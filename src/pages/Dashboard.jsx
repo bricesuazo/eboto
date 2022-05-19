@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import DashboardMain from '../components/DashboardMain'
 import DashboardSidebar from '../components/DashboardSidebar'
 import { dashboardSidebar, elections } from '../dummyData'
@@ -6,8 +6,8 @@ const Dashboard = () => {
     return (
         <div className='flex flex-col gap-4'>
             <select className="flex-initial w-1/4 h-auto rounded-lg p-4 outline-none cursor-pointer w-full" name="Election" id="election">
-                {elections.map((election, id) => (
-                    <option key={id} value={election.name}>{election.name}</option>
+                {elections.map((election) => (
+                    <option key={election.id} value={election.name}>{election.name}</option>
                 ))}
             </select>
 
