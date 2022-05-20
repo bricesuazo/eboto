@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { BiLogOut } from 'react-icons/bi'
 const Header = () => {
     return (
-        <div className="select-none bg-primary flex items-center justify-between px-8 py-4">
+        <div className="select-none bg-primary flex items-center justify-between px-8 py-4 sticky top-0 z-50">
             <Link to="/" className="text-white font-semibold text-2xl">eBoto Mo</Link>
 
             <div className="flex items-center gap-x-4 ">

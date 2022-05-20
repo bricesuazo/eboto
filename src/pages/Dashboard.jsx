@@ -4,8 +4,8 @@ import DashboardSidebar from '../components/DashboardSidebar'
 import { dashboardSidebar, elections } from '../dummyData'
 const Dashboard = () => {
     return (
-        <div className='flex flex-col gap-4'>
-            <select className="flex-initial w-1/4 h-auto rounded-lg p-4 outline-none cursor-pointer w-full" name="Election" id="election">
+        <div className='flex flex-col gap-4 p-4'>
+            <select className="flex-initial w-1/4 min-w-fit h-auto rounded-lg p-4 outline-none cursor-pointer" name="Election" id="election">
                 {elections.map((election) => (
                     <option key={election.id} value={election.name}>{election.name}</option>
                 ))}
@@ -21,7 +21,6 @@ const Dashboard = () => {
                             <Route key={dashboard.id} exact path={`/${dashboard.name.toLowerCase()}`} element={<DashboardMain type={dashboard.name.toLowerCase()} />} />
                         ))}
                     </Routes>
-                    {/* <span className='font-bold text-xl'>test</span> */}
                 </div>
             </div >
 

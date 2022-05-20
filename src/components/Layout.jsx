@@ -1,14 +1,14 @@
 import React from 'react'
-// import { HashRouter } from 'react-router-dom'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+// import { HashRouter, BrowserRouter as Router} from 'react-router-dom'
+import { HashRouter, Route, Routes } from 'react-router-dom'
 import { Header, Dashboard, Signin, Signup, Home, ElectionLanding, ElectionVote, ElectionRealtime } from '../pages/index'
 import Footer from './Footer'
 
 const Layout = () => {
     return (
         <div className='h-full'>
-            {/* <HashRouter> */}
-            <Router>
+            <HashRouter>
+                {/* <Router> */}
                 <Header />
                 <Routes>
                     <Route exact path="/" element={<Home />} />
@@ -21,8 +21,8 @@ const Layout = () => {
                     <Route path="/:election/realtime" element={<ElectionRealtime />} />
                 </Routes>
                 <Footer />
-            </Router>
-            {/* </HashRouter> */}
+                {/* </Router> */}
+            </HashRouter>
         </div>
     )
 }
