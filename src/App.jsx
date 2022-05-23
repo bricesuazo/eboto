@@ -1,5 +1,5 @@
 import Layout from "./components/Layout";
-import { FiEdit } from "react-icons/fi"
+// import { FiEdit } from "react-icons/fi"
 
 const App = () => {
 
