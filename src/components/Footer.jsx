@@ -6,12 +6,12 @@ import { FaRegPaperPlane } from 'react-icons/fa'
 
 const Footer = () => {
     return (
-        <div className='p-8 bg-primary text-white grid grid-cols-4 gap-x-8'>
+        <div className='p-8 bg-primary text-white grid grid-cols-2 gap-x-8 md:grid-cols-3 lg:grid-cols-4'>
             <div className="flex flex-col gap-y-2 col-span-2">
-                <Link to="/" className='font-semibold text-xl'>eBoto Mo</Link>
-                <span>An Online Voting System for CvSU Main Campus with Real-time Voting Count.</span>
+                <Link to="/" className='font-semibold text-4xl text-center md:text-left md:text-xl'>eBoto Mo</Link>
+                <span className='text-center md:text-left'>An Online Voting System for Cavite State University - Don Severino Delas Alas Campus with Real-time Voting Count.</span>
 
-                <div className="flex flex-col gap-y-2">
+                <div className="flex flex-col gap-y-2 justify-center md:justify-left">
                     <div className="flex flex-row items-center gap-x-2.5">
                         <IoCallOutline className='text-xl' />
                         <span>+63 912 345 6789</span>
@@ -29,7 +29,7 @@ const Footer = () => {
                     <li><Link to="/contact">Contact</Link></li>
                 </ul>
             </div>
-            <div className="flex flex-col gap-y-2">
+            <div className="hidden lg:flex flex-col gap-y-2">
                 <span className='font-semibold text-xl'>Contact Us</span>
                 <form action="" className='flex flex-col gap-1 items-end'>
                     <input className='w-full bg-black p-2 rounded-md outline-none' type="text" placeholder='Your email address' />
