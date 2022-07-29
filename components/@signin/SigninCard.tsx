@@ -21,7 +21,7 @@ const SigninCard = () => {
       password,
     });
 
-    if (res.error) {
+    if (res?.error) {
       setMessage(res.error);
     } else {
       return Router.push("/");
