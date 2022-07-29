@@ -1,6 +1,8 @@
-/** @type {import('next').NextConfig} */
+/**
+ * @type {import('next').NextConfig}
+ **/
 const nextConfig = {
-  reactStrictMode: true,
+  // reactStrictMode: true,
   images: {
     domains: ["img.freepik.com", "www.freepnglogos.com"],
   },
