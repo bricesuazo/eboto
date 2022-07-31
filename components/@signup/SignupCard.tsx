@@ -18,7 +18,7 @@ const SignupCard = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
 
     await Axios.post("/api/admin", {
@@ -45,7 +45,9 @@ const SignupCard = () => {
   };
 
   return (
-    <CredentialCard onSubmit={(e) => handleSubmit(e)}>
+    <CredentialCard
+      onSubmit={(e: React.ChangeEvent<HTMLInputElement>) => handleSubmit(e)}
+    >
       <label className="font-bold text-xl">Create an account</label>
       <div className="w-full flex gap-x-2">
         <div className="flex flex-col w-full">
@@ -56,7 +58,9 @@ const SignupCard = () => {
           <InputStyled
             type="text"
             placeholder="Enter your first name..."
-            onChange={(e) => setFirstName(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setFirstName(e.target.value)
+            }
             required
           />
         </div>
@@ -68,7 +72,9 @@ const SignupCard = () => {
           <InputStyled
             type="text"
             placeholder="Enter your last name..."
-            onChange={(e) => setLastName(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setLastName(e.target.value)
+            }
             required
           />
         </div>
@@ -81,7 +87,9 @@ const SignupCard = () => {
         <InputStyled
           type="email"
           placeholder="Enter your email address..."
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setEmail(e.target.value)
+          }
           required
         />
       </div>
@@ -93,7 +101,9 @@ const SignupCard = () => {
         <InputStyled
           type="password"
           placeholder="Enter your password..."
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setPassword(e.target.value)
+          }
           required
           minLength="8"
         />
@@ -106,7 +116,7 @@ const SignupCard = () => {
         <InputStyled
           type="password"
           placeholder="Enter your password again..."
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             setConfirmPassword(e.target.value);
             handleConfirmPassword();
           }}

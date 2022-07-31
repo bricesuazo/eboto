@@ -29,7 +29,9 @@ const SigninCard = () => {
   };
 
   return (
-    <CredentialCard onSubmit={(e) => handleSubmit(e)}>
+    <CredentialCard
+      onSubmit={(e: React.FormEvent<HTMLFormElement>) => handleSubmit(e)}
+    >
       <span className="font-bold text-xl">Login to your account</span>
       <div className="flex flex-col  w-full">
         <span>
@@ -38,7 +40,7 @@ const SigninCard = () => {
         <InputStyled
           type="email"
           placeholder="Enter your email address..."
-          onChange={(e: React.FormEvent<HTMLFormElement>) =>
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setEmail(e.target.value)
           }
           required
@@ -53,7 +55,7 @@ const SigninCard = () => {
         <InputStyled
           type="password"
           placeholder="Enter your password..."
-          onChange={(e: React.FormEvent<HTMLFormElement>) =>
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setPassword(e.target.value)
           }
           required

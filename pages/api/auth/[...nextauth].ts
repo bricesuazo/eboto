@@ -33,7 +33,7 @@ export default NextAuth({
       return token;
     },
     session: async ({ session, token }) => {
-      session.user = token.user._doc;
+      session.user = token.user;
       return session;
     },
   },
@@ -44,6 +44,6 @@ const signinUser = async ({ credentialPassword, admin }) => {
   if (!isMatch) {
     throw new Error("Password Incorrect.");
   }
-  const { password, ...others } = admin;
+  const { password, ...others } = admin._doc;
   return others;
 };

@@ -6,10 +6,19 @@ import { useSession, signOut } from "next-auth/react";
 
 const Header = () => {
   const { data: session } = useSession();
-  // console.log(session);
 
-  const currentAdminLoggedIn = session?.user;
-  const currentVoterLoggedIn = [];
+  const currentAdminLoggedIn:
+    | {
+        _id: string;
+        email: string;
+        firstName?: string;
+        lastName?: string;
+        elections: [];
+        createdAt: string;
+        updatedAt: string;
+      }
+    | undefined = session?.user;
+  const currentVoterLoggedIn: [] = [];
   const [menu, setMenu] = useState(false);
   const Logout = () => {
     return (
@@ -28,7 +37,7 @@ const Header = () => {
             return (
               <div className="flex items-center gap-x-2 ">
                 <span>Hello, {currentAdminLoggedIn?.firstName}!</span>
-                <ButtonLink href="/dashboard" invert>
+                <ButtonLink href="/dashboard/overview/" invert>
                   Dashboard
                 </ButtonLink>
                 <Logout />

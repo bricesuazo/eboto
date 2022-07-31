@@ -1,4 +1,10 @@
-const CredentialCard = ({ children, ...props }) => {
+const CredentialCard = ({
+  children,
+  ...props
+}: {
+  [x: string]: any;
+  children: React.ReactNode;
+}) => {
   return (
     <form className="relative w-full max-w-lg" {...props}>
       <div className="grid place-items-center gap-y-4 rounded-lg border-primary border-2 w-full p-4 bg-white z-20">

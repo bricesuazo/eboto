@@ -5,7 +5,7 @@ import Admin from "../../models/Admin";
 
 export default async function handler(req: NextRequest, res: NextResponse) {
   const { method } = req;
-  dbConnect();
+  await dbConnect();
 
   switch (method) {
     case "GET":
