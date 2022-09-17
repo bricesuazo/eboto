@@ -9,23 +9,39 @@ import Router from "next/router";
 import { signIn } from "next-auth/react";
 
 const SigninCard = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    setLoading(true);
     const res = await signIn("credentials", {
       redirect: false,
       email,
       password,
     });
 
-    if (res?.error) {
-      setMessage(res.error);
+    if (!res?.error) {
+      Router.push("/");
     } else {
-      return Router.push("/");
+      setMessage(res.error);
+      setLoading(false);
     }
+  };
+
+  const handleGoogleSignin = async () => {
+    // async signIn({ account, profile }) {
+    //   if (account.provider === "google") {
+    //     return profile.email_verified && profile.email.endsWith("@example.com")
+    //   }
+    //   return true // Do different verification for other providers that don't have `email_verified`
+    // },
+    await signIn("google").then((res) => {
+      console.log(res);
+    });
   };
 
   return (
@@ -71,11 +87,17 @@ const SigninCard = () => {
 
         <span className="">{message}</span>
       </div>
-      <Button type="submit">Login</Button>
+      <Button
+        type="submit"
+        loading={loading}
+        disabled={!email || !password || password.length < 8 || loading}
+      >
+        Login
+      </Button>
 
       <div className="m-auto text-center">
         <span>Login using your</span>
-        <GoogleButton />
+        <GoogleButton onClick={handleGoogleSignin} />
       </div>
       <div className="text-center">
         <span>

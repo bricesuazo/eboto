@@ -3,6 +3,7 @@ const Button = ({
   invert,
   bold,
   className,
+  loading,
   ...props
 }: {
   [x: string]: any;
@@ -18,7 +19,7 @@ const Button = ({
       } ${bold && "font-bold"}`}
       {...props}
     >
-      {children}
+      {loading ? "Loading..." : children}
     </button>
   );
 };

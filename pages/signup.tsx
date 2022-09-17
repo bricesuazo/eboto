@@ -3,7 +3,7 @@ import TwoColumnDivision from "../components/TwoColumnDivision";
 import HowSafeEBoto from "../components/@signup/HowSafeEBoto";
 import SignupCard from "../components/@signup/SignupCard";
 import { getSession } from "next-auth/react";
-import type { NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 
 const SignupPage: NextPage = () => {
   return (
@@ -21,7 +21,7 @@ const SignupPage: NextPage = () => {
 
 export default SignupPage;
 
-export const getServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession({ req: context.req });
 
   if (session) {

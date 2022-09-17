@@ -1,4 +1,4 @@
-import type { NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
 import Button from "../components/styled/Button";
 import { getSession } from "next-auth/react";
@@ -41,9 +41,9 @@ const Home: NextPage = () => {
               policies and individuals to make decisions that will affect our
               Alma Mater.
             </span>
-            <Link href="/signin" bold>
+            <Link href="/signin">
               <a>
-                <Button>Signin as voter</Button>
+                <Button bold>Signin as voter</Button>
               </a>
             </Link>
           </div>
@@ -101,10 +101,16 @@ const Home: NextPage = () => {
 
 export default Home;
 
-export const getServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession({ req: context.req });
 
-  return {
-    props: {},
-  };
+  if (session) {
+    // return {
+    //   redirect: {
+    //     destination: "/dashboard",
+    //     permanent: false,
+    //   },
+    // };
+  }
+  return { props: { session } };
 };

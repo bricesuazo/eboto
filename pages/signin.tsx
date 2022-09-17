@@ -3,7 +3,7 @@ import TwoColumnDivision from "../components/TwoColumnDivision";
 import SigninCard from "../components/@signin/SigninCard";
 import RemindersBeforeVoting from "../components/@signin/RemindersBeforeVoting";
 import { getSession } from "next-auth/react";
-import type { NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 
 const SigninPage: NextPage = () => {
   return (
@@ -21,7 +21,7 @@ const SigninPage: NextPage = () => {
 
 export default SigninPage;
 
-export const getServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession({ req: context.req });
 
   if (session) {
@@ -34,8 +34,6 @@ export const getServerSideProps = async (context) => {
   }
 
   return {
-    props: {
-      session,
-    },
+    props: { session },
   };
 };

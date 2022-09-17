@@ -6,36 +6,63 @@ import GoogleButton from "../GoogleButton";
 import Button from "../styled/Button";
 import InputStyled from "../styled/InputStyled";
 import LinkStyled from "../styled/LinkStyled";
-import Axios from "axios";
 import Router from "next/router";
 import { signIn } from "next-auth/react";
+import { v4 as uuidv4 } from "uuid";
+
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
+import { db } from "../../firebase.config";
+import capitalizeFirstLetterEachWord from "../../util/capitalizeFirstLetterEachWord";
 
 const SignupCard = () => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState("");
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
+    setLoading(true);
+    const querySnapshot = await getDocs(
+      query(collection(db, "admins"), where("email", "==", email))
+    );
+    const user = querySnapshot.docs[0];
 
-    await Axios.post("/api/admin", {
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      password: confirmPassword,
-    })
-      .then(async () => {
-        await signIn("credentials", {
-          redirect: false,
-          email: email,
-          password: confirmPassword,
-        });
-        return Router.push("/");
+    if (user) {
+      setMessage("Email already exists.");
+    } else {
+      await addDoc(collection(db, "admins"), {
+        userId: uuidv4(),
+        firstName: capitalizeFirstLetterEachWord(firstName),
+        lastName: capitalizeFirstLetterEachWord(lastName),
+        email: email,
+        password: confirmPassword,
+        createdAt: new Date(),
+        profilePicture: "",
+        elections: [],
       })
-      .catch((err) => setMessage(err.response.data.error));
+        .then(async () => {
+          await signIn("credentials", {
+            redirect: false,
+            email: email,
+            password: confirmPassword,
+          });
+          return Router.push("/");
+        })
+        .catch((err) => setMessage(err.response.data.error));
+    }
+    setLoading(false);
   };
 
   const handleConfirmPassword = () => {
@@ -126,14 +153,28 @@ const SignupCard = () => {
       </div>
 
       <span>{message}</span>
-      <Button type="submit" disabled={password !== confirmPassword}>
+      <Button
+        type="submit"
+        disabled={
+          password !== confirmPassword ||
+          password.length < 8 ||
+          confirmPassword.length < 8 ||
+          !firstName ||
+          !lastName ||
+          !email ||
+          !password ||
+          !confirmPassword ||
+          loading
+        }
+        loading={loading}
+      >
         Create an account
       </Button>
 
-      <div className="w-full grid place-items-center mt-2">
-        <span>Login using your</span>
+      {/* <div className="w-full grid place-items-center mt-2">
+        <span>Create an account using your</span>
         <GoogleButton />
-      </div>
+      </div> */}
       <div className="">
         <span>
           Already have an account?{" "}

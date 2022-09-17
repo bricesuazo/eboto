@@ -1,4 +1,8 @@
-const TwoColumnDivision = ({ children }) => {
+interface Props {
+  children: React.ReactNode[];
+}
+
+const TwoColumnDivision = ({ children }: Props) => {
   return (
     <div className="flex h-screen w-full">
       <div className="hidden lg:block bg-gray-500 flex-1">

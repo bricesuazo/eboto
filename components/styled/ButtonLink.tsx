@@ -9,7 +9,7 @@ const ButtonLink = ({
 }: {
   children: React.ReactNode;
   invert?: boolean;
-  href?: string;
+  href: string;
   className?: string;
 }) => {
   return (

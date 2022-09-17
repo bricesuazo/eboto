@@ -3,8 +3,14 @@ import type { AppProps } from "next/app";
 import Head from "next/head";
 import Layout from "../components/Layout";
 import { SessionProvider } from "next-auth/react";
+import { RecoilRoot } from "recoil";
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+interface Props {
+  Component: React.FC;
+  pageProps: any;
+  session: any;
+}
+function MyApp({ Component, pageProps: { session, ...pageProps } }: Props) {
   return (
     <>
       <Head>
@@ -14,9 +20,11 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         </title>
       </Head>
       <SessionProvider session={session}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <RecoilRoot>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </RecoilRoot>
       </SessionProvider>
     </>
   );
