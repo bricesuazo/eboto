@@ -1,5 +1,5 @@
 export interface electionType {
-  _id: string;
+  uid: string;
   id: string;
   name: string;
   about: string?;

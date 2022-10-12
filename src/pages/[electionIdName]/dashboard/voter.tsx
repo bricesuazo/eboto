@@ -1,12 +1,10 @@
 import {
-  Button,
   HStack,
   Icon,
   IconButton,
   Input,
   InputGroup,
   InputLeftElement,
-  Spinner,
   Table,
   TableContainer,
   Tbody,
@@ -19,7 +17,6 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import {
-  ArrowUpOnSquareIcon,
   MagnifyingGlassIcon,
   PencilSquareIcon,
   TrashIcon,

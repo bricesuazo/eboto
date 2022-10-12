@@ -15,8 +15,7 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { useSendEmailVerification } from "react-firebase-hooks/auth";
-import { auth, firestore } from "../firebase/firebase";
+import { firestore } from "../firebase/firebase";
 import Head from "next/head";
 import {
   addDoc,
@@ -28,9 +27,6 @@ import {
   where,
 } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { FirebaseError } from "firebase/app";
-import Router from "next/router";
 import { signIn } from "next-auth/react";
 
 const SignupPage: NextPage = () => {

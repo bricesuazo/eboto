@@ -17,19 +17,18 @@ import { PlusIcon } from "@heroicons/react/24/solid";
 import { collection, doc, query, where } from "firebase/firestore";
 import CreateElectionModal from "../components/CreateElectionModal";
 import DashboardSidebar from "../components/DashboardSidebar";
-import { auth, firestore } from "../firebase/firebase";
+import { firestore } from "../firebase/firebase";
 import {
-  useCollectionData,
   useCollectionDataOnce,
   useDocumentData,
 } from "react-firebase-hooks/firestore";
-import { useAuthState } from "react-firebase-hooks/auth";
 import Router, { useRouter } from "next/router";
 import AddVoterModal from "../components/AddVoterModal";
 import { UserPlusIcon } from "@heroicons/react/24/solid";
 import { useRef } from "react";
 import { ArrowUpOnSquareIcon } from "@heroicons/react/24/outline";
 import { electionType } from "../types/typings";
+import { useSession } from "next-auth/react";
 
 const DashboardLayout = ({
   children,
@@ -38,7 +37,7 @@ const DashboardLayout = ({
   children: any;
   title: string;
 }) => {
-  const [user] = useAuthState(auth);
+  const { data: session, status } = useSession();
   const {
     isOpen: isOpenCreateElection,
     onOpen: onOpenCreateElection,
@@ -51,10 +50,11 @@ const DashboardLayout = ({
   } = useDisclosure();
 
   const [admin, adminLoading] = useDocumentData(
-    user && doc(firestore, "admins", user?.uid)
+    session?.user && doc(firestore, "admins", session.user.uid)
   );
   const [elections, electionsLoading] = useCollectionDataOnce(
     admin &&
+      admin.elections.length !== 0 &&
       query(
         collection(firestore, "elections"),
         where("_id", "in", admin.elections)

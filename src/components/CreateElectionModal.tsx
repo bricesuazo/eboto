@@ -1,4 +1,7 @@
 import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
   Button,
   FormControl,
   FormLabel,
@@ -12,22 +15,23 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  useDisclosure,
 } from "@chakra-ui/react";
 import {
   addDoc,
   arrayUnion,
   collection,
   doc,
-  DocumentData,
+  getDocs,
+  query,
   updateDoc,
+  where,
 } from "firebase/firestore";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { electionType } from "../types/typings";
-import { auth, firestore } from "../firebase/firebase";
+import { firestore } from "../firebase/firebase";
 import { v4 as uuidv4 } from "uuid";
-import { useAuthState } from "react-firebase-hooks/auth";
 import Router from "next/router";
+import { useSession } from "next-auth/react";
 
 const CreateElectionModal = ({
   isOpen,
@@ -39,7 +43,7 @@ const CreateElectionModal = ({
   onClose: () => void;
 }) => {
   const [election, setElection] = useState<electionType>({
-    _id: "",
+    uid: "",
     id: uuidv4(),
     name: "",
     about: "",
@@ -59,7 +63,13 @@ const CreateElectionModal = ({
   });
 
   const [loading, setLoading] = useState(false);
-  const [user] = useAuthState(auth);
+  const [error, setError] = useState<string | null>(null);
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    setElection({ ...election, name: "", electionIdName: "" });
+    setError(null);
+  }, [isOpen]);
 
   return (
     <Modal isOpen={cantClose ? true : isOpen} onClose={onClose}>
@@ -68,16 +78,30 @@ const CreateElectionModal = ({
         <form
           onSubmit={async (e) => {
             e.preventDefault();
+            setError(null);
             setLoading(true);
+
+            // Check if electionidname is already taken
+            const electionIdNameQuery = await getDocs(
+              query(
+                collection(firestore, "elections"),
+                where("electionIdName", "==", election.electionIdName)
+              )
+            );
+            if (electionIdNameQuery.docs.length > 0) {
+              setError("Election ID Name is already taken");
+              setLoading(false);
+              return;
+            }
 
             await addDoc(collection(firestore, "elections"), election).then(
               async (electionSnap) => {
-                user &&
-                  (await updateDoc(doc(firestore, "admins", user.uid), {
+                session?.user &&
+                  (await updateDoc(doc(firestore, "admins", session.user.uid), {
                     elections: arrayUnion(electionSnap.id),
                   }));
                 await updateDoc(doc(firestore, "elections", electionSnap.id), {
-                  _id: electionSnap.id,
+                  uid: electionSnap.id,
                 });
               }
             );
@@ -121,8 +145,13 @@ const CreateElectionModal = ({
                 />
               </InputGroup>
             </FormControl>
+            {error && (
+              <Alert status="error" marginTop={4}>
+                <AlertIcon />
+                <AlertTitle>{error}</AlertTitle>
+              </Alert>
+            )}
           </ModalBody>
-
           <ModalFooter>
             <Button
               colorScheme="blue"

@@ -9,15 +9,25 @@ import {
   Spinner,
   Stack,
   Switch,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  Text,
 } from "@chakra-ui/react";
-
 import {
   collection,
   query,
   where,
-  getDocs,
   updateDoc,
   doc,
+  getDocs,
+  deleteDoc,
+  arrayRemove,
 } from "firebase/firestore";
 import type {
   GetServerSideProps,
@@ -26,30 +36,34 @@ import type {
 } from "next";
 import Head from "next/head";
 import { useState } from "react";
-import { useCollectionData } from "react-firebase-hooks/firestore";
 import { electionType } from "../../../types/typings";
 import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import { useSession } from "next-auth/react";
 
 interface SettingsPageProps {
-  electionIdName: string;
+  election: electionType;
 }
-const SettingsPage = ({ electionIdName }: SettingsPageProps) => {
-  const [electionData] = useCollectionData(
-    query(
-      collection(firestore, "elections"),
-      where("electionIdName", "==", electionIdName)
-    )
-  );
-  const election = electionData && (electionData[0] as electionType);
+const SettingsPage = ({ election }: SettingsPageProps) => {
+  const {
+    isOpen: isOpenDelete,
+    onOpen: onOpenDelete,
+    onClose: onCloseDelete,
+  } = useDisclosure();
+  const [initialElection, setInitialElection] =
+    useState<electionType>(election);
+  const { data: session, status } = useSession();
 
   const initialState = {
-    name: election?.name,
-    electionIdName: election?.electionIdName,
-    ongoing: election?.ongoing,
+    name: initialElection?.name,
+    electionIdName: initialElection?.electionIdName,
+    ongoing: initialElection?.ongoing,
   };
+
   const [settings, setSettings] = useState(initialState);
   const [loading, setLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   return (
     <>
@@ -57,37 +71,43 @@ const SettingsPage = ({ electionIdName }: SettingsPageProps) => {
         <title>Settings | eBoto Mo</title>
       </Head>
       <DashboardLayout title="Settings">
-        {!election ? (
+        {!election && status === "loading" ? (
           <Spinner />
         ) : (
           <form
             onSubmit={async (e) => {
               e.preventDefault();
               if (
-                (settings.name === election.name &&
-                  settings.electionIdName === election.electionIdName &&
-                  settings.ongoing === election.ongoing) ||
-                !settings.name ||
-                !settings.electionIdName
+                (settings.name.trim() === initialElection.name.trim() &&
+                  settings.electionIdName.trim() ===
+                    initialElection.electionIdName.trim() &&
+                  settings.ongoing === initialElection.ongoing) ||
+                !settings.name.trim() ||
+                !settings.electionIdName.trim()
               ) {
                 return;
               }
 
               setLoading(true);
               await updateDoc(
-                doc(firestore, "elections", election._id),
+                doc(firestore, "elections", initialElection.uid),
                 settings
-              );
-
-              setSettings(initialState);
+              ).then(() => {
+                setInitialElection({ ...initialElection, ...settings });
+                // setSettings({
+                //   name: initialElection?.name,
+                //   electionIdName: initialElection?.electionIdName,
+                //   ongoing: initialElection?.ongoing,
+                // });
+              });
               setLoading(false);
             }}
           >
-            <Stack alignItems="flex-end" spacing={6}>
+            <Stack alignItems="flex-start" spacing={6}>
               <FormControl>
                 <FormLabel>Election Name</FormLabel>
                 <Input
-                  placeholder={election.name}
+                  placeholder={initialElection.name}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setSettings({
                       ...settings,
@@ -102,7 +122,7 @@ const SettingsPage = ({ electionIdName }: SettingsPageProps) => {
                 <InputGroup>
                   <InputLeftAddon children="eboto-mo.com/" />
                   <Input
-                    placeholder={election.electionIdName}
+                    placeholder={initialElection.electionIdName}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setSettings({
                         ...settings,
@@ -127,21 +147,82 @@ const SettingsPage = ({ electionIdName }: SettingsPageProps) => {
                 <Switch
                   id="toggle-election-ongoing"
                   size="lg"
-                  checked={settings.ongoing}
+                  isChecked={settings.ongoing}
                   onChange={(e) => {
                     setSettings({ ...settings, ongoing: e.target.checked });
                   }}
                 />
               </FormControl>
+
+              <Modal isOpen={isOpenDelete} onClose={onCloseDelete} isCentered>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>Delete {election.name}</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>
+                    <Text>
+                      Are you sure you want to delete this election? This
+                      process cannot be undone.
+                    </Text>
+                  </ModalBody>
+
+                  <ModalFooter>
+                    <Button
+                      mr={3}
+                      onClick={onCloseDelete}
+                      disabled={deleteLoading}
+                    >
+                      Close
+                    </Button>
+                    <Button
+                      leftIcon={<TrashIcon width={16} />}
+                      variant="outline"
+                      color="red.400"
+                      borderColor="red.400"
+                      isLoading={deleteLoading}
+                      onClick={async () => {
+                        setDeleteLoading(true);
+                        session &&
+                          (await updateDoc(
+                            doc(firestore, "admins", session.user.uid),
+                            {
+                              elections: arrayRemove(election.uid),
+                            }
+                          ).then(async () => {
+                            await deleteDoc(
+                              doc(firestore, "elections", election.uid)
+                            );
+                          }));
+                        setDeleteLoading(false);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+              <Button
+                leftIcon={<TrashIcon width={16} />}
+                variant="outline"
+                color="red.400"
+                borderColor="red.400"
+                onClick={() => onOpenDelete()}
+                isLoading={status === "loading" && deleteLoading}
+              >
+                Delete Election
+              </Button>
+
               <Button
                 type="submit"
                 isLoading={loading}
+                alignSelf="flex-end"
                 disabled={
-                  (settings.name === election.name &&
-                    settings.electionIdName === election.electionIdName &&
-                    settings.ongoing === election.ongoing) ||
-                  !settings.name ||
-                  !settings.electionIdName
+                  (settings.name.trim() === initialElection.name.trim() &&
+                    settings.electionIdName.trim() ===
+                      initialElection.electionIdName.trim() &&
+                    settings.ongoing === initialElection.ongoing) ||
+                  !settings.name.trim() ||
+                  !settings.electionIdName.trim()
                 }
               >
                 Save
@@ -159,21 +240,21 @@ export default SettingsPage;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  // const electionQuery = query(
-  //   collection(firestore, "elections"),
-  //   where("electionIdName", "==", context.query.electionIdName)
-  // );
-  // const electionSnapshot = await getDocs(electionQuery);
-  // if (electionSnapshot.docs) {
-  //   return {
-  //     props: {
-  //       election: JSON.parse(JSON.stringify(electionSnapshot.docs[0].data())),
-  //     },
-  //   };
-  // } else {
-  //   return {
-  //     notFound: true,
-  //   };
-  // }
+  const electionQuery = query(
+    collection(firestore, "elections"),
+    where("electionIdName", "==", context.query.electionIdName)
+  );
+  const electionSnapshot = await getDocs(electionQuery);
+  if (electionSnapshot.docs.length === 0) {
+    return {
+      notFound: true,
+    };
+  } else {
+    return {
+      props: {
+        election: JSON.parse(JSON.stringify(electionSnapshot.docs[0].data())),
+      },
+    };
+  }
   return { props: { electionIdName: context.query.electionIdName } };
 };
