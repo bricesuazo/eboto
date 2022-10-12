@@ -29,7 +29,7 @@ import AddVoterModal from "../components/AddVoterModal";
 import { UserPlusIcon } from "@heroicons/react/24/solid";
 import { useRef } from "react";
 import { ArrowUpOnSquareIcon } from "@heroicons/react/24/outline";
-import { electionType } from "../../typings";
+import { electionType } from "../types/typings";
 
 const DashboardLayout = ({
   children,

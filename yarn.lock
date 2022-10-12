@@ -1490,6 +1490,11 @@
     hey-listen "^1.0.8"
     tslib "^2.3.1"
 
+"@next-auth/firebase-adapter@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@next-auth/firebase-adapter/-/firebase-adapter-1.0.1.tgz#f926e8b32c11b547aff82d4d4961c5c355d9e65c"
+  integrity sha512-Ht8VHYxnVQ0UXU6Zizwi5YABApekP6e3zdz9TP/dXbFl+TLzL/NclMcm3v+OMyXHn1kHxI1C2mv2u3L+rmNaDA==
+
 "@next/env@12.3.1":
   version "12.3.1"
   resolved "https://registry.yarnpkg.com/@next/env/-/env-12.3.1.tgz#18266bd92de3b4aa4037b1927aa59e6f11879260"

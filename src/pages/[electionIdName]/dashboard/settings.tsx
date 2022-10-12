@@ -27,7 +27,7 @@ import type {
 import Head from "next/head";
 import { useState } from "react";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-import { electionType } from "../../../../typings";
+import { electionType } from "../../../types/typings";
 import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
 

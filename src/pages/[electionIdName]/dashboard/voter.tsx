@@ -31,7 +31,7 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 
-import { electionType, voterType } from "../../../../typings";
+import { electionType, voterType } from "../../../types/typings";
 import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import { useSWRConfig } from "swr";

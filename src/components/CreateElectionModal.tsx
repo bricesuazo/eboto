@@ -23,7 +23,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import React, { useState } from "react";
-import { electionType } from "../../typings";
+import { electionType } from "../types/typings";
 import { auth, firestore } from "../firebase/firebase";
 import { v4 as uuidv4 } from "uuid";
 import { useAuthState } from "react-firebase-hooks/auth";

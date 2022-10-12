@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { ArrowPathIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
-import { electionType, voterType } from "../../typings";
+import { electionType, voterType } from "../types/typings";
 import generator from "generate-password";
 import { useSWRConfig } from "swr";
 

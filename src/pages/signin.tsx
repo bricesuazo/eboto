@@ -17,69 +17,20 @@ import {
   Text,
   Spinner,
 } from "@chakra-ui/react";
-import {
-  useAuthState,
-  useSendEmailVerification,
-  useSignInWithEmailAndPassword,
-  useSignInWithGoogle,
-} from "react-firebase-hooks/auth";
-import { auth } from "../firebase/firebase";
-import { useEffect, useState } from "react";
+
+import { useState } from "react";
 
 import Head from "next/head";
-import Router, { useRouter } from "next/router";
-import { FirebaseError } from "firebase/app";
-import {
-  isSignInWithEmailLink,
-  sendSignInLinkToEmail,
-  signInWithEmailLink,
-} from "firebase/auth";
+
+import { signIn } from "next-auth/react";
 
 const SigninPage = () => {
-  const [
-    signInWithEmailAndPassword,
-    userCredential,
-    loadingCredential,
-    errorCredential,
-  ] = useSignInWithEmailAndPassword(auth);
-  const [signInWithGoogle, userGoogle, loadingGoogle, errorGoogle] =
-    useSignInWithGoogle(auth);
-
-  const [sendEmailVerification, sending] = useSendEmailVerification(auth);
   const [credentials, setCredentials] = useState<{
     email: string;
     password: string;
   }>({ email: "", password: "" });
-  const [email, setEmail] = useState("");
-  const [passwordLessLoading, setPasswordLessLoading] = useState(false);
-
-  // const [user] = useAuthState(auth);
-  // console.log(user);
-
-  // useEffect(() => {
-  //   const run = async () => {
-  //     setPasswordLessLoading(true);
-  //     if (isSignInWithEmailLink(auth, window.location.href)) {
-  //       let confirmEmail = window.localStorage.getItem("emailForSignIn");
-  //       if (!confirmEmail) {
-  //         confirmEmail = window.prompt(
-  //           "Please provide your email for confirmation"
-  //         );
-  //       }
-  //       await signInWithEmailLink(auth, confirmEmail, window.location.href)
-  //         .then((result) => {
-  //           console.log(result);
-  //           // Clear email from storage.
-  //           window.localStorage.removeItem("emailForSignIn");
-  //         })
-  //         .catch((error) => {
-  //           console.log("signInWithEmailLink", error);
-  //         });
-  //     }
-  //     setPasswordLessLoading(false);
-  //   };
-  //   run();
-  // }, []);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   return (
     <>
@@ -89,60 +40,28 @@ const SigninPage = () => {
       <Center height="80vh">
         <Container maxW="sm">
           <Stack spacing={10}>
-            {/* {passwordLessLoading ? (
-              <Spinner />
-            ) : typeof window !== "undefined" &&
-              !window.localStorage.getItem("emailForSignIn") ? (
-              <form
-                onSubmit={async (e) => {
-                  e.preventDefault();
-                  await sendSignInLinkToEmail(auth, email, {
-                    url: "http://localhost:3000/signin",
-                    handleCodeInApp: true,
-                  })
-                    .then(() => {
-                      window.localStorage.setItem("emailForSignIn", email);
-                    })
-                    .catch((error) => {
-                      console.log("sendSignInLinkToEmail", error);
-                    });
-                }}
-              >
-                <Stack>
-                  <FormControl isRequired>
-                    <FormLabel>Email</FormLabel>
-                    <Input
-                      autoFocus
-                      placeholder="Email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      disabled={loadingCredential || loadingGoogle}
-                    />
-                  </FormControl>
-                  <Button
-                    type="submit"
-                    isLoading={loadingGoogle || loadingCredential}
-                  >
-                    Signin using Email
-                  </Button>
-                </Stack>
-              </form>
-            ) : (
-              <Box>
-                <Text>Email sent</Text>
-              </Box>
-            )} */}
-
             <Center>
               <form
                 style={{ width: "100%" }}
                 onSubmit={async (e) => {
                   e.preventDefault();
-                  await signInWithEmailAndPassword(
-                    credentials.email,
-                    credentials.password
-                  ).finally(() => Router.push("/dashboard"));
+                  setError(null);
+                  setLoading(true);
+
+                  if (!credentials.email || !credentials.password) {
+                    setLoading(false);
+                    return;
+                  }
+
+                  await signIn<"credentials">("credentials", {
+                    email: credentials.email.trim().toLocaleLowerCase(),
+                    password: credentials.password,
+                    redirect: false,
+                  }).then((res) => {
+                    setError(res?.error || null);
+                  });
+
+                  setLoading(false);
                 }}
               >
                 <Stack width="100%">
@@ -159,7 +78,7 @@ const SigninPage = () => {
                           email: e.target.value,
                         })
                       }
-                      disabled={loadingCredential || loadingGoogle}
+                      disabled={loading}
                     />
                   </FormControl>
                   <FormControl isRequired>
@@ -175,15 +94,13 @@ const SigninPage = () => {
                           password: e.target.value,
                         })
                       }
-                      disabled={loadingCredential || loadingGoogle}
+                      disabled={loading}
                     />
                   </FormControl>
-                  {errorCredential && (
+                  {error && (
                     <Alert status="error">
                       <AlertIcon />
-                      <AlertDescription>
-                        {errorCredential.code}
-                      </AlertDescription>
+                      <AlertDescription>{error}</AlertDescription>
                     </Alert>
                   )}
 
@@ -197,7 +114,16 @@ const SigninPage = () => {
                   </Flex>
                   <Button
                     type="submit"
-                    isLoading={loadingGoogle || loadingCredential}
+                    isLoading={loading}
+                    disabled={
+                      loading ||
+                      !credentials.email ||
+                      !credentials.email.match(
+                        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                      ) ||
+                      !credentials.password ||
+                      credentials.password.length < 8
+                    }
                   >
                     Signin
                   </Button>

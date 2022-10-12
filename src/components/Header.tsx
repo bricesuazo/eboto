@@ -1,29 +1,22 @@
 import {
   Avatar,
-  Box,
   Button,
   Center,
-  Flex,
   HStack,
-  Icon,
   IconButton,
   Spinner,
-  Stack,
   Text,
   useColorMode,
 } from "@chakra-ui/react";
-import { signOut } from "firebase/auth";
 import Link from "next/link";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../firebase/firebase";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
-import Router from "next/router";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
+import { useSession, signOut } from "next-auth/react";
 
 const Header = () => {
-  const [user, loading, error] = useAuthState(auth);
   const { colorMode, toggleColorMode } = useColorMode();
-  // console.log("user", user);
+  const { data: session, status } = useSession();
+  console.log(session);
 
   return (
     <Center padding={4} justifyContent="space-between">
@@ -42,24 +35,28 @@ const Header = () => {
           onClick={toggleColorMode}
         />
 
-        {loading ? (
+        {status === "loading" ? (
           <Spinner />
-        ) : user ? (
+        ) : session?.user ? (
           <>
-            {user.photoURL && (
+            {session?.user.photoURL && (
               <Avatar
-                name={`@${user.displayName || user.email?.split("@")[0]}`}
-                src={user.photoURL}
+                name={`@${
+                  session?.user.displayName ||
+                  session?.user.email?.split("@")[0]
+                }`}
+                src={session?.user.photoURL}
                 size="sm"
               />
             )}
-            <Text>Hello, {user.displayName || user.email?.split("@")[0]}!</Text>
+            <Text>
+              Hello,{" "}
+              {session?.user.displayName || session?.user.email?.split("@")[0]}!
+            </Text>
             <IconButton
               aria-label="Toggle theme"
               icon={<ArrowRightOnRectangleIcon width={24} />}
-              onClick={async () => {
-                await signOut(auth);
-              }}
+              onClick={() => signOut({ redirect: false })}
               variant="ghost"
               borderRadius="full"
             />

@@ -18,16 +18,22 @@ import { useState } from "react";
 import { useSendEmailVerification } from "react-firebase-hooks/auth";
 import { auth, firestore } from "../firebase/firebase";
 import Head from "next/head";
-import { doc, setDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
 import Router from "next/router";
+import { signIn } from "next-auth/react";
 
 const SignupPage: NextPage = () => {
-  const [sendEmailVerification, sending] = useSendEmailVerification(auth);
-  const [passwordError, setPasswordError] = useState(false);
-
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [credentials, setCredentials] = useState({
@@ -50,51 +56,64 @@ const SignupPage: NextPage = () => {
               onSubmit={async (e) => {
                 e.preventDefault();
                 setLoading(true);
-                setPasswordError(false);
-
+                setError(null);
                 if (credentials.password !== credentials.confirmPassword) {
-                  setPasswordError(true);
+                  setError("Passwords do not match");
                   setLoading(false);
                   return;
                 }
-                await createUserWithEmailAndPassword(
-                  auth,
-                  credentials.email,
-                  credentials.password
-                )
-                  .then(async (userSnapshot) => {
-                    await setDoc(
-                      doc(firestore, "admins", userSnapshot.user.uid),
-                      {
-                        accountType: "admin",
-                        id: uuidv4(),
-                        email: credentials.email,
-                        firstName: credentials.firstName?.replace(
-                          /(^\w{1})|(\s+\w{1})/g,
-                          (letter: string) => letter.toUpperCase()
-                        ),
-                        lastName: credentials.firstName?.replace(
-                          /(^\w{1})|(\s+\w{1})/g,
-                          (letter: string) => letter.toUpperCase()
-                        ),
-                        photoUrl: "",
-                        elections: [],
-                      }
-                    )
-                      .then(() => Router.push("/dashboard"))
-                      .catch((error: FirebaseError) => {
-                        setError(error.message);
-                      });
-                  })
-                  .catch((error: FirebaseError) => {
-                    setError(error.code);
-                  });
-                setLoading(false);
-                return;
+                // If user already exists, return error
+                const adminSnaphot = await getDocs(
+                  query(
+                    collection(firestore, "admins"),
+                    where("email", "==", credentials.email)
+                  )
+                );
 
-                // if (user !== null) {
-                //   sendEmailVerification();
-                // }
+                if (adminSnaphot.docs.length !== 0) {
+                  setError("User already exists");
+                  setLoading(false);
+                  return;
+                }
+
+                // Create user docs
+                const adminRef = await addDoc(collection(firestore, "admins"), {
+                  accountType: "admin",
+                  _id: uuidv4(),
+                  email: credentials.email,
+                  firstName: credentials.firstName
+                    .trim()
+                    .replace(/(^\w{1})|(\s+\w{1})/g, (letter: string) =>
+                      letter.toUpperCase()
+                    ),
+                  lastName: credentials.lastName
+                    .trim()
+                    .replace(/(^\w{1})|(\s+\w{1})/g, (letter: string) =>
+                      letter.toUpperCase()
+                    ),
+                  password: credentials.password,
+                  photoUrl: "",
+                  elections: [],
+                  createdAt: new Date(),
+                  updatedAt: new Date(),
+                  emailVerified: false,
+                });
+                // Update user's uid
+                await setDoc(
+                  doc(firestore, "admins", adminRef.id),
+                  {
+                    uid: adminRef.id,
+                  },
+                  { merge: true }
+                ).then(async () => {
+                  await signIn("credentials", {
+                    email: credentials.email,
+                    password: credentials.password,
+                    // callbackUrl: "/admin",
+                    redirect: false,
+                  });
+                });
+                setLoading(false);
               }}
             >
               <Stack width="100%" spacing={4}>
@@ -157,7 +176,6 @@ const SignupPage: NextPage = () => {
                           ...credentials,
                           password: e.target.value,
                         });
-                        setPasswordError(false);
                       }}
                       disabled={loading}
                     />
@@ -173,25 +191,35 @@ const SignupPage: NextPage = () => {
                           ...credentials,
                           confirmPassword: e.target.value,
                         });
-                        setPasswordError(false);
                       }}
                       disabled={loading}
                     />
                   </FormControl>
-                  {error ||
-                    (passwordError && (
-                      <Alert status="error">
-                        <AlertIcon />
-                        <AlertDescription>
-                          {error || (passwordError && "Passwords don't match")}
-                        </AlertDescription>
-                      </Alert>
-                    ))}
+                  {error && (
+                    <Alert status="error">
+                      <AlertIcon />
+                      <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
                   <NextLink href="/signin" passHref>
                     <Link fontSize="xs">Already have an account?</Link>
                   </NextLink>
                 </Stack>
-                <Button type="submit" isLoading={loading}>
+                <Button
+                  type="submit"
+                  isLoading={loading}
+                  disabled={
+                    !credentials.firstName ||
+                    !credentials.lastName ||
+                    !credentials.email ||
+                    !credentials.password ||
+                    !credentials.confirmPassword ||
+                    credentials.password.length < 8 ||
+                    credentials.confirmPassword.length < 8 ||
+                    credentials.password !== credentials.confirmPassword ||
+                    loading
+                  }
+                >
                   Signup
                 </Button>
               </Stack>

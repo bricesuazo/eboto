@@ -2,12 +2,16 @@ import type { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
 import Header from "../components/Header";
 import theme from "../theme";
-import useAuth from "../hooks/useAuth";
 import Head from "next/head";
+import { Session } from "next-auth";
+import { SessionProvider } from "next-auth/react";
 
-function MyApp({ Component, pageProps }: AppProps) {
-  useAuth();
-
+export default function MyApp({
+  Component,
+  pageProps,
+}: AppProps<{
+  session: Session;
+}>) {
   return (
     <>
       <Head>
@@ -16,12 +20,12 @@ function MyApp({ Component, pageProps }: AppProps) {
           Severino Delas Alas Campus with Real-time Voting Count.
         </title>
       </Head>
-      <ChakraProvider theme={theme}>
-        <Header />
-        <Component {...pageProps} />
-      </ChakraProvider>
+      <SessionProvider session={pageProps.session}>
+        <ChakraProvider theme={theme}>
+          <Header />
+          <Component {...pageProps} />
+        </ChakraProvider>
+      </SessionProvider>
     </>
   );
 }
-
-export default MyApp;

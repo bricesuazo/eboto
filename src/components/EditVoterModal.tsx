@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useSWRConfig } from "swr";
-import { voterType } from "../../typings";
+import { voterType } from "../types/typings";
 
 interface EditVoterModalProps {
   isOpen: boolean;

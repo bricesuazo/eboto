@@ -1,6 +1,6 @@
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { GetServerSideProps } from "next";
-import { electionType } from "../../../typings";
+import { electionType } from "../../types/typings";
 import { firestore } from "../../firebase/firebase";
 
 const ElectionPage = ({ election }: { election: electionType }) => {
