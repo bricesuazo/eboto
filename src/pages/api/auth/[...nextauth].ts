@@ -1,11 +1,10 @@
-import { getDocs } from "firebase/firestore";
-import { where } from "firebase/firestore";
-import { collection } from "firebase/firestore";
-import { query } from "firebase/firestore";
-import NextAuth from "next-auth";
+import { query, collection, where, getDocs } from "firebase/firestore";
+import NextAuth, { Session, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { FirestoreAdapter } from "@next-auth/firebase-adapter";
 import { firestore } from "../../../firebase/firebase";
+import { AdapterUser } from "next-auth/adapters";
+import { JWT } from "next-auth/jwt";
 
 export default NextAuth({
   // Configure one or more authentication providers
@@ -70,15 +69,17 @@ export default NextAuth({
   },
 
   callbacks: {
-    async session({ session, token, user }) {
-      // Send properties to the client, like an access_token from a provider.
-      // session.accessToken = token.accessToken;
+    async session({ session, token }: { session: Session; token: JWT }) {
+      session.user = token.user as Session["user"];
       return session;
     },
-    async jwt({ token, account }) {
-      // Persist the OAuth access_token to the token right after signin
-      if (account) {
-        token.accessToken = account.access_token;
+    async jwt({ token, user }) {
+      if (user) {
+        const { password, ...userWithoutPassword } = JSON.parse(
+          JSON.stringify(user)
+        );
+        token.accessToken = user.id;
+        token.user = userWithoutPassword;
       }
       return token;
     },

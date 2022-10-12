@@ -16,7 +16,6 @@ import { useSession, signOut } from "next-auth/react";
 const Header = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { data: session, status } = useSession();
-  console.log(session);
 
   return (
     <Center padding={4} justifyContent="space-between">
@@ -39,19 +38,18 @@ const Header = () => {
           <Spinner />
         ) : session?.user ? (
           <>
-            {session?.user.photoURL && (
+            {session?.user.photoUrl && (
               <Avatar
                 name={`@${
-                  session?.user.displayName ||
-                  session?.user.email?.split("@")[0]
+                  session?.user.firstName + " " + session?.user.lastName
                 }`}
-                src={session?.user.photoURL}
+                src={session?.user.photoUrl}
                 size="sm"
               />
             )}
             <Text>
               Hello,{" "}
-              {session?.user.displayName || session?.user.email?.split("@")[0]}!
+              {session?.user.firstName || session?.user.email?.split("@")[0]}!
             </Text>
             <IconButton
               aria-label="Toggle theme"

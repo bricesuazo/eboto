@@ -1,3 +1,4 @@
+import { electionType } from "./typings.d";
 import NextAuth from "next-auth";
 
 declare module "next-auth" {
@@ -6,12 +7,19 @@ declare module "next-auth" {
    */
   interface Session {
     user: {
-      _id: string;
-      firstName: string;
-      lastName: string;
-      email: string;
-      password: string;
+      updatedAt: Date;
       accountType: string;
+      elections: electionType[];
+      email: string;
+      emailVerified: boolean;
+      uid: string;
+      firstName: string;
+      createdAt: Date;
+      photoUrl: string;
+      password: string;
+      _id: string;
+      lastName: string;
     };
+    expires: string;
   }
 }
