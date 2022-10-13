@@ -1,14 +1,17 @@
 import {
+  Flex,
   HStack,
   Icon,
   IconButton,
   Input,
   InputGroup,
   InputLeftElement,
+  Spinner,
   Table,
   TableContainer,
   Tbody,
   Td,
+  Text,
   Tfoot,
   Th,
   Thead,
@@ -30,8 +33,18 @@ import { electionType, voterType } from "../../../types/typings";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import EditVoterModal from "../../../components/EditVoterModal";
 import { firestore } from "../../../firebase/firebase";
-import { doc, getDocs, query, where, collection } from "firebase/firestore";
+import {
+  doc,
+  getDocs,
+  query,
+  where,
+  collection,
+  updateDoc,
+  arrayRemove,
+  setDoc,
+} from "firebase/firestore";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import DeleteVoterModal from "../../../components/DeleteVoterModal";
 
 const VoterPage = ({ election }: { election: electionType }) => {
   const {
@@ -39,21 +52,34 @@ const VoterPage = ({ election }: { election: electionType }) => {
     onOpen: onOpenEditVoter,
     onClose: onCloseEditVoter,
   } = useDisclosure();
-  const [votersData] = useDocumentData(
+  const {
+    isOpen: isOpenDeleteVoter,
+    onOpen: onOpenDeleteVoter,
+    onClose: onCloseDeleteVoter,
+  } = useDisclosure();
+  const [votersData, votersDataLoading] = useDocumentData(
     doc(firestore, "elections", election.uid)
   );
 
+  const [voters, setVoters] = useState<voterType[]>(votersData?.voters);
   const [selectedVoter, setSelectedVoter] = useState<voterType | null>(null);
 
-  const [voters, setVoters] = useState<voterType[]>([]);
   useEffect(() => {
     setVoters(votersData?.voters);
-  }, [votersData]);
+  }, [votersData, voters]);
+
   return (
     <>
       <Head>
         <title>Voters | eBoto Mo</title>
       </Head>
+      {selectedVoter && (
+        <DeleteVoterModal
+          isOpen={isOpenDeleteVoter}
+          onClose={onCloseDeleteVoter}
+          selectedVoter={selectedVoter}
+        />
+      )}
       {selectedVoter && (
         <EditVoterModal
           isOpen={isOpenEditVoter}
@@ -69,95 +95,91 @@ const VoterPage = ({ election }: { election: electionType }) => {
           />
           <Input placeholder="Search..." />
         </InputGroup>
-        <TableContainer height="100%">
-          <Table variant="simple" size="sm">
-            <Thead>
-              <Tr>
-                <Th>Full name</Th>
-                <Th>Email address</Th>
-                <Th>Initial password</Th>
-                <Th textAlign="center">Has voted?</Th>
-                <Th></Th>
-              </Tr>
-            </Thead>
-
-            <Tbody overflowY="auto">
-              {voters?.map((voter) => (
-                <Tr
-                  key={voter.uid}
-                  _hover={{ backgroundColor: "whiteAlpha.100" }}
-                >
-                  <Td>{voter.fullName}</Td>
-                  <Td>{voter.email}</Td>
-                  <Td>{voter.password}</Td>
-                  <Td textAlign="center">
-                    {voter.hasVoted ? (
-                      <Icon
-                        as={CheckCircleIcon}
-                        fontSize={24}
-                        color="blue.300"
-                      />
-                    ) : (
-                      <Icon as={XCircleIcon} fontSize={24} color="red.300" />
-                    )}
-                  </Td>
-                  <Td>
-                    <HStack justifyContent="flex-end">
-                      <Tooltip label="Delete voter">
-                        <IconButton
-                          isLoading={voter.loading}
-                          aria-label="Delete voter"
-                          icon={<TrashIcon width={18} />}
-                          size="sm"
-                          onClick={async () => {
-                            // setting voters.loading = true
-                            setVoters(
-                              [...voters].map((object) => {
-                                return object.uid === voter.uid
-                                  ? {
-                                      ...object,
-                                      loading: true,
-                                    }
-                                  : object;
-                              })
-                            );
-                            // setting voters.loading = false
-                            setVoters(
-                              [...voters].map((object) => {
-                                return object.uid === voter.uid
-                                  ? {
-                                      ...object,
-                                      loading: false,
-                                    }
-                                  : object;
-                              })
-                            );
-                          }}
-                        />
-                      </Tooltip>
-                      <Tooltip label="Edit voter">
-                        <IconButton
-                          aria-label="Edit voter"
-                          icon={<PencilSquareIcon width={18} />}
-                          size="sm"
-                          onClick={() => {
-                            setSelectedVoter(
-                              voters.find(
-                                (obj) => obj.uid === voter.uid
-                              ) as voterType
-                            );
-                            onOpenEditVoter();
-                          }}
-                        />
-                      </Tooltip>
-                    </HStack>
-                  </Td>
+        {voters && voters.length !== 0 ? (
+          <TableContainer height="100%" marginTop={4}>
+            <Table variant="simple" size="sm">
+              <Thead>
+                <Tr>
+                  <Th>Full name</Th>
+                  <Th>Email address</Th>
+                  <Th>Initial password</Th>
+                  <Th textAlign="center">Has voted?</Th>
+                  <Th></Th>
                 </Tr>
-              ))}
-            </Tbody>
-            <Tfoot></Tfoot>
-          </Table>
-        </TableContainer>
+              </Thead>
+
+              <Tbody overflowY="auto">
+                {voters?.map((voter) => (
+                  <Tr
+                    key={voter.id}
+                    _hover={{ backgroundColor: "whiteAlpha.100" }}
+                  >
+                    <Td>{voter.fullName}</Td>
+                    <Td>{voter.email}</Td>
+                    <Td>{voter.password}</Td>
+                    <Td textAlign="center">
+                      {voter.hasVoted ? (
+                        <Icon
+                          as={CheckCircleIcon}
+                          fontSize={24}
+                          color="blue.300"
+                        />
+                      ) : (
+                        <Icon as={XCircleIcon} fontSize={24} color="red.300" />
+                      )}
+                    </Td>
+                    <Td>
+                      <HStack justifyContent="flex-end">
+                        <Tooltip label="Delete voter">
+                          <IconButton
+                            isLoading={voter.loading}
+                            aria-label="Delete voter"
+                            icon={<TrashIcon width={18} />}
+                            size="sm"
+                            color="red.300"
+                            onClick={() => {
+                              setSelectedVoter(
+                                voters.find(
+                                  (obj) => obj.id === voter.id
+                                ) as voterType
+                              );
+                              onOpenDeleteVoter();
+                            }}
+                          />
+                        </Tooltip>
+                        <Tooltip label="Edit voter">
+                          <IconButton
+                            aria-label="Edit voter"
+                            icon={<PencilSquareIcon width={18} />}
+                            size="sm"
+                            onClick={() => {
+                              setSelectedVoter(
+                                voters.find(
+                                  (obj) => obj.id === voter.id
+                                ) as voterType
+                              );
+                              onOpenEditVoter();
+                            }}
+                          />
+                        </Tooltip>
+                      </HStack>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+              <Tfoot></Tfoot>
+            </Table>
+          </TableContainer>
+        ) : (
+          <Flex
+            width="100%"
+            height="100%"
+            alignItems="center"
+            justifyContent="center"
+          >
+            {votersDataLoading ? <Spinner /> : <Text>No voters yet.</Text>}
+          </Flex>
+        )}
       </DashboardLayout>
     </>
   );

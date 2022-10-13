@@ -28,6 +28,7 @@ import {
 } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 import { signIn } from "next-auth/react";
+import isAdminExists from "../utils/isAdminExists";
 
 const SignupPage: NextPage = () => {
   const [error, setError] = useState<string | null>(null);
@@ -58,57 +59,51 @@ const SignupPage: NextPage = () => {
                   setLoading(false);
                   return;
                 }
-                // If user already exists, return error
-                const adminSnaphot = await getDocs(
-                  query(
-                    collection(firestore, "admins"),
-                    where("email", "==", credentials.email)
-                  )
-                );
 
-                if (adminSnaphot.docs.length !== 0) {
-                  setError("User already exists");
+                // If user already exists, return error
+                if (await isAdminExists(credentials.email)) {
+                  setError("Admin already exists");
                   setLoading(false);
                   return;
                 }
 
                 // Create user docs
-                const adminRef = await addDoc(collection(firestore, "admins"), {
-                  accountType: "admin",
-                  _id: uuidv4(),
-                  email: credentials.email,
-                  firstName: credentials.firstName
-                    .trim()
-                    .replace(/(^\w{1})|(\s+\w{1})/g, (letter: string) =>
-                      letter.toUpperCase()
-                    ),
-                  lastName: credentials.lastName
-                    .trim()
-                    .replace(/(^\w{1})|(\s+\w{1})/g, (letter: string) =>
-                      letter.toUpperCase()
-                    ),
-                  password: credentials.password,
-                  photoUrl: "",
-                  elections: [],
-                  createdAt: new Date(),
-                  updatedAt: new Date(),
-                  emailVerified: false,
-                });
-                // Update user's uid
-                await setDoc(
-                  doc(firestore, "admins", adminRef.id),
-                  {
-                    uid: adminRef.id,
-                  },
-                  { merge: true }
-                ).then(async () => {
-                  await signIn("credentials", {
-                    email: credentials.email,
-                    password: credentials.password,
-                    // callbackUrl: "/admin",
-                    redirect: false,
-                  });
-                });
+                // const adminRef = await addDoc(collection(firestore, "admins"), {
+                //   accountType: "admin",
+                //   _id: uuidv4(),
+                //   email: credentials.email,
+                //   firstName: credentials.firstName
+                //     .trim()
+                //     .replace(/(^\w{1})|(\s+\w{1})/g, (letter: string) =>
+                //       letter.toUpperCase()
+                //     ),
+                //   lastName: credentials.lastName
+                //     .trim()
+                //     .replace(/(^\w{1})|(\s+\w{1})/g, (letter: string) =>
+                //       letter.toUpperCase()
+                //     ),
+                //   password: credentials.password,
+                //   photoUrl: "",
+                //   elections: [],
+                //   createdAt: new Date(),
+                //   updatedAt: new Date(),
+                //   emailVerified: false,
+                // });
+                // // Update user's uid
+                // await setDoc(
+                //   doc(firestore, "admins", adminRef.id),
+                //   {
+                //     uid: adminRef.id,
+                //   },
+                //   { merge: true }
+                // ).then(async () => {
+                //   await signIn("credentials", {
+                //     email: credentials.email,
+                //     password: credentials.password,
+                //     // callbackUrl: "/admin",
+                //     redirect: false,
+                //   });
+                // });
                 setLoading(false);
               }}
             >

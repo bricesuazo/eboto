@@ -44,7 +44,7 @@ export interface electionType {
 
 export interface voterType {
   accountType: "voter";
-  uid: string;
+  id: string;
   fullName: string;
   email: string;
   password: string;

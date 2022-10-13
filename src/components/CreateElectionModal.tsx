@@ -33,6 +33,7 @@ import { v4 as uuidv4 } from "uuid";
 import Router from "next/router";
 import { useSession } from "next-auth/react";
 import reloadSession from "../utils/reloadSession";
+import isElectionIdNameExists from "../utils/isElectionIdNameExists";
 
 const CreateElectionModal = ({
   isOpen,
@@ -74,7 +75,11 @@ const CreateElectionModal = ({
   }, [isOpen]);
 
   return (
-    <Modal isOpen={cantClose ? true : isOpen} onClose={onClose}>
+    <Modal
+      isOpen={cantClose ? true : isOpen}
+      onClose={onClose}
+      trapFocus={false}
+    >
       <ModalOverlay />
       <ModalContent>
         <form
@@ -83,14 +88,8 @@ const CreateElectionModal = ({
             setError(null);
             setLoading(true);
 
-            // Check if electionidname is already taken
-            const electionIdNameQuery = await getDocs(
-              query(
-                collection(firestore, "elections"),
-                where("electionIdName", "==", election.electionIdName)
-              )
-            );
-            if (electionIdNameQuery.docs.length > 0) {
+            // Check if electionIdName is already taken
+            if (await isElectionIdNameExists(election.electionIdName)) {
               setError("Election ID Name is already taken");
               setLoading(false);
               return;

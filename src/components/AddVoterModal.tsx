@@ -1,4 +1,7 @@
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
   Box,
   Button,
   FormControl,
@@ -14,12 +17,17 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Stack,
   Tooltip,
 } from "@chakra-ui/react";
 import { ArrowPathIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import { electionType, voterType } from "../types/typings";
 import generator from "generate-password";
+import { arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { firestore } from "../firebase/firebase";
+import { v4 as uuidv4 } from "uuid";
+import isAdminExists from "../utils/isAdminExists";
 
 const AddVoterModal = ({
   isOpen,
@@ -37,19 +45,20 @@ const AddVoterModal = ({
   });
   const [addVoter, setAddVoter] = useState<voterType | null>({
     accountType: "voter",
-    uid: "",
     fullName: "",
     email: "",
     password: generatePassword,
     hasVoted: false,
     election: "",
+    id: uuidv4(),
   });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const clearForm = () => {
     setAddVoter({
       accountType: "voter",
-      uid: "",
+      id: uuidv4(),
       fullName: "",
       email: "",
       password: generatePassword,
@@ -65,13 +74,28 @@ const AddVoterModal = ({
     return null;
   }
   return (
-    <Modal isOpen={!loading ? isOpen : true} onClose={onClose} isCentered>
+    <Modal
+      isOpen={!loading ? isOpen : true}
+      onClose={onClose}
+      trapFocus={false}
+      isCentered
+    >
       <ModalOverlay />
       <form
         onSubmit={async (e) => {
           setLoading(true);
+          setError(null);
           e.preventDefault();
 
+          if (await isAdminExists(addVoter.email)) {
+            setError("Email already exists");
+            setLoading(false);
+            return;
+          }
+
+          await updateDoc(doc(firestore, "elections", election.uid), {
+            voters: arrayUnion(addVoter),
+          });
           onClose();
           setLoading(false);
         }}
@@ -81,59 +105,67 @@ const AddVoterModal = ({
           <ModalCloseButton />
 
           <ModalBody pb={6}>
-            <FormControl isRequired>
-              <FormLabel>Full name</FormLabel>
-              <Input
-                placeholder="Full name"
-                onChange={(e) =>
-                  setAddVoter({ ...addVoter, fullName: e.target.value })
-                }
-                value={addVoter.fullName}
-                disabled={loading}
-              />
-            </FormControl>
-
-            <FormControl mt={4} isRequired>
-              <FormLabel>Email address</FormLabel>
-              <Input
-                placeholder="Email address"
-                type="email"
-                onChange={(e) =>
-                  setAddVoter({ ...addVoter, email: e.target.value })
-                }
-                value={addVoter.email}
-                disabled={loading}
-              />
-            </FormControl>
-            <FormControl mt={4} isRequired>
-              <FormLabel>Initial password</FormLabel>
-              <InputGroup size="md">
+            <Stack spacing={4}>
+              <FormControl isRequired>
+                <FormLabel>Full name</FormLabel>
                 <Input
-                  placeholder="Initial password"
-                  type="text"
+                  placeholder="Full name"
                   onChange={(e) =>
-                    setAddVoter({ ...addVoter, password: e.target.value })
+                    setAddVoter({ ...addVoter, fullName: e.target.value })
                   }
-                  value={addVoter.password}
+                  value={addVoter.fullName}
                   disabled={loading}
                 />
-                <InputRightElement>
-                  <Tooltip label="Generate password">
-                    <IconButton
-                      disabled={loading}
-                      aria-label="Generate password"
-                      icon={<ArrowPathIcon width={24} />}
-                      onClick={() => {
-                        setAddVoter({
-                          ...addVoter,
-                          password: generatePassword,
-                        });
-                      }}
-                    />
-                  </Tooltip>
-                </InputRightElement>
-              </InputGroup>
-            </FormControl>
+              </FormControl>
+
+              <FormControl isRequired>
+                <FormLabel>Email address</FormLabel>
+                <Input
+                  placeholder="Email address"
+                  type="email"
+                  onChange={(e) =>
+                    setAddVoter({ ...addVoter, email: e.target.value })
+                  }
+                  value={addVoter.email}
+                  disabled={loading}
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Initial password</FormLabel>
+                <InputGroup size="md">
+                  <Input
+                    placeholder="Initial password"
+                    type="text"
+                    onChange={(e) =>
+                      setAddVoter({ ...addVoter, password: e.target.value })
+                    }
+                    value={addVoter.password}
+                    disabled={loading}
+                  />
+                  <InputRightElement>
+                    <Tooltip label="Generate password">
+                      <IconButton
+                        disabled={loading}
+                        aria-label="Generate password"
+                        icon={<ArrowPathIcon width={24} />}
+                        onClick={() => {
+                          setAddVoter({
+                            ...addVoter,
+                            password: generatePassword,
+                          });
+                        }}
+                      />
+                    </Tooltip>
+                  </InputRightElement>
+                </InputGroup>
+              </FormControl>
+              {error && (
+                <Alert status="error">
+                  <AlertIcon />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+            </Stack>
           </ModalBody>
 
           <ModalFooter justifyContent="space-between">
@@ -142,7 +174,7 @@ const AddVoterModal = ({
                 <Tooltip label="Clear forms">
                   <IconButton
                     aria-label="Clear form"
-                    icon={<TrashIcon width={24} />}
+                    icon={<TrashIcon width={18} />}
                     onClick={() => {
                       (addVoter.fullName || addVoter.email) && clearForm();
                     }}

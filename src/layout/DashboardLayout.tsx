@@ -53,7 +53,7 @@ const DashboardLayout = ({
 
   const [elections, electionsLoading] = useCollectionData(
     session &&
-      session.user &&
+      session.user.elections &&
       query(
         collection(firestore, "elections"),
         where("uid", "in", session.user.elections)

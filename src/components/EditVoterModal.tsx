@@ -1,7 +1,10 @@
 import {
+  Box,
   Button,
+  Flex,
   FormControl,
   FormLabel,
+  IconButton,
   Input,
   Modal,
   ModalBody,
@@ -12,8 +15,12 @@ import {
   ModalOverlay,
   Stack,
   Switch,
+  Tooltip,
 } from "@chakra-ui/react";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import { arrayRemove, doc, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import { firestore } from "../firebase/firebase";
 import { voterType } from "../types/typings";
 
 interface EditVoterModalProps {
@@ -33,7 +40,7 @@ const EditVoterModal = ({
     setVoter(selectedVoter);
   }, [selectedVoter]);
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+    <Modal isOpen={isOpen} onClose={onClose} trapFocus={false} isCentered>
       <ModalOverlay />
       <form
         onSubmit={async (e) => {
@@ -125,12 +132,41 @@ const EditVoterModal = ({
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} type="submit" isLoading={loading}>
-              Save
-            </Button>
-            <Button onClick={onClose} disabled={loading}>
-              Cancel
-            </Button>
+            <Flex justifyContent="space-between" width="100%">
+              <Tooltip label="Delete voter">
+                <IconButton
+                  aria-label="Clear form"
+                  icon={<TrashIcon width={18} />}
+                  color="red.400"
+                  onClick={async () => {
+                    setLoading(true);
+                    await updateDoc(
+                      doc(firestore, "elections", voter.election),
+                      {
+                        voters: arrayRemove(voter),
+                      }
+                    );
+                    setLoading(false);
+                    onClose();
+                  }}
+                  disabled={loading}
+                />
+              </Tooltip>
+
+              <Box>
+                <Button
+                  colorScheme="blue"
+                  mr={3}
+                  type="submit"
+                  isLoading={loading}
+                >
+                  Save
+                </Button>
+                <Button onClick={onClose} disabled={loading}>
+                  Cancel
+                </Button>
+              </Box>
+            </Flex>
           </ModalFooter>
         </ModalContent>
       </form>

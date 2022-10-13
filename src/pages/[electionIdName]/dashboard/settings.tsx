@@ -45,6 +45,7 @@ import DashboardLayout from "../../../layout/DashboardLayout";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
 import reloadSession from "../../../utils/reloadSession";
+import isElectionIdNameExists from "../../../utils/isElectionIdNameExists";
 
 interface SettingsPageProps {
   election: electionType;
@@ -101,13 +102,7 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
                 initialElection.electionIdName.trim()
               ) {
                 // Check if electionIdName is already taken
-                const electionIdNameQuery = await getDocs(
-                  query(
-                    collection(firestore, "elections"),
-                    where("electionIdName", "==", election.electionIdName)
-                  )
-                );
-                if (electionIdNameQuery.docs.length > 0) {
+                if (await isElectionIdNameExists(election.electionIdName)) {
                   setError("Election ID Name is already taken");
                   setLoading(false);
                   return;
