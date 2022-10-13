@@ -62,7 +62,6 @@ const CreateElectionModal = ({
     candidates: [],
     createdAt: new Date(),
     updatedAt: new Date(),
-    voters: [],
   });
 
   const [loading, setLoading] = useState(false);

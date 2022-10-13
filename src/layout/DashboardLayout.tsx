@@ -14,22 +14,18 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { PlusIcon } from "@heroicons/react/24/solid";
-import { collection, doc, query, where } from "firebase/firestore";
+import { collection, query, where } from "firebase/firestore";
 import CreateElectionModal from "../components/CreateElectionModal";
 import DashboardSidebar from "../components/DashboardSidebar";
 import { firestore } from "../firebase/firebase";
-import {
-  useCollectionData,
-  useCollectionDataOnce,
-  useDocumentData,
-} from "react-firebase-hooks/firestore";
 import Router, { useRouter } from "next/router";
 import AddVoterModal from "../components/AddVoterModal";
 import { UserPlusIcon } from "@heroicons/react/24/solid";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowUpOnSquareIcon } from "@heroicons/react/24/outline";
 import { electionType } from "../types/typings";
 import { useSession } from "next-auth/react";
+import { useFirestoreCollectionData } from "reactfire";
 
 const DashboardLayout = ({
   children,
@@ -50,22 +46,36 @@ const DashboardLayout = ({
     onOpen: onOpenAddVoter,
     onClose: onCloseAddVoter,
   } = useDisclosure();
+  // const [electionsData, setElectionsData] = useState<electionType[]>();
 
-  const [elections, electionsLoading] = useCollectionData(
-    session &&
-      session.user.elections &&
+  const [elections, setElections] = useState<electionType[]>();
+  const [currentElection, setCurrentElection] = useState<electionType>();
+
+  const { status: electionsStatus, data: electionsData } =
+    useFirestoreCollectionData(
       query(
         collection(firestore, "elections"),
-        where("uid", "in", session.user.elections)
+        where("uid", "in", session?.user.elections)
       )
-  );
+    );
+  console.log(electionsData);
+  // useEffect(() => {
+  // }, [session, session?.user, session?.user.elections]);
+
+  useEffect(() => {
+    // setElections(electionsData as electionType[]);
+    setElections(electionsData as electionType[]);
+  }, [electionsData]);
+
+  useEffect(() => {
+    setCurrentElection(
+      elections?.find(
+        (election) => election.electionIdName === router.query.electionIdName
+      )
+    );
+  }, [elections]);
 
   const router = useRouter();
-  const currentElection =
-    elections &&
-    elections.find(
-      (election) => election.electionIdName === router.query.electionIdName
-    );
 
   const fileRef = useRef<HTMLInputElement | null>(null);
 
@@ -86,7 +96,7 @@ const DashboardLayout = ({
         <Center columnGap={2} width="248px">
           <Select
             placeholder={
-              electionsLoading
+              false
                 ? !elections?.length
                   ? "Loading..."
                   : "Create election"

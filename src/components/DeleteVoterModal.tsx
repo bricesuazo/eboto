@@ -14,7 +14,13 @@ import {
   Tooltip,
 } from "@chakra-ui/react";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { arrayRemove, doc, updateDoc } from "firebase/firestore";
+import {
+  arrayRemove,
+  collection,
+  deleteDoc,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { firestore } from "../firebase/firebase";
 import { voterType } from "../types/typings";
@@ -54,9 +60,13 @@ const DeleteVoterModal = ({
             onClick={async () => {
               setLoading(true);
               // deleting voter
-              await updateDoc(doc(firestore, "elections", voter.election), {
-                voters: arrayRemove(voter),
-              });
+              console.log(voter);
+              await deleteDoc(
+                doc(
+                  collection(firestore, "elections", voter.election, "voters"),
+                  voter.uid
+                )
+              );
               onClose();
               setLoading(false);
             }}

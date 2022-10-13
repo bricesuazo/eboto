@@ -39,11 +39,11 @@ export interface electionType {
   ];
   createdAt: Date;
   updatedAt: Date;
-  voters: voterType[] | [];
 }
 
 export interface voterType {
   accountType: "voter";
+  uid: string;
   id: string;
   fullName: string;
   email: string;

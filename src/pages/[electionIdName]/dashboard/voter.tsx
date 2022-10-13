@@ -27,8 +27,6 @@ import {
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/solid";
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import { useDocumentData } from "react-firebase-hooks/firestore";
-
 import { electionType, voterType } from "../../../types/typings";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import EditVoterModal from "../../../components/EditVoterModal";
@@ -42,9 +40,11 @@ import {
   updateDoc,
   arrayRemove,
   setDoc,
+  DocumentData,
 } from "firebase/firestore";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import DeleteVoterModal from "../../../components/DeleteVoterModal";
+import { useFirestoreCollectionData } from "reactfire";
 
 const VoterPage = ({ election }: { election: electionType }) => {
   const {
@@ -57,16 +57,17 @@ const VoterPage = ({ election }: { election: electionType }) => {
     onOpen: onOpenDeleteVoter,
     onClose: onCloseDeleteVoter,
   } = useDisclosure();
-  const [votersData, votersDataLoading] = useDocumentData(
-    doc(firestore, "elections", election.uid)
-  );
 
-  const [voters, setVoters] = useState<voterType[]>(votersData?.voters);
+  const { status: votersStatus, data: votersData } = useFirestoreCollectionData(
+    collection(firestore, "elections", election.uid, "voters")
+  );
+  console.log(votersData);
+  const [voters, setVoters] = useState<voterType[]>([]);
   const [selectedVoter, setSelectedVoter] = useState<voterType | null>(null);
 
   useEffect(() => {
-    setVoters(votersData?.voters);
-  }, [votersData, voters]);
+    setVoters(votersData as voterType[]);
+  }, [votersData]);
 
   return (
     <>
@@ -109,7 +110,7 @@ const VoterPage = ({ election }: { election: electionType }) => {
               </Thead>
 
               <Tbody overflowY="auto">
-                {voters?.map((voter) => (
+                {voters.map((voter) => (
                   <Tr
                     key={voter.id}
                     _hover={{ backgroundColor: "whiteAlpha.100" }}
@@ -177,7 +178,11 @@ const VoterPage = ({ election }: { election: electionType }) => {
             alignItems="center"
             justifyContent="center"
           >
-            {votersDataLoading ? <Spinner /> : <Text>No voters yet.</Text>}
+            {votersStatus === "loading" ? (
+              <Spinner />
+            ) : (
+              <Text>No voters yet.</Text>
+            )}
           </Flex>
         )}
       </DashboardLayout>
@@ -190,23 +195,21 @@ export default VoterPage;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const electionSnapshot = await getDocs(
-    query(
-      collection(firestore, "elections"),
-      where("electionIdName", "==", context.query.electionIdName)
-    )
-  );
-
-  // const votersQuery = query(
-  //   collection(firestore, "voters"),
-  //   where("electionIdName", "==", electionIdName)
-  // );
-  // const votersSnapshot = await getDocs(votersQuery);
-  // const votersData = votersSnapshot.docs.map((doc) => doc.data());
-
-  return {
-    props: {
-      election: JSON.parse(JSON.stringify(electionSnapshot.docs[0].data())),
-    },
-  };
+  try {
+    const electionSnapshot = await getDocs(
+      query(
+        collection(firestore, "elections"),
+        where("electionIdName", "==", context.query.electionIdName)
+      )
+    );
+    return {
+      props: {
+        election: JSON.parse(JSON.stringify(electionSnapshot.docs[0].data())),
+      },
+    };
+  } catch (err) {
+    return {
+      notFound: true,
+    };
+  }
 };

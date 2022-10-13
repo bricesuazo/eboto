@@ -5,6 +5,8 @@ import theme from "../theme";
 import Head from "next/head";
 import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
+import { FirebaseAppProvider, FirestoreProvider } from "reactfire";
+import { app, firestore } from "../firebase/firebase";
 
 export default function MyApp({
   Component,
@@ -21,10 +23,14 @@ export default function MyApp({
         </title>
       </Head>
       <SessionProvider session={pageProps.session}>
-        <ChakraProvider theme={theme}>
-          <Header />
-          <Component {...pageProps} />
-        </ChakraProvider>
+        <FirebaseAppProvider firebaseApp={app}>
+          {/* <FirestoreProvider sdk={firestore}> */}
+          <ChakraProvider theme={theme}>
+            <Header />
+            <Component {...pageProps} />
+          </ChakraProvider>
+          {/* </FirestoreProvider> */}
+        </FirebaseAppProvider>
       </SessionProvider>
     </>
   );

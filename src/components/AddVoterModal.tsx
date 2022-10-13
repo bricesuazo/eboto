@@ -24,7 +24,13 @@ import { ArrowPathIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import { electionType, voterType } from "../types/typings";
 import generator from "generate-password";
-import { arrayUnion, doc, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  arrayUnion,
+  collection,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
 import { v4 as uuidv4 } from "uuid";
 import isAdminExists from "../utils/isAdminExists";
@@ -51,6 +57,7 @@ const AddVoterModal = ({
     hasVoted: false,
     election: "",
     id: uuidv4(),
+    uid: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -64,6 +71,7 @@ const AddVoterModal = ({
       password: generatePassword,
       hasVoted: false,
       election: election.uid,
+      uid: "",
     });
   };
 
@@ -93,8 +101,16 @@ const AddVoterModal = ({
             return;
           }
 
-          await updateDoc(doc(firestore, "elections", election.uid), {
-            voters: arrayUnion(addVoter),
+          await addDoc(
+            collection(firestore, "elections", election.uid, "voters"),
+            addVoter
+          ).then(async (docRef) => {
+            await updateDoc(
+              doc(firestore, "elections", election.uid, "voters", docRef.id),
+              {
+                uid: docRef.id,
+              }
+            );
           });
           onClose();
           setLoading(false);

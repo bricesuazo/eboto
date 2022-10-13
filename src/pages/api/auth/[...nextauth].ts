@@ -37,16 +37,22 @@ export default NextAuth({
         }
 
         const voterSnaphot = await getDocs(
-          query(collection(firestore, "elections"), where("email", "==", email))
+          query(
+            collection(firestore, "elections"),
+            where("voters", "array-contains-any", [{ email }])
+          )
         );
-        if (voterSnaphot.docs.length !== 0) {
-          const voter = adminSnaphot.docs[0].data();
-          if (voter.password === password) {
-            return JSON.parse(JSON.stringify(voter));
-          } else {
-            throw new Error("Invalid password");
-          }
-        }
+        console.log(voterSnaphot.docs.length);
+        // voterSnaphot.docs.forEach((doc) => console.log(doc.data()));
+
+        // if (voterSnaphot.docs.length !== 0) {
+        //   const voter = voterSnaphot.docs[0].data();
+        //   if (voter.password === password) {
+        //     return JSON.parse(JSON.stringify(voter));
+        //   } else {
+        //     throw new Error("Invalid password");
+        //   }
+        // }
 
         if (adminSnaphot.docs.length === 0 && voterSnaphot.docs.length === 0) {
           throw new Error("User not found");
