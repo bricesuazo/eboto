@@ -1,4 +1,11 @@
-import { query, collection, where, getDocs } from "firebase/firestore";
+import {
+  query,
+  collection,
+  where,
+  getDocs,
+  getDoc,
+  doc,
+} from "firebase/firestore";
 import NextAuth, { Session, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { FirestoreAdapter } from "@next-auth/firebase-adapter";
@@ -16,7 +23,6 @@ export default NextAuth({
           email: string;
           password: string;
         };
-        // Add logic here to look up the user from the credentials supplied
 
         const adminSnaphot = await getDocs(
           query(collection(firestore, "admins"), where("email", "==", email))
@@ -49,6 +55,33 @@ export default NextAuth({
     }),
   ],
 
+  callbacks: {
+    async session({ session, token }: { session: Session; token: JWT }) {
+      session.user = token.user as Session["user"];
+
+      if (session.user.uid) {
+        const udatedAdminData = await getDoc(
+          doc(firestore, "admins", session.user.uid)
+        );
+        if (udatedAdminData.exists()) {
+          session.user = udatedAdminData.data();
+          token.user = udatedAdminData.data();
+        }
+      }
+      return session;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        const { password, ...userWithoutPassword } = JSON.parse(
+          JSON.stringify(user)
+        );
+        token.accessToken = user.id;
+        token.user = userWithoutPassword;
+      }
+      return token;
+    },
+  },
+
   adapter: FirestoreAdapter({
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
     authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -66,22 +99,5 @@ export default NextAuth({
     error: "/error", // Error code passed in query string as ?error=
     verifyRequest: "/verify-request", // (used for check email message)
     newUser: "/new-user", // New users will be directed here on first sign in (leave the property out if not of interest)
-  },
-
-  callbacks: {
-    async session({ session, token }: { session: Session; token: JWT }) {
-      session.user = token.user as Session["user"];
-      return session;
-    },
-    async jwt({ token, user }) {
-      if (user) {
-        const { password, ...userWithoutPassword } = JSON.parse(
-          JSON.stringify(user)
-        );
-        token.accessToken = user.id;
-        token.user = userWithoutPassword;
-      }
-      return token;
-    },
   },
 });

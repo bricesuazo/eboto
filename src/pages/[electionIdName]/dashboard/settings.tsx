@@ -41,6 +41,7 @@ import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
+import reloadSession from "../../../utils/reloadSession";
 
 interface SettingsPageProps {
   election: electionType;
@@ -193,6 +194,8 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
                               doc(firestore, "elections", election.uid)
                             );
                           }));
+                        reloadSession();
+                        onCloseDelete();
                         setDeleteLoading(false);
                       }}
                     >

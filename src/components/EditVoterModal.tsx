@@ -14,7 +14,6 @@ import {
   Switch,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { useSWRConfig } from "swr";
 import { voterType } from "../types/typings";
 
 interface EditVoterModalProps {
@@ -33,7 +32,6 @@ const EditVoterModal = ({
   useEffect(() => {
     setVoter(selectedVoter);
   }, [selectedVoter]);
-  const { mutate } = useSWRConfig();
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
@@ -55,32 +53,11 @@ const EditVoterModal = ({
             voter.password !== selectedVoter.password ||
             voter.fullName !== selectedVoter.fullName
           ) {
-            await mutate(
-              "/api/voter",
-              fetch("/api/voter", {
-                method: "PUT",
-                body: JSON.stringify({
-                  voter: {
-                    uid: voter.uid,
-                    email: voter.email,
-                    password: voter.password,
-                    fullName: voter.fullName,
-                  },
-                }),
-              })
-            );
+            console.log("email or password changed");
           }
 
           // Update voter
-          await mutate(
-            "/api/voter",
-            fetch("/api/voter", {
-              method: "PUT",
-              body: JSON.stringify({
-                voter: { uid: voter.uid, hasVoted: voter.hasVoted },
-              }),
-            })
-          );
+
           onClose();
           setLoading(false);
         }}

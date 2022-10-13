@@ -39,6 +39,7 @@ export interface electionType {
   ];
   createdAt: Date;
   updatedAt: Date;
+  voters: voterType[] | [];
 }
 
 export interface voterType {

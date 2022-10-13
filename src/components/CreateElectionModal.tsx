@@ -32,6 +32,7 @@ import { firestore } from "../firebase/firebase";
 import { v4 as uuidv4 } from "uuid";
 import Router from "next/router";
 import { useSession } from "next-auth/react";
+import reloadSession from "../utils/reloadSession";
 
 const CreateElectionModal = ({
   isOpen,
@@ -60,6 +61,7 @@ const CreateElectionModal = ({
     candidates: [],
     createdAt: new Date(),
     updatedAt: new Date(),
+    voters: [],
   });
 
   const [loading, setLoading] = useState(false);
@@ -94,21 +96,27 @@ const CreateElectionModal = ({
               return;
             }
 
-            await addDoc(collection(firestore, "elections"), election).then(
-              async (electionSnap) => {
-                session?.user &&
-                  (await updateDoc(doc(firestore, "admins", session.user.uid), {
-                    elections: arrayUnion(electionSnap.id),
-                  }));
-                await updateDoc(doc(firestore, "elections", electionSnap.id), {
-                  uid: electionSnap.id,
-                });
-              }
-            );
+            await addDoc(collection(firestore, "elections"), {
+              ...election,
+              name: election.name.trim(),
+              electionIdName: election.electionIdName.trim(),
+            }).then(async (electionSnap) => {
+              session?.user &&
+                (await updateDoc(doc(firestore, "admins", session.user.uid), {
+                  elections: arrayUnion(electionSnap.id),
+                }));
+              await updateDoc(doc(firestore, "elections", electionSnap.id), {
+                uid: electionSnap.id,
+              });
+            });
             const electionIdName = election.electionIdName;
             setElection({ ...election, name: "", electionIdName: "" });
             setLoading(false);
             onClose();
+
+            // reload session
+            reloadSession();
+
             Router.push(`/${electionIdName}/dashboard`);
           }}
         >

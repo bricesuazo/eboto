@@ -22,39 +22,33 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/solid";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import type { GetServerSidePropsContext, NextPage } from "next";
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import { useCollectionData } from "react-firebase-hooks/firestore";
+import { useDocumentData } from "react-firebase-hooks/firestore";
 
 import { electionType, voterType } from "../../../types/typings";
-import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
-import { useSWRConfig } from "swr";
 import EditVoterModal from "../../../components/EditVoterModal";
+import { firestore } from "../../../firebase/firebase";
+import { doc, getDocs, query, where, collection } from "firebase/firestore";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 
 const VoterPage = ({ election }: { election: electionType }) => {
-  const { mutate } = useSWRConfig();
   const {
     isOpen: isOpenEditVoter,
     onOpen: onOpenEditVoter,
     onClose: onCloseEditVoter,
   } = useDisclosure();
-  const [voters, setVoters] = useState<voterType[] | null>(null);
-  const [selectedVoter, setSelectedVoter] = useState<voterType | null>(null);
-  const [data] = useCollectionData(
-    query(
-      collection(firestore, "voters"),
-      where("election", "==", election._id)
-    )
+  const [votersData] = useDocumentData(
+    doc(firestore, "elections", election.uid)
   );
 
-  useEffect(() => {
-    data &&
-      setVoters(data.map((obj) => ({ ...obj, loading: false })) as voterType[]);
-  }, [data]);
+  const [selectedVoter, setSelectedVoter] = useState<voterType | null>(null);
 
+  const [voters, setVoters] = useState<voterType[]>([]);
+  useEffect(() => {
+    setVoters(votersData?.voters);
+  }, [votersData]);
   return (
     <>
       <Head>
@@ -68,7 +62,7 @@ const VoterPage = ({ election }: { election: electionType }) => {
         />
       )}
       <DashboardLayout title="Voters">
-        <InputGroup maxWidth={320} marginLeft="auto">
+        <InputGroup maxWidth={240} marginLeft="auto">
           <InputLeftElement
             pointerEvents="none"
             children={<MagnifyingGlassIcon color="gray.300" width={24} />}
@@ -127,15 +121,6 @@ const VoterPage = ({ election }: { election: electionType }) => {
                                   : object;
                               })
                             );
-                            await mutate(
-                              "/api/voter",
-                              fetch("/api/voter", {
-                                method: "DELETE",
-                                body: JSON.stringify({
-                                  voter: { uid: voter.uid },
-                                }),
-                              })
-                            );
                             // setting voters.loading = false
                             setVoters(
                               [...voters].map((object) => {
@@ -180,15 +165,15 @@ const VoterPage = ({ election }: { election: electionType }) => {
 
 export default VoterPage;
 
-export const getServerSideProps = async (
+export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const electionIdName = context.query.electionIdName;
-  const electionQuery = query(
-    collection(firestore, "elections"),
-    where("electionIdName", "==", electionIdName)
+  const electionSnapshot = await getDocs(
+    query(
+      collection(firestore, "elections"),
+      where("electionIdName", "==", context.query.electionIdName)
+    )
   );
-  const electionSnapshot = await getDocs(electionQuery);
 
   // const votersQuery = query(
   //   collection(firestore, "voters"),
@@ -200,7 +185,6 @@ export const getServerSideProps = async (
   return {
     props: {
       election: JSON.parse(JSON.stringify(electionSnapshot.docs[0].data())),
-      // voters: [],
     },
   };
 };

@@ -19,6 +19,7 @@ import CreateElectionModal from "../components/CreateElectionModal";
 import DashboardSidebar from "../components/DashboardSidebar";
 import { firestore } from "../firebase/firebase";
 import {
+  useCollectionData,
   useCollectionDataOnce,
   useDocumentData,
 } from "react-firebase-hooks/firestore";
@@ -37,7 +38,8 @@ const DashboardLayout = ({
   children: any;
   title: string;
 }) => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
+
   const {
     isOpen: isOpenCreateElection,
     onOpen: onOpenCreateElection,
@@ -49,15 +51,12 @@ const DashboardLayout = ({
     onClose: onCloseAddVoter,
   } = useDisclosure();
 
-  const [admin, adminLoading] = useDocumentData(
-    session?.user && doc(firestore, "admins", session.user.uid)
-  );
-  const [elections, electionsLoading] = useCollectionDataOnce(
-    admin &&
-      admin.elections.length !== 0 &&
+  const [elections, electionsLoading] = useCollectionData(
+    session &&
+      session.user &&
       query(
         collection(firestore, "elections"),
-        where("_id", "in", admin.elections)
+        where("uid", "in", session.user.elections)
       )
   );
 
@@ -67,6 +66,7 @@ const DashboardLayout = ({
     elections.find(
       (election) => election.electionIdName === router.query.electionIdName
     );
+
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   return (
@@ -86,13 +86,13 @@ const DashboardLayout = ({
         <Center columnGap={2} width="248px">
           <Select
             placeholder={
-              adminLoading || electionsLoading
+              electionsLoading
                 ? !elections?.length
                   ? "Loading..."
                   : "Create election"
                 : undefined
             }
-            disabled={adminLoading || !elections?.length}
+            disabled={!elections?.length}
             value={router.query.electionIdName}
             onChange={(e) => {
               Router.push(
@@ -133,39 +133,46 @@ const DashboardLayout = ({
             flex="1"
             borderRadius="md"
           >
-            {title !== "Voters" ? (
-              <Text fontSize="2xl" fontWeight="bold">
-                {title}
-              </Text>
-            ) : (
-              <Flex justifyContent="space-between">
-                <Text fontSize="2xl" fontWeight="bold">
-                  {title}
-                </Text>
-                <HStack>
-                  <Input
-                    type="file"
-                    hidden
-                    accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    ref={fileRef}
-                  />
-                  <Tooltip label="Upload bulk voters. (.csv, .xls, .xlsx)">
-                    <IconButton
-                      aria-label="Edit voter"
-                      icon={<ArrowUpOnSquareIcon width={24} />}
-                      onClick={() => fileRef?.current?.click()}
-                    />
-                  </Tooltip>
-                  <Button
-                    onClick={onOpenAddVoter}
-                    leftIcon={<UserPlusIcon width={18} />}
-                    isLoading={!currentElection}
-                  >
-                    Add voter
-                  </Button>
-                </HStack>
-              </Flex>
-            )}
+            {(() => {
+              switch (title) {
+                case "Voters":
+                  return (
+                    <Flex justifyContent="space-between">
+                      <Text fontSize="2xl" fontWeight="bold">
+                        {title}
+                      </Text>
+                      <HStack>
+                        <Input
+                          type="file"
+                          hidden
+                          accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                          ref={fileRef}
+                        />
+                        <Tooltip label="Upload bulk voters. (.csv, .xls, .xlsx)">
+                          <IconButton
+                            aria-label="Edit voter"
+                            icon={<ArrowUpOnSquareIcon width={24} />}
+                            onClick={() => fileRef?.current?.click()}
+                          />
+                        </Tooltip>
+                        <Button
+                          onClick={onOpenAddVoter}
+                          leftIcon={<UserPlusIcon width={18} />}
+                          isLoading={!currentElection}
+                        >
+                          Add voter
+                        </Button>
+                      </HStack>
+                    </Flex>
+                  );
+                default:
+                  return (
+                    <Text fontSize="2xl" fontWeight="bold">
+                      {title}
+                    </Text>
+                  );
+              }
+            })()}
 
             <Divider />
             <Box paddingTop={2}>{children}</Box>

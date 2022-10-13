@@ -20,7 +20,6 @@ import { ArrowPathIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import { electionType, voterType } from "../types/typings";
 import generator from "generate-password";
-import { useSWRConfig } from "swr";
 
 const AddVoterModal = ({
   isOpen,
@@ -31,7 +30,6 @@ const AddVoterModal = ({
   onClose: () => void;
   election: electionType;
 }) => {
-  const { mutate } = useSWRConfig();
   const generatePassword = generator.generate({
     length: 16,
     lowercase: true,
@@ -56,7 +54,7 @@ const AddVoterModal = ({
       email: "",
       password: generatePassword,
       hasVoted: false,
-      election: election._id,
+      election: election.uid,
     });
   };
 
@@ -73,16 +71,6 @@ const AddVoterModal = ({
         onSubmit={async (e) => {
           setLoading(true);
           e.preventDefault();
-          // await mutate(
-          //   "/api/voter",
-          //   fetch("/api/voter", {
-          //     method: "POST",
-          //     body: JSON.stringify({
-          //       election: election._id,
-          //       voter: addVoter,
-          //     }),
-          //   })
-          // );
 
           onClose();
           setLoading(false);
