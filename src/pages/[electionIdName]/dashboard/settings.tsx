@@ -18,6 +18,9 @@ import {
   ModalCloseButton,
   useDisclosure,
   Text,
+  Alert,
+  AlertIcon,
+  AlertTitle,
 } from "@chakra-ui/react";
 import {
   collection,
@@ -64,6 +67,7 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
 
   const [settings, setSettings] = useState(initialState);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
   return (
@@ -78,6 +82,9 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
           <form
             onSubmit={async (e) => {
               e.preventDefault();
+              setError(null);
+              setLoading(true);
+
               if (
                 (settings.name.trim() === initialElection.name.trim() &&
                   settings.electionIdName.trim() ===
@@ -89,17 +96,29 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
                 return;
               }
 
-              setLoading(true);
+              if (
+                settings.electionIdName.trim() !==
+                initialElection.electionIdName.trim()
+              ) {
+                // Check if electionIdName is already taken
+                const electionIdNameQuery = await getDocs(
+                  query(
+                    collection(firestore, "elections"),
+                    where("electionIdName", "==", election.electionIdName)
+                  )
+                );
+                if (electionIdNameQuery.docs.length > 0) {
+                  setError("Election ID Name is already taken");
+                  setLoading(false);
+                  return;
+                }
+              }
+
               await updateDoc(
                 doc(firestore, "elections", initialElection.uid),
                 settings
               ).then(() => {
                 setInitialElection({ ...initialElection, ...settings });
-                // setSettings({
-                //   name: initialElection?.name,
-                //   electionIdName: initialElection?.electionIdName,
-                //   ongoing: initialElection?.ongoing,
-                // });
               });
               setLoading(false);
             }}
@@ -120,8 +139,12 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
               </FormControl>
               <FormControl>
                 <FormLabel>Election ID Name</FormLabel>
-                <InputGroup>
-                  <InputLeftAddon children="eboto-mo.com/" />
+                <InputGroup borderColor={error ? "red.400" : ""}>
+                  <InputLeftAddon
+                    children="eboto-mo.com/"
+                    pointerEvents="none"
+                    userSelect="none"
+                  />
                   <Input
                     placeholder={initialElection.electionIdName}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -129,6 +152,7 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
                         ...settings,
                         electionIdName: e.target.value,
                       });
+                      setError(null);
                     }}
                     value={settings.electionIdName}
                   />
@@ -137,6 +161,12 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
                   Election ID name must be unique.
                 </FormHelperText>
               </FormControl>
+              {error && (
+                <Alert status="warning" variant="left-accent">
+                  <AlertIcon />
+                  <AlertTitle>{error}</AlertTitle>
+                </Alert>
+              )}
               <FormControl
                 display="flex"
                 justifyContent="space-between"
