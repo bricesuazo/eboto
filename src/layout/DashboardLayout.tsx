@@ -14,7 +14,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { PlusIcon } from "@heroicons/react/24/solid";
-import { collection, query, where } from "firebase/firestore";
+import { collection, doc, onSnapshot, query, where } from "firebase/firestore";
 import CreateElectionModal from "../components/CreateElectionModal";
 import DashboardSidebar from "../components/DashboardSidebar";
 import { firestore } from "../firebase/firebase";
@@ -46,26 +46,27 @@ const DashboardLayout = ({
     onOpen: onOpenAddVoter,
     onClose: onCloseAddVoter,
   } = useDisclosure();
-  // const [electionsData, setElectionsData] = useState<electionType[]>();
 
   const [elections, setElections] = useState<electionType[]>();
   const [currentElection, setCurrentElection] = useState<electionType>();
 
-  const { status: electionsStatus, data: electionsData } =
-    useFirestoreCollectionData(
-      query(
-        collection(firestore, "elections"),
-        where("uid", "in", session?.user.elections)
-      )
-    );
-  console.log(electionsData);
-  // useEffect(() => {
-  // }, [session, session?.user, session?.user.elections]);
-
   useEffect(() => {
-    // setElections(electionsData as electionType[]);
-    setElections(electionsData as electionType[]);
-  }, [electionsData]);
+    if (session && session.user && session.user.elections.length !== 0) {
+      const unsub = onSnapshot(
+        query(
+          collection(firestore, "elections"),
+          where("uid", "in", session.user.elections)
+        ),
+        (querySnapshot) => {
+          const docData: electionType[] = [];
+          querySnapshot.forEach((doc) => {
+            docData.push(doc.data() as electionType);
+          });
+          setElections(docData);
+        }
+      );
+    }
+  }, [session]);
 
   useEffect(() => {
     setCurrentElection(
