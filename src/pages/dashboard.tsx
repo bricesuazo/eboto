@@ -4,14 +4,11 @@ import { verifyIdToken } from "../firebase/firebase-admin";
 import { doc, getDoc } from "firebase/firestore";
 import CreateElectionModal from "../components/CreateElectionModal";
 import { useDisclosure } from "@chakra-ui/react";
+import { getSession } from "next-auth/react";
 
 const DashboardPage = () => {
   const { onClose, isOpen } = useDisclosure();
-  return (
-    <>
-      <CreateElectionModal cantClose onClose={onClose} isOpen={isOpen} />
-    </>
-  );
+  return <>DashboardPage</>;
 };
 
 export default DashboardPage;
@@ -19,42 +16,52 @@ export default DashboardPage;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const cookies = context.req.cookies["eboto-mo-auth"];
+  const session = await getSession(context);
 
-  if (cookies) {
-    const token = await verifyIdToken(cookies || "");
-
-    // fetch user data from db
-    const data = await getDoc(doc(firestore, "admins", token.uid));
-    const dataSnap = data.data();
-
-    if (dataSnap?.elections.length !== 0) {
-      // fetch electionIdName
-      const election = await getDoc(
-        doc(firestore, "elections", dataSnap?.elections[0])
-      );
-      const electionSnap = election.data();
-
-      if (electionSnap) {
-        return {
-          redirect: {
-            destination: "/" + electionSnap?.electionIdName + "/dashboard",
-            permanent: false,
-          },
-        };
-      } else {
-        return {
-          notFound: true,
-        };
-      }
-    }
-  } else {
+  if (!session) {
     return {
       redirect: {
         destination: "/signin",
         permanent: false,
       },
     };
+  } else if (session.user.accountType === "voter") {
+    const electionSnap = await getDoc(
+      doc(firestore, "elections", session.user.election)
+    );
+    const election = electionSnap.data();
+    return {
+      redirect: {
+        destination: `/${election?.electionIdName}`,
+        permanent: false,
+      },
+    };
+  } else if (session.user.accountType === "admin") {
+    if (session.user.elections.length === 0) {
+      return {
+        redirect: {
+          destination: "/create-election",
+          permanent: false,
+        },
+      };
+    } else if (session.user.elections.length > 1) {
+      const electionSnap = await getDoc(
+        doc(
+          firestore,
+          "elections",
+          session.user.elections[session.user.elections.length - 1]
+        )
+      );
+      const election = electionSnap.data();
+      return {
+        redirect: {
+          destination: `/${election?.electionIdName}/dashboard`,
+          permanent: false,
+        },
+      };
+    }
   }
-  return { props: {} };
+  return {
+    props: {},
+  };
 };

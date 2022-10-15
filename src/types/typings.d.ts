@@ -52,3 +52,17 @@ export interface voterType {
   election: string;
   loading?: boolean;
 }
+export interface adminType {
+  updatedAt: Date;
+  accountType: "admin";
+  elections: electionType[];
+  email: string;
+  emailVerified: boolean;
+  uid: string;
+  firstName: string;
+  createdAt: Date;
+  photoUrl: string;
+  password: string;
+  id: string;
+  lastName: string;
+}
