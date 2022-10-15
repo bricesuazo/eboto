@@ -23,57 +23,56 @@ export default NextAuth({
           email: string;
           password: string;
         };
-          // for admin query
-          const adminSnaphot = await getDocs(
-            query(collection(firestore, "admins"), where("email", "==", email))
-          );
-          if (adminSnaphot.docs.length !== 0) {
-            const admin = adminSnaphot.docs[0].data();
-            if (admin.password === password) {
-              return JSON.parse(JSON.stringify(admin));
-            } else {
-              throw new Error("Invalid password");
-            }
+        // for admin query
+        const adminSnaphot = await getDocs(
+          query(collection(firestore, "admins"), where("email", "==", email))
+        );
+        if (adminSnaphot.docs.length !== 0) {
+          const admin = adminSnaphot.docs[0].data();
+          if (admin.password === password) {
+            return JSON.parse(JSON.stringify(admin));
+          } else {
+            throw new Error("Invalid password");
           }
+        }
 
-          // for voter query
-          const elections: electionType[] = [];
-          await getDocs(collection(firestore, "elections")).then(
-            (querySnapshot) => {
-              querySnapshot.forEach(async (doc) => {
-                elections.push(doc.data() as electionType);
+        // for voter query
+        const elections: electionType[] = [];
+        await getDocs(collection(firestore, "elections")).then(
+          (querySnapshot) => {
+            querySnapshot.forEach(async (doc) => {
+              elections.push(doc.data() as electionType);
+            });
+          }
+        );
+        const voters: voterType[] = [];
+        await Promise.all(
+          elections.map(async (election) => {
+            await getDocs(
+              query(
+                collection(firestore, "elections", election.uid, "voters"),
+                where("email", "==", email)
+              )
+            ).then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                voters.push(doc.data() as voterType);
               });
-            }
-          );
-          const voters: voterType[] = [];
-          await Promise.all(
-            elections.map(async (election) => {
-              await getDocs(
-                query(
-                  collection(firestore, "elections", election.uid, "voters"),
-                  where("email", "==", email)
-                )
-              ).then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                  voters.push(doc.data() as voterType);
-                });
-              });
-            })
-          );
+            });
+          })
+        );
 
-          if (voters.length > 0) {
-            const voter = voters.filter(
-              (voter) => voter.password === password
-            )[0];
-            if (!voter) {
-              throw new Error("Invalid credentials");
-            }
-            return voter;
+        if (voters.length > 0) {
+          const voter = voters.filter(
+            (voter) => voter.password === password
+          )[0];
+          if (!voter) {
+            throw new Error("Invalid credentials");
           }
+          return voter;
+        }
 
-          if (adminSnaphot.docs.length === 0 && voters.length === 0) {
-            throw new Error("No user found");
-          }
+        if (adminSnaphot.docs.length === 0 && voters.length === 0) {
+          throw new Error("No user found");
         }
       },
     }),
