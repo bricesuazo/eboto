@@ -61,7 +61,6 @@ const VoterPage = ({ election }: { election: electionType }) => {
   const { status: votersStatus, data: votersData } = useFirestoreCollectionData(
     collection(firestore, "elections", election.uid, "voters")
   );
-  console.log(votersData);
   const [voters, setVoters] = useState<voterType[]>([]);
   const [selectedVoter, setSelectedVoter] = useState<voterType | null>(null);
 

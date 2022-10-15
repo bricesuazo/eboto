@@ -10,8 +10,8 @@ import NextAuth, { Session, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { FirestoreAdapter } from "@next-auth/firebase-adapter";
 import { firestore } from "../../../firebase/firebase";
-import { AdapterUser } from "next-auth/adapters";
 import { JWT } from "next-auth/jwt";
+import { electionType, voterType } from "../../../types/typings";
 
 export default NextAuth({
   // Configure one or more authentication providers
@@ -23,39 +23,57 @@ export default NextAuth({
           email: string;
           password: string;
         };
-
-        const adminSnaphot = await getDocs(
-          query(collection(firestore, "admins"), where("email", "==", email))
-        );
-        if (adminSnaphot.docs.length !== 0) {
-          const admin = adminSnaphot.docs[0].data();
-          if (admin.password === password) {
-            return JSON.parse(JSON.stringify(admin));
-          } else {
-            throw new Error("Invalid password");
+          // for admin query
+          const adminSnaphot = await getDocs(
+            query(collection(firestore, "admins"), where("email", "==", email))
+          );
+          if (adminSnaphot.docs.length !== 0) {
+            const admin = adminSnaphot.docs[0].data();
+            if (admin.password === password) {
+              return JSON.parse(JSON.stringify(admin));
+            } else {
+              throw new Error("Invalid password");
+            }
           }
-        }
 
-        const voterSnaphot = await getDocs(
-          query(
-            collection(firestore, "elections"),
-            where("voters", "array-contains-any", [{ email }])
-          )
-        );
-        console.log(voterSnaphot.docs.length);
-        // voterSnaphot.docs.forEach((doc) => console.log(doc.data()));
+          // for voter query
+          const elections: electionType[] = [];
+          await getDocs(collection(firestore, "elections")).then(
+            (querySnapshot) => {
+              querySnapshot.forEach(async (doc) => {
+                elections.push(doc.data() as electionType);
+              });
+            }
+          );
+          const voters: voterType[] = [];
+          await Promise.all(
+            elections.map(async (election) => {
+              await getDocs(
+                query(
+                  collection(firestore, "elections", election.uid, "voters"),
+                  where("email", "==", email)
+                )
+              ).then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                  voters.push(doc.data() as voterType);
+                });
+              });
+            })
+          );
 
-        // if (voterSnaphot.docs.length !== 0) {
-        //   const voter = voterSnaphot.docs[0].data();
-        //   if (voter.password === password) {
-        //     return JSON.parse(JSON.stringify(voter));
-        //   } else {
-        //     throw new Error("Invalid password");
-        //   }
-        // }
+          if (voters.length > 0) {
+            const voter = voters.filter(
+              (voter) => voter.password === password
+            )[0];
+            if (!voter) {
+              throw new Error("Invalid credentials");
+            }
+            return voter;
+          }
 
-        if (adminSnaphot.docs.length === 0 && voterSnaphot.docs.length === 0) {
-          throw new Error("User not found");
+          if (adminSnaphot.docs.length === 0 && voters.length === 0) {
+            throw new Error("No user found");
+          }
         }
       },
     }),
@@ -66,12 +84,12 @@ export default NextAuth({
       session.user = token.user as Session["user"];
 
       if (session.user.uid) {
-        const udatedAdminData = await getDoc(
+        const updatedAdminData = await getDoc(
           doc(firestore, "admins", session.user.uid)
         );
-        if (udatedAdminData.exists()) {
-          session.user = udatedAdminData.data();
-          token.user = udatedAdminData.data();
+        if (updatedAdminData.exists()) {
+          session.user = updatedAdminData.data() as Session["user"];
+          token.user = updatedAdminData.data();
         }
       }
       return session;

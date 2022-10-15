@@ -13,15 +13,35 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
   Stack,
   Switch,
   Tooltip,
+  HStack,
+  WrapItem,
+  Alert,
+  AlertIcon,
+  AlertDescription,
 } from "@chakra-ui/react";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { arrayRemove, doc, updateDoc } from "firebase/firestore";
+import {
+  arrayRemove,
+  collection,
+  deleteDoc,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { firestore } from "../firebase/firebase";
 import { voterType } from "../types/typings";
+import isAdminExists from "../utils/isAdminExists";
+import isVoterExists from "../utils/isVoterExists";
 
 interface EditVoterModalProps {
   isOpen: boolean;
@@ -33,6 +53,7 @@ const EditVoterModal = ({
   onClose,
   selectedVoter,
 }: EditVoterModalProps) => {
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [voter, setVoter] = useState<voterType>(selectedVoter);
 
@@ -44,26 +65,32 @@ const EditVoterModal = ({
       <ModalOverlay />
       <form
         onSubmit={async (e) => {
-          setLoading(true);
           e.preventDefault();
-          if (
-            voter.fullName === selectedVoter.fullName &&
-            voter.email === selectedVoter.email &&
-            voter.password === selectedVoter.password &&
-            voter.hasVoted === selectedVoter.hasVoted
-          )
-            return;
+          setLoading(true);
+          setError(null);
 
-          //   Check if email is already in use
-          if (
-            voter.email !== selectedVoter.email ||
-            voter.password !== selectedVoter.password ||
-            voter.fullName !== selectedVoter.fullName
-          ) {
-            console.log("email or password changed");
+          // Check if email is already in use
+          if (voter.email !== selectedVoter.email) {
+            if (
+              (await isAdminExists(voter.email)) ||
+              (await isVoterExists(voter.election, voter.email))
+            ) {
+              setError("Email is already in use");
+              setLoading(false);
+              return;
+            }
           }
 
           // Update voter
+          await updateDoc(
+            doc(firestore, "elections", voter.election, "voters", voter.uid),
+            {
+              fullName: voter.fullName,
+              email: voter.email,
+              password: voter.password,
+              hasVoted: voter.hasVoted,
+            }
+          );
 
           onClose();
           setLoading(false);
@@ -90,9 +117,12 @@ const EditVoterModal = ({
                 <Input
                   type="email"
                   placeholder="Email"
-                  value={voter.email}
+                  value={voter.email.trim().toLocaleLowerCase()}
                   onChange={(e) =>
-                    setVoter({ ...voter, email: e.target.value })
+                    setVoter({
+                      ...voter,
+                      email: e.target.value.trim().toLocaleLowerCase(),
+                    })
                   }
                   disabled={loading}
                 />
@@ -128,37 +158,84 @@ const EditVoterModal = ({
                   disabled={loading}
                 />
               </FormControl>
+              {error && (
+                <Alert status="error">
+                  <AlertIcon />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
             </Stack>
           </ModalBody>
 
           <ModalFooter>
             <Flex justifyContent="space-between" width="100%">
-              <Tooltip label="Delete voter">
-                <IconButton
-                  aria-label="Clear form"
-                  icon={<TrashIcon width={18} />}
-                  color="red.400"
-                  onClick={async () => {
-                    setLoading(true);
-                    await updateDoc(
-                      doc(firestore, "elections", voter.election),
-                      {
-                        voters: arrayRemove(voter),
-                      }
-                    );
-                    setLoading(false);
-                    onClose();
-                  }}
-                  disabled={loading}
-                />
-              </Tooltip>
-
+              <Popover>
+                {({ onClose: onCloseDeleteModal }) => (
+                  <>
+                    <PopoverTrigger>
+                      <WrapItem>
+                        <Tooltip label="Delete voter">
+                          <IconButton
+                            aria-label="Delete voter"
+                            icon={<TrashIcon width={18} />}
+                            color="red.400"
+                            disabled={loading}
+                          />
+                        </Tooltip>
+                      </WrapItem>
+                    </PopoverTrigger>
+                    <PopoverContent width="100%">
+                      <PopoverArrow />
+                      <PopoverCloseButton />
+                      <PopoverHeader>Delete voter?</PopoverHeader>
+                      <PopoverBody>
+                        <HStack>
+                          <Button
+                            onClick={async () => {
+                              setLoading(true);
+                              await deleteDoc(
+                                doc(
+                                  collection(
+                                    firestore,
+                                    "elections",
+                                    voter.election,
+                                    "voters"
+                                  ),
+                                  voter.uid
+                                )
+                              );
+                              setLoading(false);
+                              onClose();
+                            }}
+                            isLoading={loading}
+                            colorScheme="red"
+                          >
+                            Delete
+                          </Button>
+                          <Button
+                            onClick={onCloseDeleteModal}
+                            disabled={loading}
+                          >
+                            Cancel
+                          </Button>
+                        </HStack>
+                      </PopoverBody>
+                    </PopoverContent>
+                  </>
+                )}
+              </Popover>
               <Box>
                 <Button
                   colorScheme="blue"
                   mr={3}
                   type="submit"
                   isLoading={loading}
+                  disabled={
+                    voter.fullName === selectedVoter.fullName &&
+                    voter.email === selectedVoter.email &&
+                    voter.password === selectedVoter.password &&
+                    voter.hasVoted === selectedVoter.hasVoted
+                  }
                 >
                   Save
                 </Button>

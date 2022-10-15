@@ -35,7 +35,6 @@ const DashboardLayout = ({
   title: string;
 }) => {
   const { data: session } = useSession();
-
   const {
     isOpen: isOpenCreateElection,
     onOpen: onOpenCreateElection,

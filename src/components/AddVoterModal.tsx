@@ -17,6 +17,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Spinner,
   Stack,
   Tooltip,
 } from "@chakra-ui/react";
@@ -33,6 +34,7 @@ import {
 } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
 import { v4 as uuidv4 } from "uuid";
+import isVoterExists from "../utils/isVoterExists";
 import isAdminExists from "../utils/isAdminExists";
 
 const AddVoterModal = ({
@@ -49,7 +51,7 @@ const AddVoterModal = ({
     lowercase: true,
     uppercase: true,
   });
-  const [addVoter, setAddVoter] = useState<voterType | null>({
+  const [addVoter, setAddVoter] = useState<voterType>({
     accountType: "voter",
     fullName: "",
     email: "",
@@ -74,13 +76,14 @@ const AddVoterModal = ({
       uid: "",
     });
   };
+  useEffect(() => {
+    setError(null);
+  }, []);
 
   useEffect(() => {
     isOpen && clearForm();
   }, [isOpen]);
-  if (!addVoter) {
-    return null;
-  }
+
   return (
     <Modal
       isOpen={!loading ? isOpen : true}
@@ -95,7 +98,10 @@ const AddVoterModal = ({
           setError(null);
           e.preventDefault();
 
-          if (await isAdminExists(addVoter.email)) {
+          if (
+            (await isAdminExists(addVoter.email)) ||
+            (await isVoterExists(addVoter.election, addVoter.email))
+          ) {
             setError("Email already exists");
             setLoading(false);
             return;
@@ -140,9 +146,12 @@ const AddVoterModal = ({
                   placeholder="Email address"
                   type="email"
                   onChange={(e) =>
-                    setAddVoter({ ...addVoter, email: e.target.value })
+                    setAddVoter({
+                      ...addVoter,
+                      email: e.target.value.trim().toLocaleLowerCase(),
+                    })
                   }
-                  value={addVoter.email}
+                  value={addVoter.email.trim().toLocaleLowerCase()}
                   disabled={loading}
                 />
               </FormControl>
@@ -205,6 +214,9 @@ const AddVoterModal = ({
                 mr={3}
                 type="submit"
                 isLoading={loading}
+                disabled={
+                  !addVoter.fullName && !addVoter.email && !addVoter.password
+                }
               >
                 Save
               </Button>
