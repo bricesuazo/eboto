@@ -5,6 +5,7 @@ import {
   Cog6ToothIcon as Cog6ToothIconOutline,
   FlagIcon as FlagIconOutline,
   UserCircleIcon as UserCircleIconOutline,
+  UsersIcon as UsersIconOutline,
 } from "@heroicons/react/24/outline";
 import {
   ChartBarIcon as ChartBarIconSolid,
@@ -12,6 +13,7 @@ import {
   Cog6ToothIcon as Cog6ToothIconSolid,
   FlagIcon as FlagIconSolid,
   UserCircleIcon as UserCircleIconSolid,
+  UsersIcon as UsersIconSolid,
 } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -28,6 +30,11 @@ const dashboardSidebar = [
     title: "Partylist",
     href: "/partylist",
     icon: [<FlagIconSolid height={24} />, <FlagIconOutline height={24} />],
+  },
+  {
+    title: "Position",
+    href: "/position",
+    icon: [<UsersIconSolid height={24} />, <UsersIconOutline height={24} />],
   },
   {
     title: "Candidate",

@@ -31,17 +31,7 @@ import { electionType, voterType } from "../../../types/typings";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import EditVoterModal from "../../../components/EditVoterModal";
 import { firestore } from "../../../firebase/firebase";
-import {
-  doc,
-  getDocs,
-  query,
-  where,
-  collection,
-  updateDoc,
-  arrayRemove,
-  setDoc,
-  DocumentData,
-} from "firebase/firestore";
+import { getDocs, query, where, collection } from "firebase/firestore";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import DeleteVoterModal from "../../../components/DeleteVoterModal";
 import { useFirestoreCollectionData } from "reactfire";
@@ -132,7 +122,6 @@ const VoterPage = ({ election }: { election: electionType }) => {
                       <HStack justifyContent="flex-end">
                         <Tooltip label="Delete voter">
                           <IconButton
-                            isLoading={voter.loading}
                             aria-label="Delete voter"
                             icon={<TrashIcon width={18} />}
                             size="sm"

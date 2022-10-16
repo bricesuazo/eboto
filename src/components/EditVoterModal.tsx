@@ -191,6 +191,13 @@ const EditVoterModal = ({
                       <PopoverBody>
                         <HStack>
                           <Button
+                            onClick={onCloseDeleteModal}
+                            disabled={loading}
+                            size="sm"
+                          >
+                            Cancel
+                          </Button>
+                          <Button
                             onClick={async () => {
                               setLoading(true);
                               await deleteDoc(
@@ -209,14 +216,9 @@ const EditVoterModal = ({
                             }}
                             isLoading={loading}
                             colorScheme="red"
+                            size="sm"
                           >
                             Delete
-                          </Button>
-                          <Button
-                            onClick={onCloseDeleteModal}
-                            disabled={loading}
-                          >
-                            Cancel
                           </Button>
                         </HStack>
                       </PopoverBody>

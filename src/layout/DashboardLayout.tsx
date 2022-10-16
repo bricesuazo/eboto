@@ -26,6 +26,7 @@ import { ArrowUpOnSquareIcon } from "@heroicons/react/24/outline";
 import { electionType } from "../types/typings";
 import { useSession } from "next-auth/react";
 import { useFirestoreCollectionData } from "reactfire";
+import AddPartylistModal from "../components/AddPartylistModal";
 
 const DashboardLayout = ({
   children,
@@ -44,6 +45,11 @@ const DashboardLayout = ({
     isOpen: isOpenAddVoter,
     onOpen: onOpenAddVoter,
     onClose: onCloseAddVoter,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenAddPartylist,
+    onOpen: onOpenAddPartylist,
+    onClose: onCloseAddPartylist,
   } = useDisclosure();
 
   const [elections, setElections] = useState<electionType[]>();
@@ -85,7 +91,11 @@ const DashboardLayout = ({
         isOpen={isOpenCreateElection}
         onClose={onCloseCreateElection}
       />
-
+      <AddPartylistModal
+        election={currentElection as electionType}
+        isOpen={isOpenAddPartylist}
+        onClose={onCloseAddPartylist}
+      />
       <AddVoterModal
         election={currentElection as electionType}
         isOpen={isOpenAddVoter}
@@ -118,11 +128,13 @@ const DashboardLayout = ({
               </option>
             ))}
           </Select>
-          <IconButton
-            aria-label="Add election"
-            icon={<PlusIcon width="1.5rem" />}
-            onClick={onOpenCreateElection}
-          />
+          <Tooltip label="Create an election">
+            <IconButton
+              aria-label="Add election"
+              icon={<PlusIcon width="1.5rem" />}
+              onClick={onOpenCreateElection}
+            />
+          </Tooltip>
         </Center>
 
         <Flex borderRadius="0.25rem" gap={4} height="100%">
@@ -143,14 +155,26 @@ const DashboardLayout = ({
             flex="1"
             borderRadius="md"
           >
-            {(() => {
-              switch (title) {
-                case "Voters":
-                  return (
-                    <Flex justifyContent="space-between">
-                      <Text fontSize="2xl" fontWeight="bold">
-                        {title}
-                      </Text>
+            <Flex justifyContent="space-between">
+              <Text fontSize="2xl" fontWeight="bold">
+                {title}
+              </Text>
+              {(() => {
+                switch (title) {
+                  case "Partylists":
+                    return (
+                      <HStack>
+                        <Button
+                          onClick={onOpenAddPartylist}
+                          leftIcon={<UserPlusIcon width={18} />}
+                          isLoading={!currentElection}
+                        >
+                          Add partylist
+                        </Button>
+                      </HStack>
+                    );
+                  case "Voters":
+                    return (
                       <HStack>
                         <Input
                           type="file"
@@ -173,16 +197,10 @@ const DashboardLayout = ({
                           Add voter
                         </Button>
                       </HStack>
-                    </Flex>
-                  );
-                default:
-                  return (
-                    <Text fontSize="2xl" fontWeight="bold">
-                      {title}
-                    </Text>
-                  );
-              }
-            })()}
+                    );
+                }
+              })()}
+            </Flex>
 
             <Divider />
             <Box paddingTop={2}>{children}</Box>

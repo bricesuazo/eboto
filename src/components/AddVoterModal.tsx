@@ -151,7 +151,7 @@ const AddVoterModal = ({
                       email: e.target.value.trim().toLocaleLowerCase(),
                     })
                   }
-                  value={addVoter.email.trim().toLocaleLowerCase()}
+                  value={addVoter.email}
                   disabled={loading}
                 />
               </FormControl>

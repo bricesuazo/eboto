@@ -5,40 +5,42 @@ export interface electionType {
   about: string?;
   electionIdName: string;
   ongoing: boolean;
-  partylists: [
-    {
-      id: string;
-      title: string;
-      acronym: string;
-    }
-  ];
-  positions: [
-    {
-      id: string;
-      title: string;
-      undecidedVotingCount: number;
-    }?
-  ];
-  candidates: [
-    {
-      id: string;
-      firstName: string;
-      middleName: string?;
-      lastName: string;
-      img: string?;
-      position: string;
-      partylist: string;
-      votingCount: number;
-      significantAchievements: [string]?;
-      leadershipAchievements: [string]?;
-      question: {
-        question: string;
-        answer: [string];
-      }?;
-    }?
-  ];
+  partylists: partylistType[];
+  positions: positionType[]?;
+  candidates: candidateType[]?;
   createdAt: Date;
   updatedAt: Date;
+  electionStartDate: Date?;
+  electionEndDate: Date?;
+}
+export interface partylistType {
+  uid: string;
+  id: string;
+  name: string;
+  abbreviation: string;
+  logo: string;
+  description: string;
+}
+export interface positionType {
+  id: string;
+  title: string;
+  undecidedVotingCount: number;
+}
+export interface candidateType {
+  id: string;
+  firstName: string;
+  middleName: string?;
+  lastName: string;
+  img: string?;
+  position: string;
+  partylist: string;
+  votingCount: number;
+  significantAchievements: [string]?;
+  leadershipAchievements: [string]?;
+  question: {
+    question: string;
+    answer: [string];
+  }?;
 }
 
 export interface voterType {
@@ -50,7 +52,6 @@ export interface voterType {
   password: string;
   hasVoted: boolean;
   election: string;
-  loading?: boolean;
 }
 export interface adminType {
   updatedAt: Date;

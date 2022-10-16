@@ -60,7 +60,6 @@ const DeleteVoterModal = ({
             onClick={async () => {
               setLoading(true);
               // deleting voter
-              console.log(voter);
               await deleteDoc(
                 doc(
                   collection(firestore, "elections", voter.election, "voters"),
