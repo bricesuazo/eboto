@@ -117,11 +117,11 @@ const EditVoterModal = ({
                 <Input
                   type="email"
                   placeholder="Email"
-                  value={voter.email.trim().toLocaleLowerCase()}
+                  value={voter.email.toLocaleLowerCase()}
                   onChange={(e) =>
                     setVoter({
                       ...voter,
-                      email: e.target.value.trim().toLocaleLowerCase(),
+                      email: e.target.value.toLocaleLowerCase(),
                     })
                   }
                   disabled={loading}

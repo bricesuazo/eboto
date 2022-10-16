@@ -15,7 +15,9 @@ import {
   Text,
   useDisclosure,
   WrapItem,
+  Image,
 } from "@chakra-ui/react";
+import { FlagIcon } from "@heroicons/react/24/outline";
 import {
   collection,
   getDocs,
@@ -32,6 +34,7 @@ import type {
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { useFirestoreCollectionData, useFirestoreDocData } from "reactfire";
+import EditPartylistModal from "../../../components/EditPartylistModal";
 import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import { electionType, partylistType } from "../../../types/typings";
@@ -41,9 +44,16 @@ const PartylistPage = ({ election }: { election: electionType }) => {
     collection(firestore, "elections", election.uid, "partylists")
   );
   const [partylists, setPartylists] = useState<partylistType[] | null>(null);
+  const [selectedPartylist, setSelectedPartylist] =
+    useState<partylistType | null>(null);
   useEffect(() => {
     data && setPartylists(data as partylistType[]);
   }, [data]);
+  const {
+    isOpen: isOpenEditPartylist,
+    onOpen: onOpenEditPartylist,
+    onClose: onCloseEditPartylist,
+  } = useDisclosure();
 
   const [deleteLoading, setDeleteLoading] = useState(false);
   return (
@@ -51,7 +61,14 @@ const PartylistPage = ({ election }: { election: electionType }) => {
       <Head>
         <title>Partylists | eBoto Mo</title>
       </Head>
-
+      {selectedPartylist && (
+        <EditPartylistModal
+          isOpen={isOpenEditPartylist}
+          onClose={onCloseEditPartylist}
+          election={election}
+          partylist={selectedPartylist}
+        />
+      )}
       <DashboardLayout title="Partylists">
         {!partylists ? (
           <Center>
@@ -66,74 +83,119 @@ const PartylistPage = ({ election }: { election: electionType }) => {
             <HStack spacing={4}>
               {partylists.map((partylist) => {
                 return (
-                  <Center
-                    width={48}
-                    height={64}
-                    borderRadius="md"
-                    cursor="pointer"
-                    border="1px"
-                    borderColor="whiteAlpha.300"
-                  >
-                    <Stack alignItems="center">
-                      <Text textAlign="center">
-                        {partylist.name} ({partylist.abbreviation})
-                      </Text>
-                      <Popover>
-                        {({ onClose: onCloseDeleteModal }) => (
-                          <>
-                            <PopoverTrigger>
-                              <WrapItem>
-                                <Button
-                                  size="sm"
-                                  width="fit-content"
-                                  disabled={deleteLoading}
-                                >
-                                  Delete
-                                </Button>
-                              </WrapItem>
-                            </PopoverTrigger>
-                            <PopoverContent width="100%">
-                              <PopoverArrow />
-                              <PopoverCloseButton />
-                              <PopoverHeader>Delete partylist?</PopoverHeader>
-                              <PopoverBody>
-                                <HStack>
-                                  <Button
-                                    onClick={onCloseDeleteModal}
-                                    disabled={deleteLoading}
-                                    size="sm"
-                                  >
-                                    Cancel
-                                  </Button>
-                                  <Button
-                                    onClick={async () => {
-                                      setDeleteLoading(true);
-                                      await deleteDoc(
-                                        doc(
-                                          firestore,
-                                          "elections",
-                                          election.uid,
-                                          "partylists",
-                                          partylist.uid
-                                        )
-                                      );
-                                      onCloseDeleteModal();
-                                      setDeleteLoading(false);
-                                    }}
-                                    isLoading={deleteLoading}
-                                    colorScheme="red"
-                                    size="sm"
-                                  >
-                                    Delete
-                                  </Button>
-                                </HStack>
-                              </PopoverBody>
-                            </PopoverContent>
-                          </>
-                        )}
-                      </Popover>
-                    </Stack>
-                  </Center>
+                  <>
+                    <Center
+                      width={48}
+                      height={64}
+                      borderRadius="md"
+                      cursor="pointer"
+                      border="1px"
+                      borderColor="whiteAlpha.300"
+                      key={partylist.id}
+                    >
+                      <Stack alignItems="center">
+                        <Box
+                          width={98}
+                          height={98}
+                          borderRadius="full"
+                          overflow="hidden"
+                        >
+                          <Center height="100%" position="relative">
+                            {partylist.logo ? (
+                              <>
+                                <Image
+                                  src={partylist.logo}
+                                  alt={partylist.name + " logo"}
+                                  objectFit="cover"
+                                  fallback={<Spinner size="lg" />}
+                                />
+                              </>
+                            ) : (
+                              <FlagIcon
+                                style={{
+                                  border: "1px solid gray",
+                                  padding: 18,
+                                  borderRadius: "100%",
+                                }}
+                              />
+                            )}
+                          </Center>
+                        </Box>
+                        <Text textAlign="center">
+                          {partylist.name} ({partylist.abbreviation})
+                        </Text>
+                        <HStack>
+                          <Button
+                            size="sm"
+                            width="fit-content"
+                            disabled={deleteLoading}
+                            onClick={async () => {
+                              setSelectedPartylist(partylist);
+                              onOpenEditPartylist();
+                            }}
+                          >
+                            Edit
+                          </Button>
+                          <Popover>
+                            {({ onClose: onCloseDeleteModal }) => (
+                              <>
+                                <PopoverTrigger>
+                                  <WrapItem>
+                                    <Button
+                                      size="sm"
+                                      width="fit-content"
+                                      disabled={deleteLoading}
+                                    >
+                                      Delete
+                                    </Button>
+                                  </WrapItem>
+                                </PopoverTrigger>
+                                <PopoverContent width="100%">
+                                  <PopoverArrow />
+                                  <PopoverCloseButton />
+                                  <PopoverHeader>
+                                    Delete partylist?
+                                  </PopoverHeader>
+                                  <PopoverBody>
+                                    <HStack>
+                                      <Button
+                                        onClick={onCloseDeleteModal}
+                                        disabled={deleteLoading}
+                                        size="sm"
+                                      >
+                                        Cancel
+                                      </Button>
+                                      <Button
+                                        onClick={async () => {
+                                          setDeleteLoading(true);
+                                          await deleteDoc(
+                                            doc(
+                                              firestore,
+                                              "elections",
+                                              election.uid,
+                                              "partylists",
+                                              partylist.uid
+                                            )
+                                          );
+                                          onCloseDeleteModal();
+                                          setDeleteLoading(false);
+                                        }}
+                                        isLoading={deleteLoading}
+                                        colorScheme="red"
+                                        size="sm"
+                                      >
+                                        Delete
+                                      </Button>
+                                    </HStack>
+                                  </PopoverBody>
+                                </PopoverContent>
+                              </>
+                            )}
+                          </Popover>
+                        </HStack>
+                      </Stack>
+                    </Center>
+                  </>
                 );
               })}
             </HStack>

@@ -17,37 +17,34 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { electionType, partylistType } from "../types/typings";
-import { v4 as uuidv4 } from "uuid";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
 
-const AddPartylistModal = ({
+const EditPartylistModal = ({
   isOpen,
   onClose,
   election,
+  partylist,
 }: {
   isOpen: boolean;
   onClose: () => void;
   election: electionType;
+  partylist: partylistType;
 }) => {
   const clearForm = () => {
-    setPartylist({
-      uid: "",
-      id: uuidv4(),
-      name: "",
-      abbreviation: "",
-      logo: "",
-      description: "",
+    setPartylistData({
+      name: partylist.name,
+      abbreviation: partylist.abbreviation,
+      logo: partylist.logo,
+      description: partylist.description,
     });
   };
-  const [partylist, setPartylist] = useState<partylistType>({
-    uid: "",
-    id: uuidv4(),
-    name: "",
-    abbreviation: "",
-    logo: "",
-    description: "",
+  const [partylistData, setPartylistData] = useState({
+    name: partylist.name,
+    abbreviation: partylist.abbreviation,
+    logo: partylist.logo,
+    description: partylist.description,
   });
   const [loading, setLoading] = useState(false);
 
@@ -55,7 +52,6 @@ const AddPartylistModal = ({
     clearForm();
     setLoading(false);
   }, [isOpen]);
-
   return (
     <Modal isOpen={isOpen} onClose={onClose} trapFocus={false} isCentered>
       <ModalOverlay />
@@ -63,33 +59,22 @@ const AddPartylistModal = ({
         onSubmit={async (e) => {
           setLoading(true);
           e.preventDefault();
-          await addDoc(
-            collection(firestore, "elections", election.uid, "partylists"),
-            {
-              ...partylist,
-              name: partylist.name.trim(),
-              abbreviation: partylist.abbreviation.trim(),
-            }
-          ).then(async (docRef) => {
-            await updateDoc(
-              doc(
-                firestore,
-                "elections",
-                election.uid,
-                "partylists",
-                docRef.id
-              ),
-              {
-                uid: docRef.id,
-              }
-            );
-          });
+          await updateDoc(
+            doc(
+              firestore,
+              "elections",
+              election.uid,
+              "partylists",
+              partylist.uid
+            ),
+            partylistData
+          );
           onClose();
           setLoading(false);
         }}
       >
         <ModalContent>
-          <ModalHeader>Add a partylist</ModalHeader>
+          <ModalHeader>Edit partylist</ModalHeader>
           <ModalCloseButton />
 
           <ModalBody pb={6}>
@@ -99,9 +84,9 @@ const AddPartylistModal = ({
                 <Input
                   placeholder="Partylist name"
                   onChange={(e) =>
-                    setPartylist({ ...partylist, name: e.target.value })
+                    setPartylistData({ ...partylistData, name: e.target.value })
                   }
-                  value={partylist.name}
+                  value={partylistData.name}
                   disabled={loading}
                 />
               </FormControl>
@@ -110,11 +95,32 @@ const AddPartylistModal = ({
                 <Input
                   placeholder="Partylist abbreviation"
                   onChange={(e) =>
-                    setPartylist({ ...partylist, abbreviation: e.target.value })
+                    setPartylistData({
+                      ...partylistData,
+                      abbreviation: e.target.value,
+                    })
                   }
-                  value={partylist.abbreviation}
+                  value={partylistData.abbreviation}
                   disabled={loading}
                 />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Description</FormLabel>
+                <Input
+                  placeholder="Partylist description"
+                  onChange={(e) =>
+                    setPartylistData({
+                      ...partylistData,
+                      description: e.target.value,
+                    })
+                  }
+                  value={partylistData.description}
+                  disabled={loading}
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Logo</FormLabel>
+                <Input type="file" disabled={loading} accept="image/*" />
               </FormControl>
             </Stack>
           </ModalBody>
@@ -155,4 +161,4 @@ const AddPartylistModal = ({
   );
 };
 
-export default AddPartylistModal;
+export default EditPartylistModal;
