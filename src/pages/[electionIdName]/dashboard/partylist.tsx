@@ -92,6 +92,7 @@ const PartylistPage = ({ election }: { election: electionType }) => {
                       border="1px"
                       borderColor="whiteAlpha.300"
                       key={partylist.id}
+                      padding={2}
                     >
                       <Stack alignItems="center">
                         <Box
@@ -108,12 +109,14 @@ const PartylistPage = ({ election }: { election: electionType }) => {
                                   alt={partylist.name + " logo"}
                                   objectFit="cover"
                                   fallback={<Spinner size="lg" />}
+                                  userSelect="none"
+                                  pointerEvents="none"
                                 />
                               </>
                             ) : (
                               <FlagIcon
                                 style={{
-                                  border: "1px solid gray",
+                                  border: "2px solid gray",
                                   padding: 18,
                                   borderRadius: "100%",
                                 }}
