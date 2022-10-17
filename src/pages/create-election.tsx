@@ -46,13 +46,15 @@ export const getServerSideProps: GetServerSideProps = async (
     const electionSnapshot = await getDoc(
       doc(firestore, "elections", session.user.elections[0])
     );
-    return {
-      redirect: {
-        destination:
-          "/" + electionSnapshot.data()?.electionIdName + "/dashboard",
-        permanent: false,
-      },
-    };
+    if (electionSnapshot.exists()) {
+      return {
+        redirect: {
+          destination:
+            "/" + electionSnapshot.data()?.electionIdName + "/dashboard",
+          permanent: false,
+        },
+      };
+    }
   }
   return {
     props: {},

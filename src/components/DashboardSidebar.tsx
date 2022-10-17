@@ -123,7 +123,7 @@ const DashboardSidebar = () => {
   return (
     <Stack>
       {dashboardSidebar.map((item) => (
-        <div key={item.id}>
+        <Stack key={item.id}>
           <Link
             href={"/" + router.query.electionIdName + "/dashboard" + item.href}
           >
@@ -157,7 +157,7 @@ const DashboardSidebar = () => {
           </Link>
           {item.id === 1 && <Divider />}
           {item.id === 5 && <Divider />}
-        </div>
+        </Stack>
       ))}
     </Stack>
   );

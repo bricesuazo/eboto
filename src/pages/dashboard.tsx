@@ -37,14 +37,7 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     };
   } else if (session.user.accountType === "admin") {
-    if (session.user.elections.length === 0) {
-      return {
-        redirect: {
-          destination: "/create-election",
-          permanent: false,
-        },
-      };
-    } else if (session.user.elections.length > 1) {
+    if (session.user.elections.length > 1) {
       const electionSnap = await getDoc(
         doc(
           firestore,
@@ -53,15 +46,21 @@ export const getServerSideProps: GetServerSideProps = async (
         )
       );
       const election = electionSnap.data();
-      return {
-        redirect: {
-          destination: `/${election?.electionIdName}/dashboard`,
-          permanent: false,
-        },
-      };
+
+      if (election) {
+        return {
+          redirect: {
+            destination: `/${election?.electionIdName}/dashboard`,
+            permanent: false,
+          },
+        };
+      }
     }
   }
   return {
-    props: {},
+    redirect: {
+      destination: "/create-election",
+      permanent: false,
+    },
   };
 };

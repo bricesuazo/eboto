@@ -21,10 +21,7 @@ import {
   arrayUnion,
   collection,
   doc,
-  getDocs,
-  query,
   updateDoc,
-  where,
 } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { electionType } from "../types/typings";
