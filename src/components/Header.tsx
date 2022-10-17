@@ -110,10 +110,14 @@ const Header = () => {
               return (
                 <>
                   <Link href="/signin">
-                    <Button>Signin</Button>
+                    <a>
+                      <Button>Signin</Button>
+                    </a>
                   </Link>
                   <Link href="/signup">
-                    <Button>Signup</Button>
+                    <a>
+                      <Button>Signup</Button>
+                    </a>
                   </Link>
                 </>
               );
@@ -141,9 +145,11 @@ const Header = () => {
                       </Text>
                       <MenuParent>
                         <Link href="/dashboard">
-                          <MenuItem icon={<ChartBarIcon width={18} />}>
-                            Dashboard
-                          </MenuItem>
+                          <a>
+                            <MenuItem icon={<ChartBarIcon width={18} />}>
+                              Dashboard
+                            </MenuItem>
+                          </a>
                         </Link>
                         <MenuDivider />
                       </MenuParent>
@@ -159,14 +165,16 @@ const Header = () => {
                         router.query.electionIdName === election?.electionIdName
                       ) && (
                         <Link href={`/${election?.electionIdName}`}>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            isLoading={loading}
-                            rightIcon={<ArrowRightIcon width={14} />}
-                          >
-                            Go to {election?.name}
-                          </Button>
+                          <a>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              isLoading={loading}
+                              rightIcon={<ArrowRightIcon width={14} />}
+                            >
+                              Go to {election?.name}
+                            </Button>
+                          </a>
                         </Link>
                       )}
 

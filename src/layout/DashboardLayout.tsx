@@ -27,6 +27,8 @@ import { electionType } from "../types/typings";
 import { useSession } from "next-auth/react";
 import { useFirestoreCollectionData } from "reactfire";
 import AddPartylistModal from "../components/AddPartylistModal";
+import AddPositionModal from "../components/AddPositionModal";
+import AddCandidateModal from "../components/AddCandidateModal";
 
 const DashboardLayout = ({
   children,
@@ -42,14 +44,24 @@ const DashboardLayout = ({
     onClose: onCloseCreateElection,
   } = useDisclosure();
   const {
-    isOpen: isOpenAddVoter,
-    onOpen: onOpenAddVoter,
-    onClose: onCloseAddVoter,
-  } = useDisclosure();
-  const {
     isOpen: isOpenAddPartylist,
     onOpen: onOpenAddPartylist,
     onClose: onCloseAddPartylist,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenAddPosition,
+    onOpen: onOpenAddPosition,
+    onClose: onCloseAddPosition,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenAddCandidate,
+    onOpen: onOpenAddCandidate,
+    onClose: onCloseAddCandidate,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenAddVoter,
+    onOpen: onOpenAddVoter,
+    onClose: onCloseAddVoter,
   } = useDisclosure();
 
   const [elections, setElections] = useState<electionType[]>();
@@ -57,7 +69,7 @@ const DashboardLayout = ({
 
   useEffect(() => {
     if (session && session.user && session.user.elections.length !== 0) {
-      const unsub = onSnapshot(
+      onSnapshot(
         query(
           collection(firestore, "elections"),
           where("uid", "in", session.user.elections)
@@ -95,6 +107,16 @@ const DashboardLayout = ({
         election={currentElection as electionType}
         isOpen={isOpenAddPartylist}
         onClose={onCloseAddPartylist}
+      />
+      <AddPositionModal
+        election={currentElection as electionType}
+        isOpen={isOpenAddPosition}
+        onClose={onCloseAddPosition}
+      />
+      <AddCandidateModal
+        election={currentElection as electionType}
+        isOpen={isOpenAddCandidate}
+        onClose={onCloseAddCandidate}
       />
       <AddVoterModal
         election={currentElection as electionType}
@@ -170,6 +192,30 @@ const DashboardLayout = ({
                           isLoading={!currentElection}
                         >
                           Add partylist
+                        </Button>
+                      </HStack>
+                    );
+                  case "Positions":
+                    return (
+                      <HStack>
+                        <Button
+                          onClick={onOpenAddPosition}
+                          leftIcon={<UserPlusIcon width={18} />}
+                          isLoading={!currentElection}
+                        >
+                          Add position
+                        </Button>
+                      </HStack>
+                    );
+                  case "Candidates":
+                    return (
+                      <HStack>
+                        <Button
+                          onClick={onOpenAddCandidate}
+                          leftIcon={<UserPlusIcon width={18} />}
+                          isLoading={!currentElection}
+                        >
+                          Add candidate
                         </Button>
                       </HStack>
                     );

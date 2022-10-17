@@ -22,25 +22,21 @@ export interface partylistType {
   description: string?;
 }
 export interface positionType {
+  uid: string;
   id: string;
   title: string;
   undecidedVotingCount: number;
 }
 export interface candidateType {
   id: string;
+  uid: string;
   firstName: string;
-  middleName: string?;
+  middleName?: string;
   lastName: string;
-  img: string?;
+  photoUrl: string?;
   position: string;
   partylist: string;
   votingCount: number;
-  significantAchievements: [string]?;
-  leadershipAchievements: [string]?;
-  question: {
-    question: string;
-    answer: [string];
-  }?;
 }
 
 export interface voterType {

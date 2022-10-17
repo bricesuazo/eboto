@@ -40,7 +40,7 @@ import DashboardLayout from "../../../layout/DashboardLayout";
 import { electionType, partylistType } from "../../../types/typings";
 
 const PartylistPage = ({ election }: { election: electionType }) => {
-  const { status, data } = useFirestoreCollectionData(
+  const { data } = useFirestoreCollectionData(
     collection(firestore, "elections", election.uid, "partylists")
   );
   const [partylists, setPartylists] = useState<partylistType[] | null>(null);
@@ -54,7 +54,6 @@ const PartylistPage = ({ election }: { election: electionType }) => {
     onOpen: onOpenEditPartylist,
     onClose: onCloseEditPartylist,
   } = useDisclosure();
-
   const [deleteLoading, setDeleteLoading] = useState(false);
   return (
     <>
@@ -83,7 +82,7 @@ const PartylistPage = ({ election }: { election: electionType }) => {
             <HStack spacing={4}>
               {partylists.map((partylist) => {
                 return (
-                  <>
+                  <div key={partylist.id}>
                     <Center
                       width={48}
                       height={64}
@@ -91,7 +90,6 @@ const PartylistPage = ({ election }: { election: electionType }) => {
                       cursor="pointer"
                       border="1px"
                       borderColor="whiteAlpha.300"
-                      key={partylist.id}
                       padding={2}
                     >
                       <Stack alignItems="center">
@@ -198,7 +196,7 @@ const PartylistPage = ({ election }: { election: electionType }) => {
                         </HStack>
                       </Stack>
                     </Center>
-                  </>
+                  </div>
                 );
               })}
             </HStack>

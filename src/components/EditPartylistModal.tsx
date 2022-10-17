@@ -52,6 +52,13 @@ const EditPartylistModal = ({
     clearForm();
     setLoading(false);
   }, [isOpen]);
+  const isDisabled =
+    (partylist.name.trim() === partylistData.name.trim() &&
+      partylist.abbreviation.trim() === partylistData.abbreviation.trim() &&
+      partylist.description?.trim() === partylistData.description.trim()) ||
+    !partylistData.name.trim() ||
+    !partylistData.abbreviation.trim();
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} trapFocus={false} isCentered>
       <ModalOverlay />
@@ -135,7 +142,7 @@ const EditPartylistModal = ({
                     onClick={() => {
                       (partylist.name || partylist.abbreviation) && clearForm();
                     }}
-                    disabled={loading}
+                    disabled={loading || isDisabled}
                   />
                 </Tooltip>
               )}
@@ -146,7 +153,7 @@ const EditPartylistModal = ({
                 mr={3}
                 type="submit"
                 isLoading={loading}
-                disabled={!partylist.name || !partylist.abbreviation}
+                disabled={isDisabled}
               >
                 Save
               </Button>

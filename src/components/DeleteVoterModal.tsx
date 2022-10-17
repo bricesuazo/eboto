@@ -1,8 +1,5 @@
 import {
-  Box,
   Button,
-  Flex,
-  IconButton,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -11,16 +8,8 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
-  Tooltip,
 } from "@chakra-ui/react";
-import { TrashIcon } from "@heroicons/react/24/outline";
-import {
-  arrayRemove,
-  collection,
-  deleteDoc,
-  doc,
-  updateDoc,
-} from "firebase/firestore";
+import { collection, deleteDoc, doc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { firestore } from "../firebase/firebase";
 import { voterType } from "../types/typings";
