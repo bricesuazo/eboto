@@ -135,11 +135,9 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
               <FormControl>
                 <FormLabel>Election ID Name</FormLabel>
                 <InputGroup borderColor={error ? "red.400" : ""}>
-                  <InputLeftAddon
-                    children="eboto-mo.com/"
-                    pointerEvents="none"
-                    userSelect="none"
-                  />
+                  <InputLeftAddon pointerEvents="none" userSelect="none">
+                    eboto-mo.com/
+                  </InputLeftAddon>
                   <Input
                     placeholder={initialElection.electionIdName}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {

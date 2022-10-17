@@ -53,15 +53,20 @@ const CreateElectionModal = ({
     ongoing: false,
     partylists: [
       {
+        uid: "",
         id: uuidv4(),
-        title: "Independent",
-        acronym: "IND",
+        name: "Independent",
+        abbreviation: "IND",
+        logo: "",
+        description: "",
       },
     ],
     positions: [],
     candidates: [],
     createdAt: new Date(),
     updatedAt: new Date(),
+    electionStartDate: null,
+    electionEndDate: null,
   });
 
   const [loading, setLoading] = useState(false);
@@ -138,7 +143,7 @@ const CreateElectionModal = ({
             <FormControl mt={4} isRequired>
               <FormLabel>Election ID</FormLabel>
               <InputGroup>
-                <InputLeftAddon children="eboto-mo.com/" />
+                <InputLeftAddon>eboto-mo.com/</InputLeftAddon>
                 <Input
                   placeholder="Election ID"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {

@@ -37,14 +37,14 @@ const EditPartylistModal = ({
       name: partylist.name,
       abbreviation: partylist.abbreviation,
       logo: partylist.logo,
-      description: partylist.description,
+      description: partylist.description ? partylist.description : "",
     });
   };
   const [partylistData, setPartylistData] = useState({
     name: partylist.name,
     abbreviation: partylist.abbreviation,
     logo: partylist.logo,
-    description: partylist.description,
+    description: partylist.description ? partylist.description : "",
   });
   const [loading, setLoading] = useState(false);
 

@@ -18,8 +18,8 @@ export interface partylistType {
   id: string;
   name: string;
   abbreviation: string;
-  logo: string;
-  description: string;
+  logo: string?;
+  description: string?;
 }
 export interface positionType {
   id: string;

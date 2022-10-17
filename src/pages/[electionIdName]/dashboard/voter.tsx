@@ -81,8 +81,7 @@ const VoterPage = ({ election }: { election: electionType }) => {
         <InputGroup maxWidth={240} marginLeft="auto">
           <InputLeftElement
             pointerEvents="none"
-            children={<MagnifyingGlassIcon color="gray.300" width={24} />}
-          />
+        ><MagnifyingGlassIcon color="gray.300" width={24} /></InputLeftElement>
           <Input placeholder="Search..." />
         </InputGroup>
         {voters && voters.length !== 0 ? (

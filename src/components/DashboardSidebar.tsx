@@ -1,4 +1,12 @@
-import { Button, Center, Flex, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Center,
+  Divider,
+  Flex,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import {
   ChartBarIcon as ChartBarIconOutline,
   CheckCircleIcon as CheckCircleIconOutline,
@@ -19,45 +27,93 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 const dashboardSidebar = [
   {
+    id: 1,
     title: "Overview",
     href: "/overview",
     icon: [
-      <ChartBarIconSolid height={24} />,
-      <ChartBarIconOutline height={24} />,
+      {
+        id: 1,
+        icon: <ChartBarIconSolid height={24} />,
+      },
+      {
+        id: 2,
+        icon: <ChartBarIconOutline height={24} />,
+      },
     ],
   },
   {
+    id: 2,
     title: "Partylist",
     href: "/partylist",
-    icon: [<FlagIconSolid height={24} />, <FlagIconOutline height={24} />],
+    icon: [
+      {
+        id: 1,
+        icon: <FlagIconSolid height={24} />,
+      },
+      {
+        id: 2,
+        icon: <FlagIconOutline height={24} />,
+      },
+    ],
   },
   {
+    id: 3,
     title: "Position",
     href: "/position",
-    icon: [<UsersIconSolid height={24} />, <UsersIconOutline height={24} />],
+    icon: [
+      {
+        id: 1,
+        icon: <UsersIconSolid height={24} />,
+      },
+      {
+        id: 2,
+        icon: <UsersIconOutline height={24} />,
+      },
+    ],
   },
   {
+    id: 4,
     title: "Candidate",
     href: "/candidate",
     icon: [
-      <UserCircleIconSolid height={24} />,
-      <UserCircleIconOutline height={24} />,
+      {
+        id: 1,
+        icon: <UserCircleIconSolid height={24} />,
+      },
+      {
+        id: 2,
+        icon: <UserCircleIconOutline height={24} />,
+      },
     ],
   },
   {
+    id: 5,
     title: "Voter",
     href: "/voter",
     icon: [
-      <CheckCircleIconSolid height={24} />,
-      <CheckCircleIconOutline height={24} />,
+      {
+        id: 1,
+        icon: <CheckCircleIconSolid height={24} />,
+      },
+      {
+        id: 2,
+        icon: <CheckCircleIconOutline height={24} />,
+      },
     ],
   },
   {
+    id: 6,
     title: "Settings",
     href: "/settings",
     icon: [
-      <Cog6ToothIconSolid height={24} />,
-      <Cog6ToothIconOutline height={24} />,
+      {
+        id: 1,
+        icon: <Cog6ToothIconSolid height={24} />,
+      },
+      {
+        id: 2,
+        icon: <Cog6ToothIconOutline height={24} />,
+      },
     ],
   },
 ];
@@ -65,39 +121,45 @@ const dashboardSidebar = [
 const DashboardSidebar = () => {
   const router = useRouter();
   return (
-    <Flex direction="column" gap={2}>
+    <Stack>
       {dashboardSidebar.map((item) => (
-        <Link
-          href={"/" + router.query.electionIdName + "/dashboard" + item.href}
-          key={item.title}
-        >
-          <Button
-            variant={
-              item.title.toLocaleLowerCase() !== router.pathname.split("/")[3]
-                ? "ghost"
-                : "solid"
-            }
-            leftIcon={
-              item.title.toLocaleLowerCase() === router.pathname.split("/")[3]
-                ? item.icon[0]
-                : item.icon[1]
-            }
-            justifyContent="flex-start"
-            height={12}
+        <div key={item.id}>
+          <Link
+            href={"/" + router.query.electionIdName + "/dashboard" + item.href}
           >
-            <Text
-              fontWeight={
+            <Button
+              variant={
                 item.title.toLocaleLowerCase() !== router.pathname.split("/")[3]
-                  ? "normal"
-                  : "semibold"
+                  ? "ghost"
+                  : "solid"
               }
+              key={item.id}
+              leftIcon={
+                item.title.toLocaleLowerCase() === router.pathname.split("/")[3]
+                  ? item.icon[0].icon
+                  : item.icon[1].icon
+              }
+              justifyContent="flex-start"
+              height={12}
+              width="100%"
             >
-              {item.title}
-            </Text>
-          </Button>
-        </Link>
+              <Text
+                fontWeight={
+                  item.title.toLocaleLowerCase() !==
+                  router.pathname.split("/")[3]
+                    ? "normal"
+                    : "semibold"
+                }
+              >
+                {item.title}
+              </Text>
+            </Button>
+          </Link>
+          {item.id === 1 && <Divider />}
+          {item.id === 5 && <Divider />}
+        </div>
       ))}
-    </Flex>
+    </Stack>
   );
 };
 
