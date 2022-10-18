@@ -25,21 +25,18 @@ import {
 } from "../types/typings";
 import { v4 as uuidv4 } from "uuid";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, query, updateDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
+import { useFirestoreCollectionData } from "reactfire";
 
 const AddCandidateModal = ({
   isOpen,
   onClose,
   election,
-  partylists,
-  positions,
 }: {
   isOpen: boolean;
   onClose: () => void;
   election: electionType;
-  partylists: partylistType[];
-  positions: positionType[];
 }) => {
   const clearForm = () => {
     setCandidate({
@@ -67,6 +64,24 @@ const AddCandidateModal = ({
   });
   const [loading, setLoading] = useState(false);
 
+  const { status: statusPartylists, data: partylistsData } =
+    useFirestoreCollectionData(
+      query(collection(firestore, "elections", election.uid, "partylists"))
+    );
+  const { status: statusPositions, data: positionsData } =
+    useFirestoreCollectionData(
+      query(collection(firestore, "elections", election.uid, "positions"))
+    );
+  const [partylists, setPartylists] = useState<partylistType[]>();
+  const [positions, setPositions] = useState<positionType[]>();
+  useEffect(() => {
+    if (statusPartylists === "success") {
+      setPartylists(partylistsData as partylistType[]);
+    }
+    if (statusPositions === "success") {
+      setPositions(positionsData as positionType[]);
+    }
+  }, [partylistsData, positionsData]);
   useEffect(() => {
     clearForm();
     setLoading(false);
@@ -154,9 +169,10 @@ const AddCandidateModal = ({
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Partylist</FormLabel>
-                <Select>
-                  {partylists.map((partylist) => (
+                <Select disabled={statusPartylists === "loading"}>
+                  {partylists?.map((partylist) => (
                     <option value={partylist.uid} key={partylist.id}>
+                      {statusPartylists === "loading" && "Loading..."}
                       {partylist.name} ({partylist.abbreviation})
                     </option>
                   ))}
@@ -164,9 +180,10 @@ const AddCandidateModal = ({
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Position</FormLabel>
-                <Select>
-                  {positions.map((position) => (
+                <Select disabled={statusPositions === "loading"}>
+                  {positions?.map((position) => (
                     <option value={position.uid} key={position.id}>
+                      {statusPositions === "loading" && "Loading..."}
                       {position.title}
                     </option>
                   ))}

@@ -14,7 +14,14 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { PlusIcon } from "@heroicons/react/24/solid";
-import { collection, doc, onSnapshot, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
 import CreateElectionModal from "../components/CreateElectionModal";
 import DashboardSidebar from "../components/DashboardSidebar";
 import { firestore } from "../firebase/firebase";
@@ -25,7 +32,6 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowUpOnSquareIcon } from "@heroicons/react/24/outline";
 import { electionType } from "../types/typings";
 import { useSession } from "next-auth/react";
-import { useFirestoreCollectionData } from "reactfire";
 import AddPartylistModal from "../components/AddPartylistModal";
 import AddPositionModal from "../components/AddPositionModal";
 import AddCandidateModal from "../components/AddCandidateModal";
@@ -85,6 +91,32 @@ const DashboardLayout = ({
     }
   }, [session]);
 
+  // useEffect(() => {
+  //   if (isOpenAddCandidate && currentElection) {
+  //     const getData = async () => {
+  //       // await getDocs(
+  //       //   collection(firestore, "elections", currentElection.uid, "partylists")
+  //       // ).then((querySnapshot) => {
+  //       //   const docData: partylistType[] = [];
+  //       //   querySnapshot.forEach((doc) => {
+  //       //     docData.push(doc.data() as partylistType);
+  //       //   });
+  //       //   setPartylists(docData);
+  //       // });
+  //       // await getDocs(
+  //       //   collection(firestore, "elections", currentElection.uid, "positions")
+  //       // ).then((querySnapshot) => {
+  //       //   const docData: positionType[] = [];
+  //       //   querySnapshot.forEach((doc) => {
+  //       //     docData.push(doc.data() as positionType);
+  //       //   });
+  //       //   setPositions(docData);
+  //       // });
+  //     };
+  //     getData();
+  //   }
+  // }, [isOpenAddCandidate]);
+
   useEffect(() => {
     setCurrentElection(
       elections?.find(
@@ -113,11 +145,14 @@ const DashboardLayout = ({
         isOpen={isOpenAddPosition}
         onClose={onCloseAddPosition}
       />
-      <AddCandidateModal
-        election={currentElection as electionType}
-        isOpen={isOpenAddCandidate}
-        onClose={onCloseAddCandidate}
-      />
+      {currentElection && (
+        <AddCandidateModal
+          election={currentElection}
+          isOpen={isOpenAddCandidate}
+          onClose={onCloseAddCandidate}
+        />
+      )}
+
       <AddVoterModal
         election={currentElection as electionType}
         isOpen={isOpenAddVoter}

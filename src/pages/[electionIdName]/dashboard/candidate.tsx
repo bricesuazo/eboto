@@ -240,6 +240,9 @@ export const getServerSideProps: GetServerSideProps = async (
     return {
       props: {
         election: JSON.parse(JSON.stringify(electionSnapshot.docs[0].data())),
+        // TODO: fetch partylists and positions
+        partylists: [],
+        positions: [],
       },
     };
   } catch (err) {
