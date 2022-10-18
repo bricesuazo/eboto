@@ -156,20 +156,21 @@ const AddCandidateModal = ({
               </FormControl>
               <FormControl>
                 <FormLabel>Image</FormLabel>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  placeholder="Candidate last name"
-                  onChange={(e) =>
-                    setCandidate({ ...candidate, lastName: e.target.value })
-                  }
-                  value={candidate.lastName}
-                  disabled={loading}
-                />
+                <Input type="file" accept="image/*" disabled={loading} />
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Partylist</FormLabel>
-                <Select disabled={statusPartylists === "loading"}>
+                <Select
+                  placeholder="Select partylist"
+                  disabled={statusPartylists === "loading"}
+                  onChange={(e) => {
+                    setCandidate({
+                      ...candidate,
+                      partylist: e.target.value,
+                    });
+                  }}
+                  value={candidate.partylist}
+                >
                   {partylists?.map((partylist) => (
                     <option value={partylist.uid} key={partylist.id}>
                       {statusPartylists === "loading" && "Loading..."}
@@ -180,7 +181,17 @@ const AddCandidateModal = ({
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Position</FormLabel>
-                <Select disabled={statusPositions === "loading"}>
+                <Select
+                  placeholder="Select position"
+                  disabled={statusPositions === "loading"}
+                  onChange={(e) => {
+                    setCandidate({
+                      ...candidate,
+                      position: e.target.value,
+                    });
+                  }}
+                  value={candidate.position}
+                >
                   {positions?.map((position) => (
                     <option value={position.uid} key={position.id}>
                       {statusPositions === "loading" && "Loading..."}
@@ -196,7 +207,7 @@ const AddCandidateModal = ({
             <Box>
               {(candidate.firstName ||
                 candidate.middleName ||
-                candidate.middleName ||
+                candidate.lastName ||
                 candidate.position ||
                 candidate.partylist) && (
                 <Tooltip label="Clear forms">
