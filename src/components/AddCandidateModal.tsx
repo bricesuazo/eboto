@@ -33,11 +33,16 @@ const AddCandidateModal = ({
   isOpen,
   onClose,
   election,
+  partylists,
+  position,
 }: {
   isOpen: boolean;
   onClose: () => void;
   election: electionType;
+  partylists: partylistType[];
+  position: positionType;
 }) => {
+  console.log(position);
   const clearForm = () => {
     setCandidate({
       id: uuidv4(),
@@ -46,7 +51,7 @@ const AddCandidateModal = ({
       middleName: "",
       lastName: "",
       photoUrl: "",
-      position: "",
+      position: position?.uid,
       partylist: "",
       votingCount: 0,
       createdAt: new Date(),
@@ -59,31 +64,31 @@ const AddCandidateModal = ({
     middleName: "",
     lastName: "",
     photoUrl: "",
-    position: "",
+    position: position?.uid,
     partylist: "",
     votingCount: 0,
     createdAt: new Date(),
   });
   const [loading, setLoading] = useState(false);
 
-  const { status: statusPartylists, data: partylistsData } =
-    useFirestoreCollectionData(
-      query(collection(firestore, "elections", election.uid, "partylists"))
-    );
-  const { status: statusPositions, data: positionsData } =
-    useFirestoreCollectionData(
-      query(collection(firestore, "elections", election.uid, "positions"))
-    );
-  const [partylists, setPartylists] = useState<partylistType[]>();
-  const [positions, setPositions] = useState<positionType[]>();
-  useEffect(() => {
-    if (statusPartylists === "success") {
-      setPartylists(partylistsData as partylistType[]);
-    }
-    if (statusPositions === "success") {
-      setPositions(positionsData as positionType[]);
-    }
-  }, [partylistsData, positionsData]);
+  // const { status: statusPartylists, data: partylistsData } =
+  //   useFirestoreCollectionData(
+  //     query(collection(firestore, "elections", election.uid, "partylists"))
+  //   );
+  // const { status: statusPositions, data: positionsData } =
+  //   useFirestoreCollectionData(
+  //     query(collection(firestore, "elections", election.uid, "positions"))
+  //   );
+  // const [partylists, setPartylists] = useState<partylistType[]>();
+  // const [positions, setPositions] = useState<positionType[]>();
+  // useEffect(() => {
+  //   if (statusPartylists === "success") {
+  //     setPartylists(partylistsData as partylistType[]);
+  //   }
+  //   if (statusPositions === "success") {
+  //     setPositions(positionsData as positionType[]);
+  //   }
+  // }, [partylistsData, positionsData]);
   useEffect(() => {
     clearForm();
     setLoading(false);
@@ -156,15 +161,12 @@ const AddCandidateModal = ({
                   disabled={loading}
                 />
               </FormControl>
-              <FormControl>
-                <FormLabel>Image</FormLabel>
-                <Input type="file" accept="image/*" disabled={loading} />
-              </FormControl>
+
               <FormControl isRequired>
                 <FormLabel>Partylist</FormLabel>
                 <Select
                   placeholder="Select partylist"
-                  disabled={statusPartylists === "loading" || loading}
+                  disabled={loading}
                   onChange={(e) => {
                     setCandidate({
                       ...candidate,
@@ -175,7 +177,6 @@ const AddCandidateModal = ({
                 >
                   {partylists?.map((partylist) => (
                     <option value={partylist.uid} key={partylist.id}>
-                      {statusPartylists === "loading" && "Loading..."}
                       {partylist.name} ({partylist.abbreviation})
                     </option>
                   ))}
@@ -183,9 +184,13 @@ const AddCandidateModal = ({
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Position</FormLabel>
-                <Select
+                <Input value={position?.title} readOnly />
+                {/* <Select
                   placeholder="Select position"
-                  disabled={statusPositions === "loading" || loading}
+                  disabled={
+                    // statusPositions === "loading" ||
+                    loading
+                  }
                   onChange={(e) => {
                     setCandidate({
                       ...candidate,
@@ -196,11 +201,18 @@ const AddCandidateModal = ({
                 >
                   {positions?.map((position) => (
                     <option value={position.uid} key={position.id}>
-                      {statusPositions === "loading" && "Loading..."}
+                      {
+                        // statusPositions === "loading" &&
+                        "Loading..."
+                      }
                       {position.title}
                     </option>
                   ))}
-                </Select>
+                </Select> */}
+              </FormControl>
+              <FormControl>
+                <FormLabel>Image</FormLabel>
+                <Input type="file" accept="image/*" disabled={loading} />
               </FormControl>
             </Stack>
           </ModalBody>

@@ -16,8 +16,10 @@ import {
   useDisclosure,
   WrapItem,
   Image,
+  Flex,
+  Icon,
 } from "@chakra-ui/react";
-import { FlagIcon } from "@heroicons/react/24/outline";
+import { FlagIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 import {
   collection,
   getDocs,
@@ -25,11 +27,13 @@ import {
   where,
   doc,
   deleteDoc,
+  orderBy,
 } from "firebase/firestore";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { useFirestoreCollectionData } from "reactfire";
+import AddCandidateModal from "../../../components/AddCandidateModal";
 import EditCandidateModal from "../../../components/EditCandidateModal";
 import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
@@ -49,7 +53,7 @@ const CandidatePage = ({
   partylists: partylistType[];
   positions: positionType[];
 }) => {
-  const { data } = useFirestoreCollectionData(
+  const { data, status } = useFirestoreCollectionData(
     collection(firestore, "elections", election.uid, "candidates")
   );
   const [candidates, setCandidates] = useState<candidateType[] | null>();
@@ -62,12 +66,28 @@ const CandidatePage = ({
     onOpen: onOpenEditCandidate,
     onClose: onCloseEditCandidate,
   } = useDisclosure();
+  const {
+    isOpen: isOpenAddCandidate,
+    onOpen: onOpenAddCandidate,
+    onClose: onCloseAddCandidate,
+  } = useDisclosure();
+
+  const [selectedPosition, setSelectedPosition] = useState<positionType>();
   const [deleteLoading, setDeleteLoading] = useState(false);
   return (
     <>
       <Head>
         <title>Candidates | eBoto Mo</title>
       </Head>
+      {selectedPosition && (
+        <AddCandidateModal
+          isOpen={isOpenAddCandidate}
+          onClose={onCloseAddCandidate}
+          election={election}
+          partylists={partylists}
+          position={selectedPosition}
+        />
+      )}
       {selectedCandidate && (
         <EditCandidateModal
           isOpen={isOpenEditCandidate}
@@ -80,6 +100,40 @@ const CandidatePage = ({
       )}
       <DashboardLayout title="Candidates">
         {!candidates ? (
+          <Center>
+            <Spinner />
+          </Center>
+        ) : (
+          <>
+            {positions.map((position) => {
+              return (
+                <Flex key={position.id} alignItems="center">
+                  <Text fontSize="xl" fontWeight="bold" mt={4}>
+                    {position.title}
+                  </Text>
+                  <Center
+                    width={100}
+                    border="1px solid"
+                    cursor="pointer"
+                    onClick={() => {
+                      setSelectedPosition(position);
+                      onOpenAddCandidate();
+                    }}
+                  >
+                    <Box justifyItems="center">
+                      <Icon as={UserPlusIcon} fontSize={28} />
+                      <HStack>
+                        <Button size="sm">Edit</Button>
+                        <Button size="sm">Delete</Button>
+                      </HStack>
+                    </Box>
+                  </Center>
+                </Flex>
+              );
+            })}
+          </>
+        )}
+        {/* {!candidates ? (
           <Center>
             <Spinner />
           </Center>
@@ -219,7 +273,7 @@ const CandidatePage = ({
               })}
             </HStack>
           </>
-        )}
+        )} */}
       </DashboardLayout>
     </>
   );
@@ -237,12 +291,47 @@ export const getServerSideProps: GetServerSideProps = async (
         where("electionIdName", "==", context.query.electionIdName)
       )
     );
+    if (electionSnapshot.empty) {
+      return {
+        notFound: true,
+      };
+    }
+
+    const partylistSnapshot = await getDocs(
+      query(
+        collection(
+          firestore,
+          "elections",
+          electionSnapshot.docs[0].data().uid,
+          "partylists"
+        ),
+        orderBy("createdAt")
+      )
+    );
+    const partylists: partylistType[] = partylistSnapshot.docs.map(
+      (doc) => doc.data() as partylistType
+    );
+
+    const positionSnapshot = await getDocs(
+      query(
+        collection(
+          firestore,
+          "elections",
+          electionSnapshot.docs[0].data().uid,
+          "positions"
+        ),
+        orderBy("createdAt", "asc")
+      )
+    );
+    const positions: positionType[] = positionSnapshot.docs.map(
+      (doc) => doc.data() as positionType
+    );
+
     return {
       props: {
         election: JSON.parse(JSON.stringify(electionSnapshot.docs[0].data())),
-        // TODO: fetch partylists and positions
-        partylists: [],
-        positions: [],
+        partylists: JSON.parse(JSON.stringify(partylists)),
+        positions: JSON.parse(JSON.stringify(positions)),
       },
     };
   } catch (err) {

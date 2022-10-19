@@ -145,13 +145,6 @@ const DashboardLayout = ({
         isOpen={isOpenAddPosition}
         onClose={onCloseAddPosition}
       />
-      {currentElection && (
-        <AddCandidateModal
-          election={currentElection}
-          isOpen={isOpenAddCandidate}
-          onClose={onCloseAddCandidate}
-        />
-      )}
 
       <AddVoterModal
         election={currentElection as electionType}
@@ -242,18 +235,18 @@ const DashboardLayout = ({
                         </Button>
                       </HStack>
                     );
-                  case "Candidates":
-                    return (
-                      <HStack>
-                        <Button
-                          onClick={onOpenAddCandidate}
-                          leftIcon={<UserPlusIcon width={18} />}
-                          isLoading={!currentElection}
-                        >
-                          Add candidate
-                        </Button>
-                      </HStack>
-                    );
+                  // case "Candidates":
+                  //   return (
+                  //     <HStack>
+                  //       <Button
+                  //         onClick={onOpenAddCandidate}
+                  //         leftIcon={<UserPlusIcon width={18} />}
+                  //         isLoading={!currentElection}
+                  //       >
+                  //         Add candidate
+                  //       </Button>
+                  //     </HStack>
+                  //   );
                   case "Voters":
                     return (
                       <HStack>
