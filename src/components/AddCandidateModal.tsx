@@ -49,6 +49,7 @@ const AddCandidateModal = ({
       position: "",
       partylist: "",
       votingCount: 0,
+      createdAt: new Date(),
     });
   };
   const [candidate, setCandidate] = useState<candidateType>({
@@ -61,6 +62,7 @@ const AddCandidateModal = ({
     position: "",
     partylist: "",
     votingCount: 0,
+    createdAt: new Date(),
   });
   const [loading, setLoading] = useState(false);
 
@@ -162,7 +164,7 @@ const AddCandidateModal = ({
                 <FormLabel>Partylist</FormLabel>
                 <Select
                   placeholder="Select partylist"
-                  disabled={statusPartylists === "loading"}
+                  disabled={statusPartylists === "loading" || loading}
                   onChange={(e) => {
                     setCandidate({
                       ...candidate,
@@ -183,7 +185,7 @@ const AddCandidateModal = ({
                 <FormLabel>Position</FormLabel>
                 <Select
                   placeholder="Select position"
-                  disabled={statusPositions === "loading"}
+                  disabled={statusPositions === "loading" || loading}
                   onChange={(e) => {
                     setCandidate({
                       ...candidate,

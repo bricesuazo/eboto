@@ -39,6 +39,7 @@ const AddPartylistModal = ({
       abbreviation: "",
       logo: "",
       description: "",
+      createdAt: new Date(),
     });
   };
   const [partylist, setPartylist] = useState<partylistType>({
@@ -48,6 +49,7 @@ const AddPartylistModal = ({
     abbreviation: "",
     logo: "",
     description: "",
+    createdAt: new Date(),
   });
   const [loading, setLoading] = useState(false);
 

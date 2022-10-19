@@ -21,10 +21,11 @@ import {
   arrayUnion,
   collection,
   doc,
+  setDoc,
   updateDoc,
 } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import { electionType } from "../types/typings";
+import { electionType, partylistType } from "../types/typings";
 import { firestore } from "../firebase/firebase";
 import { v4 as uuidv4 } from "uuid";
 import Router from "next/router";
@@ -48,23 +49,20 @@ const CreateElectionModal = ({
     about: "",
     electionIdName: "",
     ongoing: false,
-    partylists: [
-      {
-        uid: "",
-        id: uuidv4(),
-        name: "Independent",
-        abbreviation: "IND",
-        logo: "",
-        description: "",
-      },
-    ],
-    positions: [],
-    candidates: [],
     createdAt: new Date(),
     updatedAt: new Date(),
     electionStartDate: null,
     electionEndDate: null,
   });
+  const initialPartylist: partylistType = {
+    uid: "",
+    id: uuidv4(),
+    name: "Independent",
+    abbreviation: "IND",
+    logo: "",
+    description: "",
+    createdAt: new Date(),
+  };
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -107,6 +105,28 @@ const CreateElectionModal = ({
                 }));
               await updateDoc(doc(firestore, "elections", electionSnap.id), {
                 uid: electionSnap.id,
+              });
+              await addDoc(
+                collection(
+                  firestore,
+                  "elections",
+                  electionSnap.id,
+                  "partylists"
+                ),
+                initialPartylist
+              ).then((partylistSnap) => {
+                updateDoc(
+                  doc(
+                    firestore,
+                    "elections",
+                    electionSnap.id,
+                    "partylists",
+                    partylistSnap.id
+                  ),
+                  {
+                    uid: partylistSnap.id,
+                  }
+                );
               });
             });
             const electionIdName = election.electionIdName;

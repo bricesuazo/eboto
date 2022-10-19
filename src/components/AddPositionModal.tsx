@@ -37,6 +37,7 @@ const AddPositionModal = ({
       id: uuidv4(),
       title: "",
       undecidedVotingCount: 0,
+      createdAt: new Date(),
     });
   };
   const [position, setPosition] = useState<positionType>({
@@ -44,6 +45,7 @@ const AddPositionModal = ({
     id: uuidv4(),
     title: "",
     undecidedVotingCount: 0,
+    createdAt: new Date(),
   });
   const [loading, setLoading] = useState(false);
 

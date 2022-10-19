@@ -25,6 +25,7 @@ import {
   where,
   doc,
   deleteDoc,
+  orderBy,
 } from "firebase/firestore";
 import type {
   GetServerSideProps,
@@ -41,7 +42,10 @@ import { electionType, partylistType } from "../../../types/typings";
 
 const PartylistPage = ({ election }: { election: electionType }) => {
   const { data } = useFirestoreCollectionData(
-    collection(firestore, "elections", election.uid, "partylists")
+    query(
+      collection(firestore, "elections", election.uid, "partylists"),
+      orderBy("createdAt")
+    )
   );
   const [partylists, setPartylists] = useState<partylistType[] | null>(null);
   const [selectedPartylist, setSelectedPartylist] =
@@ -91,6 +95,17 @@ const PartylistPage = ({ election }: { election: electionType }) => {
                       border="1px"
                       borderColor="whiteAlpha.300"
                       padding={2}
+                      pointerEvents={
+                        partylist.abbreviation === "IND" ? "none" : "auto"
+                      }
+                      userSelect={
+                        partylist.abbreviation === "IND" ? "none" : "auto"
+                      }
+                      color={
+                        partylist.abbreviation === "IND"
+                          ? "whiteAlpha.500"
+                          : "white"
+                      }
                     >
                       <Stack alignItems="center">
                         <Box
@@ -125,7 +140,13 @@ const PartylistPage = ({ election }: { election: electionType }) => {
                         <Text textAlign="center">
                           {partylist.name} ({partylist.abbreviation})
                         </Text>
-                        <HStack>
+                        <HStack
+                          display={
+                            partylist.abbreviation === "IND"
+                              ? "none"
+                              : "inherit"
+                          }
+                        >
                           <Button
                             size="sm"
                             width="fit-content"

@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Center,
   HStack,
@@ -17,7 +16,6 @@ import {
   WrapItem,
   Image,
 } from "@chakra-ui/react";
-import { FlagIcon } from "@heroicons/react/24/outline";
 import {
   collection,
   getDocs,
@@ -25,6 +23,7 @@ import {
   where,
   doc,
   deleteDoc,
+  orderBy,
 } from "firebase/firestore";
 import type {
   GetServerSideProps,
@@ -41,7 +40,10 @@ import { electionType, positionType } from "../../../types/typings";
 
 const PositionPage = ({ election }: { election: electionType }) => {
   const { data } = useFirestoreCollectionData(
-    collection(firestore, "elections", election.uid, "positions")
+    query(
+      collection(firestore, "elections", election.uid, "positions"),
+      orderBy("createdAt")
+    )
   );
   const [positions, setPositions] = useState<positionType[] | null>(null);
   const [selectedPosition, setSelectedPosition] = useState<positionType | null>(

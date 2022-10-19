@@ -5,9 +5,6 @@ export interface electionType {
   about: string?;
   electionIdName: string;
   ongoing: boolean;
-  partylists: partylistType[];
-  positions: positionType[]?;
-  candidates: candidateType[]?;
   createdAt: Date;
   updatedAt: Date;
   electionStartDate: Date?;
@@ -20,12 +17,14 @@ export interface partylistType {
   abbreviation: string;
   logo: string?;
   description: string?;
+  createdAt: Date;
 }
 export interface positionType {
   uid: string;
   id: string;
   title: string;
   undecidedVotingCount: number;
+  createdAt: Date;
 }
 export interface candidateType {
   id: string;
@@ -37,6 +36,7 @@ export interface candidateType {
   position: string;
   partylist: string;
   votingCount: number;
+  createdAt: Date;
 }
 
 export interface voterType {
