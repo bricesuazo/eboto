@@ -57,7 +57,7 @@ const AddPartylistModal = ({
   }, [isOpen]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} trapFocus={false} isCentered>
+    <Modal isOpen={isOpen} onClose={onClose} trapFocus={false}>
       <ModalOverlay />
       <form
         onSubmit={async (e) => {

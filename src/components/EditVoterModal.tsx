@@ -61,7 +61,7 @@ const EditVoterModal = ({
     setVoter(selectedVoter);
   }, [selectedVoter]);
   return (
-    <Modal isOpen={isOpen} onClose={onClose} trapFocus={false} isCentered>
+    <Modal isOpen={isOpen} onClose={onClose} trapFocus={false}>
       <ModalOverlay />
       <form
         onSubmit={async (e) => {

@@ -89,7 +89,6 @@ const AddVoterModal = ({
       isOpen={!loading ? isOpen : true}
       onClose={onClose}
       trapFocus={false}
-      isCentered
     >
       <ModalOverlay />
       <form

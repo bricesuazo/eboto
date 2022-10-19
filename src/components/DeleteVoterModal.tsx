@@ -31,7 +31,7 @@ const DeleteVoterModal = ({
     setVoter(selectedVoter);
   }, [selectedVoter]);
   return (
-    <Modal isOpen={isOpen} onClose={onClose} trapFocus={false} isCentered>
+    <Modal isOpen={isOpen} onClose={onClose} trapFocus={false}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Delete voter</ModalHeader>

@@ -178,7 +178,7 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
                 />
               </FormControl>
 
-              <Modal isOpen={isOpenDelete} onClose={onCloseDelete} isCentered>
+              <Modal isOpen={isOpenDelete} onClose={onCloseDelete}>
                 <ModalOverlay />
                 <ModalContent>
                   <ModalHeader>Delete {election.name}</ModalHeader>
