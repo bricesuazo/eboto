@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Box,
   Button,
   Center,
   HStack,
@@ -11,6 +12,7 @@ import {
   MenuItemProps,
   MenuList,
   Spinner,
+  Stack,
   Switch,
   Text,
   useColorMode,
@@ -51,6 +53,19 @@ const Header = () => {
     };
     run();
   }, [session]);
+
+  const Hello = ({ email }: { email: string }) => {
+    return (
+      <Box textAlign="end">
+        <Text fontSize="sm" color="whiteAlpha.800">
+          Hello, @{email.split("@")[0]}!
+        </Text>
+        <Text fontSize="xs" color="whiteAlpha.500">
+          {email}
+        </Text>
+      </Box>
+    );
+  };
 
   const MenuParent = ({ children }: { children?: React.ReactNode }) => {
     return (
@@ -137,12 +152,8 @@ const Header = () => {
                           size="sm"
                         />
                       )}
-                      <Text>
-                        Hello,{" "}
-                        {session?.user.firstName ||
-                          session?.user.email?.split("@")[0]}
-                        !
-                      </Text>
+                      <Hello email={session?.user.email} />
+
                       <MenuParent>
                         <Link href="/dashboard">
                           <a>
@@ -158,7 +169,8 @@ const Header = () => {
                 case "voter":
                   return (
                     <>
-                      <Text>Hello, {session.user.fullName.split(" ")[0]}!</Text>
+                      <Hello email={session?.user.email} />
+
                       {!(
                         router.route.split("/").length === 2 &&
                         router.route.split("/")[1] === "[electionIdName]" &&

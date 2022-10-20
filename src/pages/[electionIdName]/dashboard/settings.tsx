@@ -31,6 +31,8 @@ import {
   getDocs,
   deleteDoc,
   arrayRemove,
+  writeBatch,
+  runTransaction,
 } from "firebase/firestore";
 import type {
   GetServerSideProps,
@@ -46,6 +48,7 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
 import reloadSession from "../../../utils/reloadSession";
 import isElectionIdNameExists from "../../../utils/isElectionIdNameExists";
+import admin from "../../../firebase/firebase-admin";
 
 interface SettingsPageProps {
   election: electionType;
@@ -206,17 +209,30 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
                       isLoading={deleteLoading}
                       onClick={async () => {
                         setDeleteLoading(true);
+
+                        const batch = writeBatch(firestore);
+                        // batch.delete(doc(firestore, "elections", election.uid));
                         session &&
-                          (await updateDoc(
+                          batch.update(
                             doc(firestore, "admins", session.user.uid),
                             {
                               elections: arrayRemove(election.uid),
                             }
-                          ).then(async () => {
-                            await deleteDoc(
-                              doc(firestore, "elections", election.uid)
-                            );
-                          }));
+                          );
+                        await batch.commit();
+
+                        // session &&
+                        //   (await updateDoc(
+                        //     doc(firestore, "admins", session.user.uid),
+                        //     {
+                        //       elections: arrayRemove(election.uid),
+                        //     }
+                        //   ).then(async () => {
+                        //     await deleteDoc(
+                        //       doc(firestore, "elections", election.uid)
+                        //     );
+                        //   }));
+
                         reloadSession();
                         onCloseDelete();
                         setDeleteLoading(false);

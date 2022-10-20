@@ -85,8 +85,8 @@ const SignupPage: NextPage = () => {
                 //   password: credentials.password,
                 //   photoUrl: "",
                 //   elections: [],
-                //   createdAt: new Date(),
-                //   updatedAt: new Date(),
+                //   createdAt: Timestamp.now(),
+                //   updatedAt: Timestamp.now(),
                 //   emailVerified: false,
                 // });
                 // // Update user's uid

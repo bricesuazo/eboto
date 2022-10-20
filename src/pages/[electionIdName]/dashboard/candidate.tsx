@@ -185,7 +185,10 @@ const CandidatePage = ({
                             </Center>
                             <Text>{`${candidate.lastName}, ${
                               candidate.firstName
-                            } ${candidate.middleName?.charAt(0)}.`}</Text>
+                            }${
+                              candidate.middleName &&
+                              " " + candidate.middleName?.charAt(0) + "."
+                            }`}</Text>
                             <HStack>
                               <Button
                                 size="xs"

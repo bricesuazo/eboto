@@ -22,6 +22,7 @@ import {
   collection,
   doc,
   setDoc,
+  Timestamp,
   updateDoc,
 } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
@@ -49,8 +50,8 @@ const CreateElectionModal = ({
     about: "",
     electionIdName: "",
     ongoing: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: Timestamp.now(),
+    updatedAt: Timestamp.now(),
     electionStartDate: null,
     electionEndDate: null,
   });
@@ -61,7 +62,7 @@ const CreateElectionModal = ({
     abbreviation: "IND",
     logo: "",
     description: "",
-    createdAt: new Date(),
+    createdAt: Timestamp.now(),
   };
 
   const [loading, setLoading] = useState(false);

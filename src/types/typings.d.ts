@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export interface electionType {
   uid: string;
   id: string;
@@ -5,10 +7,10 @@ export interface electionType {
   about: string?;
   electionIdName: string;
   ongoing: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  electionStartDate: Date?;
-  electionEndDate: Date?;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+  electionStartDate: Timestamp?;
+  electionEndDate: Timestamp?;
 }
 export interface partylistType {
   uid: string;
@@ -17,14 +19,14 @@ export interface partylistType {
   abbreviation: string;
   logo: string?;
   description: string?;
-  createdAt: Date;
+  createdAt: Timestamp;
 }
 export interface positionType {
   uid: string;
   id: string;
   title: string;
   undecidedVotingCount: number;
-  createdAt: Date;
+  createdAt: Timestamp;
 }
 export interface candidateType {
   id: string;
@@ -36,7 +38,7 @@ export interface candidateType {
   position: string;
   partylist: string;
   votingCount: number;
-  createdAt: Date;
+  createdAt: Timestamp;
 }
 
 export interface voterType {
@@ -50,14 +52,14 @@ export interface voterType {
   election: string;
 }
 export interface adminType {
-  updatedAt: Date;
+  updatedAt: Timestamp;
   accountType: "admin";
   elections: electionType[];
   email: string;
   emailVerified: boolean;
   uid: string;
   firstName: string;
-  createdAt: Date;
+  createdAt: Timestamp;
   photoUrl: string;
   password: string;
   id: string;
