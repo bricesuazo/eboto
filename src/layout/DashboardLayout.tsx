@@ -39,9 +39,11 @@ import AddCandidateModal from "../components/AddCandidateModal";
 const DashboardLayout = ({
   children,
   title,
+  overflow,
 }: {
   children: any;
   title: string;
+  overflow?: string;
 }) => {
   const { data: session } = useSession();
   const {
@@ -277,7 +279,9 @@ const DashboardLayout = ({
             </Flex>
 
             <Divider />
-            <Box paddingTop={2}>{children}</Box>
+            <Box paddingTop={2} overflow={overflow}>
+              {children}
+            </Box>
           </Stack>
         </Flex>
       </Flex>

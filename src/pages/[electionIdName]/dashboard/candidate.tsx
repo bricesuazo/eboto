@@ -19,7 +19,11 @@ import {
   Flex,
   Icon,
 } from "@chakra-ui/react";
-import { FlagIcon, UserPlusIcon } from "@heroicons/react/24/outline";
+import {
+  FlagIcon,
+  UserCircleIcon,
+  UserPlusIcon,
+} from "@heroicons/react/24/outline";
 import {
   collection,
   getDocs,
@@ -98,182 +102,166 @@ const CandidatePage = ({
           candidate={selectedCandidate}
         />
       )}
-      <DashboardLayout title="Candidates">
+      <DashboardLayout title="Candidates" overflow="auto">
         {!candidates ? (
           <Center>
             <Spinner />
           </Center>
         ) : (
-          <>
+          <Stack width="100%">
             {positions.map((position) => {
               return (
-                <Flex key={position.id} alignItems="center">
-                  <Text fontSize="xl" fontWeight="bold" mt={4}>
+                <HStack key={position.id} spacing={4}>
+                  <Text fontSize="lg" fontWeight="bold" width={32}>
                     {position.title}
                   </Text>
-                  <Center
-                    width={100}
+                  <Stack
+                    alignItems="center"
+                    width="fit-content"
+                    textAlign="center"
                     border="1px solid"
+                    borderColor="whiteAlpha.200"
+                    paddingX={4}
+                    paddingY={2}
+                    borderRadius="lg"
                     cursor="pointer"
                     onClick={() => {
                       setSelectedPosition(position);
                       onOpenAddCandidate();
                     }}
                   >
-                    <Box justifyItems="center">
-                      <Icon as={UserPlusIcon} fontSize={28} />
-                      <HStack>
-                        <Button size="sm">Edit</Button>
-                        <Button size="sm">Delete</Button>
-                      </HStack>
+                    <Icon as={UserPlusIcon} fontSize="xl" />
+                    <Box>
+                      <Text fontSize="xs">Add candidate in</Text>
+                      <Text fontSize="sm">{position.title}</Text>
                     </Box>
-                  </Center>
-                </Flex>
+                  </Stack>
+                  <HStack overflowX="auto">
+                    {candidates
+                      .filter(
+                        (candidate) => candidate.position === position.uid
+                      )
+                      .map((candidate) => {
+                        return (
+                          <Box
+                            key={candidate.id}
+                            display="inline-block"
+                            height="full"
+                            paddingX={4}
+                            paddingY={2}
+                            border="1px solid"
+                            borderColor="whiteAlpha.200"
+                            borderRadius="lg"
+                          >
+                            <Center position="relative">
+                              {candidate.photoUrl ? (
+                                <>
+                                  <Image
+                                    src={candidate.photoUrl}
+                                    alt={
+                                      candidate.firstName +
+                                      " " +
+                                      candidate.lastName +
+                                      " photo"
+                                    }
+                                    width="54px"
+                                    height="54px"
+                                    borderRadius="full"
+                                    objectFit="cover"
+                                    fallback={<Spinner size="lg" />}
+                                    userSelect="none"
+                                    pointerEvents="none"
+                                  />
+                                </>
+                              ) : (
+                                <UserCircleIcon
+                                  style={{
+                                    width: 64,
+                                    // padding: 12,
+                                    borderRadius: "100%",
+                                  }}
+                                />
+                              )}
+                            </Center>
+                            <Text>{`${candidate.lastName}, ${
+                              candidate.firstName
+                            } ${candidate.middleName?.charAt(0)}.`}</Text>
+                            <HStack>
+                              <Button
+                                size="xs"
+                                onClick={() => {
+                                  setSelectedCandidate(candidate);
+                                  onOpenEditCandidate();
+                                }}
+                              >
+                                Edit
+                              </Button>
+                              <Popover>
+                                {({ onClose: onCloseDeleteModal }) => (
+                                  <>
+                                    <PopoverTrigger>
+                                      <WrapItem>
+                                        <Button
+                                          size="xs"
+                                          width="fit-content"
+                                          disabled={deleteLoading}
+                                        >
+                                          Delete
+                                        </Button>
+                                      </WrapItem>
+                                    </PopoverTrigger>
+                                    <PopoverContent width="100%">
+                                      <PopoverArrow />
+                                      <PopoverCloseButton />
+                                      <PopoverHeader fontSize="xs">
+                                        Delete position?
+                                      </PopoverHeader>
+                                      <PopoverBody>
+                                        <HStack>
+                                          <Button
+                                            onClick={onCloseDeleteModal}
+                                            disabled={deleteLoading}
+                                            size="xs"
+                                          >
+                                            Cancel
+                                          </Button>
+                                          <Button
+                                            onClick={async () => {
+                                              setDeleteLoading(true);
+                                              await deleteDoc(
+                                                doc(
+                                                  firestore,
+                                                  "elections",
+                                                  election.uid,
+                                                  "candidates",
+                                                  candidate.uid
+                                                )
+                                              );
+                                              onCloseDeleteModal();
+                                              setDeleteLoading(false);
+                                            }}
+                                            isLoading={deleteLoading}
+                                            colorScheme="red"
+                                            size="xs"
+                                          >
+                                            Delete
+                                          </Button>
+                                        </HStack>
+                                      </PopoverBody>
+                                    </PopoverContent>
+                                  </>
+                                )}
+                              </Popover>
+                            </HStack>
+                          </Box>
+                        );
+                      })}
+                  </HStack>
+                </HStack>
               );
             })}
-          </>
+          </Stack>
         )}
-        {/* {!candidates ? (
-          <Center>
-            <Spinner />
-          </Center>
-        ) : candidates.length === 0 ? (
-          <Center>
-            <Text>No candidate</Text>
-          </Center>
-        ) : (
-          <>
-            <HStack spacing={4}>
-              {candidates.map((candidate) => {
-                return (
-                  <div key={candidate.id}>
-                    <Center
-                      width={48}
-                      height={64}
-                      borderRadius="md"
-                      cursor="pointer"
-                      border="1px"
-                      borderColor="whiteAlpha.300"
-                      padding={2}
-                    >
-                      <Stack alignItems="center">
-                        <Box
-                          width={98}
-                          height={98}
-                          borderRadius="full"
-                          overflow="hidden"
-                        >
-                          <Center height="100%" position="relative">
-                            {candidate.photoUrl ? (
-                              <>
-                                <Image
-                                  src={candidate.photoUrl}
-                                  alt={
-                                    candidate.firstName +
-                                    candidate.lastName +
-                                    " photo"
-                                  }
-                                  objectFit="cover"
-                                  fallback={<Spinner size="lg" />}
-                                  userSelect="none"
-                                  pointerEvents="none"
-                                />
-                              </>
-                            ) : (
-                              <FlagIcon
-                                style={{
-                                  border: "2px solid gray",
-                                  padding: 18,
-                                  borderRadius: "100%",
-                                }}
-                              />
-                            )}
-                          </Center>
-                        </Box>
-                        <Text textAlign="center">
-                          {`${candidate.lastName}, ${candidate.firstName} ${
-                            candidate.middleName
-                              ? candidate.middleName.charAt(0) + "."
-                              : ""
-                          }`}
-                        </Text>
-                        <HStack>
-                          <Button
-                            size="sm"
-                            width="fit-content"
-                            disabled={deleteLoading}
-                            onClick={async () => {
-                              setSelectedCandidate(candidate);
-                              onOpenEditCandidate();
-                            }}
-                          >
-                            Edit
-                          </Button>
-                          <Popover>
-                            {({ onClose: onCloseDeleteModal }) => (
-                              <>
-                                <PopoverTrigger>
-                                  <WrapItem>
-                                    <Button
-                                      size="sm"
-                                      width="fit-content"
-                                      disabled={deleteLoading}
-                                    >
-                                      Delete
-                                    </Button>
-                                  </WrapItem>
-                                </PopoverTrigger>
-                                <PopoverContent width="100%">
-                                  <PopoverArrow />
-                                  <PopoverCloseButton />
-                                  <PopoverHeader>
-                                    Delete candidate?
-                                  </PopoverHeader>
-                                  <PopoverBody>
-                                    <HStack>
-                                      <Button
-                                        onClick={onCloseDeleteModal}
-                                        disabled={deleteLoading}
-                                        size="sm"
-                                      >
-                                        Cancel
-                                      </Button>
-                                      <Button
-                                        onClick={async () => {
-                                          setDeleteLoading(true);
-                                          await deleteDoc(
-                                            doc(
-                                              firestore,
-                                              "elections",
-                                              election.uid,
-                                              "candidates",
-                                              candidate.uid
-                                            )
-                                          );
-                                          onCloseDeleteModal();
-                                          setDeleteLoading(false);
-                                        }}
-                                        isLoading={deleteLoading}
-                                        colorScheme="red"
-                                        size="sm"
-                                      >
-                                        Delete
-                                      </Button>
-                                    </HStack>
-                                  </PopoverBody>
-                                </PopoverContent>
-                              </>
-                            )}
-                          </Popover>
-                        </HStack>
-                      </Stack>
-                    </Center>
-                  </div>
-                );
-              })}
-            </HStack>
-          </>
-        )} */}
       </DashboardLayout>
     </>
   );

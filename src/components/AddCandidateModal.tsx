@@ -28,6 +28,7 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 import { addDoc, collection, doc, query, updateDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
 import { useFirestoreCollectionData } from "reactfire";
+import capitalizeFirstLetter from "../utils/capitalizeFirstLetter";
 
 const AddCandidateModal = ({
   isOpen,
@@ -42,7 +43,6 @@ const AddCandidateModal = ({
   partylists: partylistType[];
   position: positionType;
 }) => {
-  console.log(position);
   const clearForm = () => {
     setCandidate({
       id: uuidv4(),
@@ -103,7 +103,15 @@ const AddCandidateModal = ({
           e.preventDefault();
           await addDoc(
             collection(firestore, "elections", election.uid, "candidates"),
-            candidate
+            {
+              ...candidate,
+              firstName: capitalizeFirstLetter(candidate.firstName),
+
+              middleName: candidate.middleName
+                ? capitalizeFirstLetter(candidate.middleName)
+                : "",
+              lastName: capitalizeFirstLetter(candidate.lastName),
+            }
           ).then(async (docRef) => {
             await updateDoc(
               doc(

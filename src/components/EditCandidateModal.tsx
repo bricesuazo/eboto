@@ -27,45 +27,48 @@ import { v4 as uuidv4 } from "uuid";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
+import capitalizeFirstLetter from "../utils/capitalizeFirstLetter";
 
 const EditCandidateModal = ({
   isOpen,
   onClose,
   election,
+  candidate,
   partylists,
   positions,
-  candidate,
 }: {
   isOpen: boolean;
   onClose: () => void;
   election: electionType;
+  candidate: candidateType;
   partylists: partylistType[];
   positions: positionType[];
-  candidate: candidateType;
 }) => {
   const clearForm = () => {
     setCandidateData({
-      id: uuidv4(),
-      uid: "",
-      firstName: "",
-      middleName: "",
-      lastName: "",
-      photoUrl: "",
-      position: "",
-      partylist: "",
-      votingCount: 0,
+      id: candidate.id,
+      uid: candidate.uid,
+      firstName: candidate.firstName,
+      middleName: candidate.middleName,
+      lastName: candidate.lastName,
+      photoUrl: candidate.photoUrl,
+      position: candidate.position,
+      partylist: candidate.partylist,
+      votingCount: candidate.votingCount,
+      createdAt: candidate.createdAt,
     });
   };
   const [candidateData, setCandidateData] = useState<candidateType>({
-    id: uuidv4(),
-    uid: "",
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    photoUrl: "",
-    position: "",
-    partylist: "",
-    votingCount: 0,
+    id: candidate.id,
+    uid: candidate.uid,
+    firstName: candidate.firstName,
+    middleName: candidate.middleName,
+    lastName: candidate.lastName,
+    photoUrl: candidate.photoUrl,
+    position: candidate.position,
+    partylist: candidate.partylist,
+    votingCount: candidate.votingCount,
+    createdAt: candidate.createdAt,
   });
   const [loading, setLoading] = useState(false);
 
@@ -81,29 +84,32 @@ const EditCandidateModal = ({
         onSubmit={async (e) => {
           setLoading(true);
           e.preventDefault();
-          await addDoc(
-            collection(firestore, "elections", election.uid, "candidates"),
-            candidate
-          ).then(async (docRef) => {
-            await updateDoc(
-              doc(
-                firestore,
-                "elections",
-                election.uid,
-                "candidates",
-                docRef.id
-              ),
-              {
-                uid: docRef.id,
-              }
-            );
-          });
+          await updateDoc(
+            doc(
+              firestore,
+              "elections",
+              election.uid,
+              "candidates",
+              candidate.uid
+            ),
+            {
+              firstName: capitalizeFirstLetter(candidateData.firstName),
+              middleName: candidateData.middleName
+                ? capitalizeFirstLetter(candidateData.middleName)
+                : "",
+              lastName: capitalizeFirstLetter(candidateData.lastName),
+              photoUrl: candidateData.photoUrl,
+              position: candidateData.position,
+              partylist: candidateData.partylist,
+            }
+          );
+          clearForm();
           onClose();
           setLoading(false);
         }}
       >
         <ModalContent>
-          <ModalHeader>Add a candidate</ModalHeader>
+          <ModalHeader>Edit a candidate</ModalHeader>
           <ModalCloseButton />
 
           <ModalBody pb={6}>
@@ -155,20 +161,21 @@ const EditCandidateModal = ({
                 <Input
                   type="file"
                   accept="image/*"
-                  placeholder="Candidate last name"
-                  onChange={(e) =>
-                    setCandidateData({
-                      ...candidateData,
-                      lastName: e.target.value,
-                    })
-                  }
-                  value={candidateData.lastName}
+                  placeholder="Candidate photo"
                   disabled={loading}
                 />
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Partylist</FormLabel>
-                <Select>
+                <Select
+                  onChange={(e) => {
+                    setCandidateData({
+                      ...candidateData,
+                      partylist: e.target.value,
+                    });
+                  }}
+                  value={candidateData.partylist}
+                >
                   {partylists.map((partylist) => (
                     <option value={partylist.uid} key={partylist.id}>
                       {partylist.name} ({partylist.abbreviation})
@@ -178,7 +185,15 @@ const EditCandidateModal = ({
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Position</FormLabel>
-                <Select>
+                <Select
+                  onChange={(e) => {
+                    setCandidateData({
+                      ...candidateData,
+                      position: e.target.value,
+                    });
+                  }}
+                  value={candidateData.position}
+                >
                   {positions.map((position) => (
                     <option value={position.uid} key={position.id}>
                       {position.title}
@@ -191,11 +206,15 @@ const EditCandidateModal = ({
 
           <ModalFooter justifyContent="space-between">
             <Box>
-              {(candidateData.firstName ||
-                candidateData.middleName ||
-                candidateData.middleName ||
+              {(((candidateData.firstName ||
+                candidateData.lastName ||
                 candidateData.position ||
-                candidateData.partylist) && (
+                candidateData.partylist) &&
+                candidate.firstName !== candidateData.firstName) ||
+                candidate.middleName !== candidateData.middleName ||
+                candidate.lastName !== candidateData.lastName ||
+                candidate.position !== candidateData.position ||
+                candidate.partylist !== candidateData.partylist) && (
                 <Tooltip label="Clear forms">
                   <IconButton
                     aria-label="Clear form"
@@ -218,7 +237,12 @@ const EditCandidateModal = ({
                   !candidateData.firstName ||
                   !candidateData.lastName ||
                   !candidateData.position ||
-                  !candidateData.partylist
+                  !candidateData.partylist ||
+                  (candidate.firstName === candidateData.firstName &&
+                    candidate.middleName === candidateData.middleName &&
+                    candidate.lastName === candidateData.lastName &&
+                    candidate.position === candidateData.position &&
+                    candidate.partylist === candidateData.partylist)
                 }
               >
                 Save

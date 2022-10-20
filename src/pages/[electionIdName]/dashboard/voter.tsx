@@ -1,4 +1,5 @@
 import {
+  Center,
   Flex,
   HStack,
   Icon,
@@ -79,13 +80,13 @@ const VoterPage = ({ election }: { election: electionType }) => {
       )}
       <DashboardLayout title="Voters">
         <InputGroup maxWidth={240} marginLeft="auto">
-          <InputLeftElement
-            pointerEvents="none"
-        ><MagnifyingGlassIcon color="gray.300" width={24} /></InputLeftElement>
+          <InputLeftElement pointerEvents="none">
+            <MagnifyingGlassIcon color="gray.300" width={24} />
+          </InputLeftElement>
           <Input placeholder="Search..." />
         </InputGroup>
         {voters && voters.length !== 0 ? (
-          <TableContainer height="100%" marginTop={4}>
+          <TableContainer height="full" marginTop={4}>
             <Table variant="simple" size="sm">
               <Thead>
                 <Tr>
@@ -159,18 +160,13 @@ const VoterPage = ({ election }: { election: electionType }) => {
             </Table>
           </TableContainer>
         ) : (
-          <Flex
-            width="100%"
-            height="100%"
-            alignItems="center"
-            justifyContent="center"
-          >
+          <Center width="full" height="full">
             {votersStatus === "loading" ? (
               <Spinner />
             ) : (
               <Text>No voters yet.</Text>
             )}
-          </Flex>
+          </Center>
         )}
       </DashboardLayout>
     </>

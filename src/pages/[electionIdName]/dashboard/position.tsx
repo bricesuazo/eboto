@@ -15,6 +15,7 @@ import {
   useDisclosure,
   WrapItem,
   Image,
+  Flex,
 } from "@chakra-ui/react";
 import {
   collection,
@@ -71,7 +72,7 @@ const PositionPage = ({ election }: { election: electionType }) => {
           position={selectedPosition}
         />
       )}
-      <DashboardLayout title="Positions">
+      <DashboardLayout title="Positions" overflow="auto">
         {!positions ? (
           <Center>
             <Spinner />
@@ -82,7 +83,7 @@ const PositionPage = ({ election }: { election: electionType }) => {
           </Center>
         ) : (
           <>
-            <HStack spacing={4}>
+            <Flex flexWrap="wrap" gap="4">
               {positions.map((position) => {
                 return (
                   <div key={position.id}>
@@ -171,7 +172,7 @@ const PositionPage = ({ election }: { election: electionType }) => {
                   </div>
                 );
               })}
-            </HStack>
+            </Flex>
           </>
         )}
       </DashboardLayout>

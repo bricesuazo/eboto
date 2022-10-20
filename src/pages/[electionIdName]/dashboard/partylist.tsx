@@ -16,6 +16,7 @@ import {
   useDisclosure,
   WrapItem,
   Image,
+  Flex,
 } from "@chakra-ui/react";
 import { FlagIcon } from "@heroicons/react/24/outline";
 import {
@@ -83,7 +84,7 @@ const PartylistPage = ({ election }: { election: electionType }) => {
           </Center>
         ) : (
           <>
-            <HStack spacing={4}>
+            <Flex gap={4} flexWrap="wrap">
               {partylists.map((partylist) => {
                 return (
                   <div key={partylist.id}>
@@ -220,7 +221,7 @@ const PartylistPage = ({ election }: { election: electionType }) => {
                   </div>
                 );
               })}
-            </HStack>
+            </Flex>
           </>
         )}
       </DashboardLayout>
