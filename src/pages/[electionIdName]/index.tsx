@@ -19,22 +19,23 @@ interface ElectionPageProps {
   candidates: candidateType[];
 }
 
-const ElectionPage = ({ election }: ElectionPageProps) => {
+const ElectionPage = ({
+  election,
+  partylists,
+  positions,
+  candidates,
+}: ElectionPageProps) => {
   const pageTitle = `${election.name} - Election | eBoto Mo`;
+  console.table(election);
+  console.table(partylists);
+  console.table(positions);
+  console.table(candidates);
   return (
     <>
       <Head>
         <title>{pageTitle}</title>
       </Head>
       <Box>
-        <Text fontSize="2xl">{election.name}</Text>
-        <Link href={`https://eboto-mo.com/${election.electionIdName}`}>
-          <a>
-            <Text _hover={{ textDecoration: "underline" }}>
-              eboto-mo.com/{election.electionIdName}
-            </Text>
-          </a>
-        </Link>
         <Text>{election.about}</Text>
         {election.electionStartDate && election.electionEndDate && (
           <Text>
@@ -48,6 +49,58 @@ const ElectionPage = ({ election }: ElectionPageProps) => {
           </Text>
         )}
         <Text>{election.about}</Text>
+
+        <Box>
+          <Box>
+            {positions
+              .sort((a, b) => a.createdAt.seconds - b.createdAt.seconds)
+              .map((position) => {
+                return (
+                  <Box key={position.id}>
+                    <Text fontSize="2xl">{position.title}</Text>
+                    <Box>
+                      {candidates
+                        .filter(
+                          (candidate) => candidate.position === position.uid
+                        )
+                        .map((candidate) => {
+                          const linkToCandidate = `/${
+                            election.electionIdName
+                          }/${candidate.firstName
+                            .replace(/\s/g, "")
+                            .toLocaleLowerCase()}${
+                            candidate.middleName &&
+                            `-${candidate.middleName
+                              .replace(/\s/g, "")
+                              .toLocaleLowerCase()}`
+                          }-${candidate.lastName
+                            .replace(/\s/g, "")
+                            .toLocaleLowerCase()}`;
+                          return (
+                            <Link href={linkToCandidate} key={candidate.id}>
+                              <a>
+                                <Text>{`${candidate.lastName}, ${
+                                  candidate.firstName
+                                }${
+                                  candidate.middleName &&
+                                  ` ${candidate.middleName.charAt(0)}.`
+                                } (${
+                                  partylists.find((partylist) => {
+                                    return (
+                                      partylist.uid === candidate.partylist
+                                    );
+                                  })?.abbreviation
+                                })`}</Text>
+                              </a>
+                            </Link>
+                          );
+                        })}
+                    </Box>
+                  </Box>
+                );
+              })}
+          </Box>
+        </Box>
       </Box>
     </>
   );
@@ -94,9 +147,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       election: JSON.parse(JSON.stringify(electionSnapshot.docs[0].data())),
-      positions,
-      partylists,
-      candidates,
+      positions: JSON.parse(JSON.stringify(positions)) as positionType[],
+      partylists: JSON.parse(JSON.stringify(partylists)) as partylistType[],
+      candidates: JSON.parse(JSON.stringify(candidates)) as candidateType[],
     },
   };
 };
