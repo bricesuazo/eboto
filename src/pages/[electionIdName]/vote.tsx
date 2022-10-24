@@ -7,9 +7,16 @@ import {
   positionType,
 } from "../../types/typings";
 import { firestore } from "../../firebase/firebase";
-import { Box, Button, Text, useRadioGroup } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Text,
+  useDisclosure,
+  useRadioGroup,
+} from "@chakra-ui/react";
 import CandidateCard from "../../components/CandidateCard";
 import { useState } from "react";
+import ConfirmVoteModal from "../../components/ConfirmVoteModal";
 
 interface VotePageProps {
   election: electionType;
@@ -23,64 +30,88 @@ const VotePage = ({
   positions,
   candidates,
 }: VotePageProps) => {
-  const [selectedCandidates, setSelectedCandidates] =
-    useState<candidateType[]>();
+  const [selectedCandidates, setSelectedCandidates] = useState<string[]>([]);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <Box>
+    <>
+      <ConfirmVoteModal
+        isOpen={isOpen}
+        onClose={onClose}
+        election={election}
+        partylists={partylists}
+        positions={positions}
+        candidates={candidates}
+        selectedCandidates={selectedCandidates}
+      />
       <Box>
-        <Text fontSize="3xl">{election.name}</Text>
-
         <Box>
-          {positions
-            .sort((a, b) => a.createdAt.seconds - b.createdAt.seconds)
-            .map((position) => {
-              const { getRootProps, getRadioProps } = useRadioGroup({
-                name: position.uid,
-                onChange: console.log,
-              });
-              const group = getRootProps();
-              const radioUndecided = getRadioProps({
-                value: { type: "undecided", position: position.uid },
-              });
-              return (
-                <Box key={position.id}>
-                  <Text fontSize="2xl">{position.title}</Text>
-                  <Box {...group}>
-                    {candidates
-                      .filter(
-                        (candidate) => candidate.position === position.uid
-                      )
-                      .map((candidate) => {
-                        const radio = getRadioProps({ value: candidate.uid });
-                        return (
-                          <CandidateCard key={candidate.id} {...radio}>
-                            <Text>{`${candidate.lastName}, ${
-                              candidate.firstName
-                            }${
-                              candidate.middleName &&
-                              ` ${candidate.middleName.charAt(0)}.`
-                            } (${
-                              partylists.find(
-                                (partylist) =>
-                                  partylist.uid === candidate.partylist
-                              )?.abbreviation
-                            })`}</Text>
-                          </CandidateCard>
-                        );
-                      })}
-                  </Box>
-                  <CandidateCard {...radioUndecided}>
-                    <Text>Undecided</Text>
-                  </CandidateCard>
-                </Box>
-              );
-            })}
-        </Box>
-      </Box>
+          <Text fontSize="3xl">{election.name}</Text>
 
-      <Button>Cast Vote</Button>
-    </Box>
+          <Box>
+            {positions
+              .sort((a, b) => a.createdAt.seconds - b.createdAt.seconds)
+              .map((position) => {
+                const { getRootProps, getRadioProps } = useRadioGroup({
+                  name: position.uid,
+                  onChange: (value) => {
+                    setSelectedCandidates((prev) => {
+                      return prev
+                        .filter((prev) => prev.split("-")[0] !== position.uid)
+                        .concat(value);
+                    });
+                  },
+                });
+                const group = getRootProps();
+                const radioUndecided = getRadioProps({
+                  value: `${position.uid}-undecided`,
+                });
+                return (
+                  <Box key={position.id}>
+                    <Text fontSize="2xl">{position.title}</Text>
+                    <Box {...group}>
+                      {candidates
+                        .filter(
+                          (candidate) => candidate.position === position.uid
+                        )
+                        .map((candidate) => {
+                          const radio = getRadioProps({
+                            value: `${position.uid}-${candidate.uid}`,
+                          });
+                          return (
+                            <CandidateCard key={candidate.id} {...radio}>
+                              <Text>{`${candidate.lastName}, ${
+                                candidate.firstName
+                              }${
+                                candidate.middleName &&
+                                ` ${candidate.middleName.charAt(0)}.`
+                              } (${
+                                partylists.find(
+                                  (partylist) =>
+                                    partylist.uid === candidate.partylist
+                                )?.abbreviation
+                              })`}</Text>
+                            </CandidateCard>
+                          );
+                        })}
+                    </Box>
+                    <CandidateCard {...radioUndecided}>
+                      <Text>Undecided</Text>
+                    </CandidateCard>
+                  </Box>
+                );
+              })}
+          </Box>
+        </Box>
+
+        <Button
+          disabled={positions.length !== selectedCandidates.length}
+          onClick={onOpen}
+        >
+          Cast Vote
+        </Button>
+      </Box>
+    </>
   );
 };
 
