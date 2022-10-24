@@ -99,9 +99,8 @@ const ConfirmVoteModal = ({
               colorScheme="blue"
               isLoading={isSubmitting}
               onClick={() => {
-                setIsSubmitting(true);
-
                 selectedCandidates.forEach(async (selectedCandidate) => {
+                  setIsSubmitting(true);
                   const [positionUid, candidateUid] =
                     selectedCandidate.split("-");
 
@@ -132,11 +131,10 @@ const ConfirmVoteModal = ({
                       }
                     );
                   }
+                  setIsSubmitting(false);
+                  onClose();
+                  router.push(`/${election.electionIdName}/realtime`);
                 });
-
-                setIsSubmitting(false);
-                router.push(`/${election.electionIdName}/realtime`);
-                onClose();
               }}
             >
               Cast Vote

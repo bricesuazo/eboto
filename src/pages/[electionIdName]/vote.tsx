@@ -17,6 +17,7 @@ import {
 import CandidateCard from "../../components/CandidateCard";
 import { useState } from "react";
 import ConfirmVoteModal from "../../components/ConfirmVoteModal";
+import Head from "next/head";
 
 interface VotePageProps {
   election: electionType;
@@ -30,11 +31,15 @@ const VotePage = ({
   positions,
   candidates,
 }: VotePageProps) => {
+  const pageTitle = `${election.name} - Vote | eBoto Mo`;
   const [selectedCandidates, setSelectedCandidates] = useState<string[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <>
+      <Head>
+        <title>{pageTitle}</title>
+      </Head>
       <ConfirmVoteModal
         isOpen={isOpen}
         onClose={onClose}
