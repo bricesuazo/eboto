@@ -25,7 +25,14 @@ import {
 } from "../types/typings";
 import { v4 as uuidv4 } from "uuid";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { addDoc, collection, doc, query, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  query,
+  updateDoc,
+  Timestamp,
+} from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
 import { useFirestoreCollectionData } from "reactfire";
 import capitalizeFirstLetter from "../utils/capitalizeFirstLetter";

@@ -64,20 +64,11 @@ const ElectionPage = ({
                           (candidate) => candidate.position === position.uid
                         )
                         .map((candidate) => {
-                          const linkToCandidate = `/${
-                            election.electionIdName
-                          }/${candidate.firstName
-                            .replace(/\s/g, "")
-                            .toLocaleLowerCase()}${
-                            candidate.middleName &&
-                            `-${candidate.middleName
-                              .replace(/\s/g, "")
-                              .toLocaleLowerCase()}`
-                          }-${candidate.lastName
-                            .replace(/\s/g, "")
-                            .toLocaleLowerCase()}`;
                           return (
-                            <Link href={linkToCandidate} key={candidate.id}>
+                            <Link
+                              href={`/${election.electionIdName}/${candidate.uid}`}
+                              key={candidate.id}
+                            >
                               <a>
                                 <Text>{`${candidate.lastName}, ${
                                   candidate.firstName
