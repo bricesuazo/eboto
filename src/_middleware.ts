@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
   // if (request.nextUrl.pathname.startsWith("/[electionIdName]/dashboard")) {
   //   return withAuth({
   //     callbacks: {
-  //       authorized: ({ token }) => token?.role === "admin",
+  //       authorized: ({ token }) => token?.accountType === "admin",
   //     },
   //   }
   // }

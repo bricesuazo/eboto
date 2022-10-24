@@ -1,13 +1,9 @@
 import { firestore } from "../firebase/firebase";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { verifyIdToken } from "../firebase/firebase-admin";
 import { doc, getDoc } from "firebase/firestore";
-import CreateElectionModal from "../components/CreateElectionModal";
-import { useDisclosure } from "@chakra-ui/react";
 import { getSession } from "next-auth/react";
 
 const DashboardPage = () => {
-  const { onClose, isOpen } = useDisclosure();
   return <>DashboardPage</>;
 };
 

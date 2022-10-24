@@ -17,8 +17,9 @@ interface CandidateCredentialPageProps {
 const CandidateCredentialPage = ({
   candidate,
 }: CandidateCredentialPageProps) => {
-  console.log(candidate);
-  return <div>CandidateCredentialPage</div>;
+  return (
+    <div>{`${candidate.firstName} ${candidate.middleName} ${candidate.lastName}`}</div>
+  );
 };
 
 export default CandidateCredentialPage;
@@ -68,11 +69,10 @@ export const getServerSideProps: GetServerSideProps = async (
         candidateUid as string
       )
     );
-    console.log(candidateSnapshot.data());
     if (candidateSnapshot.exists()) {
       return {
         props: {
-          candidates: JSON.parse(
+          candidate: JSON.parse(
             JSON.stringify(candidateSnapshot.data() as candidateType)
           ),
         },

@@ -7,7 +7,7 @@ import {
   positionType,
 } from "../../types/typings";
 import { firestore } from "../../firebase/firebase";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Button, Text } from "@chakra-ui/react";
 import Head from "next/head";
 import Moment from "react-moment";
 import Link from "next/link";
@@ -26,17 +26,15 @@ const ElectionPage = ({
   candidates,
 }: ElectionPageProps) => {
   const pageTitle = `${election.name} - Election | eBoto Mo`;
-  console.table(election);
-  console.table(partylists);
-  console.table(positions);
-  console.table(candidates);
   return (
     <>
       <Head>
         <title>{pageTitle}</title>
       </Head>
       <Box>
-        <Text>{election.about}</Text>
+        <Text fontSize="3xl" fontWeight="bold">
+          {election.name}
+        </Text>
         {election.electionStartDate && election.electionEndDate && (
           <Text>
             <Moment format="MMMM DD, YYYY">
@@ -49,48 +47,47 @@ const ElectionPage = ({
           </Text>
         )}
         <Text>{election.about}</Text>
+        <Link href={`/${election.electionIdName}/vote`}>
+          <Button>Vote</Button>
+        </Link>
 
         <Box>
-          <Box>
-            {positions
-              .sort((a, b) => a.createdAt.seconds - b.createdAt.seconds)
-              .map((position) => {
-                return (
-                  <Box key={position.id}>
-                    <Text fontSize="2xl">{position.title}</Text>
-                    <Box>
-                      {candidates
-                        .filter(
-                          (candidate) => candidate.position === position.uid
-                        )
-                        .map((candidate) => {
-                          return (
-                            <Link
-                              href={`/${election.electionIdName}/${candidate.uid}`}
-                              key={candidate.id}
-                            >
-                              <a>
-                                <Text>{`${candidate.lastName}, ${
-                                  candidate.firstName
-                                }${
-                                  candidate.middleName &&
-                                  ` ${candidate.middleName.charAt(0)}.`
-                                } (${
-                                  partylists.find((partylist) => {
-                                    return (
-                                      partylist.uid === candidate.partylist
-                                    );
-                                  })?.abbreviation
-                                })`}</Text>
-                              </a>
-                            </Link>
-                          );
-                        })}
-                    </Box>
+          {positions
+            .sort((a, b) => a.createdAt.seconds - b.createdAt.seconds)
+            .map((position) => {
+              return (
+                <Box key={position.id}>
+                  <Text fontSize="2xl">{position.title}</Text>
+                  <Box>
+                    {candidates
+                      .filter(
+                        (candidate) => candidate.position === position.uid
+                      )
+                      .map((candidate) => {
+                        return (
+                          <Link
+                            href={`/${election.electionIdName}/${candidate.uid}`}
+                            key={candidate.id}
+                          >
+                            <a>
+                              <Text>{`${candidate.lastName}, ${
+                                candidate.firstName
+                              }${
+                                candidate.middleName &&
+                                ` ${candidate.middleName.charAt(0)}.`
+                              } (${
+                                partylists.find((partylist) => {
+                                  return partylist.uid === candidate.partylist;
+                                })?.abbreviation
+                              })`}</Text>
+                            </a>
+                          </Link>
+                        );
+                      })}
                   </Box>
-                );
-              })}
-          </Box>
+                </Box>
+              );
+            })}
         </Box>
       </Box>
     </>
