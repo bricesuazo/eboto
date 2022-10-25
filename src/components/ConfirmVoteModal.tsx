@@ -42,7 +42,6 @@ const ConfirmVoteModal = ({
 }: ConfirmVoteModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-  console.log(router);
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay>

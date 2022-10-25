@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import {
   candidateType,
@@ -52,42 +52,38 @@ const ElectionPage = ({
         </Link>
 
         <Box>
-          {positions
-            .sort((a, b) => a.createdAt.seconds - b.createdAt.seconds)
-            .map((position) => {
-              return (
-                <Box key={position.id}>
-                  <Text fontSize="2xl">{position.title}</Text>
-                  <Box>
-                    {candidates
-                      .filter(
-                        (candidate) => candidate.position === position.uid
-                      )
-                      .map((candidate) => {
-                        return (
-                          <Link
-                            href={`/${election.electionIdName}/${candidate.uid}`}
-                            key={candidate.id}
-                          >
-                            <a>
-                              <Text>{`${candidate.lastName}, ${
-                                candidate.firstName
-                              }${
-                                candidate.middleName &&
-                                ` ${candidate.middleName.charAt(0)}.`
-                              } (${
-                                partylists.find((partylist) => {
-                                  return partylist.uid === candidate.partylist;
-                                })?.abbreviation
-                              })`}</Text>
-                            </a>
-                          </Link>
-                        );
-                      })}
-                  </Box>
+          {positions.map((position) => {
+            return (
+              <Box key={position.id}>
+                <Text fontSize="2xl">{position.title}</Text>
+                <Box>
+                  {candidates
+                    .filter((candidate) => candidate.position === position.uid)
+                    .map((candidate) => {
+                      return (
+                        <Link
+                          href={`/${election.electionIdName}/${candidate.uid}`}
+                          key={candidate.id}
+                        >
+                          <a>
+                            <Text>{`${candidate.lastName}, ${
+                              candidate.firstName
+                            }${
+                              candidate.middleName &&
+                              ` ${candidate.middleName.charAt(0)}.`
+                            } (${
+                              partylists.find((partylist) => {
+                                return partylist.uid === candidate.partylist;
+                              })?.abbreviation
+                            })`}</Text>
+                          </a>
+                        </Link>
+                      );
+                    })}
                 </Box>
-              );
-            })}
+              </Box>
+            );
+          })}
         </Box>
       </Box>
     </>
@@ -109,16 +105,27 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
   const positionsSnapshot = await getDocs(
-    collection(firestore, "elections", electionSnapshot.docs[0].id, "positions")
+    query(
+      collection(
+        firestore,
+        "elections",
+        electionSnapshot.docs[0].id,
+        "positions"
+      ),
+      orderBy("createdAt", "asc")
+    )
   );
   const positions = positionsSnapshot.docs.map((doc) => doc.data());
 
   const partylistsSnapshot = await getDocs(
-    collection(
-      firestore,
-      "elections",
-      electionSnapshot.docs[0].id,
-      "partylists"
+    query(
+      collection(
+        firestore,
+        "elections",
+        electionSnapshot.docs[0].id,
+        "partylists"
+      ),
+      orderBy("createdAt", "asc")
     )
   );
   const partylists = partylistsSnapshot.docs.map((doc) => doc.data());
