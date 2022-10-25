@@ -43,9 +43,9 @@ const ConfirmVoteModal = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered size="xs">
       <ModalOverlay>
-        <ModalContent>
+        <ModalContent marginX={2}>
           <ModalHeader display="flex" alignItems="center" gap={2}>
             <CheckCircleIcon width={28} />
             <Text>Confirm Vote</Text>

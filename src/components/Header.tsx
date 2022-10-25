@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Center,
+  Hide,
   HStack,
   IconButton,
   Menu,
@@ -11,6 +12,7 @@ import {
   MenuItem,
   MenuItemProps,
   MenuList,
+  Show,
   Spinner,
   Stack,
   Switch,
@@ -57,10 +59,10 @@ const Header = () => {
   const Hello = ({ email }: { email: string }) => {
     return (
       <Box textAlign="end">
-        <Text fontSize="sm" color="whiteAlpha.800">
+        <Text fontSize={["xs", "sm"]} color="whiteAlpha.800">
           Hello, @{email.split("@")[0]}!
         </Text>
-        <Text fontSize="xs" color="whiteAlpha.500">
+        <Text fontSize={["2xs", "xs"]} color="whiteAlpha.500">
           {email}
         </Text>
       </Box>
@@ -73,11 +75,13 @@ const Header = () => {
         {({ isOpen }) => (
           <>
             <MenuButton
+              width={[8, 9]}
+              height={[8, 9]}
+              padding={2}
               as={IconButton}
               aria-label="Options"
               icon={
                 <ChevronDownIcon
-                  width={18}
                   style={{
                     transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
                     transitionDuration: "0.5s",
@@ -170,26 +174,27 @@ const Header = () => {
                   return (
                     <>
                       <Hello email={session?.user.email} />
-
-                      {!(
-                        router.route.split("/").length === 2 &&
-                        router.route.split("/")[1] === "[electionIdName]" &&
-                        router.query.electionIdName === election?.electionIdName
-                      ) && (
-                        <Link href={`/${election?.electionIdName}`}>
-                          <a>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              isLoading={loading}
-                              rightIcon={<ArrowRightIcon width={14} />}
-                            >
-                              Go to {election?.name}
-                            </Button>
-                          </a>
-                        </Link>
-                      )}
-
+                      <Show above="sm">
+                        {!(
+                          router.route.split("/").length === 2 &&
+                          router.route.split("/")[1] === "[electionIdName]" &&
+                          router.query.electionIdName ===
+                            election?.electionIdName
+                        ) && (
+                          <Link href={`/${election?.electionIdName}`}>
+                            <a>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                isLoading={loading}
+                                rightIcon={<ArrowRightIcon width={14} />}
+                              >
+                                Go to {election?.name}
+                              </Button>
+                            </a>
+                          </Link>
+                        )}
+                      </Show>
                       <MenuParent>
                         <MenuItem
                           icon={<ArchiveBoxArrowDownIcon width={18} />}

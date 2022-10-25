@@ -10,6 +10,7 @@ import { firestore } from "../../firebase/firebase";
 import {
   Box,
   Button,
+  Stack,
   Text,
   useDisclosure,
   useRadioGroup,
@@ -18,6 +19,7 @@ import CandidateCard from "../../components/CandidateCard";
 import { useState } from "react";
 import ConfirmVoteModal from "../../components/ConfirmVoteModal";
 import Head from "next/head";
+import Card from "../../components/Card";
 
 interface VotePageProps {
   election: electionType;
@@ -49,62 +51,23 @@ const VotePage = ({
         candidates={candidates}
         selectedCandidates={selectedCandidates}
       />
-      <Box>
+      <Box padding={4}>
         <Box>
-          <Text fontSize="3xl">{election.name}</Text>
+          <Text fontSize="3xl" textAlign="center">
+            {election.name}
+          </Text>
 
-          <Box>
-            {positions.map((position) => {
-              const { getRootProps, getRadioProps } = useRadioGroup({
-                name: position.uid,
-                onChange: (value) => {
-                  setSelectedCandidates((prev) => {
-                    return prev
-                      .filter((prev) => prev.split("-")[0] !== position.uid)
-                      .concat(value);
-                  });
-                },
-              });
-              const group = getRootProps();
-              const radioUndecided = getRadioProps({
-                value: `${position.uid}-undecided`,
-              });
-              return (
-                <Box key={position.id}>
-                  <Text fontSize="2xl">{position.title}</Text>
-                  <Box {...group}>
-                    {candidates
-                      .filter(
-                        (candidate) => candidate.position === position.uid
-                      )
-                      .map((candidate) => {
-                        const radio = getRadioProps({
-                          value: `${position.uid}-${candidate.uid}`,
-                        });
-                        return (
-                          <CandidateCard key={candidate.id} {...radio}>
-                            <Text>{`${candidate.lastName}, ${
-                              candidate.firstName
-                            }${
-                              candidate.middleName &&
-                              ` ${candidate.middleName.charAt(0)}.`
-                            } (${
-                              partylists.find(
-                                (partylist) =>
-                                  partylist.uid === candidate.partylist
-                              )?.abbreviation
-                            })`}</Text>
-                          </CandidateCard>
-                        );
-                      })}
-                  </Box>
-                  <CandidateCard {...radioUndecided}>
-                    <Text>Undecided</Text>
-                  </CandidateCard>
-                </Box>
-              );
-            })}
-          </Box>
+          <Stack spacing={4}>
+            {positions.map((position) => (
+              <Card
+                key={position.id}
+                position={position}
+                setSelectedCandidates={setSelectedCandidates}
+                candidates={candidates}
+                partylists={partylists}
+              />
+            ))}
+          </Stack>
         </Box>
 
         <Button

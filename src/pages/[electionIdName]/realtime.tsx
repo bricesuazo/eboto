@@ -1,4 +1,19 @@
-import { Box, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Container,
+  Grid,
+  Spinner,
+  Table,
+  TableCaption,
+  TableContainer,
+  Tbody,
+  Td,
+  Text,
+  Tfoot,
+  Th,
+  Thead,
+  Tr,
+} from "@chakra-ui/react";
 import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import type {
   GetServerSideProps,
@@ -37,32 +52,56 @@ const RealtimePage = ({
         <title>{pageTitle}</title>
       </Head>
 
-      <Box>
+      <Box padding={4}>
         <Text>{election.name}</Text>
         <Box>
-          {positions.map((position) => (
-            <Box key={position.id}>
-              <Text>{position.title}</Text>
-              <Box>
-                {candidates
-                  .filter((candidate) => candidate.position === position.uid)
-                  .map((candidate) => (
-                    <Box key={candidate.id}>
-                      <Text>{candidate.lastName}</Text>
-                      <Text>
-                        {
-                          candidatesCount.find(
-                            (candidateCount) =>
-                              candidateCount.uid === candidate.uid &&
-                              candidate.position === position.uid
-                          )?.votingCount
-                        }
-                      </Text>
-                    </Box>
-                  ))}
-              </Box>
-            </Box>
-          ))}
+          <TableContainer>
+            <Grid
+              templateColumns={[
+                "repeat(1, 1fr)",
+                "repeat(3, 1fr)",
+                "repeat(4, 1fr)",
+              ]}
+              gap={4}
+              alignItems="flex-start"
+            >
+              {positions.map((position) => (
+                <Table key={position.id} variant="simple" size="sm">
+                  <Thead>
+                    <Tr>
+                      <Th textAlign="center">{position.title}</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {candidates
+                      .filter(
+                        (candidate) => candidate.position === position.uid
+                      )
+                      .map((candidate) => (
+                        <Tr key={candidate.id}>
+                          <Td>
+                            <Box display="flex" justifyContent="space-between">
+                              <Text>{candidate.lastName}</Text>
+                              <Text>
+                                {positionsLoading === "loading" ? (
+                                  <Spinner size="sm" />
+                                ) : (
+                                  candidatesCount.find(
+                                    (candidateCount) =>
+                                      candidateCount.uid === candidate.uid &&
+                                      candidate.position === position.uid
+                                  )?.votingCount
+                                )}
+                              </Text>
+                            </Box>
+                          </Td>
+                        </Tr>
+                      ))}
+                  </Tbody>
+                </Table>
+              ))}
+            </Grid>
+          </TableContainer>
         </Box>
       </Box>
     </>
