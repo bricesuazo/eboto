@@ -1,7 +1,7 @@
 import {
   Box,
   Container,
-  Grid,
+  SimpleGrid,
   Spinner,
   Table,
   TableCaption,
@@ -52,58 +52,97 @@ const RealtimePage = ({
         <title>{pageTitle}</title>
       </Head>
 
-      <Box padding={4}>
-        <Text>{election.name}</Text>
+      <Container maxW="2xl">
+        <Box marginBottom={4}>
+          <Text fontSize="2xl" fontWeight="bold" textAlign="center">
+            {election.name}
+          </Text>
+          <Text textAlign="center">Realtime Count Update</Text>
+        </Box>
         <Box>
           <TableContainer>
-            <Grid
-              templateColumns={[
-                "repeat(1, 1fr)",
-                "repeat(3, 1fr)",
-                "repeat(4, 1fr)",
+            <SimpleGrid
+              columns={[
+                Math.ceil(positions.length / positions.length),
+                Math.ceil(positions.length / 2),
               ]}
-              gap={4}
+              spacing={4}
               alignItems="flex-start"
             >
               {positions.map((position) => (
-                <Table key={position.id} variant="simple" size="sm">
-                  <Thead>
-                    <Tr>
-                      <Th textAlign="center">{position.title}</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {candidates
-                      .filter(
-                        (candidate) => candidate.position === position.uid
-                      )
-                      .map((candidate) => (
-                        <Tr key={candidate.id}>
-                          <Td>
-                            <Box display="flex" justifyContent="space-between">
-                              <Text>{candidate.lastName}</Text>
-                              <Text>
-                                {positionsLoading === "loading" ? (
-                                  <Spinner size="sm" />
-                                ) : (
-                                  candidatesCount.find(
-                                    (candidateCount) =>
-                                      candidateCount.uid === candidate.uid &&
-                                      candidate.position === position.uid
-                                  )?.votingCount
-                                )}
-                              </Text>
-                            </Box>
-                          </Td>
-                        </Tr>
-                      ))}
-                  </Tbody>
-                </Table>
+                <Box
+                  border="1px"
+                  borderColor="gray.700"
+                  padding={2}
+                  borderRadius={4}
+                >
+                  <Table key={position.id} variant="simple" size="sm">
+                    <Thead>
+                      <Tr>
+                        <Th textAlign="center">{position.title}</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {candidates
+                        .filter(
+                          (candidate) => candidate.position === position.uid
+                        )
+                        .sort((a, b) => b.votingCount - a.votingCount)
+                        .map((candidate, index) => (
+                          <Tr key={candidate.id}>
+                            <Td
+                            // borderBottom={
+                            //   index !== candidates.length - 1 ? 0 : 1
+                            // }
+                            >
+                              <Box
+                                display="flex"
+                                justifyContent="space-between"
+                              >
+                                <Text>{candidate.lastName}</Text>
+                                <Text>
+                                  {positionsLoading === "loading" ||
+                                  !candidatesCount ? (
+                                    <Spinner size="sm" />
+                                  ) : (
+                                    candidatesCount.find(
+                                      (candidateCount) =>
+                                        candidateCount.uid === candidate.uid &&
+                                        candidate.position === position.uid
+                                    )?.votingCount
+                                  )}
+                                </Text>
+                              </Box>
+                            </Td>
+                          </Tr>
+                        ))}
+
+                      <Tr>
+                        <Td>
+                          <Box display="flex" justifyContent="space-between">
+                            <Text>Undecided</Text>
+                            <Text>
+                              {positionsLoading === "loading" ||
+                              !positionsCount ? (
+                                <Spinner size="sm" />
+                              ) : (
+                                positionsCount.find(
+                                  (positionCount) =>
+                                    positionCount.uid === position.uid
+                                )?.undecidedVotingCount
+                              )}
+                            </Text>
+                          </Box>
+                        </Td>
+                      </Tr>
+                    </Tbody>
+                  </Table>
+                </Box>
               ))}
-            </Grid>
+            </SimpleGrid>
           </TableContainer>
         </Box>
-      </Box>
+      </Container>
     </>
   );
 };

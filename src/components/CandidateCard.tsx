@@ -23,8 +23,10 @@ const CandidateCard = (props: any) => {
         _focus={{
           boxShadow: "outline",
         }}
-        px={5}
-        py={3}
+        px={4}
+        py={2}
+        width={["full", 48]}
+        height={[48, 56]}
       >
         {props.children}
       </Box>

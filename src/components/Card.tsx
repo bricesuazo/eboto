@@ -1,4 +1,4 @@
-import { Stack, Text, useRadioGroup } from "@chakra-ui/react";
+import { Container, Stack, Text, useRadioGroup } from "@chakra-ui/react";
 import { candidateType, partylistType, positionType } from "../types/typings";
 import CandidateCard from "./CandidateCard";
 
@@ -30,31 +30,41 @@ const Card = ({
     value: `${position.uid}-undecided`,
   });
   return (
-    <Stack key={position.id}>
-      <Text fontSize="2xl">{position.title}</Text>
-      <Stack {...group}>
-        {candidates
-          .filter((candidate) => candidate.position === position.uid)
-          .map((candidate) => {
-            const radio = getRadioProps({
-              value: `${position.uid}-${candidate.uid}`,
-            });
-            return (
-              <CandidateCard key={candidate.id} {...radio}>
-                <Text>{`${candidate.lastName}, ${candidate.firstName}${
-                  candidate.middleName && ` ${candidate.middleName.charAt(0)}.`
-                } (${
-                  partylists.find(
-                    (partylist) => partylist.uid === candidate.partylist
-                  )?.abbreviation
-                })`}</Text>
-              </CandidateCard>
-            );
-          })}
-      </Stack>
-      <CandidateCard {...radioUndecided}>
-        <Text>Undecided</Text>
-      </CandidateCard>
+    <Stack key={position.id} alignItems="center">
+      <Text fontSize="xl">{position.title}</Text>
+      <Container padding={0}>
+        <Stack
+          {...group}
+          direction={["column", "row"]}
+          overflowX="auto"
+          paddingX={4}
+          paddingY={2}
+          width="full"
+        >
+          {candidates
+            .filter((candidate) => candidate.position === position.uid)
+            .map((candidate) => {
+              const radio = getRadioProps({
+                value: `${position.uid}-${candidate.uid}`,
+              });
+              return (
+                <CandidateCard key={candidate.id} {...radio}>
+                  <Text>{`${candidate.lastName}, ${candidate.firstName}${
+                    candidate.middleName &&
+                    ` ${candidate.middleName.charAt(0)}.`
+                  } (${
+                    partylists.find(
+                      (partylist) => partylist.uid === candidate.partylist
+                    )?.abbreviation
+                  })`}</Text>
+                </CandidateCard>
+              );
+            })}
+          <CandidateCard {...radioUndecided}>
+            <Text>Undecided</Text>
+          </CandidateCard>
+        </Stack>
+      </Container>
     </Stack>
   );
 };

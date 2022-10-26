@@ -10,7 +10,7 @@ import {
   ModalOverlay,
   Text,
 } from "@chakra-ui/react";
-import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import { FingerPrintIcon } from "@heroicons/react/24/outline";
 import { doc, increment, updateDoc } from "firebase/firestore";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -47,7 +47,7 @@ const ConfirmVoteModal = ({
       <ModalOverlay>
         <ModalContent marginX={2}>
           <ModalHeader display="flex" alignItems="center" gap={2}>
-            <CheckCircleIcon width={28} />
+            <FingerPrintIcon width={28} />
             <Text>Confirm Vote</Text>
           </ModalHeader>
           <ModalCloseButton />

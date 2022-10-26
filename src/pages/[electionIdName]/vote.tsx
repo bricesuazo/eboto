@@ -20,6 +20,7 @@ import { useState } from "react";
 import ConfirmVoteModal from "../../components/ConfirmVoteModal";
 import Head from "next/head";
 import Card from "../../components/Card";
+import { FingerPrintIcon } from "@heroicons/react/24/outline";
 
 interface VotePageProps {
   election: electionType;
@@ -51,11 +52,14 @@ const VotePage = ({
         candidates={candidates}
         selectedCandidates={selectedCandidates}
       />
-      <Box padding={4}>
-        <Box>
-          <Text fontSize="3xl" textAlign="center">
-            {election.name}
-          </Text>
+      <Stack spacing={4} alignItems="center">
+        <Box width="full">
+          <Box marginBottom={8}>
+            <Text fontSize="3xl" textAlign="center" fontWeight="bold">
+              {election.name}
+            </Text>
+            <Text textAlign="center">Voting Page</Text>
+          </Box>
 
           <Stack spacing={4}>
             {positions.map((position) => (
@@ -70,13 +74,21 @@ const VotePage = ({
           </Stack>
         </Box>
 
-        <Button
-          disabled={positions.length !== selectedCandidates.length}
-          onClick={onOpen}
-        >
-          Cast Vote
-        </Button>
-      </Box>
+        <Box width={["full", "fit-content"]} paddingX={[4, 0]}>
+          <Button
+            disabled={positions.length !== selectedCandidates.length}
+            onClick={onOpen}
+            width="full"
+            variant="solid"
+            colorScheme="blue"
+            leftIcon={<FingerPrintIcon width={22} />}
+            paddingY={8}
+            borderRadius="full"
+          >
+            Cast Vote
+          </Button>
+        </Box>
+      </Stack>
     </>
   );
 };
