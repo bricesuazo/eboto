@@ -127,37 +127,33 @@ const DashboardSidebar = () => {
           <Link
             href={"/" + router.query.electionIdName + "/dashboard" + item.href}
           >
-            <a>
-              <Button
-                variant={
+            <Button
+              variant={
+                item.title.toLocaleLowerCase() !== router.pathname.split("/")[3]
+                  ? "ghost"
+                  : "solid"
+              }
+              key={item.id}
+              leftIcon={
+                item.title.toLocaleLowerCase() === router.pathname.split("/")[3]
+                  ? item.icon[0].icon
+                  : item.icon[1].icon
+              }
+              justifyContent="flex-start"
+              height={12}
+              width="100%"
+            >
+              <Text
+                fontWeight={
                   item.title.toLocaleLowerCase() !==
                   router.pathname.split("/")[3]
-                    ? "ghost"
-                    : "solid"
+                    ? "normal"
+                    : "semibold"
                 }
-                key={item.id}
-                leftIcon={
-                  item.title.toLocaleLowerCase() ===
-                  router.pathname.split("/")[3]
-                    ? item.icon[0].icon
-                    : item.icon[1].icon
-                }
-                justifyContent="flex-start"
-                height={12}
-                width="100%"
               >
-                <Text
-                  fontWeight={
-                    item.title.toLocaleLowerCase() !==
-                    router.pathname.split("/")[3]
-                      ? "normal"
-                      : "semibold"
-                  }
-                >
-                  {item.title}
-                </Text>
-              </Button>
-            </a>
+                {item.title}
+              </Text>
+            </Button>
           </Link>
           {item.id === 1 && <Divider />}
           {item.id === 5 && <Divider />}

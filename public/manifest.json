@@ -1,9 +1,5 @@
 {
-    "short_name": "eBoto Mo",
-    "name": "eBoto Mo - Online Voting System",
-    "start_url": ".",
-    "display": "standalone",
-},
+  "name": "eboto-mo",
   "icons": [
     {
       "src": "/android-icon-36x36.png",

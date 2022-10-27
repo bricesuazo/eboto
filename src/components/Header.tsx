@@ -129,14 +129,10 @@ const Header = () => {
               return (
                 <>
                   <Link href="/signin">
-                    <a>
-                      <Button>Signin</Button>
-                    </a>
+                    <Button>Signin</Button>
                   </Link>
                   <Link href="/signup">
-                    <a>
-                      <Button>Signup</Button>
-                    </a>
+                    <Button>Signup</Button>
                   </Link>
                 </>
               );
@@ -160,11 +156,9 @@ const Header = () => {
 
                       <MenuParent>
                         <Link href="/dashboard">
-                          <a>
-                            <MenuItem icon={<ChartBarIcon width={18} />}>
-                              Dashboard
-                            </MenuItem>
-                          </a>
+                          <MenuItem icon={<ChartBarIcon width={18} />}>
+                            Dashboard
+                          </MenuItem>
                         </Link>
                         <MenuDivider />
                       </MenuParent>
@@ -182,16 +176,14 @@ const Header = () => {
                             election?.electionIdName
                         ) && (
                           <Link href={`/${election?.electionIdName}`}>
-                            <a>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                isLoading={loading}
-                                rightIcon={<ArrowRightIcon width={14} />}
-                              >
-                                Go to {election?.name}
-                              </Button>
-                            </a>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              isLoading={loading}
+                              rightIcon={<ArrowRightIcon width={14} />}
+                            >
+                              Go to {election?.name}
+                            </Button>
                           </Link>
                         )}
                       </Show>
