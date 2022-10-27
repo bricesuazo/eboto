@@ -79,7 +79,7 @@ const RealtimePage = ({
                 >
                   <Table key={position.id} variant="simple" size="sm">
                     <Thead>
-                      <Tr></Tr>
+                      <Tr>
                         <Th textAlign="center">{position.title}</Th>
                       </Tr>
                     </Thead>
