@@ -71,6 +71,7 @@ const RealtimePage = ({
             >
               {positions.map((position) => (
                 <Box
+                  key={position.id}
                   border="1px"
                   borderColor="gray.700"
                   padding={2}
@@ -78,7 +79,7 @@ const RealtimePage = ({
                 >
                   <Table key={position.id} variant="simple" size="sm">
                     <Thead>
-                      <Tr>
+                      <Tr></Tr>
                         <Th textAlign="center">{position.title}</Th>
                       </Tr>
                     </Thead>
