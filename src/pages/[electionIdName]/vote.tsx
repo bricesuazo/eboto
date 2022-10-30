@@ -10,6 +10,7 @@ import { firestore } from "../../firebase/firebase";
 import {
   Box,
   Button,
+  Center,
   Stack,
   Text,
   useDisclosure,
@@ -21,6 +22,7 @@ import ConfirmVoteModal from "../../components/ConfirmVoteModal";
 import Head from "next/head";
 import Card from "../../components/Card";
 import { FingerPrintIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 interface VotePageProps {
   election: electionType;
@@ -37,6 +39,28 @@ const VotePage = ({
   const pageTitle = `${election.name} - Vote | eBoto Mo`;
   const [selectedCandidates, setSelectedCandidates] = useState<string[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  if (!election.ongoing) {
+    return (
+      <>
+        <Head>
+          <title>{pageTitle}</title>
+        </Head>
+        <Center height="80vh">
+          <Stack alignItems="center">
+            <Text fontSize="2xl" fontWeight="bold" textAlign="center">
+              Voting is not yet open.
+            </Text>
+            <Link href={`/${election.electionIdName}`}>
+              <a>
+                <Button width="fit-content">Go to {election.name}</Button>
+              </a>
+            </Link>
+          </Stack>
+        </Center>
+      </>
+    );
+  }
 
   return (
     <>

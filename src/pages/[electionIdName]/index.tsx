@@ -47,9 +47,19 @@ const ElectionPage = ({
           </Text>
         )}
         <Text>{election.about}</Text>
-        <Link href={`/${election.electionIdName}/vote`}>
-          <Button>Vote</Button>
-        </Link>
+        {!election.ongoing ? (
+          <Button disabled={!election.ongoing}>
+            Voting is not yet available
+          </Button>
+        ) : (
+          <Link href={`/${election.electionIdName}/vote`}>
+            <a>
+              <Button disabled={!election.ongoing}>
+                {election.ongoing ? "Vote" : "Voting is not yet available"}
+              </Button>
+            </a>
+          </Link>
+        )}
 
         <Box>
           {positions.map((position) => {
@@ -65,16 +75,18 @@ const ElectionPage = ({
                           href={`/${election.electionIdName}/${candidate.uid}`}
                           key={candidate.id}
                         >
-                          <Text>{`${candidate.lastName}, ${
-                            candidate.firstName
-                          }${
-                            candidate.middleName &&
-                            ` ${candidate.middleName.charAt(0)}.`
-                          } (${
-                            partylists.find((partylist) => {
-                              return partylist.uid === candidate.partylist;
-                            })?.abbreviation
-                          })`}</Text>
+                          <a>
+                            <Text>{`${candidate.lastName}, ${
+                              candidate.firstName
+                            }${
+                              candidate.middleName &&
+                              ` ${candidate.middleName.charAt(0)}.`
+                            } (${
+                              partylists.find((partylist) => {
+                                return partylist.uid === candidate.partylist;
+                              })?.abbreviation
+                            })`}</Text>
+                          </a>
                         </Link>
                       );
                     })}

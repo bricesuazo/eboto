@@ -59,10 +59,17 @@ const Header = () => {
   const Hello = ({ email }: { email: string }) => {
     return (
       <Box textAlign="end">
-        <Text fontSize={["xs", "sm"]} color="whiteAlpha.800">
+        <Text
+          fontSize={["xs", "sm"]}
+          color={colorMode === "dark" ? "whiteAlpha.800" : "black"}
+          fontWeight="semibold"
+        >
           Hello, @{email.split("@")[0]}!
         </Text>
-        <Text fontSize={["2xs", "xs"]} color="whiteAlpha.500">
+        <Text
+          fontSize={["2xs", "xs"]}
+          color={colorMode === "dark" ? "whiteAlpha.500" : "black"}
+        >
           {email}
         </Text>
       </Box>
@@ -94,13 +101,18 @@ const Header = () => {
             />
             <MenuList>
               {children}
-              <MenuItem icon={<MoonIcon width={18} />} closeOnSelect={false}>
+              <MenuDivider />
+              <MenuItem
+                icon={<MoonIcon width={18} />}
+                closeOnSelect={false}
+                onClick={toggleColorMode}
+              >
                 <HStack justifyContent="space-between">
                   <Text>Dark Mode</Text>
 
                   <Switch
                     isChecked={colorMode === "dark"}
-                    onChange={(e) => console.log(e)}
+                    onChange={(e) => toggleColorMode()}
                   />
                 </HStack>
               </MenuItem>
@@ -119,7 +131,11 @@ const Header = () => {
 
   return (
     <Center padding={4} justifyContent="space-between">
-      <Link href="/">Logo</Link>
+      <Link href="/">
+        <a>
+          <Text>Logo</Text>
+        </a>
+      </Link>
       <HStack>
         {(() => {
           switch (sessionStatus) {
@@ -129,10 +145,14 @@ const Header = () => {
               return (
                 <>
                   <Link href="/signin">
-                    <Button>Signin</Button>
+                    <a>
+                      <Button>Signin</Button>
+                    </a>
                   </Link>
                   <Link href="/signup">
-                    <Button>Signup</Button>
+                    <a>
+                      <Button>Signup</Button>
+                    </a>
                   </Link>
                 </>
               );
@@ -156,11 +176,12 @@ const Header = () => {
 
                       <MenuParent>
                         <Link href="/dashboard">
-                          <MenuItem icon={<ChartBarIcon width={18} />}>
-                            Dashboard
-                          </MenuItem>
+                          <a>
+                            <MenuItem icon={<ChartBarIcon width={18} />}>
+                              Dashboard
+                            </MenuItem>
+                          </a>
                         </Link>
-                        <MenuDivider />
                       </MenuParent>
                     </>
                   );
@@ -176,14 +197,16 @@ const Header = () => {
                             election?.electionIdName
                         ) && (
                           <Link href={`/${election?.electionIdName}`}>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              isLoading={loading}
-                              rightIcon={<ArrowRightIcon width={14} />}
-                            >
-                              Go to {election?.name}
-                            </Button>
+                            <a>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                isLoading={loading}
+                                rightIcon={<ArrowRightIcon width={14} />}
+                              >
+                                Go to {election?.name}
+                              </Button>
+                            </a>
                           </Link>
                         )}
                       </Show>
@@ -204,7 +227,6 @@ const Header = () => {
                             )}
                           </HStack>
                         </MenuItem>
-                        <MenuDivider />
                       </MenuParent>
                     </>
                   );
