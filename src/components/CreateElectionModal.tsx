@@ -54,6 +54,7 @@ const CreateElectionModal = ({
     updatedAt: Timestamp.now(),
     electionStartDate: null,
     electionEndDate: null,
+    publicity: "private",
   });
   const initialPartylist: partylistType = {
     uid: "",

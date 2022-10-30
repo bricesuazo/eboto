@@ -26,6 +26,7 @@ const ElectionPage = ({
   candidates,
 }: ElectionPageProps) => {
   const pageTitle = `${election.name} - Election | eBoto Mo`;
+
   return (
     <>
       <Head>

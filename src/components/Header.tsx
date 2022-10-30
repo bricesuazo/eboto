@@ -102,18 +102,11 @@ const Header = () => {
             <MenuList>
               {children}
               <MenuDivider />
-              <MenuItem
-                icon={<MoonIcon width={18} />}
-                closeOnSelect={false}
-                onClick={toggleColorMode}
-              >
+              <MenuItem icon={<MoonIcon width={18} />} closeOnSelect={false}>
                 <HStack justifyContent="space-between">
                   <Text>Dark Mode</Text>
 
-                  <Switch
-                    isChecked={colorMode === "dark"}
-                    onChange={(e) => toggleColorMode()}
-                  />
+                  <Switch isChecked={colorMode === "dark"} />
                 </HStack>
               </MenuItem>
               <MenuItem

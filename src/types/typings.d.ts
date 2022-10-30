@@ -11,6 +11,7 @@ export interface electionType {
   updatedAt: Timestamp;
   electionStartDate: Timestamp?;
   electionEndDate: Timestamp?;
+  publicity: "private" | "voters" | "public";
 }
 export interface partylistType {
   uid: string;

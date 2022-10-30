@@ -21,6 +21,8 @@ import {
   Alert,
   AlertIcon,
   AlertTitle,
+  Box,
+  Flex,
 } from "@chakra-ui/react";
 import {
   collection,
@@ -49,6 +51,8 @@ import { useSession } from "next-auth/react";
 import reloadSession from "../../../utils/reloadSession";
 import isElectionIdNameExists from "../../../utils/isElectionIdNameExists";
 import admin from "../../../firebase/firebase-admin";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 interface SettingsPageProps {
   election: electionType;
@@ -67,12 +71,19 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
     name: initialElection?.name,
     electionIdName: initialElection?.electionIdName,
     ongoing: initialElection?.ongoing,
+    electionStartDate: initialElection?.electionStartDate,
+    electionEndDate: initialElection?.electionEndDate,
+    publicity: initialElection?.publicity,
   };
 
   const [settings, setSettings] = useState(initialState);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const [dateRange, setDateRange] = useState([null, null]);
+  const [startDate, endDate] = dateRange;
+  console.log(dateRange);
 
   return (
     <>
@@ -178,6 +189,20 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
                   onChange={(e) => {
                     setSettings({ ...settings, ongoing: e.target.checked });
                   }}
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Election Date</FormLabel>
+                <DatePicker
+                  selectsRange
+                  startDate={startDate}
+                  endDate={endDate}
+                  onChange={(update) => {
+                    setDateRange(update);
+                  }}
+                  showTimeSelect
+                  dateFormat="MMMM d, yyyy h:mm aa"
+                  withPortal
                 />
               </FormControl>
 
