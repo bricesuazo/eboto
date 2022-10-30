@@ -7,6 +7,7 @@ import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { FirebaseAppProvider, FirestoreProvider } from "reactfire";
 import { app, firestore } from "../firebase/firebase";
+import { Analytics } from "@vercel/analytics/react";
 
 export default function MyApp({
   Component,
@@ -28,6 +29,7 @@ export default function MyApp({
           <ChakraProvider theme={theme}>
             <Header />
             <Component {...pageProps} />
+            <Analytics />
           </ChakraProvider>
           {/* </FirestoreProvider> */}
         </FirebaseAppProvider>

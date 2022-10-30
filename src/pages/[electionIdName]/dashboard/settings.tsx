@@ -42,7 +42,7 @@ import type {
   NextPage,
 } from "next";
 import Head from "next/head";
-import { useState } from "react";
+import { forwardRef, useState } from "react";
 import { electionType } from "../../../types/typings";
 import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
@@ -53,6 +53,7 @@ import isElectionIdNameExists from "../../../utils/isElectionIdNameExists";
 import admin from "../../../firebase/firebase-admin";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { setHours, setMinutes, addDays, subDays } from "date-fns";
 
 interface SettingsPageProps {
   election: electionType;
@@ -81,9 +82,10 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
   const [error, setError] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  const [dateRange, setDateRange] = useState([null, null]);
-  const [startDate, endDate] = dateRange;
-  console.log(dateRange);
+  // const [dateRange, setDateRange] = useState([null, null]);
+  // const [startDate, endDate] = dateRange;
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
   return (
     <>
@@ -193,7 +195,7 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
               </FormControl>
               <FormControl>
                 <FormLabel>Election Date</FormLabel>
-                <DatePicker
+                {/* <DatePicker
                   selectsRange
                   startDate={startDate}
                   endDate={endDate}
@@ -201,8 +203,35 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
                     setDateRange(update);
                   }}
                   showTimeSelect
-                  dateFormat="MMMM d, yyyy h:mm aa"
+                  dateFormat="MMMM d, yyyy"
                   withPortal
+                  isClearable={true}
+                /> */}
+                <DatePicker
+                  selected={startDate}
+                  onChange={(date) => {
+                    date ? setStartDate(date) : setStartDate(null);
+                    setEndDate(null);
+                  }}
+                  showTimeSelect
+                  dateFormat="MMMM d, yyyy h:mm aa"
+                  disabledKeyboardNavigation
+                  withPortal
+                  isClearable
+                  placeholderText="Select election start date"
+                />
+                <DatePicker
+                  selected={endDate}
+                  onChange={(date) => setEndDate(date)}
+                  minDate={startDate}
+                  showTimeSelect
+                  dateFormat="MMMM d, yyyy h:mm aa"
+                  disabledKeyboardNavigation
+                  withPortal
+                  isClearable
+                  disabled={!startDate}
+                  placeholderText="Select election end date"
+                  highlightDates={startDate ? [startDate] : []}
                 />
               </FormControl>
 
