@@ -9,8 +9,8 @@ export interface electionType {
   ongoing: boolean;
   createdAt: Timestamp;
   updatedAt: Timestamp;
-  electionStartDate: Timestamp?;
-  electionEndDate: Timestamp?;
+  electionStartDate: Timestamp;
+  electionEndDate: Timestamp;
   publicity: "private" | "voters" | "public";
 }
 export interface partylistType {

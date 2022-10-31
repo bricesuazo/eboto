@@ -23,6 +23,7 @@ import {
   AlertTitle,
   Box,
   Flex,
+  Select,
 } from "@chakra-ui/react";
 import {
   collection,
@@ -35,6 +36,7 @@ import {
   arrayRemove,
   writeBatch,
   runTransaction,
+  Timestamp,
 } from "firebase/firestore";
 import type {
   GetServerSideProps,
@@ -69,12 +71,12 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
   const { data: session, status } = useSession();
 
   const initialState = {
-    name: initialElection?.name,
-    electionIdName: initialElection?.electionIdName,
-    ongoing: initialElection?.ongoing,
-    electionStartDate: initialElection?.electionStartDate,
-    electionEndDate: initialElection?.electionEndDate,
-    publicity: initialElection?.publicity,
+    name: initialElection.name,
+    electionIdName: initialElection.electionIdName,
+    ongoing: initialElection.ongoing,
+    electionStartDate: initialElection.electionStartDate,
+    electionEndDate: initialElection.electionEndDate,
+    publicity: initialElection.publicity,
   };
 
   const [settings, setSettings] = useState(initialState);
@@ -82,10 +84,12 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
   const [error, setError] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  // const [dateRange, setDateRange] = useState([null, null]);
-  // const [startDate, endDate] = dateRange;
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [startDate, setStartDate] = useState<Date | null>(
+    new Date(settings.electionStartDate?.seconds * 1000) || null
+  );
+  const [endDate, setEndDate] = useState<Date | null>(
+    new Date(settings.electionEndDate?.seconds * 1000) || null
+  );
 
   return (
     <>
@@ -103,12 +107,26 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
               setLoading(true);
 
               if (
-                (settings.name.trim() === initialElection.name.trim() &&
+                !settings.name.trim() ||
+                !settings.electionIdName.trim() ||
+                !settings.electionStartDate ||
+                !settings.electionEndDate ||
+                !settings.publicity ||
+                !startDate ||
+                !endDate ||
+                (startDate.toDateString() ===
+                  new Date(
+                    initialElection.electionEndDate.seconds * 1000
+                  ).toDateString() &&
+                  endDate.toDateString() ===
+                    new Date(
+                      initialElection.electionEndDate.seconds * 1000
+                    ).toDateString() &&
+                  settings.name.trim() === initialElection.name.trim() &&
                   settings.electionIdName.trim() ===
                     initialElection.electionIdName.trim() &&
-                  settings.ongoing === initialElection.ongoing) ||
-                !settings.name.trim() ||
-                !settings.electionIdName.trim()
+                  settings.ongoing === initialElection.ongoing &&
+                  settings.publicity === initialElection.publicity)
               ) {
                 return;
               }
@@ -127,7 +145,12 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
 
               await updateDoc(
                 doc(firestore, "elections", initialElection.uid),
-                settings
+                {
+                  ...settings,
+                  electionStartDate: Timestamp.fromDate(startDate),
+                  electionEndDate: Timestamp.fromDate(endDate),
+                  updatedAt: Timestamp.now(),
+                }
               ).then(() => {
                 setInitialElection({ ...initialElection, ...settings });
               });
@@ -135,7 +158,7 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
             }}
           >
             <Stack alignItems="flex-start" spacing={6}>
-              <FormControl>
+              <FormControl isRequired>
                 <FormLabel>Election Name</FormLabel>
                 <Input
                   placeholder={initialElection.name}
@@ -148,7 +171,7 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
                   value={settings.name}
                 />
               </FormControl>
-              <FormControl>
+              <FormControl isRequired>
                 <FormLabel>Election ID Name</FormLabel>
                 <InputGroup borderColor={error ? "red.400" : ""}>
                   <InputLeftAddon pointerEvents="none" userSelect="none">
@@ -193,20 +216,8 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
                   }}
                 />
               </FormControl>
-              <FormControl>
+              <FormControl isRequired>
                 <FormLabel>Election Date</FormLabel>
-                {/* <DatePicker
-                  selectsRange
-                  startDate={startDate}
-                  endDate={endDate}
-                  onChange={(update) => {
-                    setDateRange(update);
-                  }}
-                  showTimeSelect
-                  dateFormat="MMMM d, yyyy"
-                  withPortal
-                  isClearable={true}
-                /> */}
                 <DatePicker
                   selected={startDate}
                   onChange={(date) => {
@@ -233,6 +244,26 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
                   placeholderText="Select election end date"
                   highlightDates={startDate ? [startDate] : []}
                 />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Election Publicity</FormLabel>
+                <Select
+                  placeholder="Publicity"
+                  value={settings.publicity}
+                  onChange={(e) => {
+                    setSettings({
+                      ...settings,
+                      publicity: e.target.value as
+                        | "private"
+                        | "voters"
+                        | "public",
+                    });
+                  }}
+                >
+                  <option value="private">Private</option>
+                  <option value="voters">Voters</option>
+                  <option value="public">Public</option>
+                </Select>
               </FormControl>
 
               <Modal isOpen={isOpenDelete} onClose={onCloseDelete}>
@@ -265,7 +296,6 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
                         setDeleteLoading(true);
 
                         const batch = writeBatch(firestore);
-                        // batch.delete(doc(firestore, "elections", election.uid));
                         session &&
                           batch.update(
                             doc(firestore, "admins", session.user.uid),
@@ -274,18 +304,6 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
                             }
                           );
                         await batch.commit();
-
-                        // session &&
-                        //   (await updateDoc(
-                        //     doc(firestore, "admins", session.user.uid),
-                        //     {
-                        //       elections: arrayRemove(election.uid),
-                        //     }
-                        //   ).then(async () => {
-                        //     await deleteDoc(
-                        //       doc(firestore, "elections", election.uid)
-                        //     );
-                        //   }));
 
                         reloadSession();
                         onCloseDelete();
@@ -313,12 +331,24 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
                 isLoading={loading}
                 alignSelf="flex-end"
                 disabled={
+                  !settings.name.trim() ||
+                  !settings.electionIdName.trim() ||
+                  !settings.publicity ||
+                  !startDate ||
+                  !endDate ||
                   (settings.name.trim() === initialElection.name.trim() &&
                     settings.electionIdName.trim() ===
                       initialElection.electionIdName.trim() &&
-                    settings.ongoing === initialElection.ongoing) ||
-                  !settings.name.trim() ||
-                  !settings.electionIdName.trim()
+                    settings.ongoing === initialElection.ongoing &&
+                    settings.publicity === initialElection.publicity &&
+                    startDate.toDateString() ===
+                      new Date(
+                        initialElection.electionStartDate.seconds * 1000
+                      ).toDateString() &&
+                    endDate.toDateString() ===
+                      new Date(
+                        initialElection.electionEndDate.seconds * 1000
+                      ).toDateString())
                 }
               >
                 Save

@@ -99,7 +99,7 @@ const AddCandidateModal = ({
   useEffect(() => {
     clearForm();
     setLoading(false);
-  }, [isOpen]);
+  }, [isOpen, clearForm]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} trapFocus={false}>
