@@ -44,7 +44,7 @@ import type {
   NextPage,
 } from "next";
 import Head from "next/head";
-import { forwardRef, useState } from "react";
+import { useState } from "react";
 import { electionType } from "../../../types/typings";
 import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
@@ -52,10 +52,8 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
 import reloadSession from "../../../utils/reloadSession";
 import isElectionIdNameExists from "../../../utils/isElectionIdNameExists";
-import admin from "../../../firebase/firebase-admin";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { setHours, setMinutes, addDays, subDays } from "date-fns";
 
 interface SettingsPageProps {
   election: electionType;
@@ -73,7 +71,6 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
   const initialState = {
     name: initialElection.name,
     electionIdName: initialElection.electionIdName,
-    ongoing: initialElection.ongoing,
     electionStartDate: initialElection.electionStartDate,
     electionEndDate: initialElection.electionEndDate,
     publicity: initialElection.publicity,
@@ -114,18 +111,17 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
                 !settings.publicity ||
                 !startDate ||
                 !endDate ||
-                (startDate.toDateString() ===
+                (startDate.toString() ===
                   new Date(
                     initialElection.electionEndDate.seconds * 1000
-                  ).toDateString() &&
-                  endDate.toDateString() ===
+                  ).toString() &&
+                  endDate.toString() ===
                     new Date(
                       initialElection.electionEndDate.seconds * 1000
-                    ).toDateString() &&
+                    ).toString() &&
                   settings.name.trim() === initialElection.name.trim() &&
                   settings.electionIdName.trim() ===
                     initialElection.electionIdName.trim() &&
-                  settings.ongoing === initialElection.ongoing &&
                   settings.publicity === initialElection.publicity)
               ) {
                 return;
@@ -199,23 +195,6 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
                   <AlertTitle>{error}</AlertTitle>
                 </Alert>
               )}
-              <FormControl
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <FormLabel htmlFor="toggle-election-ongoing" mb="0">
-                  Election Ongoing
-                </FormLabel>
-                <Switch
-                  id="toggle-election-ongoing"
-                  size="lg"
-                  isChecked={settings.ongoing}
-                  onChange={(e) => {
-                    setSettings({ ...settings, ongoing: e.target.checked });
-                  }}
-                />
-              </FormControl>
               <FormControl isRequired>
                 <FormLabel>Election Date</FormLabel>
                 <DatePicker
@@ -315,44 +294,44 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
                   </ModalFooter>
                 </ModalContent>
               </Modal>
-              <Button
-                leftIcon={<TrashIcon width={16} />}
-                variant="outline"
-                color="red.400"
-                borderColor="red.400"
-                onClick={() => onOpenDelete()}
-                isLoading={status === "loading" && deleteLoading}
-              >
-                Delete Election
-              </Button>
+              <Flex justifyContent="space-between" width="full">
+                <Button
+                  leftIcon={<TrashIcon width={16} />}
+                  variant="outline"
+                  color="red.400"
+                  borderColor="red.400"
+                  onClick={() => onOpenDelete()}
+                  isLoading={status === "loading" && deleteLoading}
+                >
+                  Delete Election
+                </Button>
 
-              <Button
-                type="submit"
-                isLoading={loading}
-                alignSelf="flex-end"
-                disabled={
-                  !settings.name.trim() ||
-                  !settings.electionIdName.trim() ||
-                  !settings.publicity ||
-                  !startDate ||
-                  !endDate ||
-                  (settings.name.trim() === initialElection.name.trim() &&
-                    settings.electionIdName.trim() ===
-                      initialElection.electionIdName.trim() &&
-                    settings.ongoing === initialElection.ongoing &&
-                    settings.publicity === initialElection.publicity &&
-                    startDate.toDateString() ===
-                      new Date(
-                        initialElection.electionStartDate.seconds * 1000
-                      ).toDateString() &&
-                    endDate.toDateString() ===
-                      new Date(
-                        initialElection.electionEndDate.seconds * 1000
-                      ).toDateString())
-                }
-              >
-                Save
-              </Button>
+                <Button
+                  type="submit"
+                  isLoading={loading}
+                  disabled={
+                    !settings.name.trim() ||
+                    !settings.electionIdName.trim() ||
+                    !settings.publicity ||
+                    !startDate ||
+                    !endDate ||
+                    (settings.name.trim() === initialElection.name.trim() &&
+                      settings.electionIdName.trim() ===
+                        initialElection.electionIdName.trim() &&
+                      settings.publicity === initialElection.publicity &&
+                      startDate.toString() ===
+                        new Date(
+                          initialElection.electionStartDate.seconds * 1000
+                        ).toString() &&
+                      endDate.toString() ===
+                        new Date(
+                          initialElection.electionEndDate.seconds * 1000
+                        ).toString())
+                  }
+                >
+                  Save
+                </Button>
+              </Flex>
             </Stack>
           </form>
         )}
