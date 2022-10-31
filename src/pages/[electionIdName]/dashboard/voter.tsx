@@ -36,8 +36,16 @@ import { getDocs, query, where, collection } from "firebase/firestore";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import DeleteVoterModal from "../../../components/DeleteVoterModal";
 import { useFirestoreCollectionData } from "reactfire";
+import { getSession } from "next-auth/react";
+import { Session } from "next-auth";
 
-const VoterPage = ({ election }: { election: electionType }) => {
+const VoterPage = ({
+  election,
+  session,
+}: {
+  election: electionType;
+  session: Session;
+}) => {
   const {
     isOpen: isOpenEditVoter,
     onOpen: onOpenEditVoter,
@@ -78,7 +86,7 @@ const VoterPage = ({ election }: { election: electionType }) => {
           selectedVoter={selectedVoter}
         />
       )}
-      <DashboardLayout title="Voters">
+      <DashboardLayout title="Voters" session={session}>
         <InputGroup maxWidth={240} marginLeft="auto">
           <InputLeftElement pointerEvents="none">
             <MagnifyingGlassIcon color="gray.300" width={24} />
@@ -187,6 +195,7 @@ export const getServerSideProps: GetServerSideProps = async (
     );
     return {
       props: {
+        session: await getSession(context),
         election: JSON.parse(JSON.stringify(electionSnapshot.docs[0].data())),
       },
     };

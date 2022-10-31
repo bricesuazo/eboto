@@ -30,6 +30,7 @@ import {
   arrayUnion,
   collection,
   doc,
+  Timestamp,
   updateDoc,
 } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
@@ -116,6 +117,9 @@ const AddVoterModal = ({
                 uid: docRef.id,
               }
             );
+          });
+          await updateDoc(doc(firestore, "elections", election.uid), {
+            updatedAt: Timestamp.now(),
           });
           onClose();
           setLoading(false);

@@ -25,7 +25,7 @@ import {
 } from "../types/typings";
 import { v4 as uuidv4 } from "uuid";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, Timestamp, updateDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
 import capitalizeFirstLetter from "../utils/capitalizeFirstLetter";
 
@@ -101,8 +101,12 @@ const EditCandidateModal = ({
               photoUrl: candidateData.photoUrl,
               position: candidateData.position,
               partylist: candidateData.partylist,
+              updatedAt: Timestamp.now(),
             }
           );
+          await updateDoc(doc(firestore, "elections", election.uid), {
+            updatedAt: Timestamp.now(),
+          });
           clearForm();
           onClose();
           setLoading(false);

@@ -9,7 +9,13 @@ import {
   ModalOverlay,
   Text,
 } from "@chakra-ui/react";
-import { collection, deleteDoc, doc } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  Timestamp,
+  updateDoc,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { firestore } from "../firebase/firebase";
 import { voterType } from "../types/typings";
@@ -55,6 +61,9 @@ const DeleteVoterModal = ({
                   voter.uid
                 )
               );
+              await updateDoc(doc(firestore, "elections", voter.election), {
+                updatedAt: Timestamp.now(),
+              });
               onClose();
               setLoading(false);
             }}

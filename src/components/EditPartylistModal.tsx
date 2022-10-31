@@ -18,7 +18,7 @@ import {
 import { useEffect, useState } from "react";
 import { electionType, partylistType } from "../types/typings";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, Timestamp, updateDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
 
 const EditPartylistModal = ({
@@ -74,8 +74,11 @@ const EditPartylistModal = ({
               "partylists",
               partylist.uid
             ),
-            partylistData
+            { ...partylistData, updatedAt: Timestamp.now() }
           );
+          await updateDoc(doc(firestore, "elections", election.uid), {
+            updatedAt: Timestamp.now(),
+          });
           onClose();
           setLoading(false);
         }}

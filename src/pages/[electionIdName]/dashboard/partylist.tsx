@@ -33,6 +33,8 @@ import type {
   GetServerSidePropsContext,
   NextPage,
 } from "next";
+import { Session } from "next-auth";
+import { getSession } from "next-auth/react";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { useFirestoreCollectionData, useFirestoreDocData } from "reactfire";
@@ -41,7 +43,13 @@ import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import { electionType, partylistType } from "../../../types/typings";
 
-const PartylistPage = ({ election }: { election: electionType }) => {
+const PartylistPage = ({
+  election,
+  session,
+}: {
+  election: electionType;
+  session: Session;
+}) => {
   const { data } = useFirestoreCollectionData(
     query(
       collection(firestore, "elections", election.uid, "partylists"),
@@ -73,7 +81,7 @@ const PartylistPage = ({ election }: { election: electionType }) => {
           partylist={selectedPartylist}
         />
       )}
-      <DashboardLayout title="Partylists">
+      <DashboardLayout title="Partylists" session={session}>
         {!partylists ? (
           <Center>
             <Spinner />
@@ -243,6 +251,7 @@ export const getServerSideProps: GetServerSideProps = async (
     );
     return {
       props: {
+        session: await getSession(context),
         election: JSON.parse(JSON.stringify(electionSnapshot.docs[0].data())),
       },
     };

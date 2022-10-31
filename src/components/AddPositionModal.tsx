@@ -81,6 +81,9 @@ const AddPositionModal = ({
               }
             );
           });
+          await updateDoc(doc(firestore, "elections", election.uid), {
+            updatedAt: Timestamp.now(),
+          });
           onClose();
           setLoading(false);
         }}

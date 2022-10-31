@@ -18,7 +18,7 @@ import {
 import { useEffect, useState } from "react";
 import { electionType, positionType } from "../types/typings";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, Timestamp, updateDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
 
 const EditPositionModal = ({
@@ -65,8 +65,11 @@ const EditPositionModal = ({
               "positions",
               position.uid
             ),
-            positionData
+            { ...positionData, updatedAt: Timestamp.now() }
           );
+          await updateDoc(doc(firestore, "elections", election.uid), {
+            updatedAt: Timestamp.now(),
+          });
           onClose();
           setLoading(false);
         }}

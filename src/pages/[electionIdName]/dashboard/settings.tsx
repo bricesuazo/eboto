@@ -8,7 +8,6 @@ import {
   InputLeftAddon,
   Spinner,
   Stack,
-  Switch,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -21,7 +20,6 @@ import {
   Alert,
   AlertIcon,
   AlertTitle,
-  Box,
   Flex,
   Select,
 } from "@chakra-ui/react";
@@ -32,10 +30,8 @@ import {
   updateDoc,
   doc,
   getDocs,
-  deleteDoc,
   arrayRemove,
   writeBatch,
-  runTransaction,
   Timestamp,
 } from "firebase/firestore";
 import type {
@@ -49,16 +45,18 @@ import { electionType } from "../../../types/typings";
 import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { useSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import reloadSession from "../../../utils/reloadSession";
 import isElectionIdNameExists from "../../../utils/isElectionIdNameExists";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { Session } from "next-auth";
 
 interface SettingsPageProps {
   election: electionType;
+  session: Session;
 }
-const SettingsPage = ({ election }: SettingsPageProps) => {
+const SettingsPage = ({ election, session }: SettingsPageProps) => {
   const {
     isOpen: isOpenDelete,
     onOpen: onOpenDelete,
@@ -66,7 +64,6 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
   } = useDisclosure();
   const [initialElection, setInitialElection] =
     useState<electionType>(election);
-  const { data: session, status } = useSession();
 
   const initialState = {
     name: initialElection.name,
@@ -93,7 +90,7 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
       <Head>
         <title>Settings | eBoto Mo</title>
       </Head>
-      <DashboardLayout title="Settings">
+      <DashboardLayout title="Settings" session={session}>
         {!election && status === "loading" ? (
           <Spinner />
         ) : (
@@ -113,7 +110,7 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
                 !endDate ||
                 (startDate.toString() ===
                   new Date(
-                    initialElection.electionEndDate.seconds * 1000
+                    initialElection.electionStartDate.seconds * 1000
                   ).toString() &&
                   endDate.toString() ===
                     new Date(
@@ -202,6 +199,10 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
                   onChange={(date) => {
                     date ? setStartDate(date) : setStartDate(null);
                     setEndDate(null);
+                    // setSettings({
+                    //   ...settings,
+                    //   electionStartDate: Timestamp.fromDate(date),
+                    // });
                   }}
                   showTimeSelect
                   dateFormat="MMMM d, yyyy h:mm aa"
@@ -227,7 +228,6 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
               <FormControl isRequired>
                 <FormLabel>Election Publicity</FormLabel>
                 <Select
-                  placeholder="Publicity"
                   value={settings.publicity}
                   onChange={(e) => {
                     setSettings({
@@ -301,7 +301,7 @@ const SettingsPage = ({ election }: SettingsPageProps) => {
                   color="red.400"
                   borderColor="red.400"
                   onClick={() => onOpenDelete()}
-                  isLoading={status === "loading" && deleteLoading}
+                  isLoading={deleteLoading}
                 >
                   Delete Election
                 </Button>
@@ -357,9 +357,9 @@ export const getServerSideProps: GetServerSideProps = async (
   } else {
     return {
       props: {
+        session: await getSession(context),
         election: JSON.parse(JSON.stringify(electionSnapshot.docs[0].data())),
       },
     };
   }
-  return { props: { electionIdName: context.query.electionIdName } };
 };

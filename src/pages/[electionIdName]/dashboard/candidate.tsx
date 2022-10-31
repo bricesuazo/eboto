@@ -34,6 +34,8 @@ import {
   orderBy,
 } from "firebase/firestore";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { Session } from "next-auth";
+import { getSession } from "next-auth/react";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { useFirestoreCollectionData } from "reactfire";
@@ -52,12 +54,14 @@ const CandidatePage = ({
   election,
   partylists,
   positions,
+  session,
 }: {
   election: electionType;
   partylists: partylistType[];
   positions: positionType[];
+  session: Session;
 }) => {
-  const { data, status } = useFirestoreCollectionData(
+  const { data } = useFirestoreCollectionData(
     collection(firestore, "elections", election.uid, "candidates")
   );
   const [candidates, setCandidates] = useState<candidateType[] | null>();
@@ -102,7 +106,7 @@ const CandidatePage = ({
           candidate={selectedCandidate}
         />
       )}
-      <DashboardLayout title="Candidates" overflow="auto">
+      <DashboardLayout title="Candidates" overflow="auto" session={session}>
         {!candidates ? (
           <Center>
             <Spinner />
@@ -323,6 +327,7 @@ export const getServerSideProps: GetServerSideProps = async (
         election: JSON.parse(JSON.stringify(electionSnapshot.docs[0].data())),
         partylists: JSON.parse(JSON.stringify(partylists)),
         positions: JSON.parse(JSON.stringify(positions)),
+        session: await getSession(context),
       },
     };
   } catch (err) {

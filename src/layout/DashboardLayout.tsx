@@ -5,6 +5,7 @@ import {
   Divider,
   Flex,
   HStack,
+  Icon,
   IconButton,
   Input,
   Select,
@@ -14,14 +15,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { PlusIcon } from "@heroicons/react/24/solid";
-import {
-  collection,
-  doc,
-  getDocs,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 import CreateElectionModal from "../components/CreateElectionModal";
 import DashboardSidebar from "../components/DashboardSidebar";
 import { firestore } from "../firebase/firebase";
@@ -29,23 +23,30 @@ import Router, { useRouter } from "next/router";
 import AddVoterModal from "../components/AddVoterModal";
 import { UserPlusIcon } from "@heroicons/react/24/solid";
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpOnSquareIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowPathIcon,
+  ArrowUpOnSquareIcon,
+} from "@heroicons/react/24/outline";
 import { electionType } from "../types/typings";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
 import AddPartylistModal from "../components/AddPartylistModal";
 import AddPositionModal from "../components/AddPositionModal";
-import AddCandidateModal from "../components/AddCandidateModal";
+import Moment from "react-moment";
+import { Session } from "next-auth";
+import { useFirestoreCollectionData } from "reactfire";
 
 const DashboardLayout = ({
   children,
   title,
   overflow,
+  session,
 }: {
   children: any;
   title: string;
   overflow?: string;
+  session: Session;
 }) => {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
   const {
     isOpen: isOpenCreateElection,
     onOpen: onOpenCreateElection,
@@ -61,11 +62,7 @@ const DashboardLayout = ({
     onOpen: onOpenAddPosition,
     onClose: onCloseAddPosition,
   } = useDisclosure();
-  const {
-    isOpen: isOpenAddCandidate,
-    onOpen: onOpenAddCandidate,
-    onClose: onCloseAddCandidate,
-  } = useDisclosure();
+
   const {
     isOpen: isOpenAddVoter,
     onOpen: onOpenAddVoter,
@@ -74,50 +71,17 @@ const DashboardLayout = ({
 
   const [elections, setElections] = useState<electionType[]>();
   const [currentElection, setCurrentElection] = useState<electionType>();
+  const [momentAgo, setMomentAgo] = useState<string>();
 
+  const { data } = useFirestoreCollectionData(
+    query(
+      collection(firestore, "elections"),
+      where("uid", "in", session.user.elections)
+    )
+  );
   useEffect(() => {
-    if (session && session.user && session.user.elections.length !== 0) {
-      onSnapshot(
-        query(
-          collection(firestore, "elections"),
-          where("uid", "in", session.user.elections)
-        ),
-        (querySnapshot) => {
-          const docData: electionType[] = [];
-          querySnapshot.forEach((doc) => {
-            docData.push(doc.data() as electionType);
-          });
-          setElections(docData);
-        }
-      );
-    }
-  }, [session]);
-
-  // useEffect(() => {
-  //   if (isOpenAddCandidate && currentElection) {
-  //     const getData = async () => {
-  //       // await getDocs(
-  //       //   collection(firestore, "elections", currentElection.uid, "partylists")
-  //       // ).then((querySnapshot) => {
-  //       //   const docData: partylistType[] = [];
-  //       //   querySnapshot.forEach((doc) => {
-  //       //     docData.push(doc.data() as partylistType);
-  //       //   });
-  //       //   setPartylists(docData);
-  //       // });
-  //       // await getDocs(
-  //       //   collection(firestore, "elections", currentElection.uid, "positions")
-  //       // ).then((querySnapshot) => {
-  //       //   const docData: positionType[] = [];
-  //       //   querySnapshot.forEach((doc) => {
-  //       //     docData.push(doc.data() as positionType);
-  //       //   });
-  //       //   setPositions(docData);
-  //       // });
-  //     };
-  //     getData();
-  //   }
-  // }, [isOpenAddCandidate]);
+    setElections(data as electionType[]);
+  }, [data]);
 
   useEffect(() => {
     setCurrentElection(
@@ -155,39 +119,56 @@ const DashboardLayout = ({
       />
 
       <Flex direction="column" gap={4} padding="4" height="85vh">
-        <Center columnGap={2} width="248px">
-          <Select
-            placeholder={
-              false
-                ? !elections?.length
-                  ? "Loading..."
-                  : "Create election"
-                : undefined
-            }
-            disabled={!elections?.length}
-            value={router.query.electionIdName}
-            onChange={(e) => {
-              Router.push(
-                "/" +
-                  e.target.value +
-                  router.pathname.split("/[electionIdName]")[1]
-              );
-            }}
-          >
-            {elections?.map((election) => (
-              <option value={election.electionIdName} key={election.id}>
-                {election.name}
-              </option>
-            ))}
-          </Select>
-          <Tooltip label="Create an election">
-            <IconButton
-              aria-label="Add election"
-              icon={<PlusIcon width="1.5rem" />}
-              onClick={onOpenCreateElection}
-            />
-          </Tooltip>
-        </Center>
+        <Stack direction="row" alignItems="center" spacing={4}>
+          <Center columnGap={2} width="248px">
+            <Select
+              placeholder={
+                false
+                  ? !elections?.length
+                    ? "Loading..."
+                    : "Create election"
+                  : undefined
+              }
+              disabled={!elections?.length}
+              value={router.query.electionIdName}
+              onChange={(e) => {
+                Router.push(
+                  "/" +
+                    e.target.value +
+                    router.pathname.split("/[electionIdName]")[1]
+                );
+              }}
+            >
+              {elections?.map((election) => (
+                <option value={election.electionIdName} key={election.id}>
+                  {election.name}
+                </option>
+              ))}
+            </Select>
+            <Tooltip label="Create an election">
+              <IconButton
+                aria-label="Add election"
+                icon={<PlusIcon width="1.5rem" />}
+                onClick={onOpenCreateElection}
+              />
+            </Tooltip>
+          </Center>
+          <Stack direction="row" color="whiteAlpha.500" cursor="pointer">
+            <Icon as={ArrowPathIcon} />
+            {!currentElection ? (
+              <Text fontSize="xs">Loading...</Text>
+            ) : (
+              <Text fontSize="xs">
+                Updated{" "}
+                <Moment
+                  interval={10000}
+                  fromNow
+                  date={currentElection?.updatedAt.toDate()}
+                />
+              </Text>
+            )}
+          </Stack>
+        </Stack>
 
         <Flex borderRadius="0.25rem" gap={4} height="100%">
           <Box
@@ -237,18 +218,6 @@ const DashboardLayout = ({
                         </Button>
                       </HStack>
                     );
-                  // case "Candidates":
-                  //   return (
-                  //     <HStack>
-                  //       <Button
-                  //         onClick={onOpenAddCandidate}
-                  //         leftIcon={<UserPlusIcon width={18} />}
-                  //         isLoading={!currentElection}
-                  //       >
-                  //         Add candidate
-                  //       </Button>
-                  //     </HStack>
-                  //   );
                   case "Voters":
                     return (
                       <HStack>

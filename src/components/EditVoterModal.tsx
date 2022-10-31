@@ -35,6 +35,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  Timestamp,
   updateDoc,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
@@ -89,6 +90,7 @@ const EditVoterModal = ({
               email: voter.email,
               password: voter.password,
               hasVoted: voter.hasVoted,
+              updatedAt: Timestamp.now(),
             }
           );
 
