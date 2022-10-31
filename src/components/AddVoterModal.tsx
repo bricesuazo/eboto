@@ -61,6 +61,8 @@ const AddVoterModal = ({
     election: "",
     id: uuidv4(),
     uid: "",
+    createdAt: Timestamp.now(),
+    updatedAt: Timestamp.now(),
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -75,6 +77,8 @@ const AddVoterModal = ({
       hasVoted: false,
       election: election.uid,
       uid: "",
+      createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
     });
   };
   useEffect(() => {

@@ -21,12 +21,14 @@ export interface partylistType {
   logo: string?;
   description: string?;
   createdAt: Timestamp;
+  updatedAt: Timestamp;
 }
 export interface positionType {
   uid: string;
   id: string;
   title: string;
   undecidedVotingCount: number;
+  updatedAt: Timestamp;
   createdAt: Timestamp;
 }
 export interface candidateType {
@@ -39,6 +41,7 @@ export interface candidateType {
   position: string;
   partylist: string;
   votingCount: number;
+  updatedAt: Timestamp;
   createdAt: Timestamp;
 }
 
@@ -51,6 +54,8 @@ export interface voterType {
   password: string;
   hasVoted: boolean;
   election: string;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
 }
 export interface adminType {
   updatedAt: Timestamp;

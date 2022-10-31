@@ -64,6 +64,7 @@ const CreateElectionModal = ({
     logo: "",
     description: "",
     createdAt: Timestamp.now(),
+    updatedAt: Timestamp.now(),
   };
 
   const [loading, setLoading] = useState(false);
@@ -107,7 +108,6 @@ const CreateElectionModal = ({
                 }));
               await updateDoc(doc(firestore, "elections", electionSnap.id), {
                 uid: electionSnap.id,
-                updatedAt: Timestamp.now(),
               });
               await addDoc(
                 collection(

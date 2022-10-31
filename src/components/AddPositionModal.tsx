@@ -44,6 +44,7 @@ const AddPositionModal = ({
       title: "",
       undecidedVotingCount: 0,
       createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
     });
   };
   const [position, setPosition] = useState<positionType>({
@@ -52,6 +53,7 @@ const AddPositionModal = ({
     title: "",
     undecidedVotingCount: 0,
     createdAt: Timestamp.now(),
+    updatedAt: Timestamp.now(),
   });
   const [loading, setLoading] = useState(false);
 

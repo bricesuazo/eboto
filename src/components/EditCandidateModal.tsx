@@ -25,7 +25,13 @@ import {
 } from "../types/typings";
 import { v4 as uuidv4 } from "uuid";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { addDoc, collection, doc, Timestamp, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  Timestamp,
+  updateDoc,
+} from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
 import capitalizeFirstLetter from "../utils/capitalizeFirstLetter";
 
@@ -56,6 +62,7 @@ const EditCandidateModal = ({
       partylist: candidate.partylist,
       votingCount: candidate.votingCount,
       createdAt: candidate.createdAt,
+      updatedAt: candidate.updatedAt,
     });
   };
   const [candidateData, setCandidateData] = useState<candidateType>({
@@ -69,6 +76,7 @@ const EditCandidateModal = ({
     partylist: candidate.partylist,
     votingCount: candidate.votingCount,
     createdAt: candidate.createdAt,
+    updatedAt: candidate.updatedAt,
   });
   const [loading, setLoading] = useState(false);
 

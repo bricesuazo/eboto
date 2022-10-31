@@ -62,6 +62,7 @@ const AddCandidateModal = ({
       partylist: "",
       votingCount: 0,
       createdAt: Timestamp.now(),
+      updatedAt: Timestamp.now(),
     });
   };
   const [candidate, setCandidate] = useState<candidateType>({
@@ -75,6 +76,7 @@ const AddCandidateModal = ({
     partylist: "",
     votingCount: 0,
     createdAt: Timestamp.now(),
+    updatedAt: Timestamp.now(),
   });
   const [loading, setLoading] = useState(false);
 
