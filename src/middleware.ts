@@ -1,6 +1,6 @@
-import { withAuth } from "next-auth/middleware";
+// import { withAuth } from "next-auth/middleware";
 
-// import type { NextRequest, NextResponse } from "next/server";
+import type { NextRequest, NextResponse } from "next/server";
 
 export function middleware(req: NextRequest, res: NextResponse) {
   // if (req.nextUrl.pathname.startsWith("/[electionIdName]/dashboard/:path*")) {
