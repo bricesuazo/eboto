@@ -33,6 +33,9 @@ import Router from "next/router";
 import { useSession } from "next-auth/react";
 import reloadSession from "../utils/reloadSession";
 import isElectionIdNameExists from "../utils/isElectionIdNameExists";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { setMinutes, setHours } from "date-fns";
 
 const CreateElectionModal = ({
   isOpen,
@@ -69,6 +72,9 @@ const CreateElectionModal = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { data: session, status } = useSession();
+
+  const [startDate, setStartDate] = useState<Date | null>(new Date());
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
   useEffect(() => {
     setElection({ ...election, name: "", electionIdName: "" });
@@ -183,6 +189,49 @@ const CreateElectionModal = ({
             )}
 
             {/* TODO: Add election start and end date */}
+            <FormControl isRequired>
+              <FormLabel>Election Date</FormLabel>
+              <DatePicker
+                selected={startDate}
+                minDate={new Date()}
+                onChange={(date) => {
+                  date ? setStartDate(date) : setStartDate(null);
+                  setEndDate(null);
+                }}
+                filterTime={(time) => {
+                  const currentDate = new Date();
+                  const selectedDate = new Date(time);
+
+                  return currentDate.getTime() < selectedDate.getTime();
+                }}
+                showTimeSelect
+                dateFormat="MMMM d, yyyy h:mm aa"
+                disabledKeyboardNavigation
+                withPortal
+                isClearable
+                placeholderText="Select election start date"
+              />
+              <DatePicker
+                disabled={!startDate}
+                selected={endDate}
+                onChange={(date) => setEndDate(date)}
+                minDate={startDate}
+                filterTime={(time) => {
+                  const selectedDate = new Date(time);
+
+                  return startDate
+                    ? startDate.getTime() < selectedDate.getTime()
+                    : new Date().getTime() < selectedDate.getTime();
+                }}
+                showTimeSelect
+                dateFormat="MMMM d, yyyy h:mm aa"
+                disabledKeyboardNavigation
+                withPortal
+                isClearable
+                placeholderText="Select election end date"
+                highlightDates={startDate ? [startDate] : []}
+              />
+            </FormControl>
           </ModalBody>
           <ModalFooter>
             <Button

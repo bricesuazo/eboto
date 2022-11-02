@@ -16,15 +16,14 @@ import { withAuth } from "next-auth/middleware";
 //   // }
 // }
 
-export default withAuth(
-  // `withAuth` augments your `Request` with the user's token.
+export default withAuth();
+// `withAuth` augments your `Request` with the user's token.
 
-  {
-    callbacks: {
-      authorized: ({ token }) => token?.user.accountType === "admin",
-    },
-  }
-);
+//   {
+//     callbacks: {
+//       authorized: ({ token }) => token?.user.accountType === "admin",
+//     },
+//   }
 
 export const config = {
   matcher: ["/dashboard", "/:path*/dashboard", "/:path*/dashboard/:path*"],

@@ -200,9 +200,16 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                 <FormLabel>Election Date</FormLabel>
                 <DatePicker
                   selected={startDate}
+                  minDate={new Date()}
                   onChange={(date) => {
                     date ? setStartDate(date) : setStartDate(null);
                     setEndDate(null);
+                  }}
+                  filterTime={(time) => {
+                    const currentDate = new Date();
+                    const selectedDate = new Date(time);
+
+                    return currentDate.getTime() < selectedDate.getTime();
                   }}
                   showTimeSelect
                   dateFormat="MMMM d, yyyy h:mm aa"
@@ -212,15 +219,22 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                   placeholderText="Select election start date"
                 />
                 <DatePicker
+                  disabled={!startDate}
                   selected={endDate}
                   onChange={(date) => setEndDate(date)}
                   minDate={startDate}
+                  filterTime={(time) => {
+                    const selectedDate = new Date(time);
+
+                    return startDate
+                      ? startDate.getTime() < selectedDate.getTime()
+                      : new Date().getTime() < selectedDate.getTime();
+                  }}
                   showTimeSelect
                   dateFormat="MMMM d, yyyy h:mm aa"
                   disabledKeyboardNavigation
                   withPortal
                   isClearable
-                  disabled={!startDate}
                   placeholderText="Select election end date"
                   highlightDates={startDate ? [startDate] : []}
                 />
