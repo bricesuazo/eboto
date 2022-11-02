@@ -70,7 +70,10 @@ const CreateElectionModal = ({
   };
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<{
+    type: "electionIdName" | "electionDates";
+    error: string;
+  } | null>(null);
   const { data: session, status } = useSession();
 
   const [startDate, setStartDate] = useState<Date | null>(new Date());
@@ -92,12 +95,22 @@ const CreateElectionModal = ({
         <form
           onSubmit={async (e) => {
             e.preventDefault();
+            if (!startDate || !endDate) {
+              setError({
+                type: "electionDates",
+                error: "Please select a start and end date for the election.",
+              });
+              return;
+            }
             setError(null);
             setLoading(true);
 
             // Check if electionIdName is already taken
             if (await isElectionIdNameExists(election.electionIdName)) {
-              setError("Election ID Name is already taken");
+              setError({
+                type: "electionIdName",
+                error: "Election ID Name is already taken",
+              });
               setLoading(false);
               return;
             }
@@ -106,6 +119,8 @@ const CreateElectionModal = ({
               ...election,
               name: election.name.trim(),
               electionIdName: election.electionIdName.trim(),
+              electionStartDate: Timestamp.fromDate(startDate),
+              electionEndDate: Timestamp.fromDate(endDate),
             }).then(async (electionSnap) => {
               session?.user &&
                 (await updateDoc(doc(firestore, "admins", session.user.uid), {
@@ -138,7 +153,6 @@ const CreateElectionModal = ({
               });
             });
             const electionIdName = election.electionIdName;
-            setElection({ ...election, name: "", electionIdName: "" });
             setLoading(false);
             onClose();
 
@@ -174,29 +188,33 @@ const CreateElectionModal = ({
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     setElection({
                       ...election,
-                      electionIdName: e.target.value,
+                      electionIdName: e.target.value.toLowerCase(),
                     });
                   }}
                   value={election.electionIdName}
                 />
               </InputGroup>
             </FormControl>
-            {error && (
+            {error?.type === "electionIdName" && (
               <Alert status="error" marginTop={4}>
                 <AlertIcon />
-                <AlertTitle>{error}</AlertTitle>
+                <AlertTitle>{error?.error}</AlertTitle>
               </Alert>
             )}
 
-            {/* TODO: Add election start and end date */}
-            <FormControl isRequired>
+            <FormControl mt={4} isRequired>
               <FormLabel>Election Date</FormLabel>
               <DatePicker
                 selected={startDate}
                 minDate={new Date()}
                 onChange={(date) => {
-                  date ? setStartDate(date) : setStartDate(null);
-                  setEndDate(null);
+                  if (date) {
+                    setStartDate(date);
+                    setError(null);
+                  } else {
+                    setStartDate(null);
+                    setEndDate(null);
+                  }
                 }}
                 filterTime={(time) => {
                   const currentDate = new Date();
@@ -214,7 +232,10 @@ const CreateElectionModal = ({
               <DatePicker
                 disabled={!startDate}
                 selected={endDate}
-                onChange={(date) => setEndDate(date)}
+                onChange={(date) => {
+                  setEndDate(date);
+                  setError(null);
+                }}
                 minDate={startDate}
                 filterTime={(time) => {
                   const selectedDate = new Date(time);
@@ -232,6 +253,12 @@ const CreateElectionModal = ({
                 highlightDates={startDate ? [startDate] : []}
               />
             </FormControl>
+            {error?.type === "electionDates" && (
+              <Alert status="error" marginTop={4}>
+                <AlertIcon />
+                <AlertTitle>{error?.error}</AlertTitle>
+              </Alert>
+            )}
           </ModalBody>
           <ModalFooter>
             <Button
