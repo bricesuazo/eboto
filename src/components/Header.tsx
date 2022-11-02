@@ -102,7 +102,11 @@ const Header = () => {
             <MenuList>
               {children}
               <MenuDivider />
-              <MenuItem icon={<MoonIcon width={18} />} closeOnSelect={false}>
+              <MenuItem
+                icon={<MoonIcon width={18} />}
+                closeOnSelect={false}
+                onClick={toggleColorMode}
+              >
                 <HStack justifyContent="space-between">
                   <Text>Dark Mode</Text>
 

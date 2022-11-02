@@ -12,6 +12,7 @@ import {
   Stack,
   Text,
   Tooltip,
+  useColorMode,
   useDisclosure,
 } from "@chakra-ui/react";
 import { PlusIcon } from "@heroicons/react/24/solid";
@@ -71,8 +72,7 @@ const DashboardLayout = ({
 
   const [elections, setElections] = useState<electionType[]>();
   const [currentElection, setCurrentElection] = useState<electionType>();
-  const [momentAgo, setMomentAgo] = useState<string>();
-
+  const { colorMode } = useColorMode();
   const { data } = useFirestoreCollectionData(
     query(
       collection(firestore, "elections"),
@@ -153,21 +153,50 @@ const DashboardLayout = ({
               />
             </Tooltip>
           </Center>
-          <Stack direction="row" color="whiteAlpha.500" cursor="pointer">
-            <Icon as={ArrowPathIcon} />
-            {!currentElection ? (
-              <Text fontSize="xs">Loading...</Text>
-            ) : (
-              <Text fontSize="xs">
-                Updated{" "}
-                <Moment
-                  interval={10000}
-                  fromNow
-                  date={currentElection?.updatedAt.toDate()}
+          <Tooltip label="Last updated" hasArrow>
+            <Stack
+              direction="row"
+              color={`${
+                (colorMode === "dark" ? "white" : "black") + "Alpha.500"
+              }`}
+              p={2}
+              cursor="pointer"
+              role="group"
+            >
+              <Center gap={2}>
+                <Icon
+                  as={ArrowPathIcon}
+                  _groupHover={{
+                    color: `${
+                      (colorMode === "dark" ? "white" : "black") + "Alpha.700"
+                    }`,
+                    transform: "rotate(180deg)",
+                    transition: "all 0.5s",
+                  }}
                 />
-              </Text>
-            )}
-          </Stack>
+                {!currentElection ? (
+                  <Text fontSize="xs">Loading...</Text>
+                ) : (
+                  <Text
+                    fontSize="xs"
+                    _groupHover={{
+                      color: `${
+                        (colorMode === "dark" ? "white" : "black") + "Alpha.700"
+                      }`,
+                      transition: "all 0.5s",
+                    }}
+                  >
+                    Updated{" "}
+                    <Moment
+                      interval={10000}
+                      fromNow
+                      date={currentElection?.updatedAt.toDate()}
+                    />
+                  </Text>
+                )}
+              </Center>
+            </Stack>
+          </Tooltip>
         </Stack>
 
         <Flex borderRadius="0.25rem" gap={4} height="100%">

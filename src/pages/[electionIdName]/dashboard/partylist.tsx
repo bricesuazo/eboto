@@ -17,6 +17,7 @@ import {
   WrapItem,
   Image,
   Flex,
+  useColorMode,
 } from "@chakra-ui/react";
 import { FlagIcon } from "@heroicons/react/24/outline";
 import {
@@ -68,6 +69,7 @@ const PartylistPage = ({
     onClose: onCloseEditPartylist,
   } = useDisclosure();
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const { colorMode } = useColorMode();
   return (
     <>
       <Head>
@@ -102,7 +104,9 @@ const PartylistPage = ({
                       borderRadius="md"
                       cursor="pointer"
                       border="1px"
-                      borderColor="whiteAlpha.300"
+                      borderColor={`${
+                        colorMode === "dark" ? "white" : "black"
+                      }Alpha.300`}
                       padding={2}
                       pointerEvents={
                         partylist.abbreviation === "IND" ? "none" : "auto"
@@ -112,7 +116,9 @@ const PartylistPage = ({
                       }
                       color={
                         partylist.abbreviation === "IND"
-                          ? "whiteAlpha.500"
+                          ? `${
+                              colorMode === "dark" ? "white" : "black"
+                            }Alpha.500`
                           : "white"
                       }
                     >
@@ -138,7 +144,8 @@ const PartylistPage = ({
                             ) : (
                               <FlagIcon
                                 style={{
-                                  border: "2px solid gray",
+                                  border: "2px solid gray.500",
+
                                   padding: 18,
                                   borderRadius: "100%",
                                 }}
