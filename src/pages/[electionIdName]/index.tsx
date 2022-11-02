@@ -11,6 +11,7 @@ import { Box, Button, Text } from "@chakra-ui/react";
 import Head from "next/head";
 import Moment from "react-moment";
 import Link from "next/link";
+import isElectionOngoing from "../../utils/isElectionOngoing";
 
 interface ElectionPageProps {
   election: electionType;
@@ -38,26 +39,25 @@ const ElectionPage = ({
         </Text>
         {election.electionStartDate && election.electionEndDate && (
           <Text>
-            <Moment format="MMMM DD, YYYY">
+            <Moment format="MMMM DD, YYYY, h:mmA">
               {election.electionStartDate.seconds * 1000}
             </Moment>
             {" - "}
-            <Moment format="MMMM DD, YYYY">
+            <Moment format="MMMM DD, YYYY, h:mmA">
               {election.electionEndDate.seconds * 1000}
             </Moment>
           </Text>
         )}
         <Text>{election.about}</Text>
-        {!election.ongoing ? (
-          <Button disabled={!election.ongoing}>
-            Voting is not yet available
-          </Button>
+        {!isElectionOngoing(
+          election.electionStartDate,
+          election.electionEndDate
+        ) ? (
+          <Button disabled>Voting is not yet available</Button>
         ) : (
           <Link href={`/${election.electionIdName}/vote`}>
             <a>
-              <Button disabled={!election.ongoing}>
-                {election.ongoing ? "Vote" : "Voting is not yet available"}
-              </Button>
+              <Button>Vote</Button>
             </a>
           </Link>
         )}

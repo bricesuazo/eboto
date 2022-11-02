@@ -1,4 +1,8 @@
-import type { NextPage } from "next";
+import type {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  NextPage,
+} from "next";
 import NextLink from "next/link";
 import {
   Button,
@@ -13,18 +17,24 @@ import {
   Alert,
   AlertIcon,
   AlertDescription,
-  Box,
-  Text,
-  Spinner,
 } from "@chakra-ui/react";
 
 import { useState } from "react";
 
 import Head from "next/head";
 
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
+import { firestore } from "../firebase/firebase";
 
-const SigninPage = () => {
+const SigninPage: NextPage = () => {
   const [credentials, setCredentials] = useState<{
     email: string;
     password: string;
@@ -56,7 +66,6 @@ const SigninPage = () => {
                   await signIn<"credentials">("credentials", {
                     email: credentials.email.trim().toLocaleLowerCase(),
                     password: credentials.password,
-                    redirect: false,
                   }).then((res) => {
                     setError(res?.error || null);
                   });
@@ -127,19 +136,6 @@ const SigninPage = () => {
                   >
                     Signin
                   </Button>
-
-                  {/* <Button
-                  leftIcon={
-                    <img
-                      src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
-                      width={20}
-                    />
-                  }
-                  onClick={() => signInWithGoogle()}
-                  isLoading={loadingGoogle || loadingCredential}
-                >
-                  Signin as Google
-                </Button> */}
                 </Stack>
               </form>
             </Center>
@@ -151,3 +147,37 @@ const SigninPage = () => {
 };
 
 export default SigninPage;
+
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const session = await getSession(context);
+  if (session && session.user.accountType === "voter") {
+    const electionSnapshot = await getDoc(
+      doc(firestore, "elections", session.user.election)
+    );
+
+    return {
+      redirect: {
+        destination: `/${electionSnapshot.data()?.electionIdName}`,
+        permanent: false,
+      },
+    };
+  } else if (session && session.user.accountType === "admin") {
+    if (session.user.elections.length === 0) {
+      return {
+        redirect: {
+          destination: "/create-election",
+          permanent: false,
+        },
+      };
+    }
+    return {
+      redirect: {
+        destination: "/dashboard",
+        permanent: false,
+      },
+    };
+  }
+  return { props: {} };
+};

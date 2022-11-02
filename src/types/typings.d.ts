@@ -6,7 +6,6 @@ export interface electionType {
   name: string;
   about: string?;
   electionIdName: string;
-  ongoing: boolean;
   createdAt: Timestamp;
   updatedAt: Timestamp;
   electionStartDate: Timestamp;

@@ -23,6 +23,7 @@ import Head from "next/head";
 import Card from "../../components/Card";
 import { FingerPrintIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import isElectionOngoing from "../../utils/isElectionOngoing";
 
 interface VotePageProps {
   election: electionType;
@@ -40,7 +41,9 @@ const VotePage = ({
   const [selectedCandidates, setSelectedCandidates] = useState<string[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  if (!election.ongoing) {
+  if (
+    !isElectionOngoing(election.electionStartDate, election.electionEndDate)
+  ) {
     return (
       <>
         <Head>

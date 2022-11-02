@@ -84,14 +84,13 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
   const [endDate, setEndDate] = useState<Date | null>(
     new Date(settings.electionEndDate?.seconds * 1000) || null
   );
-
   return (
     <>
       <Head>
         <title>Settings | eBoto Mo</title>
       </Head>
       <DashboardLayout title="Settings" session={session}>
-        {!election && status === "loading" ? (
+        {!election ? (
           <Spinner />
         ) : (
           <form
@@ -145,7 +144,12 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                   updatedAt: Timestamp.now(),
                 }
               ).then(() => {
-                setInitialElection({ ...initialElection, ...settings });
+                setInitialElection({
+                  ...initialElection,
+                  ...settings,
+                  electionStartDate: Timestamp.fromDate(startDate),
+                  electionEndDate: Timestamp.fromDate(endDate),
+                });
               });
               setLoading(false);
             }}
@@ -199,10 +203,6 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                   onChange={(date) => {
                     date ? setStartDate(date) : setStartDate(null);
                     setEndDate(null);
-                    // setSettings({
-                    //   ...settings,
-                    //   electionStartDate: Timestamp.fromDate(date),
-                    // });
                   }}
                   showTimeSelect
                   dateFormat="MMMM d, yyyy h:mm aa"

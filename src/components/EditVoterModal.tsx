@@ -93,6 +93,9 @@ const EditVoterModal = ({
               updatedAt: Timestamp.now(),
             }
           );
+          await updateDoc(doc(firestore, "elections", voter.election), {
+            updatedAt: Timestamp.now(),
+          });
 
           onClose();
           setLoading(false);

@@ -1,4 +1,8 @@
-import type { NextPage } from "next";
+import type {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  NextPage,
+} from "next";
 import NextLink from "next/link";
 import {
   Alert,
@@ -21,13 +25,15 @@ import {
   addDoc,
   collection,
   doc,
+  getDoc,
   getDocs,
   query,
   setDoc,
+  Timestamp,
   where,
 } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import isAdminExists from "../utils/isAdminExists";
 
 const SignupPage: NextPage = () => {
@@ -68,42 +74,42 @@ const SignupPage: NextPage = () => {
                 }
 
                 // Create user docs
-                // const adminRef = await addDoc(collection(firestore, "admins"), {
-                //   accountType: "admin",
-                //   _id: uuidv4(),
-                //   email: credentials.email,
-                //   firstName: credentials.firstName
-                //     .trim()
-                //     .replace(/(^\w{1})|(\s+\w{1})/g, (letter: string) =>
-                //       letter.toUpperCase()
-                //     ),
-                //   lastName: credentials.lastName
-                //     .trim()
-                //     .replace(/(^\w{1})|(\s+\w{1})/g, (letter: string) =>
-                //       letter.toUpperCase()
-                //     ),
-                //   password: credentials.password,
-                //   photoUrl: "",
-                //   elections: [],
-                //   createdAt: Timestamp.now(),
-                //   updatedAt: Timestamp.now(),
-                //   emailVerified: false,
-                // });
-                // // Update user's uid
-                // await setDoc(
-                //   doc(firestore, "admins", adminRef.id),
-                //   {
-                //     uid: adminRef.id,
-                //   },
-                //   { merge: true }
-                // ).then(async () => {
-                //   await signIn("credentials", {
-                //     email: credentials.email,
-                //     password: credentials.password,
-                //     // callbackUrl: "/admin",
-                //     redirect: false,
-                //   });
-                // });
+                const adminRef = await addDoc(collection(firestore, "admins"), {
+                  accountType: "admin",
+                  _id: uuidv4(),
+                  email: credentials.email,
+                  firstName: credentials.firstName
+                    .trim()
+                    .replace(/(^\w{1})|(\s+\w{1})/g, (letter: string) =>
+                      letter.toUpperCase()
+                    ),
+                  lastName: credentials.lastName
+                    .trim()
+                    .replace(/(^\w{1})|(\s+\w{1})/g, (letter: string) =>
+                      letter.toUpperCase()
+                    ),
+                  password: credentials.password,
+                  photoUrl: "",
+                  elections: [],
+                  createdAt: Timestamp.now(),
+                  updatedAt: Timestamp.now(),
+                  emailVerified: false,
+                });
+                // Update user's uid
+                await setDoc(
+                  doc(firestore, "admins", adminRef.id),
+                  {
+                    uid: adminRef.id,
+                  },
+                  { merge: true }
+                ).then(async () => {
+                  await signIn("credentials", {
+                    email: credentials.email,
+                    password: credentials.password,
+                    callbackUrl: "/create-election",
+                    redirect: false,
+                  });
+                });
                 setLoading(false);
               }}
             >
@@ -223,3 +229,37 @@ const SignupPage: NextPage = () => {
 };
 
 export default SignupPage;
+
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const session = await getSession(context);
+  if (session && session.user.accountType === "voter") {
+    const electionSnapshot = await getDoc(
+      doc(firestore, "elections", session.user.election)
+    );
+
+    return {
+      redirect: {
+        destination: `/${electionSnapshot.data()?.electionIdName}`,
+        permanent: false,
+      },
+    };
+  } else if (session && session.user.accountType === "admin") {
+    if (session.user.elections.length === 0) {
+      return {
+        redirect: {
+          destination: "/create-election",
+          permanent: false,
+        },
+      };
+    }
+    return {
+      redirect: {
+        destination: "/dashboard",
+        permanent: false,
+      },
+    };
+  }
+  return { props: {} };
+};

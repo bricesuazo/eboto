@@ -49,7 +49,6 @@ const CreateElectionModal = ({
     name: "",
     about: "",
     electionIdName: "",
-    ongoing: false,
     createdAt: Timestamp.now(),
     updatedAt: Timestamp.now(),
     electionStartDate: Timestamp.now(),
@@ -182,6 +181,8 @@ const CreateElectionModal = ({
                 <AlertTitle>{error}</AlertTitle>
               </Alert>
             )}
+
+            {/* TODO: Add election start and end date */}
           </ModalBody>
           <ModalFooter>
             <Button
