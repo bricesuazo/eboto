@@ -17,11 +17,9 @@ import {
   ModalCloseButton,
   useDisclosure,
   Text,
-  Alert,
-  AlertIcon,
-  AlertTitle,
   Flex,
   Select,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import {
   collection,
@@ -45,12 +43,13 @@ import { electionType } from "../../../types/typings";
 import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { getSession, useSession } from "next-auth/react";
+import { getSession } from "next-auth/react";
 import reloadSession from "../../../utils/reloadSession";
 import isElectionIdNameExists from "../../../utils/isElectionIdNameExists";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Session } from "next-auth";
+import isElectionOngoing from "../../../utils/isElectionOngoing";
 
 interface SettingsPageProps {
   election: electionType;
@@ -168,7 +167,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                   value={settings.name}
                 />
               </FormControl>
-              <FormControl isRequired>
+              <FormControl isRequired isInvalid={!!error}>
                 <FormLabel>Election ID Name</FormLabel>
                 <InputGroup borderColor={error ? "red.400" : ""}>
                   <InputLeftAddon pointerEvents="none" userSelect="none">
@@ -179,26 +178,23 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setSettings({
                         ...settings,
-                        electionIdName: e.target.value,
+                        electionIdName: e.target.value.toLocaleLowerCase(),
                       });
                       setError(null);
                     }}
                     value={settings.electionIdName}
                   />
                 </InputGroup>
-                <FormHelperText>
-                  Election ID name must be unique.
-                </FormHelperText>
+                {error && <FormErrorMessage>{error}</FormErrorMessage>}
               </FormControl>
-              {error && (
-                <Alert status="warning" variant="left-accent">
-                  <AlertIcon />
-                  <AlertTitle>{error}</AlertTitle>
-                </Alert>
-              )}
               <FormControl isRequired>
                 <FormLabel>Election Date</FormLabel>
+
                 <DatePicker
+                  disabled={isElectionOngoing(
+                    initialElection.electionStartDate,
+                    initialElection.electionEndDate
+                  )}
                   selected={startDate}
                   minDate={new Date()}
                   onChange={(date) => {
@@ -208,24 +204,33 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                   filterTime={(time) => {
                     const currentDate = new Date();
                     const selectedDate = new Date(time);
-
                     return currentDate.getTime() < selectedDate.getTime();
                   }}
                   showTimeSelect
                   dateFormat="MMMM d, yyyy h:mm aa"
                   disabledKeyboardNavigation
                   withPortal
-                  isClearable
+                  isClearable={
+                    !isElectionOngoing(
+                      initialElection.electionStartDate,
+                      initialElection.electionEndDate
+                    )
+                  }
                   placeholderText="Select election start date"
                 />
                 <DatePicker
-                  disabled={!startDate}
+                  disabled={
+                    !startDate ||
+                    isElectionOngoing(
+                      initialElection.electionStartDate,
+                      initialElection.electionEndDate
+                    )
+                  }
                   selected={endDate}
                   onChange={(date) => setEndDate(date)}
                   minDate={startDate}
                   filterTime={(time) => {
                     const selectedDate = new Date(time);
-
                     return startDate
                       ? startDate.getTime() < selectedDate.getTime()
                       : new Date().getTime() < selectedDate.getTime();
@@ -234,10 +239,18 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                   dateFormat="MMMM d, yyyy h:mm aa"
                   disabledKeyboardNavigation
                   withPortal
-                  isClearable
+                  isClearable={
+                    !isElectionOngoing(
+                      initialElection.electionStartDate,
+                      initialElection.electionEndDate
+                    )
+                  }
                   placeholderText="Select election end date"
                   highlightDates={startDate ? [startDate] : []}
                 />
+                <FormHelperText>
+                  You can't change the dates once the election is ongoing.
+                </FormHelperText>
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Election Publicity</FormLabel>
@@ -329,18 +342,18 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                     !settings.publicity ||
                     !startDate ||
                     !endDate ||
-                    (settings.name.trim() === initialElection.name.trim() &&
-                      settings.electionIdName.trim() ===
-                        initialElection.electionIdName.trim() &&
-                      settings.publicity === initialElection.publicity &&
-                      startDate.toString() ===
-                        new Date(
-                          initialElection.electionStartDate.seconds * 1000
-                        ).toString() &&
+                    (startDate.toString() ===
+                      new Date(
+                        initialElection.electionStartDate.seconds * 1000
+                      ).toString() &&
                       endDate.toString() ===
                         new Date(
                           initialElection.electionEndDate.seconds * 1000
-                        ).toString())
+                        ).toString() &&
+                      settings.name.trim() === initialElection.name.trim() &&
+                      settings.electionIdName.trim() ===
+                        initialElection.electionIdName.trim() &&
+                      settings.publicity === initialElection.publicity)
                   }
                 >
                   Save

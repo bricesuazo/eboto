@@ -4,6 +4,8 @@ import {
   AlertTitle,
   Button,
   FormControl,
+  FormErrorMessage,
+  FormHelperText,
   FormLabel,
   Input,
   InputGroup,
@@ -74,13 +76,15 @@ const CreateElectionModal = ({
     type: "electionIdName" | "electionDates";
     error: string;
   } | null>(null);
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [endDate, setEndDate] = useState<Date | null>(null);
 
   useEffect(() => {
     setElection({ ...election, name: "", electionIdName: "" });
+    setStartDate(new Date());
+    setEndDate(null);
     setError(null);
   }, [isOpen]);
 
@@ -179,8 +183,12 @@ const CreateElectionModal = ({
               />
             </FormControl>
 
-            <FormControl mt={4} isRequired>
-              <FormLabel>Election ID</FormLabel>
+            <FormControl
+              mt={4}
+              isRequired
+              isInvalid={error?.type === "electionIdName"}
+            >
+              <FormLabel>Election ID Name</FormLabel>
               <InputGroup>
                 <InputLeftAddon>eboto-mo.com/</InputLeftAddon>
                 <Input
@@ -194,13 +202,10 @@ const CreateElectionModal = ({
                   value={election.electionIdName}
                 />
               </InputGroup>
+              {error?.type === "electionIdName" && (
+                <FormErrorMessage>{error.error}</FormErrorMessage>
+              )}
             </FormControl>
-            {error?.type === "electionIdName" && (
-              <Alert status="error" marginTop={4}>
-                <AlertIcon />
-                <AlertTitle>{error?.error}</AlertTitle>
-              </Alert>
-            )}
 
             <FormControl mt={4} isRequired>
               <FormLabel>Election Date</FormLabel>
@@ -252,6 +257,9 @@ const CreateElectionModal = ({
                 placeholderText="Select election end date"
                 highlightDates={startDate ? [startDate] : []}
               />
+              <FormHelperText>
+                You can't change the dates once the election is ongoing.
+              </FormHelperText>
             </FormControl>
             {error?.type === "electionDates" && (
               <Alert status="error" marginTop={4}>

@@ -256,7 +256,7 @@ const DashboardLayout = ({
                           accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                           ref={fileRef}
                         />
-                        <Tooltip label="Upload bulk voters. (.csv, .xls, .xlsx)">
+                        <Tooltip label="Upload bulk voters. (.xls, .xlsx, .csv)">
                           <IconButton
                             aria-label="Edit voter"
                             icon={<ArrowUpOnSquareIcon width={24} />}

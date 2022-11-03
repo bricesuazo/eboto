@@ -87,7 +87,7 @@ const AddVoterModal = ({
 
   useEffect(() => {
     isOpen && clearForm();
-  }, [isOpen, clearForm]);
+  }, [isOpen]);
 
   return (
     <Modal
