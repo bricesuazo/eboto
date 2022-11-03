@@ -66,7 +66,6 @@ const VoterPage = ({
   useEffect(() => {
     setVoters(votersData as voterType[]);
   }, [votersData]);
-
   return (
     <>
       <Head>

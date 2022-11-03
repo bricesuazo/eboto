@@ -16,25 +16,25 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { PlusIcon } from "@heroicons/react/24/solid";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { collection, query, where } from "firebase/firestore";
 import CreateElectionModal from "../components/CreateElectionModal";
 import DashboardSidebar from "../components/DashboardSidebar";
 import { firestore } from "../firebase/firebase";
 import Router, { useRouter } from "next/router";
 import AddVoterModal from "../components/AddVoterModal";
 import { UserPlusIcon } from "@heroicons/react/24/solid";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowPathIcon,
   ArrowUpOnSquareIcon,
 } from "@heroicons/react/24/outline";
 import { electionType } from "../types/typings";
-// import { useSession } from "next-auth/react";
 import AddPartylistModal from "../components/AddPartylistModal";
 import AddPositionModal from "../components/AddPositionModal";
 import Moment from "react-moment";
 import { Session } from "next-auth";
 import { useFirestoreCollectionData } from "reactfire";
+import UploadBulkVotersModal from "../components/UploadBulkVotersModal";
 
 const DashboardLayout = ({
   children,
@@ -47,7 +47,6 @@ const DashboardLayout = ({
   overflow?: string;
   session: Session;
 }) => {
-  // const { data: session } = useSession();
   const {
     isOpen: isOpenCreateElection,
     onOpen: onOpenCreateElection,
@@ -68,6 +67,11 @@ const DashboardLayout = ({
     isOpen: isOpenAddVoter,
     onOpen: onOpenAddVoter,
     onClose: onCloseAddVoter,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenUploadBulkVoter,
+    onOpen: onOpenUploadBulkVoter,
+    onClose: onCloseUploadBulkVoter,
   } = useDisclosure();
 
   const [elections, setElections] = useState<electionType[]>();
@@ -93,8 +97,6 @@ const DashboardLayout = ({
 
   const router = useRouter();
 
-  const fileRef = useRef<HTMLInputElement | null>(null);
-
   return (
     <>
       <CreateElectionModal
@@ -111,11 +113,14 @@ const DashboardLayout = ({
         isOpen={isOpenAddPosition}
         onClose={onCloseAddPosition}
       />
-
       <AddVoterModal
         election={currentElection as electionType}
         isOpen={isOpenAddVoter}
         onClose={onCloseAddVoter}
+      />
+      <UploadBulkVotersModal
+        isOpen={isOpenUploadBulkVoter}
+        onClose={onCloseUploadBulkVoter}
       />
 
       <Flex direction="column" gap={4} padding="4" height="85vh">
@@ -250,17 +255,11 @@ const DashboardLayout = ({
                   case "Voters":
                     return (
                       <HStack>
-                        <Input
-                          type="file"
-                          hidden
-                          accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                          ref={fileRef}
-                        />
-                        <Tooltip label="Upload bulk voters. (.xls, .xlsx, .csv)">
+                        <Tooltip label="Upload bulk voters. (.xlsx)">
                           <IconButton
                             aria-label="Edit voter"
                             icon={<ArrowUpOnSquareIcon width={24} />}
-                            onClick={() => fileRef?.current?.click()}
+                            onClick={onOpenUploadBulkVoter}
                           />
                         </Tooltip>
                         <Button
