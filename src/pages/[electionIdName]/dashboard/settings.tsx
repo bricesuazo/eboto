@@ -249,14 +249,14 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                   highlightDates={startDate ? [startDate] : []}
                 />
                 <FormHelperText>
-                  You can't change the dates once the election is ongoing.
+                  You can&apos;t change the dates once the election is ongoing.
                 </FormHelperText>
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Election Publicity</FormLabel>
                 <Select
                   value={settings.publicity}
-                  onChange={(e) => {
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                     setSettings({
                       ...settings,
                       publicity: e.target.value as

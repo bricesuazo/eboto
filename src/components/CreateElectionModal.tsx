@@ -258,7 +258,7 @@ const CreateElectionModal = ({
                 highlightDates={startDate ? [startDate] : []}
               />
               <FormHelperText>
-                You can't change the dates once the election is ongoing.
+                You can&apos;t change the dates once the election is ongoing.
               </FormHelperText>
             </FormControl>
             {error?.type === "electionDates" && (
