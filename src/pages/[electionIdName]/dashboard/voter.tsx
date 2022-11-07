@@ -18,6 +18,7 @@ import {
   Thead,
   Tooltip,
   Tr,
+  useColorMode,
   useDisclosure,
 } from "@chakra-ui/react";
 import {
@@ -46,6 +47,7 @@ const VoterPage = ({
   election: electionType;
   session: Session;
 }) => {
+  const { colorMode } = useColorMode();
   const {
     isOpen: isOpenEditVoter,
     onOpen: onOpenEditVoter,
@@ -163,7 +165,6 @@ const VoterPage = ({
                   </Tr>
                 ))}
               </Tbody>
-              <Tfoot></Tfoot>
             </Table>
           </TableContainer>
         ) : (

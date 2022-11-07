@@ -162,7 +162,7 @@ const DashboardLayout = ({
             <Stack
               direction="row"
               color={`${
-                (colorMode === "dark" ? "white" : "black") + "Alpha.500"
+                (colorMode === "dark" ? "white" : "black") + "Alpha.600"
               }`}
               p={2}
               cursor="pointer"
@@ -173,7 +173,7 @@ const DashboardLayout = ({
                   as={ArrowPathIcon}
                   _groupHover={{
                     color: `${
-                      (colorMode === "dark" ? "white" : "black") + "Alpha.700"
+                      (colorMode === "dark" ? "white" : "black") + "Alpha.900"
                     }`,
                     transform: "rotate(180deg)",
                     transition: "all 0.5s",
@@ -207,7 +207,9 @@ const DashboardLayout = ({
         <Flex borderRadius="0.25rem" gap={4} height="100%">
           <Box
             padding={4}
-            backgroundColor="whiteAlpha.200"
+            backgroundColor={
+              colorMode === "dark" ? "whiteAlpha.200" : "gray.100"
+            }
             height="fit-content"
             width="248px"
             borderRadius="md"
@@ -217,7 +219,9 @@ const DashboardLayout = ({
 
           <Stack
             padding={4}
-            backgroundColor="whiteAlpha.200"
+            backgroundColor={
+              colorMode === "dark" ? "whiteAlpha.200" : "gray.100"
+            }
             height="100%"
             flex="1"
             borderRadius="md"

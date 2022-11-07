@@ -26,6 +26,7 @@
     "react": "^18.2.0",
     "react-datepicker": "^4.8.0",
     "react-dom": "^18.2.0",
+    "react-dropzone": "^14.2.3",
     "react-moment": "^1.1.2",
     "reactfire": "^4.2.2",
     "read-excel-file": "^5.5.3",
