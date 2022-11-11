@@ -55,9 +55,7 @@ const VotePage = ({
               Voting is not yet open.
             </Text>
             <Link href={`/${election.electionIdName}`}>
-              <a>
-                <Button width="fit-content">Go to {election.name}</Button>
-              </a>
+              <Button width="fit-content">Go to {election.name}</Button>
             </Link>
           </Stack>
         </Center>

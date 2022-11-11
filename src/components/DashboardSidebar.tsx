@@ -127,7 +127,6 @@ const DashboardSidebar = () => {
           <Link
             href={"/" + router.query.electionIdName + "/dashboard" + item.href}
           >
-            <a>
               <Button
                 variant={
                   item.title.toLocaleLowerCase() !==
@@ -157,7 +156,7 @@ const DashboardSidebar = () => {
                   {item.title}
                 </Text>
               </Button>
-            </a>
+      
           </Link>
           {item.id === 1 && <Divider />}
           {item.id === 5 && <Divider />}

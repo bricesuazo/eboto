@@ -32,31 +32,8 @@ export const getServerSideProps: GetServerSideProps = async (
         permanent: false,
       },
     };
-  } else if (session.user.accountType === "admin") {
-    if (session.user.elections.length > 1) {
-      const electionSnap = await getDoc(
-        doc(
-          firestore,
-          "elections",
-          session.user.elections[session.user.elections.length - 1]
-        )
-      );
-      const election = electionSnap.data();
-
-      if (election) {
-        return {
-          redirect: {
-            destination: `/${election?.electionIdName}/dashboard`,
-            permanent: false,
-          },
-        };
-      }
-    }
   }
   return {
-    redirect: {
-      destination: "/create-election",
-      permanent: false,
-    },
+    props: {},
   };
 };

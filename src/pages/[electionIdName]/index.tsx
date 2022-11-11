@@ -56,9 +56,7 @@ const ElectionPage = ({
           <Button disabled>Voting is not yet available</Button>
         ) : (
           <Link href={`/${election.electionIdName}/vote`}>
-            <a>
-              <Button>Vote</Button>
-            </a>
+            <Button>Vote</Button>
           </Link>
         )}
 
@@ -76,18 +74,16 @@ const ElectionPage = ({
                           href={`/${election.electionIdName}/${candidate.uid}`}
                           key={candidate.id}
                         >
-                          <a>
-                            <Text>{`${candidate.lastName}, ${
-                              candidate.firstName
-                            }${
-                              candidate.middleName &&
-                              ` ${candidate.middleName.charAt(0)}.`
-                            } (${
-                              partylists.find((partylist) => {
-                                return partylist.uid === candidate.partylist;
-                              })?.abbreviation
-                            })`}</Text>
-                          </a>
+                          <Text>{`${candidate.lastName}, ${
+                            candidate.firstName
+                          }${
+                            candidate.middleName &&
+                            ` ${candidate.middleName.charAt(0)}.`
+                          } (${
+                            partylists.find((partylist) => {
+                              return partylist.uid === candidate.partylist;
+                            })?.abbreviation
+                          })`}</Text>
                         </Link>
                       );
                     })}
