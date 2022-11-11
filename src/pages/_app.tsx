@@ -6,9 +6,11 @@ import Head from "next/head";
 import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { FirebaseAppProvider, FirestoreProvider } from "reactfire";
-import { app, firestore } from "../firebase/firebase";
+import { app } from "../firebase/firebase";
 import { Analytics } from "@vercel/analytics/react";
+import { Inter } from "@next/font/google";
 
+const inter = Inter();
 export default function MyApp({
   Component,
   pageProps,
@@ -27,8 +29,10 @@ export default function MyApp({
         <FirebaseAppProvider firebaseApp={app}>
           {/* <FirestoreProvider sdk={firestore}> */}
           <ChakraProvider theme={theme}>
-            <Header />
-            <Component {...pageProps} />
+            <main className={inter.className}>
+              <Header />
+              <Component {...pageProps} />
+            </main>
             <Analytics />
           </ChakraProvider>
           {/* </FirestoreProvider> */}
