@@ -226,7 +226,7 @@ const UploadBulkVotersModal = ({
                     </Thead>
 
                     <Tbody>
-                      {selectedFile.map((file, i) => {
+                      {selectedFile.map((file, fileIndex) => {
                         return (
                           <>
                             <Button
@@ -238,7 +238,7 @@ const UploadBulkVotersModal = ({
                                 setSelectedFile((prev) => {
                                   if (prev) {
                                     return prev.filter(
-                                      (_, index) => index !== i
+                                      (_, index) => index !== fileIndex
                                     );
                                   } else {
                                     return null;
@@ -248,9 +248,9 @@ const UploadBulkVotersModal = ({
                             >
                               Delete {file.fileName}
                             </Button>
-                            {file.voters.map((row, i) => (
+                            {file.voters.map((row, rowIndex) => (
                               <Tr
-                                key={i}
+                                key={rowIndex}
                                 _hover={{ backgroundColor: "whiteAlpha.100" }}
                               >
                                 <Td>{row[0].toLocaleString()}</Td>
@@ -262,14 +262,16 @@ const UploadBulkVotersModal = ({
                                     variant="outline"
                                     onClick={() => {
                                       // @ts-ignore
+                                      // delete row from file voters array and if no row delete file from selectedFile array state
                                       setSelectedFile((prev) => {
                                         if (prev) {
-                                          return prev.map((file) => {
-                                            if (file.fileName === row[0]) {
+                                          return prev.map((file, index) => {
+                                            if (index === fileIndex) {
                                               return {
                                                 ...file,
                                                 voters: file.voters.filter(
-                                                  (_, index) => index !== i
+                                                  (_, index) =>
+                                                    index !== rowIndex
                                                 ),
                                               };
                                             } else {
@@ -285,35 +287,6 @@ const UploadBulkVotersModal = ({
                                     Delete
                                   </Button>
                                 </Td>
-
-                                {/* <Td>
-                                  <Button
-                                    size="xs"
-                                    variant="outline"
-                                    onClick={() =>
-                                      setSelectedFile((prev) => {
-                                        if (prev) {
-                                          return prev.map((file, index) => {
-                                            if (index === i) {
-                                              return {
-                                                ...file,
-                                                voters: file.voters.filter(
-                                                  (_, index) => index !== i
-                                                ),
-                                              };
-                                            } else {
-                                              return file;
-                                            }
-                                          });
-                                        } else {
-                                          return null;
-                                        }
-                                      })
-                                    }
-                                  >
-                                    Delete
-                                  </Button>
-                                </Td> */}
                               </Tr>
                             ))}
                           </>
