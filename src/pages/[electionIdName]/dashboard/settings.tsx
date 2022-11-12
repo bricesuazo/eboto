@@ -25,7 +25,7 @@ import {
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useState } from "react";
-import { electionType } from "../../../types/typings";
+import { adminType, electionType } from "../../../types/typings";
 import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import { TrashIcon } from "@heroicons/react/24/outline";
@@ -33,14 +33,12 @@ import { getSession } from "next-auth/react";
 import isElectionIdNameExists from "../../../utils/isElectionIdNameExists";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Session } from "next-auth";
 import isElectionOngoing from "../../../utils/isElectionOngoing";
 import DeleteElectionModal from "../../../components/DeleteElectionModal";
-import dashboardRedirect from "../../../utils/dashboardRedirect";
 
 interface SettingsPageProps {
   election: electionType;
-  session: Session;
+  session: { user: adminType; expires: string };
 }
 const SettingsPage = ({ election, session }: SettingsPageProps) => {
   const {
@@ -313,10 +311,6 @@ export default SettingsPage;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const redirect = await dashboardRedirect(context);
-  if (redirect) {
-    return redirect;
-  }
   const electionQuery = query(
     collection(firestore, "elections"),
     where("electionIdName", "==", context.query.electionIdName)

@@ -29,7 +29,7 @@ import {
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/solid";
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import { electionType, voterType } from "../../../types/typings";
+import { adminType, electionType, voterType } from "../../../types/typings";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import EditVoterModal from "../../../components/EditVoterModal";
 import { firestore } from "../../../firebase/firebase";
@@ -38,15 +38,13 @@ import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import DeleteVoterModal from "../../../components/DeleteVoterModal";
 import { useFirestoreCollectionData } from "reactfire";
 import { getSession } from "next-auth/react";
-import { Session } from "next-auth";
-import dashboardRedirect from "../../../utils/dashboardRedirect";
 
 const VoterPage = ({
   election,
   session,
 }: {
   election: electionType;
-  session: Session;
+  session: { user: adminType; expires: string };
 }) => {
   const { colorMode } = useColorMode();
   const {
@@ -187,10 +185,6 @@ export default VoterPage;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const redirect = await dashboardRedirect(context);
-  if (redirect) {
-    return redirect;
-  }
   try {
     const electionSnapshot = await getDocs(
       query(

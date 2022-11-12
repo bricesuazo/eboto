@@ -88,7 +88,7 @@ export default NextAuth({
         );
         if (updatedAdminData.exists()) {
           session.user = updatedAdminData.data() as Session["user"];
-          token.user = updatedAdminData.data();
+          token.user = updatedAdminData.data() as Session["user"];
         }
       }
       return session;

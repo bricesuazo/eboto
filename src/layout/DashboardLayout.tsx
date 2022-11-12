@@ -29,7 +29,7 @@ import {
   ArrowPathIcon,
   ArrowUpOnSquareIcon,
 } from "@heroicons/react/24/outline";
-import { electionType } from "../types/typings";
+import { adminType, electionType } from "../types/typings";
 import AddPartylistModal from "../components/AddPartylistModal";
 import AddPositionModal from "../components/AddPositionModal";
 import Moment from "react-moment";
@@ -46,7 +46,7 @@ const DashboardLayout = ({
   children: any;
   title: string;
   overflow?: string;
-  session: Session;
+  session: { user: adminType; expires: string };
 }) => {
   const router = useRouter();
   const routerNavigation = useRouterNavigation();
@@ -58,9 +58,6 @@ const DashboardLayout = ({
   useEffect(() => {
     if (!session) {
       router.push("/signin");
-      return;
-    } else if (session.user.role === "voter") {
-      router.push("/");
       return;
     }
   }, []);

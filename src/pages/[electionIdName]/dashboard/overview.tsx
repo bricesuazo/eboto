@@ -1,11 +1,14 @@
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { Session } from "next-auth";
 import { getSession } from "next-auth/react";
 import Head from "next/head";
 import DashboardLayout from "../../../layout/DashboardLayout";
-import dashboardRedirect from "../../../utils/dashboardRedirect";
+import { adminType } from "../../../types/typings";
 
-const OverviewPage = ({ session }: { session: Session }) => {
+const OverviewPage = ({
+  session,
+}: {
+  session: { user: adminType; expires: string };
+}) => {
   return (
     <>
       <Head>
@@ -23,10 +26,5 @@ export default OverviewPage;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const redirect = await dashboardRedirect(context);
-  if (redirect) {
-    return redirect;
-  }
-
   return { props: { session: await getSession(context) } };
 };

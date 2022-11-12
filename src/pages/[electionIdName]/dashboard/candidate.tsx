@@ -48,8 +48,8 @@ import {
   candidateType,
   partylistType,
   positionType,
+  adminType,
 } from "../../../types/typings";
-import dashboardRedirect from "../../../utils/dashboardRedirect";
 
 const CandidatePage = ({
   election,
@@ -60,7 +60,7 @@ const CandidatePage = ({
   election: electionType;
   partylists: partylistType[];
   positions: positionType[];
-  session: Session;
+  session: { user: adminType; expires: string };
 }) => {
   const { data } = useFirestoreCollectionData(
     collection(firestore, "elections", election.uid, "candidates")
@@ -280,10 +280,6 @@ export default CandidatePage;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const redirect = await dashboardRedirect(context);
-  if (redirect) {
-    return redirect;
-  }
   try {
     const electionSnapshot = await getDocs(
       query(

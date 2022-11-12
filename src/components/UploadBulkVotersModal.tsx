@@ -256,7 +256,7 @@ const UploadBulkVotersModal = ({
                                 <Td>{row[0].toLocaleString()}</Td>
                                 <Td>{row[1].toLocaleString()}</Td>
                                 {/* delete row and if no row delete file */}
-                                <Td onClick={() => console.log(row, i)}>
+                                <Td>
                                   <Button
                                     size="xs"
                                     variant="outline"
@@ -264,23 +264,18 @@ const UploadBulkVotersModal = ({
                                       // @ts-ignore
                                       setSelectedFile((prev) => {
                                         if (prev) {
-                                          const newFile = {
-                                            ...prev[i],
-                                            voters: prev[i].voters.filter(
-                                              (_, index) => index !== i
-                                            ),
-                                          };
-                                          if (newFile.voters.length === 0) {
-                                            return prev.filter(
-                                              (_, index) => index !== i
-                                            );
-                                          } else {
-                                            return [
-                                              ...prev.slice(0, i),
-                                              newFile,
-                                              ...prev.slice(i + 1),
-                                            ];
-                                          }
+                                          return prev.map((file) => {
+                                            if (file.fileName === row[0]) {
+                                              return {
+                                                ...file,
+                                                voters: file.voters.filter(
+                                                  (_, index) => index !== i
+                                                ),
+                                              };
+                                            } else {
+                                              return file;
+                                            }
+                                          });
                                         } else {
                                           return null;
                                         }

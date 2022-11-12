@@ -39,15 +39,14 @@ import { useFirestoreCollectionData, useFirestoreDocData } from "reactfire";
 import EditPositionModal from "../../../components/EditPositionModal";
 import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
-import { electionType, positionType } from "../../../types/typings";
-import dashboardRedirect from "../../../utils/dashboardRedirect";
+import { adminType, electionType, positionType } from "../../../types/typings";
 
 const PositionPage = ({
   election,
   session,
 }: {
   election: electionType;
-  session: Session;
+  session: { user: adminType; expires: string };
 }) => {
   const { data } = useFirestoreCollectionData(
     query(
@@ -194,10 +193,6 @@ export default PositionPage;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const redirect = await dashboardRedirect(context);
-  if (redirect) {
-    return redirect;
-  }
   try {
     const electionSnapshot = await getDocs(
       query(
