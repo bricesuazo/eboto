@@ -43,6 +43,7 @@ import EditPartylistModal from "../../../components/EditPartylistModal";
 import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import { electionType, partylistType } from "../../../types/typings";
+import dashboardRedirect from "../../../utils/dashboardRedirect";
 
 const PartylistPage = ({
   election,
@@ -249,6 +250,10 @@ export default PartylistPage;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
+  const redirect = await dashboardRedirect(context);
+  if (redirect) {
+    return redirect;
+  }
   try {
     const electionSnapshot = await getDocs(
       query(

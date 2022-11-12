@@ -49,6 +49,7 @@ import {
   partylistType,
   positionType,
 } from "../../../types/typings";
+import dashboardRedirect from "../../../utils/dashboardRedirect";
 
 const CandidatePage = ({
   election,
@@ -279,6 +280,10 @@ export default CandidatePage;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
+  const redirect = await dashboardRedirect(context);
+  if (redirect) {
+    return redirect;
+  }
   try {
     const electionSnapshot = await getDocs(
       query(

@@ -36,6 +36,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Session } from "next-auth";
 import isElectionOngoing from "../../../utils/isElectionOngoing";
 import DeleteElectionModal from "../../../components/DeleteElectionModal";
+import dashboardRedirect from "../../../utils/dashboardRedirect";
 
 interface SettingsPageProps {
   election: electionType;
@@ -312,6 +313,10 @@ export default SettingsPage;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
+  const redirect = await dashboardRedirect(context);
+  if (redirect) {
+    return redirect;
+  }
   const electionQuery = query(
     collection(firestore, "elections"),
     where("electionIdName", "==", context.query.electionIdName)

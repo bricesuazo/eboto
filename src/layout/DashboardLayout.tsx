@@ -48,6 +48,23 @@ const DashboardLayout = ({
   overflow?: string;
   session: Session;
 }) => {
+  const router = useRouter();
+  const routerNavigation = useRouterNavigation();
+  // Reloads the page when router changes
+  // useEffect(() => {
+  //   currentElection?.electionIdName === router.query.electionIdName &&
+  //     routerNavigation.refresh();
+  // }, [router.query.electionIdName]);
+  useEffect(() => {
+    if (!session) {
+      router.push("/signin");
+      return;
+    } else if (session.user.role === "voter") {
+      router.push("/");
+      return;
+    }
+  }, []);
+
   const {
     isOpen: isOpenCreateElection,
     onOpen: onOpenCreateElection,
@@ -94,15 +111,10 @@ const DashboardLayout = ({
         (election) => election.electionIdName === router.query.electionIdName
       )
     );
+    if (elections?.length === 0) {
+      router.push("/create-election");
+    }
   }, [elections]);
-
-  const router = useRouter();
-  const routerNavigation = useRouterNavigation();
-  // Reloads the page when router changes
-  // useEffect(() => {
-  //   currentElection?.electionIdName === router.query.electionIdName &&
-  //     routerNavigation.refresh();
-  // }, [router.query.electionIdName]);
 
   return (
     <>

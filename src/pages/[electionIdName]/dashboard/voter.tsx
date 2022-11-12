@@ -39,6 +39,7 @@ import DeleteVoterModal from "../../../components/DeleteVoterModal";
 import { useFirestoreCollectionData } from "reactfire";
 import { getSession } from "next-auth/react";
 import { Session } from "next-auth";
+import dashboardRedirect from "../../../utils/dashboardRedirect";
 
 const VoterPage = ({
   election,
@@ -186,6 +187,10 @@ export default VoterPage;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
+  const redirect = await dashboardRedirect(context);
+  if (redirect) {
+    return redirect;
+  }
   try {
     const electionSnapshot = await getDocs(
       query(
