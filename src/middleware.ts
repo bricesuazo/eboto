@@ -8,14 +8,14 @@ export default withAuth({
 
 export const config = {
   matcher: [
-    "/dashboard/",
-    "/:electionIdName/dashboard/",
-    "/:electionIdName/dashboard/overview/",
-    "/:electionIdName/dashboard/candidate/",
-    "/:electionIdName/dashboard/partylist/",
-    "/:electionIdName/dashboard/voter/",
-    "/:electionIdName/dashboard/settings/",
-    "/:electionIdName/dashboard/position/",
-    "/create-election/",
+    "/dashboard",
+    "/:electionIdName/dashboard",
+    "/:electionIdName/dashboard/overview",
+    "/:electionIdName/dashboard/candidate",
+    "/:electionIdName/dashboard/partylist",
+    "/:electionIdName/dashboard/voter",
+    "/:electionIdName/dashboard/settings",
+    "/:electionIdName/dashboard/position",
+    "/create-election",
   ],
 };
