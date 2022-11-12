@@ -55,13 +55,6 @@ const DashboardLayout = ({
   //   currentElection?.electionIdName === router.query.electionIdName &&
   //     routerNavigation.refresh();
   // }, [router.query.electionIdName]);
-  useEffect(() => {
-    if (!session) {
-      router.push("/signin");
-      return;
-    }
-  }, []);
-
   const {
     isOpen: isOpenCreateElection,
     onOpen: onOpenCreateElection,

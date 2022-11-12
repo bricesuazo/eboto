@@ -152,7 +152,10 @@ export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   const session = await getSession(context);
-  if (session && session.user.accountType === "voter") {
+  if (!session) {
+    return { props: {} };
+  }
+  if (session.user.accountType === "voter") {
     const electionSnapshot = await getDoc(
       doc(firestore, "elections", session.user.election)
     );
@@ -163,7 +166,7 @@ export const getServerSideProps: GetServerSideProps = async (
         permanent: false,
       },
     };
-  } else if (session && session.user.accountType === "admin") {
+  } else if (session.user.accountType === "admin") {
     if (session.user.elections.length === 0) {
       return {
         redirect: {

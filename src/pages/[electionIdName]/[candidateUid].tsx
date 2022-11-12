@@ -10,13 +10,11 @@ import {
 import { firestore } from "../../firebase/firebase";
 import { candidateType } from "../../types/typings";
 
-interface CandidateCredentialPageProps {
-  candidate: candidateType;
-}
-
 const CandidateCredentialPage = ({
   candidate,
-}: CandidateCredentialPageProps) => {
+}: {
+  candidate: candidateType;
+}) => {
   return (
     <div>{`${candidate.firstName} ${candidate.middleName} ${candidate.lastName}`}</div>
   );
