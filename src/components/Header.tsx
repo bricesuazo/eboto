@@ -64,14 +64,16 @@ const Header = () => {
           color={colorMode === "dark" ? "whiteAlpha.800" : "black"}
           fontWeight="semibold"
         >
-          Hello, @{email.split("@")[0]}!
+          <Hide below="sm">Hello, </Hide>@{email.split("@")[0]}!
         </Text>
-        <Text
-          fontSize={["2xs", "xs"]}
-          color={colorMode === "dark" ? "whiteAlpha.500" : "black"}
-        >
-          {email}
-        </Text>
+        <Hide below="sm">
+          <Text
+            fontSize={["2xs", "xs"]}
+            color={colorMode === "dark" ? "whiteAlpha.500" : "black"}
+          >
+            {email}
+          </Text>
+        </Hide>
       </Box>
     );
   };

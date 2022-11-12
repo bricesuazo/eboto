@@ -17,11 +17,6 @@ const nextConfig = {
         destination: "/dashboard",
         permanent: true,
       },
-      // {
-      //   source: "/:electionIdName/dashboard/:path",
-      //   destination: "/dashboard",
-      //   permanent: true,
-      // },
     ];
   },
 };

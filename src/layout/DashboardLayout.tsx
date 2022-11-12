@@ -20,7 +20,8 @@ import { collection, query, where } from "firebase/firestore";
 import CreateElectionModal from "../components/CreateElectionModal";
 import DashboardSidebar from "../components/DashboardSidebar";
 import { firestore } from "../firebase/firebase";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
+import { useRouter as useRouterNavigation } from "next/navigation";
 import AddVoterModal from "../components/AddVoterModal";
 import { UserPlusIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
@@ -96,6 +97,12 @@ const DashboardLayout = ({
   }, [elections]);
 
   const router = useRouter();
+  const routerNavigation = useRouterNavigation();
+  // Reloads the page when router changes
+  // useEffect(() => {
+  //   currentElection?.electionIdName === router.query.electionIdName &&
+  //     routerNavigation.refresh();
+  // }, [router.query.electionIdName]);
 
   return (
     <>
@@ -137,7 +144,7 @@ const DashboardLayout = ({
               disabled={!elections?.length}
               value={router.query.electionIdName}
               onChange={(e) => {
-                Router.push(
+                router.push(
                   "/" +
                     e.target.value +
                     router.pathname.split("/[electionIdName]")[1]
@@ -195,7 +202,7 @@ const DashboardLayout = ({
                     <Moment
                       interval={10000}
                       fromNow
-                      date={currentElection?.updatedAt.toDate()}
+                      date={currentElection.updatedAt.toDate()}
                     />
                   </Text>
                 )}

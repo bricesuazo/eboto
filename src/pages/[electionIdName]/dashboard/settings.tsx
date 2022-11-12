@@ -8,15 +8,7 @@ import {
   InputLeftAddon,
   Spinner,
   Stack,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
   useDisclosure,
-  Text,
   Flex,
   Select,
   FormErrorMessage,
@@ -28,15 +20,9 @@ import {
   updateDoc,
   doc,
   getDocs,
-  arrayRemove,
-  writeBatch,
   Timestamp,
 } from "firebase/firestore";
-import type {
-  GetServerSideProps,
-  GetServerSidePropsContext,
-  NextPage,
-} from "next";
+import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useState } from "react";
 import { electionType } from "../../../types/typings";
@@ -44,12 +30,12 @@ import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { getSession } from "next-auth/react";
-import reloadSession from "../../../utils/reloadSession";
 import isElectionIdNameExists from "../../../utils/isElectionIdNameExists";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Session } from "next-auth";
 import isElectionOngoing from "../../../utils/isElectionOngoing";
+import DeleteElectionModal from "../../../components/DeleteElectionModal";
 
 interface SettingsPageProps {
   election: electionType;
@@ -75,8 +61,6 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
   const [settings, setSettings] = useState(initialState);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [deleteLoading, setDeleteLoading] = useState(false);
-
   const [startDate, setStartDate] = useState<Date | null>(
     new Date(settings.electionStartDate?.seconds * 1000) || null
   );
@@ -85,6 +69,12 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
   );
   return (
     <>
+      <DeleteElectionModal
+        election={election}
+        isOpen={isOpenDelete}
+        onClose={onCloseDelete}
+        session={session}
+      />
       <Head>
         <title>Settings | eBoto Mo</title>
       </Head>
@@ -272,55 +262,6 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                 </Select>
               </FormControl>
 
-              <Modal isOpen={isOpenDelete} onClose={onCloseDelete}>
-                <ModalOverlay />
-                <ModalContent>
-                  <ModalHeader>Delete {election.name}</ModalHeader>
-                  <ModalCloseButton />
-                  <ModalBody>
-                    <Text>
-                      Are you sure you want to delete this election? This
-                      process cannot be undone.
-                    </Text>
-                  </ModalBody>
-
-                  <ModalFooter>
-                    <Button
-                      mr={3}
-                      onClick={onCloseDelete}
-                      disabled={deleteLoading}
-                    >
-                      Close
-                    </Button>
-                    <Button
-                      leftIcon={<TrashIcon width={16} />}
-                      variant="outline"
-                      color="red.400"
-                      borderColor="red.400"
-                      isLoading={deleteLoading}
-                      onClick={async () => {
-                        setDeleteLoading(true);
-
-                        const batch = writeBatch(firestore);
-                        session &&
-                          batch.update(
-                            doc(firestore, "admins", session.user.uid),
-                            {
-                              elections: arrayRemove(election.uid),
-                            }
-                          );
-                        await batch.commit();
-
-                        reloadSession();
-                        onCloseDelete();
-                        setDeleteLoading(false);
-                      }}
-                    >
-                      Delete
-                    </Button>
-                  </ModalFooter>
-                </ModalContent>
-              </Modal>
               <Flex justifyContent="space-between" width="full">
                 <Button
                   leftIcon={<TrashIcon width={16} />}
@@ -328,7 +269,6 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                   color="red.400"
                   borderColor="red.400"
                   onClick={() => onOpenDelete()}
-                  isLoading={deleteLoading}
                 >
                   Delete Election
                 </Button>
