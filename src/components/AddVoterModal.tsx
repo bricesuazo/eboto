@@ -24,7 +24,7 @@ import {
 import { ArrowPathIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import { electionType, voterType } from "../types/typings";
-import generator from "generate-password";
+
 import {
   addDoc,
   arrayUnion,
@@ -37,6 +37,7 @@ import { firestore } from "../firebase/firebase";
 import { v4 as uuidv4 } from "uuid";
 import isVoterExists from "../utils/isVoterExists";
 import isAdminExists from "../utils/isAdminExists";
+import generatePassword from "../utils/generatePassword";
 
 const AddVoterModal = ({
   isOpen,
@@ -47,16 +48,11 @@ const AddVoterModal = ({
   onClose: () => void;
   election: electionType;
 }) => {
-  const generatePassword = generator.generate({
-    length: 16,
-    lowercase: true,
-    uppercase: true,
-  });
   const [addVoter, setAddVoter] = useState<voterType>({
     accountType: "voter",
     fullName: "",
     email: "",
-    password: generatePassword,
+    password: generatePassword(),
     hasVoted: false,
     election: "",
     id: uuidv4(),
@@ -73,7 +69,7 @@ const AddVoterModal = ({
       id: uuidv4(),
       fullName: "",
       email: "",
-      password: generatePassword,
+      password: generatePassword(),
       hasVoted: false,
       election: election.uid,
       uid: "",
@@ -183,7 +179,7 @@ const AddVoterModal = ({
                         onClick={() => {
                           setAddVoter({
                             ...addVoter,
-                            password: generatePassword,
+                            password: generatePassword(),
                           });
                         }}
                       />

@@ -21,22 +21,41 @@ import {
   Tooltip,
   Tr,
   useColorMode,
+  useToast,
 } from "@chakra-ui/react";
 import { useDropzone } from "react-dropzone";
 import NextLink from "next/link";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import readXlsxFile, { Row } from "read-excel-file";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+import { electionType } from "../types/typings";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  runTransaction,
+  Timestamp,
+  where,
+  writeBatch,
+} from "firebase/firestore";
+import { firestore } from "../firebase/firebase";
+import { v4 as uuidv4 } from "uuid";
+import generatePassword from "../utils/generatePassword";
 
 interface UploadBulkVotersModalProps {
   onClose: () => void;
   isOpen: boolean;
+  election: electionType;
 }
 const UploadBulkVotersModal = ({
   onClose,
   isOpen,
+  election,
 }: UploadBulkVotersModalProps) => {
+  const toast = useToast();
   const { colorMode } = useColorMode();
+  const [loading, setLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<
     | [
         {
@@ -113,18 +132,22 @@ const UploadBulkVotersModal = ({
                       <Table size="sm">
                         <Thead>
                           <Tr>
-                            <Th>Full name</Th>
-                            <Th>Email address</Th>
+                            <Th textTransform="lowercase">full_name</Th>
+                            <Th textTransform="lowercase">email</Th>
                           </Tr>
                         </Thead>
                         <Tbody>
                           <Tr>
                             <Td>DELA CRUZ, JUAN A.</Td>
-                            <Td>juan.delacruz@cvsu.edu.ph</Td>
+                            <Td textTransform="lowercase">
+                              juan.delacruz@cvsu.edu.ph
+                            </Td>
                           </Tr>
                           <Tr>
                             <Td>PENDUKO, PEDRO S.</Td>
-                            <Td>pedro.penduko@cvsu.edu.ph</Td>
+                            <Td textTransform="lowercase">
+                              pedro.penduko@cvsu.edu.ph
+                            </Td>
                           </Tr>
                         </Tbody>
                       </Table>
@@ -150,10 +173,8 @@ const UploadBulkVotersModal = ({
                       <Table size="sm">
                         <Thead>
                           <Tr>
-                            <Th>
-                              Full
-                              name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Email
-                              address
+                            <Th textTransform="lowercase">
+                              full_name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;email
                             </Th>
                           </Tr>
                         </Thead>
@@ -225,10 +246,10 @@ const UploadBulkVotersModal = ({
                       </Tr>
                     </Thead>
 
-                    <Tbody>
+                    <Tbody width="full">
                       {selectedFile.map((file, fileIndex) => {
                         return (
-                          <>
+                          <Box key={fileIndex}>
                             <Button
                               size="xs"
                               variant="outline"
@@ -301,7 +322,7 @@ const UploadBulkVotersModal = ({
                                 </Td>
                               </Tr>
                             ))}
-                          </>
+                          </Box>
                         );
                       })}
                     </Tbody>
@@ -311,7 +332,173 @@ const UploadBulkVotersModal = ({
             )}
           </ModalBody>
           <ModalFooter>
-            <Button onClick={onClose} disabled={!selectedFile?.length}>
+            <Button
+              onClick={async () => {
+                setLoading(true);
+
+                const batch = writeBatch(firestore);
+                if (selectedFile) {
+                  const voters = selectedFile.flatMap((file) => file.voters);
+                  const votersData = voters.map((voter) => ({
+                    full_name: voter[0],
+                    email: voter[1],
+                  }));
+                  let arrayUniqueByEmail = votersData.filter(
+                    (value, index, self) =>
+                      self.map((x) => x.email).indexOf(value.email) == index
+                  );
+
+                  // try {
+                  //   await runTransaction(firestore, async (transaction) => {
+                  //     arrayUniqueByEmail.forEach(async (voter) => {
+                  //       const isVoterExists = await getDocs(
+                  //         query(
+                  //           collection(
+                  //             firestore,
+                  //             "elections",
+                  //             election.uid,
+                  //             "voters"
+                  //           ),
+                  //           where("email", "==", voter.email)
+                  //         )
+                  //       );
+
+                  //       if (isVoterExists.docs.length !== 0) {
+                  //         toast({
+                  //           title: "Error!",
+                  //           description: `Voter with email ${voter.email} already exists`,
+                  //           status: "error",
+                  //           duration: 5000,
+                  //           isClosable: true,
+                  //         });
+                  //       } else {
+                  //         const uid = generatePassword(20);
+                  //         const voterRef = doc(
+                  //           firestore,
+                  //           "elections",
+                  //           election.uid,
+                  //           "voters",
+                  //           uid
+                  //         );
+                  //         transaction.set(voterRef, {
+                  //           election: election.uid,
+                  //           id: uuidv4(),
+                  //           uid,
+                  //           email: voter.email,
+                  //           fullName: voter.full_name,
+                  //           hasVoted: false,
+                  //           password: generatePassword(),
+                  //           accountType: "voter",
+                  //           createdAt: Timestamp.now(),
+                  //           updatedAt: Timestamp.now(),
+                  //         });
+                  //       }
+                  //     });
+                  //   });
+                  //   toast({
+                  //     title: "Uploaded!",
+                  //     description: "The voters have been uploaded",
+                  //     status: "success",
+                  //     duration: 5000,
+                  //     isClosable: true,
+                  //   });
+                  // } catch (e: any) {
+                  //   toast({
+                  //     title: "Error!",
+                  //     description: e || "The voters have not been uploaded",
+                  //     status: "error",
+                  //     duration: 5000,
+                  //     isClosable: true,
+                  //   });
+                  // }
+
+                  const isVoterExists = await getDocs(
+                    query(
+                      collection(
+                        firestore,
+                        "elections",
+                        election.uid,
+                        "voters"
+                      ),
+                      where(
+                        "email",
+                        "in",
+                        arrayUniqueByEmail.map((voter) => voter.email)
+                      )
+                    )
+                  );
+                  const existedVoters = isVoterExists.docs.map((doc) =>
+                    doc.data()
+                  );
+
+                  if (!isVoterExists.empty) {
+                    arrayUniqueByEmail = arrayUniqueByEmail.filter(
+                      (voter) =>
+                        !existedVoters.some(
+                          (existedVoter) => existedVoter.email === voter.email
+                        )
+                    );
+                  }
+
+                  if (arrayUniqueByEmail.length === 0) {
+                    toast({
+                      title: "Error!",
+                      description: `All voters already exists`,
+                      status: "error",
+                      duration: 5000,
+                      isClosable: true,
+                    });
+                  } else {
+                    arrayUniqueByEmail.forEach((voter) => {
+                      const uid = generatePassword(20);
+                      const votersRef = doc(
+                        firestore,
+                        "elections",
+                        election.uid,
+                        "voters",
+                        uid
+                      );
+                      batch.set(votersRef, {
+                        election: election.uid,
+                        id: uuidv4(),
+                        uid,
+                        email: voter.email,
+                        fullName: voter.full_name,
+                        hasVoted: false,
+                        password: generatePassword(),
+                        accountType: "voter",
+                        createdAt: Timestamp.now(),
+                        updatedAt: Timestamp.now(),
+                      });
+                    });
+                    await batch
+                      .commit()
+                      .catch((e) => {
+                        toast({
+                          title: "Error!",
+                          description: e || "The voters have not been uploaded",
+                          status: "error",
+                          duration: 9000,
+                          isClosable: true,
+                        });
+                      })
+                      .finally(() => {
+                        toast({
+                          title: "Uploaded!",
+                          description: `${arrayUniqueByEmail.length} voter/s have been uploaded`,
+                          status: "success",
+                          duration: 9000,
+                          isClosable: true,
+                        });
+                      });
+                  }
+                }
+                setLoading(false);
+                onClose();
+              }}
+              isLoading={loading}
+              disabled={!selectedFile?.length}
+            >
               Upload
             </Button>
           </ModalFooter>

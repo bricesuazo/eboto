@@ -130,6 +130,7 @@ const DashboardLayout = ({
       <UploadBulkVotersModal
         isOpen={isOpenUploadBulkVoter}
         onClose={onCloseUploadBulkVoter}
+        election={currentElection as electionType}
       />
 
       <Flex direction="column" gap={4} padding="4" height="85vh">

@@ -33,7 +33,7 @@ import { adminType, electionType, voterType } from "../../../types/typings";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import EditVoterModal from "../../../components/EditVoterModal";
 import { firestore } from "../../../firebase/firebase";
-import { getDocs, query, where, collection } from "firebase/firestore";
+import { getDocs, query, where, collection, orderBy } from "firebase/firestore";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import DeleteVoterModal from "../../../components/DeleteVoterModal";
 import { useFirestoreCollectionData } from "reactfire";
@@ -59,7 +59,10 @@ const VoterPage = ({
   } = useDisclosure();
 
   const { status: votersStatus, data: votersData } = useFirestoreCollectionData(
-    collection(firestore, "elections", election.uid, "voters")
+    query(
+      collection(firestore, "elections", election.uid, "voters"),
+      orderBy("createdAt", "asc")
+    )
   );
   const [voters, setVoters] = useState<voterType[]>([]);
   const [selectedVoter, setSelectedVoter] = useState<voterType | null>(null);
