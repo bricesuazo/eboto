@@ -261,27 +261,39 @@ const UploadBulkVotersModal = ({
                                     size="xs"
                                     variant="outline"
                                     onClick={() => {
-                                      // @ts-ignore
-                                      // delete row from file voters array and if no row delete file from selectedFile array state
-                                      setSelectedFile((prev) => {
-                                        if (prev) {
-                                          return prev.map((file, index) => {
-                                            if (index === fileIndex) {
-                                              return {
-                                                ...file,
-                                                voters: file.voters.filter(
-                                                  (_, index) =>
-                                                    index !== rowIndex
-                                                ),
-                                              };
-                                            } else {
-                                              return file;
-                                            }
-                                          });
-                                        } else {
-                                          return null;
-                                        }
-                                      });
+                                      if (file.voters.length === 1) {
+                                        // @ts-ignore
+                                        setSelectedFile((prev) => {
+                                          if (prev) {
+                                            return prev.filter(
+                                              (_, index) => index !== fileIndex
+                                            );
+                                          } else {
+                                            return null;
+                                          }
+                                        });
+                                      } else {
+                                        // @ts-ignore
+                                        setSelectedFile((prev) => {
+                                          if (prev) {
+                                            return prev.map((file, index) => {
+                                              if (index === fileIndex) {
+                                                return {
+                                                  ...file,
+                                                  voters: file.voters.filter(
+                                                    (_, index) =>
+                                                      index !== rowIndex
+                                                  ),
+                                                };
+                                              } else {
+                                                return file;
+                                              }
+                                            });
+                                          } else {
+                                            return null;
+                                          }
+                                        });
+                                      }
                                     }}
                                   >
                                     Delete
