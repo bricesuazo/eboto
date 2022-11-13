@@ -30,6 +30,7 @@ interface ConfirmVoteModalProps {
   positions: positionType[];
   candidates: candidateType[];
   selectedCandidates: string[];
+  voterUid: string;
 }
 const ConfirmVoteModal = ({
   isOpen,
@@ -39,6 +40,7 @@ const ConfirmVoteModal = ({
   positions,
   candidates,
   selectedCandidates,
+  voterUid,
 }: ConfirmVoteModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -130,6 +132,18 @@ const ConfirmVoteModal = ({
                       }
                     );
                   }
+                  await updateDoc(
+                    doc(
+                      firestore,
+                      "elections",
+                      election.uid,
+                      "voters",
+                      voterUid
+                    ),
+                    {
+                      hasVoted: true,
+                    }
+                  );
                   setIsSubmitting(false);
                   onClose();
                   router.push(`/${election.electionIdName}/realtime`);

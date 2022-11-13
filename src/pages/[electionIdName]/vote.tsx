@@ -24,18 +24,21 @@ import Card from "../../components/Card";
 import { FingerPrintIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import isElectionOngoing from "../../utils/isElectionOngoing";
+import { getSession } from "next-auth/react";
 
 interface VotePageProps {
   election: electionType;
   partylists: partylistType[];
   positions: positionType[];
   candidates: candidateType[];
+  voterUid: string;
 }
 const VotePage = ({
   election,
   partylists,
   positions,
   candidates,
+  voterUid,
 }: VotePageProps) => {
   const pageTitle = `${election.name} - Vote | eBoto Mo`;
   const [selectedCandidates, setSelectedCandidates] = useState<string[]>([]);
@@ -76,6 +79,7 @@ const VotePage = ({
         positions={positions}
         candidates={candidates}
         selectedCandidates={selectedCandidates}
+        voterUid={voterUid}
       />
       <Stack spacing={4} alignItems="center">
         <Box width="full">
@@ -121,6 +125,21 @@ const VotePage = ({
 export default VotePage;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getSession(context);
+  console.log(session);
+  if (
+    session &&
+    session.user &&
+    session.user.accountType === "voter" &&
+    session.user.hasVoted === true
+  ) {
+    return {
+      redirect: {
+        destination: `/${context.query.electionIdName}/realtime`,
+        permanent: false,
+      },
+    };
+  }
   const electionSnapshot = await getDocs(
     query(
       collection(firestore, "elections"),
@@ -173,6 +192,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       positions: JSON.parse(JSON.stringify(positions)) as positionType[],
       partylists: JSON.parse(JSON.stringify(partylists)) as partylistType[],
       candidates: JSON.parse(JSON.stringify(candidates)) as candidateType[],
+      voterUid: session?.user?.uid,
     },
   };
 };

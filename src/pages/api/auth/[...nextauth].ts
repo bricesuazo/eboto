@@ -82,13 +82,27 @@ export default NextAuth({
     async session({ session, token }: { session: Session; token: JWT }) {
       session.user = token.user as Session["user"];
 
-      if (session.user.uid) {
+      if (session.user.accountType === "admin") {
         const updatedAdminData = await getDoc(
           doc(firestore, "admins", session.user.uid)
         );
         if (updatedAdminData.exists()) {
           session.user = updatedAdminData.data() as Session["user"];
           token.user = updatedAdminData.data() as Session["user"];
+        }
+      } else if (session.user.accountType === "voter") {
+        const updatedVoterData = await getDoc(
+          doc(
+            firestore,
+            "elections",
+            session.user.election,
+            "voters",
+            session.user.uid
+          )
+        );
+        if (updatedVoterData.exists()) {
+          session.user = updatedVoterData.data() as Session["user"];
+          token.user = updatedVoterData.data() as Session["user"];
         }
       }
       return session;
