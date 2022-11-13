@@ -106,8 +106,6 @@ const SignupPage: NextPage = () => {
                   await signIn("credentials", {
                     email: credentials.email,
                     password: credentials.password,
-                    callbackUrl: "/create-election",
-                    redirect: false,
                   });
                 });
                 setLoading(false);
