@@ -17,24 +17,17 @@ import {
   Tooltip,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import {
-  electionType,
-  candidateType,
-  partylistType,
-  positionType,
-} from "../types/typings";
+import { electionType, partylistType, positionType } from "../types/typings";
 import { v4 as uuidv4 } from "uuid";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import {
   addDoc,
   collection,
   doc,
-  query,
   updateDoc,
   Timestamp,
 } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
-import { useFirestoreCollectionData } from "reactfire";
 import capitalizeFirstLetter from "../utils/capitalizeFirstLetter";
 
 const AddCandidateModal = ({
@@ -52,64 +45,40 @@ const AddCandidateModal = ({
 }) => {
   const clearForm = () => {
     setCandidate({
-      id: uuidv4(),
-      uid: "",
       firstName: "",
       middleName: "",
       lastName: "",
       photoUrl: "",
-      position: position?.uid,
       partylist: "",
-      votingCount: 0,
-      createdAt: Timestamp.now(),
-      updatedAt: Timestamp.now(),
     });
   };
-  const [candidate, setCandidate] = useState<candidateType>({
-    id: uuidv4(),
-    uid: "",
+  const [candidate, setCandidate] = useState<{
+    firstName: string;
+    middleName: string;
+    lastName: string;
+    photoUrl: string;
+    partylist: string;
+  }>({
     firstName: "",
     middleName: "",
     lastName: "",
     photoUrl: "",
-    position: position?.uid,
     partylist: "",
-    votingCount: 0,
-    createdAt: Timestamp.now(),
-    updatedAt: Timestamp.now(),
   });
   const [loading, setLoading] = useState(false);
 
-  // const { status: statusPartylists, data: partylistsData } =
-  //   useFirestoreCollectionData(
-  //     query(collection(firestore, "elections", election.uid, "partylists"))
-  //   );
-  // const { status: statusPositions, data: positionsData } =
-  //   useFirestoreCollectionData(
-  //     query(collection(firestore, "elections", election.uid, "positions"))
-  //   );
-  // const [partylists, setPartylists] = useState<partylistType[]>();
-  // const [positions, setPositions] = useState<positionType[]>();
-  // useEffect(() => {
-  //   if (statusPartylists === "success") {
-  //     setPartylists(partylistsData as partylistType[]);
-  //   }
-  //   if (statusPositions === "success") {
-  //     setPositions(positionsData as positionType[]);
-  //   }
-  // }, [partylistsData, positionsData]);
   useEffect(() => {
     clearForm();
     setLoading(false);
-  }, [isOpen, clearForm]);
+  }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} trapFocus={false}>
       <ModalOverlay />
       <form
         onSubmit={async (e) => {
-          setLoading(true);
           e.preventDefault();
+          setLoading(true);
           await addDoc(
             collection(firestore, "elections", election.uid, "candidates"),
             {
@@ -120,6 +89,13 @@ const AddCandidateModal = ({
                 ? capitalizeFirstLetter(candidate.middleName)
                 : "",
               lastName: capitalizeFirstLetter(candidate.lastName),
+
+              id: uuidv4(),
+              uid: "",
+              position: position?.uid,
+              votingCount: 0,
+              createdAt: Timestamp.now(),
+              updatedAt: Timestamp.now(),
             }
           ).then(async (docRef) => {
             await updateDoc(
@@ -205,30 +181,6 @@ const AddCandidateModal = ({
               <FormControl isRequired>
                 <FormLabel>Position</FormLabel>
                 <Input value={position?.title} readOnly />
-                {/* <Select
-                  placeholder="Select position"
-                  disabled={
-                    // statusPositions === "loading" ||
-                    loading
-                  }
-                  onChange={(e) => {
-                    setCandidate({
-                      ...candidate,
-                      position: e.target.value,
-                    });
-                  }}
-                  value={candidate.position}
-                >
-                  {positions?.map((position) => (
-                    <option value={position.uid} key={position.id}>
-                      {
-                        // statusPositions === "loading" &&
-                        "Loading..."
-                      }
-                      {position.title}
-                    </option>
-                  ))}
-                </Select> */}
               </FormControl>
               <FormControl>
                 <FormLabel>Image</FormLabel>
@@ -242,7 +194,6 @@ const AddCandidateModal = ({
               {(candidate.firstName ||
                 candidate.middleName ||
                 candidate.lastName ||
-                candidate.position ||
                 candidate.partylist) && (
                 <Tooltip label="Clear forms">
                   <IconButton
@@ -265,7 +216,6 @@ const AddCandidateModal = ({
                 disabled={
                   !candidate.firstName ||
                   !candidate.lastName ||
-                  !candidate.position ||
                   !candidate.partylist
                 }
               >

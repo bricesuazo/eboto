@@ -316,7 +316,7 @@ export const getServerSideProps: GetServerSideProps = async (
           electionSnapshot.docs[0].data().uid,
           "positions"
         ),
-        orderBy("createdAt", "asc")
+        orderBy("order")
       )
     );
     const positions: positionType[] = positionSnapshot.docs.map(
