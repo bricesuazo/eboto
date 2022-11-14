@@ -23,6 +23,7 @@ export interface partylistType {
   updatedAt: Timestamp;
 }
 export interface positionType {
+  order: number;
   uid: string;
   id: string;
   title: string;

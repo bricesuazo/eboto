@@ -183,7 +183,7 @@ const CreateElectionModal = ({
                 );
               });
 
-              // Create CSSO template
+              // CSSO template
               if (selectedTemplate === "1") {
                 const cssoTemplate = [
                   "President",
@@ -195,7 +195,7 @@ const CreateElectionModal = ({
                   "Business Manager",
                   "Public Relations Officer",
                 ];
-                cssoTemplate.forEach(async (position) => {
+                cssoTemplate.forEach(async (position, i) => {
                   await addDoc(
                     collection(
                       firestore,
@@ -204,6 +204,7 @@ const CreateElectionModal = ({
                       "positions"
                     ),
                     {
+                      order: i,
                       uid: "",
                       id: uuidv4(),
                       title: position,

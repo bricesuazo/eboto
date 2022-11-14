@@ -25,6 +25,7 @@ import {
   doc,
   updateDoc,
   Timestamp,
+  getDocs,
 } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
 
@@ -39,6 +40,7 @@ const AddPositionModal = ({
 }) => {
   const clearForm = () => {
     setPosition({
+      order: 0,
       uid: "",
       id: uuidv4(),
       title: "",
@@ -48,6 +50,7 @@ const AddPositionModal = ({
     });
   };
   const [position, setPosition] = useState<positionType>({
+    order: 0,
     uid: "",
     id: uuidv4(),
     title: "",
@@ -67,12 +70,16 @@ const AddPositionModal = ({
       <ModalOverlay />
       <form
         onSubmit={async (e) => {
-          setLoading(true);
           e.preventDefault();
+          setLoading(true);
+          const positions = await getDocs(
+            collection(firestore, "elections", election.uid, "positions")
+          );
           await addDoc(
             collection(firestore, "elections", election.uid, "positions"),
             {
               ...position,
+              order: positions.size,
               title: position.title.trim(),
             }
           ).then(async (docRef) => {

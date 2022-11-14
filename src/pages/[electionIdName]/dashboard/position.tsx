@@ -51,7 +51,7 @@ const PositionPage = ({
   const { data } = useFirestoreCollectionData(
     query(
       collection(firestore, "elections", election.uid, "positions"),
-      orderBy("createdAt")
+      orderBy("order")
     )
   );
   const [positions, setPositions] = useState<positionType[] | null>(null);
