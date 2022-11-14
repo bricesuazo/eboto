@@ -26,6 +26,8 @@ import {
   updateDoc,
   Timestamp,
   getDocs,
+  query,
+  orderBy,
 } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
 
@@ -73,13 +75,16 @@ const AddPositionModal = ({
           e.preventDefault();
           setLoading(true);
           const positions = await getDocs(
-            collection(firestore, "elections", election.uid, "positions")
+            query(
+              collection(firestore, "elections", election.uid, "positions"),
+              orderBy("order")
+            )
           );
           await addDoc(
             collection(firestore, "elections", election.uid, "positions"),
             {
               ...position,
-              order: positions.size,
+              order: positions.docs[positions.size - 1].data().order + 1,
               title: position.title.trim(),
             }
           ).then(async (docRef) => {
