@@ -9,6 +9,7 @@ import {
   AlertTitle,
   Box,
   Button,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormHelperText,
@@ -23,6 +24,9 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  RadioProps,
+  useRadio,
+  useRadioGroup,
 } from "@chakra-ui/react";
 import {
   addDoc,
@@ -87,13 +91,30 @@ const CreateElectionModal = ({
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [endDate, setEndDate] = useState<Date | null>(null);
 
+  const options = [
+    { id: 0, title: "None" },
+    {
+      id: 1,
+      title: "CSSO",
+    },
+  ];
+  const [selectedTemplate, setSelectedTemplate] = useState<string>(
+    options[0].id.toString()
+  );
+  const { getRootProps, getRadioProps } = useRadioGroup({
+    name: "election-template",
+    onChange: setSelectedTemplate,
+    value: selectedTemplate,
+  });
+  const group = getRootProps();
+
   useEffect(() => {
     setElection({ ...election, name: "", electionIdName: "" });
     setStartDate(new Date());
     setEndDate(null);
     setError(null);
+    setSelectedTemplate(options[0].id.toString());
   }, [isOpen]);
-
   return (
     <Modal
       isOpen={cantClose ? true : isOpen}
@@ -161,6 +182,51 @@ const CreateElectionModal = ({
                   }
                 );
               });
+
+              // Create CSSO template
+              if (selectedTemplate === "1") {
+                const cssoTemplate = [
+                  "President",
+                  "Vice President for Internal Affairs",
+                  "Vice President for External Affairs",
+                  "Secretary",
+                  "Treasurer",
+                  "Auditor",
+                  "Business Manager",
+                  "Public Relations Officer",
+                ];
+                cssoTemplate.forEach(async (position) => {
+                  await addDoc(
+                    collection(
+                      firestore,
+                      "elections",
+                      electionSnap.id,
+                      "positions"
+                    ),
+                    {
+                      uid: "",
+                      id: uuidv4(),
+                      title: position,
+                      undecidedVotingCount: 0,
+                      updatedAt: Timestamp.now(),
+                      createdAt: Timestamp.now(),
+                    }
+                  ).then(async (positionSnap) => {
+                    await updateDoc(
+                      doc(
+                        firestore,
+                        "elections",
+                        electionSnap.id,
+                        "positions",
+                        positionSnap.id
+                      ),
+                      {
+                        uid: positionSnap.id,
+                      }
+                    );
+                  });
+                });
+              }
             });
             const electionIdName = election.electionIdName;
             setLoading(false);
@@ -285,11 +351,19 @@ const CreateElectionModal = ({
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
-                <AccordionPanel padding={0}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat.
+                <AccordionPanel padding={2}>
+                  <Flex {...group} flexWrap="wrap" gap={2} userSelect="none">
+                    {options.map((option) => {
+                      const radio = getRadioProps({
+                        value: option.id.toString(),
+                      });
+                      return (
+                        <RadioCard key={option.id} {...radio}>
+                          {option.title}
+                        </RadioCard>
+                      );
+                    })}
+                  </Flex>
                 </AccordionPanel>
               </AccordionItem>
             </Accordion>
@@ -310,5 +384,36 @@ const CreateElectionModal = ({
     </Modal>
   );
 };
+function RadioCard(props: any) {
+  const { getInputProps, getCheckboxProps } = useRadio(props);
+
+  const input = getInputProps();
+  const checkbox = getCheckboxProps();
+
+  return (
+    <Box as="label">
+      <input {...input} />
+      <Box
+        {...checkbox}
+        cursor="pointer"
+        borderWidth="1px"
+        borderRadius="md"
+        boxShadow="md"
+        _checked={{
+          bg: "teal.600",
+          color: "white",
+          borderColor: "teal.600",
+        }}
+        _focus={{
+          boxShadow: "outline",
+        }}
+        px={5}
+        py={3}
+      >
+        {props.children}
+      </Box>
+    </Box>
+  );
+}
 
 export default CreateElectionModal;
