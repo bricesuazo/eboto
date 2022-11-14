@@ -1,7 +1,13 @@
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
   Alert,
   AlertIcon,
   AlertTitle,
+  Box,
   Button,
   FormControl,
   FormErrorMessage,
@@ -267,6 +273,26 @@ const CreateElectionModal = ({
                 <AlertTitle>{error?.error}</AlertTitle>
               </Alert>
             )}
+            <Accordion allowMultiple mt={4}>
+              <AccordionItem border="none">
+                <AccordionButton
+                  px={0}
+                  py={2}
+                  _hover={{ backgroundColor: "transparent" }}
+                >
+                  <Box flex="1" textAlign="left">
+                    Election template
+                  </Box>
+                  <AccordionIcon />
+                </AccordionButton>
+                <AccordionPanel padding={0}>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
+                  laboris nisi ut aliquip ex ea commodo consequat.
+                </AccordionPanel>
+              </AccordionItem>
+            </Accordion>
           </ModalBody>
           <ModalFooter>
             <Button
