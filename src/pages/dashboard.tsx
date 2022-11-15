@@ -142,13 +142,7 @@ export const getServerSideProps: GetServerSideProps = async (
 ) => {
   const session = await getSession(context);
   if (session && session.user.accountType === "admin") {
-    const electionSnapshot = await getDocs(
-      query(
-        collection(firestore, "elections"),
-        where("uid", "in", session.user.elections)
-      )
-    );
-    if (electionSnapshot.empty) {
+    if (session.user.elections.length === 0) {
       return {
         redirect: {
           destination: "/create-election",
@@ -156,6 +150,12 @@ export const getServerSideProps: GetServerSideProps = async (
         },
       };
     }
+    const electionSnapshot = await getDocs(
+      query(
+        collection(firestore, "elections"),
+        where("uid", "in", session.user.elections)
+      )
+    );
     const elections = electionSnapshot.docs.map((doc) => doc.data());
     return {
       props: { elections: JSON.parse(JSON.stringify(elections)) },
