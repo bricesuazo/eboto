@@ -6,6 +6,7 @@ export interface electionType {
   name: string;
   about: string?;
   electionIdName: string;
+  logoUrl: string?;
   createdAt: Timestamp;
   updatedAt: Timestamp;
   electionStartDate: Timestamp;
@@ -43,6 +44,32 @@ export interface candidateType {
   votingCount: number;
   updatedAt: Timestamp;
   createdAt: Timestamp;
+
+  credentials: {
+    affiliations: [
+      {
+        id: string;
+        organizationName: string;
+        position: string;
+        startDate: Timestamp;
+        endDate: Timestamp;
+      }
+    ]?;
+    achievements: [
+      {
+        id: string;
+        title: string;
+      }
+    ]?;
+    seminarsAttended: [
+      {
+        id: string;
+        name: string;
+        startDate: Timestamp;
+        endDate: Timestamp;
+      }
+    ]?;
+  };
 }
 
 export interface voterType {

@@ -56,6 +56,8 @@ const EditCandidateModal = ({
       votingCount: candidate.votingCount,
       createdAt: candidate.createdAt,
       updatedAt: candidate.updatedAt,
+
+      credentials: candidate.credentials,
     });
   };
   const [candidateData, setCandidateData] = useState<candidateType>({
@@ -70,6 +72,7 @@ const EditCandidateModal = ({
     votingCount: candidate.votingCount,
     createdAt: candidate.createdAt,
     updatedAt: candidate.updatedAt,
+    credentials: candidate.credentials,
   });
   const [loading, setLoading] = useState(false);
 

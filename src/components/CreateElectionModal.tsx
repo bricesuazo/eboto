@@ -62,13 +62,14 @@ const CreateElectionModal = ({
     uid: "",
     id: uuidv4(),
     name: "",
-    about: "",
+    about: null,
     electionIdName: "",
     createdAt: Timestamp.now(),
     updatedAt: Timestamp.now(),
     electionStartDate: Timestamp.now(),
     electionEndDate: Timestamp.now(),
     publicity: "private",
+    logoUrl: null,
   });
   const initialPartylist: partylistType = {
     uid: "",

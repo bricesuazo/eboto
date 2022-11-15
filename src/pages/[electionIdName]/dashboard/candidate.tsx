@@ -222,7 +222,7 @@ const CandidatePage = ({
                                       <PopoverArrow />
                                       <PopoverCloseButton />
                                       <PopoverHeader fontSize="xs">
-                                        Delete position?
+                                        Delete candidate?
                                       </PopoverHeader>
                                       <PopoverBody>
                                         <HStack>

@@ -96,6 +96,12 @@ const AddCandidateModal = ({
               votingCount: 0,
               createdAt: Timestamp.now(),
               updatedAt: Timestamp.now(),
+
+              credentials: {
+                affiliations: null,
+                achievements: null,
+                seminarsAttended: null,
+              },
             }
           ).then(async (docRef) => {
             await updateDoc(
