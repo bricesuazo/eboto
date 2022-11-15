@@ -92,10 +92,82 @@ const CreateElectionModal = ({
   const [endDate, setEndDate] = useState<Date | null>(null);
 
   const options = [
-    { id: 0, title: "None" },
+    { id: 0, title: "None", positions: [] },
     {
       id: 1,
+      title: "CEIT-SC",
+      positions: [
+        "President",
+        "Vice President for Internal Affairs",
+        "Vice President for External Affairs",
+        "Vice President for Documentation",
+        "Vice President for Finance",
+        "Vice President for Budget Management",
+        "Vice President for Operations",
+        "Vice President for Public Relations",
+        "Gender and Development Representative ",
+      ],
+    },
+    {
+      id: 2,
       title: "CSSO",
+      positions: [
+        "President",
+        "Vice President for Internal Affairs",
+        "Vice President for External Affairs",
+        "Secretary",
+        "Treasurer",
+        "Auditor",
+        "Business Manager",
+        "Public Relations Officer",
+      ],
+    },
+    {
+      id: 3,
+      title: "CoESS-ICPEP",
+      positions: [
+        "President",
+        "Vice President for Internal Affair",
+        "Vice President for External Affair",
+        "Secretary",
+        "Assistant Secretary",
+        "Treasurer",
+        "Auditor",
+        "Business Manager",
+        "Public Relations Officer",
+      ],
+    },
+    {
+      id: 4,
+      title: "IIEE",
+      positions: [
+        "President",
+        "Vice President for Internal Affairs",
+        "Vice President for External Affairs",
+        "Vice President for Technical",
+        "Secretary",
+        "Assistant Secretary",
+        "Treasurer",
+        "Assistant Treasurer",
+        "Auditor",
+        "Public Relations Officer",
+      ],
+    },
+    {
+      id: 5,
+      title: "PIIE",
+      positions: [
+        "President",
+        "Vice President for Internal Affairs",
+        "Vice President for External Affairs",
+        "Vice President for Finance",
+        "Vice President for Documentation",
+        "Vice President for Academics and Research",
+        "Vice President for Publication",
+        "Vice President for Activities and Preparation",
+        "Vice President for Communication",
+        "Vice President for Marketing",
+      ],
     },
   ];
   const [selectedTemplate, setSelectedTemplate] = useState<string>(
@@ -184,18 +256,11 @@ const CreateElectionModal = ({
               });
 
               // CSSO template
-              if (selectedTemplate === "1") {
-                const cssoTemplate = [
-                  "President",
-                  "Vice President for Internal Affairs",
-                  "Vice President for External Affairs",
-                  "Secretary",
-                  "Treasurer",
-                  "Auditor",
-                  "Business Manager",
-                  "Public Relations Officer",
-                ];
-                cssoTemplate.forEach(async (position, i) => {
+              if (selectedTemplate !== "0") {
+                const template = options.find(
+                  (option) => option.id.toString() === selectedTemplate
+                );
+                template?.positions.forEach(async (position, i) => {
                   await addDoc(
                     collection(
                       firestore,
