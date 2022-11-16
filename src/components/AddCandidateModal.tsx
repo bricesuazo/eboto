@@ -98,7 +98,6 @@ const AddCandidateModal = ({
     setLoading(false);
   }, [isOpen]);
 
-  console.log(candidate.credentials.achievements);
   return (
     <Modal isOpen={isOpen} onClose={onClose} trapFocus={false} size="4xl">
       <ModalOverlay />
@@ -274,32 +273,26 @@ const AddCandidateModal = ({
                     )}
                     <Button
                       onClick={() => {
-                        candidate.credentials.achievements
-                          ? setCandidate({
-                              ...candidate,
-                              credentials: {
-                                ...candidate.credentials,
-                                achievements: [
-                                  ...candidate.credentials.achievements,
-                                  {
-                                    id: uuidv4(),
-                                    title: "",
-                                  },
-                                ],
+                        if (
+                          candidate.credentials.achievements.length &&
+                          candidate.credentials.achievements[
+                            candidate.credentials.achievements.length - 1
+                          ].title === ""
+                        )
+                          return;
+                        setCandidate({
+                          ...candidate,
+                          credentials: {
+                            ...candidate.credentials,
+                            achievements: [
+                              ...candidate.credentials.achievements,
+                              {
+                                id: uuidv4(),
+                                title: "",
                               },
-                            })
-                          : setCandidate({
-                              ...candidate,
-                              credentials: {
-                                ...candidate.credentials,
-                                achievements: [
-                                  {
-                                    id: uuidv4(),
-                                    title: "",
-                                  },
-                                ],
-                              },
-                            });
+                            ],
+                          },
+                        });
                       }}
                       disabled={loading}
                       size="sm"
