@@ -9,6 +9,7 @@ import { FirebaseAppProvider, FirestoreProvider } from "reactfire";
 import { app } from "../firebase/firebase";
 import { Analytics } from "@vercel/analytics/react";
 import { Inter } from "@next/font/google";
+import "react-datepicker/dist/react-datepicker.css";
 
 const inter = Inter();
 export default function MyApp({

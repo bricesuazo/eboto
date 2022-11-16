@@ -46,28 +46,28 @@ export interface candidateType {
   createdAt: Timestamp;
 
   credentials: {
-    affiliations: affiliationsType[] | [];
-    achievements: achievementsType[] | [];
-    seminarsAttended: seminarsAttendedType[] | [];
+    affiliations: affiliationType[] | [];
+    achievements: achievementType[] | [];
+    seminarsAttended: seminarAttendedType[] | [];
   };
 }
 
-interface seminarsAttendedType {
+interface seminarAttendedType {
   id: string;
   name: string;
-  startDate: Timestamp;
-  endDate: Timestamp;
+  startDate: Timestamp?;
+  endDate: Timestamp?;
 }
-interface achievementsType {
+interface achievementType {
   id: string;
   title: string;
 }
-interface affiliationsType {
+interface affiliationType {
   id: string;
   organizationName: string;
   position: string;
-  startDate: Timestamp;
-  endDate: Timestamp;
+  startDate: Timestamp?;
+  endDate: Timestamp?;
 }
 
 export interface voterType {

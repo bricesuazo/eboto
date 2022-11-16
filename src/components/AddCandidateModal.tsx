@@ -19,8 +19,9 @@ import {
   Text,
   Tooltip,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import {
+  affiliationType,
   candidateType,
   electionType,
   partylistType,
@@ -37,6 +38,7 @@ import {
 } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
 import capitalizeFirstLetter from "../utils/capitalizeFirstLetter";
+import ReactDatePicker from "react-datepicker";
 
 const AddCandidateModal = ({
   isOpen,
@@ -97,7 +99,7 @@ const AddCandidateModal = ({
     clearForm();
     setLoading(false);
   }, [isOpen]);
-
+  console.log(candidate.credentials);
   return (
     <Modal isOpen={isOpen} onClose={onClose} trapFocus={false} size="4xl">
       <ModalOverlay />
@@ -245,7 +247,7 @@ const AddCandidateModal = ({
                                   },
                                 })
                               }
-                              // value={candidate.lastName}
+                              value={achievement.title}
                               disabled={loading}
                             />
                             <IconButton
@@ -305,25 +307,127 @@ const AddCandidateModal = ({
               <Stack flex={1} spacing={4}>
                 <FormControl>
                   <FormLabel>Affiliations</FormLabel>
-                  <Input
-                    placeholder="Candidate last name"
-                    onChange={(e) =>
-                      setCandidate({ ...candidate, lastName: e.target.value })
-                    }
-                    value={candidate.lastName}
-                    disabled={loading}
-                  />
+                  <Stack>
+                    {!candidate.credentials.affiliations.length ? (
+                      <Text>No affiliations added</Text>
+                    ) : (
+                      candidate.credentials.affiliations.map((affiliation) => (
+                        <AffiliationInput
+                          key={affiliation.id}
+                          affiliation={affiliation}
+                          candidate={candidate}
+                          setCandidate={setCandidate}
+                        />
+                      ))
+                    )}
+                    <Button
+                      onClick={() => {
+                        setCandidate({
+                          ...candidate,
+                          credentials: {
+                            ...candidate.credentials,
+                            affiliations: [
+                              ...candidate.credentials.affiliations,
+                              {
+                                id: uuidv4(),
+                                organizationName: "",
+                                position: "",
+                                startDate: null,
+                                endDate: null,
+                              },
+                            ],
+                          },
+                        });
+                      }}
+                      disabled={loading}
+                      size="sm"
+                    >
+                      Add affiliation
+                    </Button>
+                  </Stack>
                 </FormControl>
                 <FormControl>
                   <FormLabel>Seminars Attended</FormLabel>
-                  <Input
-                    placeholder="Candidate last name"
-                    onChange={(e) =>
-                      setCandidate({ ...candidate, lastName: e.target.value })
-                    }
-                    value={candidate.lastName}
-                    disabled={loading}
-                  />
+                  <Stack>
+                    {!candidate.credentials.seminarsAttended.length ? (
+                      <Text>No seminars attended added</Text>
+                    ) : (
+                      candidate.credentials.seminarsAttended.map(
+                        (seminarsAttended) => (
+                          <FormControl key={seminarsAttended.id} isRequired>
+                            <Flex justifyContent="space-between" gap={2}>
+                              <Input
+                                placeholder="Seminar attended title"
+                                onChange={(e) =>
+                                  setCandidate({
+                                    ...candidate,
+                                    credentials: {
+                                      ...candidate.credentials,
+                                      seminarsAttended:
+                                        candidate.credentials.seminarsAttended.map(
+                                          (seminarsAttendedToEdit) =>
+                                            seminarsAttendedToEdit.id ===
+                                            seminarsAttended.id
+                                              ? {
+                                                  ...seminarsAttended,
+                                                  name: e.target.value,
+                                                }
+                                              : seminarsAttended
+                                        ),
+                                    },
+                                  })
+                                }
+                                value={seminarsAttended.name}
+                                disabled={loading}
+                              />
+                              <IconButton
+                                aria-label="Remove seminar attended"
+                                icon={<TrashIcon width={18} />}
+                                onClick={() => {
+                                  setCandidate({
+                                    ...candidate,
+                                    credentials: {
+                                      ...candidate.credentials,
+                                      seminarsAttended:
+                                        candidate.credentials.seminarsAttended.filter(
+                                          (seminarsAttendedToRemove) =>
+                                            seminarsAttendedToRemove.id !==
+                                            seminarsAttended.id
+                                        ),
+                                    },
+                                  });
+                                }}
+                                disabled={loading}
+                              />
+                            </Flex>
+                          </FormControl>
+                        )
+                      )
+                    )}
+                    <Button
+                      onClick={() => {
+                        setCandidate({
+                          ...candidate,
+                          credentials: {
+                            ...candidate.credentials,
+                            seminarsAttended: [
+                              ...candidate.credentials.seminarsAttended,
+                              {
+                                id: uuidv4(),
+                                name: "",
+                                startDate: null,
+                                endDate: null,
+                              },
+                            ],
+                          },
+                        });
+                      }}
+                      disabled={loading}
+                      size="sm"
+                    >
+                      Add seminar added
+                    </Button>
+                  </Stack>
                 </FormControl>
               </Stack>
             </Flex>
@@ -373,3 +477,93 @@ const AddCandidateModal = ({
 };
 
 export default AddCandidateModal;
+
+import React from "react";
+
+const AffiliationInput = ({
+  affiliation,
+  candidate,
+  setCandidate,
+}: {
+  affiliation: affiliationType;
+  candidate: candidateType;
+  setCandidate: (value: React.SetStateAction<candidateType>) => void;
+}) => {
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  // const ExampleCustomInput = React.forwardRef<HTMLButtonElement>(
+  //   ({ value, onClick }, ref) => (
+  //     <button className="example-custom-input" onClick={onClick} ref={ref}>
+  //       {value}
+  //     </button>
+  //   )
+  // );
+  return (
+    <FormControl isRequired>
+      <Stack>
+        <Flex justifyContent="space-between" gap={2}>
+          <Input
+            placeholder="Affiliation title"
+            onChange={(e) =>
+              setCandidate({
+                ...candidate,
+                credentials: {
+                  ...candidate.credentials,
+                  affiliations: candidate.credentials.affiliations.map(
+                    (affiliationToEdit) =>
+                      affiliationToEdit.id === affiliation.id
+                        ? {
+                            ...affiliationToEdit,
+                            organizationName: e.target.value,
+                          }
+                        : affiliationToEdit
+                  ),
+                },
+              })
+            }
+            value={affiliation.organizationName}
+          />
+          <IconButton
+            aria-label="Remove affiliation"
+            icon={<TrashIcon width={18} />}
+            onClick={() => {
+              setCandidate({
+                ...candidate,
+                credentials: {
+                  ...candidate.credentials,
+                  affiliations: candidate.credentials.affiliations.filter(
+                    (affiliationToRemove) =>
+                      affiliationToRemove.id !== affiliation.id
+                  ),
+                },
+              });
+            }}
+          />
+        </Flex>
+        <Flex gap={2} flex={1}>
+          <Box>
+            <ReactDatePicker
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
+              showYearPicker
+              dateFormat="yyyy"
+              placeholderText="Start date"
+              // customInput={<ExampleCustomInput />}
+            />
+          </Box>
+          <Box>
+            <ReactDatePicker
+              selected={endDate}
+              onChange={(date) => setEndDate(date)}
+              showYearPicker
+              dateFormat="yyyy"
+              placeholderText="End date"
+              disabled={!startDate}
+              minDate={startDate}
+            />
+          </Box>
+        </Flex>
+      </Stack>
+    </FormControl>
+  );
+};

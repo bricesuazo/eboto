@@ -45,9 +45,7 @@ import Router from "next/router";
 import { useSession } from "next-auth/react";
 import reloadSession from "../utils/reloadSession";
 import isElectionIdNameExists from "../utils/isElectionIdNameExists";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { setMinutes, setHours } from "date-fns";
+import ReactDatePicker from "react-datepicker";
 
 const CreateElectionModal = ({
   isOpen,
@@ -348,7 +346,7 @@ const CreateElectionModal = ({
 
             <FormControl mt={4} isRequired>
               <FormLabel>Election Date</FormLabel>
-              <DatePicker
+              <ReactDatePicker
                 selected={startDate}
                 minDate={new Date()}
                 onChange={(date) => {
@@ -373,7 +371,7 @@ const CreateElectionModal = ({
                 isClearable
                 placeholderText="Select election start date"
               />
-              <DatePicker
+              <ReactDatePicker
                 disabled={!startDate}
                 selected={endDate}
                 onChange={(date) => {

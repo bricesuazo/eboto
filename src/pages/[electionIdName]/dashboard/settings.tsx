@@ -31,8 +31,7 @@ import DashboardLayout from "../../../layout/DashboardLayout";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { getSession } from "next-auth/react";
 import isElectionIdNameExists from "../../../utils/isElectionIdNameExists";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import ReactDatePicker from "react-datepicker";
 import isElectionOngoing from "../../../utils/isElectionOngoing";
 import DeleteElectionModal from "../../../components/DeleteElectionModal";
 
@@ -179,7 +178,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
               <FormControl isRequired>
                 <FormLabel>Election Date</FormLabel>
 
-                <DatePicker
+                <ReactDatePicker
                   disabled={isElectionOngoing(
                     initialElection.electionStartDate,
                     initialElection.electionEndDate
@@ -207,7 +206,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                   }
                   placeholderText="Select election start date"
                 />
-                <DatePicker
+                <ReactDatePicker
                   disabled={
                     !startDate ||
                     isElectionOngoing(
