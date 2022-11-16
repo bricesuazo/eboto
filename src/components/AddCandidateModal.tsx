@@ -94,12 +94,11 @@ const AddCandidateModal = ({
     },
   });
   const [loading, setLoading] = useState(false);
-
+  console.log(candidate.credentials.affiliations);
   useEffect(() => {
     clearForm();
     setLoading(false);
   }, [isOpen]);
-  console.log(candidate.credentials);
   return (
     <Modal isOpen={isOpen} onClose={onClose} trapFocus={false} size="4xl">
       <ModalOverlay />
@@ -312,12 +311,135 @@ const AddCandidateModal = ({
                       <Text>No affiliations added</Text>
                     ) : (
                       candidate.credentials.affiliations.map((affiliation) => (
-                        <AffiliationInput
-                          key={affiliation.id}
-                          affiliation={affiliation}
-                          candidate={candidate}
-                          setCandidate={setCandidate}
-                        />
+                        <FormControl key={affiliation.id} isRequired>
+                          <Stack>
+                            <Flex justifyContent="space-between" gap={2}>
+                              <Input
+                                placeholder="Organization name"
+                                onChange={(e) =>
+                                  setCandidate({
+                                    ...candidate,
+                                    credentials: {
+                                      ...candidate.credentials,
+                                      affiliations:
+                                        candidate.credentials.affiliations.map(
+                                          (affiliationToEdit) =>
+                                            affiliationToEdit.id ===
+                                            affiliation.id
+                                              ? {
+                                                  ...affiliationToEdit,
+                                                  organizationName:
+                                                    e.target.value,
+                                                }
+                                              : affiliationToEdit
+                                        ),
+                                    },
+                                  })
+                                }
+                                value={affiliation.organizationName}
+                              />
+                              <IconButton
+                                aria-label="Remove affiliation"
+                                icon={<TrashIcon width={18} />}
+                                onClick={() => {
+                                  setCandidate({
+                                    ...candidate,
+                                    credentials: {
+                                      ...candidate.credentials,
+                                      affiliations:
+                                        candidate.credentials.affiliations.filter(
+                                          (affiliationToRemove) =>
+                                            affiliationToRemove.id !==
+                                            affiliation.id
+                                        ),
+                                    },
+                                  });
+                                }}
+                              />
+                            </Flex>
+                            <Input
+                              placeholder="Position in the organization"
+                              onChange={(e) =>
+                                setCandidate({
+                                  ...candidate,
+                                  credentials: {
+                                    ...candidate.credentials,
+                                    affiliations:
+                                      candidate.credentials.affiliations.map(
+                                        (affiliationToEdit) =>
+                                          affiliationToEdit.id ===
+                                          affiliation.id
+                                            ? {
+                                                ...affiliationToEdit,
+                                                position: e.target.value,
+                                              }
+                                            : affiliationToEdit
+                                      ),
+                                  },
+                                })
+                              }
+                              value={affiliation.position}
+                            />
+                            <Flex gap={2} flex={1}>
+                              <ReactDatePicker
+                                selected={affiliation.startDate?.toDate()}
+                                onChange={(date) =>
+                                  date &&
+                                  setCandidate({
+                                    ...candidate,
+                                    credentials: {
+                                      ...candidate.credentials,
+                                      affiliations:
+                                        candidate.credentials.affiliations.map(
+                                          (affiliationToEdit) =>
+                                            affiliationToEdit.id ===
+                                            affiliation.id
+                                              ? {
+                                                  ...affiliationToEdit,
+                                                  startDate:
+                                                    Timestamp.fromDate(date),
+                                                }
+                                              : affiliationToEdit
+                                        ),
+                                    },
+                                  })
+                                }
+                                showYearPicker
+                                dateFormat="yyyy"
+                                placeholderText="Start date"
+                              />
+                              <ReactDatePicker
+                                selected={affiliation.endDate?.toDate()}
+                                onChange={(date) =>
+                                  date &&
+                                  setCandidate({
+                                    ...candidate,
+                                    credentials: {
+                                      ...candidate.credentials,
+                                      affiliations:
+                                        candidate.credentials.affiliations.map(
+                                          (affiliationToEdit) =>
+                                            affiliationToEdit.id ===
+                                            affiliation.id
+                                              ? {
+                                                  ...affiliationToEdit,
+                                                  endDate:
+                                                    Timestamp.fromDate(date),
+                                                }
+                                              : affiliationToEdit
+                                        ),
+                                    },
+                                  })
+                                }
+                                showYearPicker
+                                dateFormat="yyyy"
+                                placeholderText="End date"
+                                disabled={!affiliation.startDate?.toDate()}
+                                minDate={affiliation.startDate?.toDate()}
+                              />
+                            </Flex>
+                          </Stack>
+                        </FormControl>
                       ))
                     )}
                     <Button
@@ -479,91 +601,3 @@ const AddCandidateModal = ({
 export default AddCandidateModal;
 
 import React from "react";
-
-const AffiliationInput = ({
-  affiliation,
-  candidate,
-  setCandidate,
-}: {
-  affiliation: affiliationType;
-  candidate: candidateType;
-  setCandidate: (value: React.SetStateAction<candidateType>) => void;
-}) => {
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  // const ExampleCustomInput = React.forwardRef<HTMLButtonElement>(
-  //   ({ value, onClick }, ref) => (
-  //     <button className="example-custom-input" onClick={onClick} ref={ref}>
-  //       {value}
-  //     </button>
-  //   )
-  // );
-  return (
-    <FormControl isRequired>
-      <Stack>
-        <Flex justifyContent="space-between" gap={2}>
-          <Input
-            placeholder="Affiliation title"
-            onChange={(e) =>
-              setCandidate({
-                ...candidate,
-                credentials: {
-                  ...candidate.credentials,
-                  affiliations: candidate.credentials.affiliations.map(
-                    (affiliationToEdit) =>
-                      affiliationToEdit.id === affiliation.id
-                        ? {
-                            ...affiliationToEdit,
-                            organizationName: e.target.value,
-                          }
-                        : affiliationToEdit
-                  ),
-                },
-              })
-            }
-            value={affiliation.organizationName}
-          />
-          <IconButton
-            aria-label="Remove affiliation"
-            icon={<TrashIcon width={18} />}
-            onClick={() => {
-              setCandidate({
-                ...candidate,
-                credentials: {
-                  ...candidate.credentials,
-                  affiliations: candidate.credentials.affiliations.filter(
-                    (affiliationToRemove) =>
-                      affiliationToRemove.id !== affiliation.id
-                  ),
-                },
-              });
-            }}
-          />
-        </Flex>
-        <Flex gap={2} flex={1}>
-          <Box>
-            <ReactDatePicker
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-              showYearPicker
-              dateFormat="yyyy"
-              placeholderText="Start date"
-              // customInput={<ExampleCustomInput />}
-            />
-          </Box>
-          <Box>
-            <ReactDatePicker
-              selected={endDate}
-              onChange={(date) => setEndDate(date)}
-              showYearPicker
-              dateFormat="yyyy"
-              placeholderText="End date"
-              disabled={!startDate}
-              minDate={startDate}
-            />
-          </Box>
-        </Flex>
-      </Stack>
-    </FormControl>
-  );
-};
