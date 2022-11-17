@@ -35,6 +35,7 @@ import ReactDatePicker from "react-datepicker";
 import isElectionOngoing from "../../../utils/isElectionOngoing";
 import DeleteElectionModal from "../../../components/DeleteElectionModal";
 import slugify from "react-slugify";
+import deepEqual from "deep-equal";
 
 interface SettingsPageProps {
   election: electionType;
@@ -103,13 +104,9 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                     new Date(
                       initialElection.electionEndDate.seconds * 1000
                     ).toString() &&
-                  settings.name.trim() === initialElection.name.trim() &&
-                  settings.electionIdName.trim() ===
-                    initialElection.electionIdName.trim() &&
-                  settings.publicity === initialElection.publicity)
-              ) {
+                  deepEqual(settings, initialState))
+              )
                 return;
-              }
 
               const electionIdName =
                 settings.electionIdName.charAt(
