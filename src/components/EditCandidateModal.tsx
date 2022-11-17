@@ -56,6 +56,7 @@ const EditCandidateModal = ({
       votingCount: candidate.votingCount,
       createdAt: candidate.createdAt,
       updatedAt: candidate.updatedAt,
+      slug: candidate.slug,
 
       credentials: candidate.credentials,
     });
@@ -66,6 +67,7 @@ const EditCandidateModal = ({
     firstName: candidate.firstName,
     middleName: candidate.middleName,
     lastName: candidate.lastName,
+    slug: candidate.slug,
     photoUrl: candidate.photoUrl,
     position: candidate.position,
     partylist: candidate.partylist,
@@ -161,6 +163,20 @@ const EditCandidateModal = ({
                     })
                   }
                   value={candidateData.lastName}
+                  disabled={loading}
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel>Slug</FormLabel>
+                <Input
+                  placeholder="Candidate slug"
+                  onChange={(e) =>
+                    setCandidateData({
+                      ...candidateData,
+                      slug: e.target.value,
+                    })
+                  }
+                  value={candidateData.slug}
                   disabled={loading}
                 />
               </FormControl>

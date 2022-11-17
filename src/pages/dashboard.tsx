@@ -22,6 +22,7 @@ import Link from "next/link";
 import Moment from "react-moment";
 import { ChevronRightIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 import CreateElectionModal from "../components/CreateElectionModal";
+import Head from "next/head";
 
 const DashboardPage = ({ elections }: { elections: electionType[] }) => {
   const {
@@ -36,6 +37,9 @@ const DashboardPage = ({ elections }: { elections: electionType[] }) => {
         isOpen={isOpenCreateElection}
         onClose={onCloseCreateElection}
       />
+      <Head>
+        <title>Dashboard | eBoto Mo</title>
+      </Head>
       <Box padding={4}>
         <Text mb={4} fontWeight="bold" fontSize={{ sm: "lg", lg: "xl" }}>
           Your elections

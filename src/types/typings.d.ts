@@ -44,6 +44,7 @@ export interface candidateType {
   votingCount: number;
   updatedAt: Timestamp;
   createdAt: Timestamp;
+  slug:string;
 
   credentials: {
     affiliations: affiliationType[] | [];

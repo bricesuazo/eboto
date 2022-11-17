@@ -119,7 +119,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         electionSnapshot.docs[0].id,
         "positions"
       ),
-      orderBy("createdAt", "asc")
+      orderBy("order")
     )
   );
   const positions = positionsSnapshot.docs.map((doc) => doc.data());

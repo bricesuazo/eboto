@@ -66,6 +66,7 @@ const AddCandidateModal = ({
       votingCount: 0,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
+      slug: "",
 
       credentials: {
         achievements: [],
@@ -86,6 +87,7 @@ const AddCandidateModal = ({
     votingCount: 0,
     createdAt: Timestamp.now(),
     updatedAt: Timestamp.now(),
+    slug: "",
 
     credentials: {
       achievements: [],
@@ -181,6 +183,17 @@ const AddCandidateModal = ({
                       setCandidate({ ...candidate, lastName: e.target.value })
                     }
                     value={candidate.lastName}
+                    disabled={loading}
+                  />
+                </FormControl>
+                <FormControl isRequired>
+                  <FormLabel>Slug</FormLabel>
+                  <Input
+                    placeholder="Candidate's slug"
+                    onChange={(e) =>
+                      setCandidate({ ...candidate, slug: e.target.value })
+                    }
+                    value={candidate.slug}
                     disabled={loading}
                   />
                 </FormControl>
@@ -507,10 +520,10 @@ const AddCandidateModal = ({
                                             seminarsAttendedToEdit.id ===
                                             seminarsAttended.id
                                               ? {
-                                                  ...seminarsAttended,
+                                                  ...seminarsAttendedToEdit,
                                                   name: e.target.value,
                                                 }
-                                              : seminarsAttended
+                                              : seminarsAttendedToEdit
                                         ),
                                     },
                                   })
