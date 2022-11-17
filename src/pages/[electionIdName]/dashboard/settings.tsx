@@ -34,6 +34,7 @@ import isElectionIdNameExists from "../../../utils/isElectionIdNameExists";
 import ReactDatePicker from "react-datepicker";
 import isElectionOngoing from "../../../utils/isElectionOngoing";
 import DeleteElectionModal from "../../../components/DeleteElectionModal";
+import slugify from "react-slugify";
 
 interface SettingsPageProps {
   election: electionType;
@@ -150,6 +151,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                     setSettings({
                       ...settings,
                       name: e.target.value,
+                      electionIdName: slugify(e.target.value),
                     });
                   }}
                   value={settings.name}
@@ -166,7 +168,12 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setSettings({
                         ...settings,
-                        electionIdName: e.target.value.toLocaleLowerCase(),
+                        electionIdName:
+                          settings.electionIdName.charAt(
+                            settings.electionIdName.length - 1
+                          ) === "-"
+                            ? e.target.value.trim()
+                            : e.target.value.replace(" ", "-"),
                       });
                       setError(null);
                     }}
