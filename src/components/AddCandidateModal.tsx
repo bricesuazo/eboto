@@ -140,6 +140,7 @@ const AddCandidateModal = ({
             setLoading(false);
             return;
           }
+
           await addDoc(
             collection(firestore, "elections", election.uid, "candidates"),
             {

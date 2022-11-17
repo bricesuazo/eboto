@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   IconButton,
   Input,
@@ -24,7 +25,15 @@ import {
   positionType,
 } from "../types/typings";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { doc, Timestamp, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  Timestamp,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
 import capitalizeFirstLetter from "../utils/capitalizeFirstLetter";
 
@@ -77,10 +86,15 @@ const EditCandidateModal = ({
     credentials: candidate.credentials,
   });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<{
+    type: "slug";
+    error: string;
+  } | null>(null);
 
   useEffect(() => {
     clearForm();
     setLoading(false);
+    setError(null);
   }, [isOpen]);
 
   return (
@@ -88,8 +102,28 @@ const EditCandidateModal = ({
       <ModalOverlay />
       <form
         onSubmit={async (e) => {
-          setLoading(true);
           e.preventDefault();
+          setError(null);
+          setLoading(true);
+          const slug =
+            candidateData.slug.charAt(candidateData.slug.length - 1) === "-"
+              ? candidateData.slug.slice(0, candidateData.slug.length - 1)
+              : candidateData.slug;
+          const slugDoc = await getDocs(
+            query(
+              collection(firestore, "elections", election.uid, "candidates"),
+              where("slug", "==", slug)
+            )
+          );
+          if (!slugDoc.empty) {
+            setError({
+              type: "slug",
+              error: "Slug is already taken",
+            });
+            setLoading(false);
+            return;
+          }
+
           await updateDoc(
             doc(
               firestore,
@@ -104,6 +138,7 @@ const EditCandidateModal = ({
                 ? capitalizeFirstLetter(candidateData.middleName)
                 : "",
               lastName: capitalizeFirstLetter(candidateData.lastName),
+              slug,
               photoUrl: candidateData.photoUrl,
               position: candidateData.position,
               partylist: candidateData.partylist,
@@ -166,7 +201,7 @@ const EditCandidateModal = ({
                   disabled={loading}
                 />
               </FormControl>
-              <FormControl isRequired>
+              <FormControl isRequired isInvalid={error?.type === "slug"}>
                 <FormLabel>Slug</FormLabel>
                 <Input
                   placeholder="Candidate slug"
@@ -179,6 +214,9 @@ const EditCandidateModal = ({
                   value={candidateData.slug}
                   disabled={loading}
                 />
+                {error?.type === "slug" && (
+                  <FormErrorMessage>{error.error}</FormErrorMessage>
+                )}
               </FormControl>
               <FormControl>
                 <FormLabel>Image</FormLabel>
@@ -232,11 +270,13 @@ const EditCandidateModal = ({
             <Box>
               {(((candidateData.firstName ||
                 candidateData.lastName ||
+                candidateData.slug ||
                 candidateData.position ||
                 candidateData.partylist) &&
                 candidate.firstName !== candidateData.firstName) ||
                 candidate.middleName !== candidateData.middleName ||
                 candidate.lastName !== candidateData.lastName ||
+                candidate.slug !== candidateData.slug ||
                 candidate.position !== candidateData.position ||
                 candidate.partylist !== candidateData.partylist) && (
                 <Tooltip label="Clear forms">
@@ -260,11 +300,13 @@ const EditCandidateModal = ({
                 disabled={
                   !candidateData.firstName ||
                   !candidateData.lastName ||
+                  !candidateData.slug ||
                   !candidateData.position ||
                   !candidateData.partylist ||
                   (candidate.firstName === candidateData.firstName &&
                     candidate.middleName === candidateData.middleName &&
                     candidate.lastName === candidateData.lastName &&
+                    candidate.slug === candidateData.slug &&
                     candidate.position === candidateData.position &&
                     candidate.partylist === candidateData.partylist)
                 }
