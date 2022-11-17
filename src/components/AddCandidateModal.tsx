@@ -612,7 +612,7 @@ const AddCandidateModal = ({
                           : null;
                         if (
                           lastSeminarAttended &&
-                          lastSeminarAttended.name &&
+                          lastSeminarAttended.name === "" &&
                           lastSeminarAttended.startDate === null &&
                           lastSeminarAttended.endDate === null
                         )
