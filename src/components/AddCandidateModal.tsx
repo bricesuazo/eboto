@@ -19,7 +19,7 @@ import {
   Text,
   Tooltip,
 } from "@chakra-ui/react";
-import { forwardRef, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   affiliationType,
   candidateType,
@@ -28,7 +28,7 @@ import {
   positionType,
 } from "../types/typings";
 import { v4 as uuidv4 } from "uuid";
-import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import {
   addDoc,
   collection,
@@ -39,6 +39,7 @@ import {
 import { firestore } from "../firebase/firebase";
 import capitalizeFirstLetter from "../utils/capitalizeFirstLetter";
 import ReactDatePicker from "react-datepicker";
+import slugify from "react-slugify";
 
 const AddCandidateModal = ({
   isOpen,
@@ -191,9 +192,22 @@ const AddCandidateModal = ({
                   <Input
                     placeholder="Candidate's slug"
                     onChange={(e) =>
-                      setCandidate({ ...candidate, slug: e.target.value })
+                      setCandidate({
+                        ...candidate,
+                        slug: slugify(e.target.value),
+                      })
                     }
-                    value={candidate.slug}
+                    value={
+                      slugify(
+                        `${candidate.firstName.replace(
+                          " ",
+                          ""
+                        )} ${candidate.middleName?.replace(
+                          " ",
+                          ""
+                        )} ${candidate.lastName.replace(" ", "")}`
+                      ) || candidate.slug
+                    }
                     disabled={loading}
                   />
                 </FormControl>

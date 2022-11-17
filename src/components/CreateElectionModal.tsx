@@ -46,6 +46,7 @@ import { useSession } from "next-auth/react";
 import reloadSession from "../utils/reloadSession";
 import isElectionIdNameExists from "../utils/isElectionIdNameExists";
 import ReactDatePicker from "react-datepicker";
+import slugify from "react-slugify";
 
 const CreateElectionModal = ({
   isOpen,
@@ -310,10 +311,11 @@ const CreateElectionModal = ({
               <FormLabel>Election Name</FormLabel>
               <Input
                 placeholder="Election Name"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                onChange={(e) => {
                   setElection({
                     ...election,
                     name: e.target.value,
+                    electionIdName: slugify(e.target.value),
                   });
                 }}
                 value={election.name}
@@ -330,10 +332,15 @@ const CreateElectionModal = ({
                 <InputLeftAddon>eboto-mo.com/</InputLeftAddon>
                 <Input
                   placeholder="Election ID"
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  onChange={(e) => {
                     setElection({
                       ...election,
-                      electionIdName: e.target.value.toLowerCase(),
+                      electionIdName:
+                        election.electionIdName.charAt(
+                          election.electionIdName.length - 1
+                        ) === "-"
+                          ? e.target.value.trim()
+                          : e.target.value.replace(" ", "-"),
                     });
                   }}
                   value={election.electionIdName}
