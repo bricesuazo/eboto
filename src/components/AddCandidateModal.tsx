@@ -94,7 +94,7 @@ const AddCandidateModal = ({
     },
   });
   const [loading, setLoading] = useState(false);
-  console.log(candidate.credentials.affiliations);
+
   useEffect(() => {
     clearForm();
     setLoading(false);
@@ -444,6 +444,22 @@ const AddCandidateModal = ({
                     )}
                     <Button
                       onClick={() => {
+                        if (
+                          candidate.credentials.affiliations.length &&
+                          candidate.credentials.affiliations[
+                            candidate.credentials.affiliations.length - 1
+                          ].organizationName === "" &&
+                          candidate.credentials.affiliations[
+                            candidate.credentials.affiliations.length - 1
+                          ].position === "" &&
+                          !candidate.credentials.affiliations[
+                            candidate.credentials.affiliations.length - 1
+                          ].startDate &&
+                          !candidate.credentials.affiliations[
+                            candidate.credentials.affiliations.length - 1
+                          ].endDate
+                        )
+                          return;
                         setCandidate({
                           ...candidate,
                           credentials: {
@@ -522,12 +538,85 @@ const AddCandidateModal = ({
                                 disabled={loading}
                               />
                             </Flex>
+                            <Flex gap={2} flex={1}>
+                              <ReactDatePicker
+                                selected={seminarsAttended.startDate?.toDate()}
+                                onChange={(date) =>
+                                  date &&
+                                  setCandidate({
+                                    ...candidate,
+                                    credentials: {
+                                      ...candidate.credentials,
+                                      seminarsAttended:
+                                        candidate.credentials.seminarsAttended.map(
+                                          (seminarsAttendedToEdit) =>
+                                            seminarsAttendedToEdit.id ===
+                                            seminarsAttended.id
+                                              ? {
+                                                  ...seminarsAttendedToEdit,
+                                                  startDate:
+                                                    Timestamp.fromDate(date),
+                                                }
+                                              : seminarsAttendedToEdit
+                                        ),
+                                    },
+                                  })
+                                }
+                                showYearPicker
+                                dateFormat="yyyy"
+                                placeholderText="Start date"
+                              />
+                              <ReactDatePicker
+                                selected={seminarsAttended.endDate?.toDate()}
+                                onChange={(date) =>
+                                  date &&
+                                  setCandidate({
+                                    ...candidate,
+                                    credentials: {
+                                      ...candidate.credentials,
+                                      seminarsAttended:
+                                        candidate.credentials.seminarsAttended.map(
+                                          (seminarsAttendedToEdit) =>
+                                            seminarsAttendedToEdit.id ===
+                                            seminarsAttended.id
+                                              ? {
+                                                  ...seminarsAttendedToEdit,
+                                                  endDate:
+                                                    Timestamp.fromDate(date),
+                                                }
+                                              : seminarsAttendedToEdit
+                                        ),
+                                    },
+                                  })
+                                }
+                                showYearPicker
+                                dateFormat="yyyy"
+                                placeholderText="End date"
+                                disabled={!seminarsAttended.startDate?.toDate()}
+                                minDate={seminarsAttended.startDate?.toDate()}
+                              />
+                            </Flex>
                           </FormControl>
                         )
                       )
                     )}
                     <Button
                       onClick={() => {
+                        const lastSeminarAttended = candidate.credentials
+                          .seminarsAttended[
+                          candidate.credentials.seminarsAttended.length - 1
+                        ]
+                          ? candidate.credentials.seminarsAttended[
+                              candidate.credentials.seminarsAttended.length - 1
+                            ]
+                          : null;
+                        if (
+                          lastSeminarAttended &&
+                          lastSeminarAttended.name &&
+                          lastSeminarAttended.startDate === null &&
+                          lastSeminarAttended.endDate === null
+                        )
+                          return;
                         setCandidate({
                           ...candidate,
                           credentials: {
