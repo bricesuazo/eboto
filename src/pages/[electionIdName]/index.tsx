@@ -71,7 +71,7 @@ const ElectionPage = ({
                     .map((candidate) => {
                       return (
                         <Link
-                          href={`/${election.electionIdName}/${candidate.uid}`}
+                          href={`/${election.electionIdName}/${candidate.slug}`}
                           key={candidate.id}
                         >
                           <Text>{`${candidate.lastName}, ${

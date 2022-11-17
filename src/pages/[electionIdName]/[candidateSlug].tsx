@@ -25,29 +25,31 @@ export default CandidateCredentialPage;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const { electionIdName, candidateUid } = context.query;
+  const { electionIdName, candidateSlug } = context.query;
 
-  if (electionIdName && candidateUid) {
+  if (electionIdName && candidateSlug) {
     const electionSnapshot = await getDocs(
       query(
         collection(firestore, "elections"),
         where("electionIdName", "==", electionIdName)
       )
     );
-    const candidateSnapshot = await getDoc(
-      doc(
-        firestore,
-        "elections",
-        electionSnapshot.docs[0].data().uid,
-        "candidates",
-        candidateUid as string
+    const candidateSnapshot = await getDocs(
+      query(
+        collection(
+          firestore,
+          "elections",
+          electionSnapshot.docs[0].data().uid,
+          "candidates"
+        ),
+        where("slug", "==", candidateSlug)
       )
     );
-    if (candidateSnapshot.exists()) {
+    if (!candidateSnapshot.empty) {
       return {
         props: {
           candidate: JSON.parse(
-            JSON.stringify(candidateSnapshot.data() as candidateType)
+            JSON.stringify(candidateSnapshot.docs[0].data() as candidateType)
           ),
         },
       };

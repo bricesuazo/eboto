@@ -4,6 +4,7 @@ import {
   Center,
   Flex,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   IconButton,
   Input,
@@ -35,6 +36,9 @@ import {
   doc,
   updateDoc,
   Timestamp,
+  getDocs,
+  where,
+  query,
 } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
 import capitalizeFirstLetter from "../utils/capitalizeFirstLetter";
@@ -98,9 +102,15 @@ const AddCandidateModal = ({
   });
   const [loading, setLoading] = useState(false);
 
+  const [error, setError] = useState<{
+    type: "slug";
+    error: string;
+  } | null>(null);
+
   useEffect(() => {
     clearForm();
     setLoading(false);
+    setError(null);
   }, [isOpen]);
   return (
     <Modal isOpen={isOpen} onClose={onClose} trapFocus={false} size="4xl">
@@ -108,7 +118,28 @@ const AddCandidateModal = ({
       <form
         onSubmit={async (e) => {
           e.preventDefault();
+          setError(null);
           setLoading(true);
+          // Check if candidate's slug is already taken
+          const slug =
+            candidate.slug.charAt(candidate.slug.length - 1) === "-"
+              ? candidate.slug.slice(0, candidate.slug.length - 1)
+              : candidate.slug;
+
+          const slugDoc = await getDocs(
+            query(
+              collection(firestore, "elections", election.uid, "candidates"),
+              where("slug", "==", slug)
+            )
+          );
+          if (!slugDoc.empty) {
+            setError({
+              type: "slug",
+              error: "Slug is already taken",
+            });
+            setLoading(false);
+            return;
+          }
           await addDoc(
             collection(firestore, "elections", election.uid, "candidates"),
             {
@@ -119,6 +150,7 @@ const AddCandidateModal = ({
                 ? capitalizeFirstLetter(candidate.middleName)
                 : "",
               lastName: capitalizeFirstLetter(candidate.lastName),
+              slug,
             }
           ).then(async (docRef) => {
             await updateDoc(
@@ -156,6 +188,15 @@ const AddCandidateModal = ({
                       setCandidate({
                         ...candidate,
                         firstName: e.target.value,
+                        slug: slugify(
+                          `${e.target.value.replace(
+                            " ",
+                            ""
+                          )} ${candidate.middleName?.replace(
+                            " ",
+                            ""
+                          )} ${candidate.lastName.replace(" ", "")}`
+                        ),
                       })
                     }
                     value={candidate.firstName}
@@ -170,6 +211,15 @@ const AddCandidateModal = ({
                       setCandidate({
                         ...candidate,
                         middleName: e.target.value,
+                        slug: slugify(
+                          `${candidate.firstName.replace(
+                            " ",
+                            ""
+                          )} ${e.target.value.replace(
+                            " ",
+                            ""
+                          )} ${candidate.lastName.replace(" ", "")}`
+                        ),
                       })
                     }
                     value={candidate.middleName}
@@ -181,35 +231,44 @@ const AddCandidateModal = ({
                   <Input
                     placeholder="Candidate last name"
                     onChange={(e) =>
-                      setCandidate({ ...candidate, lastName: e.target.value })
+                      setCandidate({
+                        ...candidate,
+                        lastName: e.target.value,
+                        slug: slugify(
+                          `${candidate.firstName.replace(
+                            " ",
+                            ""
+                          )} ${candidate.middleName?.replace(
+                            " ",
+                            ""
+                          )} ${e.target.value.replace(" ", "")}`
+                        ),
+                      })
                     }
                     value={candidate.lastName}
                     disabled={loading}
                   />
                 </FormControl>
-                <FormControl isRequired>
+                <FormControl isRequired isInvalid={error?.type === "slug"}>
                   <FormLabel>Slug</FormLabel>
                   <Input
                     placeholder="Candidate's slug"
                     onChange={(e) =>
                       setCandidate({
                         ...candidate,
-                        slug: slugify(e.target.value),
+                        slug:
+                          candidate.slug.charAt(candidate.slug.length - 1) ===
+                          "-"
+                            ? e.target.value.trim()
+                            : e.target.value.replace(" ", "-"),
                       })
                     }
-                    value={
-                      slugify(
-                        `${candidate.firstName.replace(
-                          " ",
-                          ""
-                        )} ${candidate.middleName?.replace(
-                          " ",
-                          ""
-                        )} ${candidate.lastName.replace(" ", "")}`
-                      ) || candidate.slug
-                    }
+                    value={candidate.slug}
                     disabled={loading}
                   />
+                  {error?.type === "slug" && (
+                    <FormErrorMessage>{error.error}</FormErrorMessage>
+                  )}
                 </FormControl>
 
                 <FormControl isRequired>

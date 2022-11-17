@@ -208,8 +208,17 @@ const CreateElectionModal = ({
             setError(null);
             setLoading(true);
 
+            const electionIdName =
+              election.electionIdName.charAt(
+                election.electionIdName.length - 1
+              ) === "-"
+                ? election.electionIdName.slice(
+                    0,
+                    election.electionIdName.length - 1
+                  )
+                : election.electionIdName;
             // Check if electionIdName is already taken
-            if (await isElectionIdNameExists(election.electionIdName)) {
+            if (await isElectionIdNameExists(electionIdName)) {
               setError({
                 type: "electionIdName",
                 error: "Election ID Name is already taken",
@@ -221,7 +230,7 @@ const CreateElectionModal = ({
             await addDoc(collection(firestore, "elections"), {
               ...election,
               name: election.name.trim(),
-              electionIdName: election.electionIdName.trim(),
+              electionIdName,
               electionStartDate: Timestamp.fromDate(startDate),
               electionEndDate: Timestamp.fromDate(endDate),
             }).then(async (electionSnap) => {
@@ -294,7 +303,6 @@ const CreateElectionModal = ({
                 });
               }
             });
-            const electionIdName = election.electionIdName;
             setLoading(false);
             onClose();
 

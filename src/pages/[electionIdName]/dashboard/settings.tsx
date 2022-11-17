@@ -111,12 +111,21 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                 return;
               }
 
+              const electionIdName =
+                settings.electionIdName.charAt(
+                  settings.electionIdName.length - 1
+                ) === "-"
+                  ? settings.electionIdName.slice(
+                      0,
+                      settings.electionIdName.length - 1
+                    )
+                  : settings.electionIdName;
+
               if (
-                settings.electionIdName.trim() !==
-                initialElection.electionIdName.trim()
+                electionIdName.trim() !== initialElection.electionIdName.trim()
               ) {
                 // Check if electionIdName is already taken
-                if (await isElectionIdNameExists(election.electionIdName)) {
+                if (await isElectionIdNameExists(electionIdName)) {
                   setError("Election ID Name is already taken");
                   setLoading(false);
                   return;
@@ -127,6 +136,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                 doc(firestore, "elections", initialElection.uid),
                 {
                   ...settings,
+                  electionIdName,
                   electionStartDate: Timestamp.fromDate(startDate),
                   electionEndDate: Timestamp.fromDate(endDate),
                   updatedAt: Timestamp.now(),
