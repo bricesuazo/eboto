@@ -144,25 +144,6 @@ const EditVoterModal = ({
                 />
               </FormControl>
 
-              <FormControl
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                //   isRequired
-              >
-                <FormLabel htmlFor="email-alerts" mb="0">
-                  Voted
-                </FormLabel>
-                <Switch
-                  id="email-alerts"
-                  size="lg"
-                  isChecked={voter.hasVoted}
-                  onChange={(e) => {
-                    setVoter({ ...voter, hasVoted: e.target.checked });
-                  }}
-                  disabled={loading}
-                />
-              </FormControl>
               {error && (
                 <Alert status="error">
                   <AlertIcon />
