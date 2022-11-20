@@ -443,7 +443,8 @@ const AddCandidateModal = ({
                           {...getRootProps({})}
                         >
                           <Text textAlign="center">
-                            Drag/click the box to upload the candidate's image.
+                            Drag/click the box to upload the candidate&apos;s
+                            image.
                             <br />
                             (only accepts 1:1 ratio and .jpg, .jpeg, .png, .gif
                             types)
