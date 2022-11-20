@@ -6,6 +6,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  HStack,
   IconButton,
   Input,
   Modal,
@@ -45,11 +46,15 @@ import {
   where,
   query,
 } from "firebase/firestore";
-import { firestore } from "../firebase/firebase";
+import { firestore, storage } from "../firebase/firebase";
 import capitalizeFirstLetter from "../utils/capitalizeFirstLetter";
 import ReactDatePicker from "react-datepicker";
 import slugify from "react-slugify";
 import { useDropzone } from "react-dropzone";
+import Image from "next/image";
+import formatBytes from "../utils/formatBytes";
+import compress from "../utils/imageCompressor";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
 const AddCandidateModal = ({
   isOpen,
@@ -108,6 +113,12 @@ const AddCandidateModal = ({
     },
   });
   const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState<{
+    preview: string;
+    name: string;
+    size: number;
+    file: File;
+  } | null>(null);
 
   const [error, setError] = useState<{
     type: "slug";
@@ -127,7 +138,12 @@ const AddCandidateModal = ({
       "image/jpeg": [".jpeg", ".png"],
     },
     onDrop: (acceptedFiles) => {
-      console.log(acceptedFiles);
+      setImage(
+        Object.assign(acceptedFiles[0], {
+          preview: URL.createObjectURL(acceptedFiles[0]),
+          file: acceptedFiles[0],
+        })
+      );
     },
   });
 
@@ -135,6 +151,7 @@ const AddCandidateModal = ({
     clearForm();
     setLoading(false);
     setError(null);
+    setImage(null);
   }, [isOpen]);
   return (
     <>
@@ -192,6 +209,50 @@ const AddCandidateModal = ({
                   uid: docRef.id,
                 }
               );
+
+              // compress the image then upload
+              if (image) {
+                await compress(image.file).then(async (blob) => {
+                  console.log(blob);
+                  const storageRef = ref(
+                    storage,
+                    `elections/${election.uid}/candidates/${docRef.id}/photo`
+                  );
+                  const uploadTask = uploadBytesResumable(storageRef, blob);
+                  uploadTask.on(
+                    "state_changed",
+                    // (snapshot) => {
+                    //   const percent = Math.round(
+                    //     (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                    //   );
+
+                    //   // update progress
+                    //   // TODO: add progress bar
+                    //   // setPercent(percent);
+                    // },
+                    // (err) => console.log(err),
+                    () => {
+                      // download url
+                      getDownloadURL(uploadTask.snapshot.ref).then(
+                        async (url) => {
+                          await updateDoc(
+                            doc(
+                              firestore,
+                              "elections",
+                              election.uid,
+                              "candidates",
+                              docRef.id
+                            ),
+                            {
+                              photoUrl: url,
+                            }
+                          );
+                        }
+                      );
+                    }
+                  );
+                });
+              }
             });
             await updateDoc(doc(firestore, "elections", election.uid), {
               updatedAt: Timestamp.now(),
@@ -339,37 +400,56 @@ const AddCandidateModal = ({
                   </TabPanel>
                   <TabPanel>
                     <FormControl>
-                      {/* <FormLabel>Image</FormLabel>
-                      <Input
-                        type="file"
-                        accept="image/jpeg, image/png"
-                        disabled={loading}
-                      /> */}
-                      <Center
-                        height="full"
-                        width="full"
-                        p={4}
-                        borderWidth={4}
-                        borderColor={
-                          isDragAccept
-                            ? "green.500"
-                            : isDragReject
-                            ? "red.500"
-                            : isFocused
-                            ? "blue.500"
-                            : colorMode === "light"
-                            ? "gray.200"
-                            : "gray.600"
-                        }
-                        borderStyle="dashed"
-                        borderRadius="28px"
-                        cursor="pointer"
-                        userSelect="none"
-                        onClick={open}
-                        {...getRootProps({})}
-                      >
-                        Text
-                      </Center>
+                      {image ? (
+                        <HStack spacing={4}>
+                          <Image
+                            src={image.preview}
+                            alt="test"
+                            width={256}
+                            height={256}
+                          />
+                          <Box>
+                            <Text noOfLines={1} fontWeight="bold" fontSize="lg">
+                              {image.name}
+                            </Text>
+                            <Text>{formatBytes(image.size)}</Text>
+                            <Button onClick={() => setImage(null)} size="sm">
+                              Delete
+                            </Button>
+                          </Box>
+                        </HStack>
+                      ) : (
+                        <Center
+                          height="64"
+                          width="full"
+                          p={4}
+                          borderWidth={4}
+                          borderColor={
+                            isDragAccept
+                              ? "green.500"
+                              : isDragReject
+                              ? "red.500"
+                              : isFocused
+                              ? "blue.500"
+                              : colorMode === "light"
+                              ? "gray.200"
+                              : "gray.600"
+                          }
+                          borderStyle="dashed"
+                          borderRadius="28px"
+                          cursor="pointer"
+                          userSelect="none"
+                          onClick={open}
+                          {...getRootProps({})}
+                        >
+                          <Text textAlign="center">
+                            Drag/click the box to upload the candidate's image.
+                            <br />
+                            (only accepts 1:1 ratio and .jpg, .jpeg, .png, .gif
+                            types)
+                          </Text>
+                        </Center>
+                      )}
                     </FormControl>
                   </TabPanel>
                   <TabPanel>
