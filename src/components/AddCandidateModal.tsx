@@ -352,9 +352,9 @@ const AddCandidateModal = ({
                       >
                         <FormLabel>Slug</FormLabel>
                         <InputGroup>
-                          <InputLeftAddon
-                            children={`eboto-mo.com/${election.electionIdName}/`}
-                          />
+                          <InputLeftAddon>
+                            eboto-mo.com/{election.electionIdName}/
+                          </InputLeftAddon>
                           <Input
                             placeholder="Candidate's slug"
                             onChange={(e) =>

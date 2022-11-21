@@ -80,17 +80,12 @@ const EditCandidateModal = ({
     type: "slug";
     error: string;
   } | null>(null);
-
-  const [image, setImage] = useState<
-    | {
-        preview: string;
-        name: string;
-        size: number;
-        file: File;
-      }
-    | null
-    | string
-  >(candidateData.photoUrl);
+  const [image, setImage] = useState<{
+    preview: string;
+    name: string;
+    size: number;
+    file: File;
+  } | null>(null);
 
   const {
     getRootProps,
@@ -119,7 +114,7 @@ const EditCandidateModal = ({
     clearForm();
     setLoading(false);
     setError(null);
-    setImage(candidateData.photoUrl);
+    setImage(null);
   }, [isOpen]);
 
   return (
@@ -252,9 +247,9 @@ const EditCandidateModal = ({
                       >
                         <FormLabel>Slug</FormLabel>
                         <InputGroup>
-                          <InputLeftAddon
-                            children={`eboto-mo.com/${election.electionIdName}/`}
-                          />
+                          <InputLeftAddon>
+                            eboto-mo.com{election.electionIdName}/
+                          </InputLeftAddon>
                           <Input
                             placeholder="Candidate slug"
                             onChange={(e) =>
