@@ -46,7 +46,7 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { firestore } from "../firebase/firebase";
+import { firestore, storage } from "../firebase/firebase";
 import capitalizeFirstLetter from "../utils/capitalizeFirstLetter";
 import ReactDatePicker from "react-datepicker";
 import { v4 as uuidv4 } from "uuid";
@@ -54,6 +54,13 @@ import deepEqual from "deep-equal";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
 import formatBytes from "../utils/formatBytes";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import compress from "../utils/imageCompressor";
 
 const EditCandidateModal = ({
   isOpen,
@@ -125,7 +132,7 @@ const EditCandidateModal = ({
         <form
           onSubmit={async (e) => {
             e.preventDefault();
-            if (deepEqual(candidate, candidateData)) return;
+            if (!image && deepEqual(candidate, candidateData)) return;
             setError(null);
             setLoading(true);
 
@@ -154,6 +161,14 @@ const EditCandidateModal = ({
                 return;
               }
             }
+
+            if (!candidateData.photoUrl?.length && !image) {
+              const photoRef = ref(
+                storage,
+                `elections/${election.uid}/candidates/${candidateData.uid}/photo`
+              );
+              await deleteObject(photoRef);
+            }
             await updateDoc(
               doc(
                 firestore,
@@ -178,6 +193,48 @@ const EditCandidateModal = ({
             await updateDoc(doc(firestore, "elections", election.uid), {
               updatedAt: Timestamp.now(),
             });
+
+            if (image) {
+              await compress(image.file).then(async (blob) => {
+                const storageRef = ref(
+                  storage,
+                  `elections/${election.uid}/candidates/${candidateData.uid}/photo`
+                );
+                const uploadTask = uploadBytesResumable(storageRef, blob);
+                uploadTask.on(
+                  "state_changed",
+                  (snapshot) => {
+                    // const percent = Math.round(
+                    //   (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                    // );
+                    // update progress
+                    // TODO: add progress bar
+                    // setPercent(percent);
+                  },
+                  (err) => console.log(err),
+                  () => {
+                    // download url
+                    getDownloadURL(uploadTask.snapshot.ref).then(
+                      async (url) => {
+                        await updateDoc(
+                          doc(
+                            firestore,
+                            "elections",
+                            election.uid,
+                            "candidates",
+                            candidateData.uid
+                          ),
+                          {
+                            photoUrl: url,
+                          }
+                        );
+                      }
+                    );
+                  }
+                );
+              });
+            }
+
             clearForm();
             onClose();
             setLoading(false);
@@ -312,18 +369,17 @@ const EditCandidateModal = ({
                   <TabPanel>
                     <FormControl>
                       {(() => {
-                        if (typeof image === "string") {
+                        if (candidateData.photoUrl?.length) {
                           return (
                             <HStack spacing={4}>
                               <Image
-                                src={image}
+                                src={candidateData.photoUrl}
                                 alt={`${candidateData.firstName} ${candidateData.lastName} photo`}
                                 width={256}
                                 height={256}
                               />
                               <Button
                                 onClick={() => {
-                                  setImage(null);
                                   setCandidateData({
                                     ...candidateData,
                                     photoUrl: "",
@@ -877,7 +933,7 @@ const EditCandidateModal = ({
                   mr={3}
                   type="submit"
                   isLoading={loading}
-                  disabled={deepEqual(candidate, candidateData)}
+                  disabled={!image && deepEqual(candidate, candidateData)}
                 >
                   Save
                 </Button>
