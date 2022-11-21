@@ -9,6 +9,8 @@ import {
   HStack,
   IconButton,
   Input,
+  InputGroup,
+  InputLeftAddon,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -349,22 +351,27 @@ const AddCandidateModal = ({
                         isInvalid={error?.type === "slug"}
                       >
                         <FormLabel>Slug</FormLabel>
-                        <Input
-                          placeholder="Candidate's slug"
-                          onChange={(e) =>
-                            setCandidate({
-                              ...candidate,
-                              slug:
-                                candidate.slug.charAt(
+                        <InputGroup>
+                          <InputLeftAddon
+                            children={`eboto-mo.com/${election.electionIdName}/`}
+                          />
+                          <Input
+                            placeholder="Candidate's slug"
+                            onChange={(e) =>
+                              setCandidate({
+                                ...candidate,
+                                slug: (candidate.slug.charAt(
                                   candidate.slug.length - 1
                                 ) === "-"
                                   ? e.target.value.trim()
-                                  : e.target.value.replace(" ", "-"),
-                            })
-                          }
-                          value={candidate.slug}
-                          disabled={loading}
-                        />
+                                  : e.target.value.replace(" ", "-")
+                                ).toLocaleLowerCase(),
+                              })
+                            }
+                            value={candidate.slug}
+                            disabled={loading}
+                          />
+                        </InputGroup>
                         {error?.type === "slug" && (
                           <FormErrorMessage>{error.error}</FormErrorMessage>
                         )}

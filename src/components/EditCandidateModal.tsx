@@ -9,6 +9,8 @@ import {
   HStack,
   IconButton,
   Input,
+  InputGroup,
+  InputLeftAddon,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -136,21 +138,27 @@ const EditCandidateModal = ({
               candidateData.slug.charAt(candidateData.slug.length - 1) === "-"
                 ? candidateData.slug.slice(0, candidateData.slug.length - 1)
                 : candidateData.slug;
-            const slugDoc = await getDocs(
-              query(
-                collection(firestore, "elections", election.uid, "candidates"),
-                where("slug", "==", slug)
-              )
-            );
-            if (!slugDoc.empty) {
-              setError({
-                type: "slug",
-                error: "Slug is already taken",
-              });
-              setLoading(false);
-              return;
+            if (candidate.slug !== candidateData.slug) {
+              const slugDoc = await getDocs(
+                query(
+                  collection(
+                    firestore,
+                    "elections",
+                    election.uid,
+                    "candidates"
+                  ),
+                  where("slug", "==", slug)
+                )
+              );
+              if (!slugDoc.empty) {
+                setError({
+                  type: "slug",
+                  error: "Slug is already taken",
+                });
+                setLoading(false);
+                return;
+              }
             }
-
             await updateDoc(
               doc(
                 firestore,
@@ -243,17 +251,27 @@ const EditCandidateModal = ({
                         isInvalid={error?.type === "slug"}
                       >
                         <FormLabel>Slug</FormLabel>
-                        <Input
-                          placeholder="Candidate slug"
-                          onChange={(e) =>
-                            setCandidateData({
-                              ...candidateData,
-                              slug: e.target.value,
-                            })
-                          }
-                          value={candidateData.slug}
-                          disabled={loading}
-                        />
+                        <InputGroup>
+                          <InputLeftAddon
+                            children={`eboto-mo.com/${election.electionIdName}/`}
+                          />
+                          <Input
+                            placeholder="Candidate slug"
+                            onChange={(e) =>
+                              setCandidateData({
+                                ...candidateData,
+                                slug: (candidate.slug.charAt(
+                                  candidate.slug.length - 1
+                                ) === "-"
+                                  ? e.target.value.trim()
+                                  : e.target.value.replace(" ", "-")
+                                ).toLocaleLowerCase(),
+                              })
+                            }
+                            value={candidateData.slug}
+                            disabled={loading}
+                          />
+                        </InputGroup>
                         {error?.type === "slug" && (
                           <FormErrorMessage>{error.error}</FormErrorMessage>
                         )}
