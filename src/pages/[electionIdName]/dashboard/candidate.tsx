@@ -33,6 +33,7 @@ import {
   deleteDoc,
   orderBy,
 } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { Session } from "next-auth";
 import { getSession } from "next-auth/react";
@@ -41,7 +42,7 @@ import { useEffect, useState } from "react";
 import { useFirestoreCollectionData } from "reactfire";
 import AddCandidateModal from "../../../components/AddCandidateModal";
 import EditCandidateModal from "../../../components/EditCandidateModal";
-import { firestore } from "../../../firebase/firebase";
+import { firestore, storage } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import {
   electionType,
@@ -236,6 +237,15 @@ const CandidatePage = ({
                                           <Button
                                             onClick={async () => {
                                               setDeleteLoading(true);
+                                              if (candidate.photoUrl?.length) {
+                                                const photoRef = ref(
+                                                  storage,
+                                                  `elections/${election.uid}/candidates/${candidate.uid}/photo`
+                                                );
+                                                await deleteObject(
+                                                  ref(photoRef)
+                                                );
+                                              }
                                               await deleteDoc(
                                                 doc(
                                                   firestore,

@@ -213,7 +213,6 @@ const AddCandidateModal = ({
               // compress the image then upload
               if (image) {
                 await compress(image.file).then(async (blob) => {
-                  console.log(blob);
                   const storageRef = ref(
                     storage,
                     `elections/${election.uid}/candidates/${docRef.id}/photo`
@@ -221,16 +220,15 @@ const AddCandidateModal = ({
                   const uploadTask = uploadBytesResumable(storageRef, blob);
                   uploadTask.on(
                     "state_changed",
-                    // (snapshot) => {
-                    //   const percent = Math.round(
-                    //     (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                    //   );
-
-                    //   // update progress
-                    //   // TODO: add progress bar
-                    //   // setPercent(percent);
-                    // },
-                    // (err) => console.log(err),
+                    (snapshot) => {
+                      // const percent = Math.round(
+                      //   (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                      // );
+                      // update progress
+                      // TODO: add progress bar
+                      // setPercent(percent);
+                    },
+                    (err) => console.log(err),
                     () => {
                       // download url
                       getDownloadURL(uploadTask.snapshot.ref).then(
