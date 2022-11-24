@@ -20,6 +20,7 @@
     "deep-equal": "^2.1.0",
     "firebase": "^9.10.0",
     "firebase-admin": "^11.0.1",
+    "firebase-functions": "^4.1.0",
     "framer-motion": "^6",
     "generate-password": "^1.7.0",
     "moment": "^2.29.4",
@@ -44,6 +45,8 @@
     "@types/uuid": "^8.3.4",
     "eslint": "8.24.0",
     "eslint-config-next": "^13.0.3",
-    "typescript": "4.8.4"
+    "ts-loader": "^9.4.1",
+    "typescript": "4.8.4",
+    "webpack-node-externals": "^3.0.0"
   }
 }
