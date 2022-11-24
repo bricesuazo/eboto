@@ -16,7 +16,13 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { PlusIcon } from "@heroicons/react/24/solid";
-import { collection, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
 import CreateElectionModal from "../components/CreateElectionModal";
 import DashboardSidebar from "../components/DashboardSidebar";
 import { firestore } from "../firebase/firebase";
@@ -29,11 +35,10 @@ import {
   ArrowPathIcon,
   ArrowUpOnSquareIcon,
 } from "@heroicons/react/24/outline";
-import { adminType, electionType } from "../types/typings";
+import { adminType, electionType, positionType } from "../types/typings";
 import AddPartylistModal from "../components/AddPartylistModal";
 import AddPositionModal from "../components/AddPositionModal";
 import Moment from "react-moment";
-import { Session } from "next-auth";
 import { useFirestoreCollectionData } from "reactfire";
 import UploadBulkVotersModal from "../components/UploadBulkVotersModal";
 
@@ -84,6 +89,7 @@ const DashboardLayout = ({
 
   const [elections, setElections] = useState<electionType[]>();
   const [currentElection, setCurrentElection] = useState<electionType>();
+
   const { colorMode } = useColorMode();
   const { data } = useFirestoreCollectionData(
     query(
@@ -91,6 +97,7 @@ const DashboardLayout = ({
       where("uid", "in", session.user.elections)
     )
   );
+
   useEffect(() => {
     setElections(data as electionType[]);
   }, [data]);
@@ -101,6 +108,7 @@ const DashboardLayout = ({
         (election) => election.electionIdName === router.query.electionIdName
       )
     );
+
     if (elections?.length === 0) {
       router.push("/create-election");
     }
