@@ -156,7 +156,7 @@ const EditVoterModal = ({
           <ModalFooter>
             <Flex justifyContent="space-between" width="100%">
               <Popover>
-                {({ onClose: onCloseDeleteModal }) => (
+                {({ onClose: onCloseDeleteModal }: { onClose: () => void }) => (
                   <>
                     <PopoverTrigger>
                       <WrapItem>

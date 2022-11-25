@@ -59,6 +59,7 @@ const AddVoterModal = ({
     uid: "",
     createdAt: Timestamp.now(),
     updatedAt: Timestamp.now(),
+    emailSent: false,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -75,6 +76,7 @@ const AddVoterModal = ({
       uid: "",
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
+      emailSent: false,
     });
   };
   useEffect(() => {

@@ -206,7 +206,11 @@ const CandidatePage = ({
                                 Edit
                               </Button>
                               <Popover>
-                                {({ onClose: onCloseDeleteModal }) => (
+                                {({
+                                  onClose: onCloseDeleteModal,
+                                }: {
+                                  onClose: () => void;
+                                }) => (
                                   <>
                                     <PopoverTrigger>
                                       <WrapItem>
