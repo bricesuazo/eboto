@@ -4,7 +4,7 @@ import admin from "firebase-admin";
 admin.initializeApp();
 
 export const sendEmailToVoters = functions.pubsub
-  .schedule("30 * * * *")
+  .schedule("0 * * * *")
   .onRun(async () => {
     const db = admin.firestore();
     const electionsRef = db.collection("elections");
@@ -26,7 +26,7 @@ export const sendEmailToVoters = functions.pubsub
         const voters = await votersRef.get();
 
         voters.forEach(async (voter) => {
-          const { email, initialPassword, emailSent } = voter.data();
+          const { email, password, emailSent, fullName } = voter.data();
           if (!emailSent) {
             await admin
               .firestore()
@@ -34,8 +34,8 @@ export const sendEmailToVoters = functions.pubsub
               .add({
                 to: email,
                 message: {
-                  subject: `Election Started ${election.data().electionName}`,
-                  html: `Email:${email}<br/>Initial password: ${initialPassword}`,
+                  subject: `Election Started ${election.data().name}`,
+                  html: `Hi ${fullName},<br/>Email:${email}<br/>Initial password: ${password}`,
                 },
               })
               .then(() => {
@@ -44,45 +44,5 @@ export const sendEmailToVoters = functions.pubsub
           }
         });
       }
-      return null;
     });
   });
-
-// schedule a email send to voters with their credentials when the election is started
-// export const sendVoterCredentials = functions.firestore
-//   .document("elections/{electionId}")
-//   .onWrite(async (change, context) => {
-//     console.log("change.after.data()", change.after.data());
-//     console.log("context", context);
-
-//     // const election = change.after.data();
-//     // const electionId = context.params.electionId;
-//     // const db = admin.firestore();
-
-//     // if (election.status === "started") {
-//     //   const voters = await db
-//     //     .collection("elections")
-//     //     .doc(electionId)
-//     //     .collection("voters")
-//     //     .get();
-
-//     //   voters.forEach(async (voter) => {
-//     //     const voterData = voter.data();
-//     //     const voterId = voter.id;
-
-//     //     const email = {
-//     //       to: voterData.email,
-//     //       from: " <your email>",
-//     //       subject: "Your credentials for the election",
-//     //       text: `Your credentials for the election are: \n Voter ID: ${voterId} \n Password: ${voterData.password}`,
-//     //     };
-
-//     //     await db
-//     //       .collection("elections")
-//     //       .doc(electionId)
-//     //       .collection("voters")
-//     //       .doc(voterId)
-//     //       .update({ emailSent: true });
-//     //   });
-//     // }
-//   });

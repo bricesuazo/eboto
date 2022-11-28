@@ -197,6 +197,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                     initialElection.electionStartDate,
                     initialElection.electionEndDate
                   )}
+                  timeIntervals={60}
                   selected={startDate}
                   minDate={new Date()}
                   onChange={(date) => {
@@ -228,6 +229,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                       initialElection.electionEndDate
                     )
                   }
+                  timeIntervals={60}
                   selected={endDate}
                   onChange={(date) => setEndDate(date)}
                   minDate={startDate}

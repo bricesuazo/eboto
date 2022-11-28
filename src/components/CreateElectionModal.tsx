@@ -364,6 +364,7 @@ const CreateElectionModal = ({
               <ReactDatePicker
                 selected={startDate}
                 minDate={new Date()}
+                timeIntervals={60}
                 onChange={(date) => {
                   if (date) {
                     setStartDate(date);
@@ -389,6 +390,7 @@ const CreateElectionModal = ({
               <ReactDatePicker
                 disabled={!startDate}
                 selected={endDate}
+                timeIntervals={60}
                 onChange={(date) => {
                   setEndDate(date);
                   setError(null);
