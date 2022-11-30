@@ -6,6 +6,7 @@ import {
   Flex,
   Stack,
   Text,
+  useColorMode,
 } from "@chakra-ui/react";
 import {
   ChartBarIcon as ChartBarIconOutline,
@@ -120,6 +121,7 @@ const dashboardSidebar = [
 
 const DashboardSidebar = () => {
   const router = useRouter();
+  const { colorMode } = useColorMode();
   return (
     <Stack>
       {dashboardSidebar.map((item) => (
@@ -128,11 +130,13 @@ const DashboardSidebar = () => {
             href={"/" + router.query.electionIdName + "/dashboard" + item.href}
           >
             <Button
-              variant={
-                item.title.toLocaleLowerCase() !== router.pathname.split("/")[3]
-                  ? "ghost"
-                  : "solid"
+              variant={colorMode === "dark" ? "ghost" : "solid"}
+              border={
+                item.title.toLocaleLowerCase() === router.pathname.split("/")[3]
+                  ? "1px solid"
+                  : "none"
               }
+              borderColor={colorMode === "dark" ? "gray.600" : "gray.200"}
               key={item.id}
               leftIcon={
                 item.title.toLocaleLowerCase() === router.pathname.split("/")[3]

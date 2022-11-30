@@ -114,13 +114,7 @@ const PartylistPage = ({
                       userSelect={
                         partylist.abbreviation === "IND" ? "none" : "auto"
                       }
-                      color={
-                        partylist.abbreviation === "IND"
-                          ? `${
-                              colorMode === "dark" ? "white" : "black"
-                            }Alpha.500`
-                          : "white"
-                      }
+                      color={colorMode === "dark" ? "inherit" : "gray.800"}
                     >
                       <Stack alignItems="center">
                         <Box

@@ -97,7 +97,6 @@ const ConfirmVoteModal = ({
               Cancel
             </Button>
             <Button
-              colorScheme="blue"
               isLoading={isSubmitting}
               onClick={() => {
                 selectedCandidates.forEach(async (selectedCandidate) => {

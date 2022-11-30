@@ -7,7 +7,7 @@ const CandidateCard = (props: any) => {
   const checkbox = getCheckboxProps();
 
   return (
-    <Box as="label">
+    <Box as="label" userSelect="none">
       <input {...input} />
       <Box
         {...checkbox}
@@ -16,13 +16,14 @@ const CandidateCard = (props: any) => {
         borderRadius="md"
         boxShadow="md"
         _checked={{
-          bg: "teal.600",
+          bg: "gray.600",
           color: "white",
-          borderColor: "teal.600",
+          borderColor: "gray.600",
         }}
-        _focus={{
-          boxShadow: "outline",
-        }}
+        // _focus={{
+        //   boxShadow: "outline",
+        //   outlineColor: "gray.600",
+        // }}
         px={4}
         py={2}
         width={["full", 48]}

@@ -101,7 +101,7 @@ const PositionPage = ({
                       borderRadius="md"
                       cursor="pointer"
                       border="1px"
-                      borderColor="whiteAlpha.300"
+                      borderColor="gray.300"
                       padding={2}
                     >
                       <Stack alignItems="center">

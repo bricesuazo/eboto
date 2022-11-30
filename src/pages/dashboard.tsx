@@ -55,13 +55,16 @@ const DashboardPage = ({ elections }: { elections: electionType[] }) => {
               <Flex
                 key={election.id}
                 padding={4}
-                backgroundColor="blue.800"
+                backgroundColor={colorMode === "dark" ? "gray.900" : "gray.600"}
                 borderRadius="lg"
                 width={["full", 372]}
                 height={132}
                 userSelect="none"
                 transition="all 0.1s ease-in-out"
-                _hover={{ backgroundColor: "blue.700" }}
+                _hover={{
+                  backgroundColor:
+                    colorMode === "dark" ? "gray.700" : "gray.500",
+                }}
                 justifyContent="space-between"
                 alignItems="flex-start"
                 role="group"
@@ -78,7 +81,7 @@ const DashboardPage = ({ elections }: { elections: electionType[] }) => {
                   >
                     {election.name}
                   </Text>
-                  <Box fontSize={["xs", "sm"]} width="full" color="gray.400">
+                  <Box fontSize={["xs", "sm"]} width="full" color="gray.300">
                     <Text>
                       <Moment format="MM/DD/YY h:mmA">
                         {election.electionStartDate.seconds * 1000}
@@ -117,16 +120,20 @@ const DashboardPage = ({ elections }: { elections: electionType[] }) => {
           <Center
             height={132}
             border="2px"
-            borderColor="blue.800"
+            borderColor={colorMode === "dark" ? "gray.900" : "gray.700"}
             borderRadius="lg"
             width={["full", 172]}
             maxWidth="372px"
             onClick={onOpenCreateElection}
-            color="blue.800"
+            color={colorMode === "dark" ? "gray.200" : "gray.400"}
             userSelect="none"
             cursor="pointer"
             transition="all 0.1s ease-in-out"
-            _hover={{ backgroundColor: "blue.800", color: "white" }}
+            _hover={{
+              backgroundColor: colorMode === "dark" ? "gray.700" : "gray.800",
+              color: "white",
+              borderColor: colorMode === "dark" ? "gray.700" : "gray.800",
+            }}
           >
             <Center flexDirection="column">
               <PlusCircleIcon width={32} />

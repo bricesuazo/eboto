@@ -245,7 +245,7 @@ const EditCandidateModal = ({
             <ModalCloseButton />
 
             <ModalBody pb={6}>
-              <Tabs variant="enclosed">
+              <Tabs variant="enclosed" colorScheme="gray">
                 <TabList overflow="auto hidden">
                   <Tab>Basic Information</Tab>
                   <Tab>Image</Tab>
@@ -929,7 +929,6 @@ const EditCandidateModal = ({
               </Box>
               <Box>
                 <Button
-                  colorScheme="blue"
                   mr={3}
                   type="submit"
                   isLoading={loading}

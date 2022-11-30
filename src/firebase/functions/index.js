@@ -35,7 +35,7 @@ export const sendEmailToVoters = functions.pubsub
                 to: email,
                 message: {
                   subject: `Election Started ${election.data().name}`,
-                  html: `Hi ${fullName},<br/>Email:${email}<br/>Initial password: ${password}`,
+                  html: `Hi ${fullName},<br/>Email: ${email}<br/>Initial password: ${password}`,
                 },
               })
               .then(() => {

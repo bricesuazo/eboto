@@ -126,7 +126,7 @@ const CandidatePage = ({
                     width="fit-content"
                     textAlign="center"
                     border="1px solid"
-                    borderColor="whiteAlpha.200"
+                    borderColor="gray.200"
                     paddingX={4}
                     paddingY={2}
                     borderRadius="lg"
@@ -156,7 +156,7 @@ const CandidatePage = ({
                             paddingX={4}
                             paddingY={2}
                             border="1px solid"
-                            borderColor="whiteAlpha.200"
+                            borderColor="gray.200"
                             borderRadius="lg"
                           >
                             <Center position="relative">

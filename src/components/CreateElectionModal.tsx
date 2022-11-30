@@ -451,15 +451,14 @@ const CreateElectionModal = ({
             </Accordion>
           </ModalBody>
           <ModalFooter>
-            <Button
-              colorScheme="blue"
-              type="submit"
-              mr={!cantClose ? 3 : 0}
-              isLoading={loading}
-            >
+            {!cantClose && (
+              <Button onClick={onClose} variant="ghost">
+                Cancel
+              </Button>
+            )}
+            <Button type="submit" ml={!cantClose ? 3 : 0} isLoading={loading}>
               Create
             </Button>
-            {!cantClose && <Button onClick={onClose}>Cancel</Button>}
           </ModalFooter>
         </form>
       </ModalContent>
@@ -482,9 +481,9 @@ function RadioCard(props: any) {
         borderRadius="md"
         boxShadow="md"
         _checked={{
-          bg: "teal.600",
+          bg: "gray.600",
           color: "white",
-          borderColor: "teal.600",
+          borderColor: "gray.600",
         }}
         _focus={{
           boxShadow: "outline",

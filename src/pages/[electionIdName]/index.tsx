@@ -7,7 +7,7 @@ import {
   positionType,
 } from "../../types/typings";
 import { firestore } from "../../firebase/firebase";
-import { Box, Button, Text } from "@chakra-ui/react";
+import { Box, Button, Container, Text } from "@chakra-ui/react";
 import Head from "next/head";
 import Moment from "react-moment";
 import Link from "next/link";
@@ -33,7 +33,7 @@ const ElectionPage = ({
       <Head>
         <title>{pageTitle}</title>
       </Head>
-      <Box>
+      <Container maxW="4xl">
         <Text fontSize="3xl" fontWeight="bold">
           {election.name}
         </Text>
@@ -92,7 +92,7 @@ const ElectionPage = ({
             );
           })}
         </Box>
-      </Box>
+      </Container>
     </>
   );
 };

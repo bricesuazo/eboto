@@ -149,7 +149,6 @@ const AddPartylistModal = ({
             </Box>
             <Box>
               <Button
-                colorScheme="blue"
                 mr={3}
                 type="submit"
                 isLoading={loading}

@@ -11,6 +11,7 @@ import {
   Box,
   Button,
   Center,
+  Container,
   Stack,
   Text,
   useDisclosure,
@@ -81,7 +82,7 @@ const VotePage = ({
         selectedCandidates={selectedCandidates}
         voterUid={voterUid}
       />
-      <Stack spacing={4} alignItems="center">
+      <Container maxW="4xl" gap={4} alignItems="center">
         <Box width="full">
           <Box marginBottom={8}>
             <Text fontSize="3xl" textAlign="center" fontWeight="bold">
@@ -103,13 +104,12 @@ const VotePage = ({
           </Stack>
         </Box>
 
-        <Box width={["full", "fit-content"]} paddingX={[4, 0]}>
+        <Box width={["full", "fit-content"]} paddingX={[4, 0]} mx="auto">
           <Button
             disabled={positions.length !== selectedCandidates.length}
             onClick={onOpen}
             width="full"
             variant="solid"
-            colorScheme="blue"
             leftIcon={<FingerPrintIcon width={22} />}
             paddingY={8}
             borderRadius="full"
@@ -117,7 +117,7 @@ const VotePage = ({
             Cast Vote
           </Button>
         </Box>
-      </Stack>
+      </Container>
     </>
   );
 };
