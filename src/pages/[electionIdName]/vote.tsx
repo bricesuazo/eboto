@@ -82,7 +82,7 @@ const VotePage = ({
         selectedCandidates={selectedCandidates}
         voterUid={voterUid}
       />
-      <Container maxW="4xl" gap={4} alignItems="center">
+      <Container maxW="8xl" gap={4} alignItems="center">
         <Box width="full">
           <Box marginBottom={8}>
             <Text fontSize="3xl" textAlign="center" fontWeight="bold">
@@ -135,6 +135,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       redirect: {
         destination: `/${context.query.electionIdName}/realtime`,
+        permanent: false,
+      },
+    };
+  }
+  if (!session || !session.user) {
+    return {
+      redirect: {
+        destination: `/${context.query.electionIdName}`,
         permanent: false,
       },
     };

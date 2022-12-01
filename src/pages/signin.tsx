@@ -45,7 +45,7 @@ const SigninPage: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Signin | eBoto Mo</title>
+        <title>Sign in | eBoto Mo</title>
       </Head>
       <Center height="80vh">
         <Container maxW="sm">

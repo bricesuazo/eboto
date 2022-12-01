@@ -8,9 +8,11 @@ import { SessionProvider } from "next-auth/react";
 import { FirebaseAppProvider, FirestoreProvider } from "reactfire";
 import { app } from "../firebase/firebase";
 import { Analytics } from "@vercel/analytics/react";
-import { Inter } from "@next/font/google";
+import { Inter, Anton } from "@next/font/google";
 import "react-datepicker/dist/react-datepicker.css";
+import Footer from "../components/Footer";
 
+// const anton = Anton({ weight: "400" });
 const inter = Inter();
 export default function MyApp({
   Component,
@@ -33,6 +35,7 @@ export default function MyApp({
             <main className={inter.className}>
               <Header />
               <Component {...pageProps} />
+              <Footer />
             </main>
             <Analytics />
           </ChakraProvider>

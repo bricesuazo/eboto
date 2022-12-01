@@ -33,7 +33,7 @@ const ElectionPage = ({
       <Head>
         <title>{pageTitle}</title>
       </Head>
-      <Container maxW="4xl">
+      <Container maxW="8xl">
         <Text fontSize="3xl" fontWeight="bold">
           {election.name}
         </Text>

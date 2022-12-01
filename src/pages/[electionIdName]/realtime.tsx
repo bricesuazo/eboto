@@ -52,7 +52,7 @@ const RealtimePage = ({
         <title>{pageTitle}</title>
       </Head>
 
-      <Container maxW="4xl">
+      <Container maxW="8xl">
         <Box marginBottom={4}>
           <Text fontSize="2xl" fontWeight="bold" textAlign="center">
             {election.name}

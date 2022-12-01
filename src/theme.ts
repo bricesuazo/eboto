@@ -1,11 +1,10 @@
 import { extendTheme, type ThemeConfig } from "@chakra-ui/react";
 
 const theme = extendTheme({
-  initialColorMode: "dark",
+  initialColorMode: "light",
   useSystemColorMode: true,
   fonts: { body: `'Inter', sans-serif` },
   colors: {
-    transparent: "transparent",
     black: "#000",
     white: "#fff",
     // generate here - https://grayscale.design/app

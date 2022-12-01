@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Center,
+  Container,
   Hide,
   HStack,
   IconButton,
@@ -34,6 +35,7 @@ import { electionType } from "../types/typings";
 import { doc, getDoc } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 const Header = () => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -129,101 +131,128 @@ const Header = () => {
   };
 
   return (
-    <Center padding={4} justifyContent="space-between">
-      <Link href="/">
-        <Text>Logo</Text>
-      </Link>
-      <HStack>
-        {(() => {
-          switch (sessionStatus) {
-            case "loading":
-              return <Spinner />;
-            case "unauthenticated":
-              return (
-                <>
-                  <Link href="/signin">
-                    <Button size={["sm", "md"]}>Signin</Button>
-                  </Link>
-                  <Link href="/signup">
-                    <Button size={["sm", "md"]}>Signup</Button>
-                  </Link>
-                </>
-              );
-            case "authenticated":
-              switch (session.user.accountType) {
-                case "admin":
-                  return (
-                    <>
-                      {session?.user.photoUrl && (
-                        <Avatar
-                          name={`@${
-                            session?.user.firstName +
-                            " " +
-                            session?.user.lastName
-                          }`}
-                          src={session?.user.photoUrl}
-                          size="sm"
-                        />
-                      )}
-                      <Hello email={session?.user.email} />
-
-                      <MenuParent>
-                        <Link href="/dashboard">
-                          <MenuItem icon={<ChartBarIcon width={18} />}>
-                            Dashboard
-                          </MenuItem>
-                        </Link>
-                      </MenuParent>
-                    </>
-                  );
-                case "voter":
-                  return (
-                    <>
-                      <Hello email={session?.user.email} />
-                      <Show above="sm">
-                        {!(
-                          router.route.split("/").length === 2 &&
-                          router.route.split("/")[1] === "[electionIdName]" &&
-                          router.query.electionIdName ===
-                            election?.electionIdName
-                        ) && (
-                          <Link href={`/${election?.electionIdName}`}>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              isLoading={loading}
-                              rightIcon={<ArrowRightIcon width={14} />}
-                            >
-                              Go to {election?.name}
-                            </Button>
-                          </Link>
+    <Box backgroundColor="gray.800" position="sticky" top={0} zIndex="sticky">
+      <Container
+        maxW="8xl"
+        padding={4}
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+      >
+        <Link href="/">
+          <HStack>
+            <Box position="relative" width={8} height={8}>
+              <Image
+                src="/assets/images/eboto-mo-logo.png"
+                alt="eBoto Mo Logo"
+                fill
+                sizes="contain"
+                style={{
+                  filter: "invert(1)",
+                  userSelect: "none",
+                  pointerEvents: "none",
+                }}
+              />
+            </Box>
+            <Text fontWeight="bold" color="white" fontSize={["unset", "xl"]}>
+              eBoto Mo
+            </Text>
+          </HStack>
+        </Link>
+        <HStack>
+          {(() => {
+            switch (sessionStatus) {
+              case "loading":
+                return <Spinner />;
+              case "unauthenticated":
+                return (
+                  <>
+                    <Link href="/signin">
+                      <Button size={["sm", "md"]}>Signin</Button>
+                    </Link>
+                    <Hide below="sm">
+                      <Link href="/signup">
+                        <Button size={["sm", "md"]}>Signup</Button>
+                      </Link>
+                    </Hide>
+                  </>
+                );
+              case "authenticated":
+                switch (session.user.accountType) {
+                  case "admin":
+                    return (
+                      <>
+                        {session?.user.photoUrl && (
+                          <Avatar
+                            name={`@${
+                              session?.user.firstName +
+                              " " +
+                              session?.user.lastName
+                            }`}
+                            src={session?.user.photoUrl}
+                            size="sm"
+                          />
                         )}
-                      </Show>
-                      <MenuParent>
-                        <MenuItem
-                          icon={<ArchiveBoxArrowDownIcon width={18} />}
-                          disabled={loading}
-                          onClick={() => {
-                            !loading &&
-                              router.push(`/${election?.electionIdName}`);
-                          }}
-                        >
-                          <HStack>
-                            {loading ? (
-                              <Spinner />
-                            ) : (
-                              <Text>{election?.name}</Text>
-                            )}
-                          </HStack>
-                        </MenuItem>
-                      </MenuParent>
-                    </>
-                  );
-              }
-          }
-        })()}
-      </HStack>
-    </Center>
+                        <Hello email={session?.user.email} />
+
+                        <MenuParent>
+                          <Link href="/dashboard">
+                            <MenuItem icon={<ChartBarIcon width={18} />}>
+                              Dashboard
+                            </MenuItem>
+                          </Link>
+                        </MenuParent>
+                      </>
+                    );
+                  case "voter":
+                    return (
+                      <>
+                        <Hello email={session?.user.email} />
+                        <Show above="sm">
+                          {!(
+                            router.route.split("/").length === 2 &&
+                            router.route.split("/")[1] === "[electionIdName]" &&
+                            router.query.electionIdName ===
+                              election?.electionIdName
+                          ) && (
+                            <Link href={`/${election?.electionIdName}`}>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                isLoading={loading}
+                                rightIcon={<ArrowRightIcon width={14} />}
+                              >
+                                Go to {election?.name}
+                              </Button>
+                            </Link>
+                          )}
+                        </Show>
+                        <MenuParent>
+                          <MenuItem
+                            icon={<ArchiveBoxArrowDownIcon width={18} />}
+                            disabled={loading}
+                            onClick={() => {
+                              !loading &&
+                                router.push(`/${election?.electionIdName}`);
+                            }}
+                          >
+                            <HStack>
+                              {loading ? (
+                                <Spinner />
+                              ) : (
+                                <Text>{election?.name}</Text>
+                              )}
+                            </HStack>
+                          </MenuItem>
+                        </MenuParent>
+                      </>
+                    );
+                }
+            }
+          })()}
+        </HStack>
+      </Container>
+    </Box>
   );
 };
 
