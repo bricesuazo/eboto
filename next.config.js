@@ -1,21 +1,24 @@
-/**
- * @type {import('next').NextConfig}
- **/
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  // reactStrictMode: true,
   images: {
-    domains: ["img.freepik.com", "www.freepnglogos.com"],
+    domains: ["firebasestorage.googleapis.com"],
   },
-
-  // async redirects() {
-  //   return [
-  //     {
-  //       source: "/dashboard",
-  //       destination: "/dashboard/overview",
-  //       permanent: true,
-  //     },
-  //   ];
-  // },
+  experimental: {
+    fontLoaders: [
+      { loader: "@next/font/google", options: { subsets: ["latin"] } },
+    ],
+  },
+  reactStrictMode: true,
+  swcMinify: true,
+  async redirects() {
+    return [
+      {
+        source: "/dashboard/:path",
+        destination: "/dashboard",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;
