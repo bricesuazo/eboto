@@ -1,8 +1,10 @@
+import { ColorModeScript } from "@chakra-ui/react";
 import { Html, Head, Main, NextScript } from "next/document";
+import theme from "../theme";
 
 export default function Document() {
   return (
-    <Html>
+    <Html lang="en">
       <Head>
         {/* Favicon */}
         <link
@@ -80,32 +82,9 @@ export default function Document() {
           name="msapplication-TileImage"
           content="/assets/images/favicon/ms-icon-144x144.png"
         />
-
-        {/* Font: Inter*/}
-        <link rel="preconnect" href="https://fonts.googleapis.com"></link>
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="true"
-        ></link>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
-          rel="stylesheet"
-        ></link>
-
-        {/* Font: Anton */}
-        <link rel="preconnect" href="https://fonts.googleapis.com"></link>
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="true"
-        ></link>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Anton&display=swap"
-          rel="stylesheet"
-        ></link>
       </Head>
       <body>
+        <ColorModeScript initialColorMode={theme.initialColorMode} />
         <Main />
         <NextScript />
       </body>
