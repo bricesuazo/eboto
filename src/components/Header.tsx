@@ -131,7 +131,7 @@ const Header = () => {
         alignItems="center"
         justifyContent="space-between"
       >
-        <Link href="/">
+        <Link href="/" style={{ minWidth: "fit-content" }}>
           <HStack>
             <Box position="relative" width={8} height={8}>
               <Image

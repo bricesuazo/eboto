@@ -26,7 +26,8 @@ import {
 } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { useRouter } from "next/router";
-const dashboardSidebar = [
+
+export const dashboardSidebar = [
   {
     id: 1,
     title: "Overview",

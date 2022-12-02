@@ -4,11 +4,13 @@ import {
   Center,
   Divider,
   Flex,
+  Hide,
   HStack,
   Icon,
   IconButton,
   Input,
   Select,
+  Show,
   Stack,
   Text,
   Tooltip,
@@ -24,7 +26,9 @@ import {
   where,
 } from "firebase/firestore";
 import CreateElectionModal from "../components/CreateElectionModal";
-import DashboardSidebar from "../components/DashboardSidebar";
+import DashboardSidebar, {
+  dashboardSidebar,
+} from "../components/DashboardSidebar";
 import { firestore } from "../firebase/firebase";
 import { useRouter } from "next/router";
 import { useRouter as useRouterNavigation } from "next/navigation";
@@ -141,9 +145,13 @@ const DashboardLayout = ({
         election={currentElection as electionType}
       />
 
-      <Flex direction="column" gap={4} padding="4" height="85vh">
-        <Stack direction="row" alignItems="center" spacing={4}>
-          <Center columnGap={2} width="248px">
+      <Flex direction="column" gap={4} padding="4" height="95vh">
+        <Stack
+          direction={["column", "row"]}
+          alignItems="center"
+          spacing={[0, 4]}
+        >
+          <Center columnGap={2} width={["full", "full", "248px"]}>
             <Select
               placeholder={
                 false
@@ -185,6 +193,8 @@ const DashboardLayout = ({
               p={2}
               cursor="pointer"
               role="group"
+              width="full"
+              justifyContent={["center", "flex-start"]}
             >
               <Center gap={2}>
                 <Icon
@@ -221,27 +231,50 @@ const DashboardLayout = ({
             </Stack>
           </Tooltip>
         </Stack>
+        <Flex
+          flexDirection={["column", "column", "row"]}
+          borderRadius="0.25rem"
+          gap={4}
+          height="full"
+        >
+          <Show below="md">
+            <Select
+              value={router.pathname.split("/dashboard")[1]}
+              onChange={(e) => {
+                router.push(
+                  `/${router.query.electionIdName}/dashboard${e.target.value}`
+                );
+              }}
+            >
+              {dashboardSidebar.map((sidebar) => (
+                <option value={sidebar.href} key={sidebar.id}>
+                  {sidebar.title}
+                </option>
+              ))}
+            </Select>
+          </Show>
 
-        <Flex borderRadius="0.25rem" gap={4} height="100%">
-          <Box
-            padding={4}
-            backgroundColor={colorMode === "dark" ? "gray.700" : "gray.50"}
-            height="fit-content"
-            width="248px"
-            borderRadius="md"
-          >
-            <DashboardSidebar />
-          </Box>
+          <Hide below="md">
+            <Box
+              padding={4}
+              backgroundColor={colorMode === "dark" ? "gray.700" : "gray.50"}
+              height="fit-content"
+              width="248px"
+              borderRadius="md"
+            >
+              <DashboardSidebar />
+            </Box>
+          </Hide>
 
           <Stack
             padding={4}
             backgroundColor={colorMode === "dark" ? "gray.700" : "gray.50"}
-            height="100%"
+            height="full"
             flex="1"
             borderRadius="md"
           >
             <Flex justifyContent="space-between">
-              <Text fontSize="2xl" fontWeight="bold">
+              <Text fontSize={["xl", "2xl"]} fontWeight="bold">
                 {title}
               </Text>
               {(() => {
