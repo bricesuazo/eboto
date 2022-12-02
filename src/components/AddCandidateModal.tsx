@@ -275,7 +275,7 @@ const AddCandidateModal = ({
                   <Tab>Seminars Attended</Tab>
                 </TabList>
                 <TabPanels>
-                  <TabPanel>
+                  <TabPanel paddingX={0}>
                     <Stack spacing={4} flex={1}>
                       <FormControl isRequired>
                         <FormLabel>First name</FormLabel>
@@ -353,7 +353,7 @@ const AddCandidateModal = ({
                         <FormLabel>Slug</FormLabel>
                         <InputGroup>
                           <InputLeftAddon>
-                            eboto-mo.com/{election.electionIdName}/
+                            {election.electionIdName}/
                           </InputLeftAddon>
                           <Input
                             placeholder="Candidate's slug"
@@ -403,7 +403,7 @@ const AddCandidateModal = ({
                       </FormControl>
                     </Stack>
                   </TabPanel>
-                  <TabPanel>
+                  <TabPanel paddingX={0}>
                     <FormControl>
                       {image ? (
                         <HStack spacing={4}>
@@ -458,7 +458,7 @@ const AddCandidateModal = ({
                       )}
                     </FormControl>
                   </TabPanel>
-                  <TabPanel>
+                  <TabPanel paddingX={0}>
                     <FormControl>
                       <FormLabel>Achievements</FormLabel>
 
@@ -549,7 +549,7 @@ const AddCandidateModal = ({
                       </Stack>
                     </FormControl>
                   </TabPanel>
-                  <TabPanel>
+                  <TabPanel paddingX={0}>
                     <FormControl>
                       <FormLabel>Affiliations</FormLabel>
                       <Stack>
@@ -739,7 +739,7 @@ const AddCandidateModal = ({
                       </Stack>
                     </FormControl>
                   </TabPanel>
-                  <TabPanel>
+                  <TabPanel paddingX={0}>
                     <FormControl>
                       <FormLabel>Seminars Attended</FormLabel>
                       <Stack>
@@ -928,7 +928,6 @@ const AddCandidateModal = ({
               </Box>
               <Box>
                 <Button
-                  
                   mr={3}
                   type="submit"
                   isLoading={loading}

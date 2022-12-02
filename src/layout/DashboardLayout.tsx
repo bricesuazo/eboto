@@ -258,9 +258,8 @@ const DashboardLayout = ({
             <Box
               padding={4}
               backgroundColor={colorMode === "dark" ? "gray.700" : "gray.50"}
-              height="fit-content"
-              width="248px"
               borderRadius="md"
+              height="fit-content"
             >
               <DashboardSidebar />
             </Box>

@@ -254,7 +254,7 @@ const EditCandidateModal = ({
                   <Tab>Seminars Attended</Tab>
                 </TabList>
                 <TabPanels>
-                  <TabPanel>
+                  <TabPanel paddingX={0}>
                     <Stack spacing={4}>
                       <FormControl isRequired>
                         <FormLabel>First name</FormLabel>
@@ -305,7 +305,7 @@ const EditCandidateModal = ({
                         <FormLabel>Slug</FormLabel>
                         <InputGroup>
                           <InputLeftAddon>
-                            eboto-mo.com{election.electionIdName}/
+                            {election.electionIdName}/
                           </InputLeftAddon>
                           <Input
                             placeholder="Candidate slug"
@@ -366,7 +366,7 @@ const EditCandidateModal = ({
                       </FormControl>
                     </Stack>
                   </TabPanel>
-                  <TabPanel>
+                  <TabPanel paddingX={0}>
                     <FormControl>
                       {(() => {
                         if (candidateData.photoUrl?.length) {
@@ -456,7 +456,7 @@ const EditCandidateModal = ({
                       })()}
                     </FormControl>
                   </TabPanel>
-                  <TabPanel>
+                  <TabPanel paddingX={0}>
                     <FormControl>
                       <FormLabel>Achievements</FormLabel>
 
@@ -548,7 +548,7 @@ const EditCandidateModal = ({
                       </Stack>
                     </FormControl>
                   </TabPanel>
-                  <TabPanel>
+                  <TabPanel paddingX={0}>
                     <FormControl>
                       <FormLabel>Affiliations</FormLabel>
                       <Stack>
@@ -742,7 +742,7 @@ const EditCandidateModal = ({
                       </Stack>
                     </FormControl>
                   </TabPanel>
-                  <TabPanel>
+                  <TabPanel paddingX={0}>
                     <FormControl>
                       <FormLabel>Seminars Attended</FormLabel>
                       <Stack>
