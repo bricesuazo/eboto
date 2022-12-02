@@ -1,6 +1,8 @@
 import {
+  Box,
   Center,
   Flex,
+  Hide,
   HStack,
   Icon,
   IconButton,
@@ -90,94 +92,109 @@ const VoterPage = ({
         />
       )}
       <DashboardLayout title="Voters" session={session}>
-        <InputGroup maxWidth={240} marginLeft="auto">
-          <InputLeftElement pointerEvents="none">
-            <MagnifyingGlassIcon color="gray.300" width={24} />
-          </InputLeftElement>
-          <Input placeholder="Search..." />
-        </InputGroup>
-        {voters && voters.length !== 0 ? (
-          <TableContainer height="full" marginTop={4}>
-            <Table variant="simple" size="sm">
-              <Thead>
-                <Tr>
-                  <Th>Full name</Th>
-                  <Th>Email address</Th>
-                  <Th>Initial password</Th>
-                  <Th textAlign="center">Has voted?</Th>
-                  <Th></Th>
-                </Tr>
-              </Thead>
-
-              <Tbody overflowY="auto">
-                {voters.map((voter) => (
-                  <Tr
-                    key={voter.id}
-                    _hover={{ backgroundColor: "whiteAlpha.100" }}
-                  >
-                    <Td>{voter.fullName}</Td>
-                    <Td>{voter.email}</Td>
-                    <Td>{voter.password}</Td>
-                    <Td textAlign="center">
-                      {voter.hasVoted ? (
-                        <Icon
-                          as={CheckCircleIcon}
-                          fontSize={24}
-                          color="blue.300"
-                        />
-                      ) : (
-                        <Icon as={XCircleIcon} fontSize={24} color="red.300" />
-                      )}
-                    </Td>
-                    <Td>
-                      <HStack justifyContent="flex-end">
-                        <Tooltip label="Delete voter">
-                          <IconButton
-                            aria-label="Delete voter"
-                            icon={<TrashIcon width={18} />}
-                            size="sm"
-                            color="red.300"
-                            onClick={() => {
-                              setSelectedVoter(
-                                voters.find(
-                                  (obj) => obj.id === voter.id
-                                ) as voterType
-                              );
-                              onOpenDeleteVoter();
-                            }}
-                          />
-                        </Tooltip>
-                        <Tooltip label="Edit voter">
-                          <IconButton
-                            aria-label="Edit voter"
-                            icon={<PencilSquareIcon width={18} />}
-                            size="sm"
-                            onClick={() => {
-                              setSelectedVoter(
-                                voters.find(
-                                  (obj) => obj.id === voter.id
-                                ) as voterType
-                              );
-                              onOpenEditVoter();
-                            }}
-                          />
-                        </Tooltip>
-                      </HStack>
-                    </Td>
+        <Box width="full" height="full" overflowX="hidden">
+          <InputGroup width={["full", 248]} marginLeft="auto">
+            <InputLeftElement pointerEvents="none">
+              <MagnifyingGlassIcon color="gray.300" width={24} />
+            </InputLeftElement>
+            <Input placeholder="Search..." />
+          </InputGroup>
+          {voters && voters.length !== 0 ? (
+            <TableContainer marginTop={4}>
+              <Table variant="simple" size="sm">
+                <Thead>
+                  <Tr>
+                    <Hide below="md">
+                      <Th>Full name</Th>
+                    </Hide>
+                    <Th>Email address</Th>
+                    <Hide below="lg">
+                      <Th>Password</Th>
+                    </Hide>
+                    <Hide below="xl">
+                      <Th textAlign="center">Has voted?</Th>
+                    </Hide>
+                    <Th></Th>
                   </Tr>
-                ))}
-              </Tbody>
-            </Table>
-          </TableContainer>
-        ) : (
-          <Center width="full" height="full">
-            {votersStatus === "loading" ? (
-              <Spinner />
-            ) : (
-              <Text>No voters yet.</Text>
-            )}
-          </Center>
-        )}
+                </Thead>
+
+                <Tbody>
+                  {voters.map((voter) => (
+                    <Tr key={voter.id} _hover={{ backgroundColor: "gray.100" }}>
+                      <Hide below="md">
+                        <Td>{voter.fullName}</Td>
+                      </Hide>
+                      <Td>{voter.email}</Td>
+                      <Hide below="lg">
+                        <Td>{voter.password}</Td>
+                      </Hide>
+                      <Hide below="xl">
+                        <Td textAlign="center">
+                          {voter.hasVoted ? (
+                            <Icon
+                              as={CheckCircleIcon}
+                              fontSize={24}
+                              color="blue.300"
+                            />
+                          ) : (
+                            <Icon
+                              as={XCircleIcon}
+                              fontSize={24}
+                              color="red.300"
+                            />
+                          )}
+                        </Td>
+                      </Hide>
+                      <Td>
+                        <HStack justifyContent="flex-end">
+                          <Tooltip label="Delete voter">
+                            <IconButton
+                              aria-label="Delete voter"
+                              icon={<TrashIcon width={18} />}
+                              size="sm"
+                              color="red.300"
+                              onClick={() => {
+                                setSelectedVoter(
+                                  voters.find(
+                                    (obj) => obj.id === voter.id
+                                  ) as voterType
+                                );
+                                onOpenDeleteVoter();
+                              }}
+                            />
+                          </Tooltip>
+                          <Tooltip label="Edit voter">
+                            <IconButton
+                              aria-label="Edit voter"
+                              icon={<PencilSquareIcon width={18} />}
+                              size="sm"
+                              onClick={() => {
+                                setSelectedVoter(
+                                  voters.find(
+                                    (obj) => obj.id === voter.id
+                                  ) as voterType
+                                );
+                                onOpenEditVoter();
+                              }}
+                            />
+                          </Tooltip>
+                        </HStack>
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Center width="full" height="full">
+              {votersStatus === "loading" ? (
+                <Spinner />
+              ) : (
+                <Text>No voters yet.</Text>
+              )}
+            </Center>
+          )}
+        </Box>
       </DashboardLayout>
     </>
   );

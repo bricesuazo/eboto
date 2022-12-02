@@ -151,7 +151,7 @@ const DashboardLayout = ({
           alignItems="center"
           spacing={[0, 4]}
         >
-          <Center columnGap={2} width={["full", "full", "248px"]}>
+          <Center columnGap={2} width={["full", "full", "356px"]}>
             <Select
               placeholder={
                 false
@@ -193,7 +193,6 @@ const DashboardLayout = ({
               p={2}
               cursor="pointer"
               role="group"
-              width="full"
               justifyContent={["center", "flex-start"]}
             >
               <Center gap={2}>
