@@ -270,7 +270,7 @@ const DashboardLayout = ({
             flex="1"
             borderRadius="md"
           >
-            <Flex justifyContent="space-between">
+            <Flex justifyContent="space-between" alignItems="center">
               <Text fontSize={["xl", "2xl"]} fontWeight="bold">
                 {title}
               </Text>
@@ -305,18 +305,27 @@ const DashboardLayout = ({
                       <HStack>
                         <Tooltip label="Upload bulk voters. (.xlsx)">
                           <IconButton
-                            aria-label="Edit voter"
+                            aria-label="Upload bulk voters"
                             icon={<ArrowUpOnSquareIcon width={24} />}
                             onClick={onOpenUploadBulkVoter}
                           />
                         </Tooltip>
-                        <Button
-                          onClick={onOpenAddVoter}
-                          leftIcon={<UserPlusIcon width={18} />}
-                          isLoading={!currentElection}
-                        >
-                          Add voter
-                        </Button>
+                        <Hide above="sm">
+                          <IconButton
+                            aria-label="Add voter"
+                            icon={<UserPlusIcon width={18} />}
+                            onClick={onOpenAddVoter}
+                          />
+                        </Hide>
+                        <Hide below="sm">
+                          <Button
+                            onClick={onOpenAddVoter}
+                            leftIcon={<UserPlusIcon width={18} />}
+                            isLoading={!currentElection}
+                          >
+                            Add voter
+                          </Button>
+                        </Hide>
                       </HStack>
                     );
                 }
