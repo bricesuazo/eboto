@@ -145,7 +145,7 @@ const DashboardLayout = ({
         election={currentElection as electionType}
       />
 
-      <Flex direction="column" gap={4} padding="4" height="95vh">
+      <Stack spacing={4} padding="4">
         <Stack
           direction={["column", "row"]}
           alignItems="center"
@@ -269,7 +269,6 @@ const DashboardLayout = ({
           <Stack
             padding={4}
             backgroundColor={colorMode === "dark" ? "gray.700" : "gray.50"}
-            height="full"
             flex="1"
             borderRadius="md"
           >
@@ -327,12 +326,12 @@ const DashboardLayout = ({
             </Flex>
 
             <Divider />
-            <Box paddingTop={2} overflow={overflow}>
+            <Box paddingTop={2} overflow={overflow} height="xl">
               {children}
             </Box>
           </Stack>
         </Flex>
-      </Flex>
+      </Stack>
     </>
   );
 };
