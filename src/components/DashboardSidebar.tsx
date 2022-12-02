@@ -131,12 +131,14 @@ const DashboardSidebar = () => {
           >
             <Button
               variant={colorMode === "dark" ? "ghost" : "solid"}
+              backgroundColor="transparent"
               border={
                 item.title.toLocaleLowerCase() === router.pathname.split("/")[3]
                   ? "1px solid"
                   : "none"
               }
-              borderColor={colorMode === "dark" ? "gray.600" : "gray.200"}
+              borderColor={colorMode === "dark" ? "gray.500" : "gray.300"}
+              borderWidth="2px"
               key={item.id}
               leftIcon={
                 item.title.toLocaleLowerCase() === router.pathname.split("/")[3]

@@ -13,6 +13,8 @@ import {
   Box,
   Center,
   Flex,
+  Grid,
+  GridItem,
   Text,
   useColorMode,
   useDisclosure,
@@ -41,106 +43,118 @@ const DashboardPage = ({ elections }: { elections: electionType[] }) => {
         <title>Dashboard | eBoto Mo</title>
       </Head>
       <Box padding={4}>
-        <Text mb={4} fontWeight="bold" fontSize={{ sm: "lg", lg: "xl" }}>
-          Your elections
-        </Text>
+        {elections.length === 0 ? (
+          <Text>No Election</Text>
+        ) : (
+          <>
+            <Text mb={4} fontWeight="bold" fontSize={{ sm: "lg", lg: "xl" }}>
+              Your elections
+            </Text>
 
-        <Flex flexWrap="wrap" gap={4}>
-          {elections.map((election) => (
-            <Link
-              href={`/${election.electionIdName}/dashboard/`}
-              key={election.id}
-              style={{ width: "100%", maxWidth: "372px" }}
+            <Grid
+              templateColumns={[
+                "repeat(1, 1fr)",
+                "repeat(2, 1fr)",
+                "repeat(3, 1fr)",
+                "repeat(4, 1fr)",
+                "repeat(5, 1fr)",
+              ]}
+              gridTemplateRows="repeat(5, 1fr)"
+              gap={4}
             >
-              <Flex
-                key={election.id}
-                padding={4}
-                backgroundColor={colorMode === "dark" ? "gray.900" : "gray.600"}
-                borderRadius="lg"
-                width={["full", 372]}
-                height={132}
-                userSelect="none"
-                transition="all 0.1s ease-in-out"
-                _hover={{
-                  backgroundColor:
-                    colorMode === "dark" ? "gray.700" : "gray.500",
-                }}
-                justifyContent="space-between"
-                alignItems="flex-start"
-                role="group"
-              >
-                <Flex
-                  justifyContent="space-between"
-                  direction="column"
+              {elections.map((election) => (
+                <GridItem key={election.id}>
+                  <Link href={`/${election.electionIdName}/dashboard/`}>
+                    <Flex
+                      key={election.id}
+                      padding={4}
+                      height="full"
+                      backgroundColor={
+                        colorMode === "dark" ? "gray.900" : "gray.600"
+                      }
+                      borderRadius="lg"
+                      userSelect="none"
+                      transition="all 0.1s ease-in-out"
+                      _hover={{
+                        backgroundColor:
+                          colorMode === "dark" ? "gray.700" : "gray.500",
+                      }}
+                      justifyContent="space-between"
+                      alignItems="flex-start"
+                      role="group"
+                    >
+                      <Flex justifyContent="space-between" direction="column">
+                        <Text
+                          fontWeight="bold"
+                          fontSize={["sm", "initial"]}
+                          color="white"
+                        >
+                          {election.name}
+                        </Text>
+                        <Box fontSize={["xs", "sm"]} color="gray.300">
+                          <Text>
+                            <Moment format="MM/DD/YY h:mmA">
+                              {election.electionStartDate.seconds * 1000}
+                            </Moment>
+                            -
+                            <Moment format="MM/DD/YY h:mmA">
+                              {election.electionEndDate.seconds * 1000}
+                            </Moment>
+                          </Text>
+                          <Text>
+                            Updated:{" "}
+                            <Moment interval={10000} fromNow>
+                              {election.updatedAt.seconds * 1000}
+                            </Moment>
+                          </Text>
+                          <Text>
+                            Created:{" "}
+                            <Moment interval={10000} fromNow>
+                              {election.createdAt.seconds * 1000}
+                            </Moment>
+                          </Text>
+                        </Box>
+                      </Flex>
+                      <Box
+                        width={6}
+                        color="transparent"
+                        mr={1}
+                        transition="all 0.25s ease-in-out"
+                        _groupHover={{ color: "white", mr: 0 }}
+                      >
+                        <ChevronRightIcon />
+                      </Box>
+                    </Flex>
+                  </Link>
+                </GridItem>
+              ))}
+              <GridItem>
+                <Center
+                  border="2px"
                   height="full"
+                  borderColor={colorMode === "dark" ? "gray.900" : "gray.700"}
+                  borderRadius="lg"
+                  onClick={onOpenCreateElection}
+                  color={colorMode === "dark" ? "gray.200" : "gray.400"}
+                  userSelect="none"
+                  cursor="pointer"
+                  transition="all 0.1s ease-in-out"
+                  _hover={{
+                    backgroundColor:
+                      colorMode === "dark" ? "gray.700" : "gray.800",
+                    color: "white",
+                    borderColor: colorMode === "dark" ? "gray.700" : "gray.800",
+                  }}
                 >
-                  <Text
-                    fontWeight="bold"
-                    fontSize={["sm", "initial"]}
-                    color="white"
-                  >
-                    {election.name}
-                  </Text>
-                  <Box fontSize={["xs", "sm"]} width="full" color="gray.300">
-                    <Text>
-                      <Moment format="MM/DD/YY h:mmA">
-                        {election.electionStartDate.seconds * 1000}
-                      </Moment>
-                      -
-                      <Moment format="MM/DD/YY h:mmA">
-                        {election.electionEndDate.seconds * 1000}
-                      </Moment>
-                    </Text>
-                    <Text>
-                      Updated:{" "}
-                      <Moment interval={10000} fromNow>
-                        {election.updatedAt.seconds * 1000}
-                      </Moment>
-                    </Text>
-                    <Text>
-                      Created:{" "}
-                      <Moment interval={10000} fromNow>
-                        {election.createdAt.seconds * 1000}
-                      </Moment>
-                    </Text>
-                  </Box>
-                </Flex>
-                <Box
-                  width={6}
-                  color="gray.500"
-                  mr={1}
-                  transition="all 0.25s ease-in-out"
-                  _groupHover={{ color: "white", mr: 0 }}
-                >
-                  <ChevronRightIcon />
-                </Box>
-              </Flex>
-            </Link>
-          ))}
-          <Center
-            height={132}
-            border="2px"
-            borderColor={colorMode === "dark" ? "gray.900" : "gray.700"}
-            borderRadius="lg"
-            width={["full", 172]}
-            maxWidth="372px"
-            onClick={onOpenCreateElection}
-            color={colorMode === "dark" ? "gray.200" : "gray.400"}
-            userSelect="none"
-            cursor="pointer"
-            transition="all 0.1s ease-in-out"
-            _hover={{
-              backgroundColor: colorMode === "dark" ? "gray.700" : "gray.800",
-              color: "white",
-              borderColor: colorMode === "dark" ? "gray.700" : "gray.800",
-            }}
-          >
-            <Center flexDirection="column">
-              <PlusCircleIcon width={32} />
-              <Text>Create election</Text>
-            </Center>
-          </Center>
-        </Flex>
+                  <Center flexDirection="column">
+                    <PlusCircleIcon width={32} />
+                    <Text>Create election</Text>
+                  </Center>
+                </Center>
+              </GridItem>
+            </Grid>
+          </>
+        )}
       </Box>
     </>
   );

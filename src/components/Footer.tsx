@@ -15,26 +15,28 @@ const Footer = () => {
   return (
     <Box backgroundColor="gray.800" color="white">
       <Container maxW="8xl" paddingY={8}>
-        <Link href="/" style={{ width: "fit-content" }}>
-          <HStack justifyContent={["center", "flex-start"]}>
-            <Box position="relative" width={8} height={8}>
-              <Image
-                src="/assets/images/eboto-mo-logo.png"
-                alt="eBoto Mo Logo"
-                fill
-                sizes="contain"
-                style={{
-                  filter: "invert(1)",
-                  userSelect: "none",
-                  pointerEvents: "none",
-                }}
-              />
-            </Box>
-            <Text fontWeight="bold" color="white" fontSize={["2xl", "xl"]}>
-              eBoto Mo
-            </Text>
-          </HStack>
-        </Link>
+        <Flex justifyContent={["center", "flex-start"]}>
+          <Link href="/">
+            <HStack justifyContent={["center", "flex-start"]}>
+              <Box position="relative" width={8} height={8}>
+                <Image
+                  src="/assets/images/eboto-mo-logo.png"
+                  alt="eBoto Mo Logo"
+                  fill
+                  sizes="contain"
+                  style={{
+                    filter: "invert(1)",
+                    userSelect: "none",
+                    pointerEvents: "none",
+                  }}
+                />
+              </Box>
+              <Text fontWeight="bold" color="white" fontSize={["2xl", "xl"]}>
+                eBoto Mo
+              </Text>
+            </HStack>
+          </Link>
+        </Flex>
         <Flex
           justifyContent="space-between"
           marginTop={4}

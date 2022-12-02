@@ -60,21 +60,12 @@ const Header = () => {
 
   const Hello = ({ email }: { email: string }) => {
     return (
-      <Box textAlign="end">
-        <Text
-          fontSize={["xs", "sm"]}
-          color={colorMode === "dark" ? "whiteAlpha.800" : "black"}
-          fontWeight="semibold"
-        >
+      <Box textAlign="end" color="white">
+        <Text fontSize={["xs", "sm"]} fontWeight="semibold">
           <Hide below="sm">Hello, </Hide>@{email.split("@")[0]}!
         </Text>
         <Hide below="sm">
-          <Text
-            fontSize={["2xs", "xs"]}
-            color={colorMode === "dark" ? "whiteAlpha.500" : "black"}
-          >
-            {email}
-          </Text>
+          <Text fontSize={["2xs", "xs"]}>{email}</Text>
         </Hide>
       </Box>
     );
@@ -95,8 +86,9 @@ const Header = () => {
                 <ChevronDownIcon
                   style={{
                     transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-                    transitionDuration: "0.5s",
+                    transitionDuration: "0.25s",
                   }}
+                  color="white"
                 />
               }
               variant="ghost"
@@ -106,7 +98,7 @@ const Header = () => {
             <MenuList>
               {children}
               <MenuDivider />
-              <MenuItem
+              {/* <MenuItem
                 icon={<MoonIcon width={18} />}
                 closeOnSelect={false}
                 onClick={toggleColorMode}
@@ -116,7 +108,7 @@ const Header = () => {
 
                   <Switch isChecked={colorMode === "dark"} />
                 </HStack>
-              </MenuItem>
+              </MenuItem> */}
               <MenuItem
                 icon={<ArrowRightOnRectangleIcon width={18} />}
                 onClick={() => signOut({ callbackUrl: "/signin" })}

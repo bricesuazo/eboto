@@ -225,9 +225,7 @@ const DashboardLayout = ({
         <Flex borderRadius="0.25rem" gap={4} height="100%">
           <Box
             padding={4}
-            backgroundColor={
-              colorMode === "dark" ? "whiteAlpha.200" : "gray.100"
-            }
+            backgroundColor={colorMode === "dark" ? "gray.700" : "gray.50"}
             height="fit-content"
             width="248px"
             borderRadius="md"
@@ -237,9 +235,7 @@ const DashboardLayout = ({
 
           <Stack
             padding={4}
-            backgroundColor={
-              colorMode === "dark" ? "whiteAlpha.200" : "gray.100"
-            }
+            backgroundColor={colorMode === "dark" ? "gray.700" : "gray.50"}
             height="100%"
             flex="1"
             borderRadius="md"
