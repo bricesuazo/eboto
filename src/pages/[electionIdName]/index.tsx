@@ -7,11 +7,21 @@ import {
   positionType,
 } from "../../types/typings";
 import { firestore } from "../../firebase/firebase";
-import { Box, Button, Container, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Center,
+  Container,
+  Flex,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import Head from "next/head";
 import Moment from "react-moment";
 import Link from "next/link";
 import isElectionOngoing from "../../utils/isElectionOngoing";
+import Image from "next/image";
+import { useState } from "react";
 
 interface ElectionPageProps {
   election: electionType;
@@ -27,13 +37,14 @@ const ElectionPage = ({
   candidates,
 }: ElectionPageProps) => {
   const pageTitle = `${election.name} - Election | eBoto Mo`;
+  const [seeMore, setSeeMore] = useState(false);
 
   return (
     <>
       <Head>
         <title>{pageTitle}</title>
       </Head>
-      <Container maxW="8xl">
+      <Container maxW="8xl" textAlign="center" paddingX={[4, 16]} paddingY={16}>
         <Text fontSize="3xl" fontWeight="bold">
           {election.name}
         </Text>
@@ -46,25 +57,44 @@ const ElectionPage = ({
             {election.electionEndDate.seconds * 1000}
           </Moment>
         </Text>
-
-        <Text>{election.about}</Text>
-        {!isElectionOngoing(
-          election.electionStartDate,
-          election.electionEndDate
-        ) ? (
-          <Button disabled>Voting is not yet available</Button>
-        ) : (
-          <Link href={`/${election.electionIdName}/vote`}>
-            <Button>Vote</Button>
-          </Link>
+        {election.about && (
+          <Container
+            maxW="2xl"
+            fontWeight="normal"
+            onClick={() => setSeeMore((prev) => !prev)}
+            marginTop={4}
+            width="full"
+            cursor="pointer"
+          >
+            <Text fontWeight="bold">About</Text>
+            <Text>
+              {!seeMore
+                ? election.about?.slice(0, 56) + "... See more"
+                : election.about + " See less"}
+            </Text>
+          </Container>
         )}
+        <Box marginTop={4}>
+          {!isElectionOngoing(
+            election.electionStartDate,
+            election.electionEndDate
+          ) ? (
+            <Button disabled>Voting is not available</Button>
+          ) : (
+            <Link href={`/${election.electionIdName}/vote`}>
+              <Button>Vote</Button>
+            </Link>
+          )}
+        </Box>
 
-        <Box>
+        <Stack marginTop={8} spacing={8}>
           {positions.map((position) => {
             return (
-              <Box key={position.id}>
-                <Text fontSize="2xl">{position.title}</Text>
-                <Box>
+              <Stack key={position.id} alignItems="center">
+                <Text fontSize="2xl" fontWeight="bold">
+                  {position.title}
+                </Text>
+                <Flex flexWrap="wrap" gap={4} justifyContent="center">
                   {candidates
                     .filter((candidate) => candidate.position === position.uid)
                     .map((candidate) => {
@@ -73,24 +103,59 @@ const ElectionPage = ({
                           href={`/${election.electionIdName}/${candidate.slug}`}
                           key={candidate.id}
                         >
-                          <Text>{`${candidate.lastName}, ${
-                            candidate.firstName
-                          }${
-                            candidate.middleName &&
-                            ` ${candidate.middleName.charAt(0)}.`
-                          } (${
-                            partylists.find((partylist) => {
-                              return partylist.uid === candidate.partylist;
-                            })?.abbreviation
-                          })`}</Text>
+                          <Center
+                            padding={4}
+                            border="2px"
+                            borderColor="gray.100"
+                            borderRadius="lg"
+                            width="12rem"
+                            height="16rem"
+                            flexDirection="column"
+                            justifyContent="flex-start"
+                            cursor="pointer"
+                            transition="all 0.2s"
+                            _hover={{ borderColor: "gray.800" }}
+                            userSelect="none"
+                          >
+                            <Box
+                              position="relative"
+                              width="10rem"
+                              height="10rem"
+                              pointerEvents="none"
+                            >
+                              <Image
+                                src={
+                                  candidate.photoUrl
+                                    ? candidate.photoUrl
+                                    : "/assets/images/default-profile-picture.png"
+                                }
+                                alt={`${candidate.firstName}${
+                                  candidate.middleName &&
+                                  ` ${candidate.middleName}`
+                                } ${candidate.lastName} photo`}
+                                fill
+                                style={{ objectFit: "cover" }}
+                              />
+                            </Box>
+                            <Text>{`${candidate.lastName}, ${
+                              candidate.firstName
+                            }${
+                              candidate.middleName &&
+                              ` ${candidate.middleName.charAt(0)}.`
+                            } (${
+                              partylists.find((partylist) => {
+                                return partylist.uid === candidate.partylist;
+                              })?.abbreviation
+                            })`}</Text>
+                          </Center>
                         </Link>
                       );
                     })}
-                </Box>
-              </Box>
+                </Flex>
+              </Stack>
             );
           })}
-        </Box>
+        </Stack>
       </Container>
     </>
   );
