@@ -157,7 +157,7 @@ const CandidatePage = ({
                       </Stack>
 
                       <Flex
-                        overflowX="scroll"
+                        overflowX="auto"
                         gap={2}
                         alignItems="center"
                         width="max-content"

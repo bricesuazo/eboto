@@ -88,7 +88,7 @@ const Header = () => {
                     transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
                     transitionDuration: "0.25s",
                   }}
-                  color="white"
+                  color={!isOpen ? "white" : "black"}
                 />
               }
               variant="ghost"

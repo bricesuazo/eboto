@@ -37,17 +37,16 @@ const ElectionPage = ({
         <Text fontSize="3xl" fontWeight="bold">
           {election.name}
         </Text>
-        {election.electionStartDate && election.electionEndDate && (
-          <Text>
-            <Moment format="MMMM DD, YYYY, h:mmA">
-              {election.electionStartDate.seconds * 1000}
-            </Moment>
-            {" - "}
-            <Moment format="MMMM DD, YYYY, h:mmA">
-              {election.electionEndDate.seconds * 1000}
-            </Moment>
-          </Text>
-        )}
+        <Text>
+          <Moment format="MMMM DD, YYYY, h:mmA">
+            {election.electionStartDate.seconds * 1000}
+          </Moment>
+          {" - "}
+          <Moment format="MMMM DD, YYYY, h:mmA">
+            {election.electionEndDate.seconds * 1000}
+          </Moment>
+        </Text>
+
         <Text>{election.about}</Text>
         {!isElectionOngoing(
           election.electionStartDate,

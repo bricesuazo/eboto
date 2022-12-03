@@ -1,21 +1,187 @@
+import {
+  Box,
+  Center,
+  Flex,
+  Hide,
+  Input,
+  InputGroup,
+  InputLeftAddon,
+  InputRightAddon,
+  Spinner,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
+import { CheckIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 import Head from "next/head";
+import { useState } from "react";
+import Moment from "react-moment";
+import { useFirestoreCollectionData } from "reactfire";
+import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
-import { adminType } from "../../../types/typings";
+import { adminType, electionType } from "../../../types/typings";
 
 const OverviewPage = ({
   session,
+  election,
 }: {
   session: { user: adminType; expires: string };
+  election: electionType;
 }) => {
+  const [copied, setCopied] = useState(false);
+
+  const { data: votersData } = useFirestoreCollectionData(
+    collection(firestore, "elections", election.uid, "voters")
+  );
+
   return (
     <>
       <Head>
         <title>Overview | eBoto Mo</title>
       </Head>
       <DashboardLayout title="Overview" session={session}>
-        Overview
+        <Stack spacing={4} textAlign={["center", "left"]}>
+          <Stack direction={["column", "row"]} spacing={[0, 2]}>
+            <Text fontWeight={["normal", "bold"]}>Election Name: </Text>
+            <Text fontWeight={["bold", "normal"]} fontSize={["xl", "initial"]}>
+              {election.name}
+            </Text>
+            <Hide above="sm">
+              <Text fontSize="sm">
+                Created{" "}
+                <Moment fromNow>{election.createdAt.seconds * 1000}</Moment>
+              </Text>
+            </Hide>
+          </Stack>
+          <Hide below="sm">
+            <Stack direction="row">
+              <Text fontWeight="bold">Created At:</Text>{" "}
+              <Text>
+                <Moment format="MMMM DD, YYYY, h:mmA">
+                  {election.createdAt.seconds * 1000}
+                </Moment>{" "}
+                (<Moment fromNow>{election.createdAt.seconds * 1000}</Moment>)
+              </Text>
+            </Stack>
+          </Hide>
+          <Hide below="sm">
+            <InputGroup>
+              <InputLeftAddon>eboto-mo.com/</InputLeftAddon>
+              <Input
+                type="text"
+                placeholder="Election ID Name"
+                value={election.electionIdName}
+                readOnly
+              />
+              <InputRightAddon
+                cursor="pointer"
+                onClick={() => {
+                  if (copied) return;
+                  navigator.clipboard.writeText(
+                    `eboto-mo.com/${election.electionIdName}`
+                  );
+                  setCopied(true);
+
+                  setTimeout(() => {
+                    setCopied(false);
+                  }, 3000);
+                }}
+              >
+                {copied ? (
+                  <Text>Copied!</Text>
+                ) : (
+                  <>
+                    <DocumentDuplicateIcon width={18} />
+                    <Text>Copy</Text>
+                  </>
+                )}
+              </InputRightAddon>
+            </InputGroup>
+          </Hide>
+          <Hide above="sm">
+            <InputGroup>
+              <InputLeftAddon>/</InputLeftAddon>
+              <Input
+                type="text"
+                placeholder="Election ID Name"
+                value={election.electionIdName}
+                readOnly
+              />
+              <InputRightAddon
+                cursor="pointer"
+                onClick={() => {
+                  if (copied) return;
+                  navigator.clipboard.writeText(
+                    `eboto-mo.com/${election.electionIdName}`
+                  );
+                  setCopied(true);
+
+                  setTimeout(() => {
+                    setCopied(false);
+                  }, 3000);
+                }}
+              >
+                {copied ? (
+                  <CheckIcon width={18} />
+                ) : (
+                  <>
+                    <DocumentDuplicateIcon width={18} />
+                  </>
+                )}
+              </InputRightAddon>
+            </InputGroup>
+          </Hide>
+          <Stack spacing={[2, 0]}>
+            <Stack direction={["column", "row"]} spacing={[0, 2]}>
+              <Text fontWeight={["normal", "bold"]}>Election start date:</Text>
+              <Text fontWeight={["bold", "normal"]}>
+                <Moment format="MMMM DD, YYYY, h:mmA">
+                  {election.electionStartDate.seconds * 1000}
+                </Moment>{" "}
+                (
+                <Moment fromNow>
+                  {election.electionStartDate.seconds * 1000}
+                </Moment>
+                )
+              </Text>
+            </Stack>
+            <Stack direction={["column", "row"]} spacing={[0, 2]}>
+              <Text fontWeight={["normal", "bold"]}>Election end date:</Text>
+              <Text fontWeight={["bold", "normal"]}>
+                <Moment format="MMMM DD, YYYY, h:mmA">
+                  {election.electionEndDate.seconds * 1000}
+                </Moment>{" "}
+                (
+                <Moment fromNow>
+                  {election.electionEndDate.seconds * 1000}
+                </Moment>
+                )
+              </Text>
+            </Stack>
+          </Stack>
+
+          <Center backgroundColor="gray.500" padding={4} borderRadius="lg">
+            <Text fontSize="2xl" fontWeight="bold" color="white">
+              {!votersData ? (
+                <Spinner />
+              ) : (
+                votersData.filter((voter) => voter.hasVoted).length +
+                "/" +
+                votersData.length +
+                " " +
+                "voted (" +
+                (
+                  (votersData.filter((voter) => voter.hasVoted).length /
+                    votersData.length) *
+                  100
+                ).toFixed(0) +
+                "%)"
+              )}
+            </Text>
+          </Center>
+        </Stack>
       </DashboardLayout>
     </>
   );
@@ -26,5 +192,29 @@ export default OverviewPage;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  return { props: { session: await getSession(context) } };
+  const electionSnapshot = await getDocs(
+    query(
+      collection(firestore, "elections"),
+      where("electionIdName", "==", context.query.electionIdName)
+    )
+  );
+  if (electionSnapshot.empty) {
+    return {
+      notFound: true,
+    };
+  }
+  const votersSnapshot = await getDocs(
+    collection(
+      firestore,
+      "elections",
+      electionSnapshot.docs[0].data().uid,
+      "voters"
+    )
+  );
+  return {
+    props: {
+      election: JSON.parse(JSON.stringify(electionSnapshot.docs[0].data())),
+      session: await getSession(context),
+    },
+  };
 };
