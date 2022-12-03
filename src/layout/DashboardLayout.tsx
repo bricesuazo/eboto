@@ -279,25 +279,46 @@ const DashboardLayout = ({
                   case "Partylists":
                     return (
                       <HStack>
-                        <Button
-                          onClick={onOpenAddPartylist}
-                          leftIcon={<UserPlusIcon width={18} />}
-                          isLoading={!currentElection}
-                        >
-                          Add partylist
-                        </Button>
+                        <Hide above="sm">
+                          <IconButton
+                            aria-label="Add partylist"
+                            icon={<UserPlusIcon width={18} />}
+                            onClick={onOpenAddPartylist}
+                            isLoading={!currentElection}
+                          />
+                        </Hide>
+                        <Hide below="sm">
+                          <Button
+                            onClick={onOpenAddPartylist}
+                            leftIcon={<UserPlusIcon width={18} />}
+                            isLoading={!currentElection}
+                          >
+                            Add partylist
+                          </Button>
+                        </Hide>
                       </HStack>
                     );
                   case "Positions":
                     return (
                       <HStack>
-                        <Button
-                          onClick={onOpenAddPosition}
-                          leftIcon={<UserPlusIcon width={18} />}
-                          isLoading={!currentElection}
-                        >
-                          Add position
-                        </Button>
+                        <Hide above="sm">
+                          <IconButton
+                            aria-label="Add position"
+                            icon={<UserPlusIcon width={18} />}
+                            onClick={onOpenAddPosition}
+                            isLoading={!currentElection}
+                          />
+                        </Hide>
+
+                        <Hide below="sm">
+                          <Button
+                            onClick={onOpenAddPosition}
+                            leftIcon={<UserPlusIcon width={18} />}
+                            isLoading={!currentElection}
+                          >
+                            Add position
+                          </Button>
+                        </Hide>
                       </HStack>
                     );
                   case "Voters":

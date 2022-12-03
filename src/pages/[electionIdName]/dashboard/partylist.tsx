@@ -83,7 +83,7 @@ const PartylistPage = ({
           partylist={selectedPartylist}
         />
       )}
-      <DashboardLayout title="Partylists" session={session}>
+      <DashboardLayout title="Partylists" session={session} overflow="auto">
         {!partylists ? (
           <Center>
             <Spinner />
