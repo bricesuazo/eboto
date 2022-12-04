@@ -210,7 +210,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                     return currentDate.getTime() < selectedDate.getTime();
                   }}
                   showTimeSelect
-                  dateFormat="MMMM d, yyyy h:mm aa"
+                  dateFormat="MMMM d, yyyy haa"
                   disabledKeyboardNavigation
                   withPortal
                   isClearable={
@@ -240,7 +240,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                       : new Date().getTime() < selectedDate.getTime();
                   }}
                   showTimeSelect
-                  dateFormat="MMMM d, yyyy h:mm aa"
+                  dateFormat="MMMM d, yyyy haa"
                   disabledKeyboardNavigation
                   withPortal
                   isClearable={

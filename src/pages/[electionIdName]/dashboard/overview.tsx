@@ -175,7 +175,7 @@ const OverviewPage = ({
             <Stack direction={["column", "row"]} spacing={[0, 2]}>
               <Text fontWeight={["normal", "bold"]}>Election start date:</Text>
               <Text fontWeight={["bold", "normal"]}>
-                <Moment format="MMMM DD, YYYY, h:mmA">
+                <Moment format="MMMM DD, YYYY, hA">
                   {election.electionStartDate.seconds * 1000}
                 </Moment>{" "}
                 (
@@ -188,7 +188,7 @@ const OverviewPage = ({
             <Stack direction={["column", "row"]} spacing={[0, 2]}>
               <Text fontWeight={["normal", "bold"]}>Election end date:</Text>
               <Text fontWeight={["bold", "normal"]}>
-                <Moment format="MMMM DD, YYYY, h:mmA">
+                <Moment format="MMMM DD, YYYY, hA">
                   {election.electionEndDate.seconds * 1000}
                 </Moment>{" "}
                 (
