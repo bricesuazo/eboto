@@ -50,15 +50,19 @@ const CandidateCredentialPage = ({
   const title = `${candidate.firstName}${
     candidate.middleName && ` ${candidate.middleName}`
   } ${candidate.lastName} - ${election.name} | eBoto Mo`;
+  const imageContent = `https://eboto-mo.com/api/${election.electionIdName}/${candidate.slug}`;
+  const metaDescription = `${candidate.firstName}${
+    candidate.middleName && ` ${candidate.middleName}`
+  } ${candidate.lastName} - ${election.name} credential page - ${
+    election.name
+  } | eBoto Mo`;
   return (
     <>
       <Head>
         <title>{title}</title>
-        <meta
-          property="og:image"
-          content={`https://eboto-mo.com/api/${election.electionIdName}/${candidate.slug}`}
-        />
+        <meta property="og:image" content={imageContent} />
         <meta property="og:title" content={title} />
+        <meta name="description" content={metaDescription} />
       </Head>
       <Container maxW="8xl" minH="2xl" paddingY={8}>
         <Breadcrumb
