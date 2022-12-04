@@ -44,7 +44,12 @@ const ElectionPage = ({
       <Head>
         <title>{pageTitle}</title>
       </Head>
-      <Container maxW="8xl" textAlign="center" paddingX={[4, 16]} paddingY={16}>
+      <Container
+        maxW="8xl"
+        textAlign="center"
+        paddingX={[2, 4, 8, 16]}
+        paddingY={16}
+      >
         <Text fontSize="3xl" fontWeight="bold">
           {election.name}
         </Text>

@@ -9,6 +9,7 @@ import {
 } from "firebase/firestore";
 import { firestore } from "../../firebase/firebase";
 import { candidateType } from "../../types/typings";
+import { Container } from "@chakra-ui/react";
 
 const CandidateCredentialPage = ({
   candidate,
@@ -16,7 +17,9 @@ const CandidateCredentialPage = ({
   candidate: candidateType;
 }) => {
   return (
-    <div>{`${candidate.firstName} ${candidate.middleName} ${candidate.lastName}`}</div>
+    <Container maxW="8xl">{`${candidate.firstName}${
+      candidate.middleName && " " + candidate.middleName
+    } ${candidate.lastName}`}</Container>
   );
 };
 

@@ -1,8 +1,11 @@
 import {
   Box,
+  Button,
   Center,
   Flex,
   Hide,
+  HStack,
+  IconButton,
   Input,
   InputGroup,
   InputLeftAddon,
@@ -11,11 +14,16 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { CheckIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowTopRightOnSquareIcon,
+  CheckIcon,
+  DocumentDuplicateIcon,
+} from "@heroicons/react/24/outline";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 import Head from "next/head";
+import Link from "next/link";
 import { useState } from "react";
 import Moment from "react-moment";
 import { useFirestoreCollectionData } from "reactfire";
@@ -66,72 +74,102 @@ const OverviewPage = ({
               </Text>
             </Stack>
           </Hide>
-          <Hide below="sm">
-            <InputGroup>
-              <InputLeftAddon>eboto-mo.com/</InputLeftAddon>
-              <Input
-                type="text"
-                placeholder="Election ID Name"
-                value={election.electionIdName}
-                readOnly
-              />
-              <InputRightAddon
-                cursor="pointer"
-                onClick={() => {
-                  if (copied) return;
-                  navigator.clipboard.writeText(
-                    `eboto-mo.com/${election.electionIdName}`
-                  );
-                  setCopied(true);
+          <Hide below="md">
+            <HStack>
+              <Link href={`/${election.electionIdName}`} target="_blank">
+                <Hide below="lg">
+                  <Button
+                    rightIcon={<ArrowTopRightOnSquareIcon width={18} />}
+                    variant="outline"
+                  >
+                    Go to {election.name}
+                  </Button>
+                </Hide>
+                <Hide above="lg">
+                  <IconButton
+                    aria-label={"Go to" + election.name}
+                    icon={<ArrowTopRightOnSquareIcon width={18} />}
+                  />
+                </Hide>
+              </Link>
+              <InputGroup>
+                <InputLeftAddon>eboto-mo.com/</InputLeftAddon>
+                <Input
+                  type="text"
+                  placeholder="Election ID Name"
+                  value={election.electionIdName}
+                  readOnly
+                />
+                <InputRightAddon
+                  cursor="pointer"
+                  onClick={() => {
+                    if (copied) return;
+                    navigator.clipboard.writeText(
+                      `eboto-mo.com/${election.electionIdName}`
+                    );
+                    setCopied(true);
 
-                  setTimeout(() => {
-                    setCopied(false);
-                  }, 3000);
-                }}
-              >
-                {copied ? (
-                  <Text>Copied!</Text>
-                ) : (
-                  <>
-                    <DocumentDuplicateIcon width={18} />
-                    <Text>Copy</Text>
-                  </>
-                )}
-              </InputRightAddon>
-            </InputGroup>
+                    setTimeout(() => {
+                      setCopied(false);
+                    }, 3000);
+                  }}
+                >
+                  {copied ? (
+                    <Text>Copied!</Text>
+                  ) : (
+                    <>
+                      <DocumentDuplicateIcon width={18} />
+                      <Text>Copy</Text>
+                    </>
+                  )}
+                </InputRightAddon>
+              </InputGroup>
+            </HStack>
           </Hide>
-          <Hide above="sm">
-            <InputGroup>
-              <InputLeftAddon>/</InputLeftAddon>
-              <Input
-                type="text"
-                placeholder="Election ID Name"
-                value={election.electionIdName}
-                readOnly
-              />
-              <InputRightAddon
-                cursor="pointer"
-                onClick={() => {
-                  if (copied) return;
-                  navigator.clipboard.writeText(
-                    `eboto-mo.com/${election.electionIdName}`
-                  );
-                  setCopied(true);
 
-                  setTimeout(() => {
-                    setCopied(false);
-                  }, 3000);
-                }}
-              >
-                {copied ? (
-                  <CheckIcon width={18} />
-                ) : (
-                  <>
-                    <DocumentDuplicateIcon width={18} />
-                  </>
-                )}
-              </InputRightAddon>
-            </InputGroup>
+          <Hide above="md">
+            <Stack direction="column">
+              <InputGroup>
+                <InputLeftAddon>/</InputLeftAddon>
+                <Input
+                  type="text"
+                  placeholder="Election ID Name"
+                  value={election.electionIdName}
+                  readOnly
+                />
+                <InputRightAddon
+                  cursor="pointer"
+                  onClick={() => {
+                    if (copied) return;
+                    navigator.clipboard.writeText(
+                      `eboto-mo.com/${election.electionIdName}`
+                    );
+                    setCopied(true);
+
+                    setTimeout(() => {
+                      setCopied(false);
+                    }, 3000);
+                  }}
+                >
+                  {copied ? (
+                    <CheckIcon width={18} />
+                  ) : (
+                    <>
+                      <DocumentDuplicateIcon width={18} />
+                    </>
+                  )}
+                </InputRightAddon>
+              </InputGroup>
+              <Link href={`/${election.electionIdName}`} target="_blank">
+                <Button
+                  rightIcon={<ArrowTopRightOnSquareIcon width={18} />}
+                  variant="outline"
+                  width="full"
+                >
+                  Go to {election.name}
+                </Button>
+              </Link>
+            </Stack>
           </Hide>
           <Stack spacing={[2, 0]}>
             <Stack direction={["column", "row"]} spacing={[0, 2]}>
