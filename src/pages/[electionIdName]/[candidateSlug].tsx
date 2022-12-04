@@ -15,6 +15,7 @@ import {
   positionType,
 } from "../../types/typings";
 import {
+  AspectRatio,
   Box,
   Breadcrumb,
   BreadcrumbItem,
@@ -22,6 +23,7 @@ import {
   Button,
   Container,
   Flex,
+  Hide,
   IconButton,
   ListItem,
   Stack,
@@ -57,7 +59,8 @@ const CandidateCredentialPage = ({
         <Breadcrumb
           spacing="8px"
           separator={<ChevronRightIcon color="gray.500" width={12} />}
-          marginBottom={8}
+          marginBottom={[4, 8]}
+          fontSize={["xs", "sm", "md"]}
         >
           <BreadcrumbItem>
             <BreadcrumbLink href={`/${election.electionIdName}`}>
@@ -73,15 +76,15 @@ const CandidateCredentialPage = ({
             </BreadcrumbLink>
           </BreadcrumbItem>
         </Breadcrumb>
-        <Stack direction={["column", "row"]} spacing={8}>
-          <Box
+        <Stack direction={["column", "row"]} spacing={[4, 4, 8]}>
+          <AspectRatio
             position="relative"
-            minWidth={["xs", "2xs", "sm"]}
-            minHeight={["xs", "2xs", "sm"]}
-            width={["xs", "2xs", "sm"]}
-            height={["xs", "2xs", "sm"]}
             userSelect="none"
             pointerEvents="none"
+            width={["auto", "full"]}
+            height={["auto", "full"]}
+            ratio={1}
+            flex={[1, 3, 1]}
           >
             <Image
               src={
@@ -93,32 +96,70 @@ const CandidateCredentialPage = ({
                 candidate.middleName && ` ${candidate.middleName}`
               } ${candidate.lastName} photo`}
               fill
+              style={{ objectFit: "cover" }}
               sizes="contain"
               priority
             />
-          </Box>
-          <Box width="full">
-            <Flex justifyContent="space-between" alignItems="center">
-              <Text fontSize="2xl" fontWeight="bold">
+          </AspectRatio>
+          <Box width="full" flex={[2, 4, 2]}>
+            <Flex
+              justifyContent="space-between"
+              alignItems="center"
+              gap={[0, 4]}
+            >
+              <Text fontSize={["lg", "xl", "2xl"]} fontWeight="bold">
                 {`${candidate.firstName}${
                   candidate.middleName && " " + candidate.middleName
                 } ${candidate.lastName} (${partylist.abbreviation})`}
               </Text>
               <FacebookShareButton
                 url={`https://eboto-mo.com/${election.electionIdName}/${candidate.slug}`}
-                quote={
-                  "next-share is a social share buttons for your next React apps."
-                }
                 hashtag={"#eBotoMo"}
               >
-                <IconButton
-                  aria-label="Share"
-                  icon={<ShareIcon width={18} />}
-                  variant="outline"
-                />
+                <Hide below="sm">
+                  <Hide below="lg">
+                    <Button
+                      leftIcon={<ShareIcon width={18} />}
+                      variant="outline"
+                    >
+                      Share
+                    </Button>
+                  </Hide>
+                  <Hide above="lg">
+                    <IconButton
+                      aria-label="Share"
+                      icon={<ShareIcon width={18} />}
+                      variant="outline"
+                    />
+                  </Hide>
+                  <Hide above="sm">
+                    <Button
+                      leftIcon={<ShareIcon width={18} />}
+                      variant="outline"
+                    >
+                      Share
+                    </Button>
+                  </Hide>
+                </Hide>
               </FacebookShareButton>
             </Flex>
-            <Text>Running for {position.title}</Text>
+            <Text fontSize={["md", "lg"]}>Running for {position.title}</Text>
+            <Hide above="sm">
+              <FacebookShareButton
+                url={`https://eboto-mo.com/${election.electionIdName}/${candidate.slug}`}
+                hashtag={"#eBotoMo"}
+                style={{ width: "100%", marginTop: 4 }}
+              >
+                <Button
+                  leftIcon={<ShareIcon width={18} />}
+                  variant="outline"
+                  width="full"
+                  size="sm"
+                >
+                  Share
+                </Button>
+              </FacebookShareButton>
+            </Hide>
             <Stack marginTop={8}>
               <Text fontSize="xl" fontWeight="bold">
                 Credentials
