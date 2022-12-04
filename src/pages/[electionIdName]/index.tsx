@@ -139,6 +139,8 @@ const ElectionPage = ({
                                   ` ${candidate.middleName}`
                                 } ${candidate.lastName} photo`}
                                 fill
+                                sizes="contain"
+                                priority
                                 style={{ objectFit: "cover" }}
                               />
                             </Box>

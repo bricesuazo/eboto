@@ -126,6 +126,7 @@ export default VotePage;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
+
   if (
     session &&
     session.user &&
@@ -153,11 +154,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       where("electionIdName", "==", context.query.electionIdName)
     )
   );
-  if (electionSnapshot.empty) {
+  if (
+    electionSnapshot.empty ||
+    (session?.user.accountType === "admin" &&
+      !session.user.elections.includes(electionSnapshot.docs[0].data().uid))
+  ) {
     return {
       notFound: true,
     };
   }
+
   const positionsSnapshot = await getDocs(
     query(
       collection(

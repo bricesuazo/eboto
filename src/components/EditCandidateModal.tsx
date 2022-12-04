@@ -188,6 +188,7 @@ const EditCandidateModal = ({
                 position: candidateData.position,
                 partylist: candidateData.partylist,
                 updatedAt: Timestamp.now(),
+                credentials: candidateData.credentials,
               }
             );
             await updateDoc(doc(firestore, "elections", election.uid), {
@@ -727,7 +728,7 @@ const EditCandidateModal = ({
                                     id: uuidv4(),
                                     organizationName: "",
                                     position: "",
-                                    startDate: null,
+                                    startDate: Timestamp.now(),
                                     endDate: null,
                                   },
                                 ],
@@ -893,7 +894,7 @@ const EditCandidateModal = ({
                                   {
                                     id: uuidv4(),
                                     name: "",
-                                    startDate: null,
+                                    startDate: Timestamp.now(),
                                     endDate: null,
                                   },
                                 ],

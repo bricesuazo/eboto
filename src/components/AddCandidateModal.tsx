@@ -724,7 +724,7 @@ const AddCandidateModal = ({
                                     id: uuidv4(),
                                     organizationName: "",
                                     position: "",
-                                    startDate: null,
+                                    startDate: Timestamp.now(),
                                     endDate: null,
                                   },
                                 ],
@@ -889,7 +889,7 @@ const AddCandidateModal = ({
                                   {
                                     id: uuidv4(),
                                     name: "",
-                                    startDate: null,
+                                    startDate: Timestamp.now(),
                                     endDate: null,
                                   },
                                 ],

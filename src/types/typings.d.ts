@@ -56,7 +56,7 @@ export interface candidateType {
 interface seminarAttendedType {
   id: string;
   name: string;
-  startDate: Timestamp?;
+  startDate: Timestamp;
   endDate: Timestamp?;
 }
 interface achievementType {
@@ -67,7 +67,7 @@ interface affiliationType {
   id: string;
   organizationName: string;
   position: string;
-  startDate: Timestamp?;
+  startDate: Timestamp;
   endDate: Timestamp?;
 }
 
