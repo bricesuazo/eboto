@@ -63,6 +63,7 @@ const CandidateCredentialPage = ({
         <meta property="og:image" content={imageContent} />
         <meta property="og:title" content={title} />
         <meta name="description" content={metaDescription} />
+        <meta property="og:description" content={metaDescription} />
       </Head>
       <Container maxW="8xl" minH="2xl" paddingY={8}>
         <Breadcrumb
