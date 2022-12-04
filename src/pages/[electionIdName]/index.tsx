@@ -22,12 +22,15 @@ import Link from "next/link";
 import isElectionOngoing from "../../utils/isElectionOngoing";
 import Image from "next/image";
 import { useState } from "react";
+import { getSession } from "next-auth/react";
+import { Session } from "next-auth";
 
 interface ElectionPageProps {
   election: electionType;
   partylists: partylistType[];
   positions: positionType[];
   candidates: candidateType[];
+  session: Session;
 }
 
 const ElectionPage = ({
@@ -35,6 +38,7 @@ const ElectionPage = ({
   partylists,
   positions,
   candidates,
+  session,
 }: ElectionPageProps) => {
   const pageTitle = `${election.name} | eBoto Mo`;
   const [seeMore, setSeeMore] = useState(false);
@@ -80,10 +84,14 @@ const ElectionPage = ({
           </Container>
         )}
         <Box marginTop={4}>
-          {!isElectionOngoing(
-            election.electionStartDate,
-            election.electionEndDate
-          ) ? (
+          {!session ? (
+            <Link href="/signin">
+              <Button>Sign in to vote</Button>
+            </Link>
+          ) : !isElectionOngoing(
+              election.electionStartDate,
+              election.electionEndDate
+            ) ? (
             <Button disabled>Voting is not available</Button>
           ) : (
             <Link href={`/${election.electionIdName}/vote`}>
@@ -223,6 +231,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       positions: JSON.parse(JSON.stringify(positions)) as positionType[],
       partylists: JSON.parse(JSON.stringify(partylists)) as partylistType[],
       candidates: JSON.parse(JSON.stringify(candidates)) as candidateType[],
+      session: await getSession(context),
     },
   };
 };
