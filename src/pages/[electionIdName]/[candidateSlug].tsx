@@ -54,6 +54,11 @@ const CandidateCredentialPage = ({
     <>
       <Head>
         <title>{title}</title>
+        <meta
+          property="og:image"
+          content={`https://eboto-mo.com/api/${election.electionIdName}/${candidate.slug}`}
+        />
+        <meta property="og:title" content={title} />
       </Head>
       <Container maxW="8xl" minH="2xl" paddingY={8}>
         <Breadcrumb
