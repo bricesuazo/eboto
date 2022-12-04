@@ -8,35 +8,35 @@ export const config = {
   runtime: "experimental-edge",
 };
 
-export default async function (req: NextRequest) {
+export default function (req: NextRequest) {
   //   const { electionIdName, candidateSlug } = req.;
   const electionIdName = req.nextUrl.pathname.split("/")[2];
   const candidateSlug = req.nextUrl.pathname.split("/")[3];
-  if (!electionIdName && !candidateSlug) {
-    return new ImageResponse(<>Visit with &quot;?username=vercel&quot;</>, {
-      width: 1200,
-      height: 630,
-    });
-  }
-  const electionSnapshot = await getDocs(
-    query(
-      collection(firestore, "elections"),
-      where("electionIdName", "==", electionIdName)
-    )
-  );
-  const candidateSnapshot = await getDocs(
-    query(
-      collection(
-        firestore,
-        "elections",
-        electionSnapshot.docs[0].data().uid,
-        "candidates"
-      ),
-      where("slug", "==", candidateSlug)
-    )
-  );
-  const election = electionSnapshot.docs[0].data() as electionType;
-  const candidate = candidateSnapshot.docs[0].data() as candidateType;
+  // if (!electionIdName && !candidateSlug) {
+  //   return new ImageResponse(<>Visit with &quot;?username=vercel&quot;</>, {
+  //     width: 1200,
+  //     height: 630,
+  //   });
+  // }
+  // const electionSnapshot = await getDocs(
+  //   query(
+  //     collection(firestore, "elections"),
+  //     where("electionIdName", "==", electionIdName)
+  //   )
+  // );
+  // const candidateSnapshot = await getDocs(
+  //   query(
+  //     collection(
+  //       firestore,
+  //       "elections",
+  //       electionSnapshot.docs[0].data().uid,
+  //       "candidates"
+  //     ),
+  //     where("slug", "==", candidateSlug)
+  //   )
+  // );
+  // const election = electionSnapshot.docs[0].data() as electionType;
+  // const candidate = candidateSnapshot.docs[0].data() as candidateType;
   return new ImageResponse(
     (
       <div
@@ -51,10 +51,11 @@ export default async function (req: NextRequest) {
           justifyContent: "center",
         }}
       >
-        {election.name} -
+        {/* {election.name} -
         {`${candidate.firstName}${
           candidate.middleName && ` ${candidate.middleName}`
-        } ${candidate.lastName}`}
+        } ${candidate.lastName}`} */}
+        {electionIdName} - {candidateSlug}
       </div>
     ),
     {
