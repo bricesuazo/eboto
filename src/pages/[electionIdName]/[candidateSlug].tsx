@@ -53,9 +53,7 @@ const CandidateCredentialPage = ({
   const imageContent = `https://eboto-mo.com/api/${election.electionIdName}/${candidate.slug}`;
   const metaDescription = `${candidate.firstName}${
     candidate.middleName && ` ${candidate.middleName}`
-  } ${candidate.lastName} - ${election.name} credential page - ${
-    election.name
-  } | eBoto Mo`;
+  } ${candidate.lastName} credential page - ${election.name} | eBoto Mo`;
   return (
     <>
       <Head>
@@ -79,7 +77,7 @@ const CandidateCredentialPage = ({
           </BreadcrumbItem>
 
           <BreadcrumbItem isCurrentPage>
-            <BreadcrumbLink>
+            <BreadcrumbLink fontWeight="semibold">
               {candidate.firstName}
               {candidate.middleName && ` ${candidate.middleName}`}{" "}
               {candidate.lastName}

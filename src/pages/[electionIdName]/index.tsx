@@ -36,7 +36,7 @@ const ElectionPage = ({
   positions,
   candidates,
 }: ElectionPageProps) => {
-  const pageTitle = `${election.name} - Election | eBoto Mo`;
+  const pageTitle = `${election.name} | eBoto Mo`;
   const [seeMore, setSeeMore] = useState(false);
 
   return (

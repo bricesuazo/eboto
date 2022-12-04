@@ -10,6 +10,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { PhoneIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
+import { BsFacebook, BsTwitter, BsYoutube, BsGithub } from "react-icons/bs";
 
 const Footer = () => {
   return (
@@ -61,6 +62,44 @@ const Footer = () => {
                 </Link>
               </HStack>
             </Flex>
+            <Stack
+              direction="row"
+              spacing={4}
+              transform={["auto", "translateX(-0.5rem)"]}
+            >
+              {[
+                {
+                  id: 0,
+                  icon: <BsFacebook />,
+                  link: "https://www.facebook.com/cvsueboto",
+                },
+                {
+                  id: 1,
+                  icon: <BsTwitter />,
+                  link: "https://www.twitter.com/cvsueboto",
+                },
+                {
+                  id: 2,
+                  icon: <BsYoutube />,
+                  link: "https://www.youtube.com/cvsueboto",
+                },
+                {
+                  id: 3,
+                  icon: <BsGithub />,
+                  link: "https://www.github.com/bricesuazo/eboto-mo",
+                },
+              ].map((icon) => (
+                <Link key={icon.id} href={icon.link} target="_blank">
+                  <Box
+                    padding={2}
+                    _hover={{ opacity: ".5" }}
+                    transition="all 0.2s"
+                  >
+                    {icon.icon}
+                  </Box>
+                </Link>
+              ))}
+            </Stack>
           </Stack>
           <Box textAlign={["center", "end"]}>
             <Text fontWeight="bold">Created by:</Text>
