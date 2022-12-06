@@ -134,7 +134,7 @@ const SigninPage: NextPage = () => {
                       credentials.password.length < 8
                     }
                   >
-                    Signin
+                    Sign in
                   </Button>
                 </Stack>
               </form>

@@ -74,7 +74,7 @@ const ConfirmVoteModal = ({
                   <Text fontSize="lg" fontWeight="bold">
                     {candidate
                       ? `${candidate.lastName}, ${candidate.firstName}${
-                          candidate.middleName && ` ${candidate.middleName}.`
+                          candidate.middleName && ` ${candidate.middleName}`
                         } (${
                           partylists.find(
                             (partylist) => partylist.uid === candidate.partylist

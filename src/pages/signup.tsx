@@ -215,7 +215,7 @@ const SignupPage: NextPage = () => {
                     loading
                   }
                 >
-                  Signup
+                  Sign up
                 </Button>
               </Stack>
             </form>

@@ -135,6 +135,8 @@ const ElectionPage = ({
                               width="10rem"
                               height="10rem"
                               pointerEvents="none"
+                              borderRadius="md"
+                              overflow="hidden"
                             >
                               <Image
                                 src={

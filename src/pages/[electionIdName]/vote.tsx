@@ -104,14 +104,12 @@ const VotePage = ({
           </Stack>
         </Box>
 
-        <Box
+        <Center
           paddingX={[4, 0]}
-          mx="auto"
-          position="fixed"
-          bottom="16"
-          left="50%"
-          transform="translateX(-50%)"
+          position="sticky"
+          bottom={12}
           zIndex="sticky"
+          marginTop={16}
         >
           <Button
             disabled={positions.length !== selectedCandidates.length}
@@ -123,7 +121,7 @@ const VotePage = ({
           >
             Cast Vote
           </Button>
-        </Box>
+        </Center>
       </Container>
     </>
   );

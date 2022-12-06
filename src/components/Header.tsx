@@ -160,11 +160,11 @@ const Header = () => {
                 return (
                   <>
                     <Link href="/signin">
-                      <Button size={["sm", "md"]}>Signin</Button>
+                      <Button size={["sm", "md"]}>Sign in</Button>
                     </Link>
                     <Hide below="sm">
                       <Link href="/signup">
-                        <Button size={["sm", "md"]}>Signup</Button>
+                        <Button size={["sm", "md"]}>Sign up</Button>
                       </Link>
                     </Hide>
                   </>

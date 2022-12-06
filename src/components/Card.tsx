@@ -55,9 +55,11 @@ const Card = ({
                 <CandidateCard key={candidate.id} {...radio}>
                   <Box
                     position="relative"
-                    width="10rem"
-                    height="10rem"
+                    width={[32, 40]}
+                    height={[32, 40]}
                     pointerEvents="none"
+                    borderRadius="md"
+                    overflow="hidden"
                   >
                     <Image
                       src={
@@ -76,10 +78,7 @@ const Card = ({
                   </Box>
                   <Text textAlign="center">{`${candidate.lastName}, ${
                     candidate.firstName
-                  }${
-                    candidate.middleName &&
-                    ` ${candidate.middleName.charAt(0)}.`
-                  } (${
+                  }${candidate.middleName && ` ${candidate.middleName}`} (${
                     partylists.find(
                       (partylist) => partylist.uid === candidate.partylist
                     )?.abbreviation
@@ -90,9 +89,11 @@ const Card = ({
           <CandidateCard {...radioUndecided}>
             <Box
               position="relative"
-              width="10rem"
-              height="10rem"
+              width={[32, 40]}
+              height={[32, 40]}
               pointerEvents="none"
+              borderRadius="md"
+              overflow="hidden"
             >
               <Image
                 src="/assets/images/undecided.jpg"

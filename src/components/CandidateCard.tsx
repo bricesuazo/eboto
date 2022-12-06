@@ -8,7 +8,7 @@ const CandidateCard = (props: any) => {
 
   return (
     <Box as="label" userSelect="none">
-      <input {...input} />
+      <input {...input} style={{ display: "none" }} />
       <Box
         {...checkbox}
         cursor="pointer"
@@ -22,8 +22,8 @@ const CandidateCard = (props: any) => {
         }}
         px={4}
         py={2}
-        width={48}
-        height="64"
+        width={[40, 48]}
+        height={[56, 64]}
       >
         {props.children}
       </Box>
