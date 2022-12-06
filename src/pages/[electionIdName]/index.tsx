@@ -94,9 +94,14 @@ const ElectionPage = ({
             ) ? (
             <Button disabled>Voting is not available</Button>
           ) : (
-            <Link href={`/${election.electionIdName}/vote`}>
-              <Button>Vote</Button>
-            </Link>
+            <>
+              {session.user.accountType === "voter" &&
+                !session.user.hasVoted && (
+                  <Link href={`/${election.electionIdName}/vote`}>
+                    <Button>Vote</Button>
+                  </Link>
+                )}
+            </>
           )}
         </Box>
 

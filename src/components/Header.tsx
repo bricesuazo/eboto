@@ -202,7 +202,7 @@ const Header = () => {
                     return (
                       <>
                         <Hello email={session?.user.email} />
-                        <Show above="sm">
+                        <Show above="md">
                           {!(
                             router.route.split("/").length === 2 &&
                             router.route.split("/")[1] === "[electionIdName]" &&
@@ -215,6 +215,8 @@ const Header = () => {
                                 size="sm"
                                 isLoading={loading}
                                 rightIcon={<ArrowRightIcon width={14} />}
+                                color="gray.50"
+                                _hover={{ backgroundColor: "gray.700" }}
                               >
                                 Go to {election?.name}
                               </Button>

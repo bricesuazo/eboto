@@ -20,31 +20,35 @@ import type {
   GetServerSidePropsContext,
   NextPage,
 } from "next";
+import { Session } from "next-auth";
+import { getSession } from "next-auth/react";
 import Head from "next/head";
 import React from "react";
 import { useFirestoreCollectionData } from "reactfire";
 import { firestore } from "../../firebase/firebase";
 import { candidateType, electionType, positionType } from "../../types/typings";
+import isElectionOngoing from "../../utils/isElectionOngoing";
 
 interface RealtimePageProps {
   election: electionType;
   positions: positionType[];
   candidates: candidateType[];
+  session: Session;
 }
 const RealtimePage = ({
   election,
   positions,
   candidates,
+  session,
 }: RealtimePageProps) => {
   const pageTitle = `${election.name} - Realtime | eBoto Mo`;
   const { status: positionsLoading, data: positionsCount } =
     useFirestoreCollectionData(
       collection(firestore, "elections", election.uid, "positions")
     );
-  const { status: candidatesLoading, data: candidatesCount } =
-    useFirestoreCollectionData(
-      collection(firestore, "elections", election.uid, "candidates")
-    );
+  const { data: candidatesCount } = useFirestoreCollectionData(
+    collection(firestore, "elections", election.uid, "candidates")
+  );
 
   return (
     <>
@@ -100,9 +104,18 @@ const RealtimePage = ({
                           <Td borderColor="gray.100">
                             <Box display="flex" justifyContent="space-between">
                               <Text noOfLines={1}>
-                                {candidate.lastName}, {candidate.firstName}
-                                {candidate.middleName &&
-                                  ` ${candidate.middleName.charAt(0)}.`}
+                                {session.user.accountType === "voter" &&
+                                isElectionOngoing(
+                                  election.electionStartDate,
+                                  election.electionEndDate
+                                )
+                                  ? `Candidate ${index + 1}`
+                                  : `${candidate.lastName}, ${
+                                      candidate.firstName
+                                    }${
+                                      candidate.middleName &&
+                                      ` ${candidate.middleName.charAt(0)}.`
+                                    }`}
                               </Text>
                               <Text>
                                 {positionsLoading === "loading" ||
@@ -155,6 +168,26 @@ export default RealtimePage;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
+  const session = await getSession(context);
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+  if (session.user.accountType === "voter") {
+    if (!session.user.hasVoted) {
+      return {
+        redirect: {
+          destination: `/${context.query.electionIdName}`,
+          permanent: false,
+        },
+      };
+    }
+  }
+
   const electionSnapshot = await getDocs(
     query(
       collection(firestore, "elections"),
@@ -195,6 +228,7 @@ export const getServerSideProps: GetServerSideProps = async (
       ) as electionType,
       positions: JSON.parse(JSON.stringify(positions)) as positionType[],
       candidates: JSON.parse(JSON.stringify(candidates)) as candidateType[],
+      session,
     },
   };
 };
