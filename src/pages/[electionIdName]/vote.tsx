@@ -82,7 +82,7 @@ const VotePage = ({
         selectedCandidates={selectedCandidates}
         voterUid={voterUid}
       />
-      <Container maxW="8xl" gap={4} alignItems="center">
+      <Container maxW="8xl" paddingY={16} gap={4} alignItems="center">
         <Box width="full">
           <Box marginBottom={8}>
             <Text fontSize="3xl" textAlign="center" fontWeight="bold">
@@ -104,11 +104,18 @@ const VotePage = ({
           </Stack>
         </Box>
 
-        <Box width={["full", "fit-content"]} paddingX={[4, 0]} mx="auto">
+        <Box
+          paddingX={[4, 0]}
+          mx="auto"
+          position="fixed"
+          bottom="16"
+          left="50%"
+          transform="translateX(-50%)"
+          zIndex="sticky"
+        >
           <Button
             disabled={positions.length !== selectedCandidates.length}
             onClick={onOpen}
-            width="full"
             variant="solid"
             leftIcon={<FingerPrintIcon width={22} />}
             paddingY={8}

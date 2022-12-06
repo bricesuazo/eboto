@@ -1,4 +1,4 @@
-import { Box, useRadio } from "@chakra-ui/react";
+import { Box, Center, useRadio } from "@chakra-ui/react";
 
 const CandidateCard = (props: any) => {
   const { getInputProps, getCheckboxProps } = useRadio(props);
@@ -20,14 +20,10 @@ const CandidateCard = (props: any) => {
           color: "white",
           borderColor: "gray.600",
         }}
-        // _focus={{
-        //   boxShadow: "outline",
-        //   outlineColor: "gray.600",
-        // }}
         px={4}
         py={2}
-        width={["full", 48]}
-        height={[48, 56]}
+        width={48}
+        height="64"
       >
         {props.children}
       </Box>
