@@ -61,11 +61,13 @@ const Header = () => {
   const Hello = ({ email }: { email: string }) => {
     return (
       <Box textAlign="end" color="white">
-        <Text fontSize={["xs", "sm"]} fontWeight="semibold">
+        <Text fontSize={["xs", "sm"]} fontWeight="semibold" noOfLines={1}>
           <Hide below="sm">Hello, </Hide>@{email.split("@")[0]}!
         </Text>
         <Hide below="sm">
-          <Text fontSize={["2xs", "xs"]}>{email}</Text>
+          <Text fontSize={["2xs", "xs"]} noOfLines={1}>
+            {email}
+          </Text>
         </Hide>
       </Box>
     );

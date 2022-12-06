@@ -52,7 +52,7 @@ const RealtimePage = ({
         <title>{pageTitle}</title>
       </Head>
 
-      <Container maxW="8xl" paddingY={16}>
+      <Container maxW="8xl" minHeight="2xl" paddingY={16}>
         <Box marginBottom={4}>
           <Text fontSize="2xl" fontWeight="bold" textAlign="center">
             {election.name}
@@ -93,14 +93,17 @@ const RealtimePage = ({
                       )
                       .sort((a, b) => b.votingCount - a.votingCount)
                       .map((candidate, index) => (
-                        <Tr key={candidate.id}>
-                          <Td
-                          // borderBottom={
-                          //   index !== candidates.length - 1 ? 0 : 1
-                          // }
-                          >
+                        <Tr
+                          key={candidate.id}
+                          _hover={{ backgroundColor: "gray.50" }}
+                        >
+                          <Td borderColor="gray.100">
                             <Box display="flex" justifyContent="space-between">
-                              <Text>{candidate.lastName}</Text>
+                              <Text noOfLines={1}>
+                                {candidate.lastName}, {candidate.firstName}
+                                {candidate.middleName &&
+                                  ` ${candidate.middleName.charAt(0)}.`}
+                              </Text>
                               <Text>
                                 {positionsLoading === "loading" ||
                                 !candidatesCount ? (
@@ -118,8 +121,8 @@ const RealtimePage = ({
                         </Tr>
                       ))}
 
-                    <Tr>
-                      <Td>
+                    <Tr _hover={{ backgroundColor: "gray.50" }}>
+                      <Td borderColor="gray.100">
                         <Box display="flex" justifyContent="space-between">
                           <Text>Undecided</Text>
                           <Text>
