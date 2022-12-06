@@ -87,7 +87,7 @@ export interface voterType {
 export interface adminType {
   updatedAt: Timestamp;
   accountType: "admin";
-  elections: electionType[];
+  elections: string[];
   email: string;
   emailVerified: boolean;
   uid: string;

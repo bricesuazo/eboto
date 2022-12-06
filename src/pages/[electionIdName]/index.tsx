@@ -1,4 +1,12 @@
-import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 import { GetServerSideProps } from "next";
 import {
   candidateType,
@@ -24,6 +32,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { getSession } from "next-auth/react";
 import { Session } from "next-auth";
+import { exit } from "process";
 
 interface ElectionPageProps {
   election: electionType;
@@ -186,6 +195,8 @@ const ElectionPage = ({
 export default ElectionPage;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getSession(context);
+
   const electionSnapshot = await getDocs(
     query(
       collection(firestore, "elections"),
@@ -197,6 +208,42 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       notFound: true,
     };
   }
+
+  if (electionSnapshot.docs[0].data().publicity !== "public") {
+    if (session) {
+      switch (session.user.accountType) {
+        case "voter":
+          if (session.user.election !== electionSnapshot.docs[0].id) {
+            const election = await getDoc(
+              doc(firestore, "elections", session.user.election)
+            );
+            if (!election.exists()) {
+              return {
+                notFound: true,
+              };
+            }
+            return {
+              redirect: {
+                destination: `/${election.data().electionIdName}`,
+                permanent: false,
+              },
+            };
+          }
+          break;
+        case "admin":
+          if (!session.user.elections.includes(electionSnapshot.docs[0].id)) {
+            return {
+              redirect: {
+                destination: "/signin",
+                permanent: false,
+              },
+            };
+          }
+          break;
+      }
+    }
+  }
+
   const positionsSnapshot = await getDocs(
     query(
       collection(

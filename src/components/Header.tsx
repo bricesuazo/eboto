@@ -96,6 +96,8 @@ const Header = () => {
               variant="ghost"
               borderRadius="full"
               size="sm"
+              _hover={{ backgroundColor: "gray.700" }}
+              _focus={{ backgroundColor: "gray.600" }}
             />
             <MenuList>
               {children}
