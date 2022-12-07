@@ -140,14 +140,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   }
-  if (session.user.accountType === "voter" && session.user.hasVoted === true) {
-    return {
-      redirect: {
-        destination: `/${context.query.electionIdName}/realtime`,
-        permanent: false,
-      },
-    };
-  }
   const electionSnapshot = await getDocs(
     query(
       collection(firestore, "elections"),
@@ -163,7 +155,25 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       notFound: true,
     };
   }
-
+  if (
+    session.user.accountType === "voter" &&
+    electionSnapshot.docs[0].data().publicity === "private"
+  ) {
+    return {
+      redirect: {
+        destination: `/${electionSnapshot.docs[0].data().electionIdName}`,
+        permanent: false,
+      },
+    };
+  }
+  if (session.user.accountType === "voter" && session.user.hasVoted) {
+    return {
+      redirect: {
+        destination: `/${context.query.electionIdName}/realtime`,
+        permanent: false,
+      },
+    };
+  }
   const positionsSnapshot = await getDocs(
     query(
       collection(

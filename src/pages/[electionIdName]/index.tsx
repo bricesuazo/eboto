@@ -63,139 +63,153 @@ const ElectionPage = ({
         paddingX={[2, 4, 8, 16]}
         paddingY={16}
         minHeight="75vh"
+        alignItems="center"
       >
-        <Text fontSize="3xl" fontWeight="bold">
-          {election.name}
-        </Text>
-        <Text>
-          <Moment format="MMMM DD, YYYY, hA">
-            {election.electionStartDate.seconds * 1000}
-          </Moment>
-          {" - "}
-          <Moment format="MMMM DD, YYYY, hA">
-            {election.electionEndDate.seconds * 1000}
-          </Moment>
-        </Text>
-        {election.about && (
-          <Container
-            maxW="2xl"
-            fontWeight="normal"
-            onClick={() => setSeeMore((prev) => !prev)}
-            marginTop={4}
-            width="full"
-            cursor="pointer"
-          >
-            <Text fontWeight="bold">About</Text>
-            <Text>
-              {!seeMore
-                ? election.about?.slice(0, 56) + "... See more"
-                : election.about + " See less"}
+        {election.publicity === "private" ? (
+          <Center>
+            <Text>The election is set to private</Text>
+          </Center>
+        ) : (
+          <>
+            <Text fontSize="3xl" fontWeight="bold">
+              {election.name}
             </Text>
-          </Container>
-        )}
-        <Box marginTop={4}>
-          {!session ? (
-            <Link href="/signin">
-              <Button>Sign in to vote</Button>
-            </Link>
-          ) : election.publicity === "public" &&
-            session.user.accountType === "voter" &&
-            session.user.election !== election.uid ? (
-            <Text>You can&apos;t vote on this election.</Text>
-          ) : session.user.accountType === "voter" && session.user.hasVoted ? (
-            <Link href={`/${election.electionIdName}/realtime`}>
-              <Button>Go to realtime voting count update</Button>
-            </Link>
-          ) : !isElectionOngoing(
-              election.electionStartDate,
-              election.electionEndDate
-            ) ? (
-            <Button disabled>Voting is not available</Button>
-          ) : (
-            <>
-              {session.user.accountType === "voter" &&
-                !session.user.hasVoted && (
-                  <Link href={`/${election.electionIdName}/vote`}>
-                    <Button>Vote</Button>
-                  </Link>
-                )}
-            </>
-          )}
-        </Box>
-
-        <Stack marginTop={8} spacing={8}>
-          {positions.map((position) => {
-            return (
-              <Stack key={position.id} alignItems="center">
-                <Text fontSize="2xl" fontWeight="bold">
-                  {position.title}
+            <Text>
+              <Moment format="MMMM DD, YYYY, hA">
+                {election.electionStartDate.seconds * 1000}
+              </Moment>
+              {" - "}
+              <Moment format="MMMM DD, YYYY, hA">
+                {election.electionEndDate.seconds * 1000}
+              </Moment>
+            </Text>
+            {election.about && (
+              <Container
+                maxW="2xl"
+                fontWeight="normal"
+                onClick={() => setSeeMore((prev) => !prev)}
+                marginTop={4}
+                width="full"
+                cursor="pointer"
+              >
+                <Text fontWeight="bold">About</Text>
+                <Text>
+                  {!seeMore
+                    ? election.about?.slice(0, 56) + "... See more"
+                    : election.about + " See less"}
                 </Text>
-                <Flex flexWrap="wrap" gap={4} justifyContent="center">
-                  {candidates
-                    .filter((candidate) => candidate.position === position.uid)
-                    .map((candidate) => {
-                      return (
-                        <Link
-                          href={`/${election.electionIdName}/${candidate.slug}`}
-                          key={candidate.id}
-                        >
-                          <Center
-                            padding={4}
-                            border="2px"
-                            borderColor="gray.100"
-                            borderRadius="lg"
-                            width="12rem"
-                            height="16rem"
-                            flexDirection="column"
-                            justifyContent="flex-start"
-                            cursor="pointer"
-                            transition="all 0.2s"
-                            _hover={{ borderColor: "gray.800" }}
-                            userSelect="none"
-                          >
-                            <Box
-                              position="relative"
-                              width="10rem"
-                              height="10rem"
-                              pointerEvents="none"
-                              borderRadius="md"
-                              overflow="hidden"
+              </Container>
+            )}
+            <Box marginTop={4}>
+              {!session ? (
+                <Link href="/signin">
+                  <Button>Sign in to vote</Button>
+                </Link>
+              ) : election.publicity === "public" &&
+                session.user.accountType === "voter" &&
+                session.user.election !== election.uid ? (
+                <Text>You can&apos;t vote on this election.</Text>
+              ) : session.user.accountType === "voter" &&
+                session.user.hasVoted ? (
+                <Link href={`/${election.electionIdName}/realtime`}>
+                  <Button>Go to realtime voting count update</Button>
+                </Link>
+              ) : !isElectionOngoing(
+                  election.electionStartDate,
+                  election.electionEndDate
+                ) ? (
+                <Button disabled>Voting is not available</Button>
+              ) : (
+                <>
+                  {session.user.accountType === "voter" &&
+                    !session.user.hasVoted && (
+                      <Link href={`/${election.electionIdName}/vote`}>
+                        <Button>Vote</Button>
+                      </Link>
+                    )}
+                </>
+              )}
+            </Box>
+
+            <Stack marginTop={8} spacing={8}>
+              {positions.map((position) => {
+                return (
+                  <Stack key={position.id} alignItems="center">
+                    <Text fontSize="2xl" fontWeight="bold">
+                      {position.title}
+                    </Text>
+                    <Flex flexWrap="wrap" gap={4} justifyContent="center">
+                      {candidates
+                        .filter(
+                          (candidate) => candidate.position === position.uid
+                        )
+                        .map((candidate) => {
+                          return (
+                            <Link
+                              href={`/${election.electionIdName}/${candidate.slug}`}
+                              key={candidate.id}
                             >
-                              <Image
-                                src={
-                                  candidate.photoUrl
-                                    ? candidate.photoUrl
-                                    : "/assets/images/default-profile-picture.png"
-                                }
-                                alt={`${candidate.firstName}${
+                              <Center
+                                padding={4}
+                                border="2px"
+                                borderColor="gray.100"
+                                borderRadius="lg"
+                                width="12rem"
+                                height="16rem"
+                                flexDirection="column"
+                                justifyContent="flex-start"
+                                cursor="pointer"
+                                transition="all 0.2s"
+                                _hover={{ borderColor: "gray.800" }}
+                                userSelect="none"
+                              >
+                                <Box
+                                  position="relative"
+                                  width="10rem"
+                                  height="10rem"
+                                  pointerEvents="none"
+                                  borderRadius="md"
+                                  overflow="hidden"
+                                >
+                                  <Image
+                                    src={
+                                      candidate.photoUrl
+                                        ? candidate.photoUrl
+                                        : "/assets/images/default-profile-picture.png"
+                                    }
+                                    alt={`${candidate.firstName}${
+                                      candidate.middleName &&
+                                      ` ${candidate.middleName}`
+                                    } ${candidate.lastName} photo`}
+                                    fill
+                                    sizes="contain"
+                                    priority
+                                    style={{ objectFit: "cover" }}
+                                  />
+                                </Box>
+                                <Text>{`${candidate.lastName}, ${
+                                  candidate.firstName
+                                }${
                                   candidate.middleName &&
-                                  ` ${candidate.middleName}`
-                                } ${candidate.lastName} photo`}
-                                fill
-                                sizes="contain"
-                                priority
-                                style={{ objectFit: "cover" }}
-                              />
-                            </Box>
-                            <Text>{`${candidate.lastName}, ${
-                              candidate.firstName
-                            }${
-                              candidate.middleName &&
-                              ` ${candidate.middleName.charAt(0)}.`
-                            } (${
-                              partylists.find((partylist) => {
-                                return partylist.uid === candidate.partylist;
-                              })?.abbreviation
-                            })`}</Text>
-                          </Center>
-                        </Link>
-                      );
-                    })}
-                </Flex>
-              </Stack>
-            );
-          })}
-        </Stack>
+                                  ` ${candidate.middleName.charAt(0)}.`
+                                } (${
+                                  partylists.find((partylist) => {
+                                    return (
+                                      partylist.uid === candidate.partylist
+                                    );
+                                  })?.abbreviation
+                                })`}</Text>
+                              </Center>
+                            </Link>
+                          );
+                        })}
+                    </Flex>
+                  </Stack>
+                );
+              })}
+            </Stack>
+          </>
+        )}
       </Container>
     </>
   );

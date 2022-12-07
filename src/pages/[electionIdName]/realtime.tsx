@@ -207,6 +207,14 @@ export const getServerSideProps: GetServerSideProps = async (
       where("electionIdName", "==", context.query.electionIdName)
     )
   );
+  if (electionSnapshot.docs[0].data().publicity === "private") {
+    return {
+      redirect: {
+        destination: `/${electionSnapshot.docs[0].data().electionIdName}`,
+        permanent: false,
+      },
+    };
+  }
   const positionsSnapshot = await getDocs(
     query(
       collection(
