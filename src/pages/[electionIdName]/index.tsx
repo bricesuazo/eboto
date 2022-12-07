@@ -62,6 +62,7 @@ const ElectionPage = ({
         textAlign="center"
         paddingX={[2, 4, 8, 16]}
         paddingY={16}
+        minHeight="75vh"
       >
         <Text fontSize="3xl" fontWeight="bold">
           {election.name}
@@ -97,6 +98,10 @@ const ElectionPage = ({
             <Link href="/signin">
               <Button>Sign in to vote</Button>
             </Link>
+          ) : election.publicity === "public" &&
+            session.user.accountType === "voter" &&
+            session.user.election !== election.uid ? (
+            <Text>You can't vote on this election.</Text>
           ) : !isElectionOngoing(
               election.electionStartDate,
               election.electionEndDate
@@ -241,6 +246,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           }
           break;
       }
+    } else {
+      return {
+        redirect: {
+          destination: "/signin",
+          permanent: false,
+        },
+      };
     }
   }
 
