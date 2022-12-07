@@ -102,6 +102,10 @@ const ElectionPage = ({
             session.user.accountType === "voter" &&
             session.user.election !== election.uid ? (
             <Text>You can't vote on this election.</Text>
+          ) : session.user.accountType === "voter" && session.user.hasVoted ? (
+            <Link href={`/${election.electionIdName}/realtime`}>
+              <Button>Go to realtime voting count update</Button>
+            </Link>
           ) : !isElectionOngoing(
               election.electionStartDate,
               election.electionEndDate
