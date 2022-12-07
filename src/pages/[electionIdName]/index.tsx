@@ -101,7 +101,7 @@ const ElectionPage = ({
           ) : election.publicity === "public" &&
             session.user.accountType === "voter" &&
             session.user.election !== election.uid ? (
-            <Text>You can't vote on this election.</Text>
+            <Text>You can&apos;t vote on this election.</Text>
           ) : session.user.accountType === "voter" && session.user.hasVoted ? (
             <Link href={`/${election.electionIdName}/realtime`}>
               <Button>Go to realtime voting count update</Button>
@@ -271,7 +271,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       orderBy("order")
     )
   );
-  const positions = positionsSnapshot.docs.map((doc) => doc.data());
 
   const partylistsSnapshot = await getDocs(
     query(
@@ -284,7 +283,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       orderBy("createdAt", "asc")
     )
   );
-  const partylists = partylistsSnapshot.docs.map((doc) => doc.data());
 
   const candidatesSnapshot = await getDocs(
     collection(
@@ -294,13 +292,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       "candidates"
     )
   );
-  const candidates = candidatesSnapshot.docs.map((doc) => doc.data());
   return {
     props: {
       election: JSON.parse(JSON.stringify(electionSnapshot.docs[0].data())),
-      positions: JSON.parse(JSON.stringify(positions)) as positionType[],
-      partylists: JSON.parse(JSON.stringify(partylists)) as partylistType[],
-      candidates: JSON.parse(JSON.stringify(candidates)) as candidateType[],
+      positions: JSON.parse(
+        JSON.stringify(positionsSnapshot.docs.map((doc) => doc.data()))
+      ) as positionType[],
+      partylists: JSON.parse(
+        JSON.stringify(partylistsSnapshot.docs.map((doc) => doc.data()))
+      ) as partylistType[],
+      candidates: JSON.parse(
+        JSON.stringify(candidatesSnapshot.docs.map((doc) => doc.data()))
+      ) as candidateType[],
       session: await getSession(context),
     },
   };

@@ -169,23 +169,36 @@ export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   const session = await getSession(context);
-  if (!session) {
+  if (!session || typeof context.query.electionIdName !== "string") {
     return {
       redirect: {
-        destination: "/",
+        destination: "/signin",
         permanent: false,
       },
     };
   }
-  if (session.user.accountType === "voter") {
-    if (!session.user.hasVoted) {
-      return {
-        redirect: {
-          destination: `/${context.query.electionIdName}`,
-          permanent: false,
-        },
-      };
-    }
+
+  switch (session.user.accountType) {
+    case "voter":
+      if (!session.user.hasVoted) {
+        return {
+          redirect: {
+            destination: `/${context.query.electionIdName}`,
+            permanent: false,
+          },
+        };
+      }
+      break;
+    case "admin":
+      if (!session.user.elections.includes(context.query.electionIdName)) {
+        return {
+          redirect: {
+            destination: "/dashboard",
+            permanent: false,
+          },
+        };
+      }
+      break;
   }
 
   const electionSnapshot = await getDocs(
@@ -202,10 +215,9 @@ export const getServerSideProps: GetServerSideProps = async (
         electionSnapshot.docs[0].id,
         "positions"
       ),
-      orderBy("order", "asc")
+      orderBy("order")
     )
   );
-  const positions = positionsSnapshot.docs.map((doc) => doc.data());
   const candidatesSnapshot = await getDocs(
     collection(
       firestore,
@@ -214,20 +226,18 @@ export const getServerSideProps: GetServerSideProps = async (
       "candidates"
     )
   );
-  const candidates = candidatesSnapshot.docs.map((doc) => doc.data());
 
-  if (electionSnapshot.empty || positionsSnapshot.empty) {
-    return {
-      notFound: true,
-    };
-  }
   return {
     props: {
       election: JSON.parse(
         JSON.stringify(electionSnapshot.docs[0].data())
       ) as electionType,
-      positions: JSON.parse(JSON.stringify(positions)) as positionType[],
-      candidates: JSON.parse(JSON.stringify(candidates)) as candidateType[],
+      positions: JSON.parse(
+        JSON.stringify(positionsSnapshot.docs.map((doc) => doc.data()))
+      ) as positionType[],
+      candidates: JSON.parse(
+        JSON.stringify(candidatesSnapshot.docs.map((doc) => doc.data()))
+      ) as candidateType[],
       session,
     },
   };

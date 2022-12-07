@@ -132,23 +132,18 @@ export default VotePage;
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
 
-  if (
-    session &&
-    session.user &&
-    session.user.accountType === "voter" &&
-    session.user.hasVoted === true
-  ) {
-    return {
-      redirect: {
-        destination: `/${context.query.electionIdName}/realtime`,
-        permanent: false,
-      },
-    };
-  }
   if (!session || !session.user) {
     return {
       redirect: {
         destination: `/${context.query.electionIdName}`,
+        permanent: false,
+      },
+    };
+  }
+  if (session.user.accountType === "voter" && session.user.hasVoted === true) {
+    return {
+      redirect: {
+        destination: `/${context.query.electionIdName}/realtime`,
         permanent: false,
       },
     };
@@ -161,7 +156,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   );
   if (
     electionSnapshot.empty ||
-    (session?.user.accountType === "admin" &&
+    (session.user.accountType === "admin" &&
       !session.user.elections.includes(electionSnapshot.docs[0].data().uid))
   ) {
     return {
@@ -180,7 +175,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       orderBy("order")
     )
   );
-  const positions = positionsSnapshot.docs.map((doc) => doc.data());
 
   const partylistsSnapshot = await getDocs(
     query(
@@ -193,8 +187,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       orderBy("createdAt", "asc")
     )
   );
-  const partylists = partylistsSnapshot.docs.map((doc) => doc.data());
-
   const candidatesSnapshot = await getDocs(
     collection(
       firestore,
@@ -203,13 +195,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       "candidates"
     )
   );
-  const candidates = candidatesSnapshot.docs.map((doc) => doc.data());
   return {
     props: {
       election: JSON.parse(JSON.stringify(electionSnapshot.docs[0].data())),
-      positions: JSON.parse(JSON.stringify(positions)) as positionType[],
-      partylists: JSON.parse(JSON.stringify(partylists)) as partylistType[],
-      candidates: JSON.parse(JSON.stringify(candidates)) as candidateType[],
+      positions: JSON.parse(
+        JSON.stringify(positionsSnapshot.docs.map((doc) => doc.data()))
+      ) as positionType[],
+      partylists: JSON.parse(
+        JSON.stringify(partylistsSnapshot.docs.map((doc) => doc.data()))
+      ) as partylistType[],
+      candidates: JSON.parse(
+        JSON.stringify(candidatesSnapshot.docs.map((doc) => doc.data()))
+      ) as candidateType[],
       voterUid: session?.user?.uid,
     },
   };
