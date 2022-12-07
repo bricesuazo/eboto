@@ -19,6 +19,18 @@ export const sendEmailToVoters = functions.pubsub
         election.data().electionStartDate.seconds ===
         admin.firestore.Timestamp.fromDate(nowRounded).seconds
       ) {
+        if (
+          election.data().publicity === "private" ||
+          election.data().publicity !== "voters"
+        ) {
+          await admin
+            .firestore()
+            .collection("elections")
+            .doc(election.id)
+            .update({
+              publicity: "voters",
+            });
+        }
         const votersRef = db
           .collection("elections")
           .doc(election.id)
