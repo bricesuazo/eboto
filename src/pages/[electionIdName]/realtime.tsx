@@ -189,16 +189,6 @@ export const getServerSideProps: GetServerSideProps = async (
         };
       }
       break;
-    case "admin":
-      if (!session.user.elections.includes(context.query.electionIdName)) {
-        return {
-          redirect: {
-            destination: "/dashboard",
-            permanent: false,
-          },
-        };
-      }
-      break;
   }
 
   const electionSnapshot = await getDocs(
@@ -214,6 +204,27 @@ export const getServerSideProps: GetServerSideProps = async (
         permanent: false,
       },
     };
+  }
+  switch (session.user.accountType) {
+    case "admin":
+      if (!session.user.elections.includes(electionSnapshot.docs[0].id)) {
+        return {
+          redirect: {
+            destination: "/dashboard",
+            permanent: false,
+          },
+        };
+      }
+      break;
+    case "voter":
+      if (session.user.election !== electionSnapshot.docs[0].id) {
+        return {
+          redirect: {
+            destination: `${electionSnapshot.docs[0].data().electionIdName}}`,
+            permanent: false,
+          },
+        };
+      }
   }
   const positionsSnapshot = await getDocs(
     query(
