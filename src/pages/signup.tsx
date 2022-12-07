@@ -66,12 +66,12 @@ const SignupPage: NextPage = () => {
             pointerEvents="none"
           >
             <Image
-              src="/assets/images/cvsu-front.jpg"
+              src="/assets/images/cvsu-landmark.png"
               alt="CvSU Front"
               fill
               sizes="contain"
               priority
-              style={{ objectFit: "cover" }}
+              style={{ objectFit: "cover", filter: "brightness(0.75)" }}
             />
           </Box>
         </Hide>

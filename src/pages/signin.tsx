@@ -66,7 +66,7 @@ const SigninPage: NextPage = () => {
               fill
               sizes="contain"
               priority
-              style={{ objectFit: "cover" }}
+              style={{ objectFit: "cover", filter: "brightness(0.75)" }}
             />
           </Box>
         </Hide>
