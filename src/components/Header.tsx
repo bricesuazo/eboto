@@ -164,11 +164,37 @@ const Header = () => {
                 return (
                   <>
                     <Link href="/signin">
-                      <Button size={["sm", "md"]}>Sign in</Button>
+                      <Button
+                        size={["sm", "md"]}
+                        variant={router.route === "/signin" ? "solid" : "ghost"}
+                        color={router.route === "/signin" ? "unset" : "white"}
+                        _hover={{
+                          backgroundColor:
+                            router.route === "/signin"
+                              ? "gray.100"
+                              : "gray.600",
+                        }}
+                      >
+                        Sign in
+                      </Button>
                     </Link>
                     <Hide below="sm">
                       <Link href="/signup">
-                        <Button size={["sm", "md"]}>Sign up</Button>
+                        <Button
+                          size={["sm", "md"]}
+                          variant={
+                            router.route === "/signup" ? "solid" : "ghost"
+                          }
+                          color={router.route === "/signup" ? "unset" : "white"}
+                          _hover={{
+                            backgroundColor:
+                              router.route === "/signup"
+                                ? "gray.100"
+                                : "gray.600",
+                          }}
+                        >
+                          Sign up
+                        </Button>
                       </Link>
                     </Hide>
                   </>

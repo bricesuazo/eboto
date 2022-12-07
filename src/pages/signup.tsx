@@ -58,7 +58,13 @@ const SignupPage: NextPage = () => {
       </Head>
       <Flex height="80vh">
         <Hide below="md">
-          <Box position="relative" flex={1} height="full">
+          <Box
+            position="relative"
+            flex={1}
+            height="full"
+            userSelect="none"
+            pointerEvents="none"
+          >
             <Image
               src="/assets/images/cvsu-front.jpg"
               alt="CvSU Front"
