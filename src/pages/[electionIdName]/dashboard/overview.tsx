@@ -200,7 +200,12 @@ const OverviewPage = ({
             </Stack>
           </Stack>
 
-          <Center backgroundColor="gray.500" padding={4} borderRadius="lg">
+          <Center
+            backgroundColor="gray.500"
+            padding={4}
+            borderRadius="lg"
+            width="fit-content"
+          >
             <Text fontSize="2xl" fontWeight="bold" color="white">
               {!votersData ? (
                 <Spinner />

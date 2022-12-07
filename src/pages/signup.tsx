@@ -8,15 +8,19 @@ import {
   Alert,
   AlertDescription,
   AlertIcon,
+  Box,
   Button,
   Center,
   Container,
+  Flex,
   FormControl,
   FormLabel,
+  Hide,
   HStack,
   Input,
   Link,
   Stack,
+  Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { firestore } from "../firebase/firebase";
@@ -35,6 +39,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { getSession, signIn } from "next-auth/react";
 import isAdminExists from "../utils/isAdminExists";
+import Image from "next/image";
 
 const SignupPage: NextPage = () => {
   const [error, setError] = useState<string | null>(null);
@@ -51,9 +56,32 @@ const SignupPage: NextPage = () => {
       <Head>
         <title>Sign up | eBoto Mo</title>
       </Head>
-      <Center height="80vh">
-        <Container maxW="sm">
-          <Center>
+      <Flex height="80vh">
+        <Hide below="md">
+          <Box position="relative" flex={1} height="full">
+            <Image
+              src="/assets/images/cvsu-front.jpg"
+              alt="CvSU Front"
+              fill
+              sizes="contain"
+              priority
+              style={{ objectFit: "cover" }}
+            />
+          </Box>
+        </Hide>
+
+        <Box flex={1}>
+          <Container
+            maxW="sm"
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            height="full"
+            gap={8}
+          >
+            <Text fontSize="xl" fontWeight="bold" textAlign="center">
+              Sign up to your account
+            </Text>
             <form
               style={{ width: "100%" }}
               onSubmit={async (e) => {
@@ -219,9 +247,9 @@ const SignupPage: NextPage = () => {
                 </Button>
               </Stack>
             </form>
-          </Center>
-        </Container>
-      </Center>
+          </Container>
+        </Box>
+      </Flex>
     </>
   );
 };
