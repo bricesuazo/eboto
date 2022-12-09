@@ -36,6 +36,7 @@ import isElectionOngoing from "../../../utils/isElectionOngoing";
 import DeleteElectionModal from "../../../components/DeleteElectionModal";
 import slugify from "react-slugify";
 import deepEqual from "deep-equal";
+import isAdminOwnsTheElection from "../../../utils/isAdminOwnsTheElection";
 
 interface SettingsPageProps {
   election: electionType;
@@ -326,11 +327,26 @@ export default SettingsPage;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const electionQuery = query(
-    collection(firestore, "elections"),
-    where("electionIdName", "==", context.query.electionIdName)
+  const session = await getSession(context);
+  const electionSnapshot = await getDocs(
+    query(
+      collection(firestore, "elections"),
+      where("electionIdName", "==", context.query.electionIdName)
+    )
   );
-  const electionSnapshot = await getDocs(electionQuery);
+  if (electionSnapshot.empty || !session) {
+    return {
+      notFound: true,
+    };
+  }
+  if (!isAdminOwnsTheElection(session, electionSnapshot.docs[0].id)) {
+    return {
+      redirect: {
+        destination: "/dashboard",
+        permanent: false,
+      },
+    };
+  }
   if (electionSnapshot.docs.length === 0) {
     return {
       notFound: true,

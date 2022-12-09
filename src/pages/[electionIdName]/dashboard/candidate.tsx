@@ -55,6 +55,7 @@ import {
   positionType,
   adminType,
 } from "../../../types/typings";
+import isAdminOwnsTheElection from "../../../utils/isAdminOwnsTheElection";
 
 const CandidatePage = ({
   election,
@@ -333,15 +334,24 @@ export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
   try {
+    const session = await getSession(context);
     const electionSnapshot = await getDocs(
       query(
         collection(firestore, "elections"),
         where("electionIdName", "==", context.query.electionIdName)
       )
     );
-    if (electionSnapshot.empty) {
+    if (electionSnapshot.empty || !session) {
       return {
         notFound: true,
+      };
+    }
+    if (!isAdminOwnsTheElection(session, electionSnapshot.docs[0].id)) {
+      return {
+        redirect: {
+          destination: "/dashboard",
+          permanent: false,
+        },
       };
     }
 

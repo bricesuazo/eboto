@@ -30,6 +30,7 @@ import { useFirestoreCollectionData } from "reactfire";
 import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import { adminType, electionType } from "../../../types/typings";
+import isAdminOwnsTheElection from "../../../utils/isAdminOwnsTheElection";
 
 const OverviewPage = ({
   session,
@@ -235,17 +236,28 @@ export default OverviewPage;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
+  const session = await getSession(context);
   const electionSnapshot = await getDocs(
     query(
       collection(firestore, "elections"),
       where("electionIdName", "==", context.query.electionIdName)
     )
   );
-  if (electionSnapshot.empty) {
+  if (electionSnapshot.empty || !session) {
     return {
       notFound: true,
     };
   }
+
+  if (!isAdminOwnsTheElection(session, electionSnapshot.docs[0].id)) {
+    return {
+      redirect: {
+        destination: "/dashboard",
+        permanent: false,
+      },
+    };
+  }
+
   const votersSnapshot = await getDocs(
     collection(
       firestore,
