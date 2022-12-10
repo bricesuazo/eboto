@@ -58,6 +58,7 @@ const CandidateCredentialPage = ({
     candidate.lastName
   }& position=${position.title}${
     candidate.photoUrl &&
+    candidate.photoUrl.length &&
     `& election= ${election.uid}& candidate=${candidate.uid}`
   }`;
 
