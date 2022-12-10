@@ -19,7 +19,8 @@ export default async function (req: NextRequest) {
   const fullName = searchParams.get("fullName");
   const election = searchParams.get("election");
   const candidate = searchParams.get("candidate");
-  if (!type || !fullName || !election || !candidate) {
+  const position = searchParams.get("position");
+  if (!type || !fullName || !election || !candidate || !position) {
     return new ImageResponse(<div>404</div>, {
       width: 1200,
       height: 600,
@@ -86,7 +87,7 @@ export default async function (req: NextRequest) {
                     lineHeight: -2,
                   }}
                 >
-                  Running for President
+                  Running for {position}
                 </p>
                 <p
                   style={{
