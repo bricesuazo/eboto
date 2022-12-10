@@ -35,6 +35,7 @@ import { ChevronRightIcon, ShareIcon } from "@heroicons/react/24/outline";
 import { FacebookShareButton } from "next-share";
 import Moment from "react-moment";
 import Head from "next/head";
+import { getSession } from "next-auth/react";
 
 const CandidateCredentialPage = ({
   candidate,
@@ -270,6 +271,7 @@ export default CandidateCredentialPage;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
+  const session = await getSession(context);
   const { electionIdName, candidateSlug } = context.query;
 
   if (electionIdName && candidateSlug) {
@@ -279,6 +281,47 @@ export const getServerSideProps: GetServerSideProps = async (
         where("electionIdName", "==", electionIdName)
       )
     );
+    if (electionSnapshot.docs[0].data().publicity !== "public") {
+      if (session) {
+        switch (session.user.accountType) {
+          case "voter":
+            if (session.user.election !== electionSnapshot.docs[0].id) {
+              const election = await getDoc(
+                doc(firestore, "elections", session.user.election)
+              );
+              if (!election.exists()) {
+                return {
+                  notFound: true,
+                };
+              }
+              return {
+                redirect: {
+                  destination: `/${election.data().electionIdName}`,
+                  permanent: false,
+                },
+              };
+            }
+            break;
+          case "admin":
+            if (!session.user.elections.includes(electionSnapshot.docs[0].id)) {
+              return {
+                redirect: {
+                  destination: "/signin",
+                  permanent: false,
+                },
+              };
+            }
+            break;
+        }
+      } else {
+        return {
+          redirect: {
+            destination: "/signin",
+            permanent: false,
+          },
+        };
+      }
+    }
     const candidateSnapshot = await getDocs(
       query(
         collection(
