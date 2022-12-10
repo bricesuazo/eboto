@@ -50,7 +50,15 @@ const CandidateCredentialPage = ({
   const title = `${candidate.firstName}${
     candidate.middleName && ` ${candidate.middleName}`
   } ${candidate.lastName} - ${election.name} | eBoto Mo`;
-  const imageContent = `https://eboto-mo.com/api/${election.electionIdName}/${candidate.slug}`;
+  const imageContent = `${process.env
+    .NEXT_PUBLIC_BASE_URL!}/api/og?type=candidate&fullName=${
+    candidate.firstName
+  }${candidate.middleName && ` ${candidate.middleName}`} ${
+    candidate.lastName
+  }&election=${election.uid}&candidate=${candidate.uid}&position=${
+    position.title
+  }`;
+
   const metaDescription = `${candidate.firstName}${
     candidate.middleName && ` ${candidate.middleName}`
   } ${candidate.lastName} credential page - ${election.name} | eBoto Mo`;
