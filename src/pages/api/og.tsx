@@ -20,7 +20,7 @@ export default async function (req: NextRequest) {
   const election = searchParams.get("election");
   const candidate = searchParams.get("candidate");
   const position = searchParams.get("position");
-  if (!type || !fullName || !election || !candidate || !position) {
+  if (!type || !fullName || !position) {
     return new ImageResponse(<div>404</div>, {
       width: 1200,
       height: 600,
@@ -61,7 +61,11 @@ export default async function (req: NextRequest) {
               }}
             >
               <img
-                src={`https://firebasestorage.googleapis.com/v0/b/${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET}/o/elections%2F${election}%2Fcandidates%2F${candidate}%2Fphoto?alt=media`}
+                src={
+                  !election && !candidate
+                    ? "https://eboto-mo.com/_next/image?url=%2Fassets%2Fimages%2Fdefault-profile-picture.png&w=1920&q=75"
+                    : `https://firebasestorage.googleapis.com/v0/b/${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET}/o/elections%2F${election}%2Fcandidates%2F${candidate}%2Fphoto?alt=media`
+                }
                 alt={`${fullName}'s photo`}
                 style={{
                   width: 256,
