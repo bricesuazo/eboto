@@ -56,12 +56,11 @@ const CandidateCredentialPage = ({
     candidate.firstName
   }${candidate.middleName && ` ${candidate.middleName}`} ${
     candidate.lastName
-  }& position=${position.title}${
+  }&position=${position.title}${
     candidate.photoUrl &&
     candidate.photoUrl.length &&
-    `& election=${election.uid}&candidate=${candidate.uid}`
+    `&election=${election.uid}&candidate=${candidate.uid}`
   }`;
-
   const metaDescription = `${candidate.firstName}${
     candidate.middleName && ` ${candidate.middleName}`
   } ${candidate.lastName} credential page - ${election.name} | eBoto Mo`;
