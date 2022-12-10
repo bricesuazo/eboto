@@ -59,7 +59,7 @@ const CandidateCredentialPage = ({
   }& position=${position.title}${
     candidate.photoUrl &&
     candidate.photoUrl.length &&
-    `& election= ${election.uid}& candidate=${candidate.uid}`
+    `& election=${election.uid}&candidate=${candidate.uid}`
   }`;
 
   const metaDescription = `${candidate.firstName}${
