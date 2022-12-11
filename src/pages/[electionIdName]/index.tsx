@@ -53,7 +53,6 @@ const ElectionPage = ({
   const [seeMore, setSeeMore] = useState(false);
 
   const title = `${election.name} | eBoto Mo`;
-
   const imageContent = `${process.env
     .NEXT_PUBLIC_BASE_URL!}/api/og?type=election&electionName=${
     election.name

@@ -168,46 +168,137 @@ export default async function (req: NextRequest) {
       }
       return new ImageResponse(
         (
-          <div style={{ display: "flex" }}>
-            <p>{electionName}</p>
-            <p>{electionStartDate}</p>
-            <p>{electionEndDate}</p>
-            <p>{electionLogoUrl && electionLogoUrl}</p>
+          // <div style={{ display: "flex" }}>
+          //   <p>{electionName}</p>
+          //   <p>{electionStartDate}</p>
+          //   <p>{electionEndDate}</p>
+          //   <p>{electionLogoUrl && electionLogoUrl}</p>
+          // </div>
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              fontFamily: '"Inter Bold"',
+              color: "white",
+            }}
+          >
+            <img
+              src="https://eboto-mo.com/assets/images/cvsu-front.jpg"
+              alt=""
+              style={{
+                width: "100%",
+                objectFit: "cover",
+                objectPosition: "center",
+                position: "absolute",
+                top: 0,
+                filter: "brightness(0.35)",
+              }}
+            />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "100%",
+                height: "100%",
+                marginTop: 16,
+              }}
+            >
+              <img
+                src={
+                  !electionLogoUrl
+                    ? "https://eboto-mo.com/_next/image?url=%2Fassets%2Fimages%2Fdefault-election-logo.png&w=1920&q=75"
+                    : electionLogoUrl
+                }
+                alt={`${electionName}'s photo`}
+                style={{
+                  width: 164,
+                  height: 164,
+                  boxShadow: "1px -1px 76px 1px rgba(0,0,0,0.25)",
+                }}
+              />
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  marginTop: 48,
+                  lineHeight: -3.5,
+                }}
+              >
+                <p style={{ fontSize: 42, fontWeight: "bold" }}>
+                  {electionName}
+                </p>
+                <p
+                  style={{
+                    fontSize: 20,
+                    fontFamily: '"Inter Regular"',
+                  }}
+                >
+                  {electionStartDate} - {electionEndDate}
+                </p>
+                <p
+                  style={{
+                    backgroundColor: "#459845",
+                    color: "white",
+                    fontFamily: "Inter Bold",
+                    width: 156,
+                    height: 38,
+                    borderRadius: "32px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    lineHeight: 1,
+                  }}
+                >
+                  See information
+                </p>
+              </div>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                position: "absolute",
+                top: 18,
+                left: "50%",
+                transform: "translateX(-50%)",
+              }}
+            >
+              <p style={{ color: "#ffde59", fontWeight: "bold", fontSize: 18 }}>
+                eBoto Mo
+              </p>
+              <img
+                src="https://eboto-mo.com/_next/image?url=%2Fassets%2Fimages%2Feboto-mo-logo.png&w=64&q=75"
+                alt="eBoto Mo Logo"
+                style={{
+                  width: 32,
+                  height: 32,
+                  marginLeft: 8,
+                  filter: "invert(1)",
+                }}
+              />
+            </div>
           </div>
         ),
         {
           width: 1200,
           height: 600,
+          fonts: [
+            {
+              name: "Inter Regular",
+              data: fontInterRegular,
+              style: "normal",
+            },
+            {
+              name: "Inter Bold",
+              data: fontInterBold,
+              style: "normal",
+            },
+          ],
         }
       );
   }
-
-  // return new ImageResponse(
-  //   (
-  //     <div
-  //       style={{
-  //         fontSize: 128,
-  //         background: "white",
-  //         width: "100%",
-  //         height: "100%",
-  //         display: "flex",
-  //         textAlign: "center",
-  //         alignItems: "center",
-  //         justifyContent: "center",
-  //       }}
-  //     >
-  //       <img
-  //         src={imageUrl}
-  //         alt={`${fullName}'s photo`}
-  //         width="256"
-  //         height="256"
-  //       />
-  //       {fullName}
-  //     </div>
-  //   ),
-  //   {
-  //     width: 1200,
-  //     height: 600,
-  //   }
-  // );
 }
