@@ -26,6 +26,7 @@ import {
 } from "@chakra-ui/react";
 import Head from "next/head";
 import Moment from "react-moment";
+import moment from "moment";
 import Link from "next/link";
 import isElectionOngoing from "../../utils/isElectionOngoing";
 import Image from "next/image";
@@ -49,12 +50,18 @@ const ElectionPage = ({
   candidates,
   session,
 }: ElectionPageProps) => {
+  const [seeMore, setSeeMore] = useState(false);
+
   const title = `${election.name} | eBoto Mo`;
 
   const imageContent = `${process.env
     .NEXT_PUBLIC_BASE_URL!}/api/og?type=election&electionName=${
     election.name
-  }&electionStartDate=${"start test"}&electionEndDate=${"end test"}${
+  }&electionStartDate=${moment(
+    election.electionStartDate.seconds * 1000
+  ).format("MMMM D, YYYY hA")}&electionEndDate=${moment(
+    election.electionEndDate.seconds * 1000
+  ).format("MMMM D, YYYY hA")}${
     election.logoUrl && `&electionLogoUrl=${election.logoUrl}`
   }`;
   const metaDescription = `See details about ${election.name} | eBoto Mo`;
@@ -136,7 +143,6 @@ const ElectionPage = ({
         break;
     }
   }
-  const [seeMore, setSeeMore] = useState(false);
 
   return (
     <>
