@@ -12,6 +12,8 @@ import {
   Flex,
   Select,
   FormErrorMessage,
+  Box,
+  Text,
 } from "@chakra-ui/react";
 import {
   collection,
@@ -37,6 +39,8 @@ import DeleteElectionModal from "../../../components/DeleteElectionModal";
 import slugify from "react-slugify";
 import deepEqual from "deep-equal";
 import isAdminOwnsTheElection from "../../../utils/isAdminOwnsTheElection";
+import Image from "next/image";
+import UploadElectionLogoModal from "../../../components/UploadElectionLogoModal";
 
 interface SettingsPageProps {
   election: electionType;
@@ -48,6 +52,11 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
     onOpen: onOpenDelete,
     onClose: onCloseDelete,
   } = useDisclosure();
+  const {
+    isOpen: isOpenLogo,
+    onOpen: onOpenLogo,
+    onClose: onCloseLogo,
+  } = useDisclosure();
   const [initialElection, setInitialElection] =
     useState<electionType>(election);
 
@@ -57,6 +66,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
     electionStartDate: initialElection.electionStartDate,
     electionEndDate: initialElection.electionEndDate,
     publicity: initialElection.publicity,
+    logoUrl: initialElection.logoUrl,
   };
 
   const [settings, setSettings] = useState(initialState);
@@ -70,6 +80,12 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
   );
   return (
     <>
+      <UploadElectionLogoModal
+        election={election}
+        isOpen={isOpenLogo}
+        onClose={onCloseLogo}
+        session={session}
+      />
       <DeleteElectionModal
         election={election}
         isOpen={isOpenDelete}
@@ -79,7 +95,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
       <Head>
         <title>Settings | eBoto Mo</title>
       </Head>
-      <DashboardLayout title="Settings" session={session}>
+      <DashboardLayout title="Settings" session={session} overflow="auto">
         {!election ? (
           <Spinner />
         ) : (
@@ -275,6 +291,33 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                   <option value="voters">Voters</option>
                   <option value="public">Public</option>
                 </Select>
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>Logo</FormLabel>
+                <Flex alignItems="center">
+                  <Stack alignItems="center" spacing={0}>
+                    <Box position="relative" width={24} height={24}>
+                      <Image
+                        src={
+                          settings.logoUrl && settings.logoUrl.length
+                            ? settings.logoUrl
+                            : "/assets/images/default-election-logo.png"
+                        }
+                        alt="Election Logo"
+                        style={{ objectFit: "cover" }}
+                        fill
+                      />
+                    </Box>
+                    {!(settings.logoUrl && settings.logoUrl.length) && (
+                      <Text>No logo</Text>
+                    )}
+                  </Stack>
+
+                  <Button variant="outline" onClick={onOpenLogo}>
+                    Upload logo
+                  </Button>
+                </Flex>
               </FormControl>
 
               <Flex justifyContent="space-between" width="full">

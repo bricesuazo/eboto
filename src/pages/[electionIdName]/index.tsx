@@ -48,9 +48,9 @@ const ElectionPage = ({
   const title = `${election.name} | eBoto Mo`;
   const imageContent = `${process.env
     .NEXT_PUBLIC_BASE_URL!}/api/og?type=election&electionName=${election.name}${
-    election.logoUrl &&
-    election.logoUrl.length &&
-    `&electionLogoUrl=${election.logoUrl}`
+    election.logoUrl && election.logoUrl.length
+      ? `&electionLogoUrl=${election.logoUrl}`
+      : ""
   }&electionStartDate=${moment(
     election.electionStartDate.seconds * 1000
   ).format("MMMM D, YYYY hA")}&electionEndDate=${moment(
