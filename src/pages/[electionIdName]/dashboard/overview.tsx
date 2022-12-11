@@ -1,8 +1,6 @@
 import {
-  Box,
   Button,
   Center,
-  Flex,
   Hide,
   HStack,
   IconButton,
@@ -210,6 +208,9 @@ const OverviewPage = ({
             <Text fontSize="2xl" fontWeight="bold" color="white">
               {!votersData ? (
                 <Spinner />
+              ) : votersData.filter((voter) => voter.hasVoted).length === 0 &&
+                votersData.length === 0 ? (
+                "No voters yet"
               ) : (
                 votersData.filter((voter) => voter.hasVoted).length +
                 "/" +
@@ -258,14 +259,6 @@ export const getServerSideProps: GetServerSideProps = async (
     };
   }
 
-  const votersSnapshot = await getDocs(
-    collection(
-      firestore,
-      "elections",
-      electionSnapshot.docs[0].data().uid,
-      "voters"
-    )
-  );
   return {
     props: {
       election: JSON.parse(JSON.stringify(electionSnapshot.docs[0].data())),
