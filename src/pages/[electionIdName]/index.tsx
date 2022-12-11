@@ -47,17 +47,15 @@ const ElectionPage = ({
 
   const title = `${election.name} | eBoto Mo`;
   const imageContent = `${process.env
-    .NEXT_PUBLIC_BASE_URL!}/api/og?type=election&electionName=${
-    election.name
+    .NEXT_PUBLIC_BASE_URL!}/api/og?type=election&electionName=${election.name}${
+    election.logoUrl &&
+    election.logoUrl.length &&
+    `&electionLogoUrl=${election.logoUrl}`
   }&electionStartDate=${moment(
     election.electionStartDate.seconds * 1000
   ).format("MMMM D, YYYY hA")}&electionEndDate=${moment(
     election.electionEndDate.seconds * 1000
-  ).format("MMMM D, YYYY hA")}${
-    election.logoUrl &&
-    election.logoUrl.length &&
-    `&electionLogoUrl=${election.logoUrl}`
-  }`;
+  ).format("MMMM D, YYYY hA")}`;
   const metaDescription = `See details about ${election.name} | eBoto Mo`;
 
   const ErrorPage = ({ children }: { children: React.ReactNode }) => {
