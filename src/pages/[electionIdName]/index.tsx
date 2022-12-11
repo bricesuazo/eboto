@@ -49,14 +49,98 @@ const ElectionPage = ({
   candidates,
   session,
 }: ElectionPageProps) => {
-  const pageTitle = `${election.name} | eBoto Mo`;
+  const title = `${election.name} | eBoto Mo`;
+
+  const imageContent = `${process.env
+    .NEXT_PUBLIC_BASE_URL!}/api/og?type=election&electionName=${
+    election.name
+  }&electionStartDate=${"start test"}&electionEndDate=${"end test"}${
+    election.logoUrl && `&electionLogoUrl=${election.logoUrl}`
+  }`;
+  const metaDescription = `See details about ${election.name} | eBoto Mo`;
+
+  const ErrorPage = ({ children }: { children: React.ReactNode }) => {
+    return (
+      <>
+        <HeadElementCandidate />
+        <Container
+          maxW="8xl"
+          minH="2xl"
+          paddingY={8}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Flex flexDirection="column" alignItems="center">
+            {children}
+          </Flex>
+        </Container>
+      </>
+    );
+  };
+  const HeadElementCandidate = () => {
+    return (
+      <Head>
+        <title>{title}</title>
+        <meta property="og:image" content={imageContent} />
+        <meta property="og:title" content={title} />
+        <meta name="description" content={metaDescription} />
+        <meta property="og:description" content={metaDescription} />
+      </Head>
+    );
+  };
+  if (election.publicity !== "public") {
+    if (!session) {
+      return (
+        <ErrorPage>
+          <Text fontSize={["lg", "xl", "2xl"]} fontWeight="bold">
+            This page is not available.
+          </Text>
+          <Link href="/signin">
+            <Button>Sign in to continue</Button>
+          </Link>
+        </ErrorPage>
+      );
+    }
+    switch (session.user.accountType) {
+      case "admin":
+        if (!session.user.elections.includes(election.uid)) {
+          return (
+            <ErrorPage>
+              <Text fontSize={["lg", "xl", "2xl"]} fontWeight="bold">
+                Unauthorized (admin)
+              </Text>
+              <Link href="/dashboard">
+                <Button>Go to dashboard</Button>
+              </Link>
+            </ErrorPage>
+          );
+        }
+        break;
+      case "voter":
+        if (
+          election.publicity === "private" ||
+          session.user.election !== election.uid
+        ) {
+          return (
+            <ErrorPage>
+              <Text fontSize={["lg", "xl", "2xl"]} fontWeight="bold">
+                Unauthorized (voter)
+              </Text>
+              <Link href="/signin">
+                <Button>Go to your assigned election</Button>
+              </Link>
+            </ErrorPage>
+          );
+        }
+        break;
+    }
+  }
   const [seeMore, setSeeMore] = useState(false);
 
   return (
     <>
-      <Head>
-        <title>{pageTitle}</title>
-      </Head>
+      <HeadElementCandidate />
       <Container
         maxW="8xl"
         textAlign="center"
@@ -218,8 +302,6 @@ const ElectionPage = ({
 export default ElectionPage;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getSession(context);
-
   const electionSnapshot = await getDocs(
     query(
       collection(firestore, "elections"),
@@ -230,48 +312,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       notFound: true,
     };
-  }
-
-  if (electionSnapshot.docs[0].data().publicity !== "public") {
-    if (session) {
-      switch (session.user.accountType) {
-        case "voter":
-          if (session.user.election !== electionSnapshot.docs[0].id) {
-            const election = await getDoc(
-              doc(firestore, "elections", session.user.election)
-            );
-            if (!election.exists()) {
-              return {
-                notFound: true,
-              };
-            }
-            return {
-              redirect: {
-                destination: `/${election.data().electionIdName}`,
-                permanent: false,
-              },
-            };
-          }
-          break;
-        case "admin":
-          if (!session.user.elections.includes(electionSnapshot.docs[0].id)) {
-            return {
-              redirect: {
-                destination: "/signin",
-                permanent: false,
-              },
-            };
-          }
-          break;
-      }
-    } else {
-      return {
-        redirect: {
-          destination: "/signin",
-          permanent: false,
-        },
-      };
-    }
   }
 
   const positionsSnapshot = await getDocs(

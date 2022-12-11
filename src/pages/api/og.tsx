@@ -16,19 +16,24 @@ export default async function (req: NextRequest) {
   const fontInterBold = await InterBold;
   const { searchParams } = req.nextUrl;
   const type = searchParams.get("type");
-  const fullName = searchParams.get("fullName");
-  const election = searchParams.get("election");
-  const candidate = searchParams.get("candidate");
-  const position = searchParams.get("position");
-  if (!type || !fullName || !position) {
+  const NotFoundPage = () => {
     return new ImageResponse(<div>404</div>, {
       width: 1200,
       height: 600,
     });
+  };
+  if (!type) {
+    return NotFoundPage();
   }
-
   switch (type) {
     case "candidate":
+      const fullName = searchParams.get("fullName");
+      const electionUid = searchParams.get("election");
+      const candidateUid = searchParams.get("candidate");
+      const position = searchParams.get("position");
+      if (!fullName || !position) {
+        return NotFoundPage();
+      }
       return new ImageResponse(
         (
           <div
@@ -62,9 +67,9 @@ export default async function (req: NextRequest) {
             >
               <img
                 src={
-                  !election && !candidate
+                  !electionUid && !candidateUid
                     ? "https://eboto-mo.com/_next/image?url=%2Fassets%2Fimages%2Fdefault-profile-picture.png&w=1920&q=75"
-                    : `https://firebasestorage.googleapis.com/v0/b/${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET}/o/elections%2F${election}%2Fcandidates%2F${candidate}%2Fphoto?alt=media`
+                    : `https://firebasestorage.googleapis.com/v0/b/${process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET}/o/elections%2F${electionUid}%2Fcandidates%2F${candidateUid}%2Fphoto?alt=media`
                 }
                 alt={`${fullName}'s photo`}
                 style={{
@@ -154,10 +159,27 @@ export default async function (req: NextRequest) {
         }
       );
     case "election":
-      return new ImageResponse(<div>election</div>, {
-        width: 1200,
-        height: 600,
-      });
+      const electionName = searchParams.get("electionName");
+      const electionStartDate = searchParams.get("electionStartDate");
+      const electionEndDate = searchParams.get("electionEndDate");
+      const electionLogoUrl = searchParams.get("electionLogoUrl");
+      if (!electionName || !electionStartDate || !electionEndDate) {
+        return NotFoundPage();
+      }
+      return new ImageResponse(
+        (
+          <div style={{ display: "flex" }}>
+            <p>{electionName}</p>
+            <p>{electionStartDate}</p>
+            <p>{electionEndDate}</p>
+            <p>{electionLogoUrl && electionLogoUrl}</p>
+          </div>
+        ),
+        {
+          width: 1200,
+          height: 600,
+        }
+      );
   }
 
   // return new ImageResponse(
