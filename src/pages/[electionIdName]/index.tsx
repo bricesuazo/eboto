@@ -1,21 +1,4 @@
 import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  orderBy,
-  query,
-  where,
-} from "firebase/firestore";
-import { GetServerSideProps } from "next";
-import {
-  candidateType,
-  electionType,
-  partylistType,
-  positionType,
-} from "../../types/typings";
-import { firestore } from "../../firebase/firebase";
-import {
   Box,
   Button,
   Center,
@@ -24,16 +7,26 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import Head from "next/head";
-import Moment from "react-moment";
+import { ShareIcon } from "@heroicons/react/24/outline";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import moment from "moment";
-import Link from "next/link";
-import isElectionOngoing from "../../utils/isElectionOngoing";
-import Image from "next/image";
-import { useState } from "react";
-import { getSession } from "next-auth/react";
+import { GetServerSideProps } from "next";
 import { Session } from "next-auth";
-import { exit } from "process";
+import { getSession } from "next-auth/react";
+import { FacebookShareButton } from "next-share";
+import Head from "next/head";
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+import Moment from "react-moment";
+import { firestore } from "../../firebase/firebase";
+import {
+  candidateType,
+  electionType,
+  partylistType,
+  positionType,
+} from "../../types/typings";
+import isElectionOngoing from "../../utils/isElectionOngoing";
 
 interface ElectionPageProps {
   election: electionType;
@@ -61,7 +54,9 @@ const ElectionPage = ({
   ).format("MMMM D, YYYY hA")}&electionEndDate=${moment(
     election.electionEndDate.seconds * 1000
   ).format("MMMM D, YYYY hA")}${
-    election.logoUrl && `&electionLogoUrl=${election.logoUrl}`
+    election.logoUrl &&
+    election.logoUrl.length &&
+    `&electionLogoUrl=${election.logoUrl}`
   }`;
   const metaDescription = `See details about ${election.name} | eBoto Mo`;
 
@@ -189,6 +184,16 @@ const ElectionPage = ({
                 </Text>
               </Container>
             )}
+            <Box marginTop={4}>
+              <FacebookShareButton
+                url={`https://eboto-mo.com/${election.electionIdName}`}
+                hashtag={`#${election.name.replace(/\s/g, "")}`}
+              >
+                <Button leftIcon={<ShareIcon width={18} />} variant="outline">
+                  Share
+                </Button>
+              </FacebookShareButton>
+            </Box>
             <Box marginTop={4}>
               {!session ? (
                 <Link href="/signin">
