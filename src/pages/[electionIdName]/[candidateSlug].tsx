@@ -38,17 +38,20 @@ import Moment from "react-moment";
 import Head from "next/head";
 import { getSession } from "next-auth/react";
 import Link from "next/link";
+import { Session } from "next-auth";
 
 const CandidateCredentialPage = ({
   candidate,
   partylist,
   position,
   election,
+  session,
 }: {
   candidate: candidateType;
   partylist: partylistType;
   position: positionType;
   election: electionType;
+  session: Session;
 }) => {
   const title = `${candidate.firstName}${
     candidate.middleName && ` ${candidate.middleName}`
@@ -68,18 +71,7 @@ const CandidateCredentialPage = ({
     candidate.middleName && ` ${candidate.middleName}`
   } ${candidate.lastName} credential page - ${election.name} | eBoto Mo`;
 
-  const HeadElementCandidate = () => {
-    return (
-      <Head>
-        <title>{title}</title>
-        <meta property="og:image" content={imageContent} />
-        <meta property="og:title" content={title} />
-        <meta name="description" content={metaDescription} />
-        <meta property="og:description" content={metaDescription} />
-      </Head>
-    );
-  };
-  if (election.publicity !== "public") {
+  const ErrorPage = ({ children }: { children: React.ReactNode }) => {
     return (
       <>
         <HeadElementCandidate />
@@ -92,17 +84,72 @@ const CandidateCredentialPage = ({
           alignItems="center"
         >
           <Flex flexDirection="column" alignItems="center">
-            <Text fontSize={["lg", "xl", "2xl"]} fontWeight="bold">
-              This page is not available.
-            </Text>
-            <Link href="/signin">
-              <Button>Sign in to continue</Button>
-            </Link>
+            {children}
           </Flex>
         </Container>
       </>
     );
+  };
+  const HeadElementCandidate = () => {
+    return (
+      <Head>
+        <title>{title}</title>
+        <meta property="og:image" content={imageContent} />
+        <meta property="og:title" content={title} />
+        <meta name="description" content={metaDescription} />
+        <meta property="og:description" content={metaDescription} />
+      </Head>
+    );
+  };
+
+  if (election.publicity !== "public") {
+    if (!session) {
+      return (
+        <ErrorPage>
+          <Text fontSize={["lg", "xl", "2xl"]} fontWeight="bold">
+            This page is not available.
+          </Text>
+          <Link href="/signin">
+            <Button>Sign in to continue</Button>
+          </Link>
+        </ErrorPage>
+      );
+    }
+    switch (session.user.accountType) {
+      case "admin":
+        if (!session.user.elections.includes(election.uid)) {
+          return (
+            <ErrorPage>
+              <Text fontSize={["lg", "xl", "2xl"]} fontWeight="bold">
+                Unauthorized (admin)
+              </Text>
+              <Link href="/dashboard">
+                <Button>Go to dashboard</Button>
+              </Link>
+            </ErrorPage>
+          );
+        }
+        break;
+      case "voter":
+        if (
+          election.publicity === "private" ||
+          session.user.election !== election.uid
+        ) {
+          return (
+            <ErrorPage>
+              <Text fontSize={["lg", "xl", "2xl"]} fontWeight="bold">
+                Unauthorized (voter)
+              </Text>
+              <Link href="/signin">
+                <Button>Go to your assigned election</Button>
+              </Link>
+            </ErrorPage>
+          );
+        }
+        break;
+    }
   }
+
   return (
     <>
       <HeadElementCandidate />
@@ -303,7 +350,7 @@ export default CandidateCredentialPage;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  // const session = await getSession(context);
+  const session = await getSession(context);
   const { electionIdName, candidateSlug } = context.query;
 
   if (electionIdName && candidateSlug) {
@@ -392,6 +439,7 @@ export const getServerSideProps: GetServerSideProps = async (
     if (!candidateSnapshot.empty) {
       return {
         props: {
+          session,
           election: JSON.parse(
             JSON.stringify(electionSnapshot.docs[0].data() as electionType)
           ),
