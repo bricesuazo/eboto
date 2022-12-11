@@ -162,7 +162,11 @@ const EditCandidateModal = ({
               }
             }
 
-            if (!candidateData.photoUrl?.length && !image) {
+            if (
+              !candidateData.photoUrl?.length &&
+              !image &&
+              candidate.photoUrl !== candidateData.photoUrl
+            ) {
               const photoRef = ref(
                 storage,
                 `elections/${election.uid}/candidates/${candidateData.uid}/photo`
