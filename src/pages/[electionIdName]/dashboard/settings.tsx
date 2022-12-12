@@ -84,7 +84,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
         election={election}
         isOpen={isOpenLogo}
         onClose={onCloseLogo}
-        session={session}
+        // session={session}
       />
       <DeleteElectionModal
         election={election}

@@ -1,4 +1,5 @@
 import {
+  AspectRatio,
   Box,
   Button,
   Center,
@@ -10,26 +11,35 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Stack,
   Text,
 } from "@chakra-ui/react";
-import { Session } from "next-auth";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { electionType } from "../types/typings";
 import formatBytes from "../utils/formatBytes";
+import compress from "../utils/imageCompressor";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { firestore, storage } from "../firebase/firebase";
+import { doc, updateDoc } from "firebase/firestore";
+import ReactCrop, { Crop } from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
 
 const UploadElectionLogoModal = ({
   election,
   isOpen,
   onClose,
-  session,
 }: {
   election: electionType;
   isOpen: boolean;
   onClose: () => void;
-  session: Session;
 }) => {
+  const [isUploading, setIsUploading] = useState(false);
+  const [electionLogoUrl, setElectionLogoUrl] = useState<string | null>(
+    election.logoUrl
+  );
+  const [crop, setCrop] = useState<Crop>();
   const [image, setImage] = useState<{
     preview: string;
     name: string;
@@ -38,6 +48,7 @@ const UploadElectionLogoModal = ({
   } | null>(null);
   useEffect(() => {
     setImage(null);
+    setElectionLogoUrl(election.logoUrl);
   }, [isOpen]);
   const {
     getRootProps,
@@ -61,37 +72,57 @@ const UploadElectionLogoModal = ({
       );
     },
   });
+
   return (
     <>
       <input {...getInputProps()} />
-      <Modal isOpen={isOpen} onClose={onClose} size="xl" isCentered>
+      <Modal
+        isOpen={isUploading ? isUploading : isOpen}
+        onClose={onClose}
+        size="lg"
+        isCentered
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Upload logo</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {election.logoUrl && election.logoUrl.length ? (
-              <HStack spacing={4}>
-                <Image
-                  src={election.logoUrl}
-                  alt={`${election.name} logo`}
-                  width={256}
-                  height={256}
-                />
-                <Box>
-                  <Button onClick={() => setImage(null)} size="sm">
+            {electionLogoUrl ? (
+              <Stack spacing={4}>
+                <AspectRatio position="relative" ratio={1 / 1}>
+                  <Image
+                    src={electionLogoUrl}
+                    alt={`${election.name} logo`}
+                    fill
+                    style={{ objectFit: "contain" }}
+                  />
+                </AspectRatio>
+                <Center>
+                  <Button onClick={() => setElectionLogoUrl(null)} size="sm">
                     Delete
                   </Button>
-                </Box>
-              </HStack>
+                </Center>
+              </Stack>
             ) : image ? (
-              <HStack spacing={4}>
-                <Image
-                  src={image.preview}
-                  alt="test"
-                  width={256}
-                  height={256}
-                />
+              <Stack spacing={4}>
+                <ReactCrop
+                  crop={crop}
+                  onChange={(c) => setCrop(c)}
+                  aspect={1 / 1}
+                >
+                  <Box
+                    position="relative"
+                    width="full"
+                    height="full"
+                    minH="max-content"
+                  >
+                    <Image
+                      src={image.preview}
+                      alt="Uploaded election logo"
+                      fill
+                    />
+                  </Box>
+                </ReactCrop>
                 <Box>
                   <Text noOfLines={1} fontWeight="bold" fontSize="lg">
                     {image.name}
@@ -101,42 +132,83 @@ const UploadElectionLogoModal = ({
                     Delete
                   </Button>
                 </Box>
-              </HStack>
+              </Stack>
             ) : (
-              <Center
-                height="64"
-                width="full"
-                p={4}
-                borderWidth={4}
-                borderColor={
-                  isDragAccept
-                    ? "green.500"
-                    : isDragReject
-                    ? "red.500"
-                    : isFocused
-                    ? "blue.500"
-                    : "gray.200"
-                }
-                borderStyle="dashed"
-                borderRadius="28px"
-                cursor="pointer"
-                userSelect="none"
-                onClick={open}
-                {...getRootProps({})}
-              >
-                <Text textAlign="center">
-                  Drag/click the box to upload the election&apos;s logo.
-                  <br />
-                  (only accepts 1:1 ratio and .jpg, .jpeg, .png, .gif types)
-                </Text>
-              </Center>
+              <AspectRatio ratio={1 / 1}>
+                <Center
+                  p={4}
+                  borderWidth={4}
+                  borderColor={
+                    isDragAccept
+                      ? "green.500"
+                      : isDragReject
+                      ? "red.500"
+                      : isFocused
+                      ? "blue.500"
+                      : "gray.200"
+                  }
+                  borderStyle="dashed"
+                  borderRadius="28px"
+                  cursor="pointer"
+                  userSelect="none"
+                  onClick={open}
+                  {...getRootProps({})}
+                >
+                  <Text textAlign="center">
+                    Drag/click the box to upload the election&apos;s logo.
+                    <br />
+                    (only accepts 1:1 ratio and .jpg, .jpeg, .png, .gif types)
+                  </Text>
+                </Center>
+              </AspectRatio>
             )}
           </ModalBody>
           <ModalFooter>
-            <Button onClick={onClose} variant="ghost">
+            <Button onClick={onClose} variant="ghost" disabled={isUploading}>
               Cancel
             </Button>
-            <Button variant="solid" marginLeft={2} disabled={!image}>
+            <Button
+              variant="solid"
+              marginLeft={2}
+              disabled={!image}
+              isLoading={isUploading}
+              onClick={async () => {
+                if (image) {
+                  await compress(image.file).then(async (blob) => {
+                    const storageRef = ref(
+                      storage,
+                      `elections/${election.uid}/photo`
+                    );
+                    const uploadTask = uploadBytesResumable(storageRef, blob);
+                    uploadTask.on(
+                      "state_changed",
+                      (snapshot) => {
+                        // const percent = Math.round(
+                        //   (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                        // );
+                        // update progress
+                        // TODO: add progress bar
+                        // setPercent(percent);
+                      },
+                      (err) => console.log(err),
+                      () => {
+                        // download url
+                        getDownloadURL(uploadTask.snapshot.ref).then(
+                          async (url) => {
+                            await updateDoc(
+                              doc(firestore, "elections", election.uid),
+                              {
+                                logoUrl: url,
+                              }
+                            );
+                          }
+                        );
+                      }
+                    );
+                  });
+                }
+              }}
+            >
               Upload
             </Button>
           </ModalFooter>
