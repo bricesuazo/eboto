@@ -36,14 +36,12 @@ const EditPartylistModal = ({
     setPartylistData({
       name: partylist.name,
       abbreviation: partylist.abbreviation,
-      logo: partylist.logo,
       description: partylist.description ? partylist.description : "",
     });
   };
   const [partylistData, setPartylistData] = useState({
     name: partylist.name,
     abbreviation: partylist.abbreviation,
-    logo: partylist.logo,
     description: partylist.description ? partylist.description : "",
   });
   const [loading, setLoading] = useState(false);
@@ -128,10 +126,10 @@ const EditPartylistModal = ({
                   disabled={loading}
                 />
               </FormControl>
-              <FormControl>
+              {/* <FormControl>
                 <FormLabel>Logo</FormLabel>
                 <Input type="file" disabled={loading} accept="image/*" />
-              </FormControl>
+              </FormControl> */}
             </Stack>
           </ModalBody>
 

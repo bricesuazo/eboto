@@ -116,12 +116,12 @@ const DashboardLayout = ({
     if (elections?.length === 0) {
       router.push("/create-election");
     }
-    if (
-      currentElection &&
-      session.user.elections.includes(currentElection.uid)
-    ) {
-      router.replace("/dashboard");
-    }
+    // if (
+    //   currentElection &&
+    //   session.user.elections.includes(currentElection.uid)
+    // ) {
+    //   router.replace("/dashboard");
+    // }
   }, [elections]);
 
   return (

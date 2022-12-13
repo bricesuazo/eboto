@@ -75,7 +75,6 @@ const CreateElectionModal = ({
     id: uuidv4(),
     name: "Independent",
     abbreviation: "IND",
-    logo: "",
     description: "",
     createdAt: Timestamp.now(),
     updatedAt: Timestamp.now(),

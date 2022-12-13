@@ -125,7 +125,7 @@ const PartylistPage = ({
                           overflow="hidden"
                         >
                           <Center height="100%" position="relative">
-                            {partylist.logo ? (
+                            {/* {partylist.logo ? (
                               <>
                                 <Image
                                   src={partylist.logo}
@@ -136,16 +136,16 @@ const PartylistPage = ({
                                   pointerEvents="none"
                                 />
                               </>
-                            ) : (
-                              <FlagIcon
-                                style={{
-                                  border: "2px solid gray.500",
+                            ) : ( */}
+                            <FlagIcon
+                              style={{
+                                border: "2px solid gray.500",
 
-                                  padding: 18,
-                                  borderRadius: "100%",
-                                }}
-                              />
-                            )}
+                                padding: 18,
+                                borderRadius: "100%",
+                              }}
+                            />
+                            {/* )} */}
                           </Center>
                         </Box>
                         <Text textAlign="center">

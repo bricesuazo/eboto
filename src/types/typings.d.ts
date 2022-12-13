@@ -18,7 +18,6 @@ export interface partylistType {
   id: string;
   name: string;
   abbreviation: string;
-  logo: string?;
   description: string?;
   createdAt: Timestamp;
   updatedAt: Timestamp;
