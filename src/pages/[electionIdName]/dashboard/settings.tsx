@@ -14,6 +14,16 @@ import {
   FormErrorMessage,
   Box,
   Text,
+  HStack,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverCloseButton,
+  PopoverArrow,
+  PopoverFooter,
+  ButtonGroup,
+  PopoverBody,
+  PopoverHeader,
 } from "@chakra-ui/react";
 import {
   collection,
@@ -28,7 +38,7 @@ import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useState } from "react";
 import { adminType, electionType } from "../../../types/typings";
-import { firestore } from "../../../firebase/firebase";
+import { firestore, storage } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { getSession } from "next-auth/react";
@@ -41,6 +51,7 @@ import deepEqual from "deep-equal";
 import isAdminOwnsTheElection from "../../../utils/isAdminOwnsTheElection";
 import Image from "next/image";
 import UploadElectionLogoModal from "../../../components/UploadElectionLogoModal";
+import { deleteObject, ref } from "firebase/storage";
 
 interface SettingsPageProps {
   election: electionType;
@@ -71,6 +82,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
 
   const [settings, setSettings] = useState(initialState);
   const [loading, setLoading] = useState(false);
+  const [loadingDeleteLogo, setLoadingDeleteLogo] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [startDate, setStartDate] = useState<Date | null>(
     new Date(settings.electionStartDate?.seconds * 1000) || null
@@ -78,6 +90,11 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
   const [endDate, setEndDate] = useState<Date | null>(
     new Date(settings.electionEndDate?.seconds * 1000) || null
   );
+  const {
+    isOpen: isOpenPopover,
+    onToggle: onTogglePopover,
+    onClose: onClosePopover,
+  } = useDisclosure();
   return (
     <>
       <UploadElectionLogoModal
@@ -295,7 +312,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
 
               <FormControl>
                 <FormLabel>Logo</FormLabel>
-                <Flex alignItems="center">
+                <HStack alignItems="center">
                   <Stack alignItems="center" spacing={0}>
                     <Box position="relative" width={24} height={24}>
                       <Image
@@ -317,7 +334,71 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                   <Button variant="outline" onClick={onOpenLogo}>
                     Upload logo
                   </Button>
-                </Flex>
+                  {election.logoUrl && election.logoUrl.length && (
+                    <>
+                      <Popover
+                        isOpen={
+                          loadingDeleteLogo ? loadingDeleteLogo : isOpenPopover
+                        }
+                        onClose={onClosePopover}
+                        placement="left"
+                      >
+                        <PopoverTrigger>
+                          <Button onClick={onTogglePopover}>Remove logo</Button>
+                        </PopoverTrigger>
+                        <PopoverContent>
+                          <PopoverHeader fontWeight="semibold">
+                            Confirm delete logo?
+                          </PopoverHeader>
+                          <PopoverArrow />
+                          <PopoverCloseButton />
+                          <PopoverBody>
+                            Are you sure you want to delete the election&apos;s
+                            logo?
+                          </PopoverBody>
+                          <PopoverFooter
+                            display="flex"
+                            justifyContent="flex-end"
+                          >
+                            <ButtonGroup size="sm">
+                              <Button
+                                disabled={loadingDeleteLogo}
+                                variant="outline"
+                                onClick={onClosePopover}
+                              >
+                                Cancel
+                              </Button>
+                              <Button
+                                colorScheme="red"
+                                isLoading={loadingDeleteLogo}
+                                onClick={async () => {
+                                  setLoadingDeleteLogo(true);
+                                  await updateDoc(
+                                    doc(firestore, "elections", election.uid),
+                                    {
+                                      logoUrl: "",
+                                      updatedAt: Timestamp.now(),
+                                    }
+                                  ).then(async () => {
+                                    await deleteObject(
+                                      ref(
+                                        storage,
+                                        `elections/${election.uid}/photo`
+                                      )
+                                    );
+                                  });
+                                  setLoadingDeleteLogo(false);
+                                }}
+                              >
+                                Delete
+                              </Button>
+                            </ButtonGroup>
+                          </PopoverFooter>
+                        </PopoverContent>
+                      </Popover>
+                    </>
+                  )}
+                </HStack>
               </FormControl>
 
               <Flex justifyContent="space-between" width="full">

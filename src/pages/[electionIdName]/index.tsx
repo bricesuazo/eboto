@@ -153,6 +153,16 @@ const ElectionPage = ({
           </Center>
         ) : (
           <>
+            {election.logoUrl && election.logoUrl.length && (
+              <Box position="relative" width={32} height={32} marginX="auto">
+                <Image
+                  src={election.logoUrl}
+                  alt={`${election.name} logo`}
+                  fill
+                  style={{ objectFit: "cover", objectPosition: "center" }}
+                />
+              </Box>
+            )}
             <Text fontSize="3xl" fontWeight="bold">
               {election.name}
             </Text>
