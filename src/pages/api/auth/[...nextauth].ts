@@ -32,7 +32,8 @@ export default NextAuth({
           if (admin.password === password) {
             return JSON.parse(JSON.stringify(admin));
           } else {
-            throw new Error("Invalid password");
+            return Promise.reject(new Error("Invalid password"));
+            // return new Error("Invalid password");
           }
         }
 
@@ -66,12 +67,15 @@ export default NextAuth({
             (voter) => voter.password === password
           )[0];
           if (!voter) {
+            return Promise.reject(new Error("Invalid credentials"));
+
             throw new Error("Invalid credentials");
           }
           return voter;
         }
 
         if (adminSnaphot.docs.length === 0 && voters.length === 0) {
+          return Promise.reject(new Error("No user found"));
           throw new Error("No user found");
         }
       },
@@ -133,7 +137,7 @@ export default NextAuth({
   pages: {
     signIn: "/signin",
     signOut: "/signout",
-    error: "/error", // Error code passed in query string as ?error=
+    // error: "/error", // Error code passed in query string as ?error=
     verifyRequest: "/verify-request", // (used for check email message)
     newUser: "/new-user", // New users will be directed here on first sign in (leave the property out if not of interest)
   },

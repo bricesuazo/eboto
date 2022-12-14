@@ -37,6 +37,7 @@ import {
 } from "firebase/firestore";
 import { firestore } from "../firebase/firebase";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 const SigninPage: NextPage = () => {
   const [credentials, setCredentials] = useState<{
@@ -45,7 +46,7 @@ const SigninPage: NextPage = () => {
   }>({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const router = useRouter();
   return (
     <>
       <Head>
@@ -95,13 +96,16 @@ const SigninPage: NextPage = () => {
                   return;
                 }
 
-                await signIn<"credentials">("credentials", {
+                const res = await signIn<"credentials">("credentials", {
                   email: credentials.email.trim().toLocaleLowerCase(),
                   password: credentials.password,
-                }).then((res) => {
-                  setError(res?.error || null);
+                  redirect: false,
                 });
-
+                if (res?.error) {
+                  setError(res?.error);
+                } else {
+                  router.reload();
+                }
                 setLoading(false);
               }}
             >
