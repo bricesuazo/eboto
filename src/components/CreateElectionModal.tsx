@@ -24,7 +24,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  RadioProps,
   useRadio,
   useRadioGroup,
 } from "@chakra-ui/react";
@@ -33,20 +32,19 @@ import {
   arrayUnion,
   collection,
   doc,
-  setDoc,
   Timestamp,
   updateDoc,
 } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
-import { electionType, partylistType } from "../types/typings";
-import { firestore } from "../firebase/firebase";
-import { v4 as uuidv4 } from "uuid";
-import Router from "next/router";
 import { useSession } from "next-auth/react";
-import reloadSession from "../utils/reloadSession";
-import isElectionIdNameExists from "../utils/isElectionIdNameExists";
+import Router from "next/router";
+import { useEffect, useState } from "react";
 import ReactDatePicker from "react-datepicker";
 import slugify from "react-slugify";
+import { v4 as uuidv4 } from "uuid";
+import { firestore } from "../firebase/firebase";
+import { electionType, partylistType } from "../types/typings";
+import isElectionIdNameExists from "../utils/isElectionIdNameExists";
+import reloadSession from "../utils/reloadSession";
 
 const CreateElectionModal = ({
   isOpen,

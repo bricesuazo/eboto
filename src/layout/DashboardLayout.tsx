@@ -8,7 +8,6 @@ import {
   HStack,
   Icon,
   IconButton,
-  Input,
   Select,
   Show,
   Stack,
@@ -17,34 +16,27 @@ import {
   useColorMode,
   useDisclosure,
 } from "@chakra-ui/react";
-import { PlusIcon } from "@heroicons/react/24/solid";
-import {
-  collection,
-  getDocs,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
-import CreateElectionModal from "../components/CreateElectionModal";
-import DashboardSidebar, {
-  dashboardSidebar,
-} from "../components/DashboardSidebar";
-import { firestore } from "../firebase/firebase";
-import { useRouter } from "next/router";
-import { useRouter as useRouterNavigation } from "next/navigation";
-import AddVoterModal from "../components/AddVoterModal";
-import { UserPlusIcon } from "@heroicons/react/24/solid";
-import { useEffect, useState } from "react";
 import {
   ArrowPathIcon,
   ArrowUpOnSquareIcon,
 } from "@heroicons/react/24/outline";
-import { adminType, electionType, positionType } from "../types/typings";
-import AddPartylistModal from "../components/AddPartylistModal";
-import AddPositionModal from "../components/AddPositionModal";
+import { PlusIcon, UserPlusIcon } from "@heroicons/react/24/solid";
+import { collection, query, where } from "firebase/firestore";
+import { useRouter as useRouterNavigation } from "next/navigation";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import Moment from "react-moment";
 import { useFirestoreCollectionData } from "reactfire";
+import AddPartylistModal from "../components/AddPartylistModal";
+import AddPositionModal from "../components/AddPositionModal";
+import AddVoterModal from "../components/AddVoterModal";
+import CreateElectionModal from "../components/CreateElectionModal";
+import DashboardSidebar, {
+  dashboardSidebar,
+} from "../components/DashboardSidebar";
 import UploadBulkVotersModal from "../components/UploadBulkVotersModal";
+import { firestore } from "../firebase/firebase";
+import { adminType, electionType } from "../types/typings";
 
 const DashboardLayout = ({
   children,

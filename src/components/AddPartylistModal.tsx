@@ -15,18 +15,18 @@ import {
   Stack,
   Tooltip,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { electionType, partylistType } from "../types/typings";
-import { v4 as uuidv4 } from "uuid";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import {
   addDoc,
   collection,
   doc,
-  updateDoc,
   Timestamp,
+  updateDoc,
 } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { firestore } from "../firebase/firebase";
+import { electionType, partylistType } from "../types/typings";
 
 const AddPartylistModal = ({
   isOpen,

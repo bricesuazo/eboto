@@ -17,7 +17,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Spinner,
   Stack,
   Tooltip,
 } from "@chakra-ui/react";
@@ -27,17 +26,16 @@ import { electionType, voterType } from "../types/typings";
 
 import {
   addDoc,
-  arrayUnion,
   collection,
   doc,
   Timestamp,
   updateDoc,
 } from "firebase/firestore";
-import { firestore } from "../firebase/firebase";
 import { v4 as uuidv4 } from "uuid";
-import isVoterExists from "../utils/isVoterExists";
-import isAdminExists from "../utils/isAdminExists";
+import { firestore } from "../firebase/firebase";
 import generatePassword from "../utils/generatePassword";
+import isAdminExists from "../utils/isAdminExists";
+import isVoterExists from "../utils/isVoterExists";
 
 const AddVoterModal = ({
   isOpen,

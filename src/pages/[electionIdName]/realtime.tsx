@@ -4,26 +4,18 @@ import {
   SimpleGrid,
   Spinner,
   Table,
-  TableCaption,
-  TableContainer,
   Tbody,
   Td,
   Text,
-  Tfoot,
   Th,
   Thead,
   Tr,
 } from "@chakra-ui/react";
 import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
-import type {
-  GetServerSideProps,
-  GetServerSidePropsContext,
-  NextPage,
-} from "next";
+import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { Session } from "next-auth";
 import { getSession } from "next-auth/react";
 import Head from "next/head";
-import React from "react";
 import { useFirestoreCollectionData } from "reactfire";
 import { firestore } from "../../firebase/firebase";
 import { candidateType, electionType, positionType } from "../../types/typings";

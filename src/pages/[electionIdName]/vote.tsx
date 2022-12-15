@@ -1,12 +1,3 @@
-import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
-import { GetServerSideProps } from "next";
-import {
-  candidateType,
-  electionType,
-  partylistType,
-  positionType,
-} from "../../types/typings";
-import { firestore } from "../../firebase/firebase";
 import {
   Box,
   Button,
@@ -15,17 +6,24 @@ import {
   Stack,
   Text,
   useDisclosure,
-  useRadioGroup,
 } from "@chakra-ui/react";
-import CandidateCard from "../../components/CandidateCard";
-import { useState } from "react";
-import ConfirmVoteModal from "../../components/ConfirmVoteModal";
-import Head from "next/head";
-import Card from "../../components/Card";
 import { FingerPrintIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
-import isElectionOngoing from "../../utils/isElectionOngoing";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
+import { GetServerSideProps } from "next";
 import { getSession } from "next-auth/react";
+import Head from "next/head";
+import Link from "next/link";
+import { useState } from "react";
+import Card from "../../components/Card";
+import ConfirmVoteModal from "../../components/ConfirmVoteModal";
+import { firestore } from "../../firebase/firebase";
+import {
+  candidateType,
+  electionType,
+  partylistType,
+  positionType,
+} from "../../types/typings";
+import isElectionOngoing from "../../utils/isElectionOngoing";
 
 interface VotePageProps {
   election: electionType;

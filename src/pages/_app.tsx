@@ -1,16 +1,16 @@
-import type { AppProps } from "next/app";
 import { ChakraProvider } from "@chakra-ui/react";
-import Header from "../components/Header";
-import theme from "../theme";
-import Head from "next/head";
+import { Inter } from "@next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
-import { FirebaseAppProvider, FirestoreProvider } from "reactfire";
-import { app } from "../firebase/firebase";
-import { Analytics } from "@vercel/analytics/react";
-import { Inter, Anton } from "@next/font/google";
+import type { AppProps } from "next/app";
+import Head from "next/head";
 import "react-datepicker/dist/react-datepicker.css";
+import { FirebaseAppProvider } from "reactfire";
 import Footer from "../components/Footer";
+import Header from "../components/Header";
+import { app } from "../firebase/firebase";
+import theme from "../theme";
 
 // const anton = Anton({ weight: "400" });
 const inter = Inter();

@@ -1,6 +1,5 @@
 import {
   Box,
-  Center,
   Container,
   HStack,
   Stack,

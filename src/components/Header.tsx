@@ -2,7 +2,6 @@ import {
   Avatar,
   Box,
   Button,
-  Center,
   Container,
   Hide,
   HStack,
@@ -11,31 +10,27 @@ import {
   MenuButton,
   MenuDivider,
   MenuItem,
-  MenuItemProps,
   MenuList,
   Show,
   Spinner,
-  Stack,
-  Switch,
   Text,
-  useColorMode,
+  useColorMode
 } from "@chakra-ui/react";
-import Link from "next/link";
-import { ArrowRightIcon, MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 import {
   ArchiveBoxArrowDownIcon,
-  ArrowDownIcon,
   ArrowRightOnRectangleIcon,
   ChartBarIcon,
-  ChevronDownIcon,
+  ChevronDownIcon
 } from "@heroicons/react/24/outline";
-import { useSession, signOut } from "next-auth/react";
-import React, { ReactNode, useEffect, useState } from "react";
-import { electionType } from "../types/typings";
+import { ArrowRightIcon } from "@heroicons/react/24/solid";
 import { doc, getDoc } from "firebase/firestore";
-import { firestore } from "../firebase/firebase";
-import { useRouter } from "next/router";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { firestore } from "../firebase/firebase";
+import { electionType } from "../types/typings";
 
 const Header = () => {
   const { colorMode, toggleColorMode } = useColorMode();

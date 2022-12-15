@@ -2,7 +2,11 @@ import {
   Box,
   Button,
   Center,
+  Flex,
+  Hide,
   HStack,
+  Icon,
+  Image,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -15,31 +19,19 @@ import {
   Text,
   useDisclosure,
   WrapItem,
-  Image,
-  Flex,
-  Icon,
-  Grid,
-  GridItem,
-  Hide,
-  Show,
 } from "@chakra-ui/react";
-import {
-  FlagIcon,
-  UserCircleIcon,
-  UserPlusIcon,
-} from "@heroicons/react/24/outline";
+import { UserCircleIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 import {
   collection,
+  deleteDoc,
+  doc,
   getDocs,
+  orderBy,
   query,
   where,
-  doc,
-  deleteDoc,
-  orderBy,
 } from "firebase/firestore";
 import { deleteObject, ref } from "firebase/storage";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { Session } from "next-auth";
 import { getSession } from "next-auth/react";
 import Head from "next/head";
 import { useEffect, useState } from "react";
@@ -49,11 +41,11 @@ import EditCandidateModal from "../../../components/EditCandidateModal";
 import { firestore, storage } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import {
-  electionType,
+  adminType,
   candidateType,
+  electionType,
   partylistType,
   positionType,
-  adminType,
 } from "../../../types/typings";
 import isAdminOwnsTheElection from "../../../utils/isAdminOwnsTheElection";
 

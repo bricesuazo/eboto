@@ -29,34 +29,34 @@ import {
   Tooltip,
   useColorMode,
 } from "@chakra-ui/react";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  query,
+  Timestamp,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import Image from "next/image";
 import { useEffect, useState } from "react";
+import ReactDatePicker from "react-datepicker";
+import { useDropzone } from "react-dropzone";
+import slugify from "react-slugify";
+import { v4 as uuidv4 } from "uuid";
+import { firestore, storage } from "../firebase/firebase";
 import {
   candidateType,
   electionType,
   partylistType,
   positionType,
 } from "../types/typings";
-import { v4 as uuidv4 } from "uuid";
-import { TrashIcon } from "@heroicons/react/24/outline";
-import {
-  addDoc,
-  collection,
-  doc,
-  updateDoc,
-  Timestamp,
-  getDocs,
-  where,
-  query,
-} from "firebase/firestore";
-import { firestore, storage } from "../firebase/firebase";
 import capitalizeFirstLetter from "../utils/capitalizeFirstLetter";
-import ReactDatePicker from "react-datepicker";
-import slugify from "react-slugify";
-import { useDropzone } from "react-dropzone";
-import Image from "next/image";
 import formatBytes from "../utils/formatBytes";
 import compress from "../utils/imageCompressor";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
 const AddCandidateModal = ({
   isOpen,

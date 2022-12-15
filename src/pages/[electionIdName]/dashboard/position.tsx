@@ -1,6 +1,7 @@
 import {
   Button,
   Center,
+  Flex,
   HStack,
   Popover,
   PopoverArrow,
@@ -14,28 +15,21 @@ import {
   Text,
   useDisclosure,
   WrapItem,
-  Image,
-  Flex,
 } from "@chakra-ui/react";
 import {
   collection,
+  deleteDoc,
+  doc,
   getDocs,
+  orderBy,
   query,
   where,
-  doc,
-  deleteDoc,
-  orderBy,
 } from "firebase/firestore";
-import type {
-  GetServerSideProps,
-  GetServerSidePropsContext,
-  NextPage,
-} from "next";
-import { Session } from "next-auth";
+import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import { useFirestoreCollectionData, useFirestoreDocData } from "reactfire";
+import { useFirestoreCollectionData } from "reactfire";
 import EditPositionModal from "../../../components/EditPositionModal";
 import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";

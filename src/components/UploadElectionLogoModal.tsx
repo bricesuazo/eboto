@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Center,
-  HStack,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -14,15 +13,15 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
+import { doc, Timestamp, updateDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import Image from "next/image";
-import { SyntheticEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { firestore, storage } from "../firebase/firebase";
 import { electionType } from "../types/typings";
 import formatBytes from "../utils/formatBytes";
 import compress from "../utils/imageCompressor";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { firestore, storage } from "../firebase/firebase";
-import { doc, Timestamp, updateDoc } from "firebase/firestore";
 
 const UploadElectionLogoModal = ({
   election,

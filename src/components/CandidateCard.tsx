@@ -1,4 +1,4 @@
-import { Box, Center, useRadio } from "@chakra-ui/react";
+import { Box, useRadio } from "@chakra-ui/react";
 
 const CandidateCard = (props: any) => {
   const { getInputProps, getCheckboxProps } = useRadio(props);

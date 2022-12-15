@@ -12,11 +12,11 @@ import {
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { arrayRemove, doc, writeBatch } from "firebase/firestore";
 import { Session } from "next-auth";
-import { useState } from "react";
-import { electionType } from "../types/typings";
 import Router from "next/router";
-import reloadSession from "../utils/reloadSession";
+import { useState } from "react";
 import { firestore } from "../firebase/firebase";
+import { electionType } from "../types/typings";
+import reloadSession from "../utils/reloadSession";
 
 const DeleteElectionModal = ({
   election,

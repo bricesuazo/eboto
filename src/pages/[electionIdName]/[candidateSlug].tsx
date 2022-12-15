@@ -1,19 +1,3 @@
-import type { GetServerSideProps, GetServerSidePropsContext } from "next";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
-import { firestore } from "../../firebase/firebase";
-import {
-  candidateType,
-  electionType,
-  partylistType,
-  positionType,
-} from "../../types/typings";
 import {
   AspectRatio,
   Box,
@@ -21,7 +5,6 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   Button,
-  Center,
   Container,
   Flex,
   Hide,
@@ -31,14 +14,23 @@ import {
   Text,
   UnorderedList,
 } from "@chakra-ui/react";
-import Image from "next/image";
 import { ChevronRightIcon, ShareIcon } from "@heroicons/react/24/outline";
-import { FacebookShareButton } from "next-share";
-import Moment from "react-moment";
-import Head from "next/head";
-import { getSession } from "next-auth/react";
-import Link from "next/link";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { Session } from "next-auth";
+import { getSession } from "next-auth/react";
+import { FacebookShareButton } from "next-share";
+import Head from "next/head";
+import Image from "next/image";
+import Link from "next/link";
+import Moment from "react-moment";
+import { firestore } from "../../firebase/firebase";
+import {
+  candidateType,
+  electionType,
+  partylistType,
+  positionType,
+} from "../../types/typings";
 
 const CandidateCredentialPage = ({
   candidate,

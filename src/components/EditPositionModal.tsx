@@ -15,11 +15,11 @@ import {
   Stack,
   Tooltip,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { electionType, positionType } from "../types/typings";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { doc, Timestamp, updateDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
 import { firestore } from "../firebase/firebase";
+import { electionType, positionType } from "../types/typings";
 
 const EditPositionModal = ({
   isOpen,

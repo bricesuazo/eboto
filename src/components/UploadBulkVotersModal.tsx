@@ -23,24 +23,23 @@ import {
   useColorMode,
   useToast,
 } from "@chakra-ui/react";
-import { useDropzone } from "react-dropzone";
-import NextLink from "next/link";
-import { useEffect, useState } from "react";
-import readXlsxFile, { Row } from "read-excel-file";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
-import { electionType } from "../types/typings";
 import {
   collection,
   doc,
   getDocs,
   query,
-  runTransaction,
   Timestamp,
   where,
   writeBatch,
 } from "firebase/firestore";
-import { firestore } from "../firebase/firebase";
+import NextLink from "next/link";
+import { useEffect, useState } from "react";
+import { useDropzone } from "react-dropzone";
+import readXlsxFile, { Row } from "read-excel-file";
 import { v4 as uuidv4 } from "uuid";
+import { firestore } from "../firebase/firebase";
+import { electionType } from "../types/typings";
 import generatePassword from "../utils/generatePassword";
 
 interface UploadBulkVotersModalProps {

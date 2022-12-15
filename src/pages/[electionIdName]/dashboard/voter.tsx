@@ -1,7 +1,6 @@
 import {
   Box,
   Center,
-  Flex,
   Hide,
   HStack,
   Icon,
@@ -15,7 +14,6 @@ import {
   Tbody,
   Td,
   Text,
-  Tfoot,
   Th,
   Thead,
   Tooltip,
@@ -29,17 +27,17 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/solid";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { getSession } from "next-auth/react";
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import { adminType, electionType, voterType } from "../../../types/typings";
-import DashboardLayout from "../../../layout/DashboardLayout";
+import { useFirestoreCollectionData } from "reactfire";
+import DeleteVoterModal from "../../../components/DeleteVoterModal";
 import EditVoterModal from "../../../components/EditVoterModal";
 import { firestore } from "../../../firebase/firebase";
-import { getDocs, query, where, collection, orderBy } from "firebase/firestore";
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import DeleteVoterModal from "../../../components/DeleteVoterModal";
-import { useFirestoreCollectionData } from "reactfire";
-import { getSession } from "next-auth/react";
+import DashboardLayout from "../../../layout/DashboardLayout";
+import { adminType, electionType, voterType } from "../../../types/typings";
 import isAdminOwnsTheElection from "../../../utils/isAdminOwnsTheElection";
 
 const VoterPage = ({

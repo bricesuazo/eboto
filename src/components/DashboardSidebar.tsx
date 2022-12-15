@@ -1,13 +1,4 @@
-import {
-  Box,
-  Button,
-  Center,
-  Divider,
-  Flex,
-  Stack,
-  Text,
-  useColorMode,
-} from "@chakra-ui/react";
+import { Button, Divider, Stack, Text, useColorMode } from "@chakra-ui/react";
 import {
   ChartBarIcon as ChartBarIconOutline,
   CheckCircleIcon as CheckCircleIconOutline,

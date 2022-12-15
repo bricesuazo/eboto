@@ -1,43 +1,35 @@
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  Box,
+  Button,
+  Container,
+  Flex,
+  FormControl,
+  FormLabel,
+  Hide,
+  Input,
+  Link,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import type {
   GetServerSideProps,
   GetServerSidePropsContext,
   NextPage,
 } from "next";
 import NextLink from "next/link";
-import {
-  Button,
-  Center,
-  Container,
-  FormControl,
-  FormLabel,
-  Input,
-  Stack,
-  Link,
-  Flex,
-  Alert,
-  AlertIcon,
-  AlertDescription,
-  Box,
-  Hide,
-  Text,
-} from "@chakra-ui/react";
 
 import { useState } from "react";
 
 import Head from "next/head";
 
+import { doc, getDoc } from "firebase/firestore";
 import { getSession, signIn } from "next-auth/react";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
-import { firestore } from "../firebase/firebase";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { firestore } from "../firebase/firebase";
 
 const SigninPage: NextPage = () => {
   const [credentials, setCredentials] = useState<{

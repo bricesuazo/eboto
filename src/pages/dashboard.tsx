@@ -1,14 +1,3 @@
-import { firestore } from "../firebase/firebase";
-import type { GetServerSideProps, GetServerSidePropsContext } from "next";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
-import { getSession } from "next-auth/react";
 import {
   Box,
   Center,
@@ -19,12 +8,16 @@ import {
   useColorMode,
   useDisclosure,
 } from "@chakra-ui/react";
-import { electionType } from "../types/typings";
+import { ChevronRightIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import type { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { getSession } from "next-auth/react";
+import Head from "next/head";
 import Link from "next/link";
 import Moment from "react-moment";
-import { ChevronRightIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 import CreateElectionModal from "../components/CreateElectionModal";
-import Head from "next/head";
+import { firestore } from "../firebase/firebase";
+import { electionType } from "../types/typings";
 
 const DashboardPage = ({ elections }: { elections: electionType[] }) => {
   const {

@@ -1,9 +1,13 @@
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
   Box,
   Button,
   Flex,
   FormControl,
   FormLabel,
+  HStack,
   IconButton,
   Input,
   Modal,
@@ -21,17 +25,11 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Stack,
-  Switch,
   Tooltip,
-  HStack,
   WrapItem,
-  Alert,
-  AlertIcon,
-  AlertDescription,
 } from "@chakra-ui/react";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import {
-  arrayRemove,
   collection,
   deleteDoc,
   doc,

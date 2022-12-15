@@ -1,16 +1,9 @@
-import type {
-  GetServerSideProps,
-  GetServerSidePropsContext,
-  NextPage,
-} from "next";
-import NextLink from "next/link";
 import {
   Alert,
   AlertDescription,
   AlertIcon,
   Box,
   Button,
-  Center,
   Container,
   Flex,
   FormControl,
@@ -22,24 +15,27 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { useState } from "react";
-import { firestore } from "../firebase/firebase";
-import Head from "next/head";
 import {
   addDoc,
   collection,
   doc,
   getDoc,
-  getDocs,
-  query,
   setDoc,
   Timestamp,
-  where,
 } from "firebase/firestore";
-import { v4 as uuidv4 } from "uuid";
+import type {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  NextPage,
+} from "next";
 import { getSession, signIn } from "next-auth/react";
-import isAdminExists from "../utils/isAdminExists";
+import Head from "next/head";
 import Image from "next/image";
+import NextLink from "next/link";
+import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { firestore } from "../firebase/firebase";
+import isAdminExists from "../utils/isAdminExists";
 
 const SignupPage: NextPage = () => {
   const [error, setError] = useState<string | null>(null);

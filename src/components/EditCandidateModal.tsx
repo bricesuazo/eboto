@@ -29,14 +29,8 @@ import {
   Tooltip,
   useColorMode,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import {
-  electionType,
-  candidateType,
-  partylistType,
-  positionType,
-} from "../types/typings";
 import { TrashIcon } from "@heroicons/react/24/outline";
+import deepEqual from "deep-equal";
 import {
   collection,
   doc,
@@ -46,20 +40,26 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { firestore, storage } from "../firebase/firebase";
-import capitalizeFirstLetter from "../utils/capitalizeFirstLetter";
-import ReactDatePicker from "react-datepicker";
-import { v4 as uuidv4 } from "uuid";
-import deepEqual from "deep-equal";
-import { useDropzone } from "react-dropzone";
-import Image from "next/image";
-import formatBytes from "../utils/formatBytes";
 import {
   deleteObject,
   getDownloadURL,
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import ReactDatePicker from "react-datepicker";
+import { useDropzone } from "react-dropzone";
+import { v4 as uuidv4 } from "uuid";
+import { firestore, storage } from "../firebase/firebase";
+import {
+  candidateType,
+  electionType,
+  partylistType,
+  positionType,
+} from "../types/typings";
+import capitalizeFirstLetter from "../utils/capitalizeFirstLetter";
+import formatBytes from "../utils/formatBytes";
 import compress from "../utils/imageCompressor";
 
 const EditCandidateModal = ({

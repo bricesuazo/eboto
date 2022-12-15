@@ -7,10 +7,10 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
+import { EnvelopeIcon, PhoneIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
-import { PhoneIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
-import { BsFacebook, BsTwitter, BsYoutube, BsGithub } from "react-icons/bs";
+import { BsFacebook, BsGithub, BsTwitter, BsYoutube } from "react-icons/bs";
 
 const Footer = () => {
   return (

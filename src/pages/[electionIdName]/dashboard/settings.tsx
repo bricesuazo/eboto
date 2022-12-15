@@ -1,57 +1,57 @@
 import {
+  Box,
   Button,
+  ButtonGroup,
+  Flex,
   FormControl,
+  FormErrorMessage,
   FormHelperText,
   FormLabel,
+  HStack,
   Input,
   InputGroup,
   InputLeftAddon,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverFooter,
+  PopoverHeader,
+  PopoverTrigger,
+  Select,
   Spinner,
   Stack,
-  useDisclosure,
-  Flex,
-  Select,
-  FormErrorMessage,
-  Box,
   Text,
-  HStack,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverCloseButton,
-  PopoverArrow,
-  PopoverFooter,
-  ButtonGroup,
-  PopoverBody,
-  PopoverHeader,
+  useDisclosure,
 } from "@chakra-ui/react";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import deepEqual from "deep-equal";
 import {
   collection,
-  query,
-  where,
-  updateDoc,
   doc,
   getDocs,
+  query,
   Timestamp,
+  updateDoc,
+  where,
 } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { getSession } from "next-auth/react";
 import Head from "next/head";
+import Image from "next/image";
 import { useState } from "react";
-import { adminType, electionType } from "../../../types/typings";
+import ReactDatePicker from "react-datepicker";
+import slugify from "react-slugify";
+import DeleteElectionModal from "../../../components/DeleteElectionModal";
+import UploadElectionLogoModal from "../../../components/UploadElectionLogoModal";
 import { firestore, storage } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
-import { TrashIcon } from "@heroicons/react/24/outline";
-import { getSession } from "next-auth/react";
-import isElectionIdNameExists from "../../../utils/isElectionIdNameExists";
-import ReactDatePicker from "react-datepicker";
-import isElectionOngoing from "../../../utils/isElectionOngoing";
-import DeleteElectionModal from "../../../components/DeleteElectionModal";
-import slugify from "react-slugify";
-import deepEqual from "deep-equal";
+import { adminType, electionType } from "../../../types/typings";
 import isAdminOwnsTheElection from "../../../utils/isAdminOwnsTheElection";
-import Image from "next/image";
-import UploadElectionLogoModal from "../../../components/UploadElectionLogoModal";
-import { deleteObject, ref } from "firebase/storage";
+import isElectionIdNameExists from "../../../utils/isElectionIdNameExists";
+import isElectionOngoing from "../../../utils/isElectionOngoing";
 
 interface SettingsPageProps {
   election: electionType;
