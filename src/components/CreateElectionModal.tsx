@@ -84,8 +84,12 @@ const CreateElectionModal = ({
     error: string;
   } | null>(null);
   const { data: session } = useSession();
+  const now = new Date();
 
-  const [startDate, setStartDate] = useState<Date | null>(new Date());
+  now.setHours(now.getHours() + 1);
+  now.setMinutes(0, 0, 0);
+
+  const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date | null>(null);
 
   const options = [
@@ -359,15 +363,14 @@ const CreateElectionModal = ({
             <FormControl mt={4} isRequired>
               <FormLabel>Election Date</FormLabel>
               <ReactDatePicker
-                selected={startDate}
-                minDate={new Date()}
+                selected={now}
+                minDate={now}
                 timeIntervals={60}
                 onChange={(date) => {
                   if (date) {
                     setStartDate(date);
                     setError(null);
                   } else {
-                    setStartDate(null);
                     setEndDate(null);
                   }
                 }}
@@ -381,7 +384,6 @@ const CreateElectionModal = ({
                 dateFormat="MMMM d, yyyy h:mm aa"
                 disabledKeyboardNavigation
                 withPortal
-                isClearable
                 placeholderText="Select election start date"
               />
               <ReactDatePicker
