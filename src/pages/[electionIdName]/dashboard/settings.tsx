@@ -52,6 +52,7 @@ import { adminType, electionType } from "../../../types/typings";
 import isAdminOwnsTheElection from "../../../utils/isAdminOwnsTheElection";
 import isElectionIdNameExists from "../../../utils/isElectionIdNameExists";
 import isElectionOngoing from "../../../utils/isElectionOngoing";
+import { getHourByNumber } from "../../../utils/getHourByNumber";
 
 interface SettingsPageProps {
   election: electionType;
@@ -78,6 +79,8 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
     electionEndDate: initialElection.electionEndDate,
     publicity: initialElection.publicity,
     logoUrl: initialElection.logoUrl,
+    votingStartDate: initialElection.votingStartDate,
+    votingEndDate: initialElection.votingEndDate,
   };
 
   const [settings, setSettings] = useState(initialState);
@@ -101,7 +104,6 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
         election={election}
         isOpen={isOpenLogo}
         onClose={onCloseLogo}
-        // session={session}
       />
       <DeleteElectionModal
         election={election}
@@ -290,6 +292,61 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                   You can&apos;t change the dates once the election is ongoing.
                 </FormHelperText>
               </FormControl>
+
+              <FormControl isRequired>
+                <Stack>
+                  <FormLabel>Voting Hours</FormLabel>
+                  <HStack alignItems="center">
+                    <Select
+                      value={settings.votingStartDate}
+                      onChange={(e) =>
+                        setSettings({
+                          ...settings,
+                          votingStartDate: parseInt(
+                            e.target.value
+                          ) as typeof settings.votingStartDate,
+                        })
+                      }
+                    >
+                      {Array.from(Array(24).keys()).map((hour) => (
+                        <option value={hour}>{getHourByNumber(hour)}</option>
+                      ))}
+                    </Select>
+                    <Select
+                      value={settings.votingEndDate}
+                      onChange={(e) =>
+                        setSettings({
+                          ...election,
+                          votingEndDate: parseInt(
+                            e.target.value
+                          ) as typeof election.votingEndDate,
+                        })
+                      }
+                    >
+                      {Array.from(Array(24).keys()).map((hour) => (
+                        <option
+                          value={hour}
+                          disabled={election.votingStartDate >= hour}
+                        >
+                          {getHourByNumber(hour)}
+                        </option>
+                      ))}
+                    </Select>
+                  </HStack>
+                  <Text textAlign="center">
+                    {getHourByNumber(settings.votingStartDate)} -{" "}
+                    {getHourByNumber(settings.votingEndDate)} (
+                    {settings.votingEndDate - settings.votingStartDate < 0
+                      ? settings.votingStartDate - settings.votingEndDate
+                      : settings.votingEndDate - settings.votingStartDate}{" "}
+                    {settings.votingEndDate - settings.votingStartDate > 1
+                      ? "hours"
+                      : "hour"}
+                    )
+                  </Text>
+                </Stack>
+              </FormControl>
+
               <FormControl isRequired>
                 <FormLabel>Election Publicity</FormLabel>
                 <Select
@@ -432,7 +489,10 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                       settings.name.trim() === initialElection.name.trim() &&
                       settings.electionIdName.trim() ===
                         initialElection.electionIdName.trim() &&
-                      settings.publicity === initialElection.publicity)
+                      settings.publicity === initialElection.publicity &&
+                      settings.votingStartDate ===
+                        initialElection.votingStartDate &&
+                      settings.votingEndDate === initialElection.votingEndDate)
                   }
                 >
                   Save

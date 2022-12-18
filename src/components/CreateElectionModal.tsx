@@ -14,6 +14,7 @@ import {
   FormErrorMessage,
   FormHelperText,
   FormLabel,
+  HStack,
   Input,
   InputGroup,
   InputLeftAddon,
@@ -24,6 +25,9 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Select,
+  Stack,
+  Text,
   useRadio,
   useRadioGroup,
 } from "@chakra-ui/react";
@@ -45,6 +49,7 @@ import { firestore } from "../firebase/firebase";
 import { electionType, partylistType } from "../types/typings";
 import isElectionIdNameExists from "../utils/isElectionIdNameExists";
 import reloadSession from "../utils/reloadSession";
+import { getHourByNumber } from "../utils/getHourByNumber";
 
 const CreateElectionModal = ({
   isOpen,
@@ -67,6 +72,8 @@ const CreateElectionModal = ({
     electionEndDate: Timestamp.now(),
     publicity: "private",
     logoUrl: null,
+    votingStartDate: 7,
+    votingEndDate: 19,
   });
   const initialPartylist: partylistType = {
     uid: "",
@@ -182,7 +189,13 @@ const CreateElectionModal = ({
   const group = getRootProps();
 
   useEffect(() => {
-    setElection({ ...election, name: "", electionIdName: "" });
+    setElection({
+      ...election,
+      name: "",
+      electionIdName: "",
+      votingStartDate: 7,
+      votingEndDate: 19,
+    });
     setStartDate(new Date());
     setEndDate(null);
     setError(null);
@@ -316,138 +329,195 @@ const CreateElectionModal = ({
           <ModalHeader>Create an election</ModalHeader>
           {!cantClose && <ModalCloseButton />}
           <ModalBody pb={6}>
-            <FormControl isRequired>
-              <FormLabel>Election Name</FormLabel>
-              <Input
-                placeholder="Election Name"
-                onChange={(e) => {
-                  setElection({
-                    ...election,
-                    name: e.target.value,
-                    electionIdName: slugify(e.target.value),
-                  });
-                }}
-                value={election.name}
-              />
-            </FormControl>
-
-            <FormControl
-              mt={4}
-              isRequired
-              isInvalid={error?.type === "electionIdName"}
-            >
-              <FormLabel>Election ID Name</FormLabel>
-              <InputGroup>
-                <InputLeftAddon>eboto-mo.com/</InputLeftAddon>
+            <Stack spacing={4}>
+              <FormControl isRequired>
+                <FormLabel>Election Name</FormLabel>
                 <Input
-                  placeholder="Election ID"
+                  placeholder="Election Name"
                   onChange={(e) => {
                     setElection({
                       ...election,
-                      electionIdName:
-                        election.electionIdName.charAt(
-                          election.electionIdName.length - 1
-                        ) === "-"
-                          ? e.target.value.trim()
-                          : e.target.value.replace(" ", "-"),
+                      name: e.target.value,
+                      electionIdName: slugify(e.target.value),
                     });
                   }}
-                  value={election.electionIdName}
+                  value={election.name}
                 />
-              </InputGroup>
-              {error?.type === "electionIdName" && (
-                <FormErrorMessage>{error.error}</FormErrorMessage>
-              )}
-            </FormControl>
+              </FormControl>
 
-            <FormControl mt={4} isRequired>
-              <FormLabel>Election Date</FormLabel>
-              <ReactDatePicker
-                selected={now}
-                minDate={now}
-                timeIntervals={60}
-                onChange={(date) => {
-                  if (date) {
-                    setStartDate(date);
-                    setError(null);
-                  } else {
-                    setEndDate(null);
-                  }
-                }}
-                filterTime={(time) => {
-                  const currentDate = new Date();
-                  const selectedDate = new Date(time);
-
-                  return currentDate.getTime() < selectedDate.getTime();
-                }}
-                showTimeSelect
-                dateFormat="MMMM d, yyyy h:mm aa"
-                disabledKeyboardNavigation
-                withPortal
-                placeholderText="Select election start date"
-              />
-              <ReactDatePicker
-                disabled={!startDate}
-                selected={endDate}
-                timeIntervals={60}
-                onChange={(date) => {
-                  setEndDate(date);
-                  setError(null);
-                }}
-                minDate={startDate}
-                filterTime={(time) => {
-                  const selectedDate = new Date(time);
-
-                  return startDate
-                    ? startDate.getTime() < selectedDate.getTime()
-                    : new Date().getTime() < selectedDate.getTime();
-                }}
-                showTimeSelect
-                dateFormat="MMMM d, yyyy h:mm aa"
-                disabledKeyboardNavigation
-                withPortal
-                isClearable
-                placeholderText="Select election end date"
-                highlightDates={startDate ? [startDate] : []}
-              />
-              <FormHelperText>
-                You can&apos;t change the dates once the election is ongoing.
-              </FormHelperText>
-            </FormControl>
-            {error?.type === "electionDates" && (
-              <Alert status="error" marginTop={4}>
-                <AlertIcon />
-                <AlertTitle>{error?.error}</AlertTitle>
-              </Alert>
-            )}
-            <Accordion allowMultiple mt={4}>
-              <AccordionItem border="none">
-                <AccordionButton
-                  px={0}
-                  py={2}
-                  _hover={{ backgroundColor: "transparent" }}
-                >
-                  <Box flex="1" textAlign="left">
-                    Election template
-                  </Box>
-                  <AccordionIcon />
-                </AccordionButton>
-                <AccordionPanel padding={2}>
-                  <Flex {...group} flexWrap="wrap" gap={2} userSelect="none">
-                    {options.map((option) => {
-                      const radio = getRadioProps({
-                        value: option.id.toString(),
+              <FormControl
+                isRequired
+                isInvalid={error?.type === "electionIdName"}
+              >
+                <FormLabel>Election ID Name</FormLabel>
+                <InputGroup>
+                  <InputLeftAddon>eboto-mo.com/</InputLeftAddon>
+                  <Input
+                    placeholder="Election ID"
+                    onChange={(e) => {
+                      setElection({
+                        ...election,
+                        electionIdName:
+                          election.electionIdName.charAt(
+                            election.electionIdName.length - 1
+                          ) === "-"
+                            ? e.target.value.trim()
+                            : e.target.value.replace(" ", "-"),
                       });
-                      return (
-                        <RadioCard key={option.id} {...radio}>
-                          {option.title}
-                        </RadioCard>
-                      );
-                    })}
-                  </Flex>
-                </AccordionPanel>
-              </AccordionItem>
-            </Accordion>
+                    }}
+                    value={election.electionIdName}
+                  />
+                </InputGroup>
+                {error?.type === "electionIdName" && (
+                  <FormErrorMessage>{error.error}</FormErrorMessage>
+                )}
+              </FormControl>
+
+              <FormControl isRequired>
+                <FormLabel>Election Date</FormLabel>
+                <ReactDatePicker
+                  selected={now}
+                  minDate={now}
+                  timeIntervals={60}
+                  onChange={(date) => {
+                    if (date) {
+                      setStartDate(date);
+                      setError(null);
+                    } else {
+                      setEndDate(null);
+                    }
+                  }}
+                  filterTime={(time) => {
+                    const currentDate = new Date();
+                    const selectedDate = new Date(time);
+
+                    return currentDate.getTime() < selectedDate.getTime();
+                  }}
+                  showTimeSelect
+                  dateFormat="MMMM d, yyyy h:mm aa"
+                  disabledKeyboardNavigation
+                  withPortal
+                  placeholderText="Select election start date"
+                />
+                <ReactDatePicker
+                  disabled={!startDate}
+                  selected={endDate}
+                  timeIntervals={60}
+                  onChange={(date) => {
+                    setEndDate(date);
+                    setError(null);
+                  }}
+                  minDate={startDate}
+                  filterTime={(time) => {
+                    const selectedDate = new Date(time);
+
+                    return startDate
+                      ? startDate.getTime() < selectedDate.getTime()
+                      : new Date().getTime() < selectedDate.getTime();
+                  }}
+                  showTimeSelect
+                  dateFormat="MMMM d, yyyy h:mm aa"
+                  disabledKeyboardNavigation
+                  withPortal
+                  isClearable
+                  placeholderText="Select election end date"
+                  highlightDates={startDate ? [startDate] : []}
+                />
+                <FormHelperText>
+                  You can&apos;t change the dates once the election is ongoing.
+                </FormHelperText>
+              </FormControl>
+              {error?.type === "electionDates" && (
+                <Alert status="error" marginTop={4}>
+                  <AlertIcon />
+                  <AlertTitle>{error?.error}</AlertTitle>
+                </Alert>
+              )}
+              <FormControl isRequired>
+                <FormLabel>Voting Hours</FormLabel>
+                <Stack>
+                  <HStack alignItems="center">
+                    <Select
+                      value={election.votingStartDate}
+                      onChange={(e) =>
+                        setElection({
+                          ...election,
+                          votingStartDate: parseInt(
+                            e.target.value
+                          ) as typeof election.votingStartDate,
+                          votingEndDate: (parseInt(e.target.value) < 23
+                            ? parseInt(e.target.value) + 1
+                            : 0) as typeof election.votingEndDate,
+                        })
+                      }
+                    >
+                      {Array.from(Array(24).keys()).map((hour) => (
+                        <option value={hour}>{getHourByNumber(hour)}</option>
+                      ))}
+                    </Select>
+                    <Select
+                      value={election.votingEndDate}
+                      onChange={(e) =>
+                        setElection({
+                          ...election,
+                          votingEndDate: parseInt(
+                            e.target.value
+                          ) as typeof election.votingEndDate,
+                        })
+                      }
+                    >
+                      {Array.from(Array(24).keys()).map((hour) => (
+                        <option
+                          value={hour}
+                          disabled={election.votingStartDate >= hour}
+                        >
+                          {getHourByNumber(hour)}
+                        </option>
+                      ))}
+                    </Select>
+                  </HStack>
+                  <Text textAlign="center">
+                    {getHourByNumber(election.votingStartDate)} -{" "}
+                    {getHourByNumber(election.votingEndDate)} (
+                    {election.votingEndDate - election.votingStartDate < 0
+                      ? election.votingStartDate - election.votingEndDate
+                      : election.votingEndDate - election.votingStartDate}{" "}
+                    {election.votingEndDate - election.votingStartDate > 1
+                      ? "hours"
+                      : "hour"}
+                    )
+                  </Text>
+                </Stack>
+              </FormControl>
+              <Accordion allowMultiple>
+                <AccordionItem border="none">
+                  <AccordionButton
+                    px={0}
+                    py={2}
+                    _hover={{ backgroundColor: "transparent" }}
+                  >
+                    <Box flex="1" textAlign="left">
+                      Election template
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel padding={2}>
+                    <Flex {...group} flexWrap="wrap" gap={2} userSelect="none">
+                      {options.map((option) => {
+                        const radio = getRadioProps({
+                          value: option.id.toString(),
+                        });
+                        return (
+                          <RadioCard key={option.id} {...radio}>
+                            {option.title}
+                          </RadioCard>
+                        );
+                      })}
+                    </Flex>
+                  </AccordionPanel>
+                </AccordionItem>
+              </Accordion>
+            </Stack>
           </ModalBody>
           <ModalFooter>
             {!cantClose && (
