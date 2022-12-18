@@ -309,7 +309,9 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                       }
                     >
                       {Array.from(Array(24).keys()).map((hour) => (
-                        <option value={hour}>{getHourByNumber(hour)}</option>
+                        <option value={hour} key={hour}>
+                          {getHourByNumber(hour)}
+                        </option>
                       ))}
                     </Select>
                     <Select
@@ -326,6 +328,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                       {Array.from(Array(24).keys()).map((hour) => (
                         <option
                           value={hour}
+                          key={hour}
                           disabled={election.votingStartDate >= hour}
                         >
                           {getHourByNumber(hour)}

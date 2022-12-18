@@ -452,7 +452,9 @@ const CreateElectionModal = ({
                       }
                     >
                       {Array.from(Array(24).keys()).map((hour) => (
-                        <option value={hour}>{getHourByNumber(hour)}</option>
+                        <option value={hour} key={hour}>
+                          {getHourByNumber(hour)}
+                        </option>
                       ))}
                     </Select>
                     <Select
@@ -468,6 +470,7 @@ const CreateElectionModal = ({
                     >
                       {Array.from(Array(24).keys()).map((hour) => (
                         <option
+                          key={hour}
                           value={hour}
                           disabled={election.votingStartDate >= hour}
                         >
