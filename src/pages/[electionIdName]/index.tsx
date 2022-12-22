@@ -27,6 +27,7 @@ import {
   positionType,
 } from "../../types/typings";
 import isElectionOngoing from "../../utils/isElectionOngoing";
+import { getHourByNumber } from "../../utils/getHourByNumber";
 
 interface ElectionPageProps {
   election: electionType;
@@ -174,6 +175,17 @@ const ElectionPage = ({
               <Moment format="MMMM DD, YYYY, hA">
                 {election.electionEndDate.seconds * 1000}
               </Moment>
+            </Text>
+            <Text>
+              Voting hours: {getHourByNumber(election.votingStartDate)} -{" "}
+              {getHourByNumber(election.votingEndDate)} (
+              {election.votingEndDate - election.votingStartDate < 0
+                ? election.votingStartDate - election.votingEndDate
+                : election.votingEndDate - election.votingStartDate}{" "}
+              {election.votingEndDate - election.votingStartDate > 1
+                ? "hours"
+                : "hour"}
+              )
             </Text>
             {election.about && (
               <Container
