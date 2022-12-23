@@ -12,7 +12,7 @@ export interface electionType {
   electionStartDate: Timestamp;
   electionEndDate: Timestamp;
   publicity: "private" | "voters" | "public";
-  votingStartDate:
+  votingStartHour:
     | 0
     | 1
     | 2
@@ -37,7 +37,7 @@ export interface electionType {
     | 21
     | 22
     | 23;
-  votingEndDate:
+  votingEndHour:
     | 0
     | 1
     | 2

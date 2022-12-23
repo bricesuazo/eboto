@@ -79,8 +79,8 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
     electionEndDate: initialElection.electionEndDate,
     publicity: initialElection.publicity,
     logoUrl: initialElection.logoUrl,
-    votingStartDate: initialElection.votingStartDate,
-    votingEndDate: initialElection.votingEndDate,
+    votingStartHour: initialElection.votingStartHour,
+    votingEndHour: initialElection.votingEndHour,
   };
 
   const [settings, setSettings] = useState(initialState);
@@ -229,10 +229,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                 <FormLabel>Election Date</FormLabel>
 
                 <ReactDatePicker
-                  disabled={isElectionOngoing(
-                    initialElection.electionStartDate,
-                    initialElection.electionEndDate
-                  )}
+                  disabled={isElectionOngoing(initialElection)}
                   timeIntervals={60}
                   selected={startDate}
                   minDate={new Date()}
@@ -249,22 +246,11 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                   dateFormat="MMMM d, yyyy haa"
                   disabledKeyboardNavigation
                   withPortal
-                  isClearable={
-                    !isElectionOngoing(
-                      initialElection.electionStartDate,
-                      initialElection.electionEndDate
-                    )
-                  }
+                  isClearable={!isElectionOngoing(initialElection)}
                   placeholderText="Select election start date"
                 />
                 <ReactDatePicker
-                  disabled={
-                    !startDate ||
-                    isElectionOngoing(
-                      initialElection.electionStartDate,
-                      initialElection.electionEndDate
-                    )
-                  }
+                  disabled={!startDate || isElectionOngoing(initialElection)}
                   timeIntervals={60}
                   selected={endDate}
                   onChange={(date) => setEndDate(date)}
@@ -279,12 +265,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                   dateFormat="MMMM d, yyyy haa"
                   disabledKeyboardNavigation
                   withPortal
-                  isClearable={
-                    !isElectionOngoing(
-                      initialElection.electionStartDate,
-                      initialElection.electionEndDate
-                    )
-                  }
+                  isClearable={!isElectionOngoing(initialElection)}
                   placeholderText="Select election end date"
                   highlightDates={startDate ? [startDate] : []}
                 />
@@ -298,13 +279,13 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                   <FormLabel>Voting Hours</FormLabel>
                   <HStack alignItems="center">
                     <Select
-                      value={settings.votingStartDate}
+                      value={settings.votingStartHour}
                       onChange={(e) =>
                         setSettings({
                           ...settings,
-                          votingStartDate: parseInt(
+                          votingStartHour: parseInt(
                             e.target.value
-                          ) as typeof settings.votingStartDate,
+                          ) as typeof settings.votingStartHour,
                         })
                       }
                     >
@@ -315,13 +296,13 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                       ))}
                     </Select>
                     <Select
-                      value={settings.votingEndDate}
+                      value={settings.votingEndHour}
                       onChange={(e) =>
                         setSettings({
                           ...election,
-                          votingEndDate: parseInt(
+                          votingEndHour: parseInt(
                             e.target.value
-                          ) as typeof election.votingEndDate,
+                          ) as typeof election.votingEndHour,
                         })
                       }
                     >
@@ -329,7 +310,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                         <option
                           value={hour}
                           key={hour}
-                          disabled={election.votingStartDate >= hour}
+                          disabled={election.votingStartHour >= hour}
                         >
                           {getHourByNumber(hour)}
                         </option>
@@ -337,12 +318,12 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                     </Select>
                   </HStack>
                   <Text textAlign="center">
-                    {getHourByNumber(settings.votingStartDate)} -{" "}
-                    {getHourByNumber(settings.votingEndDate)} (
-                    {settings.votingEndDate - settings.votingStartDate < 0
-                      ? settings.votingStartDate - settings.votingEndDate
-                      : settings.votingEndDate - settings.votingStartDate}{" "}
-                    {settings.votingEndDate - settings.votingStartDate > 1
+                    {getHourByNumber(settings.votingStartHour)} -{" "}
+                    {getHourByNumber(settings.votingEndHour)} (
+                    {settings.votingEndHour - settings.votingStartHour < 0
+                      ? settings.votingStartHour - settings.votingEndHour
+                      : settings.votingEndHour - settings.votingStartHour}{" "}
+                    {settings.votingEndHour - settings.votingStartHour > 1
                       ? "hours"
                       : "hour"}
                     )
@@ -493,9 +474,9 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                       settings.electionIdName.trim() ===
                         initialElection.electionIdName.trim() &&
                       settings.publicity === initialElection.publicity &&
-                      settings.votingStartDate ===
-                        initialElection.votingStartDate &&
-                      settings.votingEndDate === initialElection.votingEndDate)
+                      settings.votingStartHour ===
+                        initialElection.votingStartHour &&
+                      settings.votingEndHour === initialElection.votingEndHour)
                   }
                 >
                   Save

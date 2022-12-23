@@ -97,10 +97,7 @@ const RealtimePage = ({
                             <Box display="flex" justifyContent="space-between">
                               <Text noOfLines={1}>
                                 {session.user.accountType === "voter" &&
-                                isElectionOngoing(
-                                  election.electionStartDate,
-                                  election.electionEndDate
-                                )
+                                isElectionOngoing(election)
                                   ? `Candidate ${index + 1}`
                                   : `${candidate.lastName}, ${
                                       candidate.firstName

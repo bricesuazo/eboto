@@ -72,8 +72,8 @@ const CreateElectionModal = ({
     electionEndDate: Timestamp.now(),
     publicity: "private",
     logoUrl: null,
-    votingStartDate: 7,
-    votingEndDate: 19,
+    votingStartHour: 7,
+    votingEndHour: 19,
   });
   const initialPartylist: partylistType = {
     uid: "",
@@ -193,8 +193,8 @@ const CreateElectionModal = ({
       ...election,
       name: "",
       electionIdName: "",
-      votingStartDate: 7,
-      votingEndDate: 19,
+      votingStartHour: 7,
+      votingEndHour: 19,
     });
     setStartDate(new Date());
     setEndDate(null);
@@ -438,16 +438,16 @@ const CreateElectionModal = ({
                 <Stack>
                   <HStack alignItems="center">
                     <Select
-                      value={election.votingStartDate}
+                      value={election.votingStartHour}
                       onChange={(e) =>
                         setElection({
                           ...election,
-                          votingStartDate: parseInt(
+                          votingStartHour: parseInt(
                             e.target.value
-                          ) as typeof election.votingStartDate,
-                          votingEndDate: (parseInt(e.target.value) < 23
+                          ) as typeof election.votingStartHour,
+                          votingEndHour: (parseInt(e.target.value) < 23
                             ? parseInt(e.target.value) + 1
-                            : 0) as typeof election.votingEndDate,
+                            : 0) as typeof election.votingEndHour,
                         })
                       }
                     >
@@ -458,13 +458,13 @@ const CreateElectionModal = ({
                       ))}
                     </Select>
                     <Select
-                      value={election.votingEndDate}
+                      value={election.votingEndHour}
                       onChange={(e) =>
                         setElection({
                           ...election,
-                          votingEndDate: parseInt(
+                          votingEndHour: parseInt(
                             e.target.value
-                          ) as typeof election.votingEndDate,
+                          ) as typeof election.votingEndHour,
                         })
                       }
                     >
@@ -472,7 +472,7 @@ const CreateElectionModal = ({
                         <option
                           key={hour}
                           value={hour}
-                          disabled={election.votingStartDate >= hour}
+                          disabled={election.votingStartHour >= hour}
                         >
                           {getHourByNumber(hour)}
                         </option>
@@ -480,12 +480,12 @@ const CreateElectionModal = ({
                     </Select>
                   </HStack>
                   <Text textAlign="center">
-                    {getHourByNumber(election.votingStartDate)} -{" "}
-                    {getHourByNumber(election.votingEndDate)} (
-                    {election.votingEndDate - election.votingStartDate < 0
-                      ? election.votingStartDate - election.votingEndDate
-                      : election.votingEndDate - election.votingStartDate}{" "}
-                    {election.votingEndDate - election.votingStartDate > 1
+                    {getHourByNumber(election.votingStartHour)} -{" "}
+                    {getHourByNumber(election.votingEndHour)} (
+                    {election.votingEndHour - election.votingStartHour < 0
+                      ? election.votingStartHour - election.votingEndHour
+                      : election.votingEndHour - election.votingStartHour}{" "}
+                    {election.votingEndHour - election.votingStartHour > 1
                       ? "hours"
                       : "hour"}
                     )

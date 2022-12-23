@@ -43,9 +43,7 @@ const VotePage = ({
   const [selectedCandidates, setSelectedCandidates] = useState<string[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  if (
-    !isElectionOngoing(election.electionStartDate, election.electionEndDate)
-  ) {
+  if (!isElectionOngoing(election)) {
     return (
       <>
         <Head>

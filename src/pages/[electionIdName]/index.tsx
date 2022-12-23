@@ -177,12 +177,12 @@ const ElectionPage = ({
               </Moment>
             </Text>
             <Text>
-              Voting hours: {getHourByNumber(election.votingStartDate)} -{" "}
-              {getHourByNumber(election.votingEndDate)} (
-              {election.votingEndDate - election.votingStartDate < 0
-                ? election.votingStartDate - election.votingEndDate
-                : election.votingEndDate - election.votingStartDate}{" "}
-              {election.votingEndDate - election.votingStartDate > 1
+              Voting hours: {getHourByNumber(election.votingStartHour)} -{" "}
+              {getHourByNumber(election.votingEndHour)} (
+              {election.votingEndHour - election.votingStartHour < 0
+                ? election.votingStartHour - election.votingEndHour
+                : election.votingEndHour - election.votingStartHour}{" "}
+              {election.votingEndHour - election.votingStartHour > 1
                 ? "hours"
                 : "hour"}
               )
@@ -228,10 +228,7 @@ const ElectionPage = ({
                 <Link href={`/${election.electionIdName}/realtime`}>
                   <Button>Go to realtime voting count update</Button>
                 </Link>
-              ) : !isElectionOngoing(
-                  election.electionStartDate,
-                  election.electionEndDate
-                ) ? (
+              ) : !isElectionOngoing(election) ? (
                 <Button disabled>Voting is not available</Button>
               ) : (
                 <>
