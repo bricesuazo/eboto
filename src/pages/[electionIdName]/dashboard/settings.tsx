@@ -275,8 +275,8 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
               </FormControl>
 
               <FormControl isRequired>
+                <FormLabel>Voting Hours</FormLabel>
                 <Stack>
-                  <FormLabel>Voting Hours</FormLabel>
                   <HStack alignItems="center">
                     <Select
                       value={settings.votingStartHour}
@@ -285,7 +285,10 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                           ...settings,
                           votingStartHour: parseInt(
                             e.target.value
-                          ) as typeof settings.votingStartHour,
+                          ) as typeof election.votingStartHour,
+                          votingEndHour: (parseInt(e.target.value) < 23
+                            ? parseInt(e.target.value) + 1
+                            : 0) as typeof settings.votingEndHour,
                         })
                       }
                     >
@@ -299,7 +302,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                       value={settings.votingEndHour}
                       onChange={(e) =>
                         setSettings({
-                          ...election,
+                          ...settings,
                           votingEndHour: parseInt(
                             e.target.value
                           ) as typeof election.votingEndHour,
@@ -308,9 +311,9 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                     >
                       {Array.from(Array(24).keys()).map((hour) => (
                         <option
-                          value={hour}
                           key={hour}
-                          disabled={election.votingStartHour >= hour}
+                          value={hour}
+                          disabled={settings.votingStartHour >= hour}
                         >
                           {getHourByNumber(hour)}
                         </option>
