@@ -24,6 +24,7 @@ import {
   positionType,
 } from "../../types/typings";
 import isElectionOngoing from "../../utils/isElectionOngoing";
+import { Session } from "next-auth";
 
 interface VotePageProps {
   election: electionType;
@@ -31,6 +32,7 @@ interface VotePageProps {
   positions: positionType[];
   candidates: candidateType[];
   voterUid: string;
+  session: Session;
 }
 const VotePage = ({
   election,
@@ -38,6 +40,7 @@ const VotePage = ({
   positions,
   candidates,
   voterUid,
+  session,
 }: VotePageProps) => {
   const pageTitle = `${election.name} - Vote | eBoto Mo`;
   const [selectedCandidates, setSelectedCandidates] = useState<string[]>([]);
@@ -80,12 +83,24 @@ const VotePage = ({
       />
       <Container maxW="8xl" paddingY={16} gap={4} alignItems="center">
         <Box width="full">
-          <Box marginBottom={8}>
-            <Text fontSize="3xl" textAlign="center" fontWeight="bold">
-              {election.name}
-            </Text>
-            <Text textAlign="center">Voting Page</Text>
-          </Box>
+          <Stack marginBottom={8} spacing={4} alignItems="center">
+            <Box>
+              <Text fontSize="3xl" textAlign="center" fontWeight="bold">
+                {election.name}
+              </Text>
+              <Text textAlign="center">Voting Page</Text>
+            </Box>
+            {session.user.accountType === "admin" && (
+              <Link
+                href={{
+                  pathname: "/[electionIdName]/realtime",
+                  query: { electionIdName: election.electionIdName },
+                }}
+              >
+                <Button>Go to realtime page</Button>
+              </Link>
+            )}
+          </Stack>
 
           <Stack spacing={4}>
             {positions.map((position) => (
@@ -100,24 +115,26 @@ const VotePage = ({
           </Stack>
         </Box>
 
-        <Center
-          paddingX={[4, 0]}
-          position="sticky"
-          bottom={12}
-          zIndex="sticky"
-          marginTop={16}
-        >
-          <Button
-            disabled={positions.length !== selectedCandidates.length}
-            onClick={onOpen}
-            variant="solid"
-            leftIcon={<FingerPrintIcon width={22} />}
-            paddingY={8}
-            borderRadius="full"
+        {session.user.accountType === "voter" && (
+          <Center
+            paddingX={[4, 0]}
+            position="sticky"
+            bottom={12}
+            zIndex="sticky"
+            marginTop={16}
           >
-            Cast Vote
-          </Button>
-        </Center>
+            <Button
+              disabled={positions.length !== selectedCandidates.length}
+              onClick={onOpen}
+              variant="solid"
+              leftIcon={<FingerPrintIcon width={22} />}
+              paddingY={8}
+              borderRadius="full"
+            >
+              Cast Vote
+            </Button>
+          </Center>
+        )}
       </Container>
     </>
   );
@@ -203,6 +220,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   );
   return {
     props: {
+      session,
       election: JSON.parse(JSON.stringify(electionSnapshot.docs[0].data())),
       positions: JSON.parse(
         JSON.stringify(positionsSnapshot.docs.map((doc) => doc.data()))
