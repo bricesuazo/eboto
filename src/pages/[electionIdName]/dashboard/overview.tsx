@@ -29,6 +29,7 @@ import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import { adminType, electionType } from "../../../types/typings";
 import isAdminOwnsTheElection from "../../../utils/isAdminOwnsTheElection";
+import { getHourByNumber } from "../../../utils/getHourByNumber";
 
 const OverviewPage = ({
   session,
@@ -194,6 +195,20 @@ const OverviewPage = ({
                 <Moment fromNow>
                   {election.electionEndDate.seconds * 1000}
                 </Moment>
+                )
+              </Text>
+            </Stack>
+            <Stack direction={["column", "row"]} spacing={[0, 2]}>
+              <Text fontWeight={["normal", "bold"]}>Voting hours:</Text>
+              <Text>
+                {getHourByNumber(election.votingStartHour)} -{" "}
+                {getHourByNumber(election.votingEndHour)} (
+                {election.votingEndHour - election.votingStartHour < 0
+                  ? election.votingStartHour - election.votingEndHour
+                  : election.votingEndHour - election.votingStartHour}{" "}
+                {election.votingEndHour - election.votingStartHour > 1
+                  ? "hours"
+                  : "hour"}
                 )
               </Text>
             </Stack>
