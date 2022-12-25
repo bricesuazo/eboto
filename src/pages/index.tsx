@@ -7,9 +7,16 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import type { NextPage } from "next";
+import { doc, getDoc } from "firebase/firestore";
+import type {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  NextPage,
+} from "next";
+import { getSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import { firestore } from "../firebase/firebase";
 
 const Home: NextPage = () => {
   return (
@@ -202,3 +209,38 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const session = await getSession(context);
+
+  if (session && session.user.accountType === "voter") {
+    const electionSnapshot = await getDoc(
+      doc(firestore, "elections", session.user.election)
+    );
+
+    return {
+      redirect: {
+        destination: `/${electionSnapshot.data()?.electionIdName}`,
+        permanent: false,
+      },
+    };
+  } else if (session && session.user.accountType === "admin") {
+    if (session.user.elections.length === 0) {
+      return {
+        redirect: {
+          destination: "/create-election",
+          permanent: false,
+        },
+      };
+    }
+    return {
+      redirect: {
+        destination: "/dashboard",
+        permanent: false,
+      },
+    };
+  }
+  return { props: {} };
+};
