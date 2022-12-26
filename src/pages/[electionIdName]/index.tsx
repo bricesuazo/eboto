@@ -48,21 +48,23 @@ const ElectionPage = ({
 
   const title = `${election.name} | eBoto Mo`;
   const imageContent = `${process.env
-    .NEXT_PUBLIC_BASE_URL!}/api/og?type=election&electionName=${election.name}${
+    .NEXT_PUBLIC_BASE_URL!}/api/og?type=election&electionName=${encodeURIComponent(
+    election.name
+  )}${
     election.logoUrl && election.logoUrl.length
-      ? `&electionLogoUrl=${election.logoUrl}`
+      ? `&electionLogoUrl=${encodeURIComponent(election.logoUrl)}`
       : ""
-  }&electionStartDate=${moment(
-    election.electionStartDate.seconds * 1000
-  ).format("MMMM D, YYYY hA")}&electionEndDate=${moment(
-    election.electionEndDate.seconds * 1000
-  ).format("MMMM D, YYYY hA")}`;
+  }&electionStartDate=${encodeURIComponent(
+    moment(election.electionStartDate.seconds * 1000).format("MMMM D, YYYY hA")
+  )}&electionEndDate=${encodeURIComponent(
+    moment(election.electionEndDate.seconds * 1000).format("MMMM D, YYYY hA")
+  )}`;
   const metaDescription = `See details about ${election.name} | eBoto Mo`;
 
   const ErrorPage = ({ children }: { children: React.ReactNode }) => {
     return (
       <>
-        <HeadElementCandidate />
+        <HeadElementElection />
         <Container
           maxW="8xl"
           minH="2xl"
@@ -78,7 +80,7 @@ const ElectionPage = ({
       </>
     );
   };
-  const HeadElementCandidate = () => {
+  const HeadElementElection = () => {
     return (
       <Head>
         <title>{title}</title>
@@ -139,7 +141,7 @@ const ElectionPage = ({
 
   return (
     <>
-      <HeadElementCandidate />
+      <HeadElementElection />
       <Container
         maxW="8xl"
         textAlign="center"
