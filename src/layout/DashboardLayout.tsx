@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import {
   ArrowPathIcon,
+  ArrowTopRightOnSquareIcon,
   ArrowUpOnSquareIcon,
 } from "@heroicons/react/24/outline";
 import { PlusIcon, UserPlusIcon } from "@heroicons/react/24/solid";
@@ -37,6 +38,7 @@ import DashboardSidebar, {
 import UploadBulkVotersModal from "../components/UploadBulkVotersModal";
 import { firestore } from "../firebase/firebase";
 import { adminType, electionType } from "../types/typings";
+import Link from "next/link";
 
 const DashboardLayout = ({
   children,
@@ -145,88 +147,118 @@ const DashboardLayout = ({
 
       <Stack spacing={4} padding="4">
         <Stack
+          justifyContent="space-between"
           direction={["column", "row"]}
           alignItems="center"
-          spacing={[0, 4]}
         >
-          <Center columnGap={2} width={["full", "full", "356px"]}>
-            <Select
-              placeholder={
-                false
-                  ? !elections?.length
-                    ? "Loading..."
-                    : "Create election"
-                  : undefined
-              }
-              disabled={!elections?.length}
-              value={router.query.electionIdName}
-              onChange={(e) => {
-                router.push(
-                  "/" +
-                    e.target.value +
-                    router.pathname.split("/[electionIdName]")[1]
-                );
-              }}
+          <Stack
+            direction={["column", "row"]}
+            alignItems="center"
+            spacing={[0, 4]}
+            width="full"
+          >
+            <Center
+              columnGap={2}
+              width={["full", "full", "356px"]}
+              justifyContent="space-between"
+              flex={5}
+              maxWidth={["auto", "sm"]}
             >
-              {elections?.map((election) => (
-                <option value={election.electionIdName} key={election.id}>
-                  {election.name}
-                </option>
-              ))}
-            </Select>
-            <Tooltip label="Create an election">
-              <IconButton
-                aria-label="Add election"
-                icon={<PlusIcon width="1.5rem" />}
-                onClick={onOpenCreateElection}
-              />
-            </Tooltip>
-          </Center>
-          <Tooltip label="Last updated" hasArrow>
-            <Stack
-              direction="row"
-              color={`${
-                (colorMode === "dark" ? "white" : "black") + "Alpha.600"
-              }`}
-              p={2}
-              cursor="pointer"
-              role="group"
-              justifyContent={["center", "flex-start"]}
-            >
-              <Center gap={2}>
-                <Icon
-                  as={ArrowPathIcon}
-                  _groupHover={{
-                    color: `${
-                      (colorMode === "dark" ? "white" : "black") + "Alpha.900"
-                    }`,
-                    transform: "rotate(180deg)",
-                    transition: "all 0.5s",
-                  }}
+              <Select
+                placeholder={
+                  false
+                    ? !elections?.length
+                      ? "Loading..."
+                      : "Create election"
+                    : undefined
+                }
+                disabled={!elections?.length}
+                value={router.query.electionIdName}
+                onChange={(e) => {
+                  router.push(
+                    "/" +
+                      e.target.value +
+                      router.pathname.split("/[electionIdName]")[1]
+                  );
+                }}
+              >
+                {elections?.map((election) => (
+                  <option value={election.electionIdName} key={election.id}>
+                    {election.name}
+                  </option>
+                ))}
+              </Select>
+              <Tooltip label="Create an election">
+                <IconButton
+                  aria-label="Add election"
+                  icon={<PlusIcon width="1.5rem" />}
+                  onClick={onOpenCreateElection}
                 />
-                {!currentElection ? (
-                  <Text fontSize="xs">Loading...</Text>
-                ) : (
-                  <Text
-                    fontSize="xs"
+              </Tooltip>
+            </Center>
+            <Tooltip label="Last updated" hasArrow flex={2}>
+              <Stack
+                direction="row"
+                color={`${
+                  (colorMode === "dark" ? "white" : "black") + "Alpha.600"
+                }`}
+                p={2}
+                cursor="pointer"
+                role="group"
+                justifyContent={["center", "flex-start"]}
+              >
+                <Center gap={2}>
+                  <Icon
+                    as={ArrowPathIcon}
                     _groupHover={{
                       color: `${
-                        (colorMode === "dark" ? "white" : "black") + "Alpha.700"
+                        (colorMode === "dark" ? "white" : "black") + "Alpha.900"
                       }`,
+                      transform: "rotate(180deg)",
                       transition: "all 0.5s",
                     }}
-                  >
-                    Updated{" "}
-                    <Moment
-                      interval={10000}
-                      fromNow
-                      date={currentElection.updatedAt.toDate()}
-                    />
-                  </Text>
-                )}
-              </Center>
-            </Stack>
-          </Tooltip>
+                  />
+                  {!currentElection ? (
+                    <Text fontSize="xs">Loading...</Text>
+                  ) : (
+                    <Text
+                      fontSize="xs"
+                      _groupHover={{
+                        color: `${
+                          (colorMode === "dark" ? "white" : "black") +
+                          "Alpha.700"
+                        }`,
+                        transition: "all 0.5s",
+                      }}
+                    >
+                      Updated{" "}
+                      <Moment
+                        interval={10000}
+                        fromNow
+                        date={currentElection.updatedAt.toDate()}
+                      />
+                    </Text>
+                  )}
+                </Center>
+              </Stack>
+            </Tooltip>
+          </Stack>
+          <Link href={`/${currentElection?.electionIdName}`} target="_blank">
+            <Button
+              isLoading={!currentElection}
+              variant="outline"
+              rightIcon={<ArrowTopRightOnSquareIcon width={18} />}
+              display={["flex", "none", "flex"]}
+              width="full"
+            >
+              {currentElection?.name}
+            </Button>
+            <IconButton
+              aria-label={"Go to" + currentElection?.name}
+              icon={<ArrowTopRightOnSquareIcon width={18} />}
+              display={["none", "flex", "none"]}
+            />
+          </Link>
         </Stack>
         <Flex
           flexDirection={["column", "column", "row"]}
