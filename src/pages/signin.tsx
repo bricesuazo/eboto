@@ -142,12 +142,12 @@ const SigninPage: NextPage = () => {
                 )}
 
                 <Flex justifyContent="space-between">
-                  <NextLink href="/signup" passHref>
-                    <Link fontSize="xs">Create account as admin?</Link>
-                  </NextLink>
-                  <NextLink href="/forgot-password" passHref>
-                    <Link fontSize="xs">Forgot password?</Link>
-                  </NextLink>
+                  <Link as={NextLink} fontSize="xs" href="/signup">
+                    Create account as admin?
+                  </Link>
+                  <Link fontSize="xs" as={NextLink} href="/forgot-password">
+                    Forgot password?
+                  </Link>
                 </Flex>
                 <Button
                   type="submit"

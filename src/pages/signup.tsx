@@ -226,9 +226,9 @@ const SignupPage: NextPage = () => {
                       <AlertDescription>{error}</AlertDescription>
                     </Alert>
                   )}
-                  <NextLink href="/signin" passHref>
-                    <Link fontSize="xs">Already have an account?</Link>
-                  </NextLink>
+                  <Link fontSize="xs" as={NextLink} href="/signin">
+                    Already have an account?
+                  </Link>
                 </Stack>
                 <Button
                   type="submit"
