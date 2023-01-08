@@ -14,13 +14,13 @@ import {
   Show,
   Spinner,
   Text,
-  useColorMode
+  useColorMode,
 } from "@chakra-ui/react";
 import {
   ArchiveBoxArrowDownIcon,
   ArrowRightOnRectangleIcon,
   ChartBarIcon,
-  ChevronDownIcon
+  ChevronDownIcon,
 } from "@heroicons/react/24/outline";
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
 import { doc, getDoc } from "firebase/firestore";
@@ -70,7 +70,7 @@ const Header = () => {
 
   const MenuParent = ({ children }: { children?: React.ReactNode }) => {
     return (
-      <Menu>
+      <Menu placement="bottom-end">
         {({ isOpen }) => (
           <>
             <MenuButton
