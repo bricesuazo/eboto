@@ -162,6 +162,7 @@ const ElectionPage = ({
                   src={election.logoUrl}
                   alt={`${election.name} logo`}
                   fill
+                  sizes="cover"
                   style={{ objectFit: "cover", objectPosition: "center" }}
                 />
               </Box>
@@ -211,9 +212,20 @@ const ElectionPage = ({
                 url={`https://eboto-mo.com/${election.electionIdName}`}
                 hashtag={`#${election.name.replace(/\s/g, "")}`}
               >
-                <Button leftIcon={<ShareIcon width={18} />} variant="outline">
-                  Share
-                </Button>
+                <Flex
+                  alignItems="center"
+                  columnGap={2}
+                  border="1px"
+                  paddingX="4"
+                  paddingY="2"
+                  borderRadius="md"
+                  borderColor="gray.300"
+                  _hover={{ backgroundColor: "gray.50" }}
+                  transition="background-color 0.2s"
+                >
+                  <ShareIcon width={18} />
+                  <Text fontWeight="semibold">Share</Text>
+                </Flex>
               </FacebookShareButton>
             </Box>
             <Box marginTop={4}>
