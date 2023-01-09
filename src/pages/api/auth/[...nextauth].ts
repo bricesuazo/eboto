@@ -12,6 +12,7 @@ import { FirestoreAdapter } from "@next-auth/firebase-adapter";
 import { firestore } from "../../../firebase/firebase";
 import { JWT } from "next-auth/jwt";
 import { electionType, voterType } from "../../../types/typings";
+import bcrypt from "bcryptjs";
 
 export default NextAuth({
   // Configure one or more authentication providers
@@ -29,7 +30,7 @@ export default NextAuth({
         );
         if (adminSnaphot.docs.length !== 0) {
           const admin = adminSnaphot.docs[0].data();
-          if (admin.password === password) {
+          if (bcrypt.compareSync(password, admin.password)) {
             return JSON.parse(JSON.stringify(admin));
           } else {
             return Promise.reject(new Error("Invalid password"));

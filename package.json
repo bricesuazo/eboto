@@ -17,6 +17,8 @@
     "@next/font": "^13.1.1",
     "@vercel/analytics": "^0.1.6",
     "@vercel/og": "^0.0.21",
+    "bcrypt": "^5.1.0",
+    "bcryptjs": "^2.4.3",
     "browser-image-compression": "^2.0.0",
     "deep-equal": "^2.1.0",
     "firebase": "^9.10.0",
@@ -41,6 +43,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
     "@types/deep-equal": "^1.0.1",
     "@types/node": "18.7.23",
     "@types/react": "18.0.21",

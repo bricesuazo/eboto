@@ -36,6 +36,7 @@ import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { firestore } from "../firebase/firebase";
 import isAdminExists from "../utils/isAdminExists";
+import bcrypt from "bcryptjs";
 
 const SignupPage: NextPage = () => {
   const [error, setError] = useState<string | null>(null);
@@ -102,7 +103,8 @@ const SignupPage: NextPage = () => {
                   setLoading(false);
                   return;
                 }
-
+                const salt = bcrypt.genSaltSync(10);
+                const hash = bcrypt.hashSync(credentials.password, salt);
                 // Create user docs
                 const adminRef = await addDoc(collection(firestore, "admins"), {
                   accountType: "admin",
@@ -118,7 +120,7 @@ const SignupPage: NextPage = () => {
                     .replace(/(^\w{1})|(\s+\w{1})/g, (letter: string) =>
                       letter.toUpperCase()
                     ),
-                  password: credentials.password,
+                  password: hash,
                   photoUrl: "",
                   elections: [],
                   createdAt: Timestamp.now(),
