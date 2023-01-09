@@ -50,6 +50,7 @@ import { electionType, partylistType } from "../types/typings";
 import isElectionIdNameExists from "../utils/isElectionIdNameExists";
 import reloadSession from "../utils/reloadSession";
 import { getHourByNumber } from "../utils/getHourByNumber";
+import Moment from "react-moment";
 
 const CreateElectionModal = ({
   isOpen,
@@ -375,54 +376,87 @@ const CreateElectionModal = ({
 
               <FormControl isRequired>
                 <FormLabel>Election Date</FormLabel>
-                <ReactDatePicker
-                  selected={now}
-                  minDate={now}
-                  timeIntervals={60}
-                  onChange={(date) => {
-                    if (date) {
-                      setStartDate(date);
-                      setError(null);
-                    } else {
-                      setEndDate(null);
+                <Stack>
+                  <ReactDatePicker
+                    selected={startDate}
+                    minDate={now}
+                    timeIntervals={60}
+                    onChange={(date) => {
+                      if (date) {
+                        setStartDate(date);
+                        setError(null);
+                      } else {
+                        setEndDate(null);
+                      }
+                    }}
+                    filterTime={(time) => {
+                      const currentDate = new Date();
+                      const selectedDate = new Date(time);
+
+                      return currentDate.getTime() < selectedDate.getTime();
+                    }}
+                    showTimeSelect
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                    disabledKeyboardNavigation
+                    withPortal
+                    placeholderText="Select election start date"
+                    customInput={
+                      <Button
+                        width="100%"
+                        variant="outline"
+                        disabled={!startDate}
+                      >
+                        {startDate ? (
+                          <Moment
+                            date={startDate}
+                            format="MMMM D, YYYY h:mmA"
+                          />
+                        ) : (
+                          "Select election end date"
+                        )}
+                      </Button>
                     }
-                  }}
-                  filterTime={(time) => {
-                    const currentDate = new Date();
-                    const selectedDate = new Date(time);
+                  />
 
-                    return currentDate.getTime() < selectedDate.getTime();
-                  }}
-                  showTimeSelect
-                  dateFormat="MMMM d, yyyy h:mm aa"
-                  disabledKeyboardNavigation
-                  withPortal
-                  placeholderText="Select election start date"
-                />
-                <ReactDatePicker
-                  disabled={!startDate}
-                  selected={endDate}
-                  timeIntervals={60}
-                  onChange={(date) => {
-                    setEndDate(date);
-                    setError(null);
-                  }}
-                  minDate={startDate}
-                  filterTime={(time) => {
-                    const selectedDate = new Date(time);
+                  <ReactDatePicker
+                    disabled={!startDate}
+                    selected={endDate}
+                    timeIntervals={60}
+                    onChange={(date) => {
+                      setEndDate(date);
+                      setError(null);
+                    }}
+                    minDate={startDate}
+                    filterTime={(time) => {
+                      const selectedDate = new Date(time);
 
-                    return startDate
-                      ? startDate.getTime() < selectedDate.getTime()
-                      : new Date().getTime() < selectedDate.getTime();
-                  }}
-                  showTimeSelect
-                  dateFormat="MMMM d, yyyy h:mm aa"
-                  disabledKeyboardNavigation
-                  withPortal
-                  isClearable
-                  placeholderText="Select election end date"
-                  highlightDates={startDate ? [startDate] : []}
-                />
+                      return startDate
+                        ? startDate.getTime() < selectedDate.getTime()
+                        : new Date().getTime() < selectedDate.getTime();
+                    }}
+                    showTimeSelect
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                    disabledKeyboardNavigation
+                    withPortal
+                    isClearable
+                    placeholderText="Select election end date"
+                    highlightDates={startDate ? [startDate] : []}
+                    customInput={
+                      <Button
+                        width="100%"
+                        variant="outline"
+                        disabled={!startDate}
+                      >
+                        {endDate ? (
+                          <Moment date={endDate} format="MMMM D, YYYY h:mmA" />
+                        ) : (
+                          "Select election end date"
+                        )}
+                      </Button>
+                    }
+                  />
+                </Stack>
+
                 <FormHelperText>
                   You can&apos;t change the dates once the election is ongoing.
                 </FormHelperText>
