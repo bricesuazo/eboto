@@ -147,7 +147,7 @@ const CandidateCredentialPage = ({
   return (
     <>
       <HeadElementCandidate />
-      <Container maxW="8xl" minH="2xl" paddingY={8}>
+      <Container maxW="6xl" minH="3xl" paddingY={8}>
         <Breadcrumb
           spacing="8px"
           separator={<ChevronRightIcon color="gray.500" width={12} />}
