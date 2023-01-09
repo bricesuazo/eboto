@@ -1,6 +1,7 @@
 import {
   Box,
   Center,
+  Container,
   Flex,
   Grid,
   GridItem,
@@ -35,7 +36,7 @@ const DashboardPage = ({ elections }: { elections: electionType[] }) => {
       <Head>
         <title>Dashboard | eBoto Mo</title>
       </Head>
-      <Box padding={4}>
+      <Container maxW="6xl" paddingY="8">
         {elections.length === 0 ? (
           <Text>No Election</Text>
         ) : (
@@ -50,7 +51,6 @@ const DashboardPage = ({ elections }: { elections: electionType[] }) => {
                 "repeat(2, 1fr)",
                 "repeat(3, 1fr)",
                 "repeat(4, 1fr)",
-                "repeat(5, 1fr)",
               ]}
               gridTemplateRows="repeat(5, 1fr)"
               gap={4}
@@ -148,7 +148,7 @@ const DashboardPage = ({ elections }: { elections: electionType[] }) => {
             </Grid>
           </>
         )}
-      </Box>
+      </Container>
     </>
   );
 };

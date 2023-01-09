@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Center,
+  Container,
   Divider,
   Flex,
   Hide,
@@ -144,252 +145,254 @@ const DashboardLayout = ({
         onClose={onCloseUploadBulkVoter}
         election={currentElection as electionType}
       />
-
-      <Stack spacing={4} padding="4">
-        <Stack
-          justifyContent="space-between"
-          direction={["column", "row"]}
-          alignItems="center"
-        >
+      <Container maxW="6xl" paddingY="8">
+        <Stack spacing={4}>
           <Stack
+            justifyContent="space-between"
             direction={["column", "row"]}
             alignItems="center"
-            spacing={[0, 4]}
-            width="full"
           >
-            <Center
-              columnGap={2}
-              width={["full", "full", "356px"]}
-              justifyContent="space-between"
-              flex={5}
-              maxWidth={["auto", "sm"]}
+            <Stack
+              direction={["column", "row"]}
+              alignItems="center"
+              spacing={[0, 4]}
+              width="full"
             >
-              <Select
-                placeholder={
-                  false
-                    ? !elections?.length
-                      ? "Loading..."
-                      : "Create election"
-                    : undefined
-                }
-                disabled={!elections?.length}
-                value={router.query.electionIdName}
-                onChange={(e) => {
-                  router.push(
-                    "/" +
-                      e.target.value +
-                      router.pathname.split("/[electionIdName]")[1]
-                  );
-                }}
+              <Center
+                columnGap={2}
+                width={["full", "full", "356px"]}
+                justifyContent="space-between"
+                flex={5}
+                maxWidth={["auto", "sm"]}
               >
-                {elections?.map((election) => (
-                  <option value={election.electionIdName} key={election.id}>
-                    {election.name}
-                  </option>
-                ))}
-              </Select>
-              <Tooltip label="Create an election">
-                <IconButton
-                  aria-label="Add election"
-                  icon={<PlusIcon width="1.5rem" />}
-                  onClick={onOpenCreateElection}
-                />
-              </Tooltip>
-            </Center>
-            <Tooltip label="Last updated" hasArrow flex={2}>
-              <Stack
-                direction="row"
-                color={`${
-                  (colorMode === "dark" ? "white" : "black") + "Alpha.600"
-                }`}
-                p={2}
-                cursor="pointer"
-                role="group"
-                justifyContent={["center", "flex-start"]}
-              >
-                <Center gap={2}>
-                  <Icon
-                    as={ArrowPathIcon}
-                    _groupHover={{
-                      color: `${
-                        (colorMode === "dark" ? "white" : "black") + "Alpha.900"
-                      }`,
-                      transform: "rotate(180deg)",
-                      transition: "all 0.5s",
-                    }}
+                <Select
+                  placeholder={
+                    false
+                      ? !elections?.length
+                        ? "Loading..."
+                        : "Create election"
+                      : undefined
+                  }
+                  disabled={!elections?.length}
+                  value={router.query.electionIdName}
+                  onChange={(e) => {
+                    router.push(
+                      "/" +
+                        e.target.value +
+                        router.pathname.split("/[electionIdName]")[1]
+                    );
+                  }}
+                >
+                  {elections?.map((election) => (
+                    <option value={election.electionIdName} key={election.id}>
+                      {election.name}
+                    </option>
+                  ))}
+                </Select>
+                <Tooltip label="Create an election">
+                  <IconButton
+                    aria-label="Add election"
+                    icon={<PlusIcon width="1.5rem" />}
+                    onClick={onOpenCreateElection}
                   />
-                  {!currentElection ? (
-                    <Text fontSize="xs">Loading...</Text>
-                  ) : (
-                    <Text
-                      fontSize="xs"
+                </Tooltip>
+              </Center>
+              <Tooltip label="Last updated" hasArrow flex={2}>
+                <Stack
+                  direction="row"
+                  color={`${
+                    (colorMode === "dark" ? "white" : "black") + "Alpha.600"
+                  }`}
+                  p={2}
+                  cursor="pointer"
+                  role="group"
+                  justifyContent={["center", "flex-start"]}
+                >
+                  <Center gap={2}>
+                    <Icon
+                      as={ArrowPathIcon}
                       _groupHover={{
                         color: `${
                           (colorMode === "dark" ? "white" : "black") +
-                          "Alpha.700"
+                          "Alpha.900"
                         }`,
+                        transform: "rotate(180deg)",
                         transition: "all 0.5s",
                       }}
-                    >
-                      Updated{" "}
-                      <Moment
-                        interval={10000}
-                        fromNow
-                        date={currentElection.updatedAt.toDate()}
-                      />
-                    </Text>
-                  )}
-                </Center>
-              </Stack>
-            </Tooltip>
+                    />
+                    {!currentElection ? (
+                      <Text fontSize="xs">Loading...</Text>
+                    ) : (
+                      <Text
+                        fontSize="xs"
+                        _groupHover={{
+                          color: `${
+                            (colorMode === "dark" ? "white" : "black") +
+                            "Alpha.700"
+                          }`,
+                          transition: "all 0.5s",
+                        }}
+                      >
+                        Updated{" "}
+                        <Moment
+                          interval={10000}
+                          fromNow
+                          date={currentElection.updatedAt.toDate()}
+                        />
+                      </Text>
+                    )}
+                  </Center>
+                </Stack>
+              </Tooltip>
+            </Stack>
+            <Link href={`/${currentElection?.electionIdName}`} target="_blank">
+              <Button
+                isLoading={!currentElection}
+                variant="outline"
+                rightIcon={<ArrowTopRightOnSquareIcon width={18} />}
+                display={["flex", "none", "flex"]}
+                width="full"
+              >
+                {currentElection?.name}
+              </Button>
+              <IconButton
+                aria-label={"Go to" + currentElection?.name}
+                icon={<ArrowTopRightOnSquareIcon width={18} />}
+                display={["none", "flex", "none"]}
+              />
+            </Link>
           </Stack>
-          <Link href={`/${currentElection?.electionIdName}`} target="_blank">
-            <Button
-              isLoading={!currentElection}
-              variant="outline"
-              rightIcon={<ArrowTopRightOnSquareIcon width={18} />}
-              display={["flex", "none", "flex"]}
-              width="full"
-            >
-              {currentElection?.name}
-            </Button>
-            <IconButton
-              aria-label={"Go to" + currentElection?.name}
-              icon={<ArrowTopRightOnSquareIcon width={18} />}
-              display={["none", "flex", "none"]}
-            />
-          </Link>
-        </Stack>
-        <Flex
-          flexDirection={["column", "column", "row"]}
-          borderRadius="0.25rem"
-          gap={4}
-          height="full"
-        >
-          <Show below="md">
-            <Select
-              value={router.pathname.split("/dashboard")[1]}
-              onChange={(e) => {
-                router.push(
-                  `/${router.query.electionIdName}/dashboard${e.target.value}`
-                );
-              }}
-            >
-              {dashboardSidebar.map((sidebar) => (
-                <option value={sidebar.href} key={sidebar.id}>
-                  {sidebar.title}
-                </option>
-              ))}
-            </Select>
-          </Show>
+          <Flex
+            flexDirection={["column", "column", "row"]}
+            borderRadius="0.25rem"
+            gap={4}
+            height="full"
+          >
+            <Show below="md">
+              <Select
+                value={router.pathname.split("/dashboard")[1]}
+                onChange={(e) => {
+                  router.push(
+                    `/${router.query.electionIdName}/dashboard${e.target.value}`
+                  );
+                }}
+              >
+                {dashboardSidebar.map((sidebar) => (
+                  <option value={sidebar.href} key={sidebar.id}>
+                    {sidebar.title}
+                  </option>
+                ))}
+              </Select>
+            </Show>
 
-          <Hide below="md">
-            <Box
+            <Hide below="md">
+              <Box
+                padding={4}
+                backgroundColor={colorMode === "dark" ? "gray.700" : "gray.50"}
+                borderRadius="md"
+                height="fit-content"
+              >
+                <DashboardSidebar />
+              </Box>
+            </Hide>
+
+            <Stack
               padding={4}
               backgroundColor={colorMode === "dark" ? "gray.700" : "gray.50"}
+              flex="1"
               borderRadius="md"
-              height="fit-content"
             >
-              <DashboardSidebar />
-            </Box>
-          </Hide>
+              <Flex justifyContent="space-between" alignItems="center">
+                <Text fontSize={["xl", "2xl"]} fontWeight="bold">
+                  {title}
+                </Text>
+                {(() => {
+                  switch (title) {
+                    case "Partylists":
+                      return (
+                        <HStack>
+                          <Hide above="sm">
+                            <IconButton
+                              aria-label="Add partylist"
+                              icon={<UserPlusIcon width={18} />}
+                              onClick={onOpenAddPartylist}
+                              isLoading={!currentElection}
+                            />
+                          </Hide>
+                          <Hide below="sm">
+                            <Button
+                              onClick={onOpenAddPartylist}
+                              leftIcon={<UserPlusIcon width={18} />}
+                              isLoading={!currentElection}
+                            >
+                              Add partylist
+                            </Button>
+                          </Hide>
+                        </HStack>
+                      );
+                    case "Positions":
+                      return (
+                        <HStack>
+                          <Hide above="sm">
+                            <IconButton
+                              aria-label="Add position"
+                              icon={<UserPlusIcon width={18} />}
+                              onClick={onOpenAddPosition}
+                              isLoading={!currentElection}
+                            />
+                          </Hide>
 
-          <Stack
-            padding={4}
-            backgroundColor={colorMode === "dark" ? "gray.700" : "gray.50"}
-            flex="1"
-            borderRadius="md"
-          >
-            <Flex justifyContent="space-between" alignItems="center">
-              <Text fontSize={["xl", "2xl"]} fontWeight="bold">
-                {title}
-              </Text>
-              {(() => {
-                switch (title) {
-                  case "Partylists":
-                    return (
-                      <HStack>
-                        <Hide above="sm">
-                          <IconButton
-                            aria-label="Add partylist"
-                            icon={<UserPlusIcon width={18} />}
-                            onClick={onOpenAddPartylist}
-                            isLoading={!currentElection}
-                          />
-                        </Hide>
-                        <Hide below="sm">
-                          <Button
-                            onClick={onOpenAddPartylist}
-                            leftIcon={<UserPlusIcon width={18} />}
-                            isLoading={!currentElection}
-                          >
-                            Add partylist
-                          </Button>
-                        </Hide>
-                      </HStack>
-                    );
-                  case "Positions":
-                    return (
-                      <HStack>
-                        <Hide above="sm">
-                          <IconButton
-                            aria-label="Add position"
-                            icon={<UserPlusIcon width={18} />}
-                            onClick={onOpenAddPosition}
-                            isLoading={!currentElection}
-                          />
-                        </Hide>
+                          <Hide below="sm">
+                            <Button
+                              onClick={onOpenAddPosition}
+                              leftIcon={<UserPlusIcon width={18} />}
+                              isLoading={!currentElection}
+                            >
+                              Add position
+                            </Button>
+                          </Hide>
+                        </HStack>
+                      );
+                    case "Voters":
+                      return (
+                        <HStack>
+                          <Tooltip label="Upload bulk voters. (.xlsx)">
+                            <IconButton
+                              aria-label="Upload bulk voters"
+                              icon={<ArrowUpOnSquareIcon width={24} />}
+                              onClick={onOpenUploadBulkVoter}
+                            />
+                          </Tooltip>
+                          <Hide above="sm">
+                            <IconButton
+                              aria-label="Add voter"
+                              icon={<UserPlusIcon width={18} />}
+                              onClick={onOpenAddVoter}
+                            />
+                          </Hide>
+                          <Hide below="sm">
+                            <Button
+                              onClick={onOpenAddVoter}
+                              leftIcon={<UserPlusIcon width={18} />}
+                              isLoading={!currentElection}
+                            >
+                              Add voter
+                            </Button>
+                          </Hide>
+                        </HStack>
+                      );
+                  }
+                })()}
+              </Flex>
 
-                        <Hide below="sm">
-                          <Button
-                            onClick={onOpenAddPosition}
-                            leftIcon={<UserPlusIcon width={18} />}
-                            isLoading={!currentElection}
-                          >
-                            Add position
-                          </Button>
-                        </Hide>
-                      </HStack>
-                    );
-                  case "Voters":
-                    return (
-                      <HStack>
-                        <Tooltip label="Upload bulk voters. (.xlsx)">
-                          <IconButton
-                            aria-label="Upload bulk voters"
-                            icon={<ArrowUpOnSquareIcon width={24} />}
-                            onClick={onOpenUploadBulkVoter}
-                          />
-                        </Tooltip>
-                        <Hide above="sm">
-                          <IconButton
-                            aria-label="Add voter"
-                            icon={<UserPlusIcon width={18} />}
-                            onClick={onOpenAddVoter}
-                          />
-                        </Hide>
-                        <Hide below="sm">
-                          <Button
-                            onClick={onOpenAddVoter}
-                            leftIcon={<UserPlusIcon width={18} />}
-                            isLoading={!currentElection}
-                          >
-                            Add voter
-                          </Button>
-                        </Hide>
-                      </HStack>
-                    );
-                }
-              })()}
-            </Flex>
-
-            <Divider />
-            <Box paddingTop={2} overflow={overflow} height="xl">
-              {children}
-            </Box>
-          </Stack>
-        </Flex>
-      </Stack>
+              <Divider />
+              <Box paddingTop={2} overflow={overflow} height="2xl">
+                {children}
+              </Box>
+            </Stack>
+          </Flex>
+        </Stack>
+      </Container>
     </>
   );
 };
