@@ -167,10 +167,10 @@ const ElectionPage = ({
                 />
               </Box>
             )}
-            <Text fontSize="3xl" fontWeight="bold">
+            <Text fontSize={["xl", "2xl", "3xl"]} fontWeight="bold">
               {election.name}
             </Text>
-            <Text>
+            <Text fontSize={["xs", "sm", "initial"]}>
               <Moment format="MMMM DD, YYYY, hA">
                 {election.electionStartDate.seconds * 1000}
               </Moment>
@@ -179,7 +179,7 @@ const ElectionPage = ({
                 {election.electionEndDate.seconds * 1000}
               </Moment>
             </Text>
-            <Text>
+            <Text fontSize={["xs", "sm", "initial"]}>
               Voting hours: {getHourByNumber(election.votingStartHour)} -{" "}
               {getHourByNumber(election.votingEndHour)} (
               {election.votingEndHour - election.votingStartHour < 0
@@ -199,8 +199,10 @@ const ElectionPage = ({
                 width="full"
                 cursor="pointer"
               >
-                <Text fontWeight="bold">About</Text>
-                <Text>
+                <Text fontWeight="bold" fontSize={["xs", "sm", "initial"]}>
+                  About
+                </Text>
+                <Text fontSize={["xs", "sm", "initial"]}>
                   {!seeMore
                     ? election.about?.slice(0, 56) + "... See more"
                     : election.about + " See less"}
@@ -213,37 +215,48 @@ const ElectionPage = ({
                 hashtag={`#${election.name.replace(/\s/g, "")}`}
               >
                 <Flex
-                  alignItems="center"
-                  columnGap={2}
+                  padding={2}
                   border="1px"
-                  paddingX="4"
-                  paddingY="2"
-                  borderRadius="md"
                   borderColor="gray.300"
+                  columnGap={2}
+                  borderRadius="md"
+                  alignItems="center"
+                  justifyContent="center"
                   _hover={{ backgroundColor: "gray.50" }}
                   transition="background-color 0.2s"
                 >
                   <ShareIcon width={18} />
-                  <Text fontWeight="semibold">Share</Text>
+                  <Text
+                    fontWeight="semibold"
+                    fontSize={["xs", "sm", "initial"]}
+                  >
+                    Share
+                  </Text>
                 </Flex>
               </FacebookShareButton>
             </Box>
             <Box marginTop={4}>
               {!session ? (
                 <Link href="/signin">
-                  <Button>Sign in to vote</Button>
+                  <Button fontSize={["sm", "initial"]}>Sign in to vote</Button>
                 </Link>
               ) : election.publicity === "public" &&
                 session.user.accountType === "voter" &&
                 session.user.election !== election.uid ? (
-                <Text>You can&apos;t vote on this election.</Text>
+                <Text fontSize={["sm", "initial"]}>
+                  You can&apos;t vote on this election.
+                </Text>
               ) : session.user.accountType === "voter" &&
                 session.user.hasVoted ? (
                 <Link href={`/${election.electionIdName}/realtime`}>
-                  <Button>Go to realtime voting count update</Button>
+                  <Button fontSize={["sm", "initial"]}>
+                    Go to realtime voting count update
+                  </Button>
                 </Link>
               ) : !isElectionOngoing(election) ? (
-                <Button disabled>Voting is not available</Button>
+                <Button disabled fontSize={["sm", "initial"]}>
+                  Voting is not available
+                </Button>
               ) : (
                 <>
                   {session.user.accountType === "voter" &&
@@ -260,7 +273,7 @@ const ElectionPage = ({
               {positions.map((position) => {
                 return (
                   <Stack key={position.id} alignItems="center">
-                    <Text fontSize="2xl" fontWeight="bold">
+                    <Text fontSize={["lg", "xl", "2xl"]} fontWeight="bold">
                       {position.title}
                     </Text>
                     <Flex flexWrap="wrap" gap={4} justifyContent="center">

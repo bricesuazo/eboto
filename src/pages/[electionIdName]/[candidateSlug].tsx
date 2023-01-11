@@ -217,6 +217,7 @@ const CandidateCredentialPage = ({
                   justifyContent="center"
                   display={["none", "flex"]}
                   _hover={{ backgroundColor: "gray.50" }}
+                  transition="background-color 0.2s"
                 >
                   <ShareIcon width={18} />
                   <Text display={["none", "none", "inherit"]}>Share</Text>
@@ -231,7 +232,7 @@ const CandidateCredentialPage = ({
                 style={{ width: "100%", marginTop: 4 }}
               >
                 <Flex
-                  padding={[2]}
+                  padding={2}
                   border="1px"
                   borderColor="gray.300"
                   columnGap={2}
@@ -239,6 +240,7 @@ const CandidateCredentialPage = ({
                   alignItems="center"
                   justifyContent="center"
                   _hover={{ backgroundColor: "gray.50" }}
+                  transition="background-color 0.2s"
                 >
                   <ShareIcon width={18} />
                   <Text>Share</Text>
