@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Container,
-  Hide,
   HStack,
   IconButton,
   Menu,
@@ -11,7 +10,6 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
-  Show,
   Spinner,
   Text,
   useColorMode,
@@ -56,14 +54,22 @@ const Header = () => {
   const Hello = ({ email }: { email: string }) => {
     return (
       <Box textAlign="end" color="white">
-        <Text fontSize={["xs", "sm"]} fontWeight="semibold" noOfLines={1}>
-          <Hide below="sm">Hello, </Hide>@{email.split("@")[0]}!
-        </Text>
-        <Hide below="sm">
+        <Box display={["inherit", "inherit", "none"]}>
+          <Text fontSize={["xs", "sm"]} fontWeight="semibold" noOfLines={1}>
+            @{email.split("@")[0]}!
+          </Text>
+        </Box>
+        <Box display={["none", "none", "inherit"]}>
+          <Text fontSize={["xs", "sm"]} fontWeight="semibold" noOfLines={1}>
+            Hello, @{email.split("@")[0]}!
+          </Text>
+        </Box>
+
+        <Box display={["none", "none", "inherit"]}>
           <Text fontSize={["2xs", "xs"]} noOfLines={1}>
             {email}
           </Text>
-        </Hide>
+        </Box>
       </Box>
     );
   };
@@ -173,7 +179,8 @@ const Header = () => {
                         Sign in
                       </Button>
                     </Link>
-                    <Hide below="sm">
+
+                    <Box display={["none", "inherit"]}>
                       <Link href="/signup">
                         <Button
                           size={["sm", "md"]}
@@ -191,7 +198,7 @@ const Header = () => {
                           Sign up
                         </Button>
                       </Link>
-                    </Hide>
+                    </Box>
                   </>
                 );
               case "authenticated":
@@ -225,7 +232,7 @@ const Header = () => {
                     return (
                       <>
                         <Hello email={session?.user.email} />
-                        <Show above="md">
+                        <Box display={["none", "none", "inherit"]}>
                           {!(
                             router.route.split("/").length === 2 &&
                             router.route.split("/")[1] === "[electionIdName]" &&
@@ -245,7 +252,7 @@ const Header = () => {
                               </Button>
                             </Link>
                           )}
-                        </Show>
+                        </Box>
                         <MenuParent>
                           <MenuItem
                             icon={<ArchiveBoxArrowDownIcon width={18} />}

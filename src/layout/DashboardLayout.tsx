@@ -5,12 +5,10 @@ import {
   Container,
   Divider,
   Flex,
-  Hide,
   HStack,
   Icon,
   IconButton,
   Select,
-  Show,
   Stack,
   Text,
   Tooltip,
@@ -24,6 +22,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { PlusIcon, UserPlusIcon } from "@heroicons/react/24/solid";
 import { collection, query, where } from "firebase/firestore";
+import Link from "next/link";
 import { useRouter as useRouterNavigation } from "next/navigation";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -39,7 +38,6 @@ import DashboardSidebar, {
 import UploadBulkVotersModal from "../components/UploadBulkVotersModal";
 import { firestore } from "../firebase/firebase";
 import { adminType, electionType } from "../types/typings";
-import Link from "next/link";
 
 const DashboardLayout = ({
   children,
@@ -197,60 +195,62 @@ const DashboardLayout = ({
                   />
                 </Tooltip>
               </Center>
-              <Tooltip label="Last updated" hasArrow flex={2}>
-                <Stack
-                  direction="row"
-                  color={`${
-                    (colorMode === "dark" ? "white" : "black") + "Alpha.600"
-                  }`}
-                  p={2}
-                  cursor="pointer"
-                  role="group"
-                  justifyContent={["center", "flex-start"]}
-                >
-                  <Center gap={2}>
-                    <Icon
-                      as={ArrowPathIcon}
-                      _groupHover={{
-                        color: `${
-                          (colorMode === "dark" ? "white" : "black") +
-                          "Alpha.900"
-                        }`,
-                        transform: "rotate(180deg)",
-                        transition: "all 0.5s",
-                      }}
-                    />
-                    {!currentElection ? (
-                      <Text fontSize="xs">Loading...</Text>
-                    ) : (
-                      <Text
-                        fontSize="xs"
+              <Box display={["none", "none", "initial"]}>
+                <Tooltip label="Last updated" hasArrow flex={2}>
+                  <Stack
+                    direction="row"
+                    color={`${
+                      (colorMode === "dark" ? "white" : "black") + "Alpha.600"
+                    }`}
+                    p={2}
+                    cursor="pointer"
+                    role="group"
+                    justifyContent={["center", "flex-start"]}
+                  >
+                    <Center gap={2}>
+                      <Icon
+                        as={ArrowPathIcon}
                         _groupHover={{
                           color: `${
                             (colorMode === "dark" ? "white" : "black") +
-                            "Alpha.700"
+                            "Alpha.900"
                           }`,
+                          transform: "rotate(180deg)",
                           transition: "all 0.5s",
                         }}
-                      >
-                        Updated{" "}
-                        <Moment
-                          interval={10000}
-                          fromNow
-                          date={currentElection.updatedAt.toDate()}
-                        />
-                      </Text>
-                    )}
-                  </Center>
-                </Stack>
-              </Tooltip>
+                      />
+                      {!currentElection ? (
+                        <Text fontSize="xs">Loading...</Text>
+                      ) : (
+                        <Text
+                          fontSize="xs"
+                          _groupHover={{
+                            color: `${
+                              (colorMode === "dark" ? "white" : "black") +
+                              "Alpha.700"
+                            }`,
+                            transition: "all 0.5s",
+                          }}
+                        >
+                          Updated{" "}
+                          <Moment
+                            interval={10000}
+                            fromNow
+                            date={currentElection.updatedAt.toDate()}
+                          />
+                        </Text>
+                      )}
+                    </Center>
+                  </Stack>
+                </Tooltip>
+              </Box>
             </Stack>
             <Link href={`/${currentElection?.electionIdName}`} target="_blank">
               <Button
                 isLoading={!currentElection}
                 variant="outline"
                 rightIcon={<ArrowTopRightOnSquareIcon width={18} />}
-                display={["flex", "none", "flex"]}
+                display={["flex", "none", "none", "flex"]}
                 width="full"
               >
                 {currentElection?.name}
@@ -258,7 +258,7 @@ const DashboardLayout = ({
               <IconButton
                 aria-label={"Go to" + currentElection?.name}
                 icon={<ArrowTopRightOnSquareIcon width={18} />}
-                display={["none", "flex", "none"]}
+                display={["none", "flex", "flex", "none"]}
               />
             </Link>
           </Stack>
@@ -268,33 +268,31 @@ const DashboardLayout = ({
             gap={4}
             height="full"
           >
-            <Show below="md">
-              <Select
-                value={router.pathname.split("/dashboard")[1]}
-                onChange={(e) => {
-                  router.push(
-                    `/${router.query.electionIdName}/dashboard${e.target.value}`
-                  );
-                }}
-              >
-                {dashboardSidebar.map((sidebar) => (
-                  <option value={sidebar.href} key={sidebar.id}>
-                    {sidebar.title}
-                  </option>
-                ))}
-              </Select>
-            </Show>
+            <Select
+              value={router.pathname.split("/dashboard")[1]}
+              onChange={(e) => {
+                router.push(
+                  `/${router.query.electionIdName}/dashboard${e.target.value}`
+                );
+              }}
+              display={["block", "block", "none"]}
+            >
+              {dashboardSidebar.map((sidebar) => (
+                <option value={sidebar.href} key={sidebar.id}>
+                  {sidebar.title}
+                </option>
+              ))}
+            </Select>
 
-            <Hide below="md">
-              <Box
-                padding={4}
-                backgroundColor={colorMode === "dark" ? "gray.700" : "gray.50"}
-                borderRadius="md"
-                height="fit-content"
-              >
-                <DashboardSidebar />
-              </Box>
-            </Hide>
+            <Box
+              padding={4}
+              backgroundColor={colorMode === "dark" ? "gray.700" : "gray.50"}
+              borderRadius="md"
+              height="fit-content"
+              display={["none", "none", "block"]}
+            >
+              <DashboardSidebar />
+            </Box>
 
             <Stack
               padding={4}
@@ -311,46 +309,43 @@ const DashboardLayout = ({
                     case "Partylists":
                       return (
                         <HStack>
-                          <Hide above="sm">
-                            <IconButton
-                              aria-label="Add partylist"
-                              icon={<UserPlusIcon width={18} />}
-                              onClick={onOpenAddPartylist}
-                              isLoading={!currentElection}
-                            />
-                          </Hide>
-                          <Hide below="sm">
-                            <Button
-                              onClick={onOpenAddPartylist}
-                              leftIcon={<UserPlusIcon width={18} />}
-                              isLoading={!currentElection}
-                            >
-                              Add partylist
-                            </Button>
-                          </Hide>
+                          <IconButton
+                            aria-label="Add partylist"
+                            icon={<UserPlusIcon width={18} />}
+                            onClick={onOpenAddPartylist}
+                            isLoading={!currentElection}
+                            display={["inherit", "none"]}
+                          />
+
+                          <Button
+                            onClick={onOpenAddPartylist}
+                            leftIcon={<UserPlusIcon width={18} />}
+                            isLoading={!currentElection}
+                            display={["none", "inherit"]}
+                          >
+                            Add partylist
+                          </Button>
                         </HStack>
                       );
                     case "Positions":
                       return (
                         <HStack>
-                          <Hide above="sm">
-                            <IconButton
-                              aria-label="Add position"
-                              icon={<UserPlusIcon width={18} />}
-                              onClick={onOpenAddPosition}
-                              isLoading={!currentElection}
-                            />
-                          </Hide>
+                          <IconButton
+                            aria-label="Add position"
+                            icon={<UserPlusIcon width={18} />}
+                            onClick={onOpenAddPosition}
+                            isLoading={!currentElection}
+                            display={["inherit", "none"]}
+                          />
 
-                          <Hide below="sm">
-                            <Button
-                              onClick={onOpenAddPosition}
-                              leftIcon={<UserPlusIcon width={18} />}
-                              isLoading={!currentElection}
-                            >
-                              Add position
-                            </Button>
-                          </Hide>
+                          <Button
+                            onClick={onOpenAddPosition}
+                            leftIcon={<UserPlusIcon width={18} />}
+                            isLoading={!currentElection}
+                            display={["none", "inherit"]}
+                          >
+                            Add position
+                          </Button>
                         </HStack>
                       );
                     case "Voters":
@@ -363,22 +358,22 @@ const DashboardLayout = ({
                               onClick={onOpenUploadBulkVoter}
                             />
                           </Tooltip>
-                          <Hide above="sm">
-                            <IconButton
-                              aria-label="Add voter"
-                              icon={<UserPlusIcon width={18} />}
-                              onClick={onOpenAddVoter}
-                            />
-                          </Hide>
-                          <Hide below="sm">
-                            <Button
-                              onClick={onOpenAddVoter}
-                              leftIcon={<UserPlusIcon width={18} />}
-                              isLoading={!currentElection}
-                            >
-                              Add voter
-                            </Button>
-                          </Hide>
+
+                          <IconButton
+                            aria-label="Add voter"
+                            icon={<UserPlusIcon width={18} />}
+                            onClick={onOpenAddVoter}
+                            display={["inherit", "none"]}
+                          />
+
+                          <Button
+                            onClick={onOpenAddVoter}
+                            leftIcon={<UserPlusIcon width={18} />}
+                            isLoading={!currentElection}
+                            display={["none", "inherit"]}
+                          >
+                            Add voter
+                          </Button>
                         </HStack>
                       );
                   }

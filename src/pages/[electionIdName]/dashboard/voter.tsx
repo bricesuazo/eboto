@@ -1,7 +1,7 @@
 import {
   Box,
   Center,
-  Hide,
+  Flex,
   HStack,
   Icon,
   IconButton,
@@ -9,15 +9,8 @@ import {
   InputGroup,
   InputLeftElement,
   Spinner,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
   Text,
-  Th,
-  Thead,
   Tooltip,
-  Tr,
   useColorMode,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -99,53 +92,80 @@ const VoterPage = ({
             <Input placeholder="Search..." />
           </InputGroup>
           {voters && voters.length !== 0 ? (
-            <TableContainer marginTop={4}>
-              <Table variant="simple" size="sm">
-                <Thead>
-                  <Tr>
-                    <Hide below="md">
-                      <Th>Full name</Th>
-                    </Hide>
-                    <Th>Email address</Th>
-                    <Hide below="lg">
-                      <Th>Password</Th>
-                    </Hide>
-                    <Hide below="xl">
-                      <Th textAlign="center">Has voted?</Th>
-                    </Hide>
-                    <Th></Th>
-                  </Tr>
-                </Thead>
+            <Box marginTop={4}>
+              <Flex
+                alignItems="center"
+                justifyContent="space-between"
+                fontSize="sm"
+                fontWeight="semibold"
+                paddingX={4}
+                paddingY={2}
+              >
+                <Text display={["none", "none", "block"]} width="32">
+                  Full name
+                </Text>
 
-                <Tbody>
-                  {voters.map((voter) => (
-                    <Tr key={voter.id} _hover={{ backgroundColor: "gray.100" }}>
-                      <Hide below="md">
-                        <Td>{voter.fullName}</Td>
-                      </Hide>
-                      <Td>{voter.email}</Td>
-                      <Hide below="lg">
-                        <Td>{voter.password}</Td>
-                      </Hide>
-                      <Hide below="xl">
-                        <Td textAlign="center">
-                          {voter.hasVoted ? (
-                            <Icon
-                              as={CheckCircleIcon}
-                              fontSize={24}
-                              color="blue.300"
-                            />
-                          ) : (
-                            <Icon
-                              as={XCircleIcon}
-                              fontSize={24}
-                              color="red.300"
-                            />
-                          )}
-                        </Td>
-                      </Hide>
-                      <Td>
-                        <HStack justifyContent="flex-end">
+                <Text width="44">Email address</Text>
+
+                <Text display={["none", "none", "none", "block"]} width="36">
+                  Password
+                </Text>
+
+                <Text
+                  textAlign="center"
+                  display={["none", "none", "none", "none", "block"]}
+                  width="20"
+                >
+                  Has voted?
+                </Text>
+
+                <Box width="16" />
+              </Flex>
+
+              <Box>
+                {voters.map((voter) => (
+                  <Flex
+                    key={voter.id}
+                    _hover={{ backgroundColor: "gray.100" }}
+                    alignItems="center"
+                    justifyContent="space-between"
+                    paddingX={4}
+                    paddingY={2}
+                    fontSize="sm"
+                  >
+                    <Text display={["none", "none", "block"]} width="32">
+                      {voter.fullName}
+                    </Text>
+
+                    <Text width="44">{voter.email}</Text>
+
+                    <Text
+                      display={["none", "none", "none", "block"]}
+                      width="36"
+                    >
+                      {voter.password}
+                    </Text>
+
+                    <Box
+                      display={["none", "none", "none", "none", "flex"]}
+                      width="20"
+                      justifyContent="center"
+                      alignItems="center"
+                    >
+                      {voter.hasVoted ? (
+                        <Icon
+                          as={CheckCircleIcon}
+                          fontSize={24}
+                          color="blue.300"
+                        />
+                      ) : (
+                        <Icon as={XCircleIcon} fontSize={24} color="red.300" />
+                      )}
+                    </Box>
+
+                    <Box>
+                      <HStack justifyContent="flex-end">
+                        <Box display={["none", "initial"]}>
                           <Tooltip label="Delete voter">
                             <IconButton
                               aria-label="Delete voter"
@@ -162,28 +182,28 @@ const VoterPage = ({
                               }}
                             />
                           </Tooltip>
-                          <Tooltip label="Edit voter">
-                            <IconButton
-                              aria-label="Edit voter"
-                              icon={<PencilSquareIcon width={18} />}
-                              size="sm"
-                              onClick={() => {
-                                setSelectedVoter(
-                                  voters.find(
-                                    (obj) => obj.id === voter.id
-                                  ) as voterType
-                                );
-                                onOpenEditVoter();
-                              }}
-                            />
-                          </Tooltip>
-                        </HStack>
-                      </Td>
-                    </Tr>
-                  ))}
-                </Tbody>
-              </Table>
-            </TableContainer>
+                        </Box>
+                        <Tooltip label="Edit voter">
+                          <IconButton
+                            aria-label="Edit voter"
+                            icon={<PencilSquareIcon width={18} />}
+                            size="sm"
+                            onClick={() => {
+                              setSelectedVoter(
+                                voters.find(
+                                  (obj) => obj.id === voter.id
+                                ) as voterType
+                              );
+                              onOpenEditVoter();
+                            }}
+                          />
+                        </Tooltip>
+                      </HStack>
+                    </Box>
+                  </Flex>
+                ))}
+              </Box>
+            </Box>
           ) : (
             <Center width="full" height="full">
               {votersStatus === "loading" ? (

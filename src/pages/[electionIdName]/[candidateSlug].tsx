@@ -7,7 +7,6 @@ import {
   Button,
   Container,
   Flex,
-  Hide,
   IconButton,
   ListItem,
   Stack,
@@ -208,35 +207,22 @@ const CandidateCredentialPage = ({
                 url={`https://eboto-mo.com/${election.electionIdName}/${candidate.slug}`}
                 hashtag={"#eBotoMo"}
               >
-                <Hide below="sm">
-                  <Hide below="lg">
-                    <Button
-                      leftIcon={<ShareIcon width={18} />}
-                      variant="outline"
-                    >
-                      Share
-                    </Button>
-                  </Hide>
-                  <Hide above="lg">
-                    <IconButton
-                      aria-label="Share"
-                      icon={<ShareIcon width={18} />}
-                      variant="outline"
-                    />
-                  </Hide>
-                  <Hide above="sm">
-                    <Button
-                      leftIcon={<ShareIcon width={18} />}
-                      variant="outline"
-                    >
-                      Share
-                    </Button>
-                  </Hide>
-                </Hide>
+                <Box display={["none", "none", "inherit"]}>
+                  <Button leftIcon={<ShareIcon width={18} />} variant="outline">
+                    Share
+                  </Button>
+                </Box>
+                <Box display={["none", "inherit", "none"]}>
+                  <IconButton
+                    aria-label="Share"
+                    icon={<ShareIcon width={18} />}
+                    variant="outline"
+                  />
+                </Box>
               </FacebookShareButton>
             </Flex>
             <Text fontSize={["md", "lg"]}>Running for {position.title}</Text>
-            <Hide above="sm">
+            <Box display={["inherit", "none"]}>
               <FacebookShareButton
                 url={`https://eboto-mo.com/${election.electionIdName}/${candidate.slug}`}
                 hashtag={"#eBotoMo"}
@@ -251,7 +237,8 @@ const CandidateCredentialPage = ({
                   Share
                 </Button>
               </FacebookShareButton>
-            </Hide>
+            </Box>
+
             <Stack marginTop={8}>
               <Text fontSize="xl" fontWeight="bold">
                 Credentials

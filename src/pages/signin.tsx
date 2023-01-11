@@ -8,7 +8,6 @@ import {
   Flex,
   FormControl,
   FormLabel,
-  Hide,
   Input,
   Link,
   Stack,
@@ -45,24 +44,23 @@ const SigninPage: NextPage = () => {
         <title>Sign in | eBoto Mo</title>
       </Head>
       <Flex height="80vh">
-        <Hide below="md">
-          <Box
-            position="relative"
-            flex={1}
-            height="full"
-            userSelect="none"
-            pointerEvents="none"
-          >
-            <Image
-              src="/assets/images/cvsu-front.jpg"
-              alt="CvSU Front"
-              fill
-              sizes="contain"
-              priority
-              style={{ objectFit: "cover", filter: "brightness(0.75)" }}
-            />
-          </Box>
-        </Hide>
+        <Box
+          position="relative"
+          flex={1}
+          height="full"
+          userSelect="none"
+          pointerEvents="none"
+          display={["none", "none", "inherit"]}
+        >
+          <Image
+            src="/assets/images/cvsu-front.jpg"
+            alt="CvSU Front"
+            fill
+            sizes="contain"
+            priority
+            style={{ objectFit: "cover", filter: "brightness(0.75)" }}
+          />
+        </Box>
 
         <Box flex={1}>
           <Container

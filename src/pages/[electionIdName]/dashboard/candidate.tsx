@@ -1,9 +1,7 @@
 import {
-  Box,
   Button,
   Center,
   Flex,
-  Hide,
   HStack,
   Icon,
   Image,
@@ -17,8 +15,8 @@ import {
   Spinner,
   Stack,
   Text,
-  useDisclosure,
   WrapItem,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { UserCircleIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 import {
@@ -122,7 +120,7 @@ const CandidatePage = ({
 
                     <Flex gap={2} width="full">
                       <Stack
-                        width={["4rem", "8rem", "10rem"]}
+                        width={["4rem", "5rem", "10rem"]}
                         alignItems="center"
                         justifyContent="center"
                         textAlign="center"
@@ -139,14 +137,21 @@ const CandidatePage = ({
                         userSelect="none"
                       >
                         <Icon as={UserPlusIcon} fontSize="xl" />
-                        <Box>
-                          <Hide below="sm">
-                            <Text fontSize={["2xs", "2xs", "xs"]}>
-                              Add candidate in
-                            </Text>
-                            <Text fontSize="sm">{position.title}</Text>
-                          </Hide>
-                        </Box>
+                        <Text
+                          fontSize="2xs"
+                          display={["none", "inherit", "none"]}
+                        >
+                          Add candidate
+                        </Text>
+                        <Flex
+                          direction="column"
+                          display={["none", "none", "inherit"]}
+                        >
+                          <Text fontSize={["2xs", "2xs", "xs"]}>
+                            Add candidate in
+                          </Text>
+                          <Text fontSize="sm">{position.title}</Text>
+                        </Flex>
                       </Stack>
 
                       <Flex

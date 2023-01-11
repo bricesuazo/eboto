@@ -1,7 +1,7 @@
 import {
+  Box,
   Button,
   Center,
-  Hide,
   HStack,
   IconButton,
   Input,
@@ -28,8 +28,8 @@ import { useFirestoreCollectionData } from "reactfire";
 import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import { adminType, electionType } from "../../../types/typings";
-import isAdminOwnsTheElection from "../../../utils/isAdminOwnsTheElection";
 import { getHourByNumber } from "../../../utils/getHourByNumber";
+import isAdminOwnsTheElection from "../../../utils/isAdminOwnsTheElection";
 
 const OverviewPage = ({
   session,
@@ -51,126 +51,126 @@ const OverviewPage = ({
       </Head>
       <DashboardLayout title="Overview" session={session}>
         <Stack spacing={4} textAlign={["center", "left"]}>
-          <Stack direction={["column", "row"]} spacing={[0, 2]}>
+          <Stack
+            direction={["column", "row"]}
+            spacing={[0, 2]}
+            alignItems="center"
+          >
             <Text fontWeight={["normal", "bold"]}>Election Name: </Text>
             <Text fontWeight={["bold", "normal"]} fontSize={["xl", "initial"]}>
               {election.name}
             </Text>
-            <Hide above="sm">
-              <Text fontSize="sm">
-                Created{" "}
-                <Moment fromNow>{election.createdAt.seconds * 1000}</Moment>
-              </Text>
-            </Hide>
+
+            <Text fontSize="sm" display={["initial", "none"]}>
+              Created{" "}
+              <Moment fromNow>{election.createdAt.seconds * 1000}</Moment>
+            </Text>
           </Stack>
-          <Hide below="sm">
-            <Stack direction="row">
-              <Text fontWeight="bold">Created At:</Text>{" "}
-              <Text>
-                <Moment format="MMMM DD, YYYY, h:mmA">
-                  {election.createdAt.seconds * 1000}
-                </Moment>{" "}
-                (<Moment fromNow>{election.createdAt.seconds * 1000}</Moment>)
-              </Text>
-            </Stack>
-          </Hide>
-          <Hide below="md">
-            <HStack>
-              <Link href={`/${election.electionIdName}`} target="_blank">
-                <Hide below="lg">
-                  <Button
-                    rightIcon={<ArrowTopRightOnSquareIcon width={18} />}
-                    variant="outline"
-                  >
-                    Go to {election.name}
-                  </Button>
-                </Hide>
-                <Hide above="lg">
-                  <IconButton
-                    aria-label={"Go to" + election.name}
-                    icon={<ArrowTopRightOnSquareIcon width={18} />}
-                  />
-                </Hide>
-              </Link>
-              <InputGroup>
-                <InputLeftAddon>eboto-mo.com/</InputLeftAddon>
-                <Input
-                  type="text"
-                  placeholder="Election ID Name"
-                  value={election.electionIdName}
-                  readOnly
-                />
-                <InputRightAddon
-                  cursor="pointer"
-                  onClick={() => {
-                    if (copied) return;
-                    navigator.clipboard.writeText(
-                      `eboto-mo.com/${election.electionIdName}`
-                    );
-                    setCopied(true);
 
-                    setTimeout(() => {
-                      setCopied(false);
-                    }, 3000);
-                  }}
-                >
-                  {copied ? (
-                    <Text>Copied!</Text>
-                  ) : (
-                    <>
-                      <DocumentDuplicateIcon width={18} />
-                      <Text>Copy</Text>
-                    </>
-                  )}
-                </InputRightAddon>
-              </InputGroup>
-            </HStack>
-          </Hide>
+          <Stack direction="row" display={["none", "initial"]}>
+            <Text fontWeight="bold">Created At:</Text>{" "}
+            <Text>
+              <Moment format="MMMM DD, YYYY, h:mmA">
+                {election.createdAt.seconds * 1000}
+              </Moment>{" "}
+              (<Moment fromNow>{election.createdAt.seconds * 1000}</Moment>)
+            </Text>
+          </Stack>
 
-          <Hide above="md">
-            <Stack direction="column">
-              <InputGroup>
-                <InputLeftAddon>/</InputLeftAddon>
-                <Input
-                  type="text"
-                  placeholder="Election ID Name"
-                  value={election.electionIdName}
-                  readOnly
-                />
-                <InputRightAddon
-                  cursor="pointer"
-                  onClick={() => {
-                    if (copied) return;
-                    navigator.clipboard.writeText(
-                      `eboto-mo.com/${election.electionIdName}`
-                    );
-                    setCopied(true);
-
-                    setTimeout(() => {
-                      setCopied(false);
-                    }, 3000);
-                  }}
-                >
-                  {copied ? (
-                    <CheckIcon width={18} />
-                  ) : (
-                    <>
-                      <DocumentDuplicateIcon width={18} />
-                    </>
-                  )}
-                </InputRightAddon>
-              </InputGroup>
-              <Link href={`/${election.electionIdName}`} target="_blank">
+          <HStack display={["none", "none", "inherit"]}>
+            <Link href={`/${election.electionIdName}`} target="_blank">
+              <Box display={["none", "none", "none", "initial"]}>
                 <Button
                   rightIcon={<ArrowTopRightOnSquareIcon width={18} />}
                   variant="outline"
-                  width="full"
                 >
                   Go to {election.name}
                 </Button>
-              </Link>
-            </Stack>
-          </Hide>
+              </Box>
+              <Box display={["none", "none", "initial", "none"]}>
+                <IconButton
+                  aria-label={"Go to" + election.name}
+                  icon={<ArrowTopRightOnSquareIcon width={18} />}
+                />
+              </Box>
+            </Link>
+            <InputGroup>
+              <InputLeftAddon>eboto-mo.com/</InputLeftAddon>
+              <Input
+                type="text"
+                placeholder="Election ID Name"
+                value={election.electionIdName}
+                readOnly
+              />
+              <InputRightAddon
+                cursor="pointer"
+                onClick={() => {
+                  if (copied) return;
+                  navigator.clipboard.writeText(
+                    `eboto-mo.com/${election.electionIdName}`
+                  );
+                  setCopied(true);
+
+                  setTimeout(() => {
+                    setCopied(false);
+                  }, 3000);
+                }}
+              >
+                {copied ? (
+                  <Text>Copied!</Text>
+                ) : (
+                  <>
+                    <DocumentDuplicateIcon width={18} />
+                    <Text>Copy</Text>
+                  </>
+                )}
+              </InputRightAddon>
+            </InputGroup>
+          </HStack>
+
+          <Stack direction="column" display={["inherit", "inherit", "none"]}>
+            <InputGroup>
+              <InputLeftAddon>/</InputLeftAddon>
+              <Input
+                type="text"
+                placeholder="Election ID Name"
+                value={election.electionIdName}
+                readOnly
+              />
+              <InputRightAddon
+                cursor="pointer"
+                onClick={() => {
+                  if (copied) return;
+                  navigator.clipboard.writeText(
+                    `eboto-mo.com/${election.electionIdName}`
+                  );
+                  setCopied(true);
+
+                  setTimeout(() => {
+                    setCopied(false);
+                  }, 3000);
+                }}
+              >
+                {copied ? (
+                  <CheckIcon width={18} />
+                ) : (
+                  <>
+                    <DocumentDuplicateIcon width={18} />
+                  </>
+                )}
+              </InputRightAddon>
+            </InputGroup>
+            <Link href={`/${election.electionIdName}`} target="_blank">
+              <Button
+                rightIcon={<ArrowTopRightOnSquareIcon width={18} />}
+                variant="outline"
+                width="full"
+              >
+                Go to {election.name}
+              </Button>
+            </Link>
+          </Stack>
+
           <Stack spacing={[2, 0]}>
             <Stack direction={["column", "row"]} spacing={[0, 2]}>
               <Text fontWeight={["normal", "bold"]}>Election start date:</Text>
