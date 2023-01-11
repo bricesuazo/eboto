@@ -1,0 +1,28 @@
+.react-datepicker {
+  display: flex;
+  flex-direction: column;
+}
+.react-datepicker__time-container {
+  width: auto;
+}
+.react-datepicker__navigation--next--with-time:not(
+    .react-datepicker__navigation--next--with-today-button
+  ) {
+  right: 0;
+}
+
+.react-datepicker__time-container
+  .react-datepicker__time
+  .react-datepicker__time-box {
+  width: auto;
+}
+.lolol {
+  background-color: red;
+}
+
+.react-datepicker__time-container
+  .react-datepicker__time
+  .react-datepicker__time-box
+  ul.react-datepicker__time-list {
+  height: 242px !important;
+}

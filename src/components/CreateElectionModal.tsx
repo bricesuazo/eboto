@@ -26,6 +26,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Select,
+  SimpleGrid,
   Stack,
   Text,
   useRadio,
@@ -97,7 +98,7 @@ const CreateElectionModal = ({
   now.setHours(now.getHours() + 1);
   now.setMinutes(0, 0, 0);
 
-  const [startDate, setStartDate] = useState<Date>();
+  const [startDate, setStartDate] = useState<Date>(now);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
   const options = [
@@ -197,7 +198,7 @@ const CreateElectionModal = ({
       votingStartHour: 7,
       votingEndHour: 19,
     });
-    setStartDate(new Date());
+    setStartDate(now);
     setEndDate(null);
     setError(null);
     setSelectedTemplate(options[0].id.toString());
@@ -279,7 +280,6 @@ const CreateElectionModal = ({
                 );
               });
 
-              // CSSO template
               if (selectedTemplate !== "0") {
                 const template = options.find(
                   (option) => option.id.toString() === selectedTemplate
@@ -373,10 +373,14 @@ const CreateElectionModal = ({
                   <FormErrorMessage>{error.error}</FormErrorMessage>
                 )}
               </FormControl>
-
               <FormControl isRequired>
                 <FormLabel>Election Date</FormLabel>
-                <Stack>
+                <SimpleGrid
+                  columns={2}
+                  spacing={2}
+                  autoRows="auto"
+                  alignItems="center"
+                >
                   <ReactDatePicker
                     selected={startDate}
                     minDate={now}
@@ -399,22 +403,29 @@ const CreateElectionModal = ({
                     dateFormat="MMMM d, yyyy h:mm aa"
                     disabledKeyboardNavigation
                     withPortal
-                    placeholderText="Select election start date"
+                    popperProps={{ strategy: "fixed" }}
                     customInput={
-                      <Button
-                        width="100%"
-                        variant="outline"
-                        disabled={!startDate}
+                      <Stack
+                        spacing={0}
+                        cursor="pointer"
+                        border="1px"
+                        borderColor="gray.200"
+                        _hover={{ borderColor: "gray.500" }}
+                        borderRadius={4}
+                        padding={2}
+                        textAlign="center"
+                        justifyContent="center"
+                        fontSize={[14, 16]}
                       >
                         {startDate ? (
-                          <Moment
-                            date={startDate}
-                            format="MMMM D, YYYY h:mmA"
-                          />
+                          <>
+                            <Moment date={startDate} format="MMMM D, YYYY" />
+                            <Moment date={startDate} format="h:mmA" />
+                          </>
                         ) : (
-                          "Select election end date"
+                          "Select election start date"
                         )}
-                      </Button>
+                      </Stack>
                     }
                   />
 
@@ -437,25 +448,35 @@ const CreateElectionModal = ({
                     showTimeSelect
                     dateFormat="MMMM d, yyyy h:mm aa"
                     disabledKeyboardNavigation
-                    withPortal
                     isClearable
-                    placeholderText="Select election end date"
                     highlightDates={startDate ? [startDate] : []}
+                    withPortal
                     customInput={
-                      <Button
-                        width="100%"
-                        variant="outline"
-                        disabled={!startDate}
+                      <Stack
+                        spacing={0}
+                        cursor="pointer"
+                        border="1px"
+                        borderColor="gray.200"
+                        _hover={{ borderColor: "gray.500" }}
+                        borderRadius={4}
+                        padding={2}
+                        textAlign="center"
+                        height="full"
+                        justifyContent="center"
+                        fontSize={[14, 16]}
                       >
                         {endDate ? (
-                          <Moment date={endDate} format="MMMM D, YYYY h:mmA" />
+                          <>
+                            <Moment date={endDate} format="MMMM D, YYYY" />
+                            <Moment date={endDate} format="h:mmA" />
+                          </>
                         ) : (
-                          "Select election end date"
+                          <Text>Select election end date</Text>
                         )}
-                      </Button>
+                      </Stack>
                     }
                   />
-                </Stack>
+                </SimpleGrid>
 
                 <FormHelperText>
                   You can&apos;t change the dates once the election is ongoing.

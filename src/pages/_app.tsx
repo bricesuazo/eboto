@@ -11,6 +11,7 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import { app } from "../firebase/firebase";
 import theme from "../theme";
+import "../styles/globals.css";
 
 // const anton = Anton({ weight: "400" });
 const inter = Inter();
