@@ -95,12 +95,6 @@ const DashboardPage = ({ elections }: { elections: electionType[] }) => {
                             </Moment>
                           </Text>
                           <Text>
-                            Updated:{" "}
-                            <Moment interval={10000} fromNow>
-                              {election.updatedAt.seconds * 1000}
-                            </Moment>
-                          </Text>
-                          <Text>
                             Created:{" "}
                             <Moment interval={10000} fromNow>
                               {election.createdAt.seconds * 1000}

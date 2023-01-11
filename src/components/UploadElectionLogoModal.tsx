@@ -22,6 +22,7 @@ import { firestore, storage } from "../firebase/firebase";
 import { electionType } from "../types/typings";
 import formatBytes from "../utils/formatBytes";
 import compress from "../utils/imageCompressor";
+import { useRouter } from "next/router";
 
 const UploadElectionLogoModal = ({
   election,
@@ -32,6 +33,7 @@ const UploadElectionLogoModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
+  const router = useRouter();
   const [isUploading, setIsUploading] = useState(false);
   const [electionLogoUrl, setElectionLogoUrl] = useState<string | null>(
     election.logoUrl
@@ -198,6 +200,8 @@ const UploadElectionLogoModal = ({
                     });
                 }
                 setIsUploading(false);
+                onClose();
+                router.reload();
               }}
             >
               Upload

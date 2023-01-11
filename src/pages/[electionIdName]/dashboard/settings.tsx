@@ -1,25 +1,18 @@
 import {
   Box,
   Button,
-  ButtonGroup,
   Flex,
   FormControl,
   FormErrorMessage,
   FormHelperText,
   FormLabel,
   HStack,
+  IconButton,
   Input,
   InputGroup,
   InputLeftAddon,
-  Popover,
-  PopoverArrow,
-  PopoverBody,
-  PopoverCloseButton,
-  PopoverContent,
-  PopoverFooter,
-  PopoverHeader,
-  PopoverTrigger,
   Select,
+  SimpleGrid,
   Spinner,
   Stack,
   Text,
@@ -28,31 +21,32 @@ import {
 import { TrashIcon } from "@heroicons/react/24/outline";
 import deepEqual from "deep-equal";
 import {
+  Timestamp,
   collection,
   doc,
   getDocs,
   query,
-  Timestamp,
   updateDoc,
   where,
 } from "firebase/firestore";
-import { deleteObject, ref } from "firebase/storage";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 import Head from "next/head";
 import Image from "next/image";
 import { useState } from "react";
 import ReactDatePicker from "react-datepicker";
+import Moment from "react-moment";
 import slugify from "react-slugify";
+import DeleteElectionLogoModal from "../../../components/DeleteElectionLogoModal";
 import DeleteElectionModal from "../../../components/DeleteElectionModal";
 import UploadElectionLogoModal from "../../../components/UploadElectionLogoModal";
-import { firestore, storage } from "../../../firebase/firebase";
+import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import { adminType, electionType } from "../../../types/typings";
+import { getHourByNumber } from "../../../utils/getHourByNumber";
 import isAdminOwnsTheElection from "../../../utils/isAdminOwnsTheElection";
 import isElectionIdNameExists from "../../../utils/isElectionIdNameExists";
 import isElectionOngoing from "../../../utils/isElectionOngoing";
-import { getHourByNumber } from "../../../utils/getHourByNumber";
 
 interface SettingsPageProps {
   election: electionType;
@@ -110,6 +104,11 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
         isOpen={isOpenDelete}
         onClose={onCloseDelete}
         session={session}
+      />
+      <DeleteElectionLogoModal
+        isOpen={isOpenPopover}
+        onClose={onClosePopover}
+        election={election}
       />
       <Head>
         <title>Settings | eBoto Mo</title>
@@ -227,48 +226,95 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Election Date</FormLabel>
-
-                <ReactDatePicker
-                  disabled={isElectionOngoing(initialElection)}
-                  timeIntervals={60}
-                  selected={startDate}
-                  minDate={new Date()}
-                  onChange={(date) => {
-                    date ? setStartDate(date) : setStartDate(null);
-                    setEndDate(null);
-                  }}
-                  filterTime={(time) => {
-                    const currentDate = new Date();
-                    const selectedDate = new Date(time);
-                    return currentDate.getTime() < selectedDate.getTime();
-                  }}
-                  showTimeSelect
-                  dateFormat="MMMM d, yyyy haa"
-                  disabledKeyboardNavigation
-                  withPortal
-                  isClearable={!isElectionOngoing(initialElection)}
-                  placeholderText="Select election start date"
-                />
-                <ReactDatePicker
-                  disabled={!startDate || isElectionOngoing(initialElection)}
-                  timeIntervals={60}
-                  selected={endDate}
-                  onChange={(date) => setEndDate(date)}
-                  minDate={startDate}
-                  filterTime={(time) => {
-                    const selectedDate = new Date(time);
-                    return startDate
-                      ? startDate.getTime() < selectedDate.getTime()
-                      : new Date().getTime() < selectedDate.getTime();
-                  }}
-                  showTimeSelect
-                  dateFormat="MMMM d, yyyy haa"
-                  disabledKeyboardNavigation
-                  withPortal
-                  isClearable={!isElectionOngoing(initialElection)}
-                  placeholderText="Select election end date"
-                  highlightDates={startDate ? [startDate] : []}
-                />
+                <SimpleGrid
+                  columns={2}
+                  spacing={2}
+                  autoRows="auto"
+                  alignItems="center"
+                >
+                  <ReactDatePicker
+                    disabled={isElectionOngoing(initialElection)}
+                    timeIntervals={60}
+                    selected={startDate}
+                    minDate={new Date()}
+                    onChange={(date) => {
+                      date ? setStartDate(date) : setStartDate(null);
+                      setEndDate(null);
+                    }}
+                    filterTime={(time) => {
+                      const currentDate = new Date();
+                      const selectedDate = new Date(time);
+                      return currentDate.getTime() < selectedDate.getTime();
+                    }}
+                    showTimeSelect
+                    dateFormat="MMMM d, yyyy haa"
+                    disabledKeyboardNavigation
+                    withPortal
+                    isClearable={!isElectionOngoing(initialElection)}
+                    customInput={
+                      <Stack
+                        spacing={0}
+                        cursor="pointer"
+                        border="1px"
+                        borderColor="gray.200"
+                        _hover={{ borderColor: "gray.500" }}
+                        borderRadius={4}
+                        padding={2}
+                        textAlign="center"
+                        justifyContent="center"
+                        fontSize={[14, 16]}
+                      >
+                        {startDate ? (
+                          <Moment
+                            date={startDate}
+                            format="MMMM D, YYYY h:mmA"
+                          />
+                        ) : (
+                          <Text>Select election start date</Text>
+                        )}
+                      </Stack>
+                    }
+                  />
+                  <ReactDatePicker
+                    disabled={!startDate || isElectionOngoing(initialElection)}
+                    timeIntervals={60}
+                    selected={endDate}
+                    onChange={(date) => setEndDate(date)}
+                    minDate={startDate}
+                    filterTime={(time) => {
+                      const selectedDate = new Date(time);
+                      return startDate
+                        ? startDate.getTime() < selectedDate.getTime()
+                        : new Date().getTime() < selectedDate.getTime();
+                    }}
+                    showTimeSelect
+                    dateFormat="MMMM d, yyyy haa"
+                    disabledKeyboardNavigation
+                    withPortal
+                    isClearable={!isElectionOngoing(initialElection)}
+                    highlightDates={startDate ? [startDate] : []}
+                    customInput={
+                      <Stack
+                        spacing={0}
+                        cursor="pointer"
+                        border="1px"
+                        borderColor="gray.200"
+                        _hover={{ borderColor: "gray.500" }}
+                        borderRadius={4}
+                        padding={2}
+                        textAlign="center"
+                        justifyContent="center"
+                        fontSize={[14, 16]}
+                      >
+                        {endDate ? (
+                          <Moment date={endDate} format="MMMM D, YYYY h:mmA" />
+                        ) : (
+                          <Text>Select election end date</Text>
+                        )}
+                      </Stack>
+                    }
+                  />
+                </SimpleGrid>
                 <FormHelperText>
                   You can&apos;t change the dates once the election is ongoing.
                 </FormHelperText>
@@ -356,7 +402,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
 
               <FormControl>
                 <FormLabel>Logo</FormLabel>
-                <HStack alignItems="center">
+                <Stack direction={["column", "row"]} alignItems="center">
                   <Stack alignItems="center" spacing={0}>
                     <Box position="relative" width={24} height={24}>
                       <Image
@@ -379,74 +425,21 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                     Upload logo
                   </Button>
                   {election.logoUrl && election.logoUrl.length && (
-                    <>
-                      <Popover
-                        isOpen={
-                          loadingDeleteLogo ? loadingDeleteLogo : isOpenPopover
-                        }
-                        onClose={onClosePopover}
-                        placement="left"
-                      >
-                        <PopoverTrigger>
-                          <Button onClick={onTogglePopover}>Remove logo</Button>
-                        </PopoverTrigger>
-                        <PopoverContent>
-                          <PopoverHeader fontWeight="semibold">
-                            Confirm delete logo?
-                          </PopoverHeader>
-                          <PopoverArrow />
-                          <PopoverCloseButton />
-                          <PopoverBody>
-                            Are you sure you want to delete the election&apos;s
-                            logo?
-                          </PopoverBody>
-                          <PopoverFooter
-                            display="flex"
-                            justifyContent="flex-end"
-                          >
-                            <ButtonGroup size="sm">
-                              <Button
-                                disabled={loadingDeleteLogo}
-                                variant="outline"
-                                onClick={onClosePopover}
-                              >
-                                Cancel
-                              </Button>
-                              <Button
-                                colorScheme="red"
-                                isLoading={loadingDeleteLogo}
-                                onClick={async () => {
-                                  setLoadingDeleteLogo(true);
-                                  await updateDoc(
-                                    doc(firestore, "elections", election.uid),
-                                    {
-                                      logoUrl: "",
-                                      updatedAt: Timestamp.now(),
-                                    }
-                                  ).then(async () => {
-                                    await deleteObject(
-                                      ref(
-                                        storage,
-                                        `elections/${election.uid}/photo`
-                                      )
-                                    );
-                                  });
-                                  setLoadingDeleteLogo(false);
-                                }}
-                              >
-                                Delete
-                              </Button>
-                            </ButtonGroup>
-                          </PopoverFooter>
-                        </PopoverContent>
-                      </Popover>
-                    </>
+                    <Button onClick={onTogglePopover}>Remove logo</Button>
                   )}
-                </HStack>
+                </Stack>
               </FormControl>
 
               <Flex justifyContent="space-between" width="full">
+                <IconButton
+                  display={["inherit", "none"]}
+                  icon={<TrashIcon width={16} />}
+                  aria-label="Icon"
+                  color="red.400"
+                  onClick={() => onOpenDelete()}
+                />
                 <Button
+                  display={["none", "block"]}
                   leftIcon={<TrashIcon width={16} />}
                   variant="outline"
                   color="red.400"
