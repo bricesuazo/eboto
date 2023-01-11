@@ -207,18 +207,20 @@ const CandidateCredentialPage = ({
                 url={`https://eboto-mo.com/${election.electionIdName}/${candidate.slug}`}
                 hashtag={"#eBotoMo"}
               >
-                <Box display={["none", "none", "inherit"]}>
-                  <Button leftIcon={<ShareIcon width={18} />} variant="outline">
-                    Share
-                  </Button>
-                </Box>
-                <Box display={["none", "inherit", "none"]}>
-                  <IconButton
-                    aria-label="Share"
-                    icon={<ShareIcon width={18} />}
-                    variant="outline"
-                  />
-                </Box>
+                <Flex
+                  padding={[2]}
+                  border="1px"
+                  borderColor="gray.300"
+                  columnGap={2}
+                  borderRadius="md"
+                  alignItems="center"
+                  justifyContent="center"
+                  display={["none", "flex"]}
+                  _hover={{ backgroundColor: "gray.50" }}
+                >
+                  <ShareIcon width={18} />
+                  <Text display={["none", "none", "inherit"]}>Share</Text>
+                </Flex>
               </FacebookShareButton>
             </Flex>
             <Text fontSize={["md", "lg"]}>Running for {position.title}</Text>
@@ -228,14 +230,19 @@ const CandidateCredentialPage = ({
                 hashtag={"#eBotoMo"}
                 style={{ width: "100%", marginTop: 4 }}
               >
-                <Button
-                  leftIcon={<ShareIcon width={18} />}
-                  variant="outline"
-                  width="full"
-                  size="sm"
+                <Flex
+                  padding={[2]}
+                  border="1px"
+                  borderColor="gray.300"
+                  columnGap={2}
+                  borderRadius="md"
+                  alignItems="center"
+                  justifyContent="center"
+                  _hover={{ backgroundColor: "gray.50" }}
                 >
-                  Share
-                </Button>
+                  <ShareIcon width={18} />
+                  <Text>Share</Text>
+                </Flex>
               </FacebookShareButton>
             </Box>
 
