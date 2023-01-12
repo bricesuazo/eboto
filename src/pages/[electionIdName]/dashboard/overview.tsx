@@ -219,27 +219,30 @@ const OverviewPage = ({
             padding={4}
             borderRadius="lg"
             width="fit-content"
+            alignSelf={["center", "start"]}
           >
-            <Text fontSize="2xl" fontWeight="bold" color="white">
-              {!votersData ? (
-                <Spinner />
-              ) : votersData.filter((voter) => voter.hasVoted).length === 0 &&
-                votersData.length === 0 ? (
-                "No voters yet"
-              ) : (
-                votersData.filter((voter) => voter.hasVoted).length +
-                "/" +
-                votersData.length +
-                " " +
-                "voted (" +
-                (
-                  (votersData.filter((voter) => voter.hasVoted).length /
-                    votersData.length) *
-                  100
-                ).toFixed(0) +
-                "%)"
-              )}
-            </Text>
+            {!votersData ? (
+              <Spinner />
+            ) : votersData.filter((voter) => voter.hasVoted).length === 0 &&
+              votersData.length === 0 ? (
+              <Text fontSize="2xl" fontWeight="bold" color="white">
+                No voters yet
+              </Text>
+            ) : (
+              <Text fontSize="2xl" fontWeight="bold" color="white">
+                {votersData.filter((voter) => voter.hasVoted).length +
+                  "/" +
+                  votersData.length +
+                  " " +
+                  "voted (" +
+                  (
+                    (votersData.filter((voter) => voter.hasVoted).length /
+                      votersData.length) *
+                    100
+                  ).toFixed(0) +
+                  "%)"}
+              </Text>
+            )}
           </Center>
         </Stack>
       </DashboardLayout>
