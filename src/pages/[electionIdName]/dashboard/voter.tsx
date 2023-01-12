@@ -85,14 +85,14 @@ const VoterPage = ({
       )}
       <DashboardLayout title="Voters" session={session}>
         <Box width="full" height="full" overflowX="hidden">
-          <InputGroup width={["full", 248]} marginLeft="auto">
+          {/* <InputGroup width={["full",   248]} marginLeft="auto">
             <InputLeftElement pointerEvents="none">
               <MagnifyingGlassIcon color="gray.300" width={24} />
             </InputLeftElement>
             <Input placeholder="Search..." />
-          </InputGroup>
+          </InputGroup> */}
           {voters && voters.length !== 0 ? (
-            <Box marginTop={4}>
+            <Box>
               <Flex
                 alignItems="center"
                 justifyContent="space-between"
