@@ -48,7 +48,7 @@ const RealtimePage = ({
         <title>{pageTitle}</title>
       </Head>
 
-      <Container maxW="8xl" minHeight="2xl" paddingY={16}>
+      <Container maxW="6xl" minHeight="2xl" paddingY={16}>
         <Box marginBottom={4}>
           <Text fontSize="2xl" fontWeight="bold" textAlign="center">
             {election.name}
@@ -56,7 +56,7 @@ const RealtimePage = ({
           <Text textAlign="center">Realtime Count Update</Text>
         </Box>
 
-        <SimpleGrid columns={[1, 2, 3, 4]} spacing={4} alignItems="flex-start">
+        <SimpleGrid columns={[1, 2, 3]} spacing={4} alignItems="flex-start">
           {positions.map((position) => (
             <Box
               key={position.id}

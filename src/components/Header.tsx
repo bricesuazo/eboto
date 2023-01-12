@@ -248,7 +248,10 @@ const Header = () => {
                                 color="gray.50"
                                 _hover={{ backgroundColor: "gray.700" }}
                               >
-                                Go to {election?.name}
+                                Go to{" "}
+                                {election && election.name.length > 8
+                                  ? election?.name.slice(0, 8) + "..."
+                                  : election?.name}
                               </Button>
                             </Link>
                           )}
