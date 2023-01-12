@@ -193,7 +193,6 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                     setSettings({
                       ...settings,
                       name: e.target.value,
-                      electionIdName: slugify(e.target.value),
                     });
                   }}
                   value={settings.name}
@@ -202,7 +201,18 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
               <FormControl isRequired isInvalid={!!error}>
                 <FormLabel>Election ID Name</FormLabel>
                 <InputGroup borderColor={error ? "red.400" : ""}>
-                  <InputLeftAddon pointerEvents="none" userSelect="none">
+                  <InputLeftAddon
+                    pointerEvents="none"
+                    userSelect="none"
+                    display={["inherit", "none"]}
+                  >
+                    /
+                  </InputLeftAddon>
+                  <InputLeftAddon
+                    pointerEvents="none"
+                    userSelect="none"
+                    display={["none", "inherit"]}
+                  >
                     eboto-mo.com/
                   </InputLeftAddon>
                   <Input
@@ -227,7 +237,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
               <FormControl isRequired>
                 <FormLabel>Election Date</FormLabel>
                 <SimpleGrid
-                  columns={2}
+                  columns={[1, 2]}
                   spacing={2}
                   autoRows="auto"
                   alignItems="center"
@@ -250,7 +260,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                     dateFormat="MMMM d, yyyy haa"
                     disabledKeyboardNavigation
                     withPortal
-                    isClearable={!isElectionOngoing(initialElection)}
+                    // isClearable={!isElectionOngoing(initialElection)}
                     customInput={
                       <Stack
                         spacing={0}
@@ -291,7 +301,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                     dateFormat="MMMM d, yyyy haa"
                     disabledKeyboardNavigation
                     withPortal
-                    isClearable={!isElectionOngoing(initialElection)}
+                    // isClearable={!isElectionOngoing(initialElection)}
                     highlightDates={startDate ? [startDate] : []}
                     customInput={
                       <Stack
@@ -315,7 +325,7 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                     }
                   />
                 </SimpleGrid>
-                <FormHelperText>
+                <FormHelperText textAlign={["center", "left"]}>
                   You can&apos;t change the dates once the election is ongoing.
                 </FormHelperText>
               </FormControl>

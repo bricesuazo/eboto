@@ -67,8 +67,8 @@ const OverviewPage = ({
             </Text>
           </Stack>
 
-          <Stack direction="row" display={["none", "initial"]}>
-            <Text fontWeight="bold">Created At:</Text>{" "}
+          <Stack direction="row" display={["none", "inherit"]}>
+            <Text fontWeight="bold">Created At:</Text>
             <Text>
               <Moment format="MMMM DD, YYYY, h:mmA">
                 {election.createdAt.seconds * 1000}
