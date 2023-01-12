@@ -10,8 +10,9 @@ import { FirebaseAppProvider } from "reactfire";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import { app } from "../firebase/firebase";
-import theme from "../theme";
 import "../styles/globals.css";
+import theme from "../theme";
+import NextNProgress from "nextjs-progressbar";
 
 // const anton = Anton({ weight: "400" });
 const inter = Inter();
@@ -34,6 +35,7 @@ export default function MyApp({
           {/* <FirestoreProvider sdk={firestore}> */}
           <ChakraProvider theme={theme}>
             <main className={inter.className}>
+              <NextNProgress color="#ffd532" height={2} />
               <Header />
               <Component {...pageProps} />
               <Footer />
