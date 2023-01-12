@@ -154,13 +154,13 @@ const CandidateCredentialPage = ({
           fontSize={["xs", "sm", "md"]}
         >
           <BreadcrumbItem>
-            <BreadcrumbLink href={`/${election.electionIdName}`}>
+            <BreadcrumbLink href={`/${election.electionIdName}`} noOfLines={1}>
               {election.name}
             </BreadcrumbLink>
           </BreadcrumbItem>
 
           <BreadcrumbItem isCurrentPage>
-            <BreadcrumbLink fontWeight="semibold">
+            <BreadcrumbLink fontWeight="semibold" noOfLines={1}>
               {candidate.firstName}
               {candidate.middleName && ` ${candidate.middleName}`}{" "}
               {candidate.lastName}
@@ -249,7 +249,11 @@ const CandidateCredentialPage = ({
             </Box>
 
             <Stack marginTop={8}>
-              <Text fontSize="xl" fontWeight="bold">
+              <Text
+                fontSize="xl"
+                fontWeight="bold"
+                textAlign={["center", "start"]}
+              >
                 Credentials
               </Text>
 

@@ -1,4 +1,4 @@
-import { Box, useRadio } from "@chakra-ui/react";
+import { Box, Stack, useRadio } from "@chakra-ui/react";
 
 const CandidateCard = (props: any) => {
   const { getInputProps, getCheckboxProps } = useRadio(props);
@@ -9,7 +9,7 @@ const CandidateCard = (props: any) => {
   return (
     <Box as="label" userSelect="none">
       <input {...input} style={{ display: "none" }} />
-      <Box
+      <Stack
         {...checkbox}
         cursor="pointer"
         borderWidth="1px"
@@ -20,13 +20,14 @@ const CandidateCard = (props: any) => {
           color: "white",
           borderColor: "gray.600",
         }}
-        px={4}
-        py={2}
+        justifyContent="center"
+        alignItems="center"
+        padding={[2, 4]}
         width={[40, 48]}
         height={[56, 64]}
       >
         {props.children}
-      </Box>
+      </Stack>
     </Box>
   );
 };

@@ -7,7 +7,7 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { ShareIcon } from "@heroicons/react/24/outline";
+import { FingerPrintIcon, ShareIcon } from "@heroicons/react/24/outline";
 import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import moment from "moment";
 import { GetServerSideProps } from "next";
@@ -157,7 +157,12 @@ const ElectionPage = ({
         ) : (
           <>
             {election.logoUrl && election.logoUrl.length && (
-              <Box position="relative" width={32} height={32} marginX="auto">
+              <Box
+                position="relative"
+                width={[24, 32]}
+                height={[24, 32]}
+                marginX="auto"
+              >
                 <Image
                   src={election.logoUrl}
                   alt={`${election.name} logo`}
@@ -190,32 +195,14 @@ const ElectionPage = ({
                 : "hour"}
               )
             </Text>
-            {election.about && (
-              <Container
-                maxW="2xl"
-                fontWeight="normal"
-                onClick={() => setSeeMore((prev) => !prev)}
-                marginTop={4}
-                width="full"
-                cursor="pointer"
-              >
-                <Text fontWeight="bold" fontSize={["xs", "sm", "initial"]}>
-                  About
-                </Text>
-                <Text fontSize={["xs", "sm", "initial"]}>
-                  {!seeMore
-                    ? election.about?.slice(0, 56) + "... See more"
-                    : election.about + " See less"}
-                </Text>
-              </Container>
-            )}
             <Box marginTop={4}>
               <FacebookShareButton
                 url={`https://eboto-mo.com/${election.electionIdName}`}
                 hashtag={`#${election.name.replace(/\s/g, "")}`}
               >
                 <Flex
-                  padding={2}
+                  paddingX={[3, 4]}
+                  paddingY={[1.5, 2]}
                   border="1px"
                   borderColor="gray.300"
                   columnGap={2}
@@ -225,16 +212,32 @@ const ElectionPage = ({
                   _hover={{ backgroundColor: "gray.50" }}
                   transition="background-color 0.2s"
                 >
-                  <ShareIcon width={18} />
-                  <Text
-                    fontWeight="semibold"
-                    fontSize={["xs", "sm", "initial"]}
-                  >
+                  <ShareIcon width={16} />
+                  <Text fontWeight="semibold" fontSize={["xs", "sm"]}>
                     Share
                   </Text>
                 </Flex>
               </FacebookShareButton>
             </Box>
+            {election.about && (
+              <Container
+                maxW="2xl"
+                fontWeight="normal"
+                onClick={() => setSeeMore((prev) => !prev)}
+                marginTop={4}
+                width="full"
+                cursor="pointer"
+              >
+                <Text fontWeight="bold" fontSize={["xs", "sm"]}>
+                  About
+                </Text>
+                <Text fontSize={["xs", "sm"]}>
+                  {!seeMore
+                    ? election.about?.slice(0, 56) + "... See more"
+                    : election.about + " See less"}
+                </Text>
+              </Container>
+            )}
             <Box marginTop={4}>
               {!session ? (
                 <Link href="/signin">
@@ -262,13 +265,14 @@ const ElectionPage = ({
                   {session.user.accountType === "voter" &&
                     !session.user.hasVoted && (
                       <Link href={`/${election.electionIdName}/vote`}>
-                        <Button>Vote</Button>
+                        <Button leftIcon={<FingerPrintIcon width={18} />}>
+                          Vote Now
+                        </Button>
                       </Link>
                     )}
                 </>
               )}
             </Box>
-
             <Stack marginTop={8} spacing={8}>
               {positions.map((position) => {
                 return (
@@ -276,7 +280,7 @@ const ElectionPage = ({
                     <Text fontSize={["lg", "xl", "2xl"]} fontWeight="bold">
                       {position.title}
                     </Text>
-                    <Flex flexWrap="wrap" gap={4} justifyContent="center">
+                    <Flex flexWrap="wrap" gap={[2, 4]} justifyContent="center">
                       {candidates
                         .filter(
                           (candidate) => candidate.position === position.uid
@@ -292,19 +296,20 @@ const ElectionPage = ({
                                 border="2px"
                                 borderColor="gray.100"
                                 borderRadius="lg"
-                                width="12rem"
-                                height="16rem"
+                                width={["9rem", "12rem"]}
+                                height={["13rem", "16rem"]}
                                 flexDirection="column"
                                 justifyContent="flex-start"
                                 cursor="pointer"
                                 transition="all 0.2s"
                                 _hover={{ borderColor: "gray.800" }}
                                 userSelect="none"
+                                gap={2}
                               >
                                 <Box
                                   position="relative"
-                                  width="10rem"
-                                  height="10rem"
+                                  width={["7.5rem", "10rem"]}
+                                  height={["7.5rem", "10rem"]}
                                   pointerEvents="none"
                                   borderRadius="md"
                                   overflow="hidden"
@@ -325,7 +330,10 @@ const ElectionPage = ({
                                     style={{ objectFit: "cover" }}
                                   />
                                 </Box>
-                                <Text>{`${candidate.lastName}, ${
+                                <Text
+                                  fontSize={["sm", "sm", "inherit"]}
+                                  noOfLines={2}
+                                >{`${candidate.lastName}, ${
                                   candidate.firstName
                                 }${
                                   candidate.middleName &&

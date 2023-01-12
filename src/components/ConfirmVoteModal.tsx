@@ -45,16 +45,21 @@ const ConfirmVoteModal = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered size="xs">
+    <Modal isOpen={isOpen} onClose={onClose} isCentered size={["xs", "md"]}>
       <ModalOverlay>
-        <ModalContent marginX={2}>
-          <ModalHeader display="flex" alignItems="center" gap={2}>
+        <ModalContent marginX={[2, 0]}>
+          <ModalHeader
+            display="flex"
+            alignItems="center"
+            gap={2}
+            paddingX={[4, 6]}
+          >
             <FingerPrintIcon width={28} />
-            <Text>Confirm Vote</Text>
+            <Text fontSize={["lg", "xl"]}>Confirm Vote</Text>
           </ModalHeader>
           <ModalCloseButton />
 
-          <ModalBody>
+          <ModalBody paddingX={[4, 6]}>
             {positions.map((position) => {
               const candidate = candidates.find(
                 (candidate) =>
@@ -67,11 +72,11 @@ const ConfirmVoteModal = ({
                     ?.split("-")[1]
               );
               return (
-                <Box key={position.uid} mb={4}>
-                  <Text fontSize="sm" color="gray.300">
+                <Box key={position.uid} mb={[2, 4]}>
+                  <Text fontSize="sm" color="gray.500">
                     {position.title}
                   </Text>
-                  <Text fontSize="lg" fontWeight="bold">
+                  <Text fontSize={["md", "lg"]} fontWeight="bold">
                     {candidate
                       ? `${candidate.lastName}, ${candidate.firstName}${
                           candidate.middleName && ` ${candidate.middleName}`
@@ -89,6 +94,7 @@ const ConfirmVoteModal = ({
 
           <ModalFooter>
             <Button
+              size={["sm", "md"]}
               variant="ghost"
               mr={3}
               onClick={onClose}
@@ -98,6 +104,7 @@ const ConfirmVoteModal = ({
             </Button>
             <Button
               isLoading={isSubmitting}
+              size={["sm", "md"]}
               onClick={() => {
                 selectedCandidates.forEach(async (selectedCandidate) => {
                   setIsSubmitting(true);

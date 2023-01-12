@@ -81,11 +81,21 @@ const VotePage = ({
         selectedCandidates={selectedCandidates}
         voterUid={voterUid}
       />
-      <Container maxW="8xl" paddingY={16} gap={4} alignItems="center">
+      <Container
+        maxW="8xl"
+        paddingX={0}
+        paddingY={16}
+        gap={4}
+        alignItems="center"
+      >
         <Box width="full">
           <Stack marginBottom={8} spacing={4} alignItems="center">
             <Box>
-              <Text fontSize="3xl" textAlign="center" fontWeight="bold">
+              <Text
+                fontSize={["xl", "2xl", "3xl"]}
+                textAlign="center"
+                fontWeight="bold"
+              >
                 {election.name}
               </Text>
               <Text textAlign="center">Voting Page</Text>

@@ -55,98 +55,96 @@ const RealtimePage = ({
           </Text>
           <Text textAlign="center">Realtime Count Update</Text>
         </Box>
-        <Box>
-          <SimpleGrid
-            columns={[1, 2, 3, 4]}
-            spacing={4}
-            alignItems="flex-start"
-          >
-            {positions.map((position) => (
-              <Box
-                key={position.id}
-                border="1px"
-                borderColor="gray.200"
-                padding={2}
-                borderRadius={4}
-              >
-                <Table key={position.id} variant="simple" size="sm">
-                  <Thead>
-                    <Tr>
-                      <Th
-                        textAlign="center"
-                        noOfLines={1}
-                        overflowWrap="break-word"
-                        width="full"
+
+        <SimpleGrid columns={[1, 2, 3, 4]} spacing={4} alignItems="flex-start">
+          {positions.map((position) => (
+            <Box
+              key={position.id}
+              border="1px"
+              borderColor="gray.200"
+              padding={2}
+              borderRadius={4}
+            >
+              <Table key={position.id} variant="simple" size="sm">
+                <Thead>
+                  <Tr>
+                    <Th
+                      textAlign="center"
+                      noOfLines={1}
+                      overflowWrap="break-word"
+                      width="full"
+                    >
+                      {position.title}
+                    </Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {candidates
+                    .filter((candidate) => candidate.position === position.uid)
+                    .sort((a, b) => b.votingCount - a.votingCount)
+                    .map((candidate, index) => (
+                      <Tr
+                        key={candidate.id}
+                        _hover={{ backgroundColor: "gray.50" }}
                       >
-                        {position.title}
-                      </Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {candidates
-                      .filter(
-                        (candidate) => candidate.position === position.uid
-                      )
-                      .sort((a, b) => b.votingCount - a.votingCount)
-                      .map((candidate, index) => (
-                        <Tr
-                          key={candidate.id}
-                          _hover={{ backgroundColor: "gray.50" }}
-                        >
-                          <Td borderColor="gray.100">
-                            <Box display="flex" justifyContent="space-between">
-                              <Text noOfLines={1}>
-                                {session.user.accountType === "voter" &&
-                                isElectionOngoing(election)
-                                  ? `Candidate ${index + 1}`
-                                  : `${candidate.lastName}, ${
-                                      candidate.firstName
-                                    }${
-                                      candidate.middleName &&
-                                      ` ${candidate.middleName.charAt(0)}.`
-                                    }`}
-                              </Text>
+                        <Td borderColor="gray.100">
+                          <Box display="flex" justifyContent="space-between">
+                            <Text noOfLines={1}>
+                              {session.user.accountType === "voter" &&
+                              isElectionOngoing(election)
+                                ? `Candidate ${index + 1}`
+                                : `${candidate.lastName}, ${
+                                    candidate.firstName
+                                  }${
+                                    candidate.middleName &&
+                                    ` ${candidate.middleName.charAt(0)}.`
+                                  }`}
+                            </Text>
+
+                            {positionsLoading === "loading" ||
+                            !candidatesCount ? (
+                              <Spinner size="sm" />
+                            ) : (
                               <Text>
-                                {positionsLoading === "loading" ||
-                                !candidatesCount ? (
-                                  <Spinner size="sm" />
-                                ) : (
+                                {
                                   candidatesCount.find(
                                     (candidateCount) =>
                                       candidateCount.uid === candidate.uid &&
                                       candidate.position === position.uid
                                   )?.votingCount
-                                )}
+                                }
                               </Text>
-                            </Box>
-                          </Td>
-                        </Tr>
-                      ))}
+                            )}
+                          </Box>
+                        </Td>
+                      </Tr>
+                    ))}
 
-                    <Tr _hover={{ backgroundColor: "gray.50" }}>
-                      <Td borderColor="gray.100">
-                        <Box display="flex" justifyContent="space-between">
-                          <Text>Undecided</Text>
+                  <Tr _hover={{ backgroundColor: "gray.50" }}>
+                    <Td borderColor="gray.100">
+                      <Box display="flex" justifyContent="space-between">
+                        <Text>Undecided</Text>
+
+                        {positionsLoading === "loading" || !positionsCount ? (
+                          <Spinner size="sm" />
+                        ) : (
                           <Text>
-                            {positionsLoading === "loading" ||
-                            !positionsCount ? (
-                              <Spinner size="sm" />
-                            ) : (
+                            {
                               positionsCount.find(
                                 (positionCount) =>
                                   positionCount.uid === position.uid
                               )?.undecidedVotingCount
-                            )}
+                            }
                           </Text>
-                        </Box>
-                      </Td>
-                    </Tr>
-                  </Tbody>
-                </Table>
-              </Box>
-            ))}
-          </SimpleGrid>
-        </Box>
+                        )}
+                      </Box>
+                    </Td>
+                  </Tr>
+                </Tbody>
+              </Table>
+            </Box>
+          ))}
+        </SimpleGrid>
       </Container>
     </>
   );

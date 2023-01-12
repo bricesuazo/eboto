@@ -43,7 +43,7 @@ const Card = ({
         {position.title}
       </Text>
       <Container maxW="4xl">
-        <HStack {...group} overflowX="auto" paddingX={4} paddingY={2}>
+        <HStack {...group} overflowX="auto">
           {candidates
             .filter((candidate) => candidate.position === position.uid)
             .map((candidate) => {
@@ -75,9 +75,13 @@ const Card = ({
                       style={{ objectFit: "cover" }}
                     />
                   </Box>
-                  <Text textAlign="center">{`${candidate.lastName}, ${
-                    candidate.firstName
-                  }${candidate.middleName && ` ${candidate.middleName}`} (${
+                  <Text
+                    textAlign="center"
+                    noOfLines={2}
+                    fontSize={["sm", "inherit"]}
+                  >{`${candidate.lastName}, ${candidate.firstName}${
+                    candidate.middleName && ` ${candidate.middleName}`
+                  } (${
                     partylists.find(
                       (partylist) => partylist.uid === candidate.partylist
                     )?.abbreviation
