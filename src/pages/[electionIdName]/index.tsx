@@ -96,7 +96,7 @@ const ElectionPage = ({
       return (
         <ErrorPage>
           <Text fontSize={["lg", "xl", "2xl"]} fontWeight="bold">
-            This page is not available.
+            ⛔ This page is not available.
           </Text>
           <Link href="/signin">
             <Button>Sign in to continue</Button>
@@ -110,7 +110,7 @@ const ElectionPage = ({
           return (
             <ErrorPage>
               <Text fontSize={["lg", "xl", "2xl"]} fontWeight="bold">
-                Unauthorized (admin)
+                🚫 Unauthorized (admin)
               </Text>
               <Link href="/dashboard">
                 <Button>Go to dashboard</Button>
@@ -127,7 +127,7 @@ const ElectionPage = ({
           return (
             <ErrorPage>
               <Text fontSize={["lg", "xl", "2xl"]} fontWeight="bold">
-                Unauthorized (voter)
+                🚫 Unauthorized (voter)
               </Text>
               <Link href="/signin">
                 <Button>Go to your assigned election</Button>
@@ -143,17 +143,25 @@ const ElectionPage = ({
     <>
       <HeadElementElection />
       <Container
-        maxW="8xl"
+        maxW="6xl"
         textAlign="center"
-        paddingX={[2, 4, 8, 16]}
         paddingY={16}
-        minHeight="75vh"
+        minHeight="xl"
         alignItems="center"
       >
         {election.publicity === "private" ? (
-          <Center>
-            <Text>The election is set to private</Text>
-          </Center>
+          <Stack alignItems="center" spacing={4}>
+            <Text fontSize="2xl" fontWeight="bold">
+              🔒 The election is set to private
+            </Text>
+            <Text fontSize="sm" maxWidth="md">
+              If you are a voter, please contact the admin or the COMELEC.
+            </Text>
+            <Text fontSize="sm" maxWidth="md">
+              If you are an admin, please check the election publicity, election
+              dates, and voting hours in the settings on the dashboard page.
+            </Text>
+          </Stack>
         ) : (
           <>
             {election.logoUrl && election.logoUrl.length && (
