@@ -52,6 +52,7 @@ import isElectionIdNameExists from "../utils/isElectionIdNameExists";
 import reloadSession from "../utils/reloadSession";
 import { getHourByNumber } from "../utils/getHourByNumber";
 import Moment from "react-moment";
+import Balancer from "react-wrap-balancer";
 
 const CreateElectionModal = ({
   isOpen,
@@ -553,13 +554,22 @@ const CreateElectionModal = ({
                     px={0}
                     py={2}
                     _hover={{ backgroundColor: "transparent" }}
+                    textAlign="left"
                   >
-                    <Box flex="1" textAlign="left">
-                      Election template
-                    </Box>
-                    <AccordionIcon />
+                    <Stack spacing={0} width="full">
+                      <Flex justifyContent="space-between" width="full">
+                        <Text fontWeight="medium">Election template</Text>
+                        <AccordionIcon />
+                      </Flex>
+                      <Balancer ratio={0.25}>
+                        <Text fontSize="xs" textColor="gray.500">
+                          It will automatically create positions based on the
+                          selected election template
+                        </Text>
+                      </Balancer>
+                    </Stack>
                   </AccordionButton>
-                  <AccordionPanel padding={2}>
+                  <AccordionPanel paddingX={0} paddingY={2}>
                     <Flex {...group} flexWrap="wrap" gap={2} userSelect="none">
                       {options.map((option) => {
                         const radio = getRadioProps({
@@ -606,14 +616,10 @@ function RadioCard(props: any) {
         cursor="pointer"
         borderWidth="1px"
         borderRadius="md"
-        boxShadow="md"
         _checked={{
           bg: "gray.600",
           color: "white",
           borderColor: "gray.600",
-        }}
-        _focus={{
-          boxShadow: "outline",
         }}
         px={5}
         py={3}

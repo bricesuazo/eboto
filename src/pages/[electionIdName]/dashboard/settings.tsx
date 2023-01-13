@@ -16,6 +16,7 @@ import {
   Spinner,
   Stack,
   Text,
+  Textarea,
   useDisclosure,
 } from "@chakra-ui/react";
 import { TrashIcon } from "@heroicons/react/24/outline";
@@ -75,11 +76,11 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
     logoUrl: initialElection.logoUrl,
     votingStartHour: initialElection.votingStartHour,
     votingEndHour: initialElection.votingEndHour,
+    about: initialElection.about,
   };
 
   const [settings, setSettings] = useState(initialState);
   const [loading, setLoading] = useState(false);
-  const [loadingDeleteLogo, setLoadingDeleteLogo] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [startDate, setStartDate] = useState<Date | null>(
     new Date(settings.electionStartDate?.seconds * 1000) || null
@@ -233,6 +234,21 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                   />
                 </InputGroup>
                 {error && <FormErrorMessage>{error}</FormErrorMessage>}
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>About</FormLabel>
+                <Textarea
+                  placeholder={`About ${initialElection.name}`}
+                  rows={4}
+                  value={settings.about!}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                    setSettings({
+                      ...settings,
+                      about: e.target.value,
+                    });
+                  }}
+                />
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Election Date</FormLabel>
@@ -477,6 +493,8 @@ const SettingsPage = ({ election, session }: SettingsPageProps) => {
                           initialElection.electionEndDate.seconds * 1000
                         ).toString() &&
                       settings.name.trim() === initialElection.name.trim() &&
+                      settings.about?.trim() ===
+                        initialElection.about?.trim() &&
                       settings.electionIdName.trim() ===
                         initialElection.electionIdName.trim() &&
                       settings.publicity === initialElection.publicity &&
