@@ -4,6 +4,7 @@ import {
   Button,
   Container,
   HStack,
+  Icon,
   IconButton,
   Menu,
   MenuButton,
@@ -100,9 +101,13 @@ const Header = () => {
               _hover={{ backgroundColor: "gray.700" }}
               _focus={{ backgroundColor: "gray.600" }}
             />
-            <MenuList>
+            <MenuList
+              minWidth={["40", "3xs"]}
+              paddingTop={[1, 2]}
+              paddingBottom={[1, 2]}
+            >
               {children}
-              <MenuDivider />
+              <MenuDivider marginTop={[1, 2]} marginBottom={[1, 2]} />
               {/* <MenuItem
                 icon={<MoonIcon width={18} />}
                 closeOnSelect={false}
@@ -115,10 +120,18 @@ const Header = () => {
                 </HStack>
               </MenuItem> */}
               <MenuItem
-                icon={<ArrowRightOnRectangleIcon width={18} />}
+                icon={
+                  <Icon
+                    as={ArrowRightOnRectangleIcon}
+                    w={[4, 5]}
+                    h={[4, 5]}
+                    display="grid"
+                    placeItems="center"
+                  />
+                }
                 onClick={() => signOut({ callbackUrl: "/signin" })}
               >
-                Signout
+                <Text fontSize={["sm", "md"]}>Signout</Text>
               </MenuItem>
             </MenuList>
           </>
@@ -221,8 +234,18 @@ const Header = () => {
 
                         <MenuParent>
                           <Link href="/dashboard">
-                            <MenuItem icon={<ChartBarIcon width={18} />}>
-                              Dashboard
+                            <MenuItem
+                              icon={
+                                <Icon
+                                  as={ChartBarIcon}
+                                  w={[4, 5]}
+                                  h={[4, 5]}
+                                  display="grid"
+                                  placeItems="center"
+                                />
+                              }
+                            >
+                              <Text fontSize={["sm", "md"]}>Dashboard</Text>
                             </MenuItem>
                           </Link>
                         </MenuParent>
@@ -258,7 +281,15 @@ const Header = () => {
                         </Box>
                         <MenuParent>
                           <MenuItem
-                            icon={<ArchiveBoxArrowDownIcon width={18} />}
+                            icon={
+                              <Icon
+                                as={ArchiveBoxArrowDownIcon}
+                                w={[4, 5]}
+                                h={[4, 5]}
+                                display="grid"
+                                placeItems="center"
+                              />
+                            }
                             disabled={loading}
                             onClick={() => {
                               !loading &&
@@ -269,7 +300,9 @@ const Header = () => {
                               {loading ? (
                                 <Spinner />
                               ) : (
-                                <Text>{election?.name}</Text>
+                                <Text fontSize={["sm", "md"]}>
+                                  {election?.name}
+                                </Text>
                               )}
                             </HStack>
                           </MenuItem>
