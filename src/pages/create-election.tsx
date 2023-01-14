@@ -1,10 +1,13 @@
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 import CreateElectionModal from "../components/CreateElectionModal";
+import { Box } from "@chakra-ui/react";
 
 const CreateElectionPage = () => {
   return (
-    <CreateElectionModal isOpen={true} cantClose={true} onClose={() => {}} />
+    <Box minHeight="3xl">
+      <CreateElectionModal isOpen={true} cantClose={true} onClose={() => {}} />
+    </Box>
   );
 };
 
