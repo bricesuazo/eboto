@@ -20,6 +20,7 @@
     "bcrypt": "^5.1.0",
     "bcryptjs": "^2.4.3",
     "browser-image-compression": "^2.0.0",
+    "crypto-js": "^4.1.1",
     "deep-equal": "^2.1.0",
     "firebase": "^9.10.0",
     "firebase-admin": "^11.0.1",
@@ -46,6 +47,7 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
+    "@types/crypto-js": "^4.1.1",
     "@types/deep-equal": "^1.0.1",
     "@types/node": "18.7.23",
     "@types/react": "18.0.21",

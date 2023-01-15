@@ -1,5 +1,6 @@
 import * as functions from "firebase-functions";
 import admin from "firebase-admin";
+import CryptoJS from "crypto-js";
 
 admin.initializeApp();
 
@@ -80,7 +81,10 @@ export const sendEmailToVoters = functions.pubsub
                               <span style="font-weight: bold">${email}</span>
                             </p>
                             <p>
-                              Password: <span style="font-weight: bold">${password}</span>
+                              Password: <span style="font-weight: bold">${CryptoJS.AES.decrypt(
+                                password,
+                                "sdjhcvbjsdgvfj2891u3"
+                              ).toString(CryptoJS.enc.Utf8)}</span>
                             </p>
                           </div>
                         </blockquote>

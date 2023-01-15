@@ -37,6 +37,7 @@ import generatePassword from "../utils/generatePassword";
 import isAdminExists from "../utils/isAdminExists";
 import isVoterExists from "../utils/isVoterExists";
 import bcrypt from "bcryptjs";
+import CryptoJS from "crypto-js";
 
 const AddVoterModal = ({
   isOpen,
@@ -112,10 +113,14 @@ const AddVoterModal = ({
             collection(firestore, "elections", election.uid, "voters"),
             {
               ...addVoter,
-              password: bcrypt.hashSync(
+              password: CryptoJS.AES.encrypt(
                 generatePassword(),
-                bcrypt.genSaltSync(10)
-              ),
+                process.env.NEXT_PUBLIC_CRYPTOJS_SECRET!
+              ).toString(),
+              // password: bcrypt.hashSync(
+              //   generatePassword(),
+              //   bcrypt.genSaltSync(10)
+              // ),
             }
           ).then(async (docRef) => {
             await updateDoc(

@@ -13,6 +13,7 @@ import { firestore } from "../../../firebase/firebase";
 import { JWT } from "next-auth/jwt";
 import { electionType, voterType } from "../../../types/typings";
 import bcrypt from "bcryptjs";
+import CryptoJS from "crypto-js";
 
 export default NextAuth({
   // Configure one or more authentication providers
@@ -64,8 +65,13 @@ export default NextAuth({
         );
 
         if (voters.length > 0) {
-          const voter = voters.filter((voter) =>
-            bcrypt.compareSync(password, voter.password)
+          const voter = voters.filter(
+            (voter) =>
+              password ===
+              CryptoJS.AES.decrypt(
+                voter.password,
+                process.env.NEXT_PUBLIC_CRYPTOJS_SECRET!
+              ).toString(CryptoJS.enc.Utf8)
           )[0];
           if (!voter) {
             return Promise.reject(new Error("Invalid credentials"));
