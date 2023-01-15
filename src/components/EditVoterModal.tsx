@@ -130,17 +130,7 @@ const EditVoterModal = ({
                   disabled={loading}
                 />
               </FormControl>
-              <FormControl isRequired>
-                <FormLabel>Password</FormLabel>
-                <Input
-                  placeholder="Password"
-                  value={voter.password}
-                  onChange={(e) =>
-                    setVoter({ ...voter, password: e.target.value })
-                  }
-                  disabled={loading}
-                />
-              </FormControl>
+           
 
               {error && (
                 <Alert status="error">

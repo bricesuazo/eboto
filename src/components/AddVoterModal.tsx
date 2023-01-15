@@ -158,35 +158,7 @@ const AddVoterModal = ({
                   disabled={loading}
                 />
               </FormControl>
-              <FormControl isRequired>
-                <FormLabel>Initial password</FormLabel>
-                <InputGroup size="md">
-                  <Input
-                    placeholder="Initial password"
-                    type="text"
-                    onChange={(e) =>
-                      setAddVoter({ ...addVoter, password: e.target.value })
-                    }
-                    value={addVoter.password}
-                    disabled={loading}
-                  />
-                  <InputRightElement>
-                    <Tooltip label="Generate password">
-                      <IconButton
-                        disabled={loading}
-                        aria-label="Generate password"
-                        icon={<ArrowPathIcon width={24} />}
-                        onClick={() => {
-                          setAddVoter({
-                            ...addVoter,
-                            password: generatePassword(),
-                          });
-                        }}
-                      />
-                    </Tooltip>
-                  </InputRightElement>
-                </InputGroup>
-              </FormControl>
+
               {error && (
                 <Alert status="error">
                   <AlertIcon />

@@ -107,9 +107,6 @@ const VoterPage = ({
 
                 <Text width="44">Email address</Text>
 
-                <Text display={["none", "none", "none", "block"]} width="36">
-                  Password
-                </Text>
 
                 <Text
                   textAlign="center"
@@ -138,13 +135,6 @@ const VoterPage = ({
                     </Text>
 
                     <Text width="44">{voter.email}</Text>
-
-                    <Text
-                      display={["none", "none", "none", "block"]}
-                      width="36"
-                    >
-                      {voter.password}
-                    </Text>
 
                     <Box
                       display={["none", "none", "none", "none", "flex"]}
