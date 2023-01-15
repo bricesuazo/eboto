@@ -64,8 +64,8 @@ export default NextAuth({
         );
 
         if (voters.length > 0) {
-          const voter = voters.filter(
-            (voter) => voter.password === password
+          const voter = voters.filter((voter) =>
+            bcrypt.compareSync(password, voter.password)
           )[0];
           if (!voter) {
             return Promise.reject(new Error("Invalid credentials"));

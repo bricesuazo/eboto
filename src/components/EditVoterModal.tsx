@@ -86,8 +86,6 @@ const EditVoterModal = ({
             {
               fullName: voter.fullName,
               email: voter.email,
-              password: voter.password,
-              hasVoted: voter.hasVoted,
               updatedAt: Timestamp.now(),
             }
           );
@@ -130,7 +128,6 @@ const EditVoterModal = ({
                   disabled={loading}
                 />
               </FormControl>
-           
 
               {error && (
                 <Alert status="error">

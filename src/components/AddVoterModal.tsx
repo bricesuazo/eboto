@@ -36,6 +36,7 @@ import { firestore } from "../firebase/firebase";
 import generatePassword from "../utils/generatePassword";
 import isAdminExists from "../utils/isAdminExists";
 import isVoterExists from "../utils/isVoterExists";
+import bcrypt from "bcryptjs";
 
 const AddVoterModal = ({
   isOpen,
@@ -50,7 +51,7 @@ const AddVoterModal = ({
     accountType: "voter",
     fullName: "",
     email: "",
-    password: generatePassword(),
+    password: "",
     hasVoted: false,
     election: "",
     id: uuidv4(),
@@ -68,7 +69,7 @@ const AddVoterModal = ({
       id: uuidv4(),
       fullName: "",
       email: "",
-      password: generatePassword(),
+      password: "",
       hasVoted: false,
       election: election.uid,
       uid: "",
@@ -109,7 +110,13 @@ const AddVoterModal = ({
 
           await addDoc(
             collection(firestore, "elections", election.uid, "voters"),
-            addVoter
+            {
+              ...addVoter,
+              password: bcrypt.hashSync(
+                generatePassword(),
+                bcrypt.genSaltSync(10)
+              ),
+            }
           ).then(async (docRef) => {
             await updateDoc(
               doc(firestore, "elections", election.uid, "voters", docRef.id),

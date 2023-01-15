@@ -101,8 +101,7 @@ const SignupPage: NextPage = () => {
                   setLoading(false);
                   return;
                 }
-                const salt = bcrypt.genSaltSync(10);
-                const hash = bcrypt.hashSync(credentials.password, salt);
+
                 // Create user docs
                 const adminRef = await addDoc(collection(firestore, "admins"), {
                   accountType: "admin",
@@ -118,7 +117,10 @@ const SignupPage: NextPage = () => {
                     .replace(/(^\w{1})|(\s+\w{1})/g, (letter: string) =>
                       letter.toUpperCase()
                     ),
-                  password: hash,
+                  password: bcrypt.hashSync(
+                    credentials.password,
+                    bcrypt.genSaltSync(10)
+                  ),
                   photoUrl: "",
                   elections: [],
                   createdAt: Timestamp.now(),
