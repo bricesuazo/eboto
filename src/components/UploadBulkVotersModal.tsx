@@ -231,101 +231,98 @@ const UploadBulkVotersModal = ({
             ) : (
               <TableContainer>
                 <Box overflow="auto" height="lg">
-                  <Table variant="simple" size="sm">
-                    <Thead
-                      position="sticky"
-                      top={0}
-                      backgroundColor="gray.700"
-                      zIndex={1}
-                    >
-                      <Tr>
-                        <Th>Full name</Th>
-                        <Th>Email address</Th>
-                        <Th>Actions</Th>
-                      </Tr>
-                    </Thead>
-
-                    <Tbody width="full">
-                      {selectedFile.map((file, fileIndex) => {
-                        return (
-                          <Box key={fileIndex}>
-                            <Button
-                              size="xs"
-                              variant="outline"
-                              mt={2}
-                              onClick={() =>
-                                // @ts-ignore
-                                setSelectedFile((prev) => {
-                                  if (prev) {
-                                    return prev.filter(
-                                      (_, index) => index !== fileIndex
-                                    );
-                                  } else {
-                                    return null;
-                                  }
-                                })
+                  {selectedFile.map((file, fileIndex) => {
+                    return (
+                      <Table
+                        variant="simple"
+                        size="sm"
+                        key={fileIndex}
+                        marginTop={2}
+                      >
+                        <Button
+                          size="xs"
+                          variant="outline"
+                          mt={2}
+                          onClick={() =>
+                            // @ts-ignore
+                            setSelectedFile((prev) => {
+                              if (prev) {
+                                return prev.filter(
+                                  (_, index) => index !== fileIndex
+                                );
+                              } else {
+                                return null;
                               }
+                            })
+                          }
+                        >
+                          Delete {file.fileName}
+                        </Button>
+                        <Thead>
+                          <Tr>
+                            <Th>Full name</Th>
+                            <Th>Email address</Th>
+                            <Th>Actions</Th>
+                          </Tr>
+                        </Thead>
+
+                        <Tbody>
+                          {file.voters.map((row, rowIndex) => (
+                            <Tr
+                              key={rowIndex}
+                              _hover={{ backgroundColor: "gray.50" }}
                             >
-                              Delete {file.fileName}
-                            </Button>
-                            {file.voters.map((row, rowIndex) => (
-                              <Tr
-                                key={rowIndex}
-                                _hover={{ backgroundColor: "whiteAlpha.100" }}
-                              >
-                                <Td>{row[0].toLocaleString()}</Td>
-                                <Td>{row[1].toLocaleString()}</Td>
-                                {/* delete row and if no row delete file */}
-                                <Td>
-                                  <Button
-                                    size="xs"
-                                    variant="outline"
-                                    onClick={() => {
-                                      if (file.voters.length === 1) {
-                                        // @ts-ignore
-                                        setSelectedFile((prev) => {
-                                          if (prev) {
-                                            return prev.filter(
-                                              (_, index) => index !== fileIndex
-                                            );
-                                          } else {
-                                            return null;
-                                          }
-                                        });
-                                      } else {
-                                        // @ts-ignore
-                                        setSelectedFile((prev) => {
-                                          if (prev) {
-                                            return prev.map((file, index) => {
-                                              if (index === fileIndex) {
-                                                return {
-                                                  ...file,
-                                                  voters: file.voters.filter(
-                                                    (_, index) =>
-                                                      index !== rowIndex
-                                                  ),
-                                                };
-                                              } else {
-                                                return file;
-                                              }
-                                            });
-                                          } else {
-                                            return null;
-                                          }
-                                        });
-                                      }
-                                    }}
-                                  >
-                                    Delete
-                                  </Button>
-                                </Td>
-                              </Tr>
-                            ))}
-                          </Box>
-                        );
-                      })}
-                    </Tbody>
-                  </Table>
+                              <Td>{row[0].toLocaleString()}</Td>
+                              <Td>{row[1].toLocaleString()}</Td>
+                              <Td>
+                                <Button
+                                  size="xs"
+                                  variant="outline"
+                                  onClick={() => {
+                                    if (file.voters.length === 1) {
+                                      // @ts-ignore
+                                      setSelectedFile((prev) => {
+                                        if (prev) {
+                                          return prev.filter(
+                                            (_, index) => index !== fileIndex
+                                          );
+                                        } else {
+                                          return null;
+                                        }
+                                      });
+                                    } else {
+                                      // @ts-ignore
+                                      setSelectedFile((prev) => {
+                                        if (prev) {
+                                          return prev.map((file, index) => {
+                                            if (index === fileIndex) {
+                                              return {
+                                                ...file,
+                                                voters: file.voters.filter(
+                                                  (_, index) =>
+                                                    index !== rowIndex
+                                                ),
+                                              };
+                                            } else {
+                                              return file;
+                                            }
+                                          });
+                                        } else {
+                                          return null;
+                                        }
+                                      });
+                                    }
+                                  }}
+                                >
+                                  Delete
+                                </Button>
+                              </Td>
+                            </Tr>
+                          ))}
+                        </Tbody>
+                      </Table>
+                    );
+                  })}
                 </Box>
               </TableContainer>
             )}
