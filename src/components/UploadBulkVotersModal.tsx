@@ -469,6 +469,7 @@ const UploadBulkVotersModal = ({
                         accountType: "voter",
                         createdAt: Timestamp.now(),
                         updatedAt: Timestamp.now(),
+                        emailSent: false,
                       });
                     });
                     await batch
