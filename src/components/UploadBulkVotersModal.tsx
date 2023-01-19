@@ -41,6 +41,7 @@ import { v4 as uuidv4 } from "uuid";
 import { firestore } from "../firebase/firebase";
 import { electionType } from "../types/typings";
 import generatePassword from "../utils/generatePassword";
+import CryptoJS from "crypto-js";
 
 interface UploadBulkVotersModalProps {
   onClose: () => void;
@@ -461,7 +462,10 @@ const UploadBulkVotersModal = ({
                         email: voter.email,
                         fullName: voter.full_name,
                         hasVoted: false,
-                        password: generatePassword(),
+                        password: CryptoJS.AES.encrypt(
+                          generatePassword(),
+                          process.env.NEXT_PUBLIC_CRYPTOJS_SECRET!
+                        ).toString(),
                         accountType: "voter",
                         createdAt: Timestamp.now(),
                         updatedAt: Timestamp.now(),
