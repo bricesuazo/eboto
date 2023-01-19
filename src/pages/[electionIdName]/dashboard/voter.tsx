@@ -32,6 +32,7 @@ import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import { adminType, electionType, voterType } from "../../../types/typings";
 import isAdminOwnsTheElection from "../../../utils/isAdminOwnsTheElection";
+import CryptoJS from "crypto-js";
 
 const VoterPage = ({
   election,
@@ -64,6 +65,7 @@ const VoterPage = ({
   useEffect(() => {
     setVoters(votersData as voterType[]);
   }, [votersData]);
+
   return (
     <>
       <Head>
@@ -106,7 +108,6 @@ const VoterPage = ({
                 </Text>
 
                 <Text width="44">Email address</Text>
-
 
                 <Text
                   textAlign="center"
@@ -235,6 +236,29 @@ export const getServerSideProps: GetServerSideProps = async (
         },
       };
     }
+
+    // const votersSnapshot = await getDocs(
+    //   query(
+    //     collection(
+    //       firestore,
+    //       "elections",
+    //       electionSnapshot.docs[0].id,
+    //       "voters"
+    //     ),
+    //     orderBy("createdAt", "asc")
+    //   )
+    // );
+
+    // console.log(
+    //   CryptoJS.AES.decrypt(
+    //     votersSnapshot.docs
+    //       .map((doc) => doc.data())
+    //       .find((voter) => voter.email === "bricebrine.suazo@cvsu.edu.ph")
+    //       ?.password,
+    //     "sdjhcvbjsdgvfj2891u3"
+    //   ).toString(CryptoJS.enc.Utf8)
+    // );
+
     return {
       props: {
         session: await getSession(context),
