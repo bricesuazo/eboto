@@ -16,6 +16,10 @@ export const userRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      if (input.password.trim().length < 8) {
+        throw new Error("Password must be at least 8 characters");
+      }
+
       const isUserExists = await ctx.prisma.user.findUnique({
         where: {
           email: input.email,
