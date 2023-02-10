@@ -8,6 +8,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { env } from "../env.mjs";
 import { prisma } from "./db";
+import bcrypt from "bcryptjs";
 
 /**
  * Module augmentation for `next-auth` types.
@@ -20,7 +21,6 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      role: "comelec" | "voter" | "superadmin";
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];
@@ -28,7 +28,6 @@ declare module "next-auth" {
 
   interface User {
     id: string;
-    role: "comelec" | "voter" | "superadmin";
     // ...other properties
     // role: UserRole;
   }
@@ -45,7 +44,6 @@ export const authOptions: NextAuthOptions = {
     session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
-        session.user.role = user.role;
         // session.user.role = user.role; <-- put other properties on the session here
       }
       return session;
@@ -56,24 +54,26 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        username: { label: "Email", type: "email", placeholder: "email" },
+        email: { label: "Email", type: "email", placeholder: "email" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials || !credentials.username || !credentials.password) {
+        if (!credentials || !credentials.email || !credentials.password) {
           throw new Error("Missing username or password");
         }
 
-        const user = await prisma.comelec.findUnique({
+        const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
         if (!user) {
-          throw new Error("No user found");
+          throw new Error("Invalid email or password");
         }
+
         const isValid = await bcrypt.compare(
           credentials.password,
           user.password
-        );
+          );
+        
         if (!isValid) {
           throw new Error("Invalid password");
         }
