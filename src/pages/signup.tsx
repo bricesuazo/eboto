@@ -27,7 +27,7 @@ const Signup: NextPage = () => {
   const signUpMutation = api.user.signUp.useMutation();
 
   return (
-    <Container maxW="2xl">
+    <Container>
       <form
         onSubmit={handleSubmit((data) => {
           void (async () => {
