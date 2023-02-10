@@ -6,62 +6,163 @@ generator client {
 }
 
 datasource db {
-    provider = "mysql"
+    provider     = "mysql"
     // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
     // Further reading:
     // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
     // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-    url      = env("DATABASE_URL")
+    url          = env("DATABASE_URL")
     relationMode = "prisma"
 }
 
-model Example {
-    id        String   @id @default(cuid())
+// Necessary for Next auth
+model voter {
+    id            String     @id @default(cuid())
+    email         String     @unique
+    emailVerified DateTime?
+    name          String?
+    image         String?
+    password      String
+    elections     election[]
+    tokens        token[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    vote      vote[]
+}
+
+model comelec {
+    id            String     @id @default(cuid())
+    email         String     @unique
+    emailVerified DateTime?
+    first_name    String
+    middle_name   String?
+    last_name     String
+    image         String?
+    password      String
+    elections     election[]
+    tokens        token[]
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
 
-// Necessary for Next auth
-model Account {
-    id                String  @id @default(cuid())
-    userId            String
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String? @db.Text
-    access_token      String? @db.Text
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String? @db.Text
-    session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    @@unique([provider, providerAccountId])
+enum electionPublicity {
+    PUBLIC
+    VOTER
+    PRIVATE
 }
 
-model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model election {
+    id            String            @id @default(cuid())
+    slug          String            @unique
+    name          String
+    description   String?
+    start_date    DateTime
+    end_date      DateTime
+    publicity     electionPublicity @default(PRIVATE)
+    voting_start  Int               @default(7) // 7am
+    voting_end    Int               @default(19) // 7pm
+    logo          String?
+    voters        voter[]
+    candidates    candidate[]
+    positions     position[]
+    commissioners comelec[]
+
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
+    vote      vote[]
+    partylist partylist[]
 }
 
-model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
+model candidate {
+    id          String  @id @default(cuid())
+    slug        String  @unique
+    first_name  String
+    middle_name String?
+    last_name   String
+    description String?
+    image       String?
+
+    vote_count Int @default(0)
+
+    election   election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId String
+    position   position @relation(fields: [positionId], references: [id], onDelete: Cascade)
+    positionId String
+
+    createdAt   DateTime   @default(now())
+    updatedAt   DateTime   @updatedAt
+    vote        vote[]
+    partylist   partylist? @relation(fields: [partylistId], references: [id])
+    partylistId String?
+
+    @@index([electionId, positionId])
 }
 
-model VerificationToken {
-    identifier String
-    token      String   @unique
-    expires    DateTime
+model vote {
+    id          String    @id @default(cuid())
+    election    election  @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId  String
+    voter       voter     @relation(fields: [voterId], references: [id], onDelete: Cascade)
+    voterId     String
+    candidate   candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+    candidateId String
 
-    @@unique([identifier, token])
+    createdAt DateTime @default(now())
+
+    position    position?  @relation(fields: [positionId], references: [id])
+    positionId  String?
+    partylist   partylist? @relation(fields: [partylistId], references: [id])
+    partylistId String?
+
+    @@index([electionId, voterId])
+}
+
+model position {
+    id            String      @id @default(cuid())
+    name          String
+    description   String?
+    election      election    @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId    String
+    candidate     candidate[]
+    vote          vote[]
+    order         Int
+    abstain_count Int         @default(0)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model partylist {
+    id          String      @id @default(cuid())
+    name        String
+    acronym     String
+    description String?
+    logo        String?
+    election    election    @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId  String
+    candidate   candidate[]
+    vote        vote[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+enum tokenType {
+    EMAIL_VERIFICATION
+    RESET_PASSWORD
+}
+
+model token {
+    id        String    @id @default(cuid())
+    token     String
+    type      tokenType
+    expiresAt DateTime  @default(now())
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    comelec   comelec?  @relation(fields: [comelecId], references: [id])
+    comelecId String?
+    voter     voter?    @relation(fields: [voterId], references: [id])
+    voterId   String?
 }

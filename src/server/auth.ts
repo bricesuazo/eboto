@@ -60,7 +60,11 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const user = await prisma.user.findUnique({
+        if (!credentials || !credentials.username || !credentials.password) {
+          throw new Error("Missing username or password");
+        }
+
+        const user = await prisma.comelec.findUnique({
           where: { email: credentials.email },
         });
         if (!user) {
