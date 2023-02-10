@@ -6,7 +6,6 @@ import {
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { env } from "../env.mjs";
 import { prisma } from "./db";
 import bcrypt from "bcryptjs";
 
@@ -58,7 +57,7 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials || !credentials.email || !credentials.password) {
+        if (!credentials || !credentials.email.trim() || !credentials.password.trim()) {
           throw new Error("Missing username or password");
         }
 

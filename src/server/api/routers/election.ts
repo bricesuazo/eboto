@@ -3,7 +3,7 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 
 export const electionRouter = createTRPCRouter({
-  // hello: publicProcedure
+  // create: protectedProcedure
   //   .input(z.object({ text: z.string() }))
   //   .query(({ input }) => {
   //     return {
