@@ -7,44 +7,29 @@ generator client {
 
 datasource db {
     provider     = "mysql"
-    // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
     url          = env("DATABASE_URL")
     relationMode = "prisma"
 }
 
 // Necessary for Next auth
-model voter {
-    id            String     @id @default(cuid())
-    email         String     @unique
-    emailVerified DateTime?
-    name          String?
-    image         String?
-    password      String
-    elections     election[]
-    tokens        token[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    vote      vote[]
-}
-
-model comelec {
-    id            String     @id @default(cuid())
-    email         String     @unique
+model user {
+    id            String    @id @default(cuid())
+    email         String    @unique
     emailVerified DateTime?
     first_name    String
     middle_name   String?
     last_name     String
     image         String?
     password      String
-    elections     election[]
     tokens        token[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+    vote      vote[]
+
+    commissioners election[] @relation("commissioners")
+    voters        election[] @relation("voters")
 }
 
 enum electionPublicity {
@@ -64,10 +49,10 @@ model election {
     voting_start  Int               @default(7) // 7am
     voting_end    Int               @default(19) // 7pm
     logo          String?
-    voters        voter[]
+    commissioners user[]            @relation("commissioners")
+    voters        user[]            @relation("voters")
     candidates    candidate[]
     positions     position[]
-    commissioners comelec[]
 
     createdAt DateTime    @default(now())
     updatedAt DateTime    @updatedAt
@@ -104,7 +89,7 @@ model vote {
     id          String    @id @default(cuid())
     election    election  @relation(fields: [electionId], references: [id], onDelete: Cascade)
     electionId  String
-    voter       voter     @relation(fields: [voterId], references: [id], onDelete: Cascade)
+    voter       user      @relation(fields: [voterId], references: [id], onDelete: Cascade)
     voterId     String
     candidate   candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
     candidateId String
@@ -161,8 +146,6 @@ model token {
     expiresAt DateTime  @default(now())
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
-    comelec   comelec?  @relation(fields: [comelecId], references: [id])
+    comelec   user?     @relation(fields: [comelecId], references: [id])
     comelecId String?
-    voter     voter?    @relation(fields: [voterId], references: [id])
-    voterId   String?
 }
