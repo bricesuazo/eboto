@@ -141,11 +141,10 @@ enum tokenType {
 
 model token {
     id        String    @id @default(cuid())
-    token     String
     type      tokenType
-    expiresAt DateTime  @default(now())
+    expiresAt DateTime
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
-    user      user      @relation(fields: [userId], references: [id])
+    user      user      @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId    String
 }

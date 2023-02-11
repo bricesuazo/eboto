@@ -18,6 +18,7 @@ import { useState } from "react";
 
 const Signin: NextPage = () => {
   const [error, setError] = useState<string | undefined>();
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -29,6 +30,7 @@ const Signin: NextPage = () => {
       <form
         onSubmit={handleSubmit(async (data) => {
           setError(undefined);
+          setLoading(true);
 
           await signIn("credentials", {
             email: data.email as string,
@@ -37,14 +39,22 @@ const Signin: NextPage = () => {
           }).then((res) => {
             if (res?.error) {
               setError(res.error);
+
+              res.error === "Email not verified. Email verification sent." &&
+                reset();
             } else {
               reset();
             }
           });
+          setLoading(false);
         })}
       >
         <Stack spacing={4}>
-          <FormControl isInvalid={!!errors.email} isRequired>
+          <FormControl
+            isInvalid={!!errors.email}
+            isRequired
+            isDisabled={loading}
+          >
             <FormLabel>Email address</FormLabel>
             <Input
               placeholder="Enter your email address"
@@ -63,7 +73,11 @@ const Signin: NextPage = () => {
               </FormErrorMessage>
             )}
           </FormControl>
-          <FormControl isInvalid={!!errors.password} isRequired>
+          <FormControl
+            isInvalid={!!errors.password}
+            isRequired
+            isDisabled={loading}
+          >
             <FormLabel>Password</FormLabel>
             <Input
               placeholder="Enter your password"
@@ -91,7 +105,9 @@ const Signin: NextPage = () => {
             </Alert>
           )}
 
-          <Button type="submit">Sign in</Button>
+          <Button type="submit" isLoading={loading}>
+            Sign in
+          </Button>
         </Stack>
       </form>
     </Container>

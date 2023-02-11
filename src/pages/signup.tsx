@@ -43,7 +43,11 @@ const Signup: NextPage = () => {
       >
         <Stack spacing={4}>
           <Stack direction={["column", "row"]} spacing={[4, 2]}>
-            <FormControl isInvalid={!!errors.firstName} isRequired>
+            <FormControl
+              isInvalid={!!errors.firstName}
+              isRequired
+              isDisabled={signUpMutation.isLoading}
+            >
               <FormLabel>First name</FormLabel>
               <Input
                 placeholder="Enter your first name"
@@ -59,7 +63,7 @@ const Signup: NextPage = () => {
               )}
             </FormControl>
 
-            <FormControl>
+            <FormControl isDisabled={signUpMutation.isLoading}>
               <FormLabel>Middle name</FormLabel>
               <Input
                 placeholder="Enter your Middle name"
@@ -72,7 +76,11 @@ const Signup: NextPage = () => {
                 </FormErrorMessage>
               )}
             </FormControl>
-            <FormControl isInvalid={!!errors.lastName} isRequired>
+            <FormControl
+              isInvalid={!!errors.lastName}
+              isRequired
+              isDisabled={signUpMutation.isLoading}
+            >
               <FormLabel>Last name</FormLabel>
               <Input
                 placeholder="Enter your last name"
@@ -89,7 +97,11 @@ const Signup: NextPage = () => {
             </FormControl>
           </Stack>
 
-          <FormControl isInvalid={!!errors.email} isRequired>
+          <FormControl
+            isInvalid={!!errors.email}
+            isRequired
+            isDisabled={signUpMutation.isLoading}
+          >
             <FormLabel>Email address</FormLabel>
             <Input
               placeholder="Enter your email address"
@@ -108,7 +120,11 @@ const Signup: NextPage = () => {
               </FormErrorMessage>
             )}
           </FormControl>
-          <FormControl isInvalid={!!errors.password} isRequired>
+          <FormControl
+            isInvalid={!!errors.password}
+            isRequired
+            isDisabled={signUpMutation.isLoading}
+          >
             <FormLabel>Password</FormLabel>
             <Input
               placeholder="Enter your password"
@@ -131,7 +147,11 @@ const Signup: NextPage = () => {
             )}
           </FormControl>
 
-          <FormControl isInvalid={!!errors.confirmPassword} isRequired>
+          <FormControl
+            isInvalid={!!errors.confirmPassword}
+            isRequired
+            isDisabled={signUpMutation.isLoading}
+          >
             <FormLabel>Confirm password</FormLabel>
             <Input
               placeholder="Confirm your password"

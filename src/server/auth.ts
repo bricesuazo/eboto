@@ -8,6 +8,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "./db";
 import bcrypt from "bcryptjs";
+// import SendGrid from "../libs/sendgrid";
 
 /**
  * Module augmentation for `next-auth` types.
@@ -57,7 +58,11 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials || !credentials.email.trim() || !credentials.password.trim()) {
+        if (
+          !credentials ||
+          !credentials.email.trim() ||
+          !credentials.password.trim()
+        ) {
           throw new Error("Missing username or password");
         }
 
@@ -71,10 +76,32 @@ export const authOptions: NextAuthOptions = {
         const isValid = await bcrypt.compare(
           credentials.password,
           user.password
-          );
-        
+        );
+
         if (!isValid) {
           throw new Error("Invalid password");
+        }
+
+        if (!user.emailVerified) {
+          const token = await prisma.token.create({
+            data: {
+              userId: user.id,
+              type: "EMAIL_VERIFICATION",
+              expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24), // 24 hours
+            },
+            select: {
+              id: true,
+            },
+          });
+
+          // Send email verification email
+          // SendGrid({
+          //   to: user.email,
+
+          // })
+          throw new Error("Email not verified. Email verification sent.", {
+            cause: "EMAIL_NOT_VERIFIED",
+          });
         }
         return user;
       },
