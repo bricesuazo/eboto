@@ -20,6 +20,7 @@
     "@trpc/next": "^10.9.0",
     "@trpc/react-query": "^10.9.0",
     "@trpc/server": "^10.9.0",
+    "@vercel/analytics": "^0.1.8",
     "bcryptjs": "^2.4.3",
     "framer-motion": "^9.0.2",
     "next": "13.1.6",
