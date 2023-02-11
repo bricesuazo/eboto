@@ -22,27 +22,25 @@ const Signin: NextPage = () => {
     register,
     handleSubmit,
     reset,
-    getValues,
     formState: { errors },
   } = useForm();
   return (
     <Container>
       <form
-        onSubmit={handleSubmit((data) => {
-          setError();
-          void (async () => {
-            await signIn("credentials", {
-              email: data.email as string,
-              password: data.password as string,
-              redirect: false,
-            }).then((res) => {
-              if (res?.error) {
-                setError(res.error);
-              } else {
-                reset();
-              }
-            });
-          })();
+        onSubmit={handleSubmit(async (data) => {
+          setError(undefined);
+
+          await signIn("credentials", {
+            email: data.email as string,
+            password: data.password as string,
+            redirect: false,
+          }).then((res) => {
+            if (res?.error) {
+              setError(res.error);
+            } else {
+              reset();
+            }
+          });
         })}
       >
         <Stack spacing={4}>

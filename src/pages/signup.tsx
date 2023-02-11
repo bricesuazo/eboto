@@ -29,17 +29,16 @@ const Signup: NextPage = () => {
   return (
     <Container>
       <form
-        onSubmit={handleSubmit((data) => {
-          void (async () => {
-            await signUpMutation.mutateAsync({
-              email: data.email as string,
-              password: data.password as string,
-              first_name: data.firstName as string,
-              last_name: data.lastName as string,
-              middle_name: data.middleName as string,
-            });
-            reset();
-          })();
+        onSubmit={handleSubmit(async (data) => {
+          await signUpMutation.mutateAsync({
+            email: data.email as string,
+            password: data.password as string,
+            first_name: data.firstName as string,
+            last_name: data.lastName as string,
+            middle_name: data.middleName as string,
+          });
+
+          reset();
         })}
       >
         <Stack spacing={4}>
