@@ -146,6 +146,6 @@ model token {
     expiresAt DateTime  @default(now())
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
-    comelec   user?     @relation(fields: [comelecId], references: [id])
-    comelecId String?
+    user      user      @relation(fields: [userId], references: [id])
+    userId    String
 }
