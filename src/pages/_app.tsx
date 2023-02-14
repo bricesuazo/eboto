@@ -13,6 +13,7 @@ import { app } from "../firebase/firebase";
 import "../styles/globals.css";
 import theme from "../theme";
 import NextNProgress from "nextjs-progressbar";
+import Banner from "../components/Banner";
 
 // const anton = Anton({ weight: "400" });
 const inter = Inter();
@@ -36,6 +37,9 @@ export default function MyApp({
           <ChakraProvider theme={theme}>
             <main className={inter.className}>
               <NextNProgress color="#ffd532" height={2} />
+
+              <Banner />
+
               <Header />
               <Component {...pageProps} />
               <Footer />
