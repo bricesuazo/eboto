@@ -111,7 +111,7 @@ const ConfirmVoteModal = ({
                   const [positionUid, candidateUid] =
                     selectedCandidate.split("-");
 
-                  if (candidateUid === "undecided") {
+                  if (candidateUid === "abstain") {
                     await updateDoc(
                       doc(
                         firestore,

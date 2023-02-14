@@ -34,8 +34,8 @@ const Card = ({
     },
   });
   const group = getRootProps();
-  const radioUndecided = getRadioProps({
-    value: `${position.uid}-undecided`,
+  const radioAbstain = getRadioProps({
+    value: `${position.uid}-abstain`,
   });
   return (
     <Stack key={position.id} alignItems="center">
@@ -89,7 +89,7 @@ const Card = ({
                 </CandidateCard>
               );
             })}
-          <CandidateCard {...radioUndecided}>
+          <CandidateCard {...radioAbstain}>
             <Box
               position="relative"
               width={[32, 40]}
@@ -99,15 +99,15 @@ const Card = ({
               overflow="hidden"
             >
               <Image
-                src="/assets/images/undecided.jpg"
-                alt="Undecided photo"
+                src="/assets/images/abstain.jpg"
+                alt="Abstain photo"
                 fill
                 sizes="contain"
                 priority
                 style={{ objectFit: "cover" }}
               />
             </Box>
-            <Text textAlign="center">Undecided</Text>
+            <Text textAlign="center">Abstain</Text>
           </CandidateCard>
         </HStack>
       </Container>

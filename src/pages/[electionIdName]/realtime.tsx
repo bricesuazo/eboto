@@ -123,7 +123,7 @@ const RealtimePage = ({
                   <Tr _hover={{ backgroundColor: "gray.50" }}>
                     <Td borderColor="gray.100">
                       <Box display="flex" justifyContent="space-between">
-                        <Text>Undecided</Text>
+                        <Text>Abstain</Text>
 
                         {positionsLoading === "loading" || !positionsCount ? (
                           <Spinner size="sm" />
