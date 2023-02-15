@@ -244,6 +244,8 @@ const OverviewPage = ({
               </Text>
             )}
           </Center>
+
+          <Button alignSelf={["center", "start"]}>Generate Result</Button>
         </Stack>
       </DashboardLayout>
     </>
