@@ -125,7 +125,7 @@ const GenerateResult = ({
                             }${
                               candidate.middleName && " " + candidate.middleName
                             }${idx === 0 ? " - Winner" : ""}`}</Text>
-                            <Text>{candidate.votingCount} votes</Text>
+                            <Text>{candidate.votingCount} vote/s</Text>
                           </View>
                         );
                       })}

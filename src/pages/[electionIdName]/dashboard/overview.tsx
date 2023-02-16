@@ -13,6 +13,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import {
+  ArchiveBoxArrowDownIcon,
   ArrowTopRightOnSquareIcon,
   CheckIcon,
   DocumentDuplicateIcon,
@@ -264,7 +265,10 @@ const OverviewPage = ({
             )}
           </Center>
 
-          <Button alignSelf={["center", "start"]}>
+          <Button
+            alignSelf={["center", "start"]}
+            leftIcon={<ArchiveBoxArrowDownIcon width={18} />}
+          >
             <PDFDownloadLink
               document={
                 <GenerateResult
