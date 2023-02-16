@@ -14,6 +14,7 @@ import {
 import { type NextPage } from "next";
 import { api } from "../utils/api";
 import { useForm } from "react-hook-form";
+import Head from "next/head";
 
 const Signup: NextPage = () => {
   const {
@@ -27,169 +28,175 @@ const Signup: NextPage = () => {
   const signUpMutation = api.user.signUp.useMutation();
 
   return (
-    <Container>
-      <form
-        onSubmit={handleSubmit(async (data) => {
-          await signUpMutation.mutateAsync({
-            email: data.email as string,
-            password: data.password as string,
-            first_name: data.firstName as string,
-            last_name: data.lastName as string,
-            middle_name: data.middleName as string,
-          });
+    <>
+      <Head>
+        <title>Create an account | eBoto Mo</title>
+      </Head>
 
-          reset();
-        })}
-      >
-        <Stack spacing={4}>
-          <Stack direction={["column", "row"]} spacing={[4, 2]}>
+      <Container>
+        <form
+          onSubmit={handleSubmit(async (data) => {
+            await signUpMutation.mutateAsync({
+              email: data.email as string,
+              password: data.password as string,
+              first_name: data.firstName as string,
+              last_name: data.lastName as string,
+              middle_name: data.middleName as string,
+            });
+
+            reset();
+          })}
+        >
+          <Stack spacing={4}>
+            <Stack direction={["column", "row"]} spacing={[4, 2]}>
+              <FormControl
+                isInvalid={!!errors.firstName}
+                isRequired
+                isDisabled={signUpMutation.isLoading}
+              >
+                <FormLabel>First name</FormLabel>
+                <Input
+                  placeholder="Enter your first name"
+                  type="text"
+                  {...register("firstName", {
+                    required: "This is required.",
+                  })}
+                />
+                {errors.firstName && (
+                  <FormErrorMessage>
+                    {errors.firstName.message?.toString()}
+                  </FormErrorMessage>
+                )}
+              </FormControl>
+
+              <FormControl isDisabled={signUpMutation.isLoading}>
+                <FormLabel>Middle name</FormLabel>
+                <Input
+                  placeholder="Enter your Middle name"
+                  type="text"
+                  {...register("middleName")}
+                />
+                {errors.middleName && (
+                  <FormErrorMessage>
+                    {errors.middleName.message?.toString()}
+                  </FormErrorMessage>
+                )}
+              </FormControl>
+              <FormControl
+                isInvalid={!!errors.lastName}
+                isRequired
+                isDisabled={signUpMutation.isLoading}
+              >
+                <FormLabel>Last name</FormLabel>
+                <Input
+                  placeholder="Enter your last name"
+                  type="text"
+                  {...register("lastName", {
+                    required: "This is required.",
+                  })}
+                />
+                {errors.lastName && (
+                  <FormErrorMessage>
+                    {errors.lastName.message?.toString()}
+                  </FormErrorMessage>
+                )}
+              </FormControl>
+            </Stack>
+
             <FormControl
-              isInvalid={!!errors.firstName}
+              isInvalid={!!errors.email}
               isRequired
               isDisabled={signUpMutation.isLoading}
             >
-              <FormLabel>First name</FormLabel>
+              <FormLabel>Email address</FormLabel>
               <Input
-                placeholder="Enter your first name"
-                type="text"
-                {...register("firstName", {
+                placeholder="Enter your email address"
+                type="email"
+                {...register("email", {
                   required: "This is required.",
+                  pattern: {
+                    value: /^\S+@\S+$/i,
+                    message: "Invalid email address.",
+                  },
                 })}
               />
-              {errors.firstName && (
+              {errors.email && (
                 <FormErrorMessage>
-                  {errors.firstName.message?.toString()}
-                </FormErrorMessage>
-              )}
-            </FormControl>
-
-            <FormControl isDisabled={signUpMutation.isLoading}>
-              <FormLabel>Middle name</FormLabel>
-              <Input
-                placeholder="Enter your Middle name"
-                type="text"
-                {...register("middleName")}
-              />
-              {errors.middleName && (
-                <FormErrorMessage>
-                  {errors.middleName.message?.toString()}
+                  {errors.email.message?.toString()}
                 </FormErrorMessage>
               )}
             </FormControl>
             <FormControl
-              isInvalid={!!errors.lastName}
+              isInvalid={!!errors.password}
               isRequired
               isDisabled={signUpMutation.isLoading}
             >
-              <FormLabel>Last name</FormLabel>
+              <FormLabel>Password</FormLabel>
               <Input
-                placeholder="Enter your last name"
-                type="text"
-                {...register("lastName", {
+                placeholder="Enter your password"
+                type="password"
+                {...register("password", {
                   required: "This is required.",
+                  min: {
+                    value: 8,
+                    message: "Password must be at least 8 characters long.",
+                  },
+                  validate: (value) =>
+                    value === getValues("confirmPassword") ||
+                    "The passwords do not match.",
                 })}
               />
-              {errors.lastName && (
+              {errors.password && (
                 <FormErrorMessage>
-                  {errors.lastName.message?.toString()}
+                  {errors.password.message?.toString()}
                 </FormErrorMessage>
               )}
             </FormControl>
+
+            <FormControl
+              isInvalid={!!errors.confirmPassword}
+              isRequired
+              isDisabled={signUpMutation.isLoading}
+            >
+              <FormLabel>Confirm password</FormLabel>
+              <Input
+                placeholder="Confirm your password"
+                type="password"
+                {...register("confirmPassword", {
+                  required: "This is required.",
+                  min: {
+                    value: 8,
+                    message: "Password must be at least 8 characters long.",
+                  },
+                  validate: (value) =>
+                    value === getValues("password") ||
+                    "The passwords do not match.",
+                })}
+              />
+              {errors.confirmPassword && (
+                <FormErrorMessage>
+                  {errors.confirmPassword.message?.toString()}
+                </FormErrorMessage>
+              )}
+            </FormControl>
+
+            {signUpMutation.isError && (
+              <Alert status="error">
+                <AlertIcon />
+                <AlertTitle>Sign up error.</AlertTitle>
+                <AlertDescription>
+                  {signUpMutation.error.message}
+                </AlertDescription>
+              </Alert>
+            )}
+
+            <Button type="submit" isLoading={signUpMutation.isLoading}>
+              Sign up
+            </Button>
           </Stack>
-
-          <FormControl
-            isInvalid={!!errors.email}
-            isRequired
-            isDisabled={signUpMutation.isLoading}
-          >
-            <FormLabel>Email address</FormLabel>
-            <Input
-              placeholder="Enter your email address"
-              type="email"
-              {...register("email", {
-                required: "This is required.",
-                pattern: {
-                  value: /^\S+@\S+$/i,
-                  message: "Invalid email address.",
-                },
-              })}
-            />
-            {errors.email && (
-              <FormErrorMessage>
-                {errors.email.message?.toString()}
-              </FormErrorMessage>
-            )}
-          </FormControl>
-          <FormControl
-            isInvalid={!!errors.password}
-            isRequired
-            isDisabled={signUpMutation.isLoading}
-          >
-            <FormLabel>Password</FormLabel>
-            <Input
-              placeholder="Enter your password"
-              type="password"
-              {...register("password", {
-                required: "This is required.",
-                min: {
-                  value: 8,
-                  message: "Password must be at least 8 characters long.",
-                },
-                validate: (value) =>
-                  value === getValues("confirmPassword") ||
-                  "The passwords do not match.",
-              })}
-            />
-            {errors.password && (
-              <FormErrorMessage>
-                {errors.password.message?.toString()}
-              </FormErrorMessage>
-            )}
-          </FormControl>
-
-          <FormControl
-            isInvalid={!!errors.confirmPassword}
-            isRequired
-            isDisabled={signUpMutation.isLoading}
-          >
-            <FormLabel>Confirm password</FormLabel>
-            <Input
-              placeholder="Confirm your password"
-              type="password"
-              {...register("confirmPassword", {
-                required: "This is required.",
-                min: {
-                  value: 8,
-                  message: "Password must be at least 8 characters long.",
-                },
-                validate: (value) =>
-                  value === getValues("password") ||
-                  "The passwords do not match.",
-              })}
-            />
-            {errors.confirmPassword && (
-              <FormErrorMessage>
-                {errors.confirmPassword.message?.toString()}
-              </FormErrorMessage>
-            )}
-          </FormControl>
-
-          {signUpMutation.isError && (
-            <Alert status="error">
-              <AlertIcon />
-              <AlertTitle>Sign up error.</AlertTitle>
-              <AlertDescription>
-                {signUpMutation.error.message}
-              </AlertDescription>
-            </Alert>
-          )}
-
-          <Button type="submit" isLoading={signUpMutation.isLoading}>
-            Sign up
-          </Button>
-        </Stack>
-      </form>
-    </Container>
+        </form>
+      </Container>
+    </>
   );
 };
 

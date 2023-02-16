@@ -8,7 +8,7 @@ const Header = () => {
       <Container maxW="4xl" alignItems="center" py={4}>
         <Flex justify="space-between">
           <Link href="/">
-            <h1>eBoto Mo</h1>
+            <Button variant="link">eBoto Mo</Button>
           </Link>
 
           <Stack direction="row" spacing={4}>
