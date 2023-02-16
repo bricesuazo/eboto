@@ -37,16 +37,25 @@ import { useFirestoreCollectionData } from "reactfire";
 import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
 import GenerateResult from "../../../pdf/GenerateResult";
-import { adminType, electionType } from "../../../types/typings";
+import {
+  adminType,
+  candidateType,
+  electionType,
+  positionType,
+} from "../../../types/typings";
 import { getHourByNumber } from "../../../utils/getHourByNumber";
 import isAdminOwnsTheElection from "../../../utils/isAdminOwnsTheElection";
 
 const OverviewPage = ({
   session,
   election,
+  positions,
+  candidates,
 }: {
   session: { user: adminType; expires: string };
   election: electionType;
+  candidates: candidateType[];
+  positions: positionType[];
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -257,8 +266,14 @@ const OverviewPage = ({
 
           <Button alignSelf={["center", "start"]}>
             <PDFDownloadLink
-              document={<GenerateResult election={election} />}
-              fileName="result.pdf"
+              document={
+                <GenerateResult
+                  election={election}
+                  candidates={candidates}
+                  positions={positions}
+                />
+              }
+              fileName={`${election.name} - Result (${Date.now()}).pdf`}
             >
               {({ loading }) =>
                 loading ? "Loading document..." : "Generate Result"
@@ -283,12 +298,32 @@ export const getServerSideProps: GetServerSideProps = async (
       where("electionIdName", "==", context.query.electionIdName)
     )
   );
+
   if (electionSnapshot.empty || !session) {
     return {
       notFound: true,
     };
   }
-
+  const positionsSnapshot = await getDocs(
+    query(
+      collection(
+        firestore,
+        "elections",
+        electionSnapshot.docs[0].id,
+        "positions"
+      )
+    )
+  );
+  const candidatesSnapshot = await getDocs(
+    query(
+      collection(
+        firestore,
+        "elections",
+        electionSnapshot.docs[0].id,
+        "candidates"
+      )
+    )
+  );
   if (!isAdminOwnsTheElection(session, electionSnapshot.docs[0].id)) {
     return {
       redirect: {
@@ -301,6 +336,12 @@ export const getServerSideProps: GetServerSideProps = async (
   return {
     props: {
       election: JSON.parse(JSON.stringify(electionSnapshot.docs[0].data())),
+      positions: JSON.parse(
+        JSON.stringify(positionsSnapshot.docs.map((doc) => doc.data()))
+      ),
+      candidates: JSON.parse(
+        JSON.stringify(candidatesSnapshot.docs.map((doc) => doc.data()))
+      ),
       session: await getSession(context),
     },
   };
