@@ -130,7 +130,9 @@ const GenerateResult = ({
                         );
                       })}
 
-                    <Text>Abstain - {position.undecidedVotingCount} votes</Text>
+                    <Text>
+                      Abstain - {position.undecidedVotingCount} vote/s
+                    </Text>
                   </View>
                 );
               })}
