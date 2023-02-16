@@ -85,7 +85,7 @@ const ConfirmVoteModal = ({
                             (partylist) => partylist.uid === candidate.partylist
                           )?.abbreviation
                         })`
-                      : "Undecided"}
+                      : "Abstain"}
                   </Text>
                 </Box>
               );
