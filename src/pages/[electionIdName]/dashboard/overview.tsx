@@ -17,6 +17,15 @@ import {
   CheckIcon,
   DocumentDuplicateIcon,
 } from "@heroicons/react/24/outline";
+// import PDFDownloadLink but disable SSR
+import dynamic from "next/dynamic";
+const PDFDownloadLink = dynamic(
+  () => import("@react-pdf/renderer").then((mod) => mod.PDFDownloadLink),
+  {
+    ssr: false,
+  }
+);
+PDFDownloadLink;
 import { collection, getDocs, query, where } from "firebase/firestore";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
@@ -27,6 +36,7 @@ import Moment from "react-moment";
 import { useFirestoreCollectionData } from "reactfire";
 import { firestore } from "../../../firebase/firebase";
 import DashboardLayout from "../../../layout/DashboardLayout";
+import GenerateResult from "../../../pdf/GenerateResult";
 import { adminType, electionType } from "../../../types/typings";
 import { getHourByNumber } from "../../../utils/getHourByNumber";
 import isAdminOwnsTheElection from "../../../utils/isAdminOwnsTheElection";
@@ -245,7 +255,16 @@ const OverviewPage = ({
             )}
           </Center>
 
-          <Button alignSelf={["center", "start"]}>Generate Result</Button>
+          <Button alignSelf={["center", "start"]}>
+            <PDFDownloadLink
+              document={<GenerateResult election={election} />}
+              fileName="result.pdf"
+            >
+              {({ loading }) =>
+                loading ? "Loading document..." : "Generate Result"
+              }
+            </PDFDownloadLink>
+          </Button>
         </Stack>
       </DashboardLayout>
     </>
