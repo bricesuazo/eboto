@@ -1,4 +1,8 @@
+import { useState } from "react";
+
+import Head from "next/head";
 import { type NextPage } from "next";
+
 import {
   Alert,
   AlertDescription,
@@ -12,10 +16,12 @@ import {
   Input,
   Stack,
 } from "@chakra-ui/react";
+
 import { useForm } from "react-hook-form";
+
 import { signIn } from "next-auth/react";
-import { useState } from "react";
-import Head from "next/head";
+
+import { AiOutlineGoogle } from "react-icons/ai";
 
 const Signin: NextPage = () => {
   const [error, setError] = useState<string | undefined>();
@@ -113,6 +119,14 @@ const Signin: NextPage = () => {
 
             <Button type="submit" isLoading={loading}>
               Sign in
+            </Button>
+
+            <Button
+              onClick={() => signIn("google")}
+              leftIcon={<AiOutlineGoogle />}
+              variant="outline"
+            >
+              Sign in with Google
             </Button>
           </Stack>
         </form>
