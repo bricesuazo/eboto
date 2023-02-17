@@ -41,7 +41,7 @@ const Signup: NextPage = () => {
               password: data.password as string,
               first_name: data.firstName as string,
               last_name: data.lastName as string,
-              middle_name: data.middleName as string,
+              // middle_name: data.middleName as string,
             });
 
             reset();
@@ -69,7 +69,7 @@ const Signup: NextPage = () => {
                 )}
               </FormControl>
 
-              <FormControl isDisabled={signUpMutation.isLoading}>
+              {/* <FormControl isDisabled={signUpMutation.isLoading}>
                 <FormLabel>Middle name</FormLabel>
                 <Input
                   placeholder="Enter your Middle name"
@@ -81,7 +81,7 @@ const Signup: NextPage = () => {
                     {errors.middleName.message?.toString()}
                   </FormErrorMessage>
                 )}
-              </FormControl>
+              </FormControl> */}
               <FormControl
                 isInvalid={!!errors.lastName}
                 isRequired

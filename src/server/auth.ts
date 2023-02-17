@@ -6,7 +6,6 @@ import {
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "./db";
 import bcrypt from "bcryptjs";
 import { env } from "../env.mjs";
@@ -43,6 +42,30 @@ declare module "next-auth" {
  **/
 export const authOptions: NextAuthOptions = {
   callbacks: {
+    // signIn: async ({ user }) => {
+    //   if (user && user.email) {
+    //     const isUserExists = await prisma.user.findUnique({
+    //       where: {
+    //         email: user.email,
+    //       },
+    //     });
+
+    //     if (isUserExists) return false;
+
+    //     if (user.email && user.name && user.image)
+    //       await prisma.user.create({
+    //         data: {
+    //           email: user.email,
+    //           emailVerified: new Date(),
+    //           first_name: user.name,
+    //           last_name: user.name,
+    //           image: user.image,
+    //           signInWith: "GOOGLE",
+    //         },
+    //       });
+    //   }
+    //   return true;
+    // },
     session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
@@ -74,7 +97,7 @@ export const authOptions: NextAuthOptions = {
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
-        if (!user) {
+        if (!user || !user.password) {
           throw new Error("Invalid email or password");
         }
 

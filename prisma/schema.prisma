@@ -12,16 +12,22 @@ datasource db {
 }
 
 // Necessary for Next auth
+enum signInWith {
+    GOOGLE
+    CREDENTIALS
+    EMAIL
+}
 
 model user {
-    id            String    @id @default(cuid())
-    email         String    @unique
+    id            String     @id @default(cuid())
+    email         String     @unique
     emailVerified DateTime?
     first_name    String
     middle_name   String?
     last_name     String
     image         String?
-    password      String
+    password      String?
+    signInWith    signInWith
     tokens        token[]
 
     createdAt DateTime @default(now())
