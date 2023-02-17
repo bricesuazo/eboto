@@ -54,31 +54,47 @@ declare module "next-auth/jwt" {
  **/
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    // signIn: async ({ user }) => {
-    //   if (user && user.email) {
-    //     const isUserExists = await prisma.user.findUnique({
-    //       where: {
-    //         email: user.email,
-    //       },
-    //     });
+    async signIn({ user, account }) {
+      if (account?.provider === "google" && user.email) {
+        const isUserExists = await prisma.user.findUnique({
+          where: {
+            email: user.email,
+          },
+        });
 
-    //     if (isUserExists) return false;
-
-    //     if (user.email && user.name && user.image)
-    //       await prisma.user.create({
-    //         data: {
-    //           email: user.email,
-    //           emailVerified: new Date(),
-    //           first_name: user.name,
-    //           last_name: user.name,
-    //           image: user.image,
-    //           signInWith: "GOOGLE",
-    //         },
-    //       });
-    //   }
-    //   return true;
-    // },
-
+        if (!isUserExists) {
+          if (user.email && user.name && user.image) {
+            const newUser = await prisma.user.create({
+              data: {
+                email: user.email,
+                emailVerified: new Date(),
+                first_name:
+                  // profile?.given_name ||
+                  user.name.split(" ").slice(0, -1).join(" "),
+                last_name:
+                  // profile?.family_name ||
+                  user.name.split(" ").slice(-1).join(" "),
+                image: user.image,
+                provider: "GOOGLE",
+              },
+              select: {
+                id: true,
+                first_name: true,
+                last_name: true,
+              },
+            });
+            user.id = newUser.id;
+            user.firstName = newUser.first_name;
+            user.lastName = newUser.last_name;
+          }
+        } else {
+          user.id = isUserExists.id;
+          user.firstName = isUserExists.first_name;
+          user.lastName = isUserExists.last_name;
+        }
+      }
+      return true;
+    },
     session({ session, token }) {
       if (session.user) {
         session.user.id = token.id;

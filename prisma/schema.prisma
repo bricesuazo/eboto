@@ -22,6 +22,11 @@ model temporaryUser {
     updatedAt  DateTime @updatedAt
 }
 
+enum provider {
+    GOOGLE
+    CREDENTIALS
+}
+
 model user {
     id            String    @id @default(cuid())
     email         String    @unique
@@ -32,6 +37,7 @@ model user {
     image         String?
     password      String?
     tokens        token[]
+    provider      provider
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

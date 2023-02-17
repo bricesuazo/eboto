@@ -40,6 +40,7 @@ export const userRouter = createTRPCRouter({
           first_name: token.temporaryUser.first_name,
           last_name: token.temporaryUser.last_name,
           emailVerified: new Date(),
+          provider: "CREDENTIALS",
         },
       });
 

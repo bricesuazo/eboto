@@ -30,7 +30,10 @@ import { getServerAuthSession } from "../server/auth";
 
 const Signin: NextPage = () => {
   const [error, setError] = useState<string | undefined>();
-  const [loading, setLoading] = useState(false);
+  const [loadings, setLoadings] = useState({
+    credentials: false,
+    google: false,
+  });
   const {
     register,
     handleSubmit,
@@ -47,7 +50,7 @@ const Signin: NextPage = () => {
         <form
           onSubmit={handleSubmit(async (data) => {
             setError(undefined);
-            setLoading(true);
+            setLoadings({ ...loadings, credentials: true });
 
             await signIn("credentials", {
               email: data.email as string,
@@ -61,14 +64,14 @@ const Signin: NextPage = () => {
                   reset();
               }
             });
-            setLoading(false);
+            setLoadings({ ...loadings, credentials: false });
           })}
         >
           <Stack spacing={4}>
             <FormControl
               isInvalid={!!errors.email}
               isRequired
-              isDisabled={loading}
+              isDisabled={loadings.credentials}
             >
               <FormLabel>Email address</FormLabel>
               <Input
@@ -91,7 +94,7 @@ const Signin: NextPage = () => {
             <FormControl
               isInvalid={!!errors.password}
               isRequired
-              isDisabled={loading}
+              isDisabled={loadings.credentials}
             >
               <FormLabel>Password</FormLabel>
               <Input
@@ -120,14 +123,21 @@ const Signin: NextPage = () => {
               </Alert>
             )}
 
-            <Button type="submit" isLoading={loading}>
+            <Button type="submit" isLoading={loadings.credentials}>
               Sign in
             </Button>
 
             <Button
-              onClick={() => signIn("google")}
-              leftIcon={<AiOutlineGoogle />}
+              onClick={() => {
+                setLoadings({ ...loadings, google: true });
+                void (async () => {
+                  await signIn("google");
+                })();
+              }}
+              leftIcon={<AiOutlineGoogle size={18} />}
               variant="outline"
+              isLoading={loadings.google}
+              loadingText="Loading..."
             >
               Sign in with Google
             </Button>

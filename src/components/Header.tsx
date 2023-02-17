@@ -4,7 +4,8 @@ import { signOut, useSession } from "next-auth/react";
 
 const Header = () => {
   const { colorMode, toggleColorMode } = useColorMode();
-  const { status } = useSession();
+  const { status, data } = useSession();
+  console.log("🚀 ~ file: Header.tsx:8 ~ Header ~ data", data);
 
   return (
     <header>
@@ -26,7 +27,9 @@ const Header = () => {
             {status === "authenticated" && (
               <Button
                 onClick={async () => {
-                  await signOut();
+                  await signOut({
+                    callbackUrl: "/signin",
+                  });
                 }}
                 size="sm"
               >
