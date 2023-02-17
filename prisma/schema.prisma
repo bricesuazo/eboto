@@ -11,23 +11,26 @@ datasource db {
     relationMode = "prisma"
 }
 
-// Necessary for Next auth
-enum signInWith {
-    GOOGLE
-    CREDENTIALS
-    EMAIL
+model temporaryUser {
+    id         String   @id @default(cuid())
+    email      String   @unique
+    first_name String
+    last_name  String
+    password   String
+    tokens     token[]
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
 }
 
 model user {
-    id            String     @id @default(cuid())
-    email         String     @unique
+    id            String    @id @default(cuid())
+    email         String    @unique
     emailVerified DateTime?
     first_name    String
     middle_name   String?
     last_name     String
     image         String?
     password      String?
-    signInWith    signInWith
     tokens        token[]
 
     createdAt DateTime @default(now())
@@ -146,11 +149,13 @@ enum tokenType {
 }
 
 model token {
-    id        String    @id @default(cuid())
-    type      tokenType
-    expiresAt DateTime
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    user      user      @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId    String
+    id              String         @id @default(cuid())
+    type            tokenType
+    expiresAt       DateTime
+    createdAt       DateTime       @default(now())
+    updatedAt       DateTime       @updatedAt
+    user            user?          @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId          String?
+    temporaryUser   temporaryUser? @relation(fields: [temporaryUserId], references: [id])
+    temporaryUserId String?
 }

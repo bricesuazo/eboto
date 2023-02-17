@@ -16,6 +16,9 @@ export const userRouter = createTRPCRouter({
         where: {
           id: input.token,
         },
+        include: {
+          temporaryUser: true,
+        },
       });
 
       if (!token || token.type !== "EMAIL_VERIFICATION") {
@@ -26,12 +29,23 @@ export const userRouter = createTRPCRouter({
         throw new Error("Token expired");
       }
 
-      await ctx.prisma.user.update({
-        where: {
-          id: token.userId,
-        },
+      if (!token.temporaryUser) {
+        throw new Error("Invalid token");
+      }
+
+      await ctx.prisma.user.create({
         data: {
+          email: token.temporaryUser.email,
+          password: token.temporaryUser.password,
+          first_name: token.temporaryUser.first_name,
+          last_name: token.temporaryUser.last_name,
           emailVerified: new Date(),
+        },
+      });
+
+      await ctx.prisma.temporaryUser.delete({
+        where: {
+          id: token.temporaryUser.id,
         },
       });
 
@@ -41,8 +55,6 @@ export const userRouter = createTRPCRouter({
           type: "EMAIL_VERIFICATION",
         },
       });
-
-      return true;
     }),
   signUp: publicProcedure
     .input(
@@ -66,16 +78,29 @@ export const userRouter = createTRPCRouter({
         throw new Error("Email already exists");
       }
 
-      return await ctx.prisma.user.create({
+      const token = await ctx.prisma.token.create({
         data: {
-          email: input.email,
-          password: await bcrypt.hash(input.password, 12),
-          first_name: input.first_name,
-          last_name: input.last_name,
-          middle_name: input.middle_name,
-          signInWith: "CREDENTIALS",
+          type: "EMAIL_VERIFICATION",
+          expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
+          temporaryUser: {
+            create: {
+              email: input.email,
+              password: await bcrypt.hash(input.password, 12),
+              first_name: input.first_name,
+              last_name: input.last_name,
+            },
+          },
+        },
+        select: {
+          id: true,
         },
       });
+
+      // Send email verification email
+      // SendGrid({
+      //   to: user.email,
+
+      // })
     }),
 
   // getAll: publicProcedure.query(({ ctx }) => {
