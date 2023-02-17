@@ -54,8 +54,6 @@ const Signin: NextPage = () => {
 
                 res.error === "Email not verified. Email verification sent." &&
                   reset();
-              } else {
-                reset();
               }
             });
             setLoading(false);

@@ -33,6 +33,12 @@ declare module "next-auth" {
     // role: UserRole;
   }
 }
+declare module "next-auth/jwt" {
+  /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
+  interface JWT {
+    id: string;
+  }
+}
 
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks,
@@ -66,13 +72,18 @@ export const authOptions: NextAuthOptions = {
     //   }
     //   return true;
     // },
-    session({ session, user }) {
+
+    session({ session, token }) {
       if (session.user) {
-        session.user.id = user.id;
+        session.user.id = token.id;
         // session.user.role = user.role; <-- put other properties on the session here
       }
       return session;
     },
+  },
+  jwt: {
+    secret: "super-secret",
+    maxAge: 15 * 24 * 30 * 60, // 15 days
   },
   providers: [
     GoogleProvider({
@@ -140,7 +151,13 @@ export const authOptions: NextAuthOptions = {
             cause: "EMAIL_NOT_VERIFIED",
           });
         }
-        return user;
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.first_name,
+          image: user.image,
+        };
       },
     }),
 
