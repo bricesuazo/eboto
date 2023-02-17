@@ -55,6 +55,7 @@ export const userRouter = createTRPCRouter({
           type: "EMAIL_VERIFICATION",
         },
       });
+      return true;
     }),
   signUp: publicProcedure
     .input(

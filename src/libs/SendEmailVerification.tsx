@@ -12,7 +12,7 @@ const SendEmailVerification = async ({
 }) => {
   const token = await prisma.token.create({
     data: {
-      userId,
+      temporaryUserId: userId,
       type: "EMAIL_VERIFICATION",
       expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 3), // 3 hours
     },

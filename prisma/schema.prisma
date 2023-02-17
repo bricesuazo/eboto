@@ -88,7 +88,7 @@ model candidate {
     createdAt   DateTime   @default(now())
     updatedAt   DateTime   @updatedAt
     vote        vote[]
-    partylist   partylist? @relation(fields: [partylistId], references: [id])
+    partylist   partylist? @relation(fields: [partylistId], references: [id], onDelete: Cascade)
     partylistId String?
 
     @@index([electionId, positionId])
@@ -105,9 +105,9 @@ model vote {
 
     createdAt DateTime @default(now())
 
-    position    position?  @relation(fields: [positionId], references: [id])
+    position    position?  @relation(fields: [positionId], references: [id], onDelete: Cascade)
     positionId  String?
-    partylist   partylist? @relation(fields: [partylistId], references: [id])
+    partylist   partylist? @relation(fields: [partylistId], references: [id], onDelete: Cascade)
     partylistId String?
 
     @@index([electionId, voterId])
