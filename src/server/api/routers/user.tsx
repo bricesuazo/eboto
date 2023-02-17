@@ -1,8 +1,7 @@
+import { render } from "@react-email/render";
 import bcrypt from "bcryptjs";
-import { Mjml, MjmlBody, MjmlColumn, MjmlSection, MjmlText } from "mjml-react";
-
 import { z } from "zod";
-import sendMail from "../../../../emails";
+import { sendEmail } from "../../../../emails";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
@@ -89,20 +88,10 @@ export const userRouter = createTRPCRouter({
           },
         });
 
-        await sendMail({
-          to: isTempUserExists.email,
-          subject: `Token - ${token.id}`,
-          component: (
-            <Mjml>
-              <MjmlBody>
-                <MjmlSection>
-                  <MjmlColumn>
-                    <MjmlText>tresfse</MjmlText>
-                  </MjmlColumn>
-                </MjmlSection>
-              </MjmlBody>
-            </Mjml>
-          ),
+        await sendEmail({
+          email: input.email,
+          subject: "Verify your email",
+          html: render(<html>Test1212</html>),
         });
 
         throw new Error("Email already exists. Email verification sent");
@@ -137,20 +126,10 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      await sendMail({
-        to: tempUser.email,
-        subject: `Token - ${token.id}`,
-        component: (
-          <Mjml>
-            <MjmlBody>
-              <MjmlSection>
-                <MjmlColumn>
-                  <MjmlText>lol</MjmlText>
-                </MjmlColumn>
-              </MjmlSection>
-            </MjmlBody>
-          </Mjml>
-        ),
+      await sendEmail({
+        email: input.email,
+        subject: "Verify your email",
+        html: render(<html>Test</html>),
       });
     }),
 

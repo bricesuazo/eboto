@@ -43,4 +43,4 @@ yarn-error.log*
 
 .vercel
 
-.mailing
+.react-email
