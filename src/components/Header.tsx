@@ -4,8 +4,8 @@ import { signOut, useSession } from "next-auth/react";
 
 const Header = () => {
   const { colorMode, toggleColorMode } = useColorMode();
-  const session = useSession();
-  console.log("🚀 ~ file: Header.tsx:8 ~ Header ~ session", session);
+  const { status } = useSession();
+
   return (
     <header>
       <Container maxW="4xl" alignItems="center" py={4}>
@@ -18,17 +18,22 @@ const Header = () => {
             <Button size="xs" onClick={toggleColorMode}>
               Toggle {colorMode === "light" ? "Dark" : "Light"}
             </Button>
-            {session.status === "authenticated" ? (
-              <>
-                <Button
-                  onClick={async () => {
-                    await signOut();
-                  }}
-                >
-                  Sign out
-                </Button>
-              </>
-            ) : (
+            {status === "loading" && (
+              <Button size="sm" isLoading>
+                Loading
+              </Button>
+            )}
+            {status === "authenticated" && (
+              <Button
+                onClick={async () => {
+                  await signOut();
+                }}
+                size="sm"
+              >
+                Sign out
+              </Button>
+            )}
+            {status === "unauthenticated" && (
               <>
                 <Link href="/signin">
                   <Button variant="link">Sign in</Button>

@@ -1,7 +1,11 @@
 import { useState } from "react";
 
 import Head from "next/head";
-import { type NextPage } from "next";
+import type {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  NextPage,
+} from "next";
 
 import {
   Alert,
@@ -22,6 +26,7 @@ import { useForm } from "react-hook-form";
 import { signIn } from "next-auth/react";
 
 import { AiOutlineGoogle } from "react-icons/ai";
+import { getServerAuthSession } from "../server/auth";
 
 const Signin: NextPage = () => {
   const [error, setError] = useState<string | undefined>();
@@ -47,7 +52,7 @@ const Signin: NextPage = () => {
             await signIn("credentials", {
               email: data.email as string,
               password: data.password as string,
-              redirect: false,
+              callbackUrl: "/dashboard",
             }).then((res) => {
               if (res?.error) {
                 setError(res.error);
@@ -134,3 +139,22 @@ const Signin: NextPage = () => {
 };
 
 export default Signin;
+
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const session = await getServerAuthSession(context);
+
+  if (session) {
+    return {
+      redirect: {
+        destination: "/dashboard",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};

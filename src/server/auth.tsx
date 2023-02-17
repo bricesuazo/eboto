@@ -22,6 +22,8 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
+      firstName: string;
+      lastName: string;
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];
@@ -29,6 +31,8 @@ declare module "next-auth" {
 
   interface User {
     id: string;
+    firstName: string;
+    lastName: string;
     // ...other properties
     // role: UserRole;
   }
@@ -37,6 +41,8 @@ declare module "next-auth/jwt" {
   /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
   interface JWT {
     id: string;
+    firstName: string;
+    lastName: string;
   }
 }
 
@@ -76,15 +82,23 @@ export const authOptions: NextAuthOptions = {
     session({ session, token }) {
       if (session.user) {
         session.user.id = token.id;
+        session.user.firstName = token.firstName;
+        session.user.lastName = token.lastName;
         // session.user.role = user.role; <-- put other properties on the session here
       }
       return session;
     },
+    jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.firstName = user.firstName;
+        token.lastName = user.lastName;
+        // token.role = user.role; <-- put other properties on the token here
+      }
+      return token;
+    },
   },
-  jwt: {
-    secret: "super-secret",
-    maxAge: 15 * 24 * 30 * 60, // 15 days
-  },
+
   providers: [
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
@@ -155,22 +169,17 @@ export const authOptions: NextAuthOptions = {
         return {
           id: user.id,
           email: user.email,
-          name: user.first_name,
+          firstName: user.first_name,
+          lastName: user.last_name,
           image: user.image,
         };
       },
     }),
-
-    /**
-     * ...add more providers here
-     *
-     * Most other providers require a bit more work than the Discord provider.
-     * For example, the GitHub provider requires you to add the
-     * `refresh_token_expires_in` field to the Account model. Refer to the
-     * NextAuth.js docs for the provider you want to use. Example:
-     * @see https://next-auth.js.org/providers/github
-     **/
   ],
+  pages: {
+    signIn: "/signin",
+    verifyRequest: "/verify",
+  },
 };
 
 /**
