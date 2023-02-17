@@ -20,6 +20,7 @@ import {
   FormLabel,
   Input,
   Stack,
+  Text,
 } from "@chakra-ui/react";
 
 import { useForm } from "react-hook-form";
@@ -61,7 +62,8 @@ const Signin: NextPage = () => {
               password: data.password as string,
               redirect: false,
               callbackUrl: (router.query.callbackUrl as string) || "/dashboard",
-            }).then((res) => {
+            }).then(async (res) => {
+              if (res?.ok) await router.push("/dashboard");
               if (res?.error) {
                 setError(res.error);
 
@@ -104,9 +106,16 @@ const Signin: NextPage = () => {
               <Flex justifyContent="space-between">
                 <FormLabel>Password</FormLabel>
                 <Link href="/forgot-password">
-                  <Button variant="link" size="sm" fontWeight="normal">
+                  <Text
+                    fontSize="sm"
+                    fontWeight="normal"
+                    _hover={{
+                      textDecoration: "underline",
+                      cursor: "pointer",
+                    }}
+                  >
                     Forgot password?
-                  </Button>
+                  </Text>
                 </Link>
               </Flex>
               <Input
@@ -128,9 +137,16 @@ const Signin: NextPage = () => {
 
               <Flex justifyContent="end" mt={2}>
                 <Link href="/signup">
-                  <Button variant="link" size="sm" fontWeight="normal">
+                  <Text
+                    fontSize="sm"
+                    fontWeight="normal"
+                    _hover={{
+                      textDecoration: "underline",
+                      cursor: "pointer",
+                    }}
+                  >
                     Don&apos;t have an account? Sign up.
-                  </Button>
+                  </Text>
                 </Link>
               </Flex>
             </FormControl>

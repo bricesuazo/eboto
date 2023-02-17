@@ -11,6 +11,7 @@ import {
   FormLabel,
   Input,
   Stack,
+  Text,
 } from "@chakra-ui/react";
 import type {
   GetServerSideProps,
@@ -198,9 +199,16 @@ const Signup: NextPage = () => {
 
                 <Flex justifyContent="end" mt={2}>
                   <Link href="/signin">
-                    <Button variant="link" size="sm" fontWeight="normal">
+                    <Text
+                      fontSize="sm"
+                      fontWeight="normal"
+                      _hover={{
+                        textDecoration: "underline",
+                        cursor: "pointer",
+                      }}
+                    >
                       Already have an account? Sign in
-                    </Button>
+                    </Text>
                   </Link>
                 </Flex>
               </FormControl>
