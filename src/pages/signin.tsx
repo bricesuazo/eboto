@@ -14,6 +14,7 @@ import {
   AlertTitle,
   Button,
   Container,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -27,8 +28,11 @@ import { signIn } from "next-auth/react";
 
 import { AiOutlineGoogle } from "react-icons/ai";
 import { getServerAuthSession } from "../server/auth";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 const Signin: NextPage = () => {
+  const router = useRouter();
   const [error, setError] = useState<string | undefined>();
   const [loadings, setLoadings] = useState({
     credentials: false,
@@ -56,7 +60,7 @@ const Signin: NextPage = () => {
               email: data.email as string,
               password: data.password as string,
               redirect: false,
-              callbackUrl: "/dashboard",
+              callbackUrl: (router.query.callbackUrl as string) || "/dashboard",
             }).then((res) => {
               if (res?.error) {
                 setError(res.error);
@@ -97,7 +101,14 @@ const Signin: NextPage = () => {
               isRequired
               isDisabled={loadings.credentials}
             >
-              <FormLabel>Password</FormLabel>
+              <Flex justifyContent="space-between">
+                <FormLabel>Password</FormLabel>
+                <Link href="/forgot-password">
+                  <Button variant="link" size="sm" fontWeight="normal">
+                    Forgot password?
+                  </Button>
+                </Link>
+              </Flex>
               <Input
                 placeholder="Enter your password"
                 type="password"
@@ -114,6 +125,14 @@ const Signin: NextPage = () => {
                   {errors.password.message?.toString()}
                 </FormErrorMessage>
               )}
+
+              <Flex justifyContent="end" mt={2}>
+                <Link href="/signup">
+                  <Button variant="link" size="sm" fontWeight="normal">
+                    Don&apos;t have an account? Sign up.
+                  </Button>
+                </Link>
+              </Flex>
             </FormControl>
 
             {error && (
@@ -132,7 +151,10 @@ const Signin: NextPage = () => {
               onClick={() => {
                 setLoadings({ ...loadings, google: true });
                 void (async () => {
-                  await signIn("google", { callbackUrl: "/dashboard" });
+                  await signIn("google", {
+                    callbackUrl:
+                      (router.query.callbackUrl as string) || "/dashboard",
+                  });
                 })();
               }}
               leftIcon={<AiOutlineGoogle size={18} />}

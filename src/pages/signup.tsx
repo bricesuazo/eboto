@@ -5,6 +5,7 @@ import {
   AlertTitle,
   Button,
   Container,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -20,6 +21,7 @@ import { api } from "../utils/api";
 import { useForm } from "react-hook-form";
 import Head from "next/head";
 import { getServerAuthSession } from "../server/auth";
+import Link from "next/link";
 
 const Signup: NextPage = () => {
   const {
@@ -193,6 +195,14 @@ const Signup: NextPage = () => {
                     {errors.confirmPassword.message?.toString()}
                   </FormErrorMessage>
                 )}
+
+                <Flex justifyContent="end" mt={2}>
+                  <Link href="/signin">
+                    <Button variant="link" size="sm" fontWeight="normal">
+                      Already have an account? Sign in
+                    </Button>
+                  </Link>
+                </Flex>
               </FormControl>
 
               {signUpMutation.isError && (
