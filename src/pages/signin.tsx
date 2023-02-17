@@ -55,6 +55,7 @@ const Signin: NextPage = () => {
             await signIn("credentials", {
               email: data.email as string,
               password: data.password as string,
+              redirect: false,
               callbackUrl: "/dashboard",
             }).then((res) => {
               if (res?.error) {
@@ -131,7 +132,7 @@ const Signin: NextPage = () => {
               onClick={() => {
                 setLoadings({ ...loadings, google: true });
                 void (async () => {
-                  await signIn("google");
+                  await signIn("google", { callbackUrl: "/dashboard" });
                 })();
               }}
               leftIcon={<AiOutlineGoogle size={18} />}

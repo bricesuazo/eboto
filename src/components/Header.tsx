@@ -1,11 +1,18 @@
 import Link from "next/link";
-import { Button, Container, Flex, Stack, useColorMode } from "@chakra-ui/react";
+import {
+  Button,
+  Container,
+  Flex,
+  IconButton,
+  Stack,
+  useColorMode,
+} from "@chakra-ui/react";
 import { signOut, useSession } from "next-auth/react";
+import { BsFillMoonFill, BsFillSunFill } from "react-icons/bs";
 
 const Header = () => {
   const { colorMode, toggleColorMode } = useColorMode();
-  const { status, data } = useSession();
-  console.log("🚀 ~ file: Header.tsx:8 ~ Header ~ data", data);
+  const { status } = useSession();
 
   return (
     <header>
@@ -16,9 +23,15 @@ const Header = () => {
           </Link>
 
           <Stack direction="row" spacing={4} alignItems="center">
-            <Button size="xs" onClick={toggleColorMode}>
-              Toggle {colorMode === "light" ? "Dark" : "Light"}
-            </Button>
+            <IconButton
+              size="sm"
+              variant="outline"
+              onClick={toggleColorMode}
+              aria-label="Toggle theme"
+              icon={
+                colorMode === "light" ? <BsFillMoonFill /> : <BsFillSunFill />
+              }
+            />
             {status === "loading" && (
               <Button size="sm" isLoading>
                 Loading

@@ -158,8 +158,12 @@ export const authOptions: NextAuthOptions = {
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
-        if (!user || !user.password) {
+        if (!user) {
           throw new Error("Invalid email or password");
+        }
+
+        if (user.provider === "GOOGLE" || !user.password) {
+          throw new Error("Please sign in with Google");
         }
 
         const isValid = await bcrypt.compare(
