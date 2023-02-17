@@ -42,3 +42,5 @@ yarn-error.log*
 *.tsbuildinfo
 
 .vercel
+
+.mailing

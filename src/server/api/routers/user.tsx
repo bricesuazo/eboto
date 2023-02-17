@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
+import { Mjml, MjmlBody, MjmlColumn, MjmlSection, MjmlText } from "mjml-react";
 
 import { z } from "zod";
+import sendMail from "../../../../emails";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
@@ -69,6 +71,43 @@ export const userRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      const isTempUserExists = await ctx.prisma.temporaryUser.findUnique({
+        where: {
+          email: input.email,
+        },
+      });
+
+      if (isTempUserExists) {
+        const token = await ctx.prisma.token.create({
+          data: {
+            type: "EMAIL_VERIFICATION",
+            expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 3), // 3 hours
+            temporaryUserId: isTempUserExists.id,
+          },
+          select: {
+            id: true,
+          },
+        });
+
+        await sendMail({
+          to: isTempUserExists.email,
+          subject: `Token - ${token.id}`,
+          component: (
+            <Mjml>
+              <MjmlBody>
+                <MjmlSection>
+                  <MjmlColumn>
+                    <MjmlText>tresfse</MjmlText>
+                  </MjmlColumn>
+                </MjmlSection>
+              </MjmlBody>
+            </Mjml>
+          ),
+        });
+
+        throw new Error("Email already exists. Email verification sent");
+      }
+
       const isUserExists = await ctx.prisma.user.findUnique({
         where: {
           email: input.email,
@@ -78,29 +117,41 @@ export const userRouter = createTRPCRouter({
         throw new Error("Email already exists");
       }
 
+      const tempUser = await ctx.prisma.temporaryUser.create({
+        data: {
+          email: input.email,
+          password: await bcrypt.hash(input.password, 12),
+          first_name: input.first_name,
+          last_name: input.last_name,
+        },
+      });
+
       const token = await ctx.prisma.token.create({
         data: {
           type: "EMAIL_VERIFICATION",
-          expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
-          temporaryUser: {
-            create: {
-              email: input.email,
-              password: await bcrypt.hash(input.password, 12),
-              first_name: input.first_name,
-              last_name: input.last_name,
-            },
-          },
+          expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 3), // 3 hours
+          temporaryUserId: tempUser.id,
         },
         select: {
           id: true,
         },
       });
 
-      // Send email verification email
-      // SendGrid({
-      //   to: user.email,
-
-      // })
+      await sendMail({
+        to: tempUser.email,
+        subject: `Token - ${token.id}`,
+        component: (
+          <Mjml>
+            <MjmlBody>
+              <MjmlSection>
+                <MjmlColumn>
+                  <MjmlText>lol</MjmlText>
+                </MjmlColumn>
+              </MjmlSection>
+            </MjmlBody>
+          </Mjml>
+        ),
+      });
     }),
 
   // getAll: publicProcedure.query(({ ctx }) => {

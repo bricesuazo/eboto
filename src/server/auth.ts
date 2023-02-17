@@ -9,7 +9,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "./db";
 import bcrypt from "bcryptjs";
 import { env } from "../env.mjs";
-// import SendGrid from "../libs/sendgrid";
+import sendMail from "../../emails";
 
 /**
  * Module augmentation for `next-auth` types.
@@ -122,11 +122,10 @@ export const authOptions: NextAuthOptions = {
             },
           });
 
-          // Send email verification email
-          // SendGrid({
-          //   to: user.email,
-
-          // })
+          await sendMail({
+            to: user.email,
+            subject: `${user.first_name} ${user.last_name} - Verify your email ${token.id}`,
+          });
           throw new Error("Email not verified. Email verification sent.", {
             cause: "EMAIL_NOT_VERIFIED",
           });

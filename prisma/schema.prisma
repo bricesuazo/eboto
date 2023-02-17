@@ -156,6 +156,6 @@ model token {
     updatedAt       DateTime       @updatedAt
     user            user?          @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId          String?
-    temporaryUser   temporaryUser? @relation(fields: [temporaryUserId], references: [id])
+    temporaryUser   temporaryUser? @relation(fields: [temporaryUserId], references: [id], onDelete: Cascade)
     temporaryUserId String?
 }
