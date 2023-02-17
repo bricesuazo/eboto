@@ -9,7 +9,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "./db";
 import bcrypt from "bcryptjs";
 import { env } from "../env.mjs";
-import sendMail from "../../emails";
+import SendEmailVerification from "../libs/SendEmailVerification";
 
 /**
  * Module augmentation for `next-auth` types.
@@ -94,6 +94,26 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Missing username or password");
         }
 
+        const tempUser = await prisma.temporaryUser.findUnique({
+          where: { email: credentials.email },
+        });
+        if (tempUser && tempUser.password) {
+          const istempUserPasswordValid = await bcrypt.compare(
+            credentials.password,
+            tempUser.password
+          );
+
+          if (!istempUserPasswordValid) {
+            throw new Error("Invalid password");
+          } else {
+            await SendEmailVerification({
+              email: tempUser.email,
+              userId: tempUser.id,
+            });
+            throw new Error("Email not verified. Email verification sent.");
+          }
+        }
+
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
@@ -111,21 +131,11 @@ export const authOptions: NextAuthOptions = {
         }
 
         if (!user.emailVerified) {
-          const token = await prisma.token.create({
-            data: {
-              userId: user.id,
-              type: "EMAIL_VERIFICATION",
-              expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24), // 24 hours
-            },
-            select: {
-              id: true,
-            },
+          await SendEmailVerification({
+            email: user.email,
+            userId: user.id,
           });
 
-          await sendMail({
-            to: user.email,
-            subject: `${user.first_name} ${user.last_name} - Verify your email ${token.id}`,
-          });
           throw new Error("Email not verified. Email verification sent.", {
             cause: "EMAIL_NOT_VERIFIED",
           });

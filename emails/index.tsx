@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import { env } from "../src/env.mjs";
+// import { env } from "../src/env.mjs";
 
 const transporter = nodemailer.createTransport({
   host: "smtp.sendgrid.net",
@@ -7,7 +7,7 @@ const transporter = nodemailer.createTransport({
   port: 465,
   auth: {
     user: "apikey",
-    pass: env.SENDGRID_API_KEY,
+    pass: process.env.SENDGRID_API_KEY,
   },
 });
 

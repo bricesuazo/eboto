@@ -1,7 +1,6 @@
-import { render } from "@react-email/render";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
-import { sendEmail } from "../../../../emails";
+import SendEmailVerification from "../../../libs/SendEmailVerification";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
@@ -22,16 +21,16 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      if (!token || token.type !== "EMAIL_VERIFICATION") {
+      if (
+        !token ||
+        token.type !== "EMAIL_VERIFICATION" ||
+        !token.temporaryUser
+      ) {
         throw new Error("Invalid token");
       }
 
       if (token.expiresAt < new Date()) {
         throw new Error("Token expired");
-      }
-
-      if (!token.temporaryUser) {
-        throw new Error("Invalid token");
       }
 
       await ctx.prisma.user.create({
@@ -77,21 +76,9 @@ export const userRouter = createTRPCRouter({
       });
 
       if (isTempUserExists) {
-        const token = await ctx.prisma.token.create({
-          data: {
-            type: "EMAIL_VERIFICATION",
-            expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 3), // 3 hours
-            temporaryUserId: isTempUserExists.id,
-          },
-          select: {
-            id: true,
-          },
-        });
-
-        await sendEmail({
-          email: input.email,
-          subject: "Verify your email",
-          html: render(<html>Test1212</html>),
+        await SendEmailVerification({
+          email: isTempUserExists.email,
+          userId: isTempUserExists.id,
         });
 
         throw new Error("Email already exists. Email verification sent");
@@ -115,29 +102,9 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      const token = await ctx.prisma.token.create({
-        data: {
-          type: "EMAIL_VERIFICATION",
-          expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 3), // 3 hours
-          temporaryUserId: tempUser.id,
-        },
-        select: {
-          id: true,
-        },
-      });
-
-      await sendEmail({
-        email: input.email,
-        subject: "Verify your email",
-        html: render(<html>Test</html>),
+      await SendEmailVerification({
+        email: tempUser.email,
+        userId: tempUser.id,
       });
     }),
-
-  // getAll: publicProcedure.query(({ ctx }) => {
-  //   return ctx.prisma.example.findMany();
-  // }),
-
-  // getSecretMessage: protectedProcedure.query(() => {
-  //   return "you can now see this secret message!";
-  // }),
 });
