@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { api } from "../utils/api";
+import { useEffect } from "react";
 
 const DashboardPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -34,6 +35,10 @@ const DashboardPage = () => {
   //   refetchOnMount: false,
   //   refetchOnReconnect: false,
   // });
+
+  useEffect(() => {
+    !isOpen && reset();
+  }, [isOpen, reset]);
 
   return (
     <Container maxW="4xl">
@@ -57,7 +62,6 @@ const DashboardPage = () => {
                 voting_end: data.voting_end as number,
               });
               onClose();
-              reset();
             })}
           >
             <ModalBody>

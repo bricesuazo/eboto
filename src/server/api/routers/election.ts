@@ -43,19 +43,7 @@ export const electionRouter = createTRPCRouter({
         throw new Error("Election already exists");
       }
 
-      await ctx.prisma.user.update({
-        where: {
-          id: ctx.session.user.id,
-        },
-        data: {
-          commissioners: {
-            connect: {
-              id: ctx.session.user.id,
-            },
-          },
-        },
-      });
-      return ctx.prisma.election.create({
+      const newElection = await ctx.prisma.election.create({
         data: {
           name: input.name,
           slug: input.slug,
@@ -69,6 +57,23 @@ export const electionRouter = createTRPCRouter({
             },
           },
         },
+        select: {
+          id: true,
+        },
       });
+
+      await ctx.prisma.user.update({
+        where: {
+          id: ctx.session.user.id,
+        },
+        data: {
+          commissioners: {
+            connect: {
+              id: newElection.id,
+            },
+          },
+        },
+      });
+      return true;
     }),
 });
