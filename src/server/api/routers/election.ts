@@ -41,7 +41,7 @@ export const electionRouter = createTRPCRouter({
       });
 
       if (isElectionExists) {
-        throw new Error("Election already exists");
+        throw new Error("Election slug is already exists");
       }
 
       const newElection = await ctx.prisma.election.create({

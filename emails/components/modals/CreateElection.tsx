@@ -22,6 +22,10 @@ import {
   Button,
   Box,
   useRadio,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { api } from "../../../src/utils/api";
@@ -46,7 +50,6 @@ function ElectionTemplateCard({
         cursor="pointer"
         borderWidth="1px"
         borderRadius="md"
-        boxShadow="md"
         _checked={{
           bg: "teal.600",
           color: "white",
@@ -76,6 +79,7 @@ const CreateElectionModal = ({
     handleSubmit,
     reset,
     watch,
+    setValue,
     formState: { errors },
   } = useForm();
 
@@ -83,12 +87,18 @@ const CreateElectionModal = ({
     !isOpen && reset();
   }, [isOpen, reset]);
 
+  useEffect(() => {
+    setValue("template", "0");
+  }, [isOpen, setValue]);
+
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "template",
     defaultValue: "0",
-    onChange: console.log,
+    onChange: (value) => {
+      setValue("template", value);
+    },
+    value: watch("template") as string,
   });
-
   const group = getRootProps();
 
   const createElectionMutation = api.election.create.useMutation();
@@ -289,7 +299,7 @@ const CreateElectionModal = ({
 
               <Accordion allowMultiple>
                 <AccordionItem border="none">
-                  <AccordionButton>
+                  <AccordionButton borderRadius="md">
                     <Text flex="1" textAlign="left">
                       Election template
                     </Text>
@@ -323,8 +333,16 @@ const CreateElectionModal = ({
                 </AccordionItem>
               </Accordion>
             </Stack>
+            {createElectionMutation.error && (
+              <Alert status="error" borderRadius="md">
+                <AlertIcon />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>
+                  {createElectionMutation.error.message}
+                </AlertDescription>
+              </Alert>
+            )}
           </ModalBody>
-
           <ModalFooter>
             <Button
               variant="ghost"
