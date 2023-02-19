@@ -30,6 +30,7 @@ export const electionRouter = createTRPCRouter({
         end_date: z.date(),
         voting_start: z.number().nullish(),
         voting_end: z.number().nullish(),
+        template: z.string(),
       })
     )
     .mutation(async ({ input, ctx }) => {

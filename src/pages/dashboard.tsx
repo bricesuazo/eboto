@@ -1,4 +1,9 @@
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
   Button,
   Container,
   FormControl,
@@ -14,18 +19,29 @@ import {
   ModalOverlay,
   Select,
   Stack,
+  Text,
   useDisclosure,
+  useRadioGroup,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { api } from "../utils/api";
 import { useEffect } from "react";
+import ElectionTemplateCard from "../components/ElectionTemplateCard";
 
 const DashboardPage = () => {
+  const { getRootProps, getRadioProps } = useRadioGroup({
+    name: "template",
+    defaultValue: "0",
+    onChange: console.log,
+  });
+
+  const group = getRootProps();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm();
 
@@ -60,6 +76,7 @@ const DashboardPage = () => {
                 slug: data.slug as string,
                 voting_start: data.voting_start as number,
                 voting_end: data.voting_end as number,
+                template: data.template as string,
               });
               onClose();
             })}
@@ -106,7 +123,7 @@ const DashboardPage = () => {
                     </FormErrorMessage>
                   )}
                 </FormControl>
-                <Stack direction="row">
+                <Stack direction={["column", "row"]}>
                   <FormControl
                     isInvalid={!!errors.start_date}
                     isRequired
@@ -155,7 +172,7 @@ const DashboardPage = () => {
                     )}
                   </FormControl>
                 </Stack>
-                <Stack direction="row">
+                <Stack direction={["column", "row"]} alignItems="center">
                   <FormControl
                     isInvalid={!!errors.start_date}
                     isRequired
@@ -166,7 +183,9 @@ const DashboardPage = () => {
                       {...register("voting_start", {
                         required: "This is required.",
                         valueAsNumber: true,
+                        value: 7,
                       })}
+                      defaultValue={7}
                     >
                       {[...Array(24).keys()].map((_, i) => (
                         <option value={i} key={i}>
@@ -187,20 +206,27 @@ const DashboardPage = () => {
                       </FormErrorMessage>
                     )}
                   </FormControl>
+
                   <FormControl
                     isInvalid={!!errors.end_date}
                     isRequired
                     isDisabled={createElectionMutation.isLoading}
                   >
-                    <FormLabel>Voting end date</FormLabel>
+                    <FormLabel>Voting hour end</FormLabel>
                     <Select
                       {...register("voting_end", {
                         required: "This is required.",
                         valueAsNumber: true,
+                        value: 19,
                       })}
+                      defaultValue={19}
                     >
                       {[...Array(24).keys()].map((_, i) => (
-                        <option value={i} key={i}>
+                        <option
+                          value={i}
+                          key={i}
+                          disabled={i < watch("voting_start")}
+                        >
                           {i === 0
                             ? "12 AM"
                             : i < 12
@@ -219,6 +245,51 @@ const DashboardPage = () => {
                     )}
                   </FormControl>
                 </Stack>
+                <Text textAlign="center" fontSize="sm">
+                  {
+                    // calculate the number of hours depending on the voting_start and voting_end
+
+                    watch("voting_end") - watch("voting_start")
+                  }{" "}
+                  hour
+                  {watch("voting_end") - watch("voting_start") > 1 ? "s" : ""}
+                </Text>
+
+                <Accordion allowMultiple>
+                  <AccordionItem border="none">
+                    <AccordionButton>
+                      <Text flex="1" textAlign="left">
+                        Election template
+                      </Text>
+                      <AccordionIcon />
+                    </AccordionButton>
+
+                    <AccordionPanel
+                      {...group}
+                      display="flex"
+                      flexWrap="wrap"
+                      gap={2}
+                    >
+                      {[
+                        { id: "0", value: "None" },
+                        { id: "1", value: "CSSO" },
+                        { id: "2", value: "CEIT" },
+                        { id: "3", value: "CEadsIT" },
+                        { id: "4", value: "ad" },
+                        { id: "5", value: "asd" },
+                      ].map((template) => {
+                        const radio = getRadioProps({
+                          value: template.id,
+                        });
+                        return (
+                          <ElectionTemplateCard key={template.id} {...radio}>
+                            {template.value}
+                          </ElectionTemplateCard>
+                        );
+                      })}
+                    </AccordionPanel>
+                  </AccordionItem>
+                </Accordion>
               </Stack>
             </ModalBody>
 
