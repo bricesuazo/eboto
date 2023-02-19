@@ -32,7 +32,14 @@ const Header = () => {
       <Container maxW="4xl" py={4}>
         <Flex justify="space-between" alignItems="center">
           <Link href="/">
-            <Stack direction="row" alignItems="center">
+            <Stack
+              direction="row"
+              alignItems="center"
+              _hover={{
+                opacity: 0.75,
+              }}
+              transition="all 0.2s"
+            >
               <Image
                 src="/images/eboto-mo-logo.png"
                 alt="eBoto Mo Logo"
@@ -79,9 +86,7 @@ const Header = () => {
                         <Box position="relative" width={[6, 8]} height={[6, 8]}>
                           <Image
                             src={
-                              data?.user.image
-                                ? data.user.image
-                                : "/default-avatar.png"
+                              data?.user.image || "/images/default-avatar.png"
                             }
                             alt="Profile picture"
                             fill
@@ -117,9 +122,11 @@ const Header = () => {
                       </HStack>
                     </MenuButton>
                     <MenuList>
-                      <MenuItem icon={<BsFillBarChartFill />}>
-                        <Link href="/dashboard">Dashboard</Link>
-                      </MenuItem>
+                      <Link href="/dashboard">
+                        <MenuItem icon={<BsFillBarChartFill />}>
+                          Dashboard
+                        </MenuItem>
+                      </Link>
                       <MenuItem
                         icon={
                           colorMode === "light" ? (

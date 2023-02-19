@@ -3,6 +3,25 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 
 export const electionRouter = createTRPCRouter({
+  getElectionOverview: protectedProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      return ctx.prisma.election.findFirst({
+        where: {
+          slug: input,
+          AND: {
+            commissioners: {
+              some: {
+                id: ctx.session.user.id,
+              },
+            },
+          },
+        },
+        include: {
+          voters: true,
+        },
+      });
+    }),
   getBySlug: publicProcedure.input(z.string()).query(async ({ input, ctx }) => {
     return ctx.prisma.election.findUnique({
       where: {
