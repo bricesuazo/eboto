@@ -103,11 +103,11 @@ const Signin: NextPage = () => {
               isRequired
               isDisabled={loadings.credentials}
             >
-              <Flex justifyContent="space-between">
+              <Flex justifyContent="space-between" alignItems="center">
                 <FormLabel>Password</FormLabel>
                 <Link href="/forgot-password">
                   <Text
-                    fontSize="sm"
+                    fontSize="xs"
                     fontWeight="normal"
                     _hover={{
                       textDecoration: "underline",
@@ -138,7 +138,7 @@ const Signin: NextPage = () => {
               <Flex justifyContent="end" mt={2}>
                 <Link href="/signup">
                   <Text
-                    fontSize="sm"
+                    fontSize="xs"
                     fontWeight="normal"
                     _hover={{
                       textDecoration: "underline",

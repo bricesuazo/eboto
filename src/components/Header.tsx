@@ -4,6 +4,7 @@ import {
   Button,
   Container,
   Flex,
+  HStack,
   Menu,
   MenuButton,
   MenuItem,
@@ -14,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { signOut, useSession } from "next-auth/react";
 import {
+  BsChevronDown,
   BsFillBarChartFill,
   BsFillMoonFill,
   BsFillSunFill,
@@ -27,8 +29,8 @@ const Header = () => {
 
   return (
     <header>
-      <Container maxW="4xl" alignItems="center" py={4}>
-        <Flex justify="space-between">
+      <Container maxW="4xl" py={4}>
+        <Flex justify="space-between" alignItems="center">
           <Link href="/">
             <Stack direction="row" alignItems="center">
               <Image
@@ -37,7 +39,9 @@ const Header = () => {
                 width={32}
                 height={32}
               />
-              <Text fontWeight="medium">eBoto Mo</Text>
+              <Text fontWeight="medium" display={["none", "inherit"]}>
+                eBoto Mo
+              </Text>
             </Stack>
           </Link>
           {status === "unauthenticated" && (
@@ -52,52 +56,97 @@ const Header = () => {
           )}
           {status === "authenticated" && (
             <Menu placement="bottom-end">
-              <MenuButton
-                bg="gray.100"
-                _hover={{
-                  bg: "gray.200",
-                }}
-                borderRadius="50%"
-                p={1}
-              >
-                <Image
-                  src={
-                    data?.user.image ? data.user.image : "/default-avatar.png"
-                  }
-                  alt="Profile picture"
-                  width={32}
-                  height={32}
-                  style={{ borderRadius: "50%" }}
-                />
-              </MenuButton>
-              <MenuList>
-                <MenuItem icon={<BsFillBarChartFill />}>
-                  <Link href="/dashboard">Dashboard</Link>
-                </MenuItem>
-                <MenuItem
-                  icon={
-                    colorMode === "light" ? (
-                      <BsFillMoonFill />
-                    ) : (
-                      <BsFillSunFill />
-                    )
-                  }
-                  onClick={toggleColorMode}
-                  closeOnSelect={false}
-                >
-                  Theme
-                </MenuItem>
-                <MenuItem
-                  onClick={() =>
-                    signOut({
-                      callbackUrl: "/signin",
-                    })
-                  }
-                  icon={<GoSignOut />}
-                >
-                  Log out
-                </MenuItem>
-              </MenuList>
+              {({ isOpen }) => {
+                return (
+                  <>
+                    <MenuButton
+                      bg="gray.50"
+                      _hover={{
+                        bg: "gray.100",
+                      }}
+                      transition="all 0.2s"
+                      _dark={{
+                        bg: "gray.800",
+                        _hover: {
+                          bg: "gray.700",
+                        },
+                      }}
+                      px={2}
+                      py={1}
+                      borderRadius="md"
+                    >
+                      <HStack>
+                        <Box position="relative" width={[6, 8]} height={[6, 8]}>
+                          <Image
+                            src={
+                              data?.user.image
+                                ? data.user.image
+                                : "/default-avatar.png"
+                            }
+                            alt="Profile picture"
+                            fill
+                            style={{
+                              borderRadius: "50%",
+                              userSelect: "none",
+                              pointerEvents: "none",
+                            }}
+                          />
+                        </Box>
+                        <Box textAlign="start">
+                          <Text fontSize="xs" width={["12", "20"]} isTruncated>
+                            {data.user.firstName} {data.user.lastName}
+                          </Text>
+                          <Text
+                            fontWeight="normal"
+                            fontSize="xs"
+                            width="20"
+                            display={["none", "inherit"]}
+                            isTruncated
+                          >
+                            {data.user.email}
+                          </Text>
+                        </Box>
+
+                        <BsChevronDown
+                          size={12}
+                          style={{
+                            rotate: isOpen ? "-180deg" : "0deg",
+                            transition: "all 0.25s",
+                          }}
+                        />
+                      </HStack>
+                    </MenuButton>
+                    <MenuList>
+                      <MenuItem icon={<BsFillBarChartFill />}>
+                        <Link href="/dashboard">Dashboard</Link>
+                      </MenuItem>
+                      <MenuItem
+                        icon={
+                          colorMode === "light" ? (
+                            <BsFillMoonFill />
+                          ) : (
+                            <BsFillSunFill />
+                          )
+                        }
+                        onClick={toggleColorMode}
+                        closeOnSelect={false}
+                      >
+                        {colorMode === "light" ? "Dark mode" : "Light mode"}
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() =>
+                          signOut({
+                            callbackUrl: "/signin",
+                          })
+                        }
+                        icon={<GoSignOut />}
+                      >
+                        Log out
+                      </MenuItem>
+                    </MenuList>
+                  </>
+                );
+              }}
             </Menu>
           )}
         </Flex>
