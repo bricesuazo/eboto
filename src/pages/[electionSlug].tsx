@@ -7,10 +7,6 @@ const ElectionPage = ({ slug }: { slug: string }) => {
     refetchOnMount: false,
     refetchOnReconnect: false,
   });
-  console.log(
-    "🚀 ~ file: [electionSlug].tsx:7 ~ ElectionPage ~ election",
-    election.data
-  );
   if (election.isLoading) return <div>Loading...</div>;
   return <div>[electionSlug]</div>;
 };
