@@ -72,7 +72,7 @@ const DashboardPage = () => {
           <Text>No vote elections found</Text>
         ) : (
           myElectionVote.data?.map((election) => (
-            <Link href={`/${election.slug}`} key={election.id}>
+            <Link href={`/${election.slug}`} key={election.id} target="_blank">
               <Box
                 _dark={{
                   bg: "gray.700",
@@ -92,6 +92,9 @@ const DashboardPage = () => {
                   <Moment format="YYYY/MM/D hA">{election.start_date}</Moment>
                   {" - "}
                   <Moment format="YYYY/MM/D hA">{election.end_date}</Moment>
+                </Text>
+                <Text fontSize="sm" color="GrayText">
+                  {election.voting_start} - {election.voting_end}
                 </Text>
               </Box>
             </Link>
