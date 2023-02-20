@@ -166,6 +166,7 @@ export const electionRouter = createTRPCRouter({
         },
         select: {
           id: true,
+          slug: true,
         },
       });
 
@@ -192,7 +193,7 @@ export const electionRouter = createTRPCRouter({
           },
         },
       });
-      return true;
+      return newElection;
     }),
   delete: protectedProcedure
     .input(z.string())

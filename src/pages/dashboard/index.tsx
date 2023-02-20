@@ -26,11 +26,7 @@ const DashboardPage = () => {
   return (
     <Container maxW="4xl">
       <Button onClick={onOpen}>Create election</Button>
-      <CreateElectionModal
-        isOpen={isOpen}
-        onClose={onClose}
-        refetch={myElections.refetch}
-      />
+      <CreateElectionModal isOpen={isOpen} onClose={onClose} />
 
       <Text>My elections</Text>
       <Flex>

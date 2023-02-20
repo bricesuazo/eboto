@@ -31,16 +31,17 @@ import { useForm } from "react-hook-form";
 import { api } from "../../utils/api";
 import { useEffect } from "react";
 import { positionTemplate } from "../../constants/positionTemplate";
+import { useRouter } from "next/router";
+import { convertNumberToHour } from "../../libs/convertNumberToHour";
 
 const CreateElectionModal = ({
   isOpen,
   onClose,
-  refetch,
 }: {
   isOpen: boolean;
   onClose: () => void;
-  refetch: () => void;
 }) => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -117,7 +118,7 @@ const CreateElectionModal = ({
         <ModalCloseButton disabled={createElectionMutation.isLoading} />
         <form
           onSubmit={handleSubmit(async (data) => {
-            await createElectionMutation.mutateAsync({
+            const election = await createElectionMutation.mutateAsync({
               name: data.name as string,
               start_date: data.start_date as Date,
               end_date: data.end_date as Date,
@@ -126,8 +127,8 @@ const CreateElectionModal = ({
               voting_end: data.voting_end as number,
               template: parseInt(data.template as string),
             });
-            refetch();
             onClose();
+            await router.push(`/dashboard/${election.slug}`);
           })}
         >
           <ModalBody>
@@ -236,13 +237,7 @@ const CreateElectionModal = ({
                   >
                     {[...Array(24).keys()].map((_, i) => (
                       <option value={i} key={i}>
-                        {i === 0
-                          ? "12 AM"
-                          : i < 12
-                          ? `${i} AM`
-                          : i === 12
-                          ? "12 PM"
-                          : `${i - 12} PM`}
+                        {convertNumberToHour(i)}
                       </option>
                     ))}
                   </Select>
@@ -274,13 +269,7 @@ const CreateElectionModal = ({
                         key={i}
                         disabled={i < watch("voting_start")}
                       >
-                        {i === 0
-                          ? "12 AM"
-                          : i < 12
-                          ? `${i} AM`
-                          : i === 12
-                          ? "12 PM"
-                          : `${i - 12} PM`}
+                        {convertNumberToHour(i)}
                       </option>
                     ))}
                   </Select>

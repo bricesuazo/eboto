@@ -1,9 +1,10 @@
 import { Button, Container, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import Moment from "react-moment";
-import { api } from "../../utils/api";
+import { convertNumberToHour } from "../../../libs/convertNumberToHour";
+import { api } from "../../../utils/api";
 
-const DashboardElection = () => {
+const DashboardOverview = () => {
   const router = useRouter();
   if (typeof router.query.electionSlug !== "string") return null;
 
@@ -11,7 +12,6 @@ const DashboardElection = () => {
     router.query.electionSlug,
     {
       refetchOnWindowFocus: false,
-      refetchOnMount: false,
       refetchOnReconnect: false,
     }
   );
@@ -51,19 +51,21 @@ const DashboardElection = () => {
           </Text>
           <Text>
             Created:{" "}
-            <Moment format="MMMM DD, YYYY hh:mm A">
-              {electionOverview.data.election.createdAt}
-            </Moment>{" "}
+            <Moment
+              format="MMMM DD, YYYY hh:mm A"
+              date={electionOverview.data.election.createdAt}
+            />{" "}
             (
             <Moment
               fromNow
-              interval={
-                1000 * 60 // 1 minute
-              }
-            >
-              {electionOverview.data.election.createdAt}
-            </Moment>
+              interval={1000}
+              date={electionOverview.data.election.createdAt}
+            />
             )
+          </Text>
+          <Text>
+            {electionOverview.data.election.publicity.charAt(0) +
+              electionOverview.data.election.publicity.slice(1).toLowerCase()}
           </Text>
           <Text>
             {electionOverview.data.positions._count._all} position
@@ -73,10 +75,15 @@ const DashboardElection = () => {
             {electionOverview.data.candidates._count._all} candidate
             {electionOverview.data.candidates._count._all < 1 ? "" : "s"}
           </Text>
+          <Text>
+            Open everyday from{" "}
+            {convertNumberToHour(electionOverview.data.election.voting_start)}{" "}
+            to {convertNumberToHour(electionOverview.data.election.voting_end)}
+          </Text>
         </>
       )}
     </Container>
   );
 };
 
-export default DashboardElection;
+export default DashboardOverview;
