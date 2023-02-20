@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { positionTemplate } from "../../../constants/positionTemplate";
 
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 
@@ -81,7 +82,7 @@ export const electionRouter = createTRPCRouter({
         end_date: z.date(),
         voting_start: z.number().nullish(),
         voting_end: z.number().nullish(),
-        template: z.string(),
+        template: z.number(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -114,6 +115,17 @@ export const electionRouter = createTRPCRouter({
         },
       });
 
+      await ctx.prisma.position.createMany({
+        data:
+          positionTemplate
+            .find((template) => template.id === input.template)
+            ?.positions.map((position, index) => ({
+              name: position,
+              electionId: newElection.id,
+              order: index,
+            })) || [],
+      });
+
       await ctx.prisma.user.update({
         where: {
           id: ctx.session.user.id,
@@ -127,5 +139,35 @@ export const electionRouter = createTRPCRouter({
         },
       });
       return true;
+    }),
+  delete: protectedProcedure
+    .input(z.string())
+    .mutation(async ({ input, ctx }) => {
+      const election = await ctx.prisma.election.findUnique({
+        where: {
+          id: input,
+        },
+        include: {
+          commissioners: true,
+        },
+      });
+
+      if (!election) {
+        throw new Error("Election not found");
+      }
+
+      if (
+        !election.commissioners.some(
+          (commissioner) => commissioner.id === ctx.session.user.id
+        )
+      ) {
+        throw new Error("You are not a commissioner of this election");
+      }
+
+      return ctx.prisma.election.delete({
+        where: {
+          id: input,
+        },
+      });
     }),
 });

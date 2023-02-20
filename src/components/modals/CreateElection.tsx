@@ -28,8 +28,9 @@ import {
   AlertDescription,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
-import { api } from "../../../src/utils/api";
+import { api } from "../../utils/api";
 import { useEffect } from "react";
+import { positionTemplate } from "../../constants/positionTemplate";
 
 function ElectionTemplateCard({
   children,
@@ -70,9 +71,11 @@ function ElectionTemplateCard({
 const CreateElectionModal = ({
   isOpen,
   onClose,
+  refetch,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  refetch: () => void;
 }) => {
   const {
     register,
@@ -120,8 +123,9 @@ const CreateElectionModal = ({
               slug: data.slug as string,
               voting_start: data.voting_start as number,
               voting_end: data.voting_end as number,
-              template: data.template as string,
+              template: parseInt(data.template as string),
             });
+            refetch();
             onClose();
           })}
         >
@@ -312,20 +316,13 @@ const CreateElectionModal = ({
                     flexWrap="wrap"
                     gap={2}
                   >
-                    {[
-                      { id: "0", value: "None" },
-                      { id: "1", value: "CSSO" },
-                      { id: "2", value: "CEIT" },
-                      { id: "3", value: "CEadsIT" },
-                      { id: "4", value: "ad" },
-                      { id: "5", value: "asd" },
-                    ].map((template) => {
+                    {positionTemplate.map((template) => {
                       const radio = getRadioProps({
-                        value: template.id,
+                        value: template.id.toString(),
                       });
                       return (
                         <ElectionTemplateCard key={template.id} {...radio}>
-                          {template.value}
+                          {template.org}
                         </ElectionTemplateCard>
                       );
                     })}

@@ -8,14 +8,13 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import Moment from "react-moment";
-import CreateElectionModal from "../../../emails/components/modals/CreateElection";
+import CreateElectionModal from "../../components/modals/CreateElection";
 import { api } from "../../utils/api";
 
 const DashboardPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const myElections = api.election.getMyElections.useQuery(undefined, {
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
     refetchOnReconnect: false,
   });
   const myElectionVote = api.election.getMyElectionVotes.useQuery(undefined, {
@@ -27,7 +26,11 @@ const DashboardPage = () => {
   return (
     <Container maxW="4xl">
       <Button onClick={onOpen}>Create election</Button>
-      <CreateElectionModal isOpen={isOpen} onClose={onClose} />
+      <CreateElectionModal
+        isOpen={isOpen}
+        onClose={onClose}
+        refetch={myElections.refetch}
+      />
 
       <Text>My elections</Text>
       <Flex>
