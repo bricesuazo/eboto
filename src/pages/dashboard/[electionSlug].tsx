@@ -1,5 +1,6 @@
 import { Button, Container, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import Moment from "react-moment";
 import { api } from "../../utils/api";
 
 const DashboardElection = () => {
@@ -35,14 +36,43 @@ const DashboardElection = () => {
             colorScheme="red"
             onClick={() =>
               electionOverview.data &&
-              deleteElectionMutation.mutate(electionOverview.data.id)
+              deleteElectionMutation.mutate(electionOverview.data.election.id)
             }
             isLoading={deleteElectionMutation.isLoading}
           >
             Delete
           </Button>
-          <Text>{electionOverview.data.name}</Text>
-          <Text>{electionOverview.data.slug}</Text>
+          <Text>{electionOverview.data.election.name}</Text>
+          <Text>{electionOverview.data.election.slug}</Text>
+
+          <Text>
+            {electionOverview.data.voted._count._all}/
+            {electionOverview.data.voters._count._all} voted
+          </Text>
+          <Text>
+            Created:{" "}
+            <Moment format="MMMM DD, YYYY hh:mm A">
+              {electionOverview.data.election.createdAt}
+            </Moment>{" "}
+            (
+            <Moment
+              fromNow
+              interval={
+                1000 * 60 // 1 minute
+              }
+            >
+              {electionOverview.data.election.createdAt}
+            </Moment>
+            )
+          </Text>
+          <Text>
+            {electionOverview.data.positions._count._all} position
+            {electionOverview.data.positions._count._all < 1 ? "" : "s"}
+          </Text>
+          <Text>
+            {electionOverview.data.candidates._count._all} candidate
+            {electionOverview.data.candidates._count._all < 1 ? "" : "s"}
+          </Text>
         </>
       )}
     </Container>

@@ -7,7 +7,7 @@ export const electionRouter = createTRPCRouter({
   getElectionOverview: protectedProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
-      return ctx.prisma.election.findFirst({
+      const election = await ctx.prisma.election.findFirst({
         where: {
           slug: input,
           AND: {
@@ -18,10 +18,61 @@ export const electionRouter = createTRPCRouter({
             },
           },
         },
-        include: {
-          voters: true,
+      });
+
+      if (!election) {
+        throw new Error("Election not found");
+      }
+
+      const voters = await ctx.prisma.user.aggregate({
+        where: {
+          voters: {
+            some: {
+              id: election.id,
+            },
+          },
+        },
+        _count: {
+          _all: true,
         },
       });
+
+      const voted = await ctx.prisma.user.aggregate({
+        where: {
+          voters: {
+            some: {
+              id: election.id,
+            },
+          },
+          vote: {
+            some: {
+              electionId: election.id,
+            },
+          },
+        },
+        _count: {
+          _all: true,
+        },
+      });
+
+      const positions = await ctx.prisma.position.aggregate({
+        where: {
+          electionId: election.id,
+        },
+        _count: {
+          _all: true,
+        },
+      });
+      const candidates = await ctx.prisma.candidate.aggregate({
+        where: {
+          electionId: election.id,
+        },
+        _count: {
+          _all: true,
+        },
+      });
+
+      return { election, voters, voted, positions, candidates };
     }),
   getBySlug: publicProcedure.input(z.string()).query(async ({ input, ctx }) => {
     return ctx.prisma.election.findUnique({

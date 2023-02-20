@@ -90,6 +90,7 @@ const Header = () => {
                             }
                             alt="Profile picture"
                             fill
+                            sizes="100%"
                             style={{
                               borderRadius: "50%",
                               userSelect: "none",
