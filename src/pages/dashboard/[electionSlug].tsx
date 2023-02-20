@@ -1,31 +1,28 @@
 import { Container, Text } from "@chakra-ui/react";
-import type { GetServerSidePropsContext } from "next";
+import { useRouter } from "next/router";
 import { api } from "../../utils/api";
 
-const DashboardElection = ({ slug }: { slug: string }) => {
+const DashboardElection = () => {
+  const { electionSlug: slug } = useRouter().query;
+  if (typeof slug !== "string") return null;
+
   const electionOverview = api.election.getElectionOverview.useQuery(slug, {
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchOnReconnect: false,
   });
 
-  if (electionOverview.isLoading) return <Text>Loading...</Text>;
-
-  if (!electionOverview.data) return <Text>No election found</Text>;
-
   return (
     <Container maxW="4xl">
-      <Text>{electionOverview.data.name}</Text>
+      {electionOverview.isLoading ? (
+        <Text>Loading...</Text>
+      ) : !electionOverview.data ? (
+        <Text>No election found</Text>
+      ) : electionOverview.data ? (
+        <Text>{electionOverview.data.name}</Text>
+      ) : null}
     </Container>
   );
 };
 
 export default DashboardElection;
-
-export const getServerSideProps = (context: GetServerSidePropsContext) => {
-  return {
-    props: {
-      slug: context.query.electionSlug,
-    },
-  };
-};
