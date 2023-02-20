@@ -101,20 +101,16 @@ model candidate {
 }
 
 model vote {
-    id          String    @id @default(cuid())
-    election    election  @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    id          String     @id @default(cuid())
+    election    election   @relation(fields: [electionId], references: [id], onDelete: Cascade)
     electionId  String
-    voter       user      @relation(fields: [voterId], references: [id], onDelete: Cascade)
+    voter       user       @relation(fields: [voterId], references: [id], onDelete: Cascade)
     voterId     String
-    candidate   candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
-    candidateId String
-
-    createdAt DateTime @default(now())
-
+    candidate   candidate? @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+    candidateId String?
     position    position?  @relation(fields: [positionId], references: [id], onDelete: Cascade)
     positionId  String?
-    partylist   partylist? @relation(fields: [partylistId], references: [id], onDelete: Cascade)
-    partylistId String?
+    createdAt   DateTime   @default(now())
 
     @@index([electionId, voterId])
 }
@@ -143,7 +139,6 @@ model partylist {
     election    election    @relation(fields: [electionId], references: [id], onDelete: Cascade)
     electionId  String
     candidate   candidate[]
-    vote        vote[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
