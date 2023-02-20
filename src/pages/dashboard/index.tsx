@@ -17,7 +17,7 @@ const DashboardPage = () => {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
-  const myElectionVote = api.election.getMyElectionVotes.useQuery(undefined, {
+  const myElectionVote = api.election.getMyElectionsVote.useQuery(undefined, {
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchOnReconnect: false,

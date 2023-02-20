@@ -32,42 +32,6 @@ import { api } from "../../utils/api";
 import { useEffect } from "react";
 import { positionTemplate } from "../../constants/positionTemplate";
 
-function ElectionTemplateCard({
-  children,
-  ...props
-}: {
-  children: React.ReactNode;
-}) {
-  const { getInputProps, getCheckboxProps } = useRadio(props);
-
-  const input = getInputProps();
-  const checkbox = getCheckboxProps();
-
-  return (
-    <Box as="label">
-      <input {...input} />
-      <Box
-        {...checkbox}
-        cursor="pointer"
-        borderWidth="1px"
-        borderRadius="md"
-        _checked={{
-          bg: "teal.600",
-          color: "white",
-          borderColor: "teal.600",
-        }}
-        _focus={{
-          boxShadow: "outline",
-        }}
-        px={5}
-        py={3}
-      >
-        {children}
-      </Box>
-    </Box>
-  );
-}
-
 const CreateElectionModal = ({
   isOpen,
   onClose,
@@ -105,6 +69,43 @@ const CreateElectionModal = ({
   const group = getRootProps();
 
   const createElectionMutation = api.election.create.useMutation();
+
+  function ElectionTemplateCard({
+    children,
+    ...props
+  }: {
+    children: React.ReactNode;
+  }) {
+    const { getInputProps, getCheckboxProps } = useRadio(props);
+
+    const input = getInputProps();
+    const checkbox = getCheckboxProps();
+    return (
+      <Box as="label">
+        <input {...input} disabled={createElectionMutation.isLoading} />
+        <Box
+          {...checkbox}
+          cursor={createElectionMutation.isLoading ? "not-allowed" : "pointer"}
+          opacity={createElectionMutation.isLoading ? 0.5 : 1}
+          borderWidth="1px"
+          borderRadius="md"
+          _checked={{
+            bg: "teal.600",
+            color: "white",
+            borderColor: "teal.600",
+          }}
+          _focus={{
+            boxShadow: "outline",
+          }}
+          px={5}
+          py={3}
+        >
+          {children}
+        </Box>
+      </Box>
+    );
+  }
+
   return (
     <Modal
       isOpen={isOpen || createElectionMutation.isLoading}
@@ -291,7 +292,11 @@ const CreateElectionModal = ({
                   )}
                 </FormControl>
               </Stack>
-              <Text textAlign="center" fontSize="sm">
+              <Text
+                textAlign="center"
+                fontSize="sm"
+                opacity={createElectionMutation.isLoading ? 0.5 : 1}
+              >
                 {
                   // calculate the number of hours depending on the voting_start and voting_end
 
@@ -301,8 +306,11 @@ const CreateElectionModal = ({
                 {watch("voting_end") - watch("voting_start") > 1 ? "s" : ""}
               </Text>
 
-              <Accordion allowMultiple>
-                <AccordionItem border="none">
+              <Accordion allowToggle>
+                <AccordionItem
+                  border="none"
+                  isDisabled={createElectionMutation.isLoading}
+                >
                   <AccordionButton borderRadius="md">
                     <Text flex="1" textAlign="left">
                       Election template

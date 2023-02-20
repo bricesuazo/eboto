@@ -55,9 +55,12 @@ export const electionRouter = createTRPCRouter({
         },
       });
     }),
-  getMyElectionVotes: protectedProcedure.query(async ({ ctx }) => {
+  getMyElectionsVote: protectedProcedure.query(async ({ ctx }) => {
     return ctx.prisma.election.findMany({
       where: {
+        publicity: {
+          not: "PRIVATE",
+        },
         voters: {
           some: {
             id: ctx.session.user.id,
