@@ -9,7 +9,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "./db";
 import bcrypt from "bcryptjs";
 import { env } from "../env.mjs";
-import SendEmailVerification from "../libs/SendEmailVerification";
+import { sendEmail } from "../utils/sendEmail";
 
 /**
  * Module augmentation for `next-auth` types.
@@ -130,7 +130,8 @@ export const authOptions: NextAuthOptions = {
         }
 
         if (!user.emailVerified || !user.password) {
-          await SendEmailVerification({
+          await sendEmail({
+            type: "EMAIL_VERIFICATION",
             email: user.email,
             userId: user.id,
           });

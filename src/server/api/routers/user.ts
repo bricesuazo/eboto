@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { z } from "zod";
-import SendEmailVerification from "../../../libs/SendEmailVerification";
+import { sendEmail } from "../../../utils/sendEmail";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
@@ -24,7 +24,8 @@ export const userRouter = createTRPCRouter({
         },
       });
       if (isUserExists && !isUserExists.emailVerified) {
-        await SendEmailVerification({
+        await sendEmail({
+          type: "EMAIL_VERIFICATION",
           email: isUserExists.email,
           userId: isUserExists.id,
         });
@@ -41,7 +42,8 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      await SendEmailVerification({
+      await sendEmail({
+        type: "EMAIL_VERIFICATION",
         email: user.email,
         userId: user.id,
       });

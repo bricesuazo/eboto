@@ -1,3 +1,4 @@
+import { type TokenType } from "@prisma/client";
 import { Body } from "@react-email/body";
 import { Button } from "@react-email/button";
 import { Container } from "@react-email/container";
@@ -13,13 +14,14 @@ import { Text } from "@react-email/text";
 
 interface VerifyEmailProps {
   token: string;
+  type: TokenType;
 }
 
 const baseUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
 
-export default function VerifyEmail({ token }: VerifyEmailProps) {
+export default function VerifyEmail({ token, type }: VerifyEmailProps) {
   return (
     <Html>
       <Head />
@@ -39,7 +41,7 @@ export default function VerifyEmail({ token }: VerifyEmailProps) {
               pY={11}
               pX={23}
               style={button}
-              href={`${baseUrl}/verify?token=${token}`}
+              href={`${baseUrl}/verify?type=${type}&token=${token}`}
             >
               Confirm email
             </Button>

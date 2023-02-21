@@ -2,7 +2,7 @@ import { Button, Container, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Moment from "react-moment";
-import { convertNumberToHour } from "../../../libs/convertNumberToHour";
+import { convertNumberToHour } from "../../../utils/convertNumberToHour";
 import { api } from "../../../utils/api";
 
 const DashboardOverview = () => {

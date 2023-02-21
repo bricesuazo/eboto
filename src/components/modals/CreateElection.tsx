@@ -32,7 +32,7 @@ import { api } from "../../utils/api";
 import { useEffect } from "react";
 import { positionTemplate } from "../../constants";
 import { useRouter } from "next/router";
-import { convertNumberToHour } from "../../libs/convertNumberToHour";
+import { convertNumberToHour } from "../../utils/convertNumberToHour";
 
 const CreateElectionModal = ({
   isOpen,

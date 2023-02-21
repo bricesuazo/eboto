@@ -1,28 +1,29 @@
+import { type TokenType } from "@prisma/client";
 import { render } from "@react-email/render";
-import { sendEmail } from "../../emails";
+import { sendEmailTransport } from "../../emails";
 import VerifyEmail from "../../emails/VerifyEmail";
 import { prisma } from "../server/db";
 
-const SendEmailVerification = async ({
+export const sendEmail = async ({
+  type,
   userId,
   email,
 }: {
+  type: TokenType;
   userId: string;
   email: string;
 }) => {
   const token = await prisma.verificationToken.create({
     data: {
       userId,
-      type: "EMAIL_VERIFICATION",
+      type,
       expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 3), // 3 hours
     },
   });
 
-  await sendEmail({
+  await sendEmailTransport({
     email,
     subject: "Verify your email",
-    html: render(<VerifyEmail token={token.id} />),
+    html: render(<VerifyEmail type={type} token={token.id} />),
   });
 };
-
-export default SendEmailVerification;

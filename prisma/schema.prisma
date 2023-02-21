@@ -137,7 +137,7 @@ model Partylist {
 
 enum TokenType {
     EMAIL_VERIFICATION
-    RESET_PASSWORD
+    PASSWORD_RESET
     ELECTION_INVITATION
 }
 
