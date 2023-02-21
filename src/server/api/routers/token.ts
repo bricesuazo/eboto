@@ -1,0 +1,48 @@
+import { z } from "zod";
+
+import { createTRPCRouter, publicProcedure } from "../trpc";
+
+export const tokenRouter = createTRPCRouter({
+  verify: publicProcedure
+    .input(
+      z.object({
+        type: z.enum([
+          "EMAIL_VERIFICATION",
+          "RESET_PASSWORD",
+          "ELECTION_INVITATION",
+        ]),
+        token: z.string(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const token = await ctx.prisma.verificationToken.findUnique({
+        where: {
+          id: input.token,
+        },
+      });
+
+      if (!token) {
+        throw new Error("Invalid token");
+      }
+
+      if (token.expiresAt < new Date()) {
+        throw new Error("Token expired");
+      }
+
+      await ctx.prisma.user.update({
+        where: {
+          id: token.userId,
+        },
+        data: {
+          emailVerified: new Date(),
+        },
+      });
+
+      await ctx.prisma.verificationToken.deleteMany({
+        where: {
+          userId: token.userId,
+          type: "EMAIL_VERIFICATION",
+        },
+      });
+    }),
+});

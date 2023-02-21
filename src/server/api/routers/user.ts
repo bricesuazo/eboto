@@ -5,43 +5,6 @@ import SendEmailVerification from "../../../libs/SendEmailVerification";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
-  verifyEmail: publicProcedure
-    .input(
-      z.object({
-        token: z.string(),
-      })
-    )
-    .query(async ({ input, ctx }) => {
-      const token = await ctx.prisma.verificationToken.findUnique({
-        where: {
-          id: input.token,
-        },
-      });
-
-      if (!token || token.type !== "EMAIL_VERIFICATION") {
-        throw new Error("Invalid token");
-      }
-
-      if (token.expiresAt < new Date()) {
-        throw new Error("Token expired");
-      }
-
-      await ctx.prisma.user.update({
-        where: {
-          id: token.userId,
-        },
-        data: {
-          emailVerified: new Date(),
-        },
-      });
-
-      await ctx.prisma.verificationToken.deleteMany({
-        where: {
-          userId: token.userId,
-          type: "EMAIL_VERIFICATION",
-        },
-      });
-    }),
   signUp: publicProcedure
     .input(
       z.object({

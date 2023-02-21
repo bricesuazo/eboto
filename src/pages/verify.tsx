@@ -3,26 +3,40 @@ import { api } from "../utils/api";
 
 const VerifyPage = () => {
   const router = useRouter();
-  const { token } = router.query;
+  const { token, type } = router.query;
 
-  if (typeof token !== "string") return null;
+  if (
+    typeof token !== "string" ||
+    typeof type !== "string" ||
+    type !== ("EMAIL_VERIFICATION" || "RESET_PASSWORD" || "ELECTION_INVITATION")
+  )
+    return null;
 
-  const verifyEmail = api.user.verifyEmail.useQuery(
+  const verifyEmail = api.token.verify.useQuery(
     {
       token,
+      type,
     },
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
       refetchInterval: false,
-      // onSuccess: () => {
-      //   void (async () => {
-      //     await router.push("/signin");
-      //   })();
-      // },
+      onSuccess: () => {
+        void (async () => {
+          await router.push("/signin");
+        })();
+      },
     }
   );
+
+  if (verifyEmail.isLoading) {
+    return (
+      <div>
+        <h1>Loading...</h1>
+      </div>
+    );
+  }
 
   if (verifyEmail.isError) {
     return (
@@ -33,18 +47,12 @@ const VerifyPage = () => {
     );
   }
 
-  if (verifyEmail.isSuccess) {
-    // async () => await router.push("/signin");
-
-    return (
-      <div>
-        <h1>Success! </h1>
-        <p>Your account has been verified. Please sign in.</p>
-      </div>
-    );
-  }
-
-  return <div>Loading...</div>;
+  return (
+    <div>
+      <h1>Success! </h1>
+      <p>Your account has been verified. Please sign in.</p>
+    </div>
+  );
 };
 
 export default VerifyPage;
