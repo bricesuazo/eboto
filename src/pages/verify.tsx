@@ -8,7 +8,7 @@ const VerifyPage = () => {
   if (
     typeof token !== "string" ||
     typeof type !== "string" ||
-    type !== ("EMAIL_VERIFICATION" || "RESET_PASSWORD" || "ELECTION_INVITATION")
+    type !== ("EMAIL_VERIFICATION" || "PASSWORD_RESET" || "ELECTION_INVITATION")
   )
     return null;
 

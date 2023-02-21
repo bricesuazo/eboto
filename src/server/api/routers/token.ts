@@ -8,7 +8,7 @@ export const tokenRouter = createTRPCRouter({
       z.object({
         type: z.enum([
           "EMAIL_VERIFICATION",
-          "RESET_PASSWORD",
+          "PASSWORD_RESET",
           "ELECTION_INVITATION",
         ]),
         token: z.string(),
@@ -18,6 +18,7 @@ export const tokenRouter = createTRPCRouter({
       const token = await ctx.prisma.verificationToken.findUnique({
         where: {
           id: input.token,
+          type: input.type,
         },
       });
 
@@ -41,7 +42,7 @@ export const tokenRouter = createTRPCRouter({
       await ctx.prisma.verificationToken.deleteMany({
         where: {
           userId: token.userId,
-          type: "EMAIL_VERIFICATION",
+          type: input.type,
         },
       });
     }),

@@ -27,7 +27,7 @@ import { useForm } from "react-hook-form";
 
 import { signIn } from "next-auth/react";
 
-import { AiOutlineGoogle } from "react-icons/ai";
+// import { AiOutlineGoogle } from "react-icons/ai";
 import { getServerAuthSession } from "../server/auth";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -163,7 +163,7 @@ const Signin: NextPage = () => {
               Sign in
             </Button>
 
-            <Button
+            {/* <Button
               onClick={() => {
                 setLoadings({ ...loadings, google: true });
                 void (async () => {
@@ -179,7 +179,7 @@ const Signin: NextPage = () => {
               loadingText="Loading..."
             >
               Sign in with Google
-            </Button>
+            </Button> */}
           </Stack>
         </form>
       </Container>
