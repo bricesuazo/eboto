@@ -4,6 +4,75 @@ import { positionTemplate } from "../../../constants/positionTemplate";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 
 export const electionRouter = createTRPCRouter({
+  createVoter: protectedProcedure
+    .input(
+      z.object({
+        electionId: z.string(),
+        userId: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const election = await ctx.prisma.election.findUnique({
+        where: {
+          id: input.electionId,
+        },
+        include: {
+          commissioners: true,
+        },
+      });
+
+      if (!election) {
+        throw new Error("Election not found");
+      }
+
+      if (
+        !election.commissioners.some(
+          (commissioner) => commissioner.id === ctx.session.user.id
+        )
+      ) {
+        throw new Error("You are not a commissioner of this election");
+      }
+
+      const user = await ctx.prisma.user.findUnique({
+        where: {
+          id: input.userId,
+        },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      const isVoterExists = await ctx.prisma.user.findFirst({
+        where: {
+          id: input.userId,
+          voters: {
+            some: {
+              id: input.electionId,
+            },
+          },
+        },
+      });
+
+      if (isVoterExists) {
+        throw new Error("User is already a voter of this election");
+      }
+
+      await ctx.prisma.user.update({
+        where: {
+          id: input.userId,
+        },
+        data: {
+          voters: {
+            connect: {
+              id: input.electionId,
+            },
+          },
+        },
+      });
+
+      return true;
+    }),
   getElectionOverview: protectedProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {

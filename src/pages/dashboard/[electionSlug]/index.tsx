@@ -1,4 +1,5 @@
 import { Button, Container, Text } from "@chakra-ui/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import Moment from "react-moment";
 import { convertNumberToHour } from "../../../libs/convertNumberToHour";
@@ -32,6 +33,13 @@ const DashboardOverview = () => {
         <Text>No election found</Text>
       ) : (
         <>
+          <Link
+            href={
+              "/dashboard/" + electionOverview.data.election.slug + "/voter"
+            }
+          >
+            <Button variant="link">voter</Button>
+          </Link>
           <Button
             colorScheme="red"
             onClick={() =>
@@ -76,7 +84,7 @@ const DashboardOverview = () => {
             {electionOverview.data.candidates._count._all < 1 ? "" : "s"}
           </Text>
           <Text>
-            Open everyday from{" "}
+            Open from{" "}
             {convertNumberToHour(electionOverview.data.election.voting_start)}{" "}
             to {convertNumberToHour(electionOverview.data.election.voting_end)}
           </Text>
