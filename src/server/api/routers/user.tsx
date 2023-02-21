@@ -12,7 +12,7 @@ export const userRouter = createTRPCRouter({
       })
     )
     .query(async ({ input, ctx }) => {
-      const token = await ctx.prisma.token.findUnique({
+      const token = await ctx.prisma.verificationToken.findUnique({
         where: {
           id: input.token,
         },
@@ -35,7 +35,7 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      await ctx.prisma.token.deleteMany({
+      await ctx.prisma.verificationToken.deleteMany({
         where: {
           userId: token.userId,
           type: "EMAIL_VERIFICATION",

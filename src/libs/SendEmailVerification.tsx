@@ -10,7 +10,7 @@ const SendEmailVerification = async ({
   userId: string;
   email: string;
 }) => {
-  const token = await prisma.token.create({
+  const token = await prisma.verificationToken.create({
     data: {
       userId,
       type: "EMAIL_VERIFICATION",

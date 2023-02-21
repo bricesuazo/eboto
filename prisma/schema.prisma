@@ -12,15 +12,15 @@ datasource db {
 }
 
 model User {
-    id            String    @id @default(cuid())
-    email         String    @unique
+    id            String              @id @default(cuid())
+    email         String              @unique
     emailVerified DateTime?
     first_name    String
     middle_name   String?
     last_name     String
     image         String?
     password      String?
-    tokens        Token[]
+    tokens        VerificationToken[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -130,9 +130,10 @@ model Partylist {
 enum TokenType {
     EMAIL_VERIFICATION
     RESET_PASSWORD
+    ELECTION_INVITATION
 }
 
-model Token {
+model VerificationToken {
     id        String    @id @default(cuid())
     type      TokenType
     expiresAt DateTime
