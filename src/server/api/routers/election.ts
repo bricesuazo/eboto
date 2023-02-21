@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { positionTemplate } from "../../../constants/positionTemplate";
+import { positionTemplate } from "../../../constants";
+import { takenSlugs } from "../../../constants";
 
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 
@@ -220,6 +221,10 @@ export const electionRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      if (takenSlugs.includes(input.slug)) {
+        throw new Error("Election slug is unavailable. Try another.");
+      }
+
       const isElectionExists = await ctx.prisma.election.findUnique({
         where: {
           slug: input.slug,

@@ -30,7 +30,7 @@ import {
 import { useForm } from "react-hook-form";
 import { api } from "../../utils/api";
 import { useEffect } from "react";
-import { positionTemplate } from "../../constants/positionTemplate";
+import { positionTemplate } from "../../constants";
 import { useRouter } from "next/router";
 import { convertNumberToHour } from "../../libs/convertNumberToHour";
 

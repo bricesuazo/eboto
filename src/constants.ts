@@ -89,3 +89,25 @@ export const positionTemplate: PositionTemplate = [
     ],
   },
 ];
+
+const takenSlugsSchema = z.array(z.string());
+
+export type TakenSlugs = z.infer<typeof takenSlugsSchema>;
+
+export const takenSlugs: TakenSlugs = [
+  "api",
+  "settings",
+  "election",
+  "user",
+  "token",
+  "login",
+  "signin",
+  "signup",
+  "logout",
+  "forgot-password",
+  "reset-password",
+  "verify",
+  "dashboard",
+  "contact",
+  "profile",
+];
