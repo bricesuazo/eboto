@@ -8,7 +8,9 @@ export const electionRouter = createTRPCRouter({
     .input(
       z.object({
         electionId: z.string(),
-        userId: z.string(),
+        email: z.string().email(),
+        firstName: z.string(),
+        lastName: z.string(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -33,19 +35,9 @@ export const electionRouter = createTRPCRouter({
         throw new Error("You are not a commissioner of this election");
       }
 
-      const user = await ctx.prisma.user.findUnique({
-        where: {
-          id: input.userId,
-        },
-      });
-
-      if (!user) {
-        throw new Error("User not found");
-      }
-
       const isVoterExists = await ctx.prisma.user.findFirst({
         where: {
-          id: input.userId,
+          email: input.email,
           voters: {
             some: {
               id: input.electionId,
@@ -58,9 +50,31 @@ export const electionRouter = createTRPCRouter({
         throw new Error("User is already a voter of this election");
       }
 
-      await ctx.prisma.user.update({
+      const isUserExists = await ctx.prisma.user.findUnique({
         where: {
-          id: input.userId,
+          email: input.email,
+        },
+      });
+
+      if (!isUserExists) {
+        return ctx.prisma.user.create({
+          data: {
+            email: input.email,
+            first_name: input.firstName,
+            last_name: input.lastName,
+            provider: "CREDENTIALS",
+            voters: {
+              connect: {
+                id: input.electionId,
+              },
+            },
+          },
+        });
+      }
+
+      return ctx.prisma.user.update({
+        where: {
+          email: input.email,
         },
         data: {
           voters: {
@@ -70,8 +84,6 @@ export const electionRouter = createTRPCRouter({
           },
         },
       });
-
-      return true;
     }),
   getElectionOverview: protectedProcedure
     .input(z.string())

@@ -10,9 +10,7 @@ import {
   FormLabel,
   Input,
   FormErrorMessage,
-  Select,
   ModalFooter,
-  Text,
   Button,
   Alert,
   AlertIcon,
@@ -23,7 +21,6 @@ import {
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { api } from "../../utils/api";
-import { convertNumberToHour } from "../../libs/convertNumberToHour";
 
 const CreateVoterModal = ({
   isOpen,
@@ -38,7 +35,6 @@ const CreateVoterModal = ({
     register,
     handleSubmit,
     reset,
-    watch,
     formState: { errors },
   } = useForm();
 
@@ -55,13 +51,15 @@ const CreateVoterModal = ({
         <ModalHeader>Add voter</ModalHeader>
         <ModalCloseButton disabled={createVoterMutation.isLoading} />
         <form
-        //   onSubmit={handleSubmit(async (data) => {
-        //     await createVoterMutation.mutateAsync({
-        //       electionId,
-        //       userId: data.userId,
-        //     });
-        //     onClose();
-        //   })}
+          onSubmit={handleSubmit(async (data) => {
+            await createVoterMutation.mutateAsync({
+              electionId,
+              email: data.email as string,
+              firstName: data.firstName as string,
+              lastName: data.lastName as string,
+            });
+            onClose();
+          })}
         >
           <ModalBody>
             <Stack>
@@ -114,16 +112,20 @@ const CreateVoterModal = ({
               >
                 <FormLabel>Email</FormLabel>
                 <Input
-                  placeholder="Enter voter's last name"
+                  placeholder="Enter voter's email"
                   type="text"
-                  {...register("lastName", {
+                  {...register("email", {
                     required: "This is required.",
+                    pattern: {
+                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                      message: "Invalid email address",
+                    },
                   })}
                 />
 
-                {errors.lastName && (
+                {errors.email && (
                   <FormErrorMessage>
-                    {errors.lastName.message?.toString()}
+                    {errors.email.message?.toString()}
                   </FormErrorMessage>
                 )}
               </FormControl>

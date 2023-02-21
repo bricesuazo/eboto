@@ -4,12 +4,18 @@ import CreateVoterModal from "../../../components/modals/CreateVoter";
 import { api } from "../../../utils/api";
 
 const DashboardVoter = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  if (typeof router.query.electionSlug !== "string") return null;
-
-  const election = api.election.getBySlug.useQuery(router.query.electionSlug);
+  const election = api.election.getBySlug.useQuery(
+    router.query.electionSlug as string,
+    {
+      enabled: router.isReady,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchOnMount: false,
+    }
+  );
 
   if (election.isLoading) return <Text>Loading...</Text>;
 
@@ -24,7 +30,7 @@ const DashboardVoter = () => {
         electionId={election.data.id}
       />
       <Button onClick={onOpen}>Add voter</Button>
-      <Text>Voter</Text>
+      <Text>{election.data.name} - voter page</Text>
     </Container>
   );
 };
