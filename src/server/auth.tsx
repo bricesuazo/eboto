@@ -54,47 +54,24 @@ declare module "next-auth/jwt" {
  **/
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    async signIn({ user, account }) {
-      if (account?.provider === "google" && user.email) {
-        const isUserExists = await prisma.user.findUnique({
-          where: {
-            email: user.email,
-          },
-        });
+    // async signIn({ credentials }) {
+    //   if (credentials && credentials.email) {
+    //     const isUserExists = await prisma.user.findUnique({
+    //       where: {
+    //         email: credentials.email as string,
+    //       },
+    //     });
 
-        if (!isUserExists) {
-          if (user.email && user.name && user.image) {
-            const newUser = await prisma.user.create({
-              data: {
-                email: user.email,
-                emailVerified: new Date(),
-                first_name:
-                  // profile?.given_name ||
-                  user.name.split(" ").slice(0, -1).join(" "),
-                last_name:
-                  // profile?.family_name ||
-                  user.name.split(" ").slice(-1).join(" "),
-                image: user.image,
-                provider: "GOOGLE",
-              },
-              select: {
-                id: true,
-                first_name: true,
-                last_name: true,
-              },
-            });
-            user.id = newUser.id;
-            user.firstName = newUser.first_name;
-            user.lastName = newUser.last_name;
-          }
-        } else {
-          user.id = isUserExists.id;
-          user.firstName = isUserExists.first_name;
-          user.lastName = isUserExists.last_name;
-        }
-      }
-      return true;
-    },
+    //     if (isUserExists && !isUserExists.emailVerified) {
+    //       await SendEmailVerification({
+    //         email: isUserExists.email,
+    //         userId: isUserExists.id,
+    //       });
+    //       throw new Error("Email not verified");
+    //     }
+    //   }
+    //   return true;
+    // },
     session({ session, token }) {
       if (session.user) {
         session.user.id = token.id;
@@ -135,35 +112,12 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Missing username or password");
         }
 
-        const tempUser = await prisma.temporaryUser.findUnique({
-          where: { email: credentials.email },
-        });
-        if (tempUser && tempUser.password) {
-          const istempUserPasswordValid = await bcrypt.compare(
-            credentials.password,
-            tempUser.password
-          );
-
-          if (!istempUserPasswordValid) {
-            throw new Error("Invalid password");
-          } else {
-            await SendEmailVerification({
-              email: tempUser.email,
-              userId: tempUser.id,
-            });
-            throw new Error("Email not verified. Email verification sent.");
-          }
-        }
-
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
-        if (!user) {
-          throw new Error("Invalid email or password");
-        }
 
-        if (user.provider === "GOOGLE" || !user.password) {
-          throw new Error("Please sign in with Google");
+        if (!user || !user.password) {
+          throw new Error("Invalid email or password");
         }
 
         const isValid = await bcrypt.compare(
@@ -172,18 +126,15 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (!isValid) {
-          throw new Error("Invalid password");
+          throw new Error("Invalid email or password");
         }
 
-        if (!user.emailVerified) {
+        if (!user.emailVerified || !user.password) {
           await SendEmailVerification({
             email: user.email,
             userId: user.id,
           });
-
-          throw new Error("Email not verified. Email verification sent.", {
-            cause: "EMAIL_NOT_VERIFIED",
-          });
+          throw new Error("Email not verified. Email verification sent.");
         }
 
         return {

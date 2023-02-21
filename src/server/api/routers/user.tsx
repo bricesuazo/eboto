@@ -16,16 +16,9 @@ export const userRouter = createTRPCRouter({
         where: {
           id: input.token,
         },
-        include: {
-          temporaryUser: true,
-        },
       });
 
-      if (
-        !token ||
-        token.type !== "EMAIL_VERIFICATION" ||
-        !token.temporaryUser
-      ) {
+      if (!token || token.type !== "EMAIL_VERIFICATION") {
         throw new Error("Invalid token");
       }
 
@@ -33,20 +26,12 @@ export const userRouter = createTRPCRouter({
         throw new Error("Token expired");
       }
 
-      await ctx.prisma.user.create({
-        data: {
-          email: token.temporaryUser.email,
-          password: token.temporaryUser.password,
-          first_name: token.temporaryUser.first_name,
-          last_name: token.temporaryUser.last_name,
-          emailVerified: new Date(),
-          provider: "CREDENTIALS",
-        },
-      });
-
-      await ctx.prisma.temporaryUser.delete({
+      await ctx.prisma.user.update({
         where: {
-          id: token.temporaryUser.id,
+          id: token.userId,
+        },
+        data: {
+          emailVerified: new Date(),
         },
       });
 
@@ -56,7 +41,6 @@ export const userRouter = createTRPCRouter({
           type: "EMAIL_VERIFICATION",
         },
       });
-      return true;
     }),
   signUp: publicProcedure
     .input(
@@ -71,31 +55,21 @@ export const userRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const isTempUserExists = await ctx.prisma.temporaryUser.findUnique({
-        where: {
-          email: input.email,
-        },
-      });
-
-      if (isTempUserExists) {
-        await SendEmailVerification({
-          email: isTempUserExists.email,
-          userId: isTempUserExists.id,
-        });
-
-        throw new Error("Email already exists. Email verification sent");
-      }
-
       const isUserExists = await ctx.prisma.user.findUnique({
         where: {
           email: input.email,
         },
       });
-      if (isUserExists) {
-        throw new Error("Email already exists");
+      if (isUserExists && !isUserExists.emailVerified) {
+        await SendEmailVerification({
+          email: isUserExists.email,
+          userId: isUserExists.id,
+        });
+
+        throw new Error("Email already exists. Email verification sent");
       }
 
-      const tempUser = await ctx.prisma.temporaryUser.create({
+      const user = await ctx.prisma.user.create({
         data: {
           email: input.email,
           password: await bcrypt.hash(input.password, 12),
@@ -105,8 +79,8 @@ export const userRouter = createTRPCRouter({
       });
 
       await SendEmailVerification({
-        email: tempUser.email,
-        userId: tempUser.id,
+        email: user.email,
+        userId: user.id,
       });
     }),
 });

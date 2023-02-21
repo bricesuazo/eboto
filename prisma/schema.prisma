@@ -11,23 +11,7 @@ datasource db {
     relationMode = "prisma"
 }
 
-model temporaryUser {
-    id         String   @id @default(cuid())
-    email      String   @unique
-    first_name String
-    last_name  String
-    password   String
-    tokens     token[]
-    createdAt  DateTime @default(now())
-    updatedAt  DateTime @updatedAt
-}
-
-enum provider {
-    GOOGLE
-    CREDENTIALS
-}
-
-model user {
+model User {
     id            String    @id @default(cuid())
     email         String    @unique
     emailVerified DateTime?
@@ -36,46 +20,45 @@ model user {
     last_name     String
     image         String?
     password      String?
-    tokens        token[]
-    provider      provider
+    tokens        Token[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    vote      vote[]
+    vote      Vote[]
 
-    commissioners election[] @relation("commissioners")
-    voters        election[] @relation("voters")
+    commissioners Election[] @relation("commissioners")
+    voters        Election[] @relation("voters")
 }
 
-enum electionPublicity {
+enum ElectionPublicity {
     PUBLIC
     VOTER
     PRIVATE
 }
 
-model election {
+model Election {
     id            String            @id @default(cuid())
     slug          String            @unique
     name          String
     description   String?
     start_date    DateTime
     end_date      DateTime
-    publicity     electionPublicity @default(PRIVATE)
+    publicity     ElectionPublicity @default(PRIVATE)
     voting_start  Int               @default(7) // 7am
     voting_end    Int               @default(19) // 7pm
     logo          String?
-    commissioners user[]            @relation("commissioners")
-    voters        user[]            @relation("voters")
-    candidates    candidate[]
-    positions     position[]
+    commissioners User[]            @relation("commissioners")
+    voters        User[]            @relation("voters")
+    candidates    Candidate[]
+    positions     Position[]
 
     createdAt DateTime    @default(now())
     updatedAt DateTime    @updatedAt
-    vote      vote[]
-    partylist partylist[]
+    vote      Vote[]
+    partylist Partylist[]
 }
 
-model candidate {
+model Candidate {
     id          String  @id @default(cuid())
     slug        String  @unique
     first_name  String
@@ -86,43 +69,43 @@ model candidate {
 
     vote_count Int @default(0)
 
-    election   election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
     electionId String
-    position   position @relation(fields: [positionId], references: [id], onDelete: Cascade)
+    position   Position @relation(fields: [positionId], references: [id], onDelete: Cascade)
     positionId String
 
     createdAt   DateTime   @default(now())
     updatedAt   DateTime   @updatedAt
-    vote        vote[]
-    partylist   partylist? @relation(fields: [partylistId], references: [id], onDelete: Cascade)
+    vote        Vote[]
+    partylist   Partylist? @relation(fields: [partylistId], references: [id], onDelete: Cascade)
     partylistId String?
 
     @@index([electionId, positionId])
 }
 
-model vote {
+model Vote {
     id          String     @id @default(cuid())
-    election    election   @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    election    Election   @relation(fields: [electionId], references: [id], onDelete: Cascade)
     electionId  String
-    voter       user       @relation(fields: [voterId], references: [id], onDelete: Cascade)
+    voter       User       @relation(fields: [voterId], references: [id], onDelete: Cascade)
     voterId     String
-    candidate   candidate? @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+    candidate   Candidate? @relation(fields: [candidateId], references: [id], onDelete: Cascade)
     candidateId String?
-    position    position?  @relation(fields: [positionId], references: [id], onDelete: Cascade)
+    position    Position?  @relation(fields: [positionId], references: [id], onDelete: Cascade)
     positionId  String?
     createdAt   DateTime   @default(now())
 
     @@index([electionId, voterId])
 }
 
-model position {
+model Position {
     id            String      @id @default(cuid())
     name          String
     description   String?
-    election      election    @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    election      Election    @relation(fields: [electionId], references: [id], onDelete: Cascade)
     electionId    String
-    candidate     candidate[]
-    vote          vote[]
+    candidate     Candidate[]
+    vote          Vote[]
     order         Int
     abstain_count Int         @default(0)
 
@@ -130,33 +113,31 @@ model position {
     updatedAt DateTime @updatedAt
 }
 
-model partylist {
+model Partylist {
     id          String      @id @default(cuid())
     name        String
     acronym     String
     description String?
     logo        String?
-    election    election    @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    election    Election    @relation(fields: [electionId], references: [id], onDelete: Cascade)
     electionId  String
-    candidate   candidate[]
+    candidate   Candidate[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }
 
-enum tokenType {
+enum TokenType {
     EMAIL_VERIFICATION
     RESET_PASSWORD
 }
 
-model token {
-    id              String         @id @default(cuid())
-    type            tokenType
-    expiresAt       DateTime
-    createdAt       DateTime       @default(now())
-    updatedAt       DateTime       @updatedAt
-    user            user?          @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId          String?
-    temporaryUser   temporaryUser? @relation(fields: [temporaryUserId], references: [id], onDelete: Cascade)
-    temporaryUserId String?
+model Token {
+    id        String    @id @default(cuid())
+    type      TokenType
+    expiresAt DateTime
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId    String
 }

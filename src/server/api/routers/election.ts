@@ -62,7 +62,6 @@ export const electionRouter = createTRPCRouter({
             email: input.email,
             first_name: input.firstName,
             last_name: input.lastName,
-            provider: "CREDENTIALS",
             voters: {
               connect: {
                 id: input.electionId,
