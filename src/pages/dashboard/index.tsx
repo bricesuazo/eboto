@@ -22,6 +22,10 @@ const DashboardPage = () => {
     refetchOnMount: false,
     refetchOnReconnect: false,
   });
+  console.log(
+    "🚀 ~ file: index.tsx:25 ~ DashboardPage ~ myElectionVote:",
+    myElectionVote.data
+  );
 
   return (
     <Container maxW="4xl">
