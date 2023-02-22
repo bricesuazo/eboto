@@ -23,7 +23,12 @@ export const userRouter = createTRPCRouter({
           email: input.email,
         },
       });
-      if (isUserExists && !isUserExists.emailVerified) {
+      if (
+        isUserExists &&
+        !isUserExists.emailVerified &&
+        isUserExists.password &&
+        (await bcrypt.compare(input.password, isUserExists.password))
+      ) {
         await sendEmail({
           type: "EMAIL_VERIFICATION",
           email: isUserExists.email,
@@ -31,6 +36,10 @@ export const userRouter = createTRPCRouter({
         });
 
         throw new Error("Email already exists. Email verification sent");
+      }
+
+      if (isUserExists) {
+        throw new Error("Email already exists");
       }
 
       const user = await ctx.prisma.user.create({

@@ -255,16 +255,17 @@ export const electionRouter = createTRPCRouter({
         },
       });
 
-      await ctx.prisma.position.createMany({
-        data:
-          positionTemplate
-            .find((template) => template.id === input.template)
-            ?.positions.map((position, index) => ({
-              name: position,
-              electionId: newElection.id,
-              order: index,
-            })) || [],
-      });
+      if (input.template !== 0)
+        await ctx.prisma.position.createMany({
+          data:
+            positionTemplate
+              .find((template) => template.id === input.template)
+              ?.positions.map((position, index) => ({
+                name: position,
+                electionId: newElection.id,
+                order: index,
+              })) || [],
+        });
 
       await ctx.prisma.user.update({
         where: {
@@ -304,10 +305,27 @@ export const electionRouter = createTRPCRouter({
         throw new Error("You are not a commissioner of this election");
       }
 
-      return ctx.prisma.election.delete({
+      // await ctx.prisma.user.update({
+      //   where: {
+      //     id: ctx.session.user.id,
+      //   },
+      //   data: {
+      //     commissioners: {
+      //       disconnect: {
+      //         id: input,
+      //       },
+      //     },
+      //   },
+      // });
+
+      // disconnect all of the voters with has election to their voters
+
+      await ctx.prisma.election.delete({
         where: {
           id: input,
         },
       });
+
+      return true;
     }),
 });

@@ -12,24 +12,46 @@ datasource db {
 }
 
 model User {
-    id            String              @id @default(cuid())
-    email         String              @unique
+    id            String    @id @default(cuid())
+    email         String    @unique
     emailVerified DateTime?
     first_name    String
     middle_name   String?
     last_name     String
     image         String?
     password      String?
-    tokens        VerificationToken[]
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    vote      Vote[]
-
-    commissioners Election[] @relation("commissioners")
-    voters        Election[] @relation("voters")
+    vote                Vote[]
+    tokens              VerificationToken[]
+    commissioners       Election[]            @relation("commissioners")
+    voters              Election[]            @relation("voters")
+    ElectionVoterStatus ElectionVoterStatus[]
 
     @@index([id, email])
+}
+
+enum ElectionVoterStatusType {
+    INVITED
+    ACCEPTED
+    DECLINED
+}
+
+model ElectionVoterStatus {
+    id        String                  @id @default(cuid())
+    status    ElectionVoterStatusType @default(INVITED)
+    createdAt DateTime                @default(now())
+
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId String
+
+    voter   User   @relation(fields: [voterId], references: [id], onDelete: Cascade)
+    voterId String @unique
+
+    tokens VerificationToken[]
+
+    @@index([electionId])
 }
 
 enum ElectionPublicity {
@@ -39,100 +61,112 @@ enum ElectionPublicity {
 }
 
 model Election {
-    id            String            @id @default(cuid())
-    slug          String            @unique
-    name          String
-    description   String?
-    start_date    DateTime
-    end_date      DateTime
-    publicity     ElectionPublicity @default(PRIVATE)
-    voting_start  Int               @default(7) // 7am
-    voting_end    Int               @default(19) // 7pm
-    logo          String?
-    commissioners User[]            @relation("commissioners")
-    voters        User[]            @relation("voters")
-    candidates    Candidate[]
-    positions     Position[]
+    id           String            @id @default(cuid())
+    slug         String            @unique
+    name         String
+    description  String?
+    start_date   DateTime
+    end_date     DateTime
+    publicity    ElectionPublicity @default(PRIVATE)
+    voting_start Int               @default(7) // 7am
+    voting_end   Int               @default(19) // 7pm
+    logo         String?
+    createdAt    DateTime          @default(now())
+    updatedAt    DateTime          @updatedAt
 
-    createdAt DateTime    @default(now())
-    updatedAt DateTime    @updatedAt
-    vote      Vote[]
-    partylist Partylist[]
+    commissioners       User[]                @relation("commissioners")
+    voters              User[]                @relation("voters")
+    candidates          Candidate[]
+    positions           Position[]
+    vote                Vote[]
+    partylist           Partylist[]
+    ElectionVoterStatus ElectionVoterStatus[]
 
     @@index([id, slug])
 }
 
 model Candidate {
-    id          String  @id @default(cuid())
-    slug        String  @unique
+    id          String   @id @default(cuid())
+    slug        String   @unique
     first_name  String
     middle_name String?
     last_name   String
     description String?
     image       String?
-
-    vote_count Int @default(0)
+    vote_count  Int      @default(0)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
 
     election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
     electionId String
+
     position   Position @relation(fields: [positionId], references: [id], onDelete: Cascade)
     positionId String
 
-    createdAt   DateTime   @default(now())
-    updatedAt   DateTime   @updatedAt
-    vote        Vote[]
     partylist   Partylist? @relation(fields: [partylistId], references: [id], onDelete: Cascade)
     partylistId String?
 
-    @@index([electionId, positionId])
+    vote Vote[]
+
+    @@index([electionId])
+    @@index([positionId])
+    @@index([partylistId])
 }
 
 model Vote {
-    id          String     @id @default(cuid())
-    election    Election   @relation(fields: [electionId], references: [id], onDelete: Cascade)
-    electionId  String
-    voter       User       @relation(fields: [voterId], references: [id], onDelete: Cascade)
-    voterId     String
+    id         String   @id @default(cuid())
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId String
+    createdAt  DateTime @default(now())
+
+    voter   User   @relation(fields: [voterId], references: [id], onDelete: Cascade)
+    voterId String
+
     candidate   Candidate? @relation(fields: [candidateId], references: [id], onDelete: Cascade)
     candidateId String?
-    position    Position?  @relation(fields: [positionId], references: [id], onDelete: Cascade)
-    positionId  String?
-    createdAt   DateTime   @default(now())
 
-    @@index([electionId, voterId, id])
+    position   Position? @relation(fields: [positionId], references: [id], onDelete: Cascade)
+    positionId String?
+
+    @@index([electionId])
+    @@index([voterId])
+    @@index([candidateId])
+    @@index([positionId])
 }
 
 model Position {
-    id            String      @id @default(cuid())
+    id            String   @id @default(cuid())
     name          String
     description   String?
-    election      Election    @relation(fields: [electionId], references: [id], onDelete: Cascade)
-    electionId    String
-    candidate     Candidate[]
-    vote          Vote[]
     order         Int
-    abstain_count Int         @default(0)
+    abstain_count Int      @default(0)
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId String
+
+    candidate Candidate[]
+    vote      Vote[]
 
     @@index([electionId, id])
 }
 
 model Partylist {
-    id          String      @id @default(cuid())
+    id          String   @id @default(cuid())
     name        String
     acronym     String
     description String?
     logo        String?
-    election    Election    @relation(fields: [electionId], references: [id], onDelete: Cascade)
-    electionId  String
-    candidate   Candidate[]
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId String
 
-    @@index([electionId, id])
+    candidate Candidate[]
+
+    @@index([electionId])
 }
 
 enum TokenType {
@@ -147,8 +181,13 @@ model VerificationToken {
     expiresAt DateTime
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
-    user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId    String
 
-    @@index([userId, type])
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String
+
+    voter   ElectionVoterStatus? @relation(fields: [voterId], references: [id], onDelete: Cascade)
+    voterId String?
+
+    @@index([voterId])
+    @@index([userId])
 }
