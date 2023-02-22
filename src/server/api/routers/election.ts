@@ -5,6 +5,37 @@ import { takenSlugs } from "../../../constants";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 
 export const electionRouter = createTRPCRouter({
+  getElectionVoter: protectedProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      const election = await ctx.prisma.election.findUnique({
+        where: {
+          slug: input,
+        },
+        include: {
+          electionVoterStatus: {
+            include: {
+              voter: true,
+            },
+          },
+          commissioners: true,
+        },
+      });
+
+      if (!election) {
+        throw new Error("Election not found");
+      }
+
+      if (
+        !election.commissioners.some(
+          (commissioner) => commissioner.id === ctx.session.user.id
+        )
+      ) {
+        throw new Error("You are not a commissioner of this election");
+      }
+
+      return election.electionVoterStatus;
+    }),
   createVoter: protectedProcedure
     .input(
       z.object({
@@ -57,33 +88,95 @@ export const electionRouter = createTRPCRouter({
         },
       });
 
-      if (!isUserExists) {
-        return ctx.prisma.user.create({
-          data: {
-            email: input.email,
-            first_name: input.firstName,
-            last_name: input.lastName,
-            voters: {
-              connect: {
-                id: input.electionId,
-              },
+      // const user = await ctx.prisma.user.upsert({
+      //   where: {
+      //     email: input.email,
+      //   },
+      //   create: {
+      //     email: input.email,
+      //     first_name: input.firstName,
+      //     last_name: input.lastName,
+      //     ElectionVoterStatus: {
+      //       create: {
+      //         electionId: input.electionId,
+      //         status: "INVITED",
+      //       },
+      //     },
+      //     voters: {
+      //       connect: {
+      //         id: input.electionId,
+      //       },
+      //     },
+      //   },
+      //   update: {
+      //     voters: {
+      //       connect: {
+      //         id: input.electionId,
+      //       },
+      //     },
+      //   },
+      // });
+
+      const voter = await ctx.prisma.electionVoterStatus.upsert({
+        where: {
+          voterId: isUserExists?.id,
+        },
+        create: {
+          voter: {
+            connect: {
+              id: isUserExists?.id,
             },
           },
-        });
-      }
-
-      return ctx.prisma.user.update({
-        where: {
-          email: input.email,
-        },
-        data: {
-          voters: {
+          election: {
             connect: {
               id: input.electionId,
             },
           },
+          status: "INVITED",
+        },
+        update: {
+          status: "INVITED",
         },
       });
+
+      const token = await ctx.prisma.verificationToken.create({
+        data: {
+          type: "ELECTION_INVITATION",
+          userId: voter.voterId,
+          expiresAt: election.end_date,
+        },
+      });
+      console.log("🚀 ~ file: election.ts:96 ~ .mutation ~ token:", token);
+
+      return true;
+
+      // if (!isUserExists) {
+      //   return ctx.prisma.user.create({
+      //     data: {
+      //       email: input.email,
+      //       first_name: input.firstName,
+      //       last_name: input.lastName,
+      //       voters: {
+      //         connect: {
+      //           id: input.electionId,
+      //         },
+      //       },
+      //     },
+      //   });
+      // }
+
+      // return ctx.prisma.user.update({
+      //   where: {
+      //     email: input.email,
+      //   },
+      //   data: {
+      //     voters: {
+      //       connect: {
+      //         id: input.electionId,
+      //       },
+      //     },
+      //   },
+      // });
     }),
   getElectionOverview: protectedProcedure
     .input(z.string())

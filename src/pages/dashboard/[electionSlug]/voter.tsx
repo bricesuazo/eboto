@@ -17,6 +17,16 @@ const DashboardVoter = () => {
     }
   );
 
+  const voters = api.election.getElectionVoter.useQuery(
+    router.query.electionSlug as string,
+    {
+      enabled: router.isReady,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchOnMount: false,
+    }
+  );
+
   if (election.isLoading) return <Text>Loading...</Text>;
 
   if (election.isError) return <Text>Error: {election.error.message}</Text>;
@@ -31,6 +41,20 @@ const DashboardVoter = () => {
       />
       <Button onClick={onOpen}>Add voter</Button>
       <Text>{election.data.name} - voter page</Text>
+
+      {voters.isLoading ? (
+        <Text>Loading...</Text>
+      ) : voters.isError ? (
+        <Text>Error: {voters.error.message}</Text>
+      ) : !voters.data.length ? (
+        <Text>No voters found</Text>
+      ) : (
+        voters.data.map(({ voter, status }) => (
+          <Text key={voter.id}>
+            {voter.first_name} {voter.last_name} - {voter.email} ({status})
+          </Text>
+        ))
+      )}
     </Container>
   );
 };
