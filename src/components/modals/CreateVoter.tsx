@@ -26,10 +26,12 @@ const CreateVoterModal = ({
   isOpen,
   onClose,
   electionId,
+  onVoterCreated,
 }: {
   electionId: string;
   isOpen: boolean;
   onClose: () => void;
+  onVoterCreated: () => void;
 }) => {
   const {
     register,
@@ -58,6 +60,7 @@ const CreateVoterModal = ({
               firstName: data.firstName as string,
               lastName: data.lastName as string,
             });
+            onVoterCreated();
             onClose();
           })}
         >

@@ -23,6 +23,20 @@ export const userRouter = createTRPCRouter({
           email: input.email,
         },
       });
+
+      if (
+        isUserExists &&
+        !isUserExists.password &&
+        !isUserExists.emailVerified
+      ) {
+        await sendEmail({
+          type: "EMAIL_VERIFICATION",
+          email: isUserExists.email,
+          userId: isUserExists.id,
+        });
+        return;
+      }
+
       if (
         isUserExists &&
         !isUserExists.emailVerified &&

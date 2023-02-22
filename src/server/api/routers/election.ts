@@ -80,72 +80,106 @@ export const electionRouter = createTRPCRouter({
         throw new Error("User is already a voter of this election");
       }
 
-      const voter = await ctx.prisma.voter.upsert({
+      const isUserExists = await ctx.prisma.user.findFirst({
         where: {
-          id: ctx.session.user.id,
-        },
-        create: {
-          account: {
-            create: {
-              email: input.email,
-              first_name: input.firstName,
-              last_name: input.lastName,
-            },
-          },
-          election: {
-            connect: {
-              id: input.electionId,
-            },
-          },
-        },
-        update: {
-          election: {
-            connect: {
-              id: input.electionId,
-            },
-          },
+          email: input.email,
         },
       });
 
-      const token = await ctx.prisma.verificationToken.create({
+      const voter = await ctx.prisma.voter.create({
         data: {
-          type: "ELECTION_INVITATION",
-          userId: voter.id,
-          expiresAt: election.end_date,
+          account: isUserExists
+            ? {
+                connect: {
+                  id: isUserExists.id,
+                },
+              }
+            : {
+                create: {
+                  email: input.email,
+                  first_name: input.firstName,
+                  last_name: input.lastName,
+                },
+              },
+          election: {
+            connect: {
+              id: input.electionId,
+            },
+          },
         },
       });
-      console.log("🚀 ~ file: election.ts:96 ~ .mutation ~ token:", token);
 
-      return true;
-
-      // if (!isUserExists) {
-      //   return ctx.prisma.user.create({
-      //     data: {
-      //       email: input.email,
-      //       first_name: input.firstName,
-      //       last_name: input.lastName,
-      //       voters: {
-      //         connect: {
-      //           id: input.electionId,
-      //         },
-      //       },
-      //     },
-      //   });
-      // }
-
-      // return ctx.prisma.user.update({
-      //   where: {
-      //     email: input.email,
-      //   },
+      // const token = await ctx.prisma.verificationToken.create({
       //   data: {
-      //     voters: {
-      //       connect: {
-      //         id: input.electionId,
-      //       },
-      //     },
+      //     type: "ELECTION_INVITATION",
+      //     userId: voter.id,
+      //     expiresAt: election.end_date,
       //   },
       // });
+
+      return true;
     }),
+  removeVoter: protectedProcedure
+
+    .input(
+      z.object({
+        electionId: z.string(),
+        voterId: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const election = await ctx.prisma.election.findUnique({
+        where: {
+          id: input.electionId,
+        },
+        include: {
+          commissioners: true,
+        },
+      });
+
+      if (!election) {
+        throw new Error("Election not found");
+      }
+
+      if (
+        !election.commissioners.some(
+          (commissioner) => commissioner.id === ctx.session.user.id
+        )
+      ) {
+        throw new Error("You are not a commissioner of this election");
+      }
+
+      const voter = await ctx.prisma.voter.findFirst({
+        where: {
+          id: input.voterId,
+          electionId: input.electionId,
+        },
+        // include: {
+        //   account: true,
+        // },
+      });
+
+      if (!voter) {
+        throw new Error("Voter not found");
+      }
+
+      // if (!voter.account.emailVerified) {
+      //   await ctx.prisma.user.delete({
+      //     where: {
+      //       id: input.voterId,
+      //     },
+      //   });
+      // } else {
+      await ctx.prisma.voter.delete({
+        where: {
+          id: input.voterId,
+        },
+      });
+      // }
+
+      return true;
+    }),
+
   getElectionOverview: protectedProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {

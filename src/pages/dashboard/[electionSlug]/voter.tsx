@@ -1,4 +1,4 @@
-import { Button, Container, Text, useDisclosure } from "@chakra-ui/react";
+import { Button, Container, Flex, Text, useDisclosure } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import CreateVoterModal from "../../../components/modals/CreateVoter";
 import { api } from "../../../utils/api";
@@ -27,17 +27,27 @@ const DashboardVoter = () => {
     }
   );
 
+  const removeVoterMutation = api.election.removeVoter.useMutation({
+    onSuccess: async () => {
+      await voters.refetch();
+    },
+  });
+
   if (election.isLoading) return <Text>Loading...</Text>;
 
   if (election.isError) return <Text>Error: {election.error.message}</Text>;
 
   if (!election.data) return <Text>No election found</Text>;
+
   return (
     <Container maxW="4xl">
       <CreateVoterModal
         isOpen={isOpen}
         onClose={onClose}
         electionId={election.data.id}
+        onVoterCreated={async () => {
+          await voters.refetch();
+        }}
       />
       <Button onClick={onOpen}>Add voter</Button>
       <Text>{election.data.name} - voter page</Text>
@@ -50,9 +60,24 @@ const DashboardVoter = () => {
         <Text>No voters found</Text>
       ) : (
         voters.data.map(({ status, account: voter }) => (
-          <Text key={voter.id}>
-            {voter.first_name} {voter.last_name} - {voter.email} ({status})
-          </Text>
+          <Flex key={voter.id}>
+            <Text>
+              {voter.first_name} {voter.last_name} - {voter.email} ({status})
+            </Text>
+
+            <Button
+              onClick={() =>
+                election.data &&
+                removeVoterMutation.mutate({
+                  electionId: election.data.id,
+                  voterId: voter.id,
+                })
+              }
+              isLoading={removeVoterMutation.isLoading}
+            >
+              Delete
+            </Button>
+          </Flex>
         ))
       )}
     </Container>
