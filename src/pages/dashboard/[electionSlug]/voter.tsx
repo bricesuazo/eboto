@@ -49,7 +49,7 @@ const DashboardVoter = () => {
       ) : !voters.data.length ? (
         <Text>No voters found</Text>
       ) : (
-        voters.data.map(({ voter, status }) => (
+        voters.data.map(({ status, account: voter }) => (
           <Text key={voter.id}>
             {voter.first_name} {voter.last_name} - {voter.email} ({status})
           </Text>

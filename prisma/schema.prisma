@@ -23,7 +23,7 @@ model User {
     createdAt     DateTime  @default(now())
     updatedAt     DateTime  @updatedAt
 
-    vote          Vote[]
+    votes         Vote[]
     tokens        VerificationToken[]
     commissioners Commissioner[]
     voters        Voter[]
@@ -38,30 +38,30 @@ enum AccountStatusType {
 }
 
 model Commissioner {
-    id        String            @id @default(cuid())
+    id      String @id
+    account User   @relation(fields: [id], references: [id], onDelete: Cascade)
+
     createdAt DateTime          @default(now())
     status    AccountStatusType @default(INVITED)
 
     election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
     electionId String
 
-    commissioner   User   @relation(fields: [commissionerId], references: [id], onDelete: Cascade)
-    commissionerId String @unique
-
+    @@index([id])
     @@index([electionId])
 }
 
 model Voter {
-    id        String            @id @default(cuid())
+    id      String @id
+    account User   @relation(fields: [id], references: [id], onDelete: Cascade)
+
     status    AccountStatusType @default(INVITED)
     createdAt DateTime          @default(now())
 
     election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
     electionId String
 
-    voter   User   @relation(fields: [voterId], references: [id], onDelete: Cascade)
-    voterId String @unique
-
+    @@index([id])
     @@index([electionId])
 }
 

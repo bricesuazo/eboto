@@ -13,9 +13,9 @@ export const electionRouter = createTRPCRouter({
           slug: input,
         },
         include: {
-          electionVoterStatus: {
+          voters: {
             include: {
-              voter: true,
+              account: true,
             },
           },
           commissioners: true,
@@ -34,7 +34,7 @@ export const electionRouter = createTRPCRouter({
         throw new Error("You are not a commissioner of this election");
       }
 
-      return election.electionVoterStatus;
+      return election.voters;
     }),
   createVoter: protectedProcedure
     .input(
@@ -67,14 +67,12 @@ export const electionRouter = createTRPCRouter({
         throw new Error("You are not a commissioner of this election");
       }
 
-      const isVoterExists = await ctx.prisma.user.findFirst({
+      const isVoterExists = await ctx.prisma.voter.findFirst({
         where: {
-          email: input.email,
-          voters: {
-            some: {
-              id: input.electionId,
-            },
+          account: {
+            email: input.email,
           },
+          electionId: input.electionId,
         },
       });
 
@@ -82,49 +80,16 @@ export const electionRouter = createTRPCRouter({
         throw new Error("User is already a voter of this election");
       }
 
-      const isUserExists = await ctx.prisma.user.findUnique({
+      const voter = await ctx.prisma.voter.upsert({
         where: {
-          email: input.email,
-        },
-      });
-
-      // const user = await ctx.prisma.user.upsert({
-      //   where: {
-      //     email: input.email,
-      //   },
-      //   create: {
-      //     email: input.email,
-      //     first_name: input.firstName,
-      //     last_name: input.lastName,
-      //     ElectionVoterStatus: {
-      //       create: {
-      //         electionId: input.electionId,
-      //         status: "INVITED",
-      //       },
-      //     },
-      //     voters: {
-      //       connect: {
-      //         id: input.electionId,
-      //       },
-      //     },
-      //   },
-      //   update: {
-      //     voters: {
-      //       connect: {
-      //         id: input.electionId,
-      //       },
-      //     },
-      //   },
-      // });
-
-      const voter = await ctx.prisma.electionVoterStatus.upsert({
-        where: {
-          voterId: isUserExists?.id,
+          id: ctx.session.user.id,
         },
         create: {
-          voter: {
-            connect: {
-              id: isUserExists?.id,
+          account: {
+            create: {
+              email: input.email,
+              first_name: input.firstName,
+              last_name: input.lastName,
             },
           },
           election: {
@@ -132,17 +97,20 @@ export const electionRouter = createTRPCRouter({
               id: input.electionId,
             },
           },
-          status: "INVITED",
         },
         update: {
-          status: "INVITED",
+          election: {
+            connect: {
+              id: input.electionId,
+            },
+          },
         },
       });
 
       const token = await ctx.prisma.verificationToken.create({
         data: {
           type: "ELECTION_INVITATION",
-          userId: voter.voterId,
+          userId: voter.id,
           expiresAt: election.end_date,
         },
       });
@@ -184,11 +152,9 @@ export const electionRouter = createTRPCRouter({
       const election = await ctx.prisma.election.findFirst({
         where: {
           slug: input,
-          AND: {
-            commissioners: {
-              some: {
-                id: ctx.session.user.id,
-              },
+          commissioners: {
+            some: {
+              id: ctx.session.user.id,
             },
           },
         },
@@ -198,29 +164,23 @@ export const electionRouter = createTRPCRouter({
         throw new Error("Election not found");
       }
 
-      const voters = await ctx.prisma.user.aggregate({
+      const voters = await ctx.prisma.voter.aggregate({
         where: {
-          voters: {
-            some: {
-              id: election.id,
-            },
-          },
+          electionId: election.id,
         },
         _count: {
           _all: true,
         },
       });
 
-      const voted = await ctx.prisma.user.aggregate({
+      const voted = await ctx.prisma.voter.aggregate({
         where: {
-          voters: {
-            some: {
-              id: election.id,
-            },
-          },
-          vote: {
-            some: {
-              electionId: election.id,
+          electionId: election.id,
+          account: {
+            votes: {
+              some: {
+                electionId: election.id,
+              },
             },
           },
         },
@@ -336,11 +296,6 @@ export const electionRouter = createTRPCRouter({
           end_date: input.end_date,
           voting_start: input.voting_start ? input.voting_start : undefined,
           voting_end: input.voting_end ? input.voting_end : undefined,
-          commissioners: {
-            connect: {
-              id: ctx.session.user.id,
-            },
-          },
         },
         select: {
           id: true,
@@ -360,16 +315,10 @@ export const electionRouter = createTRPCRouter({
               })) || [],
         });
 
-      await ctx.prisma.user.update({
-        where: {
-          id: ctx.session.user.id,
-        },
+      await ctx.prisma.commissioner.create({
         data: {
-          commissioners: {
-            connect: {
-              id: newElection.id,
-            },
-          },
+          id: ctx.session.user.id,
+          electionId: newElection.id,
         },
       });
       return newElection;

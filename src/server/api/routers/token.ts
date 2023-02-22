@@ -30,21 +30,25 @@ export const tokenRouter = createTRPCRouter({
         throw new Error("Token expired");
       }
 
-      await ctx.prisma.user.update({
-        where: {
-          id: token.userId,
-        },
-        data: {
-          emailVerified: new Date(),
-        },
-      });
+      switch (input.type) {
+        case "EMAIL_VERIFICATION":
+          await ctx.prisma.user.update({
+            where: {
+              id: token.userId,
+            },
+            data: {
+              emailVerified: new Date(),
+            },
+          });
 
-      await ctx.prisma.verificationToken.deleteMany({
-        where: {
-          userId: token.userId,
-          type: input.type,
-        },
-      });
+          await ctx.prisma.verificationToken.deleteMany({
+            where: {
+              userId: token.userId,
+              type: input.type,
+            },
+          });
+          break;
+      }
 
       return true;
     }),
