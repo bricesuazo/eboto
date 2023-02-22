@@ -143,7 +143,7 @@ enum TokenType {
 
 model VerificationToken {
     id        String    @id @default(cuid())
-    type      TokenType @unique
+    type      TokenType
     expiresAt DateTime
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt

@@ -15,7 +15,7 @@ export const tokenRouter = createTRPCRouter({
       })
     )
     .query(async ({ input, ctx }) => {
-      const token = await ctx.prisma.verificationToken.findUnique({
+      const token = await ctx.prisma.verificationToken.findFirst({
         where: {
           id: input.token,
           type: input.type,

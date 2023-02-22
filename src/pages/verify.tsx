@@ -47,6 +47,8 @@ const VerifyPage = () => {
     );
   }
 
+  // TODO: Add password input when election invitation is accepted
+
   return (
     <div>
       <h1>Success! </h1>
