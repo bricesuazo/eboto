@@ -45,5 +45,7 @@ export const tokenRouter = createTRPCRouter({
           type: input.type,
         },
       });
+
+      return true;
     }),
 });

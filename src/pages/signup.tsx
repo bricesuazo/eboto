@@ -198,18 +198,33 @@ const Signup: NextPage = () => {
                 )}
 
                 <Flex justifyContent="end" mt={2}>
-                  <Link href="/signin">
-                    <Text
-                      fontSize="sm"
-                      fontWeight="normal"
-                      _hover={{
-                        textDecoration: "underline",
-                        cursor: "pointer",
-                      }}
-                    >
-                      Already have an account? Sign in
-                    </Text>
-                  </Link>
+                  <Button isDisabled={signUpMutation.isLoading} variant="link">
+                    {signUpMutation.isLoading ? (
+                      <Text
+                        fontSize="sm"
+                        fontWeight="normal"
+                        _hover={{
+                          textDecoration: "underline",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Already have an account? Sign in
+                      </Text>
+                    ) : (
+                      <Link href="/signin">
+                        <Text
+                          fontSize="sm"
+                          fontWeight="normal"
+                          _hover={{
+                            textDecoration: "underline",
+                            cursor: "pointer",
+                          }}
+                        >
+                          Already have an account? Sign in
+                        </Text>
+                      </Link>
+                    )}
+                  </Button>
                 </Flex>
               </FormControl>
 
