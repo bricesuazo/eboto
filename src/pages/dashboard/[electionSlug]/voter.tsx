@@ -59,7 +59,7 @@ const DashboardVoter = () => {
       ) : !voters.data.length ? (
         <Text>No voters found</Text>
       ) : (
-        voters.data.map(({ status, account: voter }) => (
+        voters.data.map(({ status, user: voter }) => (
           <Flex key={voter.id}>
             <Text>
               {voter.first_name} {voter.last_name} - {voter.email} ({status})

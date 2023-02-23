@@ -15,7 +15,7 @@ export const electionRouter = createTRPCRouter({
         include: {
           voters: {
             include: {
-              account: true,
+              user: true,
             },
           },
           commissioners: true,
@@ -28,7 +28,7 @@ export const electionRouter = createTRPCRouter({
 
       if (
         !election.commissioners.some(
-          (commissioner) => commissioner.id === ctx.session.user.id
+          (commissioner) => commissioner.userId === ctx.session.user.id
         )
       ) {
         throw new Error("You are not a commissioner of this election");
@@ -61,7 +61,7 @@ export const electionRouter = createTRPCRouter({
 
       if (
         !election.commissioners.some(
-          (commissioner) => commissioner.id === ctx.session.user.id
+          (commissioner) => commissioner.userId === ctx.session.user.id
         )
       ) {
         throw new Error("You are not a commissioner of this election");
@@ -69,7 +69,7 @@ export const electionRouter = createTRPCRouter({
 
       const isVoterExists = await ctx.prisma.voter.findFirst({
         where: {
-          account: {
+          user: {
             email: input.email,
           },
           electionId: input.electionId,
@@ -88,7 +88,7 @@ export const electionRouter = createTRPCRouter({
 
       const voter = await ctx.prisma.voter.create({
         data: {
-          account: isUserExists
+          user: isUserExists
             ? {
                 connect: {
                   id: isUserExists.id,
@@ -143,7 +143,7 @@ export const electionRouter = createTRPCRouter({
 
       if (
         !election.commissioners.some(
-          (commissioner) => commissioner.id === ctx.session.user.id
+          (commissioner) => commissioner.userId === ctx.session.user.id
         )
       ) {
         throw new Error("You are not a commissioner of this election");
@@ -210,7 +210,7 @@ export const electionRouter = createTRPCRouter({
       const voted = await ctx.prisma.voter.aggregate({
         where: {
           electionId: election.id,
-          account: {
+          user: {
             votes: {
               some: {
                 electionId: election.id,
@@ -257,6 +257,9 @@ export const electionRouter = createTRPCRouter({
             userId: ctx.session.user.id,
           },
         },
+      },
+      orderBy: {
+        updatedAt: "desc",
       },
     });
   }),
@@ -331,6 +334,7 @@ export const electionRouter = createTRPCRouter({
           voting_start: input.voting_start ? input.voting_start : undefined,
           voting_end: input.voting_end ? input.voting_end : undefined,
         },
+
         select: {
           id: true,
           slug: true,
@@ -376,7 +380,7 @@ export const electionRouter = createTRPCRouter({
 
       if (
         !election.commissioners.some(
-          (commissioner) => commissioner.id === ctx.session.user.id
+          (commissioner) => commissioner.userId === ctx.session.user.id
         )
       ) {
         throw new Error("You are not a commissioner of this election");

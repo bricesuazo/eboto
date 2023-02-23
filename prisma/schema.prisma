@@ -61,8 +61,10 @@ model Commissioner {
 }
 
 model Voter {
-    id      String @id
-    account User   @relation(fields: [id], references: [id], onDelete: Cascade)
+    id String @id @default(cuid())
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     status    AccountStatusType @default(INVITED)
     createdAt DateTime          @default(now())
@@ -70,7 +72,7 @@ model Voter {
     election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
     electionId String
 
-    @@index([id])
+    @@index([userId])
     @@index([electionId])
 }
 
