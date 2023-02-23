@@ -62,6 +62,7 @@ const DashboardVoter = () => {
         voters.data.map(({ status, account: voter }) => (
           <Flex key={voter.id}>
             <Text>
+              {voter.first_name} {voter.last_name} - {voter.email} ({status})
               {voter.email} ({status})
             </Text>
 

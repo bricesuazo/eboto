@@ -56,6 +56,8 @@ const CreateVoterModal = ({
             await createVoterMutation.mutateAsync({
               electionId,
               email: data.email as string,
+              firstName: data.firstName as string,
+              lastName: data.lastName as string,
             });
             onVoterCreated();
             onClose();
