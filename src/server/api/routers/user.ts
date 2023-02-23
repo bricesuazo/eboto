@@ -29,6 +29,16 @@ export const userRouter = createTRPCRouter({
         !isUserExists.password &&
         !isUserExists.emailVerified
       ) {
+        await ctx.prisma.user.update({
+          where: {
+            id: isUserExists.id,
+          },
+          data: {
+            first_name: input.first_name,
+            last_name: input.last_name,
+            password: await bcrypt.hash(input.password, 12),
+          },
+        });
         await sendEmail({
           type: "EMAIL_VERIFICATION",
           email: isUserExists.email,
