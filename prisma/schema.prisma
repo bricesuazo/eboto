@@ -31,6 +31,13 @@ model User {
     @@index([id, email])
 }
 
+model TemporaryUser {
+    id        String   @id @default(cuid())
+    email     String   @unique
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
 enum AccountStatusType {
     INVITED
     ACCEPTED
@@ -38,8 +45,10 @@ enum AccountStatusType {
 }
 
 model Commissioner {
-    id      String @id
-    account User   @relation(fields: [id], references: [id], onDelete: Cascade)
+    id String @id @default(cuid())
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     createdAt DateTime          @default(now())
     status    AccountStatusType @default(INVITED)
@@ -47,7 +56,7 @@ model Commissioner {
     election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
     electionId String
 
-    @@index([id])
+    @@index([userId])
     @@index([electionId])
 }
 

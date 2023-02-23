@@ -16,6 +16,7 @@ import {
   AlertIcon,
   AlertTitle,
   AlertDescription,
+  HStack,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
@@ -65,6 +66,48 @@ const CreateVoterModal = ({
         >
           <ModalBody>
             <Stack>
+              <HStack>
+                <FormControl
+                  isInvalid={!!errors.firstName}
+                  isRequired
+                  isDisabled={createVoterMutation.isLoading}
+                >
+                  <FormLabel>First name</FormLabel>
+                  <Input
+                    placeholder="Enter voter's first name"
+                    type="text"
+                    {...register("firstName", {
+                      required: "This is required.",
+                    })}
+                  />
+
+                  {errors.firstName && (
+                    <FormErrorMessage>
+                      {errors.firstName.message?.toString()}
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+                <FormControl
+                  isInvalid={!!errors.lastName}
+                  isRequired
+                  isDisabled={createVoterMutation.isLoading}
+                >
+                  <FormLabel>Last name</FormLabel>
+                  <Input
+                    placeholder="Enter voter's last name"
+                    type="text"
+                    {...register("lastName", {
+                      required: "This is required.",
+                    })}
+                  />
+
+                  {errors.lastName && (
+                    <FormErrorMessage>
+                      {errors.lastName.message?.toString()}
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+              </HStack>
               <FormControl
                 isInvalid={!!errors.lastName}
                 isRequired

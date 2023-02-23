@@ -188,7 +188,7 @@ export const electionRouter = createTRPCRouter({
           slug: input,
           commissioners: {
             some: {
-              id: ctx.session.user.id,
+              userId: ctx.session.user.id,
             },
           },
         },
@@ -254,7 +254,7 @@ export const electionRouter = createTRPCRouter({
       where: {
         commissioners: {
           some: {
-            id: ctx.session.user.id,
+            userId: ctx.session.user.id,
           },
         },
       },
@@ -337,6 +337,13 @@ export const electionRouter = createTRPCRouter({
         },
       });
 
+      await ctx.prisma.commissioner.create({
+        data: {
+          electionId: newElection.id,
+          userId: ctx.session.user.id,
+        },
+      });
+
       if (input.template !== 0)
         await ctx.prisma.position.createMany({
           data:
@@ -349,12 +356,6 @@ export const electionRouter = createTRPCRouter({
               })) || [],
         });
 
-      await ctx.prisma.commissioner.create({
-        data: {
-          id: ctx.session.user.id,
-          electionId: newElection.id,
-        },
-      });
       return newElection;
     }),
   delete: protectedProcedure
