@@ -31,11 +31,28 @@ model User {
     @@index([id, email])
 }
 
-model TemporaryUser {
-    id        String   @id @default(cuid())
-    email     String   @unique
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model InvitedCommissioner {
+    id String @id @default(cuid())
+
+    email  String
+    status AccountStatusType @default(INVITED)
+
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId String
+
+    @@index([electionId])
+}
+
+model InvitedVoter {
+    id String @id @default(cuid())
+
+    email  String
+    status AccountStatusType @default(INVITED)
+
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId String
+
+    @@index([electionId])
 }
 
 enum AccountStatusType {
@@ -50,8 +67,7 @@ model Commissioner {
     userId String
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    createdAt DateTime          @default(now())
-    status    AccountStatusType @default(INVITED)
+    createdAt DateTime @default(now())
 
     election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
     electionId String
@@ -66,8 +82,7 @@ model Voter {
     userId String
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    status    AccountStatusType @default(INVITED)
-    createdAt DateTime          @default(now())
+    createdAt DateTime @default(now())
 
     election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
     electionId String
@@ -96,12 +111,14 @@ model Election {
     createdAt    DateTime          @default(now())
     updatedAt    DateTime          @updatedAt
 
-    commissioners Commissioner[]
-    voters        Voter[]
-    candidates    Candidate[]
-    positions     Position[]
-    vote          Vote[]
-    partylist     Partylist[]
+    commissioners       Commissioner[]
+    voters              Voter[]
+    candidates          Candidate[]
+    positions           Position[]
+    vote                Vote[]
+    partylist           Partylist[]
+    invitedVoter        InvitedVoter[]
+    invitedCommissioner InvitedCommissioner[]
 
     @@index([id, slug])
 }
