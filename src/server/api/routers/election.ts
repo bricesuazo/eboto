@@ -75,6 +75,8 @@ export const electionRouter = createTRPCRouter({
         throw new Error("Email is already a voter of this election");
       }
 
+      // TODO: Check if email is the email of this session user. Then just connect the voter to the user
+
       await ctx.prisma.invitedVoter.create({
         data: {
           email: input.email,

@@ -40,6 +40,8 @@ model InvitedCommissioner {
     election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
     electionId String
 
+    tokens VerificationToken[]
+
     @@index([electionId])
 }
 
@@ -51,6 +53,8 @@ model InvitedVoter {
 
     election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
     electionId String
+
+    tokens VerificationToken[]
 
     @@index([electionId])
 }
@@ -136,10 +140,16 @@ model VerificationToken {
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
 
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String
+    user                  User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId                String
+    InvitedVoter          InvitedVoter?        @relation(fields: [invitedVoterId], references: [id])
+    invitedVoterId        String?
+    InvitedCommissioner   InvitedCommissioner? @relation(fields: [invitedCommissionerId], references: [id])
+    invitedCommissionerId String?
 
     @@index([userId])
+    @@index([invitedVoterId])
+    @@index([invitedCommissionerId])
 }
 
 model Candidate {
