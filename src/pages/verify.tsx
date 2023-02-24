@@ -3,11 +3,15 @@ import { api } from "../utils/api";
 
 const VerifyPage = () => {
   const router = useRouter();
-  const { token, type } = router.query;
+  const { token, type, status, accountType } = router.query;
 
   if (
     typeof token !== "string" ||
     typeof type !== "string" ||
+    (status !== "ACCEPTED" && status !== "DECLINED" && status !== undefined) ||
+    (accountType !== "VOTER" &&
+      accountType !== "COMMISSIONER" &&
+      accountType !== undefined) ||
     type !== ("EMAIL_VERIFICATION" || "PASSWORD_RESET" || "ELECTION_INVITATION")
   )
     return null;
@@ -16,6 +20,8 @@ const VerifyPage = () => {
     {
       token,
       type,
+      status,
+      accountType,
     },
     {
       refetchOnMount: false,

@@ -12,6 +12,8 @@ export const tokenRouter = createTRPCRouter({
           "ELECTION_INVITATION",
         ]),
         token: z.string(),
+        status: z.enum(["ACCEPTED", "DECLINED"]).optional(),
+        accountType: z.enum(["VOTER", "COMMISSIONER"]).optional(),
       })
     )
     .query(async ({ input, ctx }) => {
@@ -32,14 +34,28 @@ export const tokenRouter = createTRPCRouter({
 
       switch (input.type) {
         case "EMAIL_VERIFICATION":
-          await ctx.prisma.user.update({
-            where: {
-              id: token.userId,
-            },
-            data: {
-              emailVerified: new Date(),
-            },
-          });
+          switch (input.accountType) {
+            case "VOTER":
+              await ctx.prisma.invitedVoter.update({
+                where: {
+                  id: token.userId,
+                },
+                data: {
+                  status: input.status,
+                },
+              });
+              break;
+            case "COMMISSIONER":
+              await ctx.prisma.invitedCommissioner.update({
+                where: {
+                  id: token.userId,
+                },
+                data: {
+                  status: input.status,
+                },
+              });
+              break;
+          }
 
           await ctx.prisma.verificationToken.deleteMany({
             where: {
