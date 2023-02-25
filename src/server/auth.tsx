@@ -24,6 +24,7 @@ declare module "next-auth" {
       id: string;
       firstName: string;
       lastName: string;
+      email: string;
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];

@@ -56,29 +56,51 @@ const DashboardVoter = () => {
         <Text>Loading...</Text>
       ) : voters.isError ? (
         <Text>Error: {voters.error.message}</Text>
-      ) : !voters.data.length ? (
+      ) : !voters.data.invitedVoter.length && !voters.data.voters.length ? (
         <Text>No voters found</Text>
       ) : (
-        voters.data.map((voter) => (
-          <Flex key={voter.id}>
-            <Text>
-              {voter.email} ({voter.status})
-            </Text>
+        <>
+          {voters.data.voters.map((voter) => (
+            <Flex key={voter.id}>
+              <Text>{voter.user.email}</Text>
 
-            <Button
-              onClick={() =>
-                election.data &&
-                removeVoterMutation.mutate({
-                  electionId: election.data.id,
-                  voterId: voter.id,
-                })
-              }
-              isLoading={removeVoterMutation.isLoading}
-            >
-              Delete
-            </Button>
-          </Flex>
-        ))
+              <Button
+                onClick={() =>
+                  election.data &&
+                  removeVoterMutation.mutate({
+                    electionId: election.data.id,
+                    voterId: voter.id,
+                    isInvitedVoter: false,
+                  })
+                }
+                isLoading={removeVoterMutation.isLoading}
+              >
+                Delete
+              </Button>
+            </Flex>
+          ))}
+          {voters.data.invitedVoter.map((voter) => (
+            <Flex key={voter.id}>
+              <Text>
+                {voter.email} ({voter.status})
+              </Text>
+
+              <Button
+                onClick={() =>
+                  election.data &&
+                  removeVoterMutation.mutate({
+                    electionId: election.data.id,
+                    voterId: voter.id,
+                    isInvitedVoter: true,
+                  })
+                }
+                isLoading={removeVoterMutation.isLoading}
+              >
+                Delete
+              </Button>
+            </Flex>
+          ))}
+        </>
       )}
     </Container>
   );

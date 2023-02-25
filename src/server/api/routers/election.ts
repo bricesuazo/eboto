@@ -9,10 +9,101 @@ export const electionRouter = createTRPCRouter({
     .input(
       z.object({
         tokenId: z.string(),
+        status: z.boolean(),
       })
     )
-    .mutation(({ input, ctx }) => {
-      console.log(input);
+    .mutation(async ({ input, ctx }) => {
+      const token = await ctx.prisma.verificationToken.findFirst({
+        where: {
+          id: input.tokenId,
+          type: "ELECTION_INVITATION",
+          OR: [
+            {
+              invitedVoter: {
+                email: ctx.session.user.email,
+              },
+            },
+            {
+              invitedCommissioner: {
+                email: ctx.session.user.email,
+              },
+            },
+          ],
+        },
+        include: {
+          invitedVoter: true,
+          invitedCommissioner: true,
+        },
+      });
+
+      if (!token) {
+        throw new Error("Invalid token");
+      }
+
+      if (token.expiresAt < new Date()) {
+        throw new Error("Token expired");
+      }
+
+      if (input.status) {
+        if (token.invitedVoter) {
+          await ctx.prisma.voter.create({
+            data: {
+              userId: ctx.session.user.id,
+              electionId: token.invitedVoter.electionId,
+            },
+          });
+
+          await ctx.prisma.invitedVoter.delete({
+            where: {
+              id: token.invitedVoter.id,
+            },
+          });
+        } else if (token.invitedCommissioner) {
+          await ctx.prisma.commissioner.create({
+            data: {
+              userId: ctx.session.user.id,
+              electionId: token.invitedCommissioner.electionId,
+            },
+          });
+
+          await ctx.prisma.invitedCommissioner.delete({
+            where: {
+              id: token.invitedCommissioner.id,
+            },
+          });
+        }
+      } else {
+        await ctx.prisma.verificationToken.update({
+          where: {
+            id: input.tokenId,
+          },
+          data: token.invitedVoter
+            ? {
+                invitedVoter: {
+                  update: {
+                    status: "DECLINED",
+                  },
+                },
+              }
+            : token.invitedCommissioner
+            ? {
+                invitedCommissioner: {
+                  update: {
+                    status: "DECLINED",
+                  },
+                },
+              }
+            : {},
+        });
+
+        await ctx.prisma.verificationToken.delete({
+          where: {
+            id: input.tokenId,
+          },
+        });
+      }
+
+      return true;
     }),
   getElectionVoter: protectedProcedure
     .input(z.string())
@@ -38,7 +129,7 @@ export const electionRouter = createTRPCRouter({
         throw new Error("You are not a commissioner of this election");
       }
 
-      return ctx.prisma.invitedVoter.findMany({
+      const invitedVoter = await ctx.prisma.invitedVoter.findMany({
         where: {
           electionId: election.id,
         },
@@ -50,6 +141,20 @@ export const electionRouter = createTRPCRouter({
           },
         },
       });
+
+      const voters = await ctx.prisma.voter.findMany({
+        where: {
+          electionId: election.id,
+        },
+        include: {
+          user: true,
+        },
+      });
+
+      return {
+        invitedVoter,
+        voters,
+      };
     }),
   createVoter: protectedProcedure
     .input(
@@ -119,6 +224,7 @@ export const electionRouter = createTRPCRouter({
       z.object({
         electionId: z.string(),
         voterId: z.string(),
+        isInvitedVoter: z.boolean(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -147,15 +253,24 @@ export const electionRouter = createTRPCRouter({
       await ctx.prisma.verificationToken.deleteMany({
         where: {
           invitedVoterId: input.voterId,
+          userId: input.voterId,
           type: "ELECTION_INVITATION",
         },
       });
 
-      await ctx.prisma.invitedVoter.delete({
-        where: {
-          id: input.voterId,
-        },
-      });
+      if (input.isInvitedVoter) {
+        await ctx.prisma.invitedVoter.delete({
+          where: {
+            id: input.voterId,
+          },
+        });
+      } else {
+        await ctx.prisma.voter.delete({
+          where: {
+            id: input.voterId,
+          },
+        });
+      }
 
       return true;
     }),
@@ -260,19 +375,12 @@ export const electionRouter = createTRPCRouter({
   getMyElectionsVote: protectedProcedure.query(async ({ ctx }) => {
     return ctx.prisma.election.findMany({
       where: {
-        publicity: {
-          not: "PRIVATE",
-        },
+        // publicity: {
+        //   not: "PRIVATE",
+        // },
         voters: {
           some: {
-            id: ctx.session.user.id,
-          },
-        },
-      },
-      include: {
-        vote: {
-          where: {
-            voterId: ctx.session.user.id,
+            userId: ctx.session.user.id,
           },
         },
       },

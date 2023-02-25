@@ -1,15 +1,53 @@
+import { Button, Container } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { api } from "../utils/api";
 
 const Invitation = () => {
   const router = useRouter();
-  console.log(router);
   const { token } = router.query;
+  const tokenQuery = api.token.getById.useQuery(token as string, {
+    enabled: !!token,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+  const invitationMutation = api.election.invitation.useMutation({
+    onSuccess: async () => await router.push("/dashboard"),
+  });
 
-  //   const invitationMutation = api.election.invitation.useMutation();
-  //   const electionQuery = api.election.getBySlug;
+  if (tokenQuery.isLoading) return <Container>Loading...</Container>;
+  if (tokenQuery.isError)
+    return <Container>{tokenQuery.error.message}</Container>;
 
-  return <div>Invitation</div>;
+  if (typeof token !== "string" || !tokenQuery.data)
+    return <Container>No token</Container>;
+
+  return (
+    <Container>
+      accept invitation
+      <Button
+        onClick={() => {
+          invitationMutation.mutate({
+            tokenId: token,
+            status: true,
+          });
+        }}
+        isLoading={invitationMutation.isLoading}
+      >
+        Accept
+      </Button>
+      <Button
+        onClick={() => {
+          invitationMutation.mutate({
+            tokenId: token,
+            status: false,
+          });
+        }}
+        isLoading={invitationMutation.isLoading}
+      >
+        Decline
+      </Button>
+    </Container>
+  );
 };
 
 export default Invitation;

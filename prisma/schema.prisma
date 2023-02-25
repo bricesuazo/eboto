@@ -61,7 +61,6 @@ model InvitedVoter {
 
 enum AccountStatusType {
     INVITED
-    ACCEPTED
     DECLINED
 }
 

@@ -1,8 +1,44 @@
+import { protectedProcedure } from "./../trpc";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const tokenRouter = createTRPCRouter({
+  getById: protectedProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      const token = await ctx.prisma.verificationToken.findFirst({
+        where: {
+          id: input,
+          OR: [
+            {
+              invitedVoter: {
+                email: ctx.session.user.email,
+              },
+            },
+            {
+              invitedCommissioner: {
+                email: ctx.session.user.email,
+              },
+            },
+          ],
+        },
+        include: {
+          invitedVoter: true,
+          invitedCommissioner: true,
+        },
+      });
+
+      if (!token) {
+        throw new Error("Invalid token");
+      }
+
+      if (token.expiresAt < new Date()) {
+        throw new Error("Token expired");
+      }
+
+      return token;
+    }),
   verify: publicProcedure
     .input(
       z.object({
@@ -41,79 +77,6 @@ export const tokenRouter = createTRPCRouter({
             },
           });
           break;
-        case "ELECTION_INVITATION":
-          switch (input.accountType) {
-            case "VOTER":
-              if (!token.invitedVoterId) {
-                throw new Error("Invalid token");
-              }
-              const isVoterExists = await ctx.prisma.invitedVoter.findFirst({
-                where: {
-                  tokens: {
-                    some: {
-                      id: token.id,
-                    },
-                  },
-                },
-              });
-
-              if (!isVoterExists) {
-                throw new Error("Invalid token");
-              }
-
-              await ctx.prisma.invitedVoter.update({
-                where: {
-                  id: isVoterExists.id,
-                },
-                data: {
-                  status: input.status,
-                },
-              });
-
-              await ctx.prisma.verificationToken.deleteMany({
-                where: {
-                  invitedVoterId: isVoterExists.id,
-                  type: "ELECTION_INVITATION",
-                },
-              });
-
-              break;
-            case "COMMISSIONER":
-              if (!token.invitedCommissionerId) {
-                throw new Error("Invalid token");
-              }
-              const isCommissionerExists =
-                await ctx.prisma.invitedCommissioner.findFirst({
-                  where: {
-                    tokens: {
-                      some: {
-                        id: token.id,
-                      },
-                    },
-                  },
-                });
-
-              if (!isCommissionerExists) {
-                throw new Error("Invalid token");
-              }
-
-              await ctx.prisma.invitedCommissioner.update({
-                where: {
-                  id: isCommissionerExists.id,
-                },
-                data: {
-                  status: input.status,
-                },
-              });
-
-              await ctx.prisma.verificationToken.deleteMany({
-                where: {
-                  invitedCommissionerId: isCommissionerExists.id,
-                  type: "ELECTION_INVITATION",
-                },
-              });
-              break;
-          }
       }
 
       return true;
