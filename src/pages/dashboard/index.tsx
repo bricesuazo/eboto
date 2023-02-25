@@ -10,6 +10,7 @@ import Link from "next/link";
 import Moment from "react-moment";
 import CreateElectionModal from "../../components/modals/CreateElection";
 import { api } from "../../utils/api";
+import { convertNumberToHour } from "../../utils/convertNumberToHour";
 
 const DashboardPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -86,7 +87,8 @@ const DashboardPage = () => {
                   <Moment format="YYYY/MM/D hA">{election.end_date}</Moment>
                 </Text>
                 <Text fontSize="sm" color="GrayText">
-                  {election.voting_start} - {election.voting_end}
+                  Open from {convertNumberToHour(election.voting_start)} -{" "}
+                  {convertNumberToHour(election.voting_end)}
                 </Text>
               </Box>
             </Link>

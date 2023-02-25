@@ -1,4 +1,4 @@
-import { Button, Container, Text } from "@chakra-ui/react";
+import { Button, Container, Flex, HStack, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Moment from "react-moment";
@@ -33,23 +33,65 @@ const DashboardOverview = () => {
         <Text>No election found</Text>
       ) : (
         <>
-          <Link
-            href={
-              "/dashboard/" + electionOverview.data.election.slug + "/voter"
-            }
-          >
-            <Button variant="link">voter</Button>
-          </Link>
-          <Button
-            colorScheme="red"
-            onClick={() =>
-              electionOverview.data &&
-              deleteElectionMutation.mutate(electionOverview.data.election.id)
-            }
-            isLoading={deleteElectionMutation.isLoading}
-          >
-            Delete
-          </Button>
+          <Flex justifyContent="space-between">
+            <HStack>
+              <Link
+                href={
+                  "/dashboard/" +
+                  electionOverview.data.election.slug +
+                  "/partylist"
+                }
+              >
+                <Button>Partylist</Button>
+              </Link>
+              <Link
+                href={
+                  "/dashboard/" +
+                  electionOverview.data.election.slug +
+                  "/position"
+                }
+              >
+                <Button>Position</Button>
+              </Link>
+              <Link
+                href={
+                  "/dashboard/" +
+                  electionOverview.data.election.slug +
+                  "/candidate"
+                }
+              >
+                <Button>Candidate</Button>
+              </Link>
+              <Link
+                href={
+                  "/dashboard/" + electionOverview.data.election.slug + "/voter"
+                }
+              >
+                <Button>Voter</Button>
+              </Link>
+              <Link
+                href={
+                  "/dashboard/" +
+                  electionOverview.data.election.slug +
+                  "/settings"
+                }
+              >
+                <Button>Settings</Button>
+              </Link>
+            </HStack>
+
+            <Button
+              colorScheme="red"
+              onClick={() =>
+                electionOverview.data &&
+                deleteElectionMutation.mutate(electionOverview.data.election.id)
+              }
+              isLoading={deleteElectionMutation.isLoading}
+            >
+              Delete
+            </Button>
+          </Flex>
+
           <Text>{electionOverview.data.election.name}</Text>
           <Text>{electionOverview.data.election.slug}</Text>
 
