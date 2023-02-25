@@ -110,4 +110,11 @@ export const takenSlugs: TakenSlugs = [
   "dashboard",
   "contact",
   "profile",
+  "invite",
+  "admin",
+  "admin-dashboard",
+  "admin-election",
+  "admin-user",
+  "admin-settings",
+  "invitation",
 ];

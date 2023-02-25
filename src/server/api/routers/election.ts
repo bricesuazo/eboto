@@ -5,6 +5,15 @@ import { takenSlugs } from "../../../constants";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 
 export const electionRouter = createTRPCRouter({
+  invitation: protectedProcedure
+    .input(
+      z.object({
+        tokenId: z.string(),
+      })
+    )
+    .mutation(({ input, ctx }) => {
+      console.log(input);
+    }),
   getElectionVoter: protectedProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
@@ -32,6 +41,13 @@ export const electionRouter = createTRPCRouter({
       return ctx.prisma.invitedVoter.findMany({
         where: {
           electionId: election.id,
+        },
+        include: {
+          election: {
+            include: {
+              voters: true,
+            },
+          },
         },
       });
     }),
@@ -76,8 +92,16 @@ export const electionRouter = createTRPCRouter({
       }
 
       // TODO: Check if email is the email of this session user. Then just connect the voter to the user
+      if (ctx.session.user.email === input.email) {
+        return await ctx.prisma.voter.create({
+          data: {
+            userId: ctx.session.user.id,
+            electionId: input.electionId,
+          },
+        });
+      }
 
-      await ctx.prisma.invitedVoter.create({
+      return await ctx.prisma.invitedVoter.create({
         data: {
           email: input.email,
           electionId: input.electionId,
@@ -89,7 +113,6 @@ export const electionRouter = createTRPCRouter({
           },
         },
       });
-      return true;
     }),
   removeVoter: protectedProcedure
     .input(

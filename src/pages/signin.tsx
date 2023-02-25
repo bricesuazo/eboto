@@ -63,7 +63,10 @@ const Signin: NextPage = () => {
               redirect: false,
               callbackUrl: (router.query.callbackUrl as string) || "/dashboard",
             }).then(async (res) => {
-              if (res?.ok) await router.push("/dashboard");
+              if (res?.ok)
+                await router.push(
+                  (router.query.callbackUrl as string) || "/dashboard"
+                );
               if (res?.error) {
                 setError(res.error);
 

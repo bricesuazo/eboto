@@ -82,12 +82,34 @@ export const tokenRouter = createTRPCRouter({
               if (!token.invitedCommissionerId) {
                 throw new Error("Invalid token");
               }
+              const isCommissionerExists =
+                await ctx.prisma.invitedCommissioner.findFirst({
+                  where: {
+                    tokens: {
+                      some: {
+                        id: token.id,
+                      },
+                    },
+                  },
+                });
+
+              if (!isCommissionerExists) {
+                throw new Error("Invalid token");
+              }
+
               await ctx.prisma.invitedCommissioner.update({
                 where: {
-                  id: token.invitedCommissionerId,
+                  id: isCommissionerExists.id,
                 },
                 data: {
                   status: input.status,
+                },
+              });
+
+              await ctx.prisma.verificationToken.deleteMany({
+                where: {
+                  invitedCommissionerId: isCommissionerExists.id,
+                  type: "ELECTION_INVITATION",
                 },
               });
               break;
