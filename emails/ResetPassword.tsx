@@ -11,7 +11,7 @@ import { Preview } from "@react-email/preview";
 import { Section } from "@react-email/section";
 import { Text } from "@react-email/text";
 
-interface VerifyEmailProps {
+interface ResetPasswordProps {
   token: string;
 }
 
@@ -19,11 +19,11 @@ const baseUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
 
-export default function VerifyEmail({ token }: VerifyEmailProps) {
+export default function ResetPassword({ token }: ResetPasswordProps) {
   return (
     <Html>
       <Head />
-      <Preview>Confirm your email to eBoto Mo</Preview>
+      <Preview>Reset your password</Preview>
       <Body style={main}>
         <Container style={container}>
           <Img
@@ -33,15 +33,15 @@ export default function VerifyEmail({ token }: VerifyEmailProps) {
             alt="eBoto Mo"
             style={logo}
           />
-          <Heading style={heading}>Confirm your email to eBoto Mo</Heading>
+          <Heading style={heading}>Reset your password</Heading>
           <Section style={buttonContainer}>
             <Button
               pY={11}
               pX={23}
               style={button}
-              href={`${baseUrl}/verify?type=EMAIL_VERIFICATION&token=${token}`}
+              href={`${baseUrl}/verify?type=PASSWORD_RESET&token=${token}`}
             >
-              Confirm email
+              Reset password
             </Button>
           </Section>
           <Text style={paragraph}>

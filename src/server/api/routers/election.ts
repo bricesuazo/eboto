@@ -185,14 +185,23 @@ export const electionRouter = createTRPCRouter({
         throw new Error("You are not a commissioner of this election");
       }
 
-      const isVoterExistsInElection = await ctx.prisma.invitedVoter.findFirst({
+      const isVoterExistsInElection = await ctx.prisma.voter.findFirst({
         where: {
-          email: input.email,
+          user: {
+            email: input.email,
+          },
           electionId: input.electionId,
         },
       });
+      const isVoterExistsInInvitedVoters =
+        await ctx.prisma.invitedVoter.findFirst({
+          where: {
+            email: input.email,
+            electionId: input.electionId,
+          },
+        });
 
-      if (isVoterExistsInElection) {
+      if (isVoterExistsInElection || isVoterExistsInInvitedVoters) {
         throw new Error("Email is already a voter of this election");
       }
 

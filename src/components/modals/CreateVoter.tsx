@@ -40,7 +40,10 @@ const CreateVoterModal = ({
   } = useForm();
 
   useEffect(() => {
-    !isOpen && reset();
+    if (!isOpen) {
+      reset();
+      createVoterMutation.reset();
+    }
   }, [isOpen, reset]);
 
   const createVoterMutation = api.election.createVoter.useMutation();

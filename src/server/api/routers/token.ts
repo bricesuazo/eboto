@@ -42,11 +42,7 @@ export const tokenRouter = createTRPCRouter({
   verify: publicProcedure
     .input(
       z.object({
-        type: z.enum([
-          "EMAIL_VERIFICATION",
-          "PASSWORD_RESET",
-          "ELECTION_INVITATION",
-        ]),
+        type: z.enum(["EMAIL_VERIFICATION", "PASSWORD_RESET"]),
         token: z.string(),
         status: z.enum(["ACCEPTED", "DECLINED"]).optional(),
         accountType: z.enum(["VOTER", "COMMISSIONER"]).optional(),
@@ -76,9 +72,10 @@ export const tokenRouter = createTRPCRouter({
               type: input.type,
             },
           });
+          return "EMAIL_VERIFICATION";
           break;
+        case "PASSWORD_RESET":
+          return "PASSWORD_RESET";
       }
-
-      return true;
     }),
 });

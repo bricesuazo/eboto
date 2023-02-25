@@ -43,6 +43,7 @@ const Signin: NextPage = () => {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm();
   return (
@@ -108,7 +109,11 @@ const Signin: NextPage = () => {
             >
               <Flex justifyContent="space-between" alignItems="center">
                 <FormLabel>Password</FormLabel>
-                <Link href="/forgot-password">
+                <Link
+                  href={`/reset-password${
+                    watch("email") ? `?email=${watch("email") as string}` : ""
+                  }`}
+                >
                   <Text
                     fontSize="xs"
                     fontWeight="normal"

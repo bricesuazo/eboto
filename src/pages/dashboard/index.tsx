@@ -19,7 +19,6 @@ const DashboardPage = () => {
   });
   const myElectionVote = api.election.getMyElectionsVote.useQuery(undefined, {
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
     refetchOnReconnect: false,
   });
 
