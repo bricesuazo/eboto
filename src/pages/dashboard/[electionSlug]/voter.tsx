@@ -27,7 +27,7 @@ const DashboardVoter = () => {
     }
   );
 
-  const removeVoterMutation = api.election.removeVoter.useMutation({
+  const removeVoterMutation = api.voter.removeSingle.useMutation({
     onSuccess: async () => {
       await voters.refetch();
     },

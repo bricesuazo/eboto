@@ -2,9 +2,109 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { sendEmail } from "../../../utils/sendEmail";
 
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
+  invitation: protectedProcedure
+    .input(
+      z.object({
+        tokenId: z.string(),
+        isAccepted: z.boolean(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const token = await ctx.prisma.verificationToken.findFirst({
+        where: {
+          id: input.tokenId,
+          type: "ELECTION_INVITATION",
+          OR: [
+            {
+              invitedVoter: {
+                email: ctx.session.user.email,
+              },
+            },
+            {
+              invitedCommissioner: {
+                email: ctx.session.user.email,
+              },
+            },
+          ],
+        },
+        include: {
+          invitedVoter: true,
+          invitedCommissioner: true,
+        },
+      });
+
+      if (!token) {
+        throw new Error("Invalid token");
+      }
+
+      if (token.expiresAt < new Date()) {
+        throw new Error("Token expired");
+      }
+
+      if (input.isAccepted) {
+        if (token.invitedVoter) {
+          await ctx.prisma.voter.create({
+            data: {
+              userId: ctx.session.user.id,
+              electionId: token.invitedVoter.electionId,
+            },
+          });
+
+          await ctx.prisma.invitedVoter.delete({
+            where: {
+              id: token.invitedVoter.id,
+            },
+          });
+        } else if (token.invitedCommissioner) {
+          await ctx.prisma.commissioner.create({
+            data: {
+              userId: ctx.session.user.id,
+              electionId: token.invitedCommissioner.electionId,
+            },
+          });
+
+          await ctx.prisma.invitedCommissioner.delete({
+            where: {
+              id: token.invitedCommissioner.id,
+            },
+          });
+        }
+      } else {
+        await ctx.prisma.verificationToken.update({
+          where: {
+            id: input.tokenId,
+          },
+          data: token.invitedVoter
+            ? {
+                invitedVoter: {
+                  update: {
+                    status: "DECLINED",
+                  },
+                },
+              }
+            : token.invitedCommissioner
+            ? {
+                invitedCommissioner: {
+                  update: {
+                    status: "DECLINED",
+                  },
+                },
+              }
+            : {},
+        });
+
+        await ctx.prisma.verificationToken.delete({
+          where: {
+            id: input.tokenId,
+          },
+        });
+      }
+
+      return true;
+    }),
   resetPassword: publicProcedure
     .input(
       z.object({

@@ -46,7 +46,7 @@ const CreateVoterModal = ({
     }
   }, [isOpen, reset]);
 
-  const createVoterMutation = api.election.createVoter.useMutation();
+  const createVoterMutation = api.voter.createSingle.useMutation();
 
   return (
     <Modal isOpen={isOpen || createVoterMutation.isLoading} onClose={onClose}>

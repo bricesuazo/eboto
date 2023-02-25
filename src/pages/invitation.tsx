@@ -11,7 +11,7 @@ const Invitation = () => {
     refetchOnReconnect: false,
     retry: false,
   });
-  const invitationMutation = api.election.invitation.useMutation({
+  const invitationMutation = api.user.invitation.useMutation({
     onSuccess: async () => await router.push("/dashboard"),
   });
 
