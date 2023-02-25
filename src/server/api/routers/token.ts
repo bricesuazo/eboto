@@ -42,25 +42,46 @@ export const tokenRouter = createTRPCRouter({
           });
           break;
         case "ELECTION_INVITATION":
-          if (!token.invitedVoterId) {
-            throw new Error("Invalid token");
-          }
           switch (input.accountType) {
             case "VOTER":
+              if (!token.invitedVoterId) {
+                throw new Error("Invalid token");
+              }
+              const isVoterExists = await ctx.prisma.invitedVoter.findFirst({
+                where: {
+                  tokens: {
+                    some: {
+                      id: token.id,
+                    },
+                  },
+                },
+              });
+
+              if (!isVoterExists) {
+                throw new Error("Invalid token");
+              }
+
               await ctx.prisma.invitedVoter.update({
                 where: {
-                  id: token.invitedVoterId,
+                  id: isVoterExists.id,
                 },
                 data: {
                   status: input.status,
                 },
               });
+
+              await ctx.prisma.verificationToken.deleteMany({
+                where: {
+                  invitedVoterId: isVoterExists.id,
+                  type: "ELECTION_INVITATION",
+                },
+              });
+
               break;
             case "COMMISSIONER":
               if (!token.invitedCommissionerId) {
                 throw new Error("Invalid token");
               }
-
               await ctx.prisma.invitedCommissioner.update({
                 where: {
                   id: token.invitedCommissionerId,
