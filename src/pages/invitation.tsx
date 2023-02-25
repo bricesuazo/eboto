@@ -28,7 +28,7 @@ const Invitation = () => {
         onClick={() => {
           invitationMutation.mutate({
             tokenId: token,
-            status: true,
+            isAccepted: true,
           });
         }}
         isLoading={invitationMutation.isLoading}
@@ -39,7 +39,7 @@ const Invitation = () => {
         onClick={() => {
           invitationMutation.mutate({
             tokenId: token,
-            status: false,
+            isAccepted: false,
           });
         }}
         isLoading={invitationMutation.isLoading}

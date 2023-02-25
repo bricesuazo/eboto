@@ -1,4 +1,7 @@
+import { render } from "@react-email/render";
 import { z } from "zod";
+import { sendEmailTransport } from "../../../../emails";
+import ElectionInvitation from "../../../../emails/ElectionInvitation";
 import { positionTemplate } from "../../../constants";
 import { takenSlugs } from "../../../constants";
 
@@ -9,7 +12,7 @@ export const electionRouter = createTRPCRouter({
     .input(
       z.object({
         tokenId: z.string(),
-        status: z.boolean(),
+        isAccepted: z.boolean(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -44,7 +47,7 @@ export const electionRouter = createTRPCRouter({
         throw new Error("Token expired");
       }
 
-      if (input.status) {
+      if (input.isAccepted) {
         if (token.invitedVoter) {
           await ctx.prisma.voter.create({
             data: {
@@ -215,18 +218,38 @@ export const electionRouter = createTRPCRouter({
         });
       }
 
-      return await ctx.prisma.invitedVoter.create({
+      const invitedVoter = await ctx.prisma.invitedVoter.create({
         data: {
           email: input.email,
           electionId: input.electionId,
-          tokens: {
-            create: {
-              type: "ELECTION_INVITATION",
-              expiresAt: election.end_date,
+        },
+      });
+
+      const token = await ctx.prisma.verificationToken.create({
+        data: {
+          expiresAt: election.end_date,
+          type: "ELECTION_INVITATION",
+          invitedVoter: {
+            connect: {
+              id: invitedVoter.id,
             },
           },
         },
       });
+
+      await sendEmailTransport({
+        email: input.email,
+        subject: `You have been invited to vote in ${election.name}`,
+        html: render(
+          <ElectionInvitation
+            type="VOTER"
+            token={token.id}
+            electionName={election.name}
+            electionEndDate={election.end_date}
+          />
+        ),
+      });
+      return invitedVoter;
     }),
   removeVoter: protectedProcedure
     .input(
