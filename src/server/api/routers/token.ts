@@ -84,12 +84,6 @@ export const tokenRouter = createTRPCRouter({
           return "EMAIL_VERIFICATION";
 
         case "PASSWORD_RESET":
-          await ctx.prisma.verificationToken.deleteMany({
-            where: {
-              userId: token.userId,
-              type: input.type,
-            },
-          });
           return "PASSWORD_RESET";
       }
     }),
