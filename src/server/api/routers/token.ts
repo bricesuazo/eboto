@@ -44,8 +44,6 @@ export const tokenRouter = createTRPCRouter({
       z.object({
         type: z.enum(["EMAIL_VERIFICATION", "PASSWORD_RESET"]),
         token: z.string(),
-        status: z.enum(["ACCEPTED", "DECLINED"]).optional(),
-        accountType: z.enum(["VOTER", "COMMISSIONER"]).optional(),
       })
     )
     .query(async ({ input, ctx }) => {
@@ -66,6 +64,17 @@ export const tokenRouter = createTRPCRouter({
 
       switch (input.type) {
         case "EMAIL_VERIFICATION":
+          if (!token.userId) return;
+
+          await ctx.prisma.user.update({
+            where: {
+              id: token.userId,
+            },
+            data: {
+              emailVerified: new Date(),
+            },
+          });
+
           await ctx.prisma.verificationToken.deleteMany({
             where: {
               userId: token.userId,
@@ -73,8 +82,14 @@ export const tokenRouter = createTRPCRouter({
             },
           });
           return "EMAIL_VERIFICATION";
-          break;
+
         case "PASSWORD_RESET":
+          await ctx.prisma.verificationToken.deleteMany({
+            where: {
+              userId: token.userId,
+              type: input.type,
+            },
+          });
           return "PASSWORD_RESET";
       }
     }),

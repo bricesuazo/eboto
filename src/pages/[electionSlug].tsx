@@ -16,10 +16,6 @@ const ElectionPage = () => {
   if (election.isError) return <div>Error: {election.error.message}</div>;
 
   if (!election.data) return <div>Not found</div>;
-  console.log(
-    "🚀 ~ file: [electionSlug].tsx:22 ~ ElectionPage ~ election.data:",
-    election.data
-  );
 
   return <div>{election.data.name}ddd</div>;
 };

@@ -17,7 +17,7 @@ import { api } from "../utils/api";
 
 const VerifyPage = () => {
   const router = useRouter();
-  const { token, type, status, accountType } = router.query;
+  const { token, type } = router.query;
   const {
     register,
     handleSubmit,
@@ -29,14 +29,13 @@ const VerifyPage = () => {
     {
       token: token as string,
       type: type as "EMAIL_VERIFICATION" | "PASSWORD_RESET",
-      status: status as "ACCEPTED" | "DECLINED" | undefined,
-      accountType: accountType as "VOTER" | "COMMISSIONER" | undefined,
     },
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
       refetchInterval: false,
+      retry: false,
     }
   );
   const resetPasswordMutation = api.user.resetPassword.useMutation();

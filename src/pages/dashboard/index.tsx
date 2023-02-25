@@ -22,7 +22,7 @@ const DashboardPage = () => {
       <CreateElectionModal isOpen={isOpen} onClose={onClose} />
 
       <Text>My elections</Text>
-      <Flex>
+      <Flex gap={2}>
         {!myElections.data || myElections.isLoading ? (
           <Text>Loading...</Text>
         ) : myElections.data.length === 0 ? (
@@ -57,7 +57,7 @@ const DashboardPage = () => {
       </Flex>
 
       <Text>My votes</Text>
-      <Flex>
+      <Flex gap={2}>
         {!myElectionVote.data || myElectionVote.isLoading ? (
           <Text>Loading...</Text>
         ) : myElectionVote.data.length === 0 ? (
