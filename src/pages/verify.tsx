@@ -12,7 +12,9 @@ const VerifyPage = () => {
     (accountType !== "VOTER" &&
       accountType !== "COMMISSIONER" &&
       accountType !== undefined) ||
-    type !== ("EMAIL_VERIFICATION" || "PASSWORD_RESET" || "ELECTION_INVITATION")
+    (type !== "EMAIL_VERIFICATION" &&
+      type !== "PASSWORD_RESET" &&
+      type !== "ELECTION_INVITATION")
   )
     return null;
 

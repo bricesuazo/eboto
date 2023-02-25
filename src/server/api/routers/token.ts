@@ -34,29 +34,6 @@ export const tokenRouter = createTRPCRouter({
 
       switch (input.type) {
         case "EMAIL_VERIFICATION":
-          switch (input.accountType) {
-            case "VOTER":
-              await ctx.prisma.invitedVoter.update({
-                where: {
-                  id: token.userId,
-                },
-                data: {
-                  status: input.status,
-                },
-              });
-              break;
-            case "COMMISSIONER":
-              await ctx.prisma.invitedCommissioner.update({
-                where: {
-                  id: token.userId,
-                },
-                data: {
-                  status: input.status,
-                },
-              });
-              break;
-          }
-
           await ctx.prisma.verificationToken.deleteMany({
             where: {
               userId: token.userId,
@@ -64,6 +41,36 @@ export const tokenRouter = createTRPCRouter({
             },
           });
           break;
+        case "ELECTION_INVITATION":
+          if (!token.invitedVoterId) {
+            throw new Error("Invalid token");
+          }
+          switch (input.accountType) {
+            case "VOTER":
+              await ctx.prisma.invitedVoter.update({
+                where: {
+                  id: token.invitedVoterId,
+                },
+                data: {
+                  status: input.status,
+                },
+              });
+              break;
+            case "COMMISSIONER":
+              if (!token.invitedCommissionerId) {
+                throw new Error("Invalid token");
+              }
+
+              await ctx.prisma.invitedCommissioner.update({
+                where: {
+                  id: token.invitedCommissionerId,
+                },
+                data: {
+                  status: input.status,
+                },
+              });
+              break;
+          }
       }
 
       return true;

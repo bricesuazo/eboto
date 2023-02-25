@@ -81,19 +81,14 @@ export const electionRouter = createTRPCRouter({
         data: {
           email: input.email,
           electionId: input.electionId,
+          tokens: {
+            create: {
+              type: "ELECTION_INVITATION",
+              expiresAt: election.end_date,
+            },
+          },
         },
       });
-
-      // TODO: Fix token model. Should be InvitedVoter not User
-
-      // const token = await ctx.prisma.verificationToken.create({
-      //   data: {
-      //     type: "ELECTION_INVITATION",
-      //     userId: voter.id,
-      //     expiresAt: election.end_date,
-      //   },
-      // });
-
       return true;
     }),
   removeVoter: protectedProcedure
@@ -125,6 +120,13 @@ export const electionRouter = createTRPCRouter({
       ) {
         throw new Error("You are not a commissioner of this election");
       }
+
+      await ctx.prisma.verificationToken.deleteMany({
+        where: {
+          invitedVoterId: input.voterId,
+          type: "ELECTION_INVITATION",
+        },
+      });
 
       await ctx.prisma.invitedVoter.delete({
         where: {
