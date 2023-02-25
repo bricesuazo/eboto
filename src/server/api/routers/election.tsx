@@ -476,22 +476,11 @@ export const electionRouter = createTRPCRouter({
         publicity: {
           not: "PRIVATE",
         },
-        OR: [
-          {
-            commissioners: {
-              some: {
-                userId: ctx.session.user.id,
-              },
-            },
+        voters: {
+          some: {
+            userId: ctx.session.user.id,
           },
-          {
-            voters: {
-              some: {
-                userId: ctx.session.user.id,
-              },
-            },
-          },
-        ],
+        },
       },
     });
   }),
