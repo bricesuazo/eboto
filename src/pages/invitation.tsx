@@ -9,6 +9,7 @@ const Invitation = () => {
     enabled: !!token,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
+    retry: false,
   });
   const invitationMutation = api.election.invitation.useMutation({
     onSuccess: async () => await router.push("/dashboard"),

@@ -393,28 +393,105 @@ export const electionRouter = createTRPCRouter({
   getElectionData: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
-      return ctx.prisma.election.findUnique({
+      const election = await ctx.prisma.election.findUnique({
         where: {
           slug: input,
         },
-        include: {
-          candidates: true,
-          positions: true,
-          partylist: true,
-        },
       });
+
+      if (election) {
+        switch (election.publicity) {
+          case "PUBLIC":
+            return ctx.prisma.election.findUnique({
+              where: {
+                slug: input,
+              },
+              include: {
+                positions: true,
+                candidates: true,
+                partylist: true,
+              },
+            });
+          case "VOTER":
+            if (ctx.session) {
+              const isVoter = await ctx.prisma.election.findFirst({
+                where: {
+                  slug: input,
+                  voters: {
+                    some: {
+                      userId: ctx.session.user.id,
+                    },
+                  },
+                },
+              });
+
+              if (isVoter) {
+                return ctx.prisma.election.findUnique({
+                  where: {
+                    slug: input,
+                  },
+                  include: {
+                    positions: true,
+                    candidates: true,
+                    partylist: true,
+                  },
+                });
+              }
+            }
+            break;
+          case "PRIVATE":
+            if (ctx.session) {
+              const isCommissioner = await ctx.prisma.election.findFirst({
+                where: {
+                  slug: input,
+                  commissioners: {
+                    some: {
+                      userId: ctx.session.user.id,
+                    },
+                  },
+                },
+              });
+
+              if (isCommissioner) {
+                return ctx.prisma.election.findUnique({
+                  where: {
+                    slug: input,
+                  },
+                  include: {
+                    positions: true,
+                    candidates: true,
+                    partylist: true,
+                  },
+                });
+              }
+            }
+        }
+      }
+      throw new Error("Election not found");
     }),
   getMyElectionsVote: protectedProcedure.query(async ({ ctx }) => {
-    return ctx.prisma.election.findMany({
+    // return elections if I own it and with respect to the publicity
+    return await ctx.prisma.election.findMany({
       where: {
-        // publicity: {
-        //   not: "PRIVATE",
-        // },
-        voters: {
-          some: {
-            userId: ctx.session.user.id,
-          },
+        publicity: {
+          not: "PRIVATE",
         },
+        OR: [
+          {
+            commissioners: {
+              some: {
+                userId: ctx.session.user.id,
+              },
+            },
+          },
+          {
+            voters: {
+              some: {
+                userId: ctx.session.user.id,
+              },
+            },
+          },
+        ],
       },
     });
   }),

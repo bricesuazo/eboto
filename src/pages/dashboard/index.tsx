@@ -13,14 +13,8 @@ import { api } from "../../utils/api";
 
 const DashboardPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const myElections = api.election.getMyElections.useQuery(undefined, {
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
-  const myElectionVote = api.election.getMyElectionsVote.useQuery(undefined, {
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
+  const myElections = api.election.getMyElections.useQuery(undefined);
+  const myElectionVote = api.election.getMyElectionsVote.useQuery(undefined);
 
   return (
     <Container maxW="4xl">
