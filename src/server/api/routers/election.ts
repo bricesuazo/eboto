@@ -99,6 +99,14 @@ export const electionRouter = createTRPCRouter({
           _all: true,
         },
       });
+      const invitedVoters = await ctx.prisma.invitedVoter.aggregate({
+        where: {
+          electionId: election.id,
+        },
+        _count: {
+          _all: true,
+        },
+      });
 
       const positions = await ctx.prisma.position.aggregate({
         where: {
@@ -117,7 +125,7 @@ export const electionRouter = createTRPCRouter({
         },
       });
 
-      return { election, voters, voted, positions, candidates };
+      return { election, voters, voted, positions, candidates, invitedVoters };
     }),
   getBySlug: publicProcedure.input(z.string()).query(async ({ input, ctx }) => {
     return ctx.prisma.election.findUnique({

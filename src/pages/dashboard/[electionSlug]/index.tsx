@@ -97,7 +97,13 @@ const DashboardOverview = () => {
 
           <Text>
             {electionOverview.data.voted._count._all}/
-            {electionOverview.data.voters._count._all} voted
+            {electionOverview.data.voters._count._all} voted (
+            {(
+              (electionOverview.data.voted._count._all /
+                electionOverview.data.voters._count._all) *
+              100
+            ).toFixed(2)}
+            %)
           </Text>
           <Text>
             Created:{" "}
@@ -117,13 +123,12 @@ const DashboardOverview = () => {
             {electionOverview.data.election.publicity.charAt(0) +
               electionOverview.data.election.publicity.slice(1).toLowerCase()}
           </Text>
+          <Text>{electionOverview.data.positions._count._all} position/s</Text>
           <Text>
-            {electionOverview.data.positions._count._all} position
-            {electionOverview.data.positions._count._all < 1 ? "" : "s"}
+            {electionOverview.data.candidates._count._all} candidate/s
           </Text>
           <Text>
-            {electionOverview.data.candidates._count._all} candidate
-            {electionOverview.data.candidates._count._all < 1 ? "" : "s"}
+            {electionOverview.data.invitedVoters._count._all} invited voter/s
           </Text>
           <Text>
             Open from{" "}
