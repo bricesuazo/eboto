@@ -1,8 +1,79 @@
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const partylistRouter = createTRPCRouter({
+  editSingle: protectedProcedure
+    .input(
+      z.object({
+        id: z.string().min(1),
+        name: z.string().min(1),
+        acronym: z.string().min(1),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const partylist = await ctx.prisma.partylist.findUniqueOrThrow({
+        where: {
+          id: input.id,
+        },
+        select: {
+          election: {
+            select: {
+              id: true,
+              commissioners: true,
+            },
+          },
+        },
+      });
+
+      if (
+        !partylist.election.commissioners.some(
+          (commissioner) => commissioner.userId === ctx.session.user.id
+        )
+      )
+        throw new Error("Unauthorized");
+
+      return ctx.prisma.partylist.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          name: input.name,
+          acronym: input.acronym,
+        },
+      });
+    }),
+  deleteSingle: protectedProcedure
+    .input(z.string().min(1))
+    .mutation(async ({ input, ctx }) => {
+      const partylist = await ctx.prisma.partylist.findUniqueOrThrow({
+        where: {
+          id: input,
+        },
+        select: {
+          election: {
+            select: {
+              id: true,
+              commissioners: true,
+            },
+          },
+        },
+      });
+
+      if (
+        !partylist.election.commissioners.some(
+          (commissioner) => commissioner.userId === ctx.session.user.id
+        )
+      )
+        throw new Error("Unauthorized");
+
+      return ctx.prisma.partylist.delete({
+        where: {
+          id: input,
+        },
+      });
+    }),
+
   createSingle: protectedProcedure
     .input(
       z.object({
@@ -29,8 +100,16 @@ export const partylistRouter = createTRPCRouter({
         },
         select: {
           id: true,
+          commissioners: true,
         },
       });
+
+      if (
+        !election.commissioners.some(
+          (commissioner) => commissioner.userId === ctx.session.user.id
+        )
+      )
+        throw new Error("Unauthorized");
 
       const partylists = await ctx.prisma.partylist.findMany({
         where: {

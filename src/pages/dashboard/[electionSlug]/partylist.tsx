@@ -1,6 +1,7 @@
-import { Box, Button, Container, Text, useDisclosure } from "@chakra-ui/react";
+import { Button, Container, Flex, Text, useDisclosure } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import CreatePartylistModal from "../../../components/modals/CreatePartylist";
+import Partylist from "../../../components/Partylist";
 import { api } from "../../../utils/api";
 
 const DashboardPartylist = () => {
@@ -13,6 +14,7 @@ const DashboardPartylist = () => {
       enabled: router.isReady,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
+      retry: false,
     }
   );
 
@@ -30,13 +32,19 @@ const DashboardPartylist = () => {
         }}
         electionId={partylists.data.election.id}
       />
-      <Button onClick={onOpen}>Add partylist</Button>
+      <Button onClick={onOpen} mb={4}>
+        Add partylist
+      </Button>
 
-      <Box>
+      <Flex gap={4} flexWrap="wrap">
         {partylists.data.partylists.map((partylist) => (
-          <Text key={partylist.id}>{partylist.name}</Text>
+          <Partylist
+            key={partylist.id}
+            partylist={partylist}
+            refetch={async () => await partylists.refetch()}
+          />
         ))}
-      </Box>
+      </Flex>
     </Container>
   );
 };

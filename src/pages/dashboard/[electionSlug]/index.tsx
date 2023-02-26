@@ -14,6 +14,7 @@ const DashboardOverview = () => {
     {
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
+      retry: false,
     }
   );
 
