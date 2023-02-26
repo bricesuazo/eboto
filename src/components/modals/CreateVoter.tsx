@@ -29,12 +29,10 @@ const CreateVoterModal = ({
   isOpen,
   onClose,
   electionId,
-  onVoterCreated,
 }: {
   electionId: string;
   isOpen: boolean;
   onClose: () => void;
-  onVoterCreated: () => void;
 }) => {
   const {
     register,
@@ -58,7 +56,6 @@ const CreateVoterModal = ({
       electionId,
       email: data.email,
     });
-    onVoterCreated();
     onClose();
   };
 

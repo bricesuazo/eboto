@@ -43,10 +43,10 @@ const DashboardVoter = () => {
     <Container maxW="4xl">
       <CreateVoterModal
         isOpen={isOpen}
-        onClose={onClose}
         electionId={election.data.id}
-        onVoterCreated={async () => {
+        onClose={async () => {
           await voters.refetch();
+          onClose();
         }}
       />
       <Button onClick={onOpen}>Add voter</Button>
