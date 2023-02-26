@@ -98,11 +98,17 @@ const DashboardOverview = () => {
           <Text>
             {electionOverview.data.voted._count._all}/
             {electionOverview.data.voters._count._all} voted (
-            {(
+            {isNaN(
               (electionOverview.data.voted._count._all /
                 electionOverview.data.voters._count._all) *
-              100
-            ).toFixed(2)}
+                100
+            )
+              ? 0
+              : (
+                  (electionOverview.data.voted._count._all /
+                    electionOverview.data.voters._count._all) *
+                  100
+                ).toFixed(2)}
             %)
           </Text>
           <Text>
