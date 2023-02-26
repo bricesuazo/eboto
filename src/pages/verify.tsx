@@ -12,8 +12,14 @@ import {
 } from "@chakra-ui/react";
 import { Container } from "@react-email/container";
 import { useRouter } from "next/router";
-import { useForm } from "react-hook-form";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { api } from "../utils/api";
+
+type FormValues = {
+  token: string;
+  password: string;
+  confirmPassword: string;
+};
 
 const VerifyPage = () => {
   const router = useRouter();
@@ -23,7 +29,7 @@ const VerifyPage = () => {
     handleSubmit,
     getValues,
     formState: { errors },
-  } = useForm();
+  } = useForm<FormValues>();
 
   const verify = api.token.verify.useQuery(
     {
@@ -39,6 +45,13 @@ const VerifyPage = () => {
     }
   );
   const resetPasswordMutation = api.user.resetPassword.useMutation();
+
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    await resetPasswordMutation.mutateAsync({
+      token: token as string,
+      password: data.password,
+    });
+  };
 
   if (verify.isLoading) {
     return (
@@ -76,14 +89,7 @@ const VerifyPage = () => {
       }
       return (
         <Container>
-          <form
-            onSubmit={handleSubmit(async (data) => {
-              await resetPasswordMutation.mutateAsync({
-                token: token as string,
-                password: data.password as string,
-              });
-            })}
-          >
+          <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={4}>
               <FormControl
                 isInvalid={!!errors.password}

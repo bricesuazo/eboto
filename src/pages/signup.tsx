@@ -19,10 +19,18 @@ import type {
   NextPage,
 } from "next";
 import { api } from "../utils/api";
-import { useForm } from "react-hook-form";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import Head from "next/head";
 import { getServerAuthSession } from "../server/auth";
 import Link from "next/link";
+
+type FormValues = {
+  email: string;
+  confirmPassword: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+};
 
 const Signup: NextPage = () => {
   const {
@@ -31,9 +39,20 @@ const Signup: NextPage = () => {
     reset,
     getValues,
     formState: { errors },
-  } = useForm();
+  } = useForm<FormValues>();
 
   const signUpMutation = api.user.signUp.useMutation();
+
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    await signUpMutation.mutateAsync({
+      email: data.email,
+      password: data.password,
+      first_name: data.firstName,
+      last_name: data.lastName,
+    });
+
+    reset();
+  };
 
   return (
     <>
@@ -52,19 +71,7 @@ const Signup: NextPage = () => {
             </AlertDescription>
           </Alert>
         ) : (
-          <form
-            onSubmit={handleSubmit(async (data) => {
-              await signUpMutation.mutateAsync({
-                email: data.email as string,
-                password: data.password as string,
-                first_name: data.firstName as string,
-                last_name: data.lastName as string,
-                // middle_name: data.middleName as string,
-              });
-
-              reset();
-            })}
-          >
+          <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing={4}>
               <Stack direction={["column", "row"]} spacing={[4, 2]}>
                 <FormControl

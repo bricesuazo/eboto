@@ -17,9 +17,13 @@ import {
   AlertTitle,
   AlertDescription,
 } from "@chakra-ui/react";
-import { useForm } from "react-hook-form";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { api } from "../../utils/api";
+
+type FormValues = {
+  email: string;
+};
 
 const CreateVoterModal = ({
   isOpen,
@@ -37,16 +41,26 @@ const CreateVoterModal = ({
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm<FormValues>();
 
   useEffect(() => {
     if (!isOpen) {
       reset();
       createVoterMutation.reset();
     }
+    // //eslint-disable-next-line
   }, [isOpen, reset]);
 
   const createVoterMutation = api.voter.createSingle.useMutation();
+
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    await createVoterMutation.mutateAsync({
+      electionId,
+      email: data.email,
+    });
+    onVoterCreated();
+    onClose();
+  };
 
   return (
     <Modal isOpen={isOpen || createVoterMutation.isLoading} onClose={onClose}>
@@ -54,20 +68,11 @@ const CreateVoterModal = ({
       <ModalContent>
         <ModalHeader>Add voter</ModalHeader>
         <ModalCloseButton disabled={createVoterMutation.isLoading} />
-        <form
-          onSubmit={handleSubmit(async (data) => {
-            await createVoterMutation.mutateAsync({
-              electionId,
-              email: data.email as string,
-            });
-            onVoterCreated();
-            onClose();
-          })}
-        >
+        <form onSubmit={handleSubmit(onSubmit)}>
           <ModalBody>
             <Stack>
               <FormControl
-                isInvalid={!!errors.lastName}
+                isInvalid={!!errors.email}
                 isRequired
                 isDisabled={createVoterMutation.isLoading}
               >

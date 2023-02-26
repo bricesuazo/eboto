@@ -28,13 +28,23 @@ import {
   AlertDescription,
   useToast,
 } from "@chakra-ui/react";
-import { useForm } from "react-hook-form";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { api } from "../../utils/api";
 import { useEffect } from "react";
 import { positionTemplate } from "../../constants";
 import { useRouter } from "next/router";
 import { convertNumberToHour } from "../../utils/convertNumberToHour";
 import { useConfetti } from "../../lib/confetti";
+
+type FormValues = {
+  template: number;
+  name: string;
+  start_date: Date;
+  end_date: Date;
+  slug: string;
+  voting_start: number;
+  voting_end: number;
+};
 
 const CreateElectionModal = ({
   isOpen,
@@ -43,8 +53,10 @@ const CreateElectionModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const { fireConfetti } = useConfetti();
   const router = useRouter();
+  const { fireConfetti } = useConfetti();
+  const toast = useToast();
+
   const {
     register,
     handleSubmit,
@@ -52,26 +64,25 @@ const CreateElectionModal = ({
     watch,
     setValue,
     formState: { errors },
-  } = useForm();
+  } = useForm<FormValues>();
 
   useEffect(() => {
     !isOpen && reset();
   }, [isOpen, reset]);
 
   useEffect(() => {
-    setValue("template", "0");
+    setValue("template", 0);
   }, [isOpen, setValue]);
 
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "template",
     defaultValue: "0",
     onChange: (value) => {
-      setValue("template", value);
+      setValue("template", parseInt(value));
     },
-    value: watch("template") as string,
+    value: watch("template", 0).toString(),
   });
   const group = getRootProps();
-  const toast = useToast();
 
   const createElectionMutation = api.election.create.useMutation({
     onSuccess: async (data) => {
@@ -87,6 +98,18 @@ const CreateElectionModal = ({
       await fireConfetti();
     },
   });
+
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    await createElectionMutation.mutateAsync({
+      name: data.name,
+      start_date: data.start_date,
+      end_date: data.end_date,
+      slug: data.slug,
+      voting_start: data.voting_start,
+      voting_end: data.voting_end,
+      template: data.template,
+    });
+  };
 
   function ElectionTemplateCard({
     children,
@@ -133,19 +156,7 @@ const CreateElectionModal = ({
       <ModalContent>
         <ModalHeader>Create election</ModalHeader>
         <ModalCloseButton disabled={createElectionMutation.isLoading} />
-        <form
-          onSubmit={handleSubmit(async (data) => {
-            await createElectionMutation.mutateAsync({
-              name: data.name as string,
-              start_date: data.start_date as Date,
-              end_date: data.end_date as Date,
-              slug: data.slug as string,
-              voting_start: data.voting_start as number,
-              voting_end: data.voting_end as number,
-              template: parseInt(data.template as string),
-            });
-          })}
-        >
+        <form onSubmit={handleSubmit(onSubmit)}>
           <ModalBody>
             <Stack>
               <FormControl
@@ -159,6 +170,11 @@ const CreateElectionModal = ({
                   type="text"
                   {...register("name", {
                     required: "This is required.",
+                    min: {
+                      value: 3,
+                      message:
+                        "Election name must be at least 3 characters long.",
+                    },
                   })}
                 />
 
@@ -179,6 +195,11 @@ const CreateElectionModal = ({
                   type="text"
                   {...register("slug", {
                     required: "This is required.",
+                    min: {
+                      value: 3,
+                      message:
+                        "Election slug must be at least 3 characters long.",
+                    },
                   })}
                 />
 

@@ -12,9 +12,13 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useForm } from "react-hook-form";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { api } from "../utils/api";
 import { useEffect } from "react";
+
+type FormValues = {
+  email: string;
+};
 
 const ResetPassword = () => {
   const router = useRouter();
@@ -24,10 +28,10 @@ const ResetPassword = () => {
     reset,
     setValue,
     formState: { errors },
-  } = useForm();
+  } = useForm<FormValues>();
 
   useEffect(() => {
-    if (router.query.email) {
+    if (router.query.email && typeof router.query.email === "string") {
       setValue("email", router.query.email);
     }
   }, [router.query.email, setValue]);
@@ -35,6 +39,10 @@ const ResetPassword = () => {
   const requestResetPasswordMutation =
     api.user.requestResetPassword.useMutation();
 
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    await requestResetPasswordMutation.mutateAsync(data.email);
+    reset();
+  };
   return (
     <Container>
       {requestResetPasswordMutation.isSuccess ? (
@@ -46,14 +54,7 @@ const ResetPassword = () => {
           </AlertDescription>
         </Alert>
       ) : (
-        <form
-          onSubmit={handleSubmit(async (data) => {
-            await requestResetPasswordMutation.mutateAsync(
-              data.email as string
-            );
-            reset();
-          })}
-        >
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={4}>
             <FormControl
               isInvalid={!!errors.email}

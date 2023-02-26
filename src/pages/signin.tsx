@@ -23,7 +23,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-import { useForm } from "react-hook-form";
+import { type SubmitHandler, useForm } from "react-hook-form";
 
 import { signIn } from "next-auth/react";
 
@@ -31,6 +31,11 @@ import { signIn } from "next-auth/react";
 import { getServerAuthSession } from "../server/auth";
 import { useRouter } from "next/router";
 import Link from "next/link";
+
+type FormValues = {
+  email: string;
+  password: string;
+};
 
 const Signin: NextPage = () => {
   const router = useRouter();
@@ -45,7 +50,29 @@ const Signin: NextPage = () => {
     reset,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm<FormValues>();
+
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    setError(undefined);
+    setLoadings({ ...loadings, credentials: true });
+
+    await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+      callbackUrl: (router.query.callbackUrl as string) || "/dashboard",
+    }).then(async (res) => {
+      if (res?.ok)
+        await router.push((router.query.callbackUrl as string) || "/dashboard");
+      if (res?.error) {
+        setError(res.error);
+
+        res.error === "Email not verified. Email verification sent." && reset();
+      }
+    });
+    setLoadings({ ...loadings, credentials: false });
+  };
+
   return (
     <>
       <Head>
@@ -53,31 +80,7 @@ const Signin: NextPage = () => {
       </Head>
 
       <Container>
-        <form
-          onSubmit={handleSubmit(async (data) => {
-            setError(undefined);
-            setLoadings({ ...loadings, credentials: true });
-
-            await signIn("credentials", {
-              email: data.email as string,
-              password: data.password as string,
-              redirect: false,
-              callbackUrl: (router.query.callbackUrl as string) || "/dashboard",
-            }).then(async (res) => {
-              if (res?.ok)
-                await router.push(
-                  (router.query.callbackUrl as string) || "/dashboard"
-                );
-              if (res?.error) {
-                setError(res.error);
-
-                res.error === "Email not verified. Email verification sent." &&
-                  reset();
-              }
-            });
-            setLoadings({ ...loadings, credentials: false });
-          })}
-        >
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={4}>
             <FormControl
               isInvalid={!!errors.email}
@@ -111,7 +114,7 @@ const Signin: NextPage = () => {
                 <FormLabel>Password</FormLabel>
                 <Link
                   href={`/reset-password${
-                    watch("email") ? `?email=${watch("email") as string}` : ""
+                    watch("email") ? `?email=${watch("email")}` : ""
                   }`}
                 >
                   <Text
