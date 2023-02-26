@@ -63,8 +63,8 @@ const EditPartylistModal = ({
   const editPartylistMutation = api.partylist.editSingle.useMutation({
     onSuccess: (data) => {
       toast({
-        title: `${data.name} (${data.acronym}) created!`,
-        description: "Successfully created partylist",
+        title: `${data.name} (${data.acronym}) updated!`,
+        description: "Successfully updated partylist",
         status: "success",
         duration: 5000,
         isClosable: true,
