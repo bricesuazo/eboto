@@ -169,8 +169,8 @@ model Candidate {
     position   Position @relation(fields: [positionId], references: [id], onDelete: Cascade)
     positionId String
 
-    partylist   Partylist? @relation(fields: [partylistId], references: [id], onDelete: Cascade)
-    partylistId String?
+    partylist   Partylist @relation(fields: [partylistId], references: [id], onDelete: Cascade)
+    partylistId String
 
     vote Vote[]
 
