@@ -9,8 +9,8 @@ import {
   AlertTitle,
   AlertDescription,
   Button,
+  Container,
 } from "@chakra-ui/react";
-import { Container } from "@react-email/container";
 import { useRouter } from "next/router";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { api } from "../utils/api";
@@ -37,6 +37,7 @@ const VerifyPage = () => {
       type: type as "EMAIL_VERIFICATION" | "PASSWORD_RESET",
     },
     {
+      enabled: router.isReady,
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
@@ -70,6 +71,15 @@ const VerifyPage = () => {
     );
   }
 
+  if (!verify.data || verify.data.length === 0) {
+    return (
+      <div>
+        <h1>Error</h1>
+        <p>Token not found</p>
+      </div>
+    );
+  }
+
   switch (verify.data) {
     case "EMAIL_VERIFICATION":
       return (
@@ -86,82 +96,86 @@ const VerifyPage = () => {
             <p>Your password has been reset. Please sign in.</p>
           </div>
         );
+      } else {
+        return (
+          <Container>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Stack spacing={4}>
+                <FormControl
+                  isInvalid={!!errors.password}
+                  isRequired
+                  isDisabled={resetPasswordMutation.isLoading}
+                >
+                  <FormLabel>Password</FormLabel>
+                  <Input
+                    placeholder="Enter your password"
+                    type="password"
+                    {...register("password", {
+                      required: "This is required.",
+                      min: {
+                        value: 8,
+                        message: "Password must be at least 8 characters long.",
+                      },
+                      validate: (value) =>
+                        value === getValues("confirmPassword") ||
+                        "The passwords do not match.",
+                    })}
+                  />
+                  {errors.password && (
+                    <FormErrorMessage>
+                      {errors.password.message?.toString()}
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+
+                <FormControl
+                  isInvalid={!!errors.confirmPassword}
+                  isRequired
+                  isDisabled={resetPasswordMutation.isLoading}
+                >
+                  <FormLabel>Confirm password</FormLabel>
+                  <Input
+                    placeholder="Confirm your password"
+                    type="password"
+                    {...register("confirmPassword", {
+                      required: "This is required.",
+                      min: {
+                        value: 8,
+                        message: "Password must be at least 8 characters long.",
+                      },
+                      validate: (value) =>
+                        value === getValues("password") ||
+                        "The passwords do not match.",
+                    })}
+                  />
+                  {errors.confirmPassword && (
+                    <FormErrorMessage>
+                      {errors.confirmPassword.message?.toString()}
+                    </FormErrorMessage>
+                  )}
+
+                  {resetPasswordMutation.isError && (
+                    <Alert status="error">
+                      <AlertIcon />
+                      <AlertTitle>Sign in error.</AlertTitle>
+                      <AlertDescription>
+                        {resetPasswordMutation.error.message}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </FormControl>
+
+                <Button
+                  type="submit"
+                  isLoading={resetPasswordMutation.isLoading}
+                >
+                  Sign in
+                </Button>
+              </Stack>
+            </form>
+          </Container>
+        );
       }
-      return (
-        <Container>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Stack spacing={4}>
-              <FormControl
-                isInvalid={!!errors.password}
-                isRequired
-                isDisabled={resetPasswordMutation.isLoading}
-              >
-                <FormLabel>Password</FormLabel>
-                <Input
-                  placeholder="Enter your password"
-                  type="password"
-                  {...register("password", {
-                    required: "This is required.",
-                    min: {
-                      value: 8,
-                      message: "Password must be at least 8 characters long.",
-                    },
-                    validate: (value) =>
-                      value === getValues("confirmPassword") ||
-                      "The passwords do not match.",
-                  })}
-                />
-                {errors.password && (
-                  <FormErrorMessage>
-                    {errors.password.message?.toString()}
-                  </FormErrorMessage>
-                )}
-              </FormControl>
-
-              <FormControl
-                isInvalid={!!errors.confirmPassword}
-                isRequired
-                isDisabled={resetPasswordMutation.isLoading}
-              >
-                <FormLabel>Confirm password</FormLabel>
-                <Input
-                  placeholder="Confirm your password"
-                  type="password"
-                  {...register("confirmPassword", {
-                    required: "This is required.",
-                    min: {
-                      value: 8,
-                      message: "Password must be at least 8 characters long.",
-                    },
-                    validate: (value) =>
-                      value === getValues("password") ||
-                      "The passwords do not match.",
-                  })}
-                />
-                {errors.confirmPassword && (
-                  <FormErrorMessage>
-                    {errors.confirmPassword.message?.toString()}
-                  </FormErrorMessage>
-                )}
-
-                {resetPasswordMutation.isError && (
-                  <Alert status="error">
-                    <AlertIcon />
-                    <AlertTitle>Sign in error.</AlertTitle>
-                    <AlertDescription>
-                      {resetPasswordMutation.error.message}
-                    </AlertDescription>
-                  </Alert>
-                )}
-              </FormControl>
-
-              <Button type="submit" isLoading={resetPasswordMutation.isLoading}>
-                Sign in
-              </Button>
-            </Stack>
-          </form>
-        </Container>
-      );
   }
 };
 

@@ -148,15 +148,20 @@ export const userRouter = createTRPCRouter({
   requestResetPassword: publicProcedure
     .input(z.string().email())
     .mutation(async ({ input, ctx }) => {
-      const user = await ctx.prisma.user.findUnique({
+      await ctx.prisma.verificationToken.deleteMany({
+        where: {
+          user: {
+            email: input,
+          },
+          type: "PASSWORD_RESET",
+        },
+      });
+
+      const user = await ctx.prisma.user.findUniqueOrThrow({
         where: {
           email: input,
         },
       });
-
-      if (!user) {
-        throw new Error("User not found");
-      }
 
       await sendEmail({
         type: "PASSWORD_RESET",

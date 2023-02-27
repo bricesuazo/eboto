@@ -1,15 +1,5 @@
-import nodemailer from "nodemailer";
-// import { env } from "../src/env.mjs";
-
-const transporter = nodemailer.createTransport({
-  host: "smtp.sendgrid.net",
-  // port: 587,
-  port: 465,
-  auth: {
-    user: "apikey",
-    pass: process.env.SENDGRID_API_KEY,
-  },
-});
+import sendgrid from "@sendgrid/mail";
+import { env } from "../src/env.mjs";
 
 export const sendEmailTransport = async ({
   email,
@@ -20,7 +10,9 @@ export const sendEmailTransport = async ({
   subject: string;
   html: string;
 }) => {
-  await transporter.sendMail({
+  sendgrid.setApiKey(env.SENDGRID_API_KEY);
+
+  await sendgrid.send({
     from: "eboto@bricesuazo.com",
     to: email,
     subject,
