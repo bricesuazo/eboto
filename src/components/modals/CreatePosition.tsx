@@ -24,17 +24,18 @@ import { useEffect } from "react";
 
 type FormValues = {
   name: string;
-  acronym: string;
 };
 
-const CreatePartylistModal = ({
+const CreatePositionModal = ({
   isOpen,
   onClose,
   electionId,
+  order,
 }: {
   isOpen: boolean;
   onClose: () => void;
   electionId: string;
+  order: number;
 }) => {
   const toast = useToast();
 
@@ -49,11 +50,11 @@ const CreatePartylistModal = ({
     isOpen && reset();
   }, [isOpen, reset]);
 
-  const createPartylistMutation = api.partylist.createSingle.useMutation({
+  const createPositionMutation = api.position.createSingle.useMutation({
     onSuccess: (data) => {
       toast({
-        title: `${data.name} (${data.acronym}) created!`,
-        description: "Successfully created partylist",
+        title: `${data.name} created!`,
+        description: "Successfully created position",
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -63,39 +64,39 @@ const CreatePartylistModal = ({
   });
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    await createPartylistMutation.mutateAsync({
+    await createPositionMutation.mutateAsync({
       name: data.name,
-      acronym: data.acronym,
       electionId,
+      order,
     });
   };
 
   return (
     <Modal
-      isOpen={isOpen || createPartylistMutation.isLoading}
+      isOpen={isOpen || createPositionMutation.isLoading}
       onClose={onClose}
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Create partylist</ModalHeader>
-        <ModalCloseButton disabled={createPartylistMutation.isLoading} />
+        <ModalHeader>Create position</ModalHeader>
+        <ModalCloseButton disabled={createPositionMutation.isLoading} />
         <form onSubmit={handleSubmit(onSubmit)}>
           <ModalBody>
             <Stack>
               <FormControl
                 isInvalid={!!errors.name}
                 isRequired
-                isDisabled={createPartylistMutation.isLoading}
+                isDisabled={createPositionMutation.isLoading}
               >
-                <FormLabel>Partylist name</FormLabel>
+                <FormLabel>Position name</FormLabel>
                 <Input
-                  placeholder="Enter partylist name"
+                  placeholder="Enter position name"
                   type="text"
                   {...register("name", {
                     required: "This is required.",
                     minLength: {
-                      value: 3,
-                      message: "Name must be at least 3 characters long.",
+                      value: 2,
+                      message: "Name must be at least 2 characters long.",
                     },
                   })}
                 />
@@ -106,35 +107,13 @@ const CreatePartylistModal = ({
                   </FormErrorMessage>
                 )}
               </FormControl>
-              <FormControl
-                isInvalid={!!errors.acronym}
-                isRequired
-                isDisabled={createPartylistMutation.isLoading}
-              >
-                <FormLabel>Acronym</FormLabel>
-                <Input
-                  placeholder="Enter acronym"
-                  type="text"
-                  {...register("acronym", {
-                    required: "This is required.",
-                    minLength: {
-                      value: 1,
-                      message: "Acronym must be at least 1 character long.",
-                    },
-                  })}
-                />
-
-                {errors.acronym && (
-                  <FormErrorMessage>{errors.acronym.message}</FormErrorMessage>
-                )}
-              </FormControl>
             </Stack>
-            {createPartylistMutation.error && (
+            {createPositionMutation.error && (
               <Alert status="error" borderRadius="md">
                 <AlertIcon />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>
-                  {createPartylistMutation.error.message}
+                  {createPositionMutation.error.message}
                 </AlertDescription>
               </Alert>
             )}
@@ -144,14 +123,14 @@ const CreatePartylistModal = ({
               variant="ghost"
               mr={2}
               onClick={onClose}
-              disabled={createPartylistMutation.isLoading}
+              disabled={createPositionMutation.isLoading}
             >
               Cancel
             </Button>
             <Button
               colorScheme="blue"
               type="submit"
-              isLoading={createPartylistMutation.isLoading}
+              isLoading={createPositionMutation.isLoading}
             >
               Create
             </Button>
@@ -162,4 +141,4 @@ const CreatePartylistModal = ({
   );
 };
 
-export default CreatePartylistModal;
+export default CreatePositionModal;

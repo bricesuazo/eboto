@@ -111,7 +111,7 @@ const EditPartylistModal = ({
                         return "Name must be different from the current name.";
                       }
                     },
-                    min: {
+                    minLength: {
                       value: 3,
                       message: "Name must be at least 3 characters long.",
                     },
@@ -143,7 +143,7 @@ const EditPartylistModal = ({
                         return "Acronym must be different from the current acronym.";
                       }
                     },
-                    min: {
+                    minLength: {
                       value: 1,
                       message: "Acronym must be at least 1 character long.",
                     },

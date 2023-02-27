@@ -6,23 +6,23 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import type { Partylist } from "@prisma/client";
+import type { Position } from "@prisma/client";
 import { api } from "../utils/api";
-import EditPartylistModal from "./modals/EditPartylist";
+import EditPositionModal from "./modals/EditPosition";
 
-const PartylistCard = ({
-  partylist,
+const PositionCard = ({
+  position,
   refetch,
 }: {
-  partylist: Partylist;
+  position: Position;
   refetch: () => void;
 }) => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const deletePartylistMutation = api.partylist.deleteSingle.useMutation({
+  const deletePositionMutation = api.position.deleteSingle.useMutation({
     onSuccess: (data) => {
       toast({
-        title: `${data.name} (${data.acronym}) deleted!`,
+        title: `${data.name} deleted!`,
         description: "Successfully deleted partylist",
         status: "success",
         duration: 5000,
@@ -34,13 +34,13 @@ const PartylistCard = ({
 
   return (
     <>
-      <EditPartylistModal
+      <EditPositionModal
         isOpen={isOpen}
         onClose={() => {
           refetch();
           onClose();
         }}
-        partylist={partylist}
+        position={position}
       />
       <Center
         flexDirection="column"
@@ -56,7 +56,7 @@ const PartylistCard = ({
         p={4}
       >
         <Text textAlign="center" w="full">
-          {partylist.name} ({partylist.acronym})
+          {position.name}
         </Text>
 
         <Flex>
@@ -64,8 +64,8 @@ const PartylistCard = ({
             Edit
           </Button>
           <Button
-            onClick={() => deletePartylistMutation.mutate(partylist.id)}
-            isLoading={deletePartylistMutation.isLoading}
+            onClick={() => deletePositionMutation.mutate(position.id)}
+            isLoading={deletePositionMutation.isLoading}
             variant="ghost"
             colorScheme="red"
             size="sm"
@@ -79,4 +79,4 @@ const PartylistCard = ({
   );
 };
 
-export default PartylistCard;
+export default PositionCard;

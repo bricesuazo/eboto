@@ -170,7 +170,7 @@ const CreateElectionModal = ({
                   type="text"
                   {...register("name", {
                     required: "This is required.",
-                    min: {
+                    minLength: {
                       value: 3,
                       message:
                         "Election name must be at least 3 characters long.",
@@ -195,7 +195,7 @@ const CreateElectionModal = ({
                   type="text"
                   {...register("slug", {
                     required: "This is required.",
-                    min: {
+                    minLength: {
                       value: 3,
                       message:
                         "Election slug must be at least 3 characters long.",
