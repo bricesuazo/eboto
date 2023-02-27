@@ -96,7 +96,7 @@ const EditPartylistModal = ({
                   type="text"
                   {...register("name", {
                     required: "This is required.",
-                    min: {
+                    minLength: {
                       value: 3,
                       message: "Name must be at least 3 characters long.",
                     },

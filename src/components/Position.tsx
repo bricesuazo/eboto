@@ -23,7 +23,7 @@ const PositionCard = ({
     onSuccess: (data) => {
       toast({
         title: `${data.name} deleted!`,
-        description: "Successfully deleted partylist",
+        description: "Successfully deleted position",
         status: "success",
         duration: 5000,
         isClosable: true,

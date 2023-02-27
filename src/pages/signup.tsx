@@ -162,7 +162,7 @@ const Signup: NextPage = () => {
                   type="password"
                   {...register("password", {
                     required: "This is required.",
-                    min: {
+                    minLength: {
                       value: 8,
                       message: "Password must be at least 8 characters long.",
                     },
@@ -189,7 +189,7 @@ const Signup: NextPage = () => {
                   type="password"
                   {...register("confirmPassword", {
                     required: "This is required.",
-                    min: {
+                    minLength: {
                       value: 8,
                       message: "Password must be at least 8 characters long.",
                     },
