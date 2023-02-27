@@ -67,7 +67,7 @@ const CreateElectionModal = ({
   } = useForm<FormValues>();
 
   useEffect(() => {
-    !isOpen && reset();
+    isOpen && reset();
   }, [isOpen, reset]);
 
   useEffect(() => {

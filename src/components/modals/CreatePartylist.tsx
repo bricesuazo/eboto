@@ -46,7 +46,7 @@ const CreatePartylistModal = ({
   } = useForm<FormValues>();
 
   useEffect(() => {
-    !isOpen && reset();
+    isOpen && reset();
   }, [isOpen, reset]);
 
   const createPartylistMutation = api.partylist.createSingle.useMutation({

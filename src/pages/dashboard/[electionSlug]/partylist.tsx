@@ -37,13 +37,17 @@ const DashboardPartylist = () => {
       </Button>
 
       <Flex gap={4} flexWrap="wrap">
-        {partylists.data.partylists.map((partylist) => (
-          <Partylist
-            key={partylist.id}
-            partylist={partylist}
-            refetch={async () => await partylists.refetch()}
-          />
-        ))}
+        {!partylists.data.partylists.length ? (
+          <Text>No partylist</Text>
+        ) : (
+          partylists.data.partylists.map((partylist) => (
+            <Partylist
+              key={partylist.id}
+              partylist={partylist}
+              refetch={async () => await partylists.refetch()}
+            />
+          ))
+        )}
       </Flex>
     </Container>
   );
