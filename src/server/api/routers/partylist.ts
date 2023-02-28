@@ -119,6 +119,7 @@ export const partylistRouter = createTRPCRouter({
         },
         select: {
           id: true,
+          slug: true,
           commissioners: true,
         },
       });

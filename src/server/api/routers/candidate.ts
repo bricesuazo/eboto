@@ -160,6 +160,7 @@ export const candidateRouter = createTRPCRouter({
         },
         select: {
           id: true,
+          slug: true,
           commissioners: true,
         },
       });

@@ -1,6 +1,7 @@
 import { Container, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import Candidates from "../../../components/Candidates";
+import ElectionDashboardHeader from "../../../components/ElectionDashboardHeader";
 import { api } from "../../../utils/api";
 
 const CandidatePartylist = () => {
@@ -24,6 +25,8 @@ const CandidatePartylist = () => {
 
   return (
     <Container maxW="4xl">
+      <ElectionDashboardHeader slug={candidates.data.election.slug} />
+
       {candidates.data.positions.length === 0 ? (
         <Text>No positions yet</Text>
       ) : (

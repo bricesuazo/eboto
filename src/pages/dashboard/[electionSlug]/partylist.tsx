@@ -1,5 +1,6 @@
 import { Button, Container, Flex, Text, useDisclosure } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import ElectionDashboardHeader from "../../../components/ElectionDashboardHeader";
 import CreatePartylistModal from "../../../components/modals/CreatePartylist";
 import PartylistCard from "../../../components/PartylistCard";
 import { api } from "../../../utils/api";
@@ -30,6 +31,7 @@ const DashboardPartylist = () => {
         electionId={partylists.data.election.id}
         refetch={partylists.refetch}
       />
+      <ElectionDashboardHeader slug={partylists.data.election.slug} />
       <Button onClick={onOpen} mb={4}>
         Add partylist
       </Button>

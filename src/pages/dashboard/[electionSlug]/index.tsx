@@ -1,9 +1,9 @@
-import { Button, Container, HStack, Text } from "@chakra-ui/react";
-import Link from "next/link";
+import { Container, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import Moment from "react-moment";
 import { convertNumberToHour } from "../../../utils/convertNumberToHour";
 import { api } from "../../../utils/api";
+import ElectionDashboardHeader from "../../../components/ElectionDashboardHeader";
 
 const DashboardOverview = () => {
   const router = useRouter();
@@ -28,51 +28,7 @@ const DashboardOverview = () => {
         <Text>No election found</Text>
       ) : (
         <>
-          <HStack>
-            <Link
-              href={
-                "/dashboard/" +
-                electionOverview.data.election.slug +
-                "/partylist"
-              }
-            >
-              <Button>Partylist</Button>
-            </Link>
-            <Link
-              href={
-                "/dashboard/" +
-                electionOverview.data.election.slug +
-                "/position"
-              }
-            >
-              <Button>Position</Button>
-            </Link>
-            <Link
-              href={
-                "/dashboard/" +
-                electionOverview.data.election.slug +
-                "/candidate"
-              }
-            >
-              <Button>Candidate</Button>
-            </Link>
-            <Link
-              href={
-                "/dashboard/" + electionOverview.data.election.slug + "/voter"
-              }
-            >
-              <Button>Voter</Button>
-            </Link>
-            <Link
-              href={
-                "/dashboard/" +
-                electionOverview.data.election.slug +
-                "/settings"
-              }
-            >
-              <Button>Settings</Button>
-            </Link>
-          </HStack>
+          <ElectionDashboardHeader slug={electionOverview.data.election.slug} />
 
           <Text>{electionOverview.data.election.name}</Text>
           <Text>{electionOverview.data.election.slug}</Text>

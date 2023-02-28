@@ -18,6 +18,7 @@ import {
 import type { ElectionPublicity } from "@prisma/client";
 import { useRouter } from "next/router";
 import { type SubmitHandler, useForm } from "react-hook-form";
+import ElectionDashboardHeader from "../../../components/ElectionDashboardHeader";
 import { api } from "../../../utils/api";
 import { convertNumberToHour } from "../../../utils/convertNumberToHour";
 
@@ -102,6 +103,8 @@ const DashboardSettings = () => {
 
   return (
     <Container maxW="4xl">
+      <ElectionDashboardHeader slug={election.data.slug} />
+
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack>
           <FormControl

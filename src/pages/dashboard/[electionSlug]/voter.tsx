@@ -1,5 +1,6 @@
 import { Button, Container, Flex, Text, useDisclosure } from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import ElectionDashboardHeader from "../../../components/ElectionDashboardHeader";
 import CreateVoterModal from "../../../components/modals/CreateVoter";
 import { api } from "../../../utils/api";
 
@@ -47,6 +48,8 @@ const DashboardVoter = () => {
         onClose={onClose}
         refetch={voters.refetch}
       />
+      <ElectionDashboardHeader slug={voters.data.election.slug} />
+
       <Button onClick={onOpen}>Add voter</Button>
       <Text>{voters.data.election.name} - voter page</Text>
 

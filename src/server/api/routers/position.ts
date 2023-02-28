@@ -97,6 +97,7 @@ export const positionRouter = createTRPCRouter({
         },
         select: {
           id: true,
+          slug: true,
           commissioners: true,
         },
       });
