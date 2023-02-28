@@ -14,8 +14,8 @@ import { convertNumberToHour } from "../../utils/convertNumberToHour";
 
 const DashboardPage = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const myElections = api.election.getMyElections.useQuery(undefined);
-  const myElectionVote = api.election.getMyElectionsVote.useQuery(undefined);
+  const myElections = api.election.getMyElections.useQuery();
+  const myElectionVote = api.election.getMyElectionsVote.useQuery();
 
   return (
     <Container maxW="4xl">

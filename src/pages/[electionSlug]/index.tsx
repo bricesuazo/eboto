@@ -1,15 +1,25 @@
-import { Box, Button, Container, Flex, Stack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Center,
+  Container,
+  Flex,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Moment from "react-moment";
-import { api } from "../utils/api";
-import { convertNumberToHour } from "../utils/convertNumberToHour";
+import { api } from "../../utils/api";
+import { convertNumberToHour } from "../../utils/convertNumberToHour";
 
 const ElectionPage = () => {
-  const { electionSlug } = useRouter().query;
+  const router = useRouter();
+
   const election = api.election.getElectionData.useQuery(
-    electionSlug as string,
+    router.query.electionSlug as string,
     {
+      enabled: router.isReady,
       refetchOnWindowFocus: false,
       refetchOnMount: false,
       refetchOnReconnect: false,
@@ -31,11 +41,7 @@ const ElectionPage = () => {
             <Text fontSize="2xl" fontWeight="bold">
               {election.data.name}
             </Text>
-            <Link href={`https://eboto-mo.com/${election.data.slug}`}>
-              <Button variant="link">
-                https://eboto-mo.com/{election.data.slug}
-              </Button>
-            </Link>
+
             <Text>
               <Moment
                 format="MMMM DD, YYYY hA"
@@ -48,6 +54,10 @@ const ElectionPage = () => {
               Open from {convertNumberToHour(election.data.voting_start)} to{" "}
               {convertNumberToHour(election.data.voting_end)}
             </Text>
+
+            <Link href={`/${election.data.slug}/vote`}>
+              <Button>Vote now!</Button>
+            </Link>
           </Box>
 
           <Stack>
@@ -61,15 +71,33 @@ const ElectionPage = () => {
                   {election.data?.candidates
                     .filter((candidate) => candidate.positionId === position.id)
                     .map((candidate) => (
-                      <Box key={candidate.id}>
-                        <Text>
-                          {candidate.first_name}{" "}
-                          {candidate.middle_name
-                            ? candidate.middle_name + " "
-                            : ""}
-                          {candidate.last_name}({candidate.partylistId})
-                        </Text>
-                      </Box>
+                      <Link
+                        href={`/${election.data?.slug || ""}/${candidate.slug}`}
+                        key={candidate.id}
+                      >
+                        <Center
+                          w="44"
+                          h="24"
+                          border="1px"
+                          borderColor="GrayText"
+                          borderRadius="md"
+                        >
+                          <Text>
+                            {candidate.first_name}{" "}
+                            {candidate.middle_name
+                              ? candidate.middle_name + " "
+                              : ""}
+                            {candidate.last_name}(
+                            {
+                              election.data?.partylist.find(
+                                (partylist) =>
+                                  partylist.id === candidate.partylistId
+                              )?.acronym
+                            }
+                            )
+                          </Text>
+                        </Center>
+                      </Link>
                     ))}
                 </Flex>
               </Box>

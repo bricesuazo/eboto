@@ -73,6 +73,12 @@ const DashboardSettings = () => {
   const deleteElectionMutation = api.election.delete.useMutation({
     onSuccess: async () => {
       await router.push("/dashboard");
+      toast({
+        title: "Election deleted.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
     },
   });
 

@@ -196,7 +196,7 @@ export const electionRouter = createTRPCRouter({
     });
   }),
   getMyElectionsVote: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.prisma.election.findMany({
+    return ctx.prisma.election.findMany({
       where: {
         publicity: {
           not: "PRIVATE",
