@@ -31,10 +31,12 @@ const EditPartylistModal = ({
   isOpen,
   onClose,
   position,
+  refetch,
 }: {
   isOpen: boolean;
   onClose: () => void;
   position: Position;
+  refetch: () => Promise<unknown>;
 }) => {
   const toast = useToast();
 
@@ -42,22 +44,18 @@ const EditPartylistModal = ({
     register,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors },
   } = useForm<FormValues>();
 
   useEffect(() => {
     if (isOpen) {
-      setValue("name", position.name);
-    } else {
-      reset({
-        name: position.name,
-      });
+      reset();
     }
   }, [isOpen, reset]);
 
   const editPositionMutation = api.position.editSingle.useMutation({
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      await refetch();
       toast({
         title: `${data.name} updated!`,
         description: "Successfully updated position",
@@ -96,6 +94,7 @@ const EditPartylistModal = ({
                   type="text"
                   {...register("name", {
                     required: "This is required.",
+                    value: position.name,
                     minLength: {
                       value: 3,
                       message: "Name must be at least 3 characters long.",

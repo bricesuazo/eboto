@@ -15,12 +15,13 @@ const PartylistCard = ({
   refetch,
 }: {
   partylist: Partylist;
-  refetch: () => void;
+  refetch: () => Promise<unknown>;
 }) => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const deletePartylistMutation = api.partylist.deleteSingle.useMutation({
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      await refetch();
       toast({
         title: `${data.name} (${data.acronym}) deleted!`,
         description: "Successfully deleted partylist",
@@ -28,7 +29,6 @@ const PartylistCard = ({
         duration: 5000,
         isClosable: true,
       });
-      refetch();
     },
   });
 
@@ -36,11 +36,9 @@ const PartylistCard = ({
     <>
       <EditPartylistModal
         isOpen={isOpen}
-        onClose={() => {
-          refetch();
-          onClose();
-        }}
+        onClose={onClose}
         partylist={partylist}
+        refetch={refetch}
       />
       <Center
         flexDirection="column"

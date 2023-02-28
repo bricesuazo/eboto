@@ -31,11 +31,13 @@ const CreatePositionModal = ({
   onClose,
   electionId,
   order,
+  refetch,
 }: {
   isOpen: boolean;
   onClose: () => void;
   electionId: string;
   order: number;
+  refetch: () => Promise<unknown>;
 }) => {
   const toast = useToast();
 
@@ -51,7 +53,8 @@ const CreatePositionModal = ({
   }, [isOpen, reset]);
 
   const createPositionMutation = api.position.createSingle.useMutation({
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      await refetch();
       toast({
         title: `${data.name} created!`,
         description: "Successfully created position",

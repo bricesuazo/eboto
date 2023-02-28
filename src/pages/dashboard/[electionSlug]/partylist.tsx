@@ -1,7 +1,7 @@
 import { Button, Container, Flex, Text, useDisclosure } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import CreatePartylistModal from "../../../components/modals/CreatePartylist";
-import Partylist from "../../../components/PartylistCard";
+import PartylistCard from "../../../components/PartylistCard";
 import { api } from "../../../utils/api";
 
 const DashboardPartylist = () => {
@@ -26,11 +26,9 @@ const DashboardPartylist = () => {
     <Container maxW="4xl">
       <CreatePartylistModal
         isOpen={isOpen}
-        onClose={async () => {
-          await partylists.refetch();
-          onClose();
-        }}
+        onClose={onClose}
         electionId={partylists.data.election.id}
+        refetch={partylists.refetch}
       />
       <Button onClick={onOpen} mb={4}>
         Add partylist
@@ -41,10 +39,10 @@ const DashboardPartylist = () => {
           <Text>No partylist</Text>
         ) : (
           partylists.data.partylists.map((partylist) => (
-            <Partylist
+            <PartylistCard
               key={partylist.id}
               partylist={partylist}
-              refetch={async () => await partylists.refetch()}
+              refetch={partylists.refetch}
             />
           ))
         )}

@@ -26,12 +26,10 @@ const DashboardPosition = () => {
     <Container maxW="4xl">
       <CreatePositionModal
         isOpen={isOpen}
-        onClose={async () => {
-          await positions.refetch();
-          onClose();
-        }}
+        onClose={onClose}
         electionId={positions.data.election.id}
         order={positions.data.positions.length}
+        refetch={positions.refetch}
       />
       <Button onClick={onOpen} mb={4}>
         Add position

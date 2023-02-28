@@ -54,13 +54,6 @@ const EditCandidateModal = ({
     formState: { errors },
   } = useForm<FormValues>();
 
-  useEffect(() => {
-    if (isOpen) {
-      reset();
-      editPositionMutation.reset();
-    }
-  }, [isOpen, reset]);
-
   const editPositionMutation = api.candidate.editSingle.useMutation({
     onSuccess: async (data) => {
       await refetch();
@@ -74,6 +67,13 @@ const EditCandidateModal = ({
       onClose();
     },
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      reset();
+      editPositionMutation.reset();
+    }
+  }, [isOpen, reset, editPositionMutation]);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     await editPositionMutation.mutateAsync({

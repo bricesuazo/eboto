@@ -31,10 +31,12 @@ const CreatePartylistModal = ({
   isOpen,
   onClose,
   electionId,
+  refetch,
 }: {
   isOpen: boolean;
   onClose: () => void;
   electionId: string;
+  refetch: () => Promise<unknown>;
 }) => {
   const toast = useToast();
 
@@ -50,7 +52,8 @@ const CreatePartylistModal = ({
   }, [isOpen, reset]);
 
   const createPartylistMutation = api.partylist.createSingle.useMutation({
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      await refetch();
       toast({
         title: `${data.name} (${data.acronym}) created!`,
         description: "Successfully created partylist",

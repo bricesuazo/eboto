@@ -54,13 +54,6 @@ const CreateCandidateModal = ({
     formState: { errors },
   } = useForm<FormValues>();
 
-  useEffect(() => {
-    if (isOpen) {
-      reset();
-      createCandidateMutation.reset();
-    }
-  }, [isOpen, reset]);
-
   const createCandidateMutation = api.candidate.createSingle.useMutation({
     onSuccess: async (data) => {
       toast({
@@ -74,6 +67,13 @@ const CreateCandidateModal = ({
       onClose();
     },
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      reset();
+      createCandidateMutation.reset();
+    }
+  }, [isOpen, reset, createCandidateMutation]);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     await createCandidateMutation.mutateAsync({

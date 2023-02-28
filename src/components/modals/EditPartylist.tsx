@@ -32,10 +32,12 @@ const EditPartylistModal = ({
   isOpen,
   onClose,
   partylist,
+  refetch,
 }: {
   isOpen: boolean;
   onClose: () => void;
   partylist: Partylist;
+  refetch: () => Promise<unknown>;
 }) => {
   const toast = useToast();
 
@@ -43,25 +45,19 @@ const EditPartylistModal = ({
     register,
     handleSubmit,
     reset,
-    setValue,
     watch,
     formState: { errors },
   } = useForm<FormValues>();
 
   useEffect(() => {
     if (isOpen) {
-      setValue("name", partylist.name);
-      setValue("acronym", partylist.acronym);
-    } else {
-      reset({
-        name: partylist.name,
-        acronym: partylist.acronym,
-      });
+      reset();
     }
   }, [isOpen, reset]);
 
   const editPartylistMutation = api.partylist.editSingle.useMutation({
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      await refetch();
       toast({
         title: `${data.name} (${data.acronym}) updated!`,
         description: "Successfully updated partylist",
@@ -103,6 +99,7 @@ const EditPartylistModal = ({
                   type="text"
                   {...register("name", {
                     required: "This is required.",
+                    value: partylist.name,
                     validate: (value) => {
                       if (
                         value === partylist.name &&
@@ -135,6 +132,7 @@ const EditPartylistModal = ({
                   type="text"
                   {...register("acronym", {
                     required: "This is required.",
+                    value: partylist.acronym,
                     validate: (value) => {
                       if (
                         value === partylist.acronym &&

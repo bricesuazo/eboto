@@ -15,12 +15,13 @@ const PositionCard = ({
   refetch,
 }: {
   position: Position;
-  refetch: () => void;
+  refetch: () => Promise<unknown>;
 }) => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const deletePositionMutation = api.position.deleteSingle.useMutation({
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      await refetch();
       toast({
         title: `${data.name} deleted!`,
         description: "Successfully deleted position",
@@ -28,7 +29,6 @@ const PositionCard = ({
         duration: 5000,
         isClosable: true,
       });
-      refetch();
     },
   });
 
@@ -36,11 +36,9 @@ const PositionCard = ({
     <>
       <EditPositionModal
         isOpen={isOpen}
-        onClose={() => {
-          refetch();
-          onClose();
-        }}
+        onClose={onClose}
         position={position}
+        refetch={refetch}
       />
       <Center
         flexDirection="column"
