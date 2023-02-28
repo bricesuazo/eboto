@@ -1,12 +1,10 @@
-import { Container, Flex, Text, useDisclosure, Button } from "@chakra-ui/react";
+import { Container, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import CandidateCard from "../../../components/Candidate";
-import CreateCandidateModal from "../../../components/modals/CreateCandidate";
+import Candidates from "../../../components/Candidates";
 import { api } from "../../../utils/api";
 
 const CandidatePartylist = () => {
   const router = useRouter();
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const candidates = api.candidate.getAll.useQuery(
     router.query.electionSlug as string,
@@ -22,34 +20,31 @@ const CandidatePartylist = () => {
 
   if (candidates.isError) return <Text>Error</Text>;
 
+  if (!candidates.data) return <Text>No data</Text>;
+
   return (
     <Container maxW="4xl">
-      <CreateCandidateModal
-        isOpen={isOpen}
-        onClose={async () => {
-          await candidates.refetch();
-          onClose();
-        }}
-        electionId={candidates.data.election.id}
-        order={candidates.data.candidates.length}
-      />
-      <Button onClick={onOpen} mb={4}>
-        Add candidate
-      </Button>
-
-      <Flex gap={4} flexWrap="wrap">
-        {!candidates.data.candidates ? (
-          <Text>No position</Text>
-        ) : (
-          candidates.data.candidates.map((candidate) => (
-            <CandidateCard
-              key={candidate.id}
-              candidate={candidate}
+      {candidates.data.positions.length === 0 ? (
+        <Text>No positions yet</Text>
+      ) : (
+        candidates.data.positions.map((position) => {
+          return (
+            <Candidates
+              key={position.id}
+              position={position}
+              partylists={candidates.data.partylists}
+              candidates={
+                candidates.data.candidates.filter
+                  ? candidates.data.candidates.filter(
+                      (candidate) => candidate.positionId === position.id
+                    )
+                  : []
+              }
               refetch={async () => await candidates.refetch()}
             />
-          ))
-        )}
-      </Flex>
+          );
+        })
+      )}
     </Container>
   );
 };

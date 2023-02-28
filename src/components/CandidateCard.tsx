@@ -6,21 +6,24 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import type { Candidate } from "@prisma/client";
+import type { Candidate, Partylist } from "@prisma/client";
 import { api } from "../utils/api";
 import EditCandidateModal from "./modals/EditCandidate";
 
 const CandidateCard = ({
   candidate,
   refetch,
+  partylists,
 }: {
   candidate: Candidate;
-  refetch: () => void;
+  refetch: () => Promise<unknown>;
+  partylists: Partylist[];
 }) => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const deletePositionMutation = api.candidate.deleteSingle.useMutation({
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      await refetch();
       toast({
         title: `${data.first_name} ${data.last_name} deleted!`,
         description: "Successfully deleted candidate",
@@ -28,7 +31,6 @@ const CandidateCard = ({
         duration: 5000,
         isClosable: true,
       });
-      refetch();
     },
   });
 
@@ -36,11 +38,10 @@ const CandidateCard = ({
     <>
       <EditCandidateModal
         isOpen={isOpen}
-        onClose={() => {
-          refetch();
-          onClose();
-        }}
+        onClose={onClose}
+        partylists={partylists}
         candidate={candidate}
+        refetch={refetch}
       />
       <Center
         flexDirection="column"

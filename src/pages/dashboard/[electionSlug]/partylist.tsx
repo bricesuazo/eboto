@@ -1,7 +1,7 @@
 import { Button, Container, Flex, Text, useDisclosure } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import CreatePartylistModal from "../../../components/modals/CreatePartylist";
-import Partylist from "../../../components/Partylist";
+import Partylist from "../../../components/PartylistCard";
 import { api } from "../../../utils/api";
 
 const DashboardPartylist = () => {

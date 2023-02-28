@@ -6,7 +6,7 @@ export const candidateRouter = createTRPCRouter({
   editSingle: protectedProcedure
     .input(
       z.object({
-        id: z.string().min(1),
+        id: z.string(),
         firstName: z.string(),
         lastName: z.string(),
         slug: z.string(),
@@ -18,7 +18,7 @@ export const candidateRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const position = await ctx.prisma.position.findUniqueOrThrow({
         where: {
-          id: input.id,
+          id: input.positionId,
         },
         select: {
           election: {
@@ -36,6 +36,17 @@ export const candidateRouter = createTRPCRouter({
         )
       )
         throw new Error("Unauthorized");
+
+      const candidate = await ctx.prisma.candidate.findFirst({
+        where: {
+          slug: input.slug,
+          NOT: {
+            id: input.id,
+          },
+        },
+      });
+
+      if (candidate) throw new Error("Candidate's slug already exists");
 
       return ctx.prisma.candidate.update({
         where: {
@@ -88,11 +99,13 @@ export const candidateRouter = createTRPCRouter({
         firstName: z.string().min(1),
         lastName: z.string().min(1),
         slug: z.string().min(1),
-        electionId: z.string().min(1),
-        positionId: z.string().min(1),
+        position: z.object({
+          id: z.string().min(1),
+          electionId: z.string().min(1),
+        }),
         partylistId: z.string().min(1),
 
-        middleName: z.string().min(1).optional(),
+        middleName: z.string().nullable(),
         description: z.string().min(1).optional(),
         image: z.string().min(1).optional(),
       })
@@ -100,7 +113,7 @@ export const candidateRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const election = await ctx.prisma.election.findUniqueOrThrow({
         where: {
-          id: input.electionId,
+          id: input.position.electionId,
         },
         select: {
           id: true,
@@ -115,6 +128,14 @@ export const candidateRouter = createTRPCRouter({
       )
         throw new Error("Unauthorized");
 
+      const candidate = await ctx.prisma.candidate.findUnique({
+        where: {
+          slug: input.slug,
+        },
+      });
+
+      if (candidate) throw new Error("Candidate's slug already exists");
+
       return ctx.prisma.candidate.create({
         data: {
           first_name: input.firstName,
@@ -122,7 +143,7 @@ export const candidateRouter = createTRPCRouter({
           slug: input.slug,
           electionId: election.id,
           partylistId: input.partylistId,
-          positionId: input.positionId,
+          positionId: input.position.id,
 
           middle_name: input.middleName,
           description: input.description,
@@ -150,6 +171,14 @@ export const candidateRouter = createTRPCRouter({
       )
         throw new Error("Unauthorized");
 
+      const positions = await ctx.prisma.position.findMany({
+        where: {
+          electionId: election.id,
+        },
+        orderBy: {
+          order: "asc",
+        },
+      });
       const candidates = await ctx.prisma.candidate.findMany({
         where: {
           electionId: election.id,
@@ -160,7 +189,15 @@ export const candidateRouter = createTRPCRouter({
           },
         },
       });
+      const partylists = await ctx.prisma.partylist.findMany({
+        where: {
+          electionId: election.id,
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+      });
 
-      return { candidates, election };
+      return { candidates, election, positions, partylists };
     }),
 });

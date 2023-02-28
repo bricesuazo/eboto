@@ -279,18 +279,22 @@ export const electionRouter = createTRPCRouter({
           end_date: input.end_date,
           voting_start: input.voting_start ? input.voting_start : undefined,
           voting_end: input.voting_end ? input.voting_end : undefined,
+          commissioners: {
+            create: {
+              userId: ctx.session.user.id,
+            },
+          },
+          partylist: {
+            create: {
+              name: "Independent",
+              acronym: "IND",
+            },
+          },
         },
 
         select: {
           id: true,
           slug: true,
-        },
-      });
-
-      await ctx.prisma.commissioner.create({
-        data: {
-          electionId: newElection.id,
-          userId: ctx.session.user.id,
         },
       });
 
