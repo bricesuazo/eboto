@@ -326,12 +326,7 @@ const CreateElectionModal = ({
                 fontSize="sm"
                 opacity={createElectionMutation.isLoading ? 0.5 : 1}
               >
-                {
-                  // calculate the number of hours depending on the voting_start and voting_end
-
-                  watch("voting_end") - watch("voting_start")
-                }{" "}
-                hour
+                {watch("voting_end") - watch("voting_start")} hour
                 {watch("voting_end") - watch("voting_start") > 1 ? "s" : ""}
               </Text>
 

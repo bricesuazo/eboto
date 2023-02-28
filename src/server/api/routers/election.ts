@@ -5,6 +5,32 @@ import { takenSlugs } from "../../../constants";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 
 export const electionRouter = createTRPCRouter({
+  getElectionSettings: protectedProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      const election = await ctx.prisma.election.findUnique({
+        where: {
+          slug: input,
+        },
+        include: {
+          commissioners: true,
+        },
+      });
+
+      if (!election) {
+        throw new Error("Election not found");
+      }
+
+      if (
+        !election.commissioners.some(
+          (commissioner) => commissioner.userId === ctx.session.user.id
+        )
+      ) {
+        throw new Error("You are not a commissioner of this election");
+      }
+
+      return election;
+    }),
   getElectionVoter: protectedProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
@@ -329,6 +355,72 @@ export const electionRouter = createTRPCRouter({
         });
 
       return newElection;
+    }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        slug: z.string(),
+        start_date: z.date(),
+        end_date: z.date(),
+        voting_start: z.number().nullable(),
+        voting_end: z.number().nullable(),
+        publicity: z.enum(["PUBLIC", "VOTER", "PRIVATE"]),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const election = await ctx.prisma.election.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          commissioners: true,
+        },
+      });
+
+      if (!election) {
+        throw new Error("Election not found");
+      }
+
+      if (
+        !election.commissioners.some(
+          (commissioner) => commissioner.userId === ctx.session.user.id
+        )
+      ) {
+        throw new Error("You are not a commissioner of this election");
+      }
+
+      if (input.slug !== election.slug) {
+        if (takenSlugs.includes(input.slug.trim().toLowerCase())) {
+          throw new Error("Election slug is unavailable. Try another.");
+        }
+
+        const isElectionExists = await ctx.prisma.election.findUnique({
+          where: {
+            slug: input.slug,
+          },
+        });
+
+        if (isElectionExists) {
+          throw new Error("Election slug is already exists");
+        }
+      }
+
+      return await ctx.prisma.election.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          name: input.name,
+          slug: input.slug.trim().toLowerCase(),
+          start_date: input.start_date,
+          end_date: input.end_date,
+          voting_start: input.voting_start ? input.voting_start : undefined,
+          voting_end: input.voting_end ? input.voting_end : undefined,
+          publicity: input.publicity,
+        },
+      });
     }),
   delete: protectedProcedure
     .input(z.string())
