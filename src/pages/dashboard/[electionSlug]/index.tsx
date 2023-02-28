@@ -138,6 +138,9 @@ const DashboardOverview = () => {
             {electionOverview.data.invitedVoters._count._all} invited voter/s
           </Text>
           <Text>
+            {electionOverview.data.declinedVoters._count._all} declined voter/s
+          </Text>
+          <Text>
             Open from{" "}
             {convertNumberToHour(electionOverview.data.election.voting_start)}{" "}
             to {convertNumberToHour(electionOverview.data.election.voting_end)}

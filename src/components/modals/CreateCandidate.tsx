@@ -56,6 +56,7 @@ const CreateCandidateModal = ({
 
   const createCandidateMutation = api.candidate.createSingle.useMutation({
     onSuccess: async (data) => {
+      await refetch();
       toast({
         title: `${data.first_name} ${data.last_name} created!`,
         description: "Successfully created position",
@@ -63,7 +64,6 @@ const CreateCandidateModal = ({
         duration: 5000,
         isClosable: true,
       });
-      await refetch();
       onClose();
     },
   });

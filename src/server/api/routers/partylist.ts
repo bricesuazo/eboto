@@ -133,6 +133,9 @@ export const partylistRouter = createTRPCRouter({
       const partylists = await ctx.prisma.partylist.findMany({
         where: {
           electionId: election.id,
+          acronym: {
+            not: "IND",
+          },
         },
         orderBy: {
           createdAt: "asc",
