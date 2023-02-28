@@ -44,10 +44,8 @@ const DashboardVoter = () => {
       <CreateVoterModal
         isOpen={isOpen}
         electionId={election.data.id}
-        onClose={async () => {
-          await voters.refetch();
-          onClose();
-        }}
+        onClose={onClose}
+        refetch={voters.refetch}
       />
       <Button onClick={onOpen}>Add voter</Button>
       <Text>{election.data.name} - voter page</Text>

@@ -12,6 +12,11 @@ export const partylistRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      if (input.acronym.trim().toUpperCase() === "IND")
+        throw new Error(
+          "IND is reserved for independent partylist. Please use another acronym"
+        );
+
       const partylist = await ctx.prisma.partylist.findUniqueOrThrow({
         where: {
           id: input.id,
@@ -32,6 +37,14 @@ export const partylistRouter = createTRPCRouter({
         )
       )
         throw new Error("Unauthorized");
+
+      const partylistWithSameAcronym = await ctx.prisma.partylist.findUnique({
+        where: {
+          acronym: input.acronym,
+        },
+      });
+
+      if (partylistWithSameAcronym) throw new Error("Acronym already exists");
 
       return ctx.prisma.partylist.update({
         where: {
@@ -50,7 +63,7 @@ export const partylistRouter = createTRPCRouter({
         where: {
           id: input,
         },
-        select: {
+        include: {
           election: {
             select: {
               id: true,
@@ -66,6 +79,9 @@ export const partylistRouter = createTRPCRouter({
         )
       )
         throw new Error("Unauthorized");
+
+      if (partylist.acronym.trim().toUpperCase() === "IND")
+        throw new Error("Cannot delete independent partylist");
 
       return ctx.prisma.partylist.delete({
         where: {
@@ -83,6 +99,9 @@ export const partylistRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      if (input.acronym.trim().toUpperCase() === "IND")
+        throw new Error("IND is reserved for independent partylist");
+
       return ctx.prisma.partylist.create({
         data: {
           name: input.name,

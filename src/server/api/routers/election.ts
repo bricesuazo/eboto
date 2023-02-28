@@ -257,7 +257,7 @@ export const electionRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      if (takenSlugs.includes(input.slug)) {
+      if (takenSlugs.includes(input.slug.trim().toLowerCase())) {
         throw new Error("Election slug is unavailable. Try another.");
       }
 
@@ -274,7 +274,7 @@ export const electionRouter = createTRPCRouter({
       const newElection = await ctx.prisma.election.create({
         data: {
           name: input.name,
-          slug: input.slug,
+          slug: input.slug.trim().toLowerCase(),
           start_date: input.start_date,
           end_date: input.end_date,
           voting_start: input.voting_start ? input.voting_start : undefined,

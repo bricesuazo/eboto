@@ -55,7 +55,7 @@ export const candidateRouter = createTRPCRouter({
         data: {
           first_name: input.firstName,
           last_name: input.lastName,
-          slug: input.slug,
+          slug: input.slug.trim().toLowerCase(),
           electionId: position.election.id,
           partylistId: input.partylistId,
           positionId: input.positionId,
@@ -140,7 +140,7 @@ export const candidateRouter = createTRPCRouter({
         data: {
           first_name: input.firstName,
           last_name: input.lastName,
-          slug: input.slug,
+          slug: input.slug.trim().toLowerCase(),
           electionId: election.id,
           partylistId: input.partylistId,
           positionId: input.position.id,

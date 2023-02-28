@@ -54,7 +54,7 @@ const EditCandidateModal = ({
     formState: { errors },
   } = useForm<FormValues>();
 
-  const editPositionMutation = api.candidate.editSingle.useMutation({
+  const editCandidateMutation = api.candidate.editSingle.useMutation({
     onSuccess: async (data) => {
       await refetch();
       toast({
@@ -71,12 +71,12 @@ const EditCandidateModal = ({
   useEffect(() => {
     if (isOpen) {
       reset();
-      editPositionMutation.reset();
+      editCandidateMutation.reset();
     }
-  }, [isOpen, reset, editPositionMutation]);
+  }, [isOpen, reset, editCandidateMutation]);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    await editPositionMutation.mutateAsync({
+    await editCandidateMutation.mutateAsync({
       id: candidate.id,
       firstName: data.firstName,
       lastName: data.lastName,
@@ -88,20 +88,20 @@ const EditCandidateModal = ({
   };
 
   return (
-    <Modal isOpen={isOpen || editPositionMutation.isLoading} onClose={onClose}>
+    <Modal isOpen={isOpen || editCandidateMutation.isLoading} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
           Edit Candidate - {candidate.first_name} {candidate.last_name}
         </ModalHeader>
-        <ModalCloseButton disabled={editPositionMutation.isLoading} />
+        <ModalCloseButton disabled={editCandidateMutation.isLoading} />
         <form onSubmit={handleSubmit(onSubmit)}>
           <ModalBody>
             <Stack>
               <FormControl
                 isInvalid={!!errors.firstName}
                 isRequired
-                isDisabled={editPositionMutation.isLoading}
+                isDisabled={editCandidateMutation.isLoading}
               >
                 <FormLabel>First name</FormLabel>
                 <Input
@@ -124,7 +124,7 @@ const EditCandidateModal = ({
               </FormControl>
               <FormControl
                 isInvalid={!!errors.middleName}
-                isDisabled={editPositionMutation.isLoading}
+                isDisabled={editCandidateMutation.isLoading}
               >
                 <FormLabel>Middle name</FormLabel>
                 <Input
@@ -143,7 +143,7 @@ const EditCandidateModal = ({
               <FormControl
                 isInvalid={!!errors.lastName}
                 isRequired
-                isDisabled={editPositionMutation.isLoading}
+                isDisabled={editCandidateMutation.isLoading}
               >
                 <FormLabel>Last name</FormLabel>
                 <Input
@@ -167,7 +167,7 @@ const EditCandidateModal = ({
               <FormControl
                 isInvalid={!!errors.slug}
                 isRequired
-                isDisabled={editPositionMutation.isLoading}
+                isDisabled={editCandidateMutation.isLoading}
               >
                 <FormLabel>Slug</FormLabel>
                 <Input
@@ -191,7 +191,7 @@ const EditCandidateModal = ({
               <FormControl
                 isInvalid={!!errors.partylistId}
                 isRequired
-                isDisabled={editPositionMutation.isLoading}
+                isDisabled={editCandidateMutation.isLoading}
               >
                 <FormLabel>Partylist</FormLabel>
 
@@ -216,12 +216,12 @@ const EditCandidateModal = ({
                 )}
               </FormControl>
             </Stack>
-            {editPositionMutation.error && (
+            {editCandidateMutation.error && (
               <Alert status="error" borderRadius="md">
                 <AlertIcon />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>
-                  {editPositionMutation.error.message}
+                  {editCandidateMutation.error.message}
                 </AlertDescription>
               </Alert>
             )}
@@ -231,14 +231,14 @@ const EditCandidateModal = ({
               variant="ghost"
               mr={2}
               onClick={onClose}
-              disabled={editPositionMutation.isLoading}
+              disabled={editCandidateMutation.isLoading}
             >
               Cancel
             </Button>
             <Button
               colorScheme="blue"
               type="submit"
-              isLoading={editPositionMutation.isLoading}
+              isLoading={editCandidateMutation.isLoading}
             >
               Create
             </Button>

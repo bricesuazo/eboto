@@ -47,10 +47,6 @@ const CreatePartylistModal = ({
     formState: { errors },
   } = useForm<FormValues>();
 
-  useEffect(() => {
-    isOpen && reset();
-  }, [isOpen, reset]);
-
   const createPartylistMutation = api.partylist.createSingle.useMutation({
     onSuccess: async (data) => {
       await refetch();
@@ -64,6 +60,14 @@ const CreatePartylistModal = ({
       onClose();
     },
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      reset();
+    } else {
+      createPartylistMutation.reset();
+    }
+  }, [isOpen, reset]);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     await createPartylistMutation.mutateAsync({

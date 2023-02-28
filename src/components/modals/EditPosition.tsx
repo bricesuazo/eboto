@@ -47,12 +47,6 @@ const EditPartylistModal = ({
     formState: { errors },
   } = useForm<FormValues>();
 
-  useEffect(() => {
-    if (isOpen) {
-      reset();
-    }
-  }, [isOpen, reset]);
-
   const editPositionMutation = api.position.editSingle.useMutation({
     onSuccess: async (data) => {
       await refetch();
@@ -66,6 +60,14 @@ const EditPartylistModal = ({
       onClose();
     },
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      reset();
+    } else {
+      editPositionMutation.reset();
+    }
+  }, [isOpen, reset]);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     await editPositionMutation.mutateAsync({

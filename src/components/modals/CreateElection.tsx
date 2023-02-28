@@ -66,14 +66,6 @@ const CreateElectionModal = ({
     formState: { errors },
   } = useForm<FormValues>();
 
-  useEffect(() => {
-    isOpen && reset();
-  }, [isOpen, reset]);
-
-  useEffect(() => {
-    setValue("template", 0);
-  }, [isOpen, setValue]);
-
   const { getRootProps, getRadioProps } = useRadioGroup({
     name: "template",
     defaultValue: "0",
@@ -98,6 +90,18 @@ const CreateElectionModal = ({
       await fireConfetti();
     },
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      reset();
+    } else {
+      createElectionMutation.reset();
+    }
+  }, [isOpen, reset]);
+
+  useEffect(() => {
+    setValue("template", 0);
+  }, [isOpen, setValue]);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     await createElectionMutation.mutateAsync({

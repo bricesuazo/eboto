@@ -16,6 +16,7 @@ import {
   AlertIcon,
   AlertTitle,
   AlertDescription,
+  useToast,
 } from "@chakra-ui/react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useEffect } from "react";
@@ -29,11 +30,14 @@ const CreateVoterModal = ({
   isOpen,
   onClose,
   electionId,
+  refetch,
 }: {
   electionId: string;
   isOpen: boolean;
   onClose: () => void;
+  refetch: () => Promise<unknown>;
 }) => {
+  const toast = useToast();
   const {
     register,
     handleSubmit,
@@ -41,15 +45,27 @@ const CreateVoterModal = ({
     formState: { errors },
   } = useForm<FormValues>();
 
+  const createVoterMutation = api.voter.createSingle.useMutation({
+    onSuccess: async (data) => {
+      await refetch();
+      toast({
+        title: `${data.email} added!`,
+        description: "Successfully added voter",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+    },
+  });
+
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
       reset();
+    } else {
       createVoterMutation.reset();
     }
     // //eslint-disable-next-line
   }, [isOpen, reset]);
-
-  const createVoterMutation = api.voter.createSingle.useMutation();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     await createVoterMutation.mutateAsync({

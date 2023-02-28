@@ -48,10 +48,6 @@ const CreatePositionModal = ({
     formState: { errors },
   } = useForm<FormValues>();
 
-  useEffect(() => {
-    isOpen && reset();
-  }, [isOpen, reset]);
-
   const createPositionMutation = api.position.createSingle.useMutation({
     onSuccess: async (data) => {
       await refetch();
@@ -65,6 +61,14 @@ const CreatePositionModal = ({
       onClose();
     },
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      reset();
+    } else {
+      createPositionMutation.reset();
+    }
+  }, [isOpen, reset]);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     await createPositionMutation.mutateAsync({

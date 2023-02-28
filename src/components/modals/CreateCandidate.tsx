@@ -71,9 +71,10 @@ const CreateCandidateModal = ({
   useEffect(() => {
     if (isOpen) {
       reset();
+    } else {
       createCandidateMutation.reset();
     }
-  }, [isOpen, reset, createCandidateMutation]);
+  }, [isOpen, reset]);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     await createCandidateMutation.mutateAsync({
