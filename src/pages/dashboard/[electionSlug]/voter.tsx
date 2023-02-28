@@ -7,15 +7,15 @@ const DashboardVoter = () => {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const election = api.election.getBySlug.useQuery(
-    router.query.electionSlug as string,
-    {
-      enabled: router.isReady,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchOnMount: false,
-    }
-  );
+  // const election = api.election.getBySlug.useQuery(
+  //   router.query.electionSlug as string,
+  //   {
+  //     enabled: router.isReady,
+  //     refetchOnWindowFocus: false,
+  //     refetchOnReconnect: false,
+  //     refetchOnMount: false,
+  //   }
+  // );
 
   const voters = api.election.getElectionVoter.useQuery(
     router.query.electionSlug as string,
@@ -33,28 +33,24 @@ const DashboardVoter = () => {
     },
   });
 
-  if (election.isLoading) return <Text>Loading...</Text>;
+  if (voters.isLoading) return <Text>Loading...</Text>;
 
-  if (election.isError) return <Text>Error: {election.error.message}</Text>;
+  if (voters.isError) return <Text>Error: {voters.error.message}</Text>;
 
-  if (!election.data) return <Text>No election found</Text>;
+  if (!voters.data) return <Text>No election found</Text>;
 
   return (
     <Container maxW="4xl">
       <CreateVoterModal
         isOpen={isOpen}
-        electionId={election.data.id}
+        electionId={voters.data.election.id}
         onClose={onClose}
         refetch={voters.refetch}
       />
       <Button onClick={onOpen}>Add voter</Button>
-      <Text>{election.data.name} - voter page</Text>
+      <Text>{voters.data.election.name} - voter page</Text>
 
-      {voters.isLoading ? (
-        <Text>Loading...</Text>
-      ) : voters.isError ? (
-        <Text>Error: {voters.error.message}</Text>
-      ) : !voters.data.invitedVoter.length && !voters.data.voters.length ? (
+      {!voters.data.invitedVoter.length && !voters.data.voters.length ? (
         <Text>No voters found</Text>
       ) : (
         <>
@@ -64,9 +60,8 @@ const DashboardVoter = () => {
 
               <Button
                 onClick={() =>
-                  election.data &&
                   removeVoterMutation.mutate({
-                    electionId: election.data.id,
+                    electionId: voters.data.election.id,
                     voterId: voter.id,
                     isInvitedVoter: false,
                   })
@@ -85,9 +80,8 @@ const DashboardVoter = () => {
 
               <Button
                 onClick={() =>
-                  election.data &&
                   removeVoterMutation.mutate({
-                    electionId: election.data.id,
+                    electionId: voters.data.election.id,
                     voterId: voter.id,
                     isInvitedVoter: true,
                   })

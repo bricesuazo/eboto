@@ -1,4 +1,4 @@
-import { Button, Container, Flex, HStack, Text } from "@chakra-ui/react";
+import { Button, Container, HStack, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Moment from "react-moment";
@@ -7,22 +7,16 @@ import { api } from "../../../utils/api";
 
 const DashboardOverview = () => {
   const router = useRouter();
-  if (typeof router.query.electionSlug !== "string") return null;
 
   const electionOverview = api.election.getElectionOverview.useQuery(
-    router.query.electionSlug,
+    router.query.electionSlug as string,
     {
+      enabled: router.isReady,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
       retry: false,
     }
   );
-
-  const deleteElectionMutation = api.election.delete.useMutation({
-    onSuccess: async () => {
-      await router.push("/dashboard");
-    },
-  });
 
   return (
     <Container maxW="4xl">
@@ -34,64 +28,51 @@ const DashboardOverview = () => {
         <Text>No election found</Text>
       ) : (
         <>
-          <Flex justifyContent="space-between">
-            <HStack>
-              <Link
-                href={
-                  "/dashboard/" +
-                  electionOverview.data.election.slug +
-                  "/partylist"
-                }
-              >
-                <Button>Partylist</Button>
-              </Link>
-              <Link
-                href={
-                  "/dashboard/" +
-                  electionOverview.data.election.slug +
-                  "/position"
-                }
-              >
-                <Button>Position</Button>
-              </Link>
-              <Link
-                href={
-                  "/dashboard/" +
-                  electionOverview.data.election.slug +
-                  "/candidate"
-                }
-              >
-                <Button>Candidate</Button>
-              </Link>
-              <Link
-                href={
-                  "/dashboard/" + electionOverview.data.election.slug + "/voter"
-                }
-              >
-                <Button>Voter</Button>
-              </Link>
-              <Link
-                href={
-                  "/dashboard/" +
-                  electionOverview.data.election.slug +
-                  "/settings"
-                }
-              >
-                <Button>Settings</Button>
-              </Link>
-            </HStack>
-
-            <Button
-              colorScheme="red"
-              onClick={() =>
-                electionOverview.data &&
-                deleteElectionMutation.mutate(electionOverview.data.election.id)
+          <HStack>
+            <Link
+              href={
+                "/dashboard/" +
+                electionOverview.data.election.slug +
+                "/partylist"
               }
-              isLoading={deleteElectionMutation.isLoading}
             >
-              Delete
-            </Button>
-          </Flex>
+              <Button>Partylist</Button>
+            </Link>
+            <Link
+              href={
+                "/dashboard/" +
+                electionOverview.data.election.slug +
+                "/position"
+              }
+            >
+              <Button>Position</Button>
+            </Link>
+            <Link
+              href={
+                "/dashboard/" +
+                electionOverview.data.election.slug +
+                "/candidate"
+              }
+            >
+              <Button>Candidate</Button>
+            </Link>
+            <Link
+              href={
+                "/dashboard/" + electionOverview.data.election.slug + "/voter"
+              }
+            >
+              <Button>Voter</Button>
+            </Link>
+            <Link
+              href={
+                "/dashboard/" +
+                electionOverview.data.election.slug +
+                "/settings"
+              }
+            >
+              <Button>Settings</Button>
+            </Link>
+          </HStack>
 
           <Text>{electionOverview.data.election.name}</Text>
           <Text>{electionOverview.data.election.slug}</Text>

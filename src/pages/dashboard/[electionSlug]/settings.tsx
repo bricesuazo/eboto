@@ -5,6 +5,7 @@ import {
   AlertTitle,
   Button,
   Container,
+  Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -65,6 +66,12 @@ const DashboardSettings = () => {
         duration: 3000,
         isClosable: true,
       });
+    },
+  });
+
+  const deleteElectionMutation = api.election.delete.useMutation({
+    onSuccess: async () => {
+      await router.push("/dashboard");
     },
   });
 
@@ -302,14 +309,23 @@ const DashboardSettings = () => {
           )}
         </Stack>
 
-        <Button
-          colorScheme="blue"
-          type="submit"
-          isLoading={updateElectionMutation.isLoading}
-          mt={4}
-        >
-          Update
-        </Button>
+        <Flex mt={4} justifyContent="space-between">
+          <Button
+            colorScheme="blue"
+            type="submit"
+            isLoading={updateElectionMutation.isLoading}
+          >
+            Update
+          </Button>
+          <Button
+            variant="outline"
+            colorScheme="red"
+            onClick={() => deleteElectionMutation.mutate(election.data.id)}
+            isLoading={deleteElectionMutation.isLoading}
+          >
+            Delete
+          </Button>
+        </Flex>
       </form>
     </Container>
   );

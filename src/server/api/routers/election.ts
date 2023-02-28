@@ -80,6 +80,7 @@ export const electionRouter = createTRPCRouter({
       return {
         invitedVoter,
         voters,
+        election,
       };
     }),
 
@@ -194,6 +195,20 @@ export const electionRouter = createTRPCRouter({
       },
     });
   }),
+  getMyElectionsVote: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.election.findMany({
+      where: {
+        publicity: {
+          not: "PRIVATE",
+        },
+        voters: {
+          some: {
+            userId: ctx.session.user.id,
+          },
+        },
+      },
+    });
+  }),
   getElectionData: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
@@ -273,21 +288,6 @@ export const electionRouter = createTRPCRouter({
       }
       throw new Error("Election not found");
     }),
-  getMyElectionsVote: protectedProcedure.query(async ({ ctx }) => {
-    // return elections if I own it and with respect to the publicity
-    return await ctx.prisma.election.findMany({
-      where: {
-        publicity: {
-          not: "PRIVATE",
-        },
-        voters: {
-          some: {
-            userId: ctx.session.user.id,
-          },
-        },
-      },
-    });
-  }),
   create: protectedProcedure
     .input(
       z.object({
