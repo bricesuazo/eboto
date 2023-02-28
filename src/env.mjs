@@ -22,6 +22,7 @@ const server = z.object({
   SENDGRID_API_KEY: z.string(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
+  EMAIL_FROM: z.string().email(),
 
   // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
 });
@@ -48,6 +49,7 @@ const processEnv = {
   SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  EMAIL_FROM: process.env.EMAIL_FROM,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 

@@ -13,7 +13,7 @@ export const sendEmailTransport = async ({
   sendgrid.setApiKey(env.SENDGRID_API_KEY);
 
   await sendgrid.send({
-    from: "eboto@bricesuazo.com",
+    from: env.EMAIL_FROM,
     to: email,
     subject,
     html,

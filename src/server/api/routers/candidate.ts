@@ -7,11 +7,16 @@ export const candidateRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string().min(1),
-        name: z.string().min(1),
+        firstName: z.string(),
+        lastName: z.string(),
+        slug: z.string(),
+        electionId: z.string(),
+        partylistId: z.string(),
+        positionId: z.string(),
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const election = await ctx.prisma.position.findUniqueOrThrow({
+      const position = await ctx.prisma.position.findUniqueOrThrow({
         where: {
           id: input.id,
         },
@@ -26,21 +31,25 @@ export const candidateRouter = createTRPCRouter({
       });
 
       if (
-        !election.election.commissioners.some(
+        !position.election.commissioners.some(
           (commissioner) => commissioner.userId === ctx.session.user.id
         )
       )
         throw new Error("Unauthorized");
 
-      // return ctx.prisma.candidate.update({
-      //   where: {
-      //     id: input.id,
-      //   },
-      //   data: {
-      //     first_name: input.firstName,
-      //     last_name: input.lastName,
-      //   },
-      // });
+      return ctx.prisma.candidate.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          first_name: input.firstName,
+          last_name: input.lastName,
+          slug: input.slug,
+          electionId: position.election.id,
+          partylistId: input.partylistId,
+          positionId: input.positionId,
+        },
+      });
     }),
   deleteSingle: protectedProcedure
     .input(z.string().min(1))
