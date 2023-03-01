@@ -221,7 +221,7 @@ model Position {
 model Partylist {
     id          String   @id @default(cuid())
     name        String
-    acronym     String   @unique
+    acronym     String
     description String?
     logo        String?
     createdAt   DateTime @default(now())

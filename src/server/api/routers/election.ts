@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { positionTemplate } from "../../../constants";
 import { takenSlugs } from "../../../constants";
@@ -287,6 +288,102 @@ export const electionRouter = createTRPCRouter({
         }
       }
       throw new Error("Election not found");
+    }),
+  getElectionVotingPageData: publicProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      const election = await ctx.prisma.election.findUniqueOrThrow({
+        where: {
+          slug: input,
+        },
+      });
+
+      switch (election.publicity) {
+        case "PRIVATE":
+          if (!ctx.session)
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Election not found",
+              cause: "Session not found",
+            });
+
+          const commissioner = await ctx.prisma.election.findFirstOrThrow({
+            where: {
+              id: election.id,
+              commissioners: {
+                some: {
+                  userId: ctx.session.user.id,
+                },
+              },
+            },
+            include: {
+              positions: true,
+              candidates: true,
+              partylist: true,
+            },
+          });
+
+          return { election: commissioner, isVoteButtonShow: false };
+
+        case "VOTER":
+          if (!ctx.session)
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Election not found",
+              cause: "Session not found",
+            });
+
+          const voter = await ctx.prisma.election.findFirstOrThrow({
+            where: {
+              id: election.id,
+              voters: {
+                some: {
+                  userId: ctx.session.user.id,
+                },
+              },
+            },
+            include: {
+              positions: true,
+              candidates: true,
+              partylist: true,
+              vote: {
+                where: {
+                  voterId: ctx.session.user.id,
+                  electionId: election.id,
+                },
+              },
+            },
+          });
+
+          return { election: voter, isVoteButtonShow: voter.vote.length === 0 };
+
+        case "PUBLIC":
+          const publicElection = await ctx.prisma.election.findUniqueOrThrow({
+            where: {
+              id: election.id,
+            },
+            include: {
+              positions: true,
+              candidates: true,
+              partylist: true,
+              vote: ctx.session
+                ? {
+                    where: {
+                      voterId: ctx.session.user.id,
+                      electionId: election.id,
+                    },
+                  }
+                : undefined,
+            },
+          });
+
+          return {
+            election: publicElection,
+            isVoteButtonShow: ctx.session
+              ? publicElection.vote.length === 0
+              : false,
+          };
+      }
     }),
   create: protectedProcedure
     .input(
