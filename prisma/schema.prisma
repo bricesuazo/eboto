@@ -153,7 +153,7 @@ model VerificationToken {
 
 model Candidate {
     id          String   @id @default(cuid())
-    slug        String   @unique
+    slug        String
     first_name  String
     middle_name String?
     last_name   String

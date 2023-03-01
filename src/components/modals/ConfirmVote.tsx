@@ -29,6 +29,9 @@ const ConfirmVote = ({
   election,
   selectedCandidates,
 }: ConfirmVoteModalProps) => {
+  // const voteMutation = api.election.vote.useMutation();
+  // console.log(selectedCandidates);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={["xs", "md"]}>
       <ModalOverlay />

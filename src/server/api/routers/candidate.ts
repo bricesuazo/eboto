@@ -40,6 +40,7 @@ export const candidateRouter = createTRPCRouter({
       const candidate = await ctx.prisma.candidate.findFirst({
         where: {
           slug: input.slug,
+          electionId: position.election.id,
           NOT: {
             id: input.id,
           },
@@ -128,9 +129,10 @@ export const candidateRouter = createTRPCRouter({
       )
         throw new Error("Unauthorized");
 
-      const candidate = await ctx.prisma.candidate.findUnique({
+      const candidate = await ctx.prisma.candidate.findFirst({
         where: {
           slug: input.slug,
+          electionId: election.id,
         },
       });
 
