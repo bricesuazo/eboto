@@ -38,7 +38,7 @@ export const partylistRouter = createTRPCRouter({
       )
         throw new Error("Unauthorized");
 
-      const partylistWithSameAcronym = await ctx.prisma.partylist.findUnique({
+      const partylistWithSameAcronym = await ctx.prisma.partylist.findFirst({
         where: {
           acronym: input.acronym,
         },
