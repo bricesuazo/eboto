@@ -229,7 +229,7 @@ export const electionRouter = createTRPCRouter({
               include: {
                 positions: true,
                 candidates: true,
-                partylist: true,
+                partylists: true,
               },
             });
           case "VOTER":
@@ -253,7 +253,7 @@ export const electionRouter = createTRPCRouter({
                   include: {
                     positions: true,
                     candidates: true,
-                    partylist: true,
+                    partylists: true,
                   },
                 });
               }
@@ -280,7 +280,7 @@ export const electionRouter = createTRPCRouter({
                   include: {
                     positions: true,
                     candidates: true,
-                    partylist: true,
+                    partylists: true,
                   },
                 });
               }
@@ -319,7 +319,7 @@ export const electionRouter = createTRPCRouter({
             include: {
               positions: true,
               candidates: true,
-              partylist: true,
+              partylists: true,
             },
           });
 
@@ -345,7 +345,7 @@ export const electionRouter = createTRPCRouter({
             include: {
               positions: true,
               candidates: true,
-              partylist: true,
+              partylists: true,
               vote: {
                 where: {
                   voterId: ctx.session.user.id,
@@ -365,7 +365,7 @@ export const electionRouter = createTRPCRouter({
             include: {
               positions: true,
               candidates: true,
-              partylist: true,
+              partylists: true,
               vote: ctx.session
                 ? {
                     where: {
@@ -425,7 +425,7 @@ export const electionRouter = createTRPCRouter({
               userId: ctx.session.user.id,
             },
           },
-          partylist: {
+          partylists: {
             create: {
               name: "Independent",
               acronym: "IND",

@@ -119,7 +119,7 @@ model Election {
     candidates          Candidate[]
     positions           Position[]
     vote                Vote[]
-    partylist           Partylist[]
+    partylists          Partylist[]
     invitedVoter        InvitedVoter[]
     invitedCommissioner InvitedCommissioner[]
 

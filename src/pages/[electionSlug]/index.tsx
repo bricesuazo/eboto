@@ -97,7 +97,7 @@ const ElectionPage = () => {
                               : ""}
                             {candidate.last_name}(
                             {
-                              election.data.election?.partylist.find(
+                              election.data.election?.partylists.find(
                                 (partylist) =>
                                   partylist.id === candidate.partylistId
                               )?.acronym

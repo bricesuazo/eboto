@@ -53,12 +53,13 @@ const Header = () => {
           </Link>
           {status === "unauthenticated" && (
             <Stack direction="row" alignItems="center" spacing={4}>
-              <Link href="/signin">
-                <Button variant="link">Sign in</Button>
-              </Link>
-              <Link href="/signup">
-                <Button variant="outline">Get Started</Button>
-              </Link>
+              <Button variant="link" as={Link} href="/signin">
+                Sign in
+              </Button>
+
+              <Button variant="outline" as={Link} href="/signup">
+                Get Started
+              </Button>
             </Stack>
           )}
           {status === "authenticated" && (
