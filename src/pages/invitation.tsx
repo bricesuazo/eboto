@@ -14,7 +14,11 @@ const Invitation = () => {
     onSuccess: async () => await router.push("/dashboard"),
   });
 
-  if (typeof router.query.token !== "string" || !tokenQuery.data)
+  if (
+    !router.query.token ||
+    typeof router.query.token !== "string" ||
+    !tokenQuery.data
+  )
     return <Container>No token</Container>;
 
   if (tokenQuery.isLoading) return <Container>Loading...</Container>;
@@ -27,7 +31,7 @@ const Invitation = () => {
       <Button
         onClick={() => {
           invitationMutation.mutate({
-            tokenId: router.query.token,
+            tokenId: router.query.token as string,
             isAccepted: true,
           });
         }}
@@ -38,7 +42,7 @@ const Invitation = () => {
       <Button
         onClick={() => {
           invitationMutation.mutate({
-            tokenId: router.query.token,
+            tokenId: router.query.token as string,
             isAccepted: false,
           });
         }}

@@ -11,6 +11,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import type { Candidate, Election, Partylist, Position } from "@prisma/client";
+import { api } from "../../utils/api";
 
 interface ConfirmVoteModalProps {
   isOpen: boolean;
@@ -29,11 +30,20 @@ const ConfirmVote = ({
   election,
   selectedCandidates,
 }: ConfirmVoteModalProps) => {
-  // const voteMutation = api.election.vote.useMutation();
-  // console.log(selectedCandidates);
+  const voteMutation = api.election.vote.useMutation({
+    onSuccess: () => {
+      onClose();
+    },
+  });
+
+  console.log(selectedCandidates);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={["xs", "md"]}>
+    <Modal
+      isOpen={isOpen || voteMutation.isLoading}
+      onClose={onClose}
+      size={["xs", "md"]}
+    >
       <ModalOverlay />
       <ModalContent marginX={[2, 0]}>
         <ModalHeader
@@ -82,10 +92,27 @@ const ConfirmVote = ({
         </ModalBody>
 
         <ModalFooter>
-          <Button size={["sm", "md"]} variant="ghost" mr={3} onClick={onClose}>
+          <Button
+            size={["sm", "md"]}
+            variant="ghost"
+            mr={3}
+            onClick={onClose}
+            isDisabled={voteMutation.isLoading}
+          >
             Cancel
           </Button>
-          <Button size={["sm", "md"]}>Cast Vote</Button>
+          <Button
+            size={["sm", "md"]}
+            isLoading={voteMutation.isLoading}
+            onClick={() =>
+              voteMutation.mutate({
+                electionId: election.id,
+                votes: selectedCandidates,
+              })
+            }
+          >
+            Cast Vote
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

@@ -6,6 +6,46 @@ import { takenSlugs } from "../../../constants";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 
 export const electionRouter = createTRPCRouter({
+  vote: protectedProcedure
+    .input(
+      z.object({
+        electionId: z.string(),
+        votes: z.array(z.string()),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const election = await ctx.prisma.election.findUniqueOrThrow({
+        where: {
+          id: input.electionId,
+        },
+      });
+
+      // input.votes is ['clepr3q0e000bfcd0ol0jdxba-clepr7u7l000ffcd0mzck0urd', 'clepr3sze000cfcd0l2l8t6qy-abstain', 'clepr3who000efcd0ywo74kz9-abstain']
+      // const votes = input.votes.map((vote) => {
+      //   const [candidateId, positionId] = vote.split("-");
+      //   return {
+      //     candidateId,
+      //     positionId,
+      //   };
+      // });
+
+      return ctx.prisma.vote.createMany({
+        data: input.votes.map((vote) => {
+          const [positionId, candidateId] = vote.split("-");
+          return {
+            candidateId: candidateId === "abstain" ? null : candidateId,
+            positionId:
+              positionId === "abstain"
+                ? null
+                : candidateId !== "abstain"
+                ? null
+                : positionId,
+            voterId: ctx.session.user.id,
+            electionId: election.id,
+          };
+        }),
+      });
+    }),
   getElectionSettings: protectedProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
