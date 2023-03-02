@@ -4,9 +4,8 @@ import { api } from "../utils/api";
 
 const Invitation = () => {
   const router = useRouter();
-  const { token } = router.query;
-  const tokenQuery = api.token.getById.useQuery(token as string, {
-    enabled: !!token,
+  const tokenQuery = api.token.getById.useQuery(router.query.token as string, {
+    enabled: router.isReady && !!router.query.token,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     retry: false,
@@ -15,12 +14,12 @@ const Invitation = () => {
     onSuccess: async () => await router.push("/dashboard"),
   });
 
+  if (typeof router.query.token !== "string" || !tokenQuery.data)
+    return <Container>No token</Container>;
+
   if (tokenQuery.isLoading) return <Container>Loading...</Container>;
   if (tokenQuery.isError)
     return <Container>{tokenQuery.error.message}</Container>;
-
-  if (typeof token !== "string" || !tokenQuery.data)
-    return <Container>No token</Container>;
 
   return (
     <Container>
@@ -28,7 +27,7 @@ const Invitation = () => {
       <Button
         onClick={() => {
           invitationMutation.mutate({
-            tokenId: token,
+            tokenId: router.query.token,
             isAccepted: true,
           });
         }}
@@ -39,7 +38,7 @@ const Invitation = () => {
       <Button
         onClick={() => {
           invitationMutation.mutate({
-            tokenId: token,
+            tokenId: router.query.token,
             isAccepted: false,
           });
         }}
