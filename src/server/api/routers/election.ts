@@ -58,6 +58,63 @@ export const electionRouter = createTRPCRouter({
         }),
       });
     }),
+  getElectionRealtime: publicProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      const election = await ctx.prisma.election.findUniqueOrThrow({
+        where: {
+          slug: input,
+        },
+      });
+
+      return ctx.prisma.election.findUniqueOrThrow({
+        where: {
+          id: election.id,
+        },
+        include: {
+          positions: {
+            include: {
+              vote: {
+                include: {
+                  position: {
+                    include: {
+                      _count: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          candidates: {
+            include: {
+              vote: {
+                include: {
+                  candidate: {
+                    include: {
+                      _count: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          // vote: {
+          //   include: {
+          //     candidate: {
+          //       include: {
+          //         _count: true,
+          //       },
+          //     },
+          //     position: {
+          //       include: {
+          //         _count: true,
+          //       },
+          //     },
+          //   },
+          // },
+        },
+      });
+    }),
   getElectionSettings: protectedProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {

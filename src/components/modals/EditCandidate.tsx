@@ -71,9 +71,10 @@ const EditCandidateModal = ({
   useEffect(() => {
     if (isOpen) {
       reset();
+    } else {
       editCandidateMutation.reset();
     }
-  }, [isOpen, reset, editCandidateMutation]);
+  }, [isOpen, reset]);
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     await editCandidateMutation.mutateAsync({
