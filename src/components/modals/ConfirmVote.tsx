@@ -9,8 +9,10 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import type { Candidate, Election, Partylist, Position } from "@prisma/client";
+import { useRouter } from "next/router";
 import { api } from "../../utils/api";
 
 interface ConfirmVoteModalProps {
@@ -30,13 +32,29 @@ const ConfirmVote = ({
   election,
   selectedCandidates,
 }: ConfirmVoteModalProps) => {
+  const router = useRouter();
+  const toast = useToast();
   const voteMutation = api.election.vote.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
+      await router.push(`/${election.slug}/realtime`);
       onClose();
+      toast({
+        title: "Vote casted successfully!",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error casting vote",
+        description: error.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     },
   });
-
-  console.log(selectedCandidates);
 
   return (
     <Modal

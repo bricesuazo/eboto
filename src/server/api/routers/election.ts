@@ -20,14 +20,26 @@ export const electionRouter = createTRPCRouter({
         },
       });
 
-      // input.votes is ['clepr3q0e000bfcd0ol0jdxba-clepr7u7l000ffcd0mzck0urd', 'clepr3sze000cfcd0l2l8t6qy-abstain', 'clepr3who000efcd0ywo74kz9-abstain']
-      // const votes = input.votes.map((vote) => {
-      //   const [candidateId, positionId] = vote.split("-");
-      //   return {
-      //     candidateId,
-      //     positionId,
-      //   };
-      // });
+      const existingVotes = await ctx.prisma.vote.findMany({
+        where: {
+          voterId: ctx.session.user.id,
+          electionId: election.id,
+        },
+      });
+
+      if (existingVotes.length > 0) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You have already voted in this election",
+        });
+      }
+
+      await ctx.prisma.voter.findFirstOrThrow({
+        where: {
+          userId: ctx.session.user.id,
+          electionId: election.id,
+        },
+      });
 
       return ctx.prisma.vote.createMany({
         data: input.votes.map((vote) => {
