@@ -58,7 +58,11 @@ const ElectionPage = ({
               {convertNumberToHour(election.voting_end)}
             </Text>
 
-            {!hasVoted && (
+            {hasVoted ? (
+              <Button as={Link} href={`/${election.slug}/realtime`}>
+                Realtime count
+              </Button>
+            ) : (
               <Button as={Link} href={`/${election.slug}/vote`}>
                 Vote now!
               </Button>
@@ -115,66 +119,79 @@ export const getServerSideProps: GetServerSideProps = async (
     return { notFound: true };
 
   const session = await getServerAuthSession(context);
-  const election = await prisma.election.findFirst({
+  const electionQuery = await prisma.election.findFirst({
     where: {
       slug: context.query.electionSlug,
     },
   });
 
-  if (!election) return { notFound: true };
+  if (!electionQuery) return { notFound: true };
 
-  switch (election.publicity) {
-    case "PRIVATE":
-      if (!session)
-        return { redirect: { destination: "/signin", permanent: false } };
+  const election = {
+    ...electionQuery,
+    start_date: electionQuery.start_date.toISOString(),
+    end_date: electionQuery.end_date.toISOString(),
+    createdAt: electionQuery.createdAt.toISOString(),
+    updatedAt: electionQuery.updatedAt.toISOString(),
+  };
 
-      const commissioner = await prisma.commissioner.findFirst({
-        where: {
-          electionId: election.id,
-          userId: session.user.id,
+  if (election.publicity === "PRIVATE") {
+    if (!session)
+      return { redirect: { destination: "/signin", permanent: false } };
+
+    const commissioner = await prisma.commissioner.findFirst({
+      where: {
+        electionId: election.id,
+        userId: session.user.id,
+      },
+    });
+
+    if (!commissioner) return { notFound: true };
+
+    return {
+      props: {
+        hasVoted: true,
+        election,
+      },
+    };
+  } else if (election.publicity === "VOTER") {
+    if (!session)
+      return { redirect: { destination: "/signin", permanent: false } };
+
+    const vote = await prisma.vote.findFirst({
+      where: {
+        voterId: session.user.id,
+        electionId: election.id,
+      },
+    });
+
+    if (vote)
+      return {
+        props: {
+          hasVoted: true,
+          election,
         },
-      });
+      };
+  } else if (election.publicity === "PUBLIC") {
+    const vote = await prisma.vote.findFirst({
+      where: {
+        voterId: session?.user.id,
+        electionId: election.id,
+      },
+    });
 
-      if (!commissioner) return { notFound: true };
-      break;
-    case "VOTER":
-      if (!session)
-        return { redirect: { destination: "/signin", permanent: false } };
-
-      const vote = await prisma.vote.findFirst({
-        where: {
-          voterId: session.user.id,
-          electionId: election.id,
-        },
-      });
-
-      if (vote)
-        return {
-          props: {
-            hasVoted: true,
-            election: {
-              ...election,
-              start_date: election.start_date.toISOString(),
-              end_date: election.end_date.toISOString(),
-              createdAt: election.createdAt.toISOString(),
-              updatedAt: election.updatedAt.toISOString(),
-            },
-          },
-        };
-
-      break;
+    return {
+      props: {
+        hasVoted: !!vote || !session,
+        election,
+      },
+    };
   }
 
   return {
     props: {
-      hasVoted: false,
-      election: {
-        ...election,
-        start_date: election.start_date.toISOString(),
-        end_date: election.end_date.toISOString(),
-        createdAt: election.createdAt.toISOString(),
-        updatedAt: election.updatedAt.toISOString(),
-      },
+      hasVoted: true,
+      election,
     },
   };
 };
