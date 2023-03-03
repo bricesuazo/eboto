@@ -165,13 +165,21 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     });
 
-    if (vote)
+    if (vote) {
       return {
         props: {
           hasVoted: true,
           election,
         },
       };
+    } else {
+      return {
+        props: {
+          hasVoted: false,
+          election,
+        },
+      };
+    }
   } else if (election.publicity === "PUBLIC") {
     const vote = await prisma.vote.findFirst({
       where: {
