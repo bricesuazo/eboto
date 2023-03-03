@@ -61,31 +61,21 @@ export const electionRouter = createTRPCRouter({
   getElectionRealtime: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
-      const election = await ctx.prisma.election.findUniqueOrThrow({
+      return ctx.prisma.position.findMany({
         where: {
-          slug: input,
-        },
-      });
-
-      return ctx.prisma.election.findUniqueOrThrow({
-        where: {
-          id: election.id,
+          electionId: input,
         },
         include: {
-          positions: {
+          vote: {
             include: {
-              vote: {
+              position: {
                 include: {
-                  position: {
-                    include: {
-                      _count: true,
-                    },
-                  },
+                  _count: true,
                 },
               },
             },
           },
-          candidates: {
+          candidate: {
             include: {
               vote: {
                 include: {
@@ -98,20 +88,6 @@ export const electionRouter = createTRPCRouter({
               },
             },
           },
-          // vote: {
-          //   include: {
-          //     candidate: {
-          //       include: {
-          //         _count: true,
-          //       },
-          //     },
-          //     position: {
-          //       include: {
-          //         _count: true,
-          //       },
-          //     },
-          //   },
-          // },
         },
       });
     }),
