@@ -13,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 import type { Candidate, Election, Partylist, Position } from "@prisma/client";
 import { useRouter } from "next/router";
+import { useConfetti } from "../../lib/confetti";
 import { api } from "../../utils/api";
 
 interface ConfirmVoteModalProps {
@@ -36,6 +37,7 @@ const ConfirmVote = ({
 }: ConfirmVoteModalProps) => {
   const router = useRouter();
   const toast = useToast();
+  const { fireConfetti } = useConfetti();
   const voteMutation = api.election.vote.useMutation({
     onSuccess: async () => {
       await router.push(`/${election.slug}/realtime`);
@@ -46,6 +48,7 @@ const ConfirmVote = ({
         duration: 5000,
         isClosable: true,
       });
+      await fireConfetti();
     },
     onError: (error) => {
       toast({
