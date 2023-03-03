@@ -4,13 +4,13 @@ import VotingCandidate from "./VotingCandidate";
 
 const VotingPosition = ({
   position,
-  candidates,
-  partylists,
   setSelectedCandidates,
 }: {
-  position: Position;
-  candidates: Candidate[];
-  partylists: Partylist[];
+  position: Position & {
+    candidate: (Candidate & {
+      partylist: Partylist;
+    })[];
+  };
   setSelectedCandidates: React.Dispatch<React.SetStateAction<string[]>>;
 }) => {
   const { getRootProps, getRadioProps } = useRadioGroup({
@@ -34,19 +34,14 @@ const VotingPosition = ({
       </Text>
 
       <Flex flexWrap="wrap" {...group}>
-        {candidates
-          .filter((candidate) => candidate.positionId === position.id)
-          .map((candidate) => {
-            const radio = getRadioProps({
-              value: `${position.id}-${candidate.id}`,
-            });
+        {position.candidate.map((candidate) => {
+          const radio = getRadioProps({
+            value: `${position.id}-${candidate.id}`,
+          });
 
-            const partylist = partylists.find(
-              (partylist) => partylist.id === candidate.partylistId
-            );
-            return (
-              <VotingCandidate key={candidate.id} {...radio}>
-                {/* <Box
+          return (
+            <VotingCandidate key={candidate.id} {...radio}>
+              {/* <Box
                   position="relative"
                   width={[32, 40]}
                   height={[32, 40]}
@@ -69,16 +64,16 @@ const VotingPosition = ({
                     style={{ objectFit: "cover" }}
                   />
                 </Box> */}
-                <Text
-                  textAlign="center"
-                  noOfLines={2}
-                  fontSize={["sm", "inherit"]}
-                >{`${candidate.last_name}, ${candidate.first_name}${
-                  candidate.middle_name ? ` ${candidate.middle_name}` : ""
-                }${partylist ? ` (${partylist.acronym})` : ""}`}</Text>
-              </VotingCandidate>
-            );
-          })}
+              <Text
+                textAlign="center"
+                noOfLines={2}
+                fontSize={["sm", "inherit"]}
+              >{`${candidate.last_name}, ${candidate.first_name}${
+                candidate.middle_name ? ` ${candidate.middle_name}` : ""
+              } (${candidate.partylist.acronym})`}</Text>
+            </VotingCandidate>
+          );
+        })}
         <VotingCandidate {...radioAbstain}>
           {/* <Box
             position="relative"

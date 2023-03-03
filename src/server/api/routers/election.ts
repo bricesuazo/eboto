@@ -58,6 +58,22 @@ export const electionRouter = createTRPCRouter({
         }),
       });
     }),
+  getElectionVoting: publicProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      return ctx.prisma.position.findMany({
+        where: {
+          electionId: input,
+        },
+        include: {
+          candidate: {
+            include: {
+              partylist: true,
+            },
+          },
+        },
+      });
+    }),
   getElectionRealtime: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {

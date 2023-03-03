@@ -6,53 +6,47 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useRouter } from "next/router";
+import type { Election } from "@prisma/client";
+import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useState } from "react";
 import ConfirmVote from "../../components/modals/ConfirmVote";
 import VotingPosition from "../../components/VotingPosition";
+import { getServerAuthSession } from "../../server/auth";
+import { prisma } from "../../server/db";
 import { api } from "../../utils/api";
 
-const VotePage = () => {
+const VotePage = ({ election }: { election: Election }) => {
   const [selectedCandidates, setSelectedCandidates] = useState<string[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const router = useRouter();
 
-  const election = api.election.getElectionData.useQuery(
-    router.query.electionSlug as string,
-    {
-      enabled: router.isReady,
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      retry: false,
-    }
-  );
+  const positions = api.election.getElectionVoting.useQuery(election.id, {
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    retry: false,
+  });
+  if (positions.isLoading) return <Text>Loading...</Text>;
 
-  if (election.isLoading) return <Text>Loading...</Text>;
+  if (positions.isError) return <Text>Error:{positions.error.message}</Text>;
 
-  if (election.isError) return <Text>Error:{election.error.message}</Text>;
-
-  if (!election.data) return <Text>Not found</Text>;
+  if (!positions.data) return <Text>Not found</Text>;
 
   return (
     <>
       <ConfirmVote
         isOpen={isOpen}
         onClose={onClose}
-        election={election.data}
+        election={election}
+        positions={positions.data}
         selectedCandidates={selectedCandidates}
       />
       <Container>
         <Stack>
-          {election.data.positions.map((position) => {
-            if (!election.data) return;
-
+          {positions.data.map((position) => {
             return (
               <VotingPosition
                 key={position.id}
                 position={position}
-                candidates={election.data.candidates}
-                partylists={election.data.partylists}
                 setSelectedCandidates={setSelectedCandidates}
               />
             );
@@ -67,9 +61,7 @@ const VotePage = () => {
           marginTop={16}
         >
           <Button
-            isDisabled={
-              election.data.positions.length !== selectedCandidates.length
-            }
+            isDisabled={positions.data.length !== selectedCandidates.length}
             onClick={onOpen}
             variant="solid"
             // leftIcon={<FingerPrintIcon width={22} />}
@@ -85,3 +77,75 @@ const VotePage = () => {
 };
 
 export default VotePage;
+
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  if (
+    !context.query.electionSlug ||
+    typeof context.query.electionSlug !== "string"
+  )
+    return { notFound: true };
+
+  const session = await getServerAuthSession(context);
+  const election = await prisma.election.findFirst({
+    where: {
+      slug: context.query.electionSlug,
+    },
+  });
+
+  if (!election) return { notFound: true };
+
+  switch (election.publicity) {
+    case "PRIVATE":
+      if (!session)
+        return { redirect: { destination: "/signin", permanent: false } };
+
+      const commissioner = await prisma.commissioner.findFirst({
+        where: {
+          electionId: election.id,
+          userId: session.user.id,
+        },
+      });
+
+      if (!commissioner) return { notFound: true };
+
+      return {
+        redirect: {
+          destination: `/${election.slug}/realtime`,
+          permanent: false,
+        },
+      };
+    case "VOTER":
+      if (!session)
+        return { redirect: { destination: "/signin", permanent: false } };
+
+      const vote = await prisma.vote.findFirst({
+        where: {
+          voterId: session.user.id,
+          electionId: election.id,
+        },
+      });
+
+      if (vote)
+        return {
+          redirect: {
+            destination: `/${election.slug}/realtime`,
+            permanent: false,
+          },
+        };
+      break;
+  }
+
+  return {
+    props: {
+      election: {
+        ...election,
+        start_date: election.start_date.toISOString(),
+        end_date: election.end_date.toISOString(),
+        createdAt: election.createdAt.toISOString(),
+        updatedAt: election.updatedAt.toISOString(),
+      },
+    },
+  };
+};

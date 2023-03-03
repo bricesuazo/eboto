@@ -1,7 +1,6 @@
 import { Box, Container, Stack, Text } from "@chakra-ui/react";
 import type { Election } from "@prisma/client";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
-import Moment from "react-moment";
 import { getServerAuthSession } from "../../server/auth";
 import { prisma } from "../../server/db";
 import { api } from "../../utils/api";
@@ -75,8 +74,7 @@ export const getServerSideProps: GetServerSideProps = async (
         },
       });
 
-      if (!commissioner)
-        return { redirect: { destination: "/", permanent: false } };
+      if (!commissioner) return { notFound: true };
       break;
     case "VOTER":
       if (!session)
@@ -89,7 +87,10 @@ export const getServerSideProps: GetServerSideProps = async (
         },
       });
 
-      if (!vote) return { redirect: { destination: "/", permanent: false } };
+      if (!vote)
+        return {
+          redirect: { destination: `/${election.slug}`, permanent: false },
+        };
       break;
   }
 

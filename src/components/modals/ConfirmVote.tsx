@@ -18,18 +18,20 @@ import { api } from "../../utils/api";
 interface ConfirmVoteModalProps {
   isOpen: boolean;
   onClose: () => void;
-  election: Election & {
-    candidates: Candidate[];
-    positions: Position[];
-    partylists: Partylist[];
-  };
+  election: Election;
   selectedCandidates: string[];
+  positions: (Position & {
+    candidate: (Candidate & {
+      partylist: Partylist;
+    })[];
+  })[];
 }
 
 const ConfirmVote = ({
   isOpen,
   onClose,
   election,
+  positions,
   selectedCandidates,
 }: ConfirmVoteModalProps) => {
   const router = useRouter();
@@ -76,8 +78,8 @@ const ConfirmVote = ({
         <ModalCloseButton />
 
         <ModalBody paddingX={[4, 6]}>
-          {election.positions.map((position) => {
-            const candidate = election.candidates.find(
+          {positions.map((position) => {
+            const candidate = position.candidate.find(
               (candidate) =>
                 candidate.id ===
                 selectedCandidates
@@ -86,10 +88,6 @@ const ConfirmVote = ({
                       selectedCandidate.split("-")[0] === position.id
                   )
                   ?.split("-")[1]
-            );
-
-            const partylist = election.partylists.find(
-              (partylist) => partylist.id === candidate?.partylistId
             );
 
             return (
@@ -101,7 +99,7 @@ const ConfirmVote = ({
                   {candidate
                     ? `${candidate.last_name}, ${candidate.first_name}${
                         candidate.middle_name ? ` ${candidate.middle_name}` : ""
-                      }${partylist ? ` (${partylist.acronym})` : ""}`
+                      } (${candidate.partylist.acronym})`
                     : "Abstain"}
                 </Text>
               </Box>
