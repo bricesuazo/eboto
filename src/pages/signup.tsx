@@ -2,293 +2,268 @@ import {
   Alert,
   AlertDescription,
   AlertIcon,
-  Box,
+  AlertTitle,
   Button,
   Container,
   Flex,
   FormControl,
+  FormErrorMessage,
   FormLabel,
-  HStack,
   Input,
-  Link,
   Stack,
   Text,
 } from "@chakra-ui/react";
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  setDoc,
-  Timestamp,
-} from "firebase/firestore";
 import type {
   GetServerSideProps,
   GetServerSidePropsContext,
   NextPage,
 } from "next";
-import { getSession, signIn } from "next-auth/react";
+import { api } from "../utils/api";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import Head from "next/head";
-import Image from "next/image";
-import NextLink from "next/link";
-import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { firestore } from "../firebase/firebase";
-import isAdminExists from "../utils/isAdminExists";
-import bcrypt from "bcryptjs";
+import { getServerAuthSession } from "../server/auth";
+import Link from "next/link";
 
-const SignupPage: NextPage = () => {
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [credentials, setCredentials] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+type FormValues = {
+  email: string;
+  confirmPassword: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+};
+
+const Signup: NextPage = () => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    getValues,
+    formState: { errors },
+  } = useForm<FormValues>();
+
+  const signUpMutation = api.user.signUp.useMutation();
+
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    await signUpMutation.mutateAsync({
+      email: data.email,
+      password: data.password,
+      first_name: data.firstName,
+      last_name: data.lastName,
+    });
+
+    reset();
+  };
+
   return (
     <>
       <Head>
-        <title>Sign up | eBoto Mo</title>
+        <title>Create an account | eBoto Mo</title>
       </Head>
-      <Flex height="80vh">
-        <Box
-          position="relative"
-          flex={1}
-          height="full"
-          userSelect="none"
-          pointerEvents="none"
-          display={["none", "none", "inherit"]}
-        >
-          <Image
-            src="/assets/images/cvsu-landmark.png"
-            alt="CvSU Front"
-            fill
-            sizes="contain"
-            priority
-            style={{ objectFit: "cover", filter: "brightness(0.75)" }}
-          />
-        </Box>
 
-        <Box flex={1}>
-          <Container
-            maxW="sm"
-            display="flex"
-            flexDirection="column"
-            justifyContent="center"
-            height="full"
-            gap={8}
-          >
-            <Text fontSize="xl" fontWeight="bold" textAlign="center">
-              Sign up to your account
-            </Text>
-            <form
-              style={{ width: "100%" }}
-              onSubmit={async (e) => {
-                e.preventDefault();
-                setLoading(true);
-                setError(null);
-                if (credentials.password !== credentials.confirmPassword) {
-                  setError("Passwords do not match");
-                  setLoading(false);
-                  return;
-                }
-
-                // If user already exists, return error
-                if (await isAdminExists(credentials.email)) {
-                  setError("Admin already exists");
-                  setLoading(false);
-                  return;
-                }
-
-                // Create user docs
-                const adminRef = await addDoc(collection(firestore, "admins"), {
-                  accountType: "admin",
-                  _id: uuidv4(),
-                  email: credentials.email,
-                  firstName: credentials.firstName
-                    .trim()
-                    .replace(/(^\w{1})|(\s+\w{1})/g, (letter: string) =>
-                      letter.toUpperCase()
-                    ),
-                  lastName: credentials.lastName
-                    .trim()
-                    .replace(/(^\w{1})|(\s+\w{1})/g, (letter: string) =>
-                      letter.toUpperCase()
-                    ),
-                  password: bcrypt.hashSync(
-                    credentials.password,
-                    bcrypt.genSaltSync(10)
-                  ),
-                  photoUrl: "",
-                  elections: [],
-                  createdAt: Timestamp.now(),
-                  updatedAt: Timestamp.now(),
-                  emailVerified: false,
-                });
-                // Update user's uid
-                await setDoc(
-                  doc(firestore, "admins", adminRef.id),
-                  {
-                    uid: adminRef.id,
-                  },
-                  { merge: true }
-                ).then(async () => {
-                  await signIn("credentials", {
-                    email: credentials.email,
-                    password: credentials.password,
-                  });
-                });
-                setLoading(false);
-              }}
-            >
-              <Stack width="100%" spacing={4}>
-                <Stack>
-                  <HStack>
-                    <FormControl isRequired>
-                      <FormLabel>First name</FormLabel>
-                      <Input
-                        autoFocus
-                        placeholder="First name"
-                        type="text"
-                        onChange={(e) =>
-                          setCredentials({
-                            ...credentials,
-                            firstName: e.target.value,
-                          })
-                        }
-                        disabled={loading}
-                      />
-                    </FormControl>
-                    <FormControl isRequired>
-                      <FormLabel>Last name</FormLabel>
-                      <Input
-                        placeholder="Last name"
-                        type="text"
-                        onChange={(e) =>
-                          setCredentials({
-                            ...credentials,
-                            lastName: e.target.value,
-                          })
-                        }
-                        disabled={loading}
-                      />
-                    </FormControl>
-                  </HStack>
-                  <FormControl isRequired>
-                    <FormLabel>Email</FormLabel>
-                    <Input
-                      placeholder="Email"
-                      type="email"
-                      value={credentials.email}
-                      onChange={(e) =>
-                        setCredentials({
-                          ...credentials,
-                          email: e.target.value,
-                        })
-                      }
-                      disabled={loading}
-                    />
-                  </FormControl>
-                  <FormControl isRequired>
-                    <FormLabel>Password</FormLabel>
-                    <Input
-                      placeholder="Password"
-                      type="password"
-                      minLength={8}
-                      value={credentials.password}
-                      onChange={(e) => {
-                        setCredentials({
-                          ...credentials,
-                          password: e.target.value,
-                        });
-                      }}
-                      disabled={loading}
-                    />
-                  </FormControl>
-                  <FormControl isRequired>
-                    <FormLabel>Confirm password</FormLabel>
-                    <Input
-                      placeholder="Confirm password"
-                      type="password"
-                      minLength={8}
-                      onChange={(e) => {
-                        setCredentials({
-                          ...credentials,
-                          confirmPassword: e.target.value,
-                        });
-                      }}
-                      disabled={loading}
-                    />
-                  </FormControl>
-                  {error && (
-                    <Alert status="error">
-                      <AlertIcon />
-                      <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-                  )}
-                  <Link fontSize="xs" as={NextLink} href="/signin">
-                    Already have an account?
-                  </Link>
-                </Stack>
-                <Button
-                  type="submit"
-                  isLoading={loading}
-                  disabled={
-                    !credentials.firstName ||
-                    !credentials.lastName ||
-                    !credentials.email ||
-                    !credentials.email
-                      .toLocaleLowerCase()
-                      .match(
-                        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-                      ) ||
-                    !credentials.password ||
-                    !credentials.confirmPassword ||
-                    credentials.password.length < 8 ||
-                    credentials.confirmPassword.length < 8 ||
-                    credentials.password !== credentials.confirmPassword ||
-                    loading
-                  }
+      <Container>
+        {signUpMutation.isSuccess ? (
+          <Alert status="success">
+            <AlertIcon />
+            <AlertTitle mr={2}>Success!</AlertTitle>
+            <AlertDescription>
+              Your account has been created. Please check your email to verify
+              your account.
+            </AlertDescription>
+          </Alert>
+        ) : (
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Stack spacing={4}>
+              <Stack direction={["column", "row"]} spacing={[4, 2]}>
+                <FormControl
+                  isInvalid={!!errors.firstName}
+                  isRequired
+                  isDisabled={signUpMutation.isLoading}
                 >
-                  Sign up
-                </Button>
+                  <FormLabel>First name</FormLabel>
+                  <Input
+                    placeholder="Enter your first name"
+                    type="text"
+                    {...register("firstName", {
+                      required: "This is required.",
+                    })}
+                  />
+                  {errors.firstName && (
+                    <FormErrorMessage>
+                      {errors.firstName.message?.toString()}
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+
+                {/* <FormControl isDisabled={signUpMutation.isLoading}>
+                <FormLabel>Middle name</FormLabel>
+                <Input
+                  placeholder="Enter your Middle name"
+                  type="text"
+                  {...register("middleName")}
+                />
+                {errors.middleName && (
+                  <FormErrorMessage>
+                    {errors.middleName.message?.toString()}
+                  </FormErrorMessage>
+                )}
+              </FormControl> */}
+                <FormControl
+                  isInvalid={!!errors.lastName}
+                  isRequired
+                  isDisabled={signUpMutation.isLoading}
+                >
+                  <FormLabel>Last name</FormLabel>
+                  <Input
+                    placeholder="Enter your last name"
+                    type="text"
+                    {...register("lastName", {
+                      required: "This is required.",
+                    })}
+                  />
+                  {errors.lastName && (
+                    <FormErrorMessage>
+                      {errors.lastName.message?.toString()}
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
               </Stack>
-            </form>
-          </Container>
-        </Box>
-      </Flex>
+
+              <FormControl
+                isInvalid={!!errors.email}
+                isRequired
+                isDisabled={signUpMutation.isLoading}
+              >
+                <FormLabel>Email address</FormLabel>
+                <Input
+                  placeholder="Enter your email address"
+                  type="email"
+                  {...register("email", {
+                    required: "This is required.",
+                    pattern: {
+                      value: /^\S+@\S+$/i,
+                      message: "Invalid email address.",
+                    },
+                  })}
+                />
+                {errors.email && (
+                  <FormErrorMessage>
+                    {errors.email.message?.toString()}
+                  </FormErrorMessage>
+                )}
+              </FormControl>
+              <FormControl
+                isInvalid={!!errors.password}
+                isRequired
+                isDisabled={signUpMutation.isLoading}
+              >
+                <FormLabel>Password</FormLabel>
+                <Input
+                  placeholder="Enter your password"
+                  type="password"
+                  {...register("password", {
+                    required: "This is required.",
+                    minLength: {
+                      value: 8,
+                      message: "Password must be at least 8 characters long.",
+                    },
+                    validate: (value) =>
+                      value === getValues("confirmPassword") ||
+                      "The passwords do not match.",
+                  })}
+                />
+                {errors.password && (
+                  <FormErrorMessage>
+                    {errors.password.message?.toString()}
+                  </FormErrorMessage>
+                )}
+              </FormControl>
+
+              <FormControl
+                isInvalid={!!errors.confirmPassword}
+                isRequired
+                isDisabled={signUpMutation.isLoading}
+              >
+                <FormLabel>Confirm password</FormLabel>
+                <Input
+                  placeholder="Confirm your password"
+                  type="password"
+                  {...register("confirmPassword", {
+                    required: "This is required.",
+                    minLength: {
+                      value: 8,
+                      message: "Password must be at least 8 characters long.",
+                    },
+                    validate: (value) =>
+                      value === getValues("password") ||
+                      "The passwords do not match.",
+                  })}
+                />
+                {errors.confirmPassword && (
+                  <FormErrorMessage>
+                    {errors.confirmPassword.message?.toString()}
+                  </FormErrorMessage>
+                )}
+
+                <Flex justifyContent="end" mt={2}>
+                  <Button isDisabled={signUpMutation.isLoading} variant="link">
+                    {signUpMutation.isLoading ? (
+                      <Text
+                        fontSize="sm"
+                        fontWeight="normal"
+                        _hover={{
+                          textDecoration: "underline",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Already have an account? Sign in
+                      </Text>
+                    ) : (
+                      <Link href="/signin">
+                        <Text
+                          fontSize="sm"
+                          fontWeight="normal"
+                          _hover={{
+                            textDecoration: "underline",
+                            cursor: "pointer",
+                          }}
+                        >
+                          Already have an account? Sign in
+                        </Text>
+                      </Link>
+                    )}
+                  </Button>
+                </Flex>
+              </FormControl>
+
+              {signUpMutation.isError && (
+                <Alert status="error">
+                  <AlertIcon />
+                  <AlertTitle>Sign up error.</AlertTitle>
+                  <AlertDescription>
+                    {signUpMutation.error.message}
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              <Button type="submit" isLoading={signUpMutation.isLoading}>
+                Sign up
+              </Button>
+            </Stack>
+          </form>
+        )}
+      </Container>
     </>
   );
 };
 
-export default SignupPage;
+export default Signup;
 
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const session = await getSession(context);
-  if (session && session.user.accountType === "voter") {
-    const electionSnapshot = await getDoc(
-      doc(firestore, "elections", session.user.election)
-    );
+  const session = await getServerAuthSession(context);
 
-    return {
-      redirect: {
-        destination: `/${electionSnapshot.data()?.electionIdName}`,
-        permanent: false,
-      },
-    };
-  } else if (session && session.user.accountType === "admin") {
-    if (session.user.elections.length === 0) {
-      return {
-        redirect: {
-          destination: "/create-election",
-          permanent: false,
-        },
-      };
-    }
+  if (session) {
     return {
       redirect: {
         destination: "/dashboard",
@@ -296,5 +271,8 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     };
   }
-  return { props: {} };
+
+  return {
+    props: {},
+  };
 };

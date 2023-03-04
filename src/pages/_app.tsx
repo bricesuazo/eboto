@@ -1,54 +1,40 @@
-import { ChakraProvider } from "@chakra-ui/react";
-import { Inter } from "@next/font/google";
-import { Analytics } from "@vercel/analytics/react";
-import { Session } from "next-auth";
+import { type AppType } from "next/app";
+import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
-import type { AppProps } from "next/app";
-import Head from "next/head";
-import "react-datepicker/dist/react-datepicker.css";
-import { FirebaseAppProvider } from "reactfire";
-import Footer from "../components/Footer";
+import { ChakraProvider } from "@chakra-ui/react";
+import { Analytics } from "@vercel/analytics/react";
+import { api } from "../utils/api";
 import Header from "../components/Header";
-import { app } from "../firebase/firebase";
-import "../styles/globals.css";
-import theme from "../theme";
-import NextNProgress from "nextjs-progressbar";
-import Banner from "../components/Banner";
+import Head from "next/head";
+import { ConfettiProvider } from "../lib/confetti";
 
-// const anton = Anton({ weight: "400" });
-const inter = Inter();
-export default function MyApp({
+const MyApp: AppType<{ session: Session | null }> = ({
   Component,
-  pageProps,
-}: AppProps<{
-  session: Session;
-}>) {
+  pageProps: { session, ...pageProps },
+}) => {
   return (
     <>
       <Head>
-        <title>
-          eBoto Mo | An Online Voting System for Cavite State University - Don
-          Severino Delas Alas Campus with Real-time Voting Count.
-        </title>
+        <title>eBoto Mo</title>
+        {/* add favicon */}
+        <link
+          rel="shortcut icon"
+          href="/images/favicon.ico"
+          type="image/x-icon"
+        />
       </Head>
-      <SessionProvider session={pageProps.session}>
-        <FirebaseAppProvider firebaseApp={app}>
-          {/* <FirestoreProvider sdk={firestore}> */}
-          <ChakraProvider theme={theme}>
-            <main className={inter.className}>
-              <NextNProgress color="#ffd532" height={2} />
+      <SessionProvider session={session}>
+        <ChakraProvider>
+          <ConfettiProvider>
+            <Header />
 
-              <Banner />
-
-              <Header />
-              <Component {...pageProps} />
-              <Footer />
-            </main>
+            <Component {...pageProps} />
             <Analytics />
-          </ChakraProvider>
-          {/* </FirestoreProvider> */}
-        </FirebaseAppProvider>
+          </ConfettiProvider>
+        </ChakraProvider>
       </SessionProvider>
     </>
   );
-}
+};
+
+export default api.withTRPC(MyApp);

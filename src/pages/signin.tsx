@@ -1,207 +1,211 @@
-import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  Box,
-  Button,
-  Container,
-  Flex,
-  FormControl,
-  FormLabel,
-  Input,
-  Link,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
+import { useState } from "react";
+
+import Head from "next/head";
 import type {
   GetServerSideProps,
   GetServerSidePropsContext,
   NextPage,
 } from "next";
-import NextLink from "next/link";
 
-import { useState } from "react";
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Button,
+  Container,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 
-import Head from "next/head";
+import { type SubmitHandler, useForm } from "react-hook-form";
 
-import { doc, getDoc } from "firebase/firestore";
-import { getSession, signIn } from "next-auth/react";
-import Image from "next/image";
+import { signIn } from "next-auth/react";
+
+// import { AiOutlineGoogle } from "react-icons/ai";
+import { getServerAuthSession } from "../server/auth";
 import { useRouter } from "next/router";
-import { firestore } from "../firebase/firebase";
+import Link from "next/link";
 
-const SigninPage: NextPage = () => {
-  const [credentials, setCredentials] = useState<{
-    email: string;
-    password: string;
-  }>({ email: "", password: "" });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+type FormValues = {
+  email: string;
+  password: string;
+};
+
+const Signin: NextPage = () => {
   const router = useRouter();
+  const [error, setError] = useState<string | undefined>();
+  const [loadings, setLoadings] = useState({
+    credentials: false,
+    google: false,
+  });
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors },
+  } = useForm<FormValues>();
+
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    setError(undefined);
+    setLoadings({ ...loadings, credentials: true });
+
+    await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+      callbackUrl: (router.query.callbackUrl as string) || "/dashboard",
+    }).then(async (res) => {
+      if (res?.ok)
+        await router.push((router.query.callbackUrl as string) || "/dashboard");
+      if (res?.error) {
+        setError(res.error);
+
+        res.error === "Email not verified. Email verification sent." && reset();
+      }
+    });
+    setLoadings({ ...loadings, credentials: false });
+  };
+
   return (
     <>
       <Head>
-        <title>Sign in | eBoto Mo</title>
+        <title>Sign in to your account | eBoto Mo</title>
       </Head>
-      <Flex height="80vh">
-        <Box
-          position="relative"
-          flex={1}
-          height="full"
-          userSelect="none"
-          pointerEvents="none"
-          display={["none", "none", "inherit"]}
-        >
-          <Image
-            src="/assets/images/cvsu-front.jpg"
-            alt="CvSU Front"
-            fill
-            sizes="contain"
-            priority
-            style={{ objectFit: "cover", filter: "brightness(0.75)" }}
-          />
-        </Box>
 
-        <Box flex={1}>
-          <Container
-            maxW="sm"
-            display="flex"
-            flexDirection="column"
-            justifyContent="center"
-            height="full"
-            gap={8}
-          >
-            <Text fontSize="xl" fontWeight="bold" textAlign="center">
-              Sign in to your account
-            </Text>
-            <form
-              style={{ width: "100%" }}
-              onSubmit={async (e) => {
-                e.preventDefault();
-                setError(null);
-                setLoading(true);
-
-                if (!credentials.email || !credentials.password) {
-                  setLoading(false);
-                  return;
-                }
-
-                const res = await signIn<"credentials">("credentials", {
-                  email: credentials.email.trim().toLocaleLowerCase(),
-                  password: credentials.password,
-                  redirect: false,
-                });
-                if (res?.error) {
-                  setError(res?.error);
-                } else {
-                  router.reload();
-                }
-                setLoading(false);
-              }}
+      <Container>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Stack spacing={4}>
+            <FormControl
+              isInvalid={!!errors.email}
+              isRequired
+              isDisabled={loadings.credentials}
             >
-              <Stack width="100%">
-                <FormControl isRequired>
-                  <FormLabel>Email</FormLabel>
-                  <Input
-                    autoFocus
-                    placeholder="Email"
-                    type="email"
-                    value={credentials.email}
-                    onChange={(e) =>
-                      setCredentials({
-                        ...credentials,
-                        email: e.target.value,
-                      })
-                    }
-                    disabled={loading}
-                  />
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel>Password</FormLabel>
-                  <Input
-                    placeholder="Password"
-                    type="password"
-                    minLength={8}
-                    value={credentials.password}
-                    onChange={(e) =>
-                      setCredentials({
-                        ...credentials,
-                        password: e.target.value,
-                      })
-                    }
-                    disabled={loading}
-                  />
-                </FormControl>
-                {error && (
-                  <Alert status="error">
-                    <AlertIcon />
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>
-                )}
-
-                <Flex justifyContent="space-between">
-                  <Link as={NextLink} fontSize="xs" href="/signup">
-                    Create account as admin?
-                  </Link>
-                  <Link fontSize="xs" as={NextLink} href="/forgot-password">
-                    Forgot password?
-                  </Link>
-                </Flex>
-                <Button
-                  type="submit"
-                  isLoading={loading}
-                  disabled={
-                    loading ||
-                    !credentials.email ||
-                    !credentials.email
-                      .toLocaleLowerCase()
-                      .match(
-                        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-                      ) ||
-                    !credentials.password ||
-                    credentials.password.length < 8
-                  }
+              <FormLabel>Email address</FormLabel>
+              <Input
+                placeholder="Enter your email address"
+                type="email"
+                {...register("email", {
+                  required: "This is required.",
+                  pattern: {
+                    value: /^\S+@\S+$/i,
+                    message: "Invalid email address.",
+                  },
+                })}
+              />
+              {errors.email && (
+                <FormErrorMessage>
+                  {errors.email.message?.toString()}
+                </FormErrorMessage>
+              )}
+            </FormControl>
+            <FormControl
+              isInvalid={!!errors.password}
+              isRequired
+              isDisabled={loadings.credentials}
+            >
+              <Flex justifyContent="space-between" alignItems="center">
+                <FormLabel>Password</FormLabel>
+                <Link
+                  href={`/reset-password${
+                    watch("email") ? `?email=${watch("email")}` : ""
+                  }`}
                 >
-                  Sign in
-                </Button>
-              </Stack>
-            </form>
-          </Container>
-        </Box>
-      </Flex>
+                  <Text
+                    fontSize="xs"
+                    fontWeight="normal"
+                    _hover={{
+                      textDecoration: "underline",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Forgot password?
+                  </Text>
+                </Link>
+              </Flex>
+              <Input
+                placeholder="Enter your password"
+                type="password"
+                {...register("password", {
+                  required: "This is required.",
+                  minLength: {
+                    value: 8,
+                    message: "Password must be at least 8 characters.",
+                  },
+                })}
+              />
+              {errors.password && (
+                <FormErrorMessage>
+                  {errors.password.message?.toString()}
+                </FormErrorMessage>
+              )}
+
+              <Flex justifyContent="end" mt={2}>
+                <Link href="/signup">
+                  <Text
+                    fontSize="xs"
+                    fontWeight="normal"
+                    _hover={{
+                      textDecoration: "underline",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Don&apos;t have an account? Sign up.
+                  </Text>
+                </Link>
+              </Flex>
+            </FormControl>
+
+            {error && (
+              <Alert status="error">
+                <AlertIcon />
+                <AlertTitle>Sign in error.</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            <Button type="submit" isLoading={loadings.credentials}>
+              Sign in
+            </Button>
+
+            {/* <Button
+              onClick={() => {
+                setLoadings({ ...loadings, google: true });
+                void (async () => {
+                  await signIn("google", {
+                    callbackUrl:
+                      (router.query.callbackUrl as string) || "/dashboard",
+                  });
+                })();
+              }}
+              leftIcon={<AiOutlineGoogle size={18} />}
+              variant="outline"
+              isLoading={loadings.google}
+              loadingText="Loading..."
+            >
+              Sign in with Google
+            </Button> */}
+          </Stack>
+        </form>
+      </Container>
     </>
   );
 };
 
-export default SigninPage;
+export default Signin;
 
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const session = await getSession(context);
-  if (!session) {
-    return { props: {} };
-  }
-  if (session.user.accountType === "voter") {
-    const electionSnapshot = await getDoc(
-      doc(firestore, "elections", session.user.election)
-    );
+  const session = await getServerAuthSession(context);
 
-    return {
-      redirect: {
-        destination: `/${electionSnapshot.data()?.electionIdName}`,
-        permanent: false,
-      },
-    };
-  } else if (session.user.accountType === "admin") {
-    if (session.user.elections.length === 0) {
-      return {
-        redirect: {
-          destination: "/create-election",
-          permanent: false,
-        },
-      };
-    }
+  if (session) {
     return {
       redirect: {
         destination: "/dashboard",
@@ -209,5 +213,8 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     };
   }
-  return { props: {} };
+
+  return {
+    props: {},
+  };
 };

@@ -1,0 +1,236 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
+}
+
+model User {
+    id            String    @id @default(cuid())
+    email         String    @unique
+    emailVerified DateTime?
+    first_name    String
+    middle_name   String?
+    last_name     String
+    image         String?
+    password      String?
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
+
+    votes         Vote[]
+    tokens        VerificationToken[]
+    commissioners Commissioner[]
+    voters        Voter[]
+
+    @@index([id, email])
+}
+
+model InvitedCommissioner {
+    id String @id @default(cuid())
+
+    email  String
+    status AccountStatusType @default(INVITED)
+
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId String
+
+    tokens VerificationToken[]
+
+    @@index([electionId])
+}
+
+model InvitedVoter {
+    id String @id @default(cuid())
+
+    email  String
+    status AccountStatusType @default(INVITED)
+
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId String
+
+    tokens VerificationToken[]
+
+    @@index([electionId])
+}
+
+enum AccountStatusType {
+    INVITED
+    DECLINED
+}
+
+model Commissioner {
+    id String @id @default(cuid())
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId String
+
+    @@index([userId])
+    @@index([electionId])
+}
+
+model Voter {
+    id String @id @default(cuid())
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId String
+
+    @@index([userId])
+    @@index([electionId])
+}
+
+enum ElectionPublicity {
+    PUBLIC
+    VOTER
+    PRIVATE
+}
+
+model Election {
+    id           String            @id @default(cuid())
+    slug         String            @unique
+    name         String
+    description  String?
+    start_date   DateTime
+    end_date     DateTime
+    publicity    ElectionPublicity @default(PRIVATE)
+    voting_start Int               @default(7) // 7am
+    voting_end   Int               @default(19) // 7pm
+    logo         String?
+    createdAt    DateTime          @default(now())
+    updatedAt    DateTime          @updatedAt
+
+    commissioners       Commissioner[]
+    voters              Voter[]
+    candidates          Candidate[]
+    positions           Position[]
+    vote                Vote[]
+    partylists          Partylist[]
+    invitedVoter        InvitedVoter[]
+    invitedCommissioner InvitedCommissioner[]
+
+    @@index([id, slug])
+}
+
+enum TokenType {
+    EMAIL_VERIFICATION
+    PASSWORD_RESET
+    ELECTION_INVITATION
+}
+
+model VerificationToken {
+    id        String    @id @default(cuid())
+    type      TokenType
+    expiresAt DateTime
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+
+    user                  User?                @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId                String?
+    invitedVoter          InvitedVoter?        @relation(fields: [invitedVoterId], references: [id], onDelete: Cascade)
+    invitedVoterId        String?
+    invitedCommissioner   InvitedCommissioner? @relation(fields: [invitedCommissionerId], references: [id], onDelete: Cascade)
+    invitedCommissionerId String?
+
+    @@index([userId])
+    @@index([invitedVoterId])
+    @@index([invitedCommissionerId])
+}
+
+model Candidate {
+    id          String   @id @default(cuid())
+    slug        String
+    first_name  String
+    middle_name String?
+    last_name   String
+    description String?
+    image       String?
+    vote_count  Int      @default(0)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId String
+
+    position   Position @relation(fields: [positionId], references: [id], onDelete: Cascade)
+    positionId String
+
+    partylist   Partylist @relation(fields: [partylistId], references: [id], onDelete: Cascade)
+    partylistId String
+
+    vote Vote[]
+
+    @@index([electionId])
+    @@index([positionId])
+    @@index([partylistId])
+}
+
+model Vote {
+    id         String   @id @default(cuid())
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId String
+    createdAt  DateTime @default(now())
+
+    voter   User   @relation(fields: [voterId], references: [id], onDelete: Cascade)
+    voterId String
+
+    candidate   Candidate? @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+    candidateId String?
+
+    position   Position? @relation(fields: [positionId], references: [id], onDelete: Cascade)
+    positionId String?
+
+    @@index([electionId])
+    @@index([voterId])
+    @@index([candidateId])
+    @@index([positionId])
+}
+
+model Position {
+    id            String   @id @default(cuid())
+    name          String
+    description   String?
+    order         Int
+    abstain_count Int      @default(0)
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId String
+
+    candidate Candidate[]
+    vote      Vote[]
+
+    @@index([electionId, id])
+}
+
+model Partylist {
+    id          String   @id @default(cuid())
+    name        String
+    acronym     String
+    description String?
+    logo        String?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId String
+
+    candidate Candidate[]
+
+    @@index([electionId])
+}
