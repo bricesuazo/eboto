@@ -159,7 +159,6 @@ model Candidate {
     last_name   String
     description String?
     image       String?
-    vote_count  Int      @default(0)
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
 
@@ -201,13 +200,12 @@ model Vote {
 }
 
 model Position {
-    id            String   @id @default(cuid())
-    name          String
-    description   String?
-    order         Int
-    abstain_count Int      @default(0)
-    createdAt     DateTime @default(now())
-    updatedAt     DateTime @updatedAt
+    id          String   @id @default(cuid())
+    name        String
+    description String?
+    order       Int
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
 
     election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
     electionId String
