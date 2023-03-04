@@ -1,14 +1,10 @@
-import {
-  Button,
-  Center,
-  Flex,
-  Text,
-  useDisclosure,
-  useToast,
-} from "@chakra-ui/react";
+import { Button, Flex, Group, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import type { Candidate, Partylist } from "@prisma/client";
 import { api } from "../utils/api";
 import EditCandidateModal from "./modals/EditCandidate";
+import { IconCheck } from "@tabler/icons-react";
 
 const CandidateCard = ({
   candidate,
@@ -19,17 +15,15 @@ const CandidateCard = ({
   refetch: () => Promise<unknown>;
   partylists: Partylist[];
 }) => {
-  const toast = useToast();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [opened, { open, close }] = useDisclosure(false);
   const deletePositionMutation = api.candidate.deleteSingle.useMutation({
     onSuccess: async (data) => {
       await refetch();
-      toast({
+      notifications.show({
         title: `${data.first_name} ${data.last_name} deleted!`,
-        description: "Successfully deleted candidate",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
+        message: "Successfully deleted candidate",
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
       });
     },
   });
@@ -37,45 +31,33 @@ const CandidateCard = ({
   return (
     <>
       <EditCandidateModal
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={opened}
+        onClose={close}
         partylists={partylists}
         candidate={candidate}
         refetch={refetch}
       />
-      <Center
-        flexDirection="column"
-        gap={2}
-        w={48}
-        h={32}
-        border="1px"
-        borderColor="gray.300"
-        borderRadius="md"
-        _dark={{
-          borderColor: "gray.700",
-        }}
-        p={4}
-      >
-        <Text textAlign="center" w="full">
+      <Group w={48} h={32} p={4}>
+        <Text align="center" w="full">
           {candidate.first_name} {candidate.last_name}
         </Text>
 
         <Flex>
-          <Button onClick={onOpen} variant="ghost" size="sm" w="fit-content">
+          <Button onClick={open} variant="ghost" size="sm" w="fit-content">
             Edit
           </Button>
           <Button
             onClick={() => deletePositionMutation.mutate(candidate.id)}
-            isLoading={deletePositionMutation.isLoading}
+            loading={deletePositionMutation.isLoading}
             variant="ghost"
-            colorScheme="red"
+            color="red"
             size="sm"
             w="fit-content"
           >
             Delete
           </Button>
         </Flex>
-      </Center>
+      </Group>
     </>
   );
 };

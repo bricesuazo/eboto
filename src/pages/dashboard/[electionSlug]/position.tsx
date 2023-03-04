@@ -1,4 +1,5 @@
-import { Button, Container, Flex, Text, useDisclosure } from "@chakra-ui/react";
+import { Button, Container, Flex, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
 import ElectionDashboardHeader from "../../../components/ElectionDashboardHeader";
 import CreatePositionModal from "../../../components/modals/CreatePosition";
@@ -7,7 +8,7 @@ import { api } from "../../../utils/api";
 
 const DashboardPosition = () => {
   const router = useRouter();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [opened, { open, close }] = useDisclosure(false);
 
   const positions = api.position.getAll.useQuery(
     router.query.electionSlug as string,
@@ -24,20 +25,20 @@ const DashboardPosition = () => {
   if (positions.isError) return <Text>Error</Text>;
 
   return (
-    <Container maxW="4xl">
+    <Container maw="4xl">
       <CreatePositionModal
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={opened}
+        onClose={close}
         electionId={positions.data.election.id}
         order={positions.data.positions.length}
         refetch={positions.refetch}
       />
       <ElectionDashboardHeader slug={positions.data.election.slug} />
-      <Button onClick={onOpen} mb={4}>
+      <Button onClick={open} mb={4}>
         Add position
       </Button>
 
-      <Flex gap={4} flexWrap="wrap">
+      <Flex gap={4} wrap="wrap">
         {!positions.data.positions.length ? (
           <Text>No position</Text>
         ) : (

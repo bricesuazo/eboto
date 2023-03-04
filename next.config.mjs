@@ -12,6 +12,11 @@ const config = {
   images: {
     domains: ["lh3.googleusercontent.com"],
   },
+  experimental: {
+    fontLoaders: [
+      { loader: "@next/font/google", options: { subsets: ["latin"] } },
+    ],
+  },
 
   /**
    * If you have the "experimental: { appDir: true }" setting enabled, then you

@@ -1,4 +1,5 @@
-import { Button, Container, Flex, Text, useDisclosure } from "@chakra-ui/react";
+import { Button, Container, Flex, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
 import ElectionDashboardHeader from "../../../components/ElectionDashboardHeader";
 import CreatePartylistModal from "../../../components/modals/CreatePartylist";
@@ -7,7 +8,7 @@ import { api } from "../../../utils/api";
 
 const DashboardPartylist = () => {
   const router = useRouter();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [opened, { open, close }] = useDisclosure(false);
 
   const partylists = api.partylist.getAll.useQuery(
     router.query.electionSlug as string,
@@ -24,19 +25,19 @@ const DashboardPartylist = () => {
   if (partylists.isError) return <Text>Error</Text>;
 
   return (
-    <Container maxW="4xl">
+    <Container maw="4xl">
       <CreatePartylistModal
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={opened}
+        onClose={close}
         electionId={partylists.data.election.id}
         refetch={partylists.refetch}
       />
       <ElectionDashboardHeader slug={partylists.data.election.slug} />
-      <Button onClick={onOpen} mb={4}>
+      <Button onClick={open} mb={4}>
         Add partylist
       </Button>
 
-      <Flex gap={4} flexWrap="wrap">
+      <Flex gap={4} wrap="wrap">
         {!partylists.data.partylists.length ? (
           <Text>No partylist</Text>
         ) : (

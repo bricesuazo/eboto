@@ -1,4 +1,3 @@
-import { Flex, Text, useRadioGroup } from "@chakra-ui/react";
 import type { Candidate, Partylist, Position } from "@prisma/client";
 import VotingCandidate from "./VotingCandidate";
 
@@ -13,23 +12,23 @@ const VotingPosition = ({
   };
   setSelectedCandidates: React.Dispatch<React.SetStateAction<string[]>>;
 }) => {
-  const { getRootProps, getRadioProps } = useRadioGroup({
-    name: position.id,
-    onChange: (value) => {
-      setSelectedCandidates((prev) => {
-        return prev
-          .filter((prev) => prev.split("-")[0] !== position.id)
-          .concat(value);
-      });
-    },
-  });
-  const group = getRootProps();
-  const radioAbstain = getRadioProps({
-    value: `${position.id}-abstain`,
-  });
+  // const { getRootProps, getRadioProps } = useRadioGroup({
+  //   name: position.id,
+  //   onChange: (value) => {
+  //     setSelectedCandidates((prev) => {
+  //       return prev
+  //         .filter((prev) => prev.split("-")[0] !== position.id)
+  //         .concat(value);
+  //     });
+  //   },
+  // });
+  // const group = getRootProps();
+  // const radioAbstain = getRadioProps({
+  //   value: `${position.id}-abstain`,
+  // });
   return (
     <>
-      <Text fontSize="xl" fontWeight="medium">
+      {/* <Text fontSize="xl" fontWeight="medium">
         {position.name}
       </Text>
 
@@ -41,7 +40,7 @@ const VotingPosition = ({
 
           return (
             <VotingCandidate key={candidate.id} {...radio}>
-              {/* <Box
+               <Box
                   position="relative"
                   width={[32, 40]}
                   height={[32, 40]}
@@ -63,19 +62,19 @@ const VotingPosition = ({
                     priority
                     style={{ objectFit: "cover" }}
                   />
-                </Box> */}
-              <Text
+                </Box> 
+             <Text
                 textAlign="center"
                 noOfLines={2}
                 fontSize={["sm", "inherit"]}
               >{`${candidate.last_name}, ${candidate.first_name}${
                 candidate.middle_name ? ` ${candidate.middle_name}` : ""
               } (${candidate.partylist.acronym})`}</Text>
-            </VotingCandidate>
+            </VotingCandidate> 
           );
         })}
-        <VotingCandidate {...radioAbstain}>
-          {/* <Box
+        <VotingCandidate {...radioAbstain}> 
+        <Box
             position="relative"
             width={[32, 40]}
             height={[32, 40]}
@@ -91,10 +90,10 @@ const VotingPosition = ({
               priority
               style={{ objectFit: "cover" }}
             />
-          </Box> */}
+          </Box> 
           <Text textAlign="center">Abstain</Text>
         </VotingCandidate>
-      </Flex>
+      </Flex> */}
     </>
   );
 };

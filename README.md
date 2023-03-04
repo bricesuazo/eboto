@@ -11,9 +11,8 @@ This system is our final project in COSC70A & COSC75A.
 - **API**: [tRPC](https://trpc.io/)
 - **Authentication**: [NextAuth.js](https://next-auth.js.org/)
 - **Deployment**: [Vercel](https://vercel.com)
-- **Styling**: [Chakra UI](https://chakra-ui.com/)
+- **Styling**: [Mantine](https://mantine.dev/)
 - **Email**: [React Email](https://react.email/)
-- **Form Validator**: [React Hook Form](https://react-hook-form.com/)
 - **Data Validator**: [Zod](https://zod.dev/)
 
 ## Running Locally

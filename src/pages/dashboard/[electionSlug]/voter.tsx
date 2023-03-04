@@ -1,4 +1,5 @@
-import { Button, Container, Flex, Text, useDisclosure } from "@chakra-ui/react";
+import { Button, Container, Flex, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
 import ElectionDashboardHeader from "../../../components/ElectionDashboardHeader";
 import CreateVoterModal from "../../../components/modals/CreateVoter";
@@ -6,7 +7,7 @@ import { api } from "../../../utils/api";
 
 const DashboardVoter = () => {
   const router = useRouter();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [opened, { open, close }] = useDisclosure(false);
 
   // const election = api.election.getBySlug.useQuery(
   //   router.query.electionSlug as string,
@@ -41,16 +42,16 @@ const DashboardVoter = () => {
   if (!voters.data) return <Text>No election found</Text>;
 
   return (
-    <Container maxW="4xl">
+    <Container maw="4xl">
       <CreateVoterModal
-        isOpen={isOpen}
+        isOpen={opened}
         electionId={voters.data.election.id}
-        onClose={onClose}
+        onClose={close}
         refetch={voters.refetch}
       />
       <ElectionDashboardHeader slug={voters.data.election.slug} />
 
-      <Button onClick={onOpen}>Add voter</Button>
+      <Button onClick={open}>Add voter</Button>
       <Text>{voters.data.election.name} - voter page</Text>
 
       {!voters.data.invitedVoter.length && !voters.data.voters.length ? (
@@ -69,7 +70,7 @@ const DashboardVoter = () => {
                     isInvitedVoter: false,
                   })
                 }
-                isLoading={removeVoterMutation.isLoading}
+                loading={removeVoterMutation.isLoading}
               >
                 Delete
               </Button>
@@ -89,7 +90,7 @@ const DashboardVoter = () => {
                     isInvitedVoter: true,
                   })
                 }
-                isLoading={removeVoterMutation.isLoading}
+                loading={removeVoterMutation.isLoading}
               >
                 Delete
               </Button>

@@ -1,4 +1,4 @@
-import { Container, Text } from "@chakra-ui/react";
+import { Container, Text } from "@mantine/core";
 import type { Candidate, Election, Partylist } from "@prisma/client";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "../../server/auth";
@@ -14,7 +14,7 @@ const CandidatePage = ({
   };
 }) => {
   return (
-    <Container maxW="4xl">
+    <Container maw="4xl">
       <Text>{election.name}</Text>
       <Text>
         {candidate.first_name} ({candidate.partylist.acronym})

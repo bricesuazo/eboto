@@ -9,21 +9,15 @@ import type {
 
 import {
   Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
+  Anchor,
+  Box,
   Button,
+  Center,
   Container,
-  Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
+  PasswordInput,
   Stack,
-  Text,
-} from "@chakra-ui/react";
-
-import { type SubmitHandler, useForm } from "react-hook-form";
+  TextInput,
+} from "@mantine/core";
 
 import { signIn } from "next-auth/react";
 
@@ -31,11 +25,8 @@ import { signIn } from "next-auth/react";
 import { getServerAuthSession } from "../server/auth";
 import { useRouter } from "next/router";
 import Link from "next/link";
-
-type FormValues = {
-  email: string;
-  password: string;
-};
+import { hasLength, isEmail, isNotEmpty, useForm } from "@mantine/form";
+import { IconAlertCircle, IconAt, IconLock } from "@tabler/icons-react";
 
 const Signin: NextPage = () => {
   const router = useRouter();
@@ -44,34 +35,18 @@ const Signin: NextPage = () => {
     credentials: false,
     google: false,
   });
-  const {
-    register,
-    handleSubmit,
-    reset,
-    watch,
-    formState: { errors },
-  } = useForm<FormValues>();
 
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    setError(undefined);
-    setLoadings({ ...loadings, credentials: true });
-
-    await signIn("credentials", {
-      email: data.email,
-      password: data.password,
-      redirect: false,
-      callbackUrl: (router.query.callbackUrl as string) || "/dashboard",
-    }).then(async (res) => {
-      if (res?.ok)
-        await router.push((router.query.callbackUrl as string) || "/dashboard");
-      if (res?.error) {
-        setError(res.error);
-
-        res.error === "Email not verified. Email verification sent." && reset();
-      }
-    });
-    setLoadings({ ...loadings, credentials: false });
-  };
+  const form = useForm({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validateInputOnBlur: true,
+    validate: {
+      email: isEmail("Invalid email") || isNotEmpty("Email is required"),
+      password: hasLength({ min: 8 }, "Password must be at least 8 characters"),
+    },
+  });
 
   return (
     <>
@@ -79,100 +54,88 @@ const Signin: NextPage = () => {
         <title>Sign in to your account | eBoto Mo</title>
       </Head>
 
-      <Container>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack spacing={4}>
-            <FormControl
-              isInvalid={!!errors.email}
-              isRequired
-              isDisabled={loadings.credentials}
-            >
-              <FormLabel>Email address</FormLabel>
-              <Input
-                placeholder="Enter your email address"
-                type="email"
-                {...register("email", {
-                  required: "This is required.",
-                  pattern: {
-                    value: /^\S+@\S+$/i,
-                    message: "Invalid email address.",
-                  },
-                })}
-              />
-              {errors.email && (
-                <FormErrorMessage>
-                  {errors.email.message?.toString()}
-                </FormErrorMessage>
-              )}
-            </FormControl>
-            <FormControl
-              isInvalid={!!errors.password}
-              isRequired
-              isDisabled={loadings.credentials}
-            >
-              <Flex justifyContent="space-between" alignItems="center">
-                <FormLabel>Password</FormLabel>
-                <Link
-                  href={`/reset-password${
-                    watch("email") ? `?email=${watch("email")}` : ""
-                  }`}
-                >
-                  <Text
-                    fontSize="xs"
-                    fontWeight="normal"
-                    _hover={{
-                      textDecoration: "underline",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Forgot password?
-                  </Text>
-                </Link>
-              </Flex>
-              <Input
-                placeholder="Enter your password"
-                type="password"
-                {...register("password", {
-                  required: "This is required.",
-                  minLength: {
-                    value: 8,
-                    message: "Password must be at least 8 characters.",
-                  },
-                })}
-              />
-              {errors.password && (
-                <FormErrorMessage>
-                  {errors.password.message?.toString()}
-                </FormErrorMessage>
-              )}
+      <Container size="xs">
+        <form
+          onSubmit={form.onSubmit((values) => {
+            setError(undefined);
+            setLoadings({ ...loadings, credentials: true });
 
-              <Flex justifyContent="end" mt={2}>
-                <Link href="/signup">
-                  <Text
-                    fontSize="xs"
-                    fontWeight="normal"
-                    _hover={{
-                      textDecoration: "underline",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Don&apos;t have an account? Sign up.
-                  </Text>
-                </Link>
-              </Flex>
-            </FormControl>
+            void (async () => {
+              await signIn("credentials", {
+                email: values.email,
+                password: values.password,
+                redirect: false,
+                callbackUrl:
+                  (router.query.callbackUrl as string) || "/dashboard",
+              }).then(async (res) => {
+                if (res?.ok)
+                  await router.push(
+                    (router.query.callbackUrl as string) || "/dashboard"
+                  );
+                if (res?.error) {
+                  setError(res.error);
+
+                  res.error ===
+                    "Email not verified. Email verification sent." &&
+                    form.reset();
+
+                  setLoadings({ ...loadings, credentials: false });
+                }
+              });
+            })();
+          })}
+        >
+          <Stack spacing="sm">
+            <TextInput
+              placeholder="Enter your email address"
+              type="email"
+              withAsterisk
+              label="Email"
+              required
+              {...form.getInputProps("email")}
+              icon={<IconAt size="1rem" />}
+            />
+
+            <Box>
+              <PasswordInput
+                placeholder="Enter your password"
+                withAsterisk
+                label="Password"
+                required
+                {...form.getInputProps("password")}
+                icon={<IconLock size="1rem" />}
+              />
+              <Anchor
+                size="sm"
+                variant=""
+                component={Link}
+                href={`/reset-password${
+                  form.values.email ? `?email=${form.values.email}` : ""
+                }`}
+              >
+                Forgot password?
+              </Anchor>
+            </Box>
 
             {error && (
-              <Alert status="error">
-                <AlertIcon />
-                <AlertTitle>Sign in error.</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
+              <Alert
+                icon={<IconAlertCircle size="1rem" />}
+                title="Error"
+                color="red"
+              >
+                {error}
               </Alert>
             )}
 
-            <Button type="submit" isLoading={loadings.credentials}>
+            <Button type="submit" loading={loadings.credentials}>
               Sign in
             </Button>
+
+            <Center>
+              <Anchor component={Link} href="/signup" size="sm">
+                Don&apos;t have an account? Sign up.
+              </Anchor>
+            </Center>
 
             {/* <Button
               onClick={() => {
@@ -186,7 +149,7 @@ const Signin: NextPage = () => {
               }}
               leftIcon={<AiOutlineGoogle size={18} />}
               variant="outline"
-              isLoading={loadings.google}
+              loading={loadings.google}
               loadingText="Loading..."
             >
               Sign in with Google

@@ -1,4 +1,4 @@
-import { Button, Container } from "@chakra-ui/react";
+import { Button, Container } from "@mantine/core";
 import { useRouter } from "next/router";
 import { api } from "../utils/api";
 
@@ -35,7 +35,7 @@ const Invitation = () => {
             isAccepted: true,
           });
         }}
-        isLoading={invitationMutation.isLoading}
+        loading={invitationMutation.isLoading}
       >
         Accept
       </Button>
@@ -46,7 +46,7 @@ const Invitation = () => {
             isAccepted: false,
           });
         }}
-        isLoading={invitationMutation.isLoading}
+        loading={invitationMutation.isLoading}
       >
         Decline
       </Button>

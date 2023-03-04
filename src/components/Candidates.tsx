@@ -1,4 +1,5 @@
-import { Button, Text, useDisclosure } from "@chakra-ui/react";
+import { Button, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import type { Candidate, Partylist, Position } from "@prisma/client";
 import CandidateCard from "./CandidateCard";
 import CreateCandidateModal from "./modals/CreateCandidate";
@@ -14,21 +15,21 @@ const Candidates = ({
   candidates: Candidate[];
   partylists: Partylist[];
 }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [opened, { open, close }] = useDisclosure(false);
   return (
     <>
       <CreateCandidateModal
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={opened}
+        onClose={close}
         position={position}
         refetch={refetch}
         partylists={partylists}
       />
 
-      <Text fontWeight="bold" fontSize="xl" mb={2}>
+      <Text weight="bold" size="xl" mb={2}>
         {position.name}
       </Text>
-      <Button onClick={onOpen} mb={4}>
+      <Button onClick={open} mb={4}>
         Add candidate
       </Button>
 

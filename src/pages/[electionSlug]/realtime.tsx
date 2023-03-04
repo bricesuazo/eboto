@@ -1,4 +1,4 @@
-import { Box, Container, Stack, Text } from "@chakra-ui/react";
+import { Container, Stack, Box, Text } from "@mantine/core";
 import type { Election } from "@prisma/client";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "../../server/auth";
@@ -18,7 +18,7 @@ const RealtimePage = ({ election }: { election: Election }) => {
 
   if (!positions.data) return <div>No data</div>;
   return (
-    <Container maxW="4xl">
+    <Container maw="4xl">
       <Text>{election.name}</Text>
 
       <h2>Positions</h2>

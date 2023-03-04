@@ -1,31 +1,9 @@
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  Stack,
-  FormControl,
-  FormLabel,
-  Input,
-  FormErrorMessage,
-  ModalFooter,
-  Button,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-  useToast,
-} from "@chakra-ui/react";
-import { type SubmitHandler, useForm } from "react-hook-form";
+import { Modal, TextInput, Button, Alert, Group } from "@mantine/core";
 import { api } from "../../utils/api";
 import { useEffect } from "react";
-
-type FormValues = {
-  name: string;
-  acronym: string;
-};
+import { notifications } from "@mantine/notifications";
+import { IconCheck } from "@tabler/icons-react";
+import { useForm } from "@mantine/form";
 
 const CreatePartylistModal = ({
   isOpen,
@@ -38,24 +16,21 @@ const CreatePartylistModal = ({
   electionId: string;
   refetch: () => Promise<unknown>;
 }) => {
-  const toast = useToast();
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormValues>();
+  const form = useForm({
+    initialValues: {
+      name: "",
+      acronym: "",
+    },
+  });
 
   const createPartylistMutation = api.partylist.createSingle.useMutation({
     onSuccess: async (data) => {
       await refetch();
-      toast({
+      notifications.show({
         title: `${data.name} (${data.acronym}) created!`,
-        description: "Successfully created partylist",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
+        message: "Successfully created partylist",
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
       });
       onClose();
     },
@@ -63,108 +38,64 @@ const CreatePartylistModal = ({
 
   useEffect(() => {
     if (isOpen) {
-      reset();
+      form.reset();
     } else {
       createPartylistMutation.reset();
     }
-  }, [isOpen, reset]);
-
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    await createPartylistMutation.mutateAsync({
-      name: data.name,
-      acronym: data.acronym,
-      electionId,
-    });
-  };
+  }, [isOpen]);
 
   return (
     <Modal
-      isOpen={isOpen || createPartylistMutation.isLoading}
-      onClose={onClose}
+      opened={isOpen || createPartylistMutation.isLoading}
+      onClose={close}
+      title="Create partylist"
     >
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Create partylist</ModalHeader>
-        <ModalCloseButton disabled={createPartylistMutation.isLoading} />
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <ModalBody>
-            <Stack>
-              <FormControl
-                isInvalid={!!errors.name}
-                isRequired
-                isDisabled={createPartylistMutation.isLoading}
-              >
-                <FormLabel>Partylist name</FormLabel>
-                <Input
-                  placeholder="Enter partylist name"
-                  type="text"
-                  {...register("name", {
-                    required: "This is required.",
-                    minLength: {
-                      value: 3,
-                      message: "Name must be at least 3 characters long.",
-                    },
-                  })}
-                />
+      <form
+        onSubmit={form.onSubmit((value) => {
+          void (async () => {
+            await createPartylistMutation.mutateAsync({
+              name: value.name,
+              acronym: value.acronym,
+              electionId,
+            });
+          })();
+        })}
+      >
+        <TextInput
+          placeholder="Enter partylist name"
+          type="text"
+          {...form.getInputProps("name")}
+        />
 
-                {errors.name && (
-                  <FormErrorMessage>
-                    {errors.name.message?.toString()}
-                  </FormErrorMessage>
-                )}
-              </FormControl>
-              <FormControl
-                isInvalid={!!errors.acronym}
-                isRequired
-                isDisabled={createPartylistMutation.isLoading}
-              >
-                <FormLabel>Acronym</FormLabel>
-                <Input
-                  placeholder="Enter acronym"
-                  type="text"
-                  {...register("acronym", {
-                    required: "This is required.",
-                    minLength: {
-                      value: 1,
-                      message: "Acronym must be at least 1 character long.",
-                    },
-                  })}
-                />
+        <TextInput
+          placeholder="Enter acronym"
+          type="text"
+          {...form.getInputProps("acronym")}
+        />
 
-                {errors.acronym && (
-                  <FormErrorMessage>{errors.acronym.message}</FormErrorMessage>
-                )}
-              </FormControl>
-            </Stack>
-            {createPartylistMutation.error && (
-              <Alert status="error" borderRadius="md">
-                <AlertIcon />
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>
-                  {createPartylistMutation.error.message}
-                </AlertDescription>
-              </Alert>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              variant="ghost"
-              mr={2}
-              onClick={onClose}
-              disabled={createPartylistMutation.isLoading}
-            >
-              Cancel
-            </Button>
-            <Button
-              colorScheme="blue"
-              type="submit"
-              isLoading={createPartylistMutation.isLoading}
-            >
-              Create
-            </Button>
-          </ModalFooter>
-        </form>
-      </ModalContent>
+        {createPartylistMutation.error && (
+          <Alert color="red" title="Error">
+            {createPartylistMutation.error.message}
+          </Alert>
+        )}
+        <Group>
+          <Button
+            variant="ghost"
+            mr={2}
+            onClick={onClose}
+            disabled={createPartylistMutation.isLoading}
+          >
+            Cancel
+          </Button>
+          <Button
+            color="blue"
+            type="submit"
+            loading={createPartylistMutation.isLoading}
+          >
+            Create
+          </Button>
+        </Group>
+      </form>
     </Modal>
   );
 };

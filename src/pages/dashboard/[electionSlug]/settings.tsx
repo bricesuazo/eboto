@@ -1,47 +1,14 @@
-import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
-  Button,
-  Container,
-  Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
-  Select,
-  Stack,
-  Text,
-  useToast,
-} from "@chakra-ui/react";
-import type { ElectionPublicity } from "@prisma/client";
+import { Alert, Button, Container, Group, Input, Select } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
+import { IconCheck } from "@tabler/icons-react";
 import { useRouter } from "next/router";
-import { type SubmitHandler, useForm } from "react-hook-form";
 import ElectionDashboardHeader from "../../../components/ElectionDashboardHeader";
 import { api } from "../../../utils/api";
 import { convertNumberToHour } from "../../../utils/convertNumberToHour";
 
-type FormValues = {
-  name: string;
-  start_date: string;
-  end_date: string;
-  slug: string;
-  voting_start: number;
-  voting_end: number;
-  publicity: ElectionPublicity;
-};
-
 const DashboardSettings = () => {
   const router = useRouter();
-  const toast = useToast();
-
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<FormValues>();
 
   const { electionSlug } = router.query;
 
@@ -53,6 +20,17 @@ const DashboardSettings = () => {
       refetchOnWindowFocus: false,
     }
   );
+  const form = useForm({
+    initialValues: {
+      name: election.data?.name,
+      slug: election.data?.slug,
+      start_date: election.data?.start_date.toISOString().split("T")[0],
+      end_date: election.data?.end_date.toISOString().split("T")[0],
+      voting_start: election.data?.voting_start,
+      voting_end: election.data?.voting_end,
+      publicity: election.data?.publicity,
+    },
+  });
 
   const updateElectionMutation = api.election.update.useMutation({
     onSuccess: async (data) => {
@@ -61,11 +39,11 @@ const DashboardSettings = () => {
       } else {
         await election.refetch();
       }
-      toast({
+      notifications.show({
         title: "Election settings updated.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
+        icon: <IconCheck size="1.1rem" />,
+        message: "Your changes have been saved.",
+        autoClose: 3000,
       });
     },
   });
@@ -73,11 +51,11 @@ const DashboardSettings = () => {
   const deleteElectionMutation = api.election.delete.useMutation({
     onSuccess: async () => {
       await router.push("/dashboard");
-      toast({
+      notifications.show({
         title: "Election deleted.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
+        message: "Your election has been deleted.",
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 3000,
       });
     },
   });
@@ -94,247 +72,98 @@ const DashboardSettings = () => {
     return <div>Not found</div>;
   }
 
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    await updateElectionMutation.mutateAsync({
-      name: data.name,
-      start_date: new Date(data.start_date),
-      end_date: new Date(data.end_date),
-      slug: data.slug,
-      voting_start: data.voting_start,
-      voting_end: data.voting_end,
-      id: election.data.id,
-      publicity: data.publicity,
-    });
-  };
-
   return (
-    <Container maxW="4xl">
+    <Container maw="4xl">
       <ElectionDashboardHeader slug={election.data.slug} />
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack>
-          <FormControl
-            isInvalid={!!errors.name}
-            isRequired
-            isDisabled={updateElectionMutation.isLoading}
-          >
-            <FormLabel>Election name</FormLabel>
-            <Input
-              placeholder="Enter election name"
-              type="text"
-              {...register("name", {
-                value: election.data.name,
-                required: "This is required.",
-                minLength: {
-                  value: 3,
-                  message: "Election name must be at least 3 characters long.",
-                },
-              })}
-            />
+      <form
+        onSubmit={form.onSubmit((value) => {
+          void (async () => {
+            // await updateElectionMutation.mutateAsync({
+            //   id: election.data.id,
+            //   name: value.name,
+            //   slug: value.slug,
+            //   start_date: value.start_date,
+            //   end_date: value.end_date,
+            //   voting_start: value.voting_start,
+            //   voting_end: value.voting_end,
+            //   publicity: value.publicity,
+            // });
+          })();
+        })}
+      >
+        <Input
+          placeholder="Enter election name"
+          type="text"
+          {...form.getInputProps("name")}
+        />
 
-            {errors.name && (
-              <FormErrorMessage>
-                {errors.name.message?.toString()}
-              </FormErrorMessage>
-            )}
-          </FormControl>
-          <FormControl
-            isInvalid={!!errors.slug}
-            isRequired
-            isDisabled={updateElectionMutation.isLoading}
-          >
-            <FormLabel>Election slug</FormLabel>
-            <Input
-              placeholder="Enter election slug"
-              type="text"
-              {...register("slug", {
-                value: election.data.slug,
-                required: "This is required.",
-                minLength: {
-                  value: 3,
-                  message: "Election slug must be at least 3 characters long.",
-                },
-              })}
-            />
+        <Input
+          placeholder="Enter election slug"
+          type="text"
+          {...form.getInputProps("slug")}
+        />
 
-            {errors.slug && (
-              <FormErrorMessage>
-                {errors.slug.message?.toString()}
-              </FormErrorMessage>
-            )}
-          </FormControl>
-          <Stack direction={["column", "row"]}>
-            <FormControl
-              isInvalid={!!errors.start_date}
-              isRequired
-              isDisabled={updateElectionMutation.isLoading}
-            >
-              <FormLabel>Voting start date</FormLabel>
-              <Input
-                type="date"
-                {...register("start_date", {
-                  value: election.data.start_date.toISOString().split("T")[0],
-                  required: "This is required.",
-                })}
-                defaultValue={
-                  election.data.start_date.toISOString().split("T")[0]
-                }
-              />
+        <Input type="date" {...form.getInputProps("start_date")} />
 
-              {errors.start_date && (
-                <FormErrorMessage>
-                  {errors.start_date.message?.toString()}
-                </FormErrorMessage>
-              )}
-            </FormControl>
-            <FormControl
-              isInvalid={!!errors.end_date}
-              isRequired
-              isDisabled={updateElectionMutation.isLoading}
-            >
-              <FormLabel>Voting end date</FormLabel>
-              <Input
-                type="date"
-                {...register("end_date", {
-                  value: election.data.end_date.toISOString().split("T")[0],
-                  required: "This is required.",
-                })}
-                defaultValue={
-                  election.data.end_date.toISOString().split("T")[0]
-                }
-              />
+        <Input type="date" {...form.getInputProps("end_date")} />
 
-              {errors.end_date && (
-                <FormErrorMessage>
-                  {errors.end_date.message?.toString()}
-                </FormErrorMessage>
-              )}
-            </FormControl>
-          </Stack>
-          <Stack direction={["column", "row"]} alignItems="center">
-            <FormControl
-              isInvalid={!!errors.start_date}
-              isRequired
-              isDisabled={updateElectionMutation.isLoading}
-            >
-              <FormLabel>Voting hour start</FormLabel>
-              <Select
-                {...register("voting_start", {
-                  required: "This is required.",
-                  valueAsNumber: true,
-                  value: election.data.voting_start,
-                })}
-                defaultValue={election.data.voting_start}
-              >
-                {[...Array(24).keys()].map((_, i) => (
-                  <option value={i} key={i}>
-                    {convertNumberToHour(i)}
-                  </option>
-                ))}
-              </Select>
+        <Select
+          {...form.getInputProps("voting_start")}
+          data={[...Array(24).keys()].map((_, i) => ({
+            value: i.toString(),
+            label: convertNumberToHour(i),
+          }))}
+        />
 
-              {errors.start_date && (
-                <FormErrorMessage>
-                  {errors.start_date.message?.toString()}
-                </FormErrorMessage>
-              )}
-            </FormControl>
+        <Select
+          {...form.getInputProps("voting_end")}
+          data={[...Array(24).keys()].map((_, i) => ({
+            value: i.toString(),
+            label: convertNumberToHour(i),
+          }))}
+        />
 
-            <FormControl
-              isInvalid={!!errors.end_date}
-              isRequired
-              isDisabled={updateElectionMutation.isLoading}
-            >
-              <FormLabel>Voting hour end</FormLabel>
-              <Select
-                {...register("voting_end", {
-                  value: election.data.voting_end,
-                  required: "This is required.",
-                  valueAsNumber: true,
-                })}
-                defaultValue={election.data.voting_end}
-              >
-                {[...Array(24).keys()].map((_, i) => (
-                  <option
-                    value={i}
-                    key={i}
-                    disabled={i < watch("voting_start")}
-                  >
-                    {convertNumberToHour(i)}
-                  </option>
-                ))}
-              </Select>
+        {/* <Text
+          align="center"
+          size="sm"
+          opacity={updateElectionMutation.isLoading ? 0.5 : 1}
+        >
+          {form.values.voting_end - form.values.voting_start} hour
+          {form.values.voting_end - form.values.voting_start > 1 ? "s" : ""}
+        </Text> */}
 
-              {errors.end_date && (
-                <FormErrorMessage>
-                  {errors.end_date.message?.toString()}
-                </FormErrorMessage>
-              )}
-            </FormControl>
-          </Stack>
-          <Text
-            textAlign="center"
-            fontSize="sm"
-            opacity={updateElectionMutation.isLoading ? 0.5 : 1}
-          >
-            {watch("voting_end") - watch("voting_start")} hour
-            {watch("voting_end") - watch("voting_start") > 1 ? "s" : ""}
-          </Text>
+        <Select
+          {...form.getInputProps("publicity")}
+          data={["PRIVATE", "VOTER", "PUBLIC"].map((p) => ({
+            value: p,
+            label: p,
+          }))}
+        />
 
-          <FormControl
-            isInvalid={!!errors.publicity}
-            isRequired
-            isDisabled={updateElectionMutation.isLoading}
-          >
-            <FormLabel>Publicity</FormLabel>
-            <Select
-              {...register("publicity", {
-                value: election.data.publicity,
-                required: "This is required.",
-              })}
-            >
-              {["PRIVATE", "VOTER", "PUBLIC"].map((p, i) => (
-                <option value={p} key={i}>
-                  {p.charAt(0) + p.slice(1).toLowerCase()}
-                </option>
-              ))}
-            </Select>
+        {updateElectionMutation.error && (
+          <Alert title="Error" color="red">
+            {updateElectionMutation.error.message}
+          </Alert>
+        )}
 
-            {errors.publicity && (
-              <FormErrorMessage>
-                {errors.publicity.message?.toString()}
-              </FormErrorMessage>
-            )}
-          </FormControl>
-
-          {updateElectionMutation.error && (
-            <Alert status="error" borderRadius="md">
-              <AlertIcon />
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>
-                {updateElectionMutation.error.message}
-              </AlertDescription>
-            </Alert>
-          )}
-        </Stack>
-
-        <Flex mt={4} justifyContent="space-between">
+        <Group>
           <Button
-            colorScheme="blue"
+            color="blue"
             type="submit"
-            isLoading={updateElectionMutation.isLoading}
+            loading={updateElectionMutation.isLoading}
           >
             Update
           </Button>
           <Button
             variant="outline"
-            colorScheme="red"
+            color="red"
             onClick={() => deleteElectionMutation.mutate(election.data.id)}
-            isLoading={deleteElectionMutation.isLoading}
+            loading={deleteElectionMutation.isLoading}
           >
             Delete
           </Button>
-        </Flex>
+        </Group>
       </form>
     </Container>
   );

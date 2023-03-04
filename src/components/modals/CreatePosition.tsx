@@ -1,30 +1,15 @@
 import {
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  Stack,
-  FormControl,
-  FormLabel,
-  Input,
-  FormErrorMessage,
-  ModalFooter,
+  TextInput,
   Button,
   Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-  useToast,
-} from "@chakra-ui/react";
-import { type SubmitHandler, useForm } from "react-hook-form";
+  Group,
+} from "@mantine/core";
 import { api } from "../../utils/api";
 import { useEffect } from "react";
-
-type FormValues = {
-  name: string;
-};
+import { notifications } from "@mantine/notifications";
+import { IconCheck } from "@tabler/icons-react";
+import { useForm } from "@mantine/form";
 
 const CreatePositionModal = ({
   isOpen,
@@ -39,24 +24,20 @@ const CreatePositionModal = ({
   order: number;
   refetch: () => Promise<unknown>;
 }) => {
-  const toast = useToast();
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormValues>();
+  const form = useForm({
+    initialValues: {
+      name: "",
+    },
+  });
 
   const createPositionMutation = api.position.createSingle.useMutation({
     onSuccess: async (data) => {
       await refetch();
-      toast({
+      notifications.show({
         title: `${data.name} created!`,
-        description: "Successfully created position",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
+        message: "Successfully created position",
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
       });
       onClose();
     },
@@ -64,86 +45,58 @@ const CreatePositionModal = ({
 
   useEffect(() => {
     if (isOpen) {
-      reset();
+      form.reset();
     } else {
       createPositionMutation.reset();
     }
-  }, [isOpen, reset]);
-
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    await createPositionMutation.mutateAsync({
-      name: data.name,
-      electionId,
-      order,
-    });
-  };
+  }, [isOpen]);
 
   return (
     <Modal
-      isOpen={isOpen || createPositionMutation.isLoading}
-      onClose={onClose}
+      opened={isOpen || createPositionMutation.isLoading}
+      onClose={close}
+      title="Create position"
     >
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Create position</ModalHeader>
-        <ModalCloseButton disabled={createPositionMutation.isLoading} />
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <ModalBody>
-            <Stack>
-              <FormControl
-                isInvalid={!!errors.name}
-                isRequired
-                isDisabled={createPositionMutation.isLoading}
-              >
-                <FormLabel>Position name</FormLabel>
-                <Input
-                  placeholder="Enter position name"
-                  type="text"
-                  {...register("name", {
-                    required: "This is required.",
-                    minLength: {
-                      value: 2,
-                      message: "Name must be at least 2 characters long.",
-                    },
-                  })}
-                />
+      <form
+        onSubmit={form.onSubmit((value) => {
+          void (async () => {
+            await createPositionMutation.mutateAsync({
+              name: value.name,
+              electionId,
+              order,
+            });
+          })();
+        })}
+      >
+        <TextInput
+          placeholder="Enter position name"
+          type="text"
+          {...form.getInputProps("name")}
+        />
 
-                {errors.name && (
-                  <FormErrorMessage>
-                    {errors.name.message?.toString()}
-                  </FormErrorMessage>
-                )}
-              </FormControl>
-            </Stack>
-            {createPositionMutation.error && (
-              <Alert status="error" borderRadius="md">
-                <AlertIcon />
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>
-                  {createPositionMutation.error.message}
-                </AlertDescription>
-              </Alert>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              variant="ghost"
-              mr={2}
-              onClick={onClose}
-              disabled={createPositionMutation.isLoading}
-            >
-              Cancel
-            </Button>
-            <Button
-              colorScheme="blue"
-              type="submit"
-              isLoading={createPositionMutation.isLoading}
-            >
-              Create
-            </Button>
-          </ModalFooter>
-        </form>
-      </ModalContent>
+        {createPositionMutation.error && (
+          <Alert color="red" title="Error">
+            {createPositionMutation.error.message}
+          </Alert>
+        )}
+        <Group>
+          <Button
+            variant="ghost"
+            mr={2}
+            onClick={onClose}
+            disabled={createPositionMutation.isLoading}
+          >
+            Cancel
+          </Button>
+          <Button
+            color="blue"
+            type="submit"
+            loading={createPositionMutation.isLoading}
+          >
+            Create
+          </Button>
+        </Group>
+      </form>
     </Modal>
   );
 };

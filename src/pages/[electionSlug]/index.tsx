@@ -1,12 +1,12 @@
 import {
-  Box,
-  Button,
-  Center,
-  Container,
-  Flex,
   Stack,
+  Box,
+  Flex,
+  Center,
+  Button,
+  Container,
   Text,
-} from "@chakra-ui/react";
+} from "@mantine/core";
 import type { Election } from "@prisma/client";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Link from "next/link";
@@ -34,7 +34,7 @@ const ElectionPage = ({
   );
 
   return (
-    <Container maxW="4xl">
+    <Container maw="4xl">
       {positions.isLoading ? (
         <Text>Loading...</Text>
       ) : positions.isError ? (
@@ -42,9 +42,9 @@ const ElectionPage = ({
       ) : !positions.data ? (
         <Text>Not found</Text>
       ) : (
-        <Stack spacing={8} textAlign="center">
+        <Stack spacing={8} align="center">
           <Box>
-            <Text fontSize="2xl" fontWeight="bold">
+            <Text size="2xl" weight="bold">
               {election.name}
             </Text>
 
@@ -59,11 +59,11 @@ const ElectionPage = ({
             </Text>
 
             {hasVoted ? (
-              <Button as={Link} href={`/${election.slug}/realtime`}>
+              <Button component={Link} href={`/${election.slug}/realtime`}>
                 Realtime count
               </Button>
             ) : (
-              <Button as={Link} href={`/${election.slug}/vote`}>
+              <Button component={Link} href={`/${election.slug}/vote`}>
                 Vote now!
               </Button>
             )}
@@ -72,20 +72,17 @@ const ElectionPage = ({
           <Stack>
             {positions.data.map((position) => (
               <Box key={position.id}>
-                <Text fontSize="xl" fontWeight="medium">
+                <Text size="xl" weight="medium">
                   {position.name}
                 </Text>
 
-                <Flex flexWrap="wrap">
+                <Flex wrap="wrap">
                   {position.candidate.map((candidate) => (
                     <Center
-                      as={Link}
+                      component={Link}
                       href={`/${election?.slug || ""}/${candidate.slug}`}
                       w="44"
                       h="24"
-                      border="1px"
-                      borderColor="GrayText"
-                      borderRadius="md"
                       key={candidate.id}
                     >
                       <Text>

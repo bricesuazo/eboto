@@ -1,4 +1,4 @@
-import { Container, Text } from "@chakra-ui/react";
+import { Container, Text } from "@mantine/core";
 import { useRouter } from "next/router";
 import Candidates from "../../../components/Candidates";
 import ElectionDashboardHeader from "../../../components/ElectionDashboardHeader";
@@ -24,7 +24,7 @@ const CandidatePartylist = () => {
   if (!candidates.data) return <Text>No data</Text>;
 
   return (
-    <Container maxW="4xl">
+    <Container maw="4xl">
       <ElectionDashboardHeader slug={candidates.data.election.slug} />
 
       {candidates.data.positions.length === 0 ? (

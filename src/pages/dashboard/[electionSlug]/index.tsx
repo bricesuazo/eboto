@@ -1,4 +1,4 @@
-import { Container, Text } from "@chakra-ui/react";
+import { Container, Text } from "@mantine/core";
 import { useRouter } from "next/router";
 import Moment from "react-moment";
 import { convertNumberToHour } from "../../../utils/convertNumberToHour";
@@ -19,7 +19,7 @@ const DashboardOverview = () => {
   );
 
   return (
-    <Container maxW="4xl">
+    <Container maw="4xl">
       {electionOverview.isLoading ? (
         <Text>Loading...</Text>
       ) : electionOverview.isError ? (

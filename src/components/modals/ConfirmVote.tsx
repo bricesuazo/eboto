@@ -1,17 +1,7 @@
-import {
-  Box,
-  Button,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-  useToast,
-} from "@chakra-ui/react";
+import { Button, Group, Modal, Text } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import type { Candidate, Election, Partylist, Position } from "@prisma/client";
+import { IconCheck, IconX } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import { useConfetti } from "../../lib/confetti";
 import { api } from "../../utils/api";
@@ -36,104 +26,81 @@ const ConfirmVote = ({
   selectedCandidates,
 }: ConfirmVoteModalProps) => {
   const router = useRouter();
-  const toast = useToast();
   const { fireConfetti } = useConfetti();
+
   const voteMutation = api.election.vote.useMutation({
     onSuccess: async () => {
       await router.push(`/${election.slug}/realtime`);
       onClose();
-      toast({
+      notifications.show({
         title: "Vote casted successfully!",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
+        message: "You can now view the realtime results",
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
       });
       await fireConfetti();
     },
     onError: (error) => {
-      toast({
+      notifications.show({
         title: "Error casting vote",
-        description: error.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
+        message: error.message,
+        icon: <IconX size="1.1rem" />,
+        color: "red",
+        autoClose: 5000,
       });
     },
   });
 
   return (
     <Modal
-      isOpen={isOpen || voteMutation.isLoading}
-      onClose={onClose}
-      size={["xs", "md"]}
+      opened={isOpen || voteMutation.isLoading}
+      onClose={close}
+      title="Confirm Vote"
     >
-      <ModalOverlay />
-      <ModalContent marginX={[2, 0]}>
-        <ModalHeader
-        // display="flex"
-        // alignItems="center"
-        // gap={2}
-        // paddingX={[4, 6]}
+      {positions.map((position) => {
+        const candidate = position.candidate.find(
+          (candidate) =>
+            candidate.id ===
+            selectedCandidates
+              .find(
+                (selectedCandidate) =>
+                  selectedCandidate.split("-")[0] === position.id
+              )
+              ?.split("-")[1]
+        );
+
+        return (
+          <Group key={position.id}>
+            <Text size="sm" color="gray.500">
+              {position.name}
+            </Text>
+            <Text weight="bold">
+              {candidate
+                ? `${candidate.last_name}, ${candidate.first_name}${
+                    candidate.middle_name ? ` ${candidate.middle_name}` : ""
+                  } (${candidate.partylist.acronym})`
+                : "Abstain"}
+            </Text>
+          </Group>
+        );
+      })}
+
+      <Group>
+        <Button onClick={onClose} disabled={voteMutation.isLoading}>
+          Cancel
+        </Button>
+        <Button
+          loading={voteMutation.isLoading}
+          onClick={() =>
+            voteMutation.mutate({
+              electionId: election.id,
+              votes: selectedCandidates,
+            })
+          }
         >
-          {/* <FingerPrintIcon width={28} /> */}
-          <Text fontSize={["lg", "xl"]}>Confirm Vote</Text>
-        </ModalHeader>
-        <ModalCloseButton />
-
-        <ModalBody paddingX={[4, 6]}>
-          {positions.map((position) => {
-            const candidate = position.candidate.find(
-              (candidate) =>
-                candidate.id ===
-                selectedCandidates
-                  .find(
-                    (selectedCandidate) =>
-                      selectedCandidate.split("-")[0] === position.id
-                  )
-                  ?.split("-")[1]
-            );
-
-            return (
-              <Box key={position.id} mb={[2, 4]}>
-                <Text fontSize="sm" color="gray.500">
-                  {position.name}
-                </Text>
-                <Text fontSize={["md", "lg"]} fontWeight="bold">
-                  {candidate
-                    ? `${candidate.last_name}, ${candidate.first_name}${
-                        candidate.middle_name ? ` ${candidate.middle_name}` : ""
-                      } (${candidate.partylist.acronym})`
-                    : "Abstain"}
-                </Text>
-              </Box>
-            );
-          })}
-        </ModalBody>
-
-        <ModalFooter>
-          <Button
-            size={["sm", "md"]}
-            variant="ghost"
-            mr={3}
-            onClick={onClose}
-            isDisabled={voteMutation.isLoading}
-          >
-            Cancel
-          </Button>
-          <Button
-            size={["sm", "md"]}
-            isLoading={voteMutation.isLoading}
-            onClick={() =>
-              voteMutation.mutate({
-                electionId: election.id,
-                votes: selectedCandidates,
-              })
-            }
-          >
-            Cast Vote
-          </Button>
-        </ModalFooter>
-      </ModalContent>
+          Cast Vote
+        </Button>
+      </Group>
     </Modal>
   );
 };

@@ -1,4 +1,4 @@
-import { Button, HStack } from "@chakra-ui/react";
+import { Button, Stack } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -6,7 +6,7 @@ const ElectionDashboardHeader = ({ slug }: { slug: string }) => {
   const router = useRouter();
 
   return (
-    <HStack mb={4}>
+    <Stack mb={4}>
       {["partylist", "position", "candidate", "voter", "settings"].map(
         (page) => (
           <Link href={"/dashboard/" + slug + "/" + page} key={page}>
@@ -20,7 +20,7 @@ const ElectionDashboardHeader = ({ slug }: { slug: string }) => {
           </Link>
         )
       )}
-    </HStack>
+    </Stack>
   );
 };
 
