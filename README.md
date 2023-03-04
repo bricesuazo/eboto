@@ -1,28 +1,36 @@
-# Create T3 App
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/bricesuazo/eboto-mo)
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+# [eBoto Mo](https://eboto-mo.com/) - An online voting system for Cavite State University - Don Severino Delas Alas Campus with realtime voting count.
 
-## What's next? How do I make an app with this?
+This system is our final project in COSC70A & COSC75A.
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- **Bootstrapping**: [create-t3-app](https://create.t3.gg/)
+- **Framework**: [Next.js + Typescript](https://nextjs.org/)
+- **Database**: [PlanetScale](https://planetscale.com/)
+- **ORM**: [Prisma](https://www.prisma.io//)
+- **API**: [tRPC](https://trpc.io/)
+- **Authentication**: [NextAuth.js](https://next-auth.js.org/)
+- **Deployment**: [Vercel](https://vercel.com)
+- **Styling**: [Chakra UI](https://chakra-ui.com/)
+- **Email**: [React Email](https://react.email/)
+- **Form Validator**: [React Hook Form](https://react-hook-form.com/)
+- **Data Validator**: [Zod](https://zod.dev/)
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Running Locally
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+This application requires Node.js v16.13+.
 
-## Learn More
+```bash
+git clone https://github.com/bricesuazo/eboto-mo.git
+cd eboto-mo
+npm install
+npm run dev
+```
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+Create a `.env` file similar to [`.env.example`](https://github.com/bricesuazo/eboto-mo/blob/main/.env.example).
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+## Creator
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+[Brice Suazo](mailto:bricebrine.suazo@cvsu.edu.ph),
+[Rey Anthony De Luna](mailto:reyanthony.deluna@cvsu.edu.ph), &
+[Lourielene Baldomero](mailto:lourielene.baldomero@cvsu.edu.ph)
