@@ -1,165 +1,125 @@
 import Link from "next/link";
+import { signOut, useSession } from "next-auth/react";
+import Image from "next/image";
 import {
   Box,
   Button,
-  Container,
-  Flex,
-  HStack,
+  Group,
   Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Stack,
   Text,
-  useColorMode,
-} from "@chakra-ui/react";
-import { signOut, useSession } from "next-auth/react";
+  UnstyledButton,
+  useMantineColorScheme,
+} from "@mantine/core";
 import {
-  BsChevronDown,
-  BsFillBarChartFill,
-  BsFillMoonFill,
-  BsFillSunFill,
-} from "react-icons/bs";
-import { GoSignOut } from "react-icons/go";
-import Image from "next/image";
+  IconChartBar,
+  IconChevronDown,
+  IconMoon,
+  IconSun,
+  IconTransitionLeft,
+} from "@tabler/icons-react";
+import { useState } from "react";
 
 const Header = () => {
-  const { colorMode, toggleColorMode } = useColorMode();
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const { status, data } = useSession();
+  const [opened, setOpened] = useState(false);
 
   return (
     <header>
-      <Container maxW="4xl" py={4}>
-        <Flex justify="space-between" alignItems="center">
-          <Link href="/">
-            <Stack
-              direction="row"
-              alignItems="center"
-              _hover={{
-                opacity: 0.75,
-              }}
-              transition="all 0.2s"
-            >
-              <Image
-                src="/images/eboto-mo-logo.png"
-                alt="eBoto Mo Logo"
-                width={32}
-                height={32}
-              />
-              <Text fontWeight="medium" display={["none", "inherit"]}>
-                eBoto Mo
-              </Text>
-            </Stack>
-          </Link>
-          {status === "unauthenticated" && (
-            <Stack direction="row" alignItems="center" spacing={4}>
-              <Button variant="link" as={Link} href="/signin">
-                Sign in
-              </Button>
+      <Group position="apart" p="md">
+        <UnstyledButton component={Link} href="/">
+          <Group spacing={8}>
+            <Image
+              src="/images/eboto-mo-logo.png"
+              alt="eBoto Mo Logo"
+              width={32}
+              height={32}
+            />
+            <Text weight={600}>eBoto Mo</Text>
+          </Group>
+        </UnstyledButton>
 
-              <Button variant="outline" as={Link} href="/signup">
-                Get Started
-              </Button>
-            </Stack>
-          )}
-          {status === "authenticated" && (
-            <Menu placement="bottom-end">
-              {({ isOpen }) => {
-                return (
-                  <>
-                    <MenuButton
-                      bg="gray.50"
-                      _hover={{
-                        bg: "gray.100",
-                      }}
-                      transition="all 0.2s"
-                      _dark={{
-                        bg: "gray.800",
-                        _hover: {
-                          bg: "gray.700",
-                        },
-                      }}
-                      px={2}
-                      py={1}
-                      borderRadius="md"
-                    >
-                      <HStack>
-                        <Box position="relative" width={[6, 8]} height={[6, 8]}>
-                          <Image
-                            src={
-                              data?.user.image || "/images/default-avatar.png"
-                            }
-                            alt="Profile picture"
-                            fill
-                            sizes="100%"
-                            style={{
-                              borderRadius: "50%",
-                              userSelect: "none",
-                              pointerEvents: "none",
-                            }}
-                          />
-                        </Box>
-                        <Box textAlign="start">
-                          <Text fontSize="xs" width={["12", "20"]} isTruncated>
-                            {data.user.firstName} {data.user.lastName}
-                          </Text>
-                          <Text
-                            fontWeight="normal"
-                            fontSize="xs"
-                            width="20"
-                            display={["none", "inherit"]}
-                            isTruncated
-                          >
-                            {data.user.email}
-                          </Text>
-                        </Box>
+        {status === "unauthenticated" && (
+          <Group spacing="xs">
+            <Button variant="outline" component={Link} href="/signin">
+              Sign in
+            </Button>
 
-                        <BsChevronDown
-                          size={12}
-                          style={{
-                            rotate: isOpen ? "-180deg" : "0deg",
-                            transition: "all 0.25s",
-                          }}
-                        />
-                      </HStack>
-                    </MenuButton>
-                    <MenuList>
-                      <Link href="/dashboard">
-                        <MenuItem icon={<BsFillBarChartFill />}>
-                          Dashboard
-                        </MenuItem>
-                      </Link>
-                      <MenuItem
-                        icon={
-                          colorMode === "light" ? (
-                            <BsFillMoonFill />
-                          ) : (
-                            <BsFillSunFill />
-                          )
-                        }
-                        onClick={toggleColorMode}
-                        closeOnSelect={false}
-                      >
-                        {colorMode === "light" ? "Dark mode" : "Light mode"}
-                      </MenuItem>
-                      <MenuItem
-                        onClick={() =>
-                          signOut({
-                            callbackUrl: "/signin",
-                          })
-                        }
-                        icon={<GoSignOut />}
-                      >
-                        Log out
-                      </MenuItem>
-                    </MenuList>
-                  </>
-                );
-              }}
-            </Menu>
-          )}
-        </Flex>
-      </Container>
+            <Button component={Link} href="/signup">
+              Get Started
+            </Button>
+          </Group>
+        )}
+        {status === "authenticated" && (
+          <Menu position="bottom-end" opened={opened} onChange={setOpened}>
+            <Menu.Target>
+              <UnstyledButton>
+                <Group>
+                  <Box>
+                    <Image
+                      src={data?.user.image || "/images/default-avatar.png"}
+                      alt="Profile picture"
+                      width={32}
+                      height={32}
+                    />
+                  </Box>
+                  <Box>
+                    <Text size="xs" truncate>
+                      {data.user.firstName} {data.user.lastName}
+                    </Text>
+                    <Text weight="normal" size="xs" w="20" truncate>
+                      {data.user.email}
+                    </Text>
+                  </Box>
+
+                  <IconChevronDown
+                    size={16}
+                    style={{
+                      rotate: opened ? "-180deg" : "0deg",
+                      transition: "all 0.25s",
+                    }}
+                  />
+                </Group>
+              </UnstyledButton>
+            </Menu.Target>
+
+            <Menu.Dropdown>
+              <Menu.Item
+                component={Link}
+                href="/dashboard"
+                icon={<IconChartBar size={16} />}
+              >
+                Dashboard
+              </Menu.Item>
+
+              <Menu.Item
+                icon={
+                  colorScheme === "light" ? (
+                    <IconMoon size={16} />
+                  ) : (
+                    <IconSun size={16} />
+                  )
+                }
+                onClick={() => toggleColorScheme()}
+                closeMenuOnClick={false}
+              >
+                {colorScheme === "light" ? "Dark mode" : "Light mode"}
+              </Menu.Item>
+              <Menu.Item
+                onClick={() =>
+                  signOut({
+                    callbackUrl: "/signin",
+                  })
+                }
+                icon={<IconTransitionLeft size={16} />}
+              >
+                Log out
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        )}
+      </Group>
     </header>
   );
 };

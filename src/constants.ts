@@ -5,13 +5,14 @@ const positionTemplateSchema = z.array(
     id: z.number(),
     org: z.string(),
     positions: z.array(z.string()),
+    college: z.string(),
   })
 );
 
 export type PositionTemplate = z.infer<typeof positionTemplateSchema>;
 
 export const positionTemplate: PositionTemplate = [
-  { id: 0, org: "None", positions: [] },
+  { id: 0, org: "None", positions: [], college: "No template" },
   {
     id: 1,
     org: "CEIT-SC",
@@ -26,6 +27,7 @@ export const positionTemplate: PositionTemplate = [
       "Vice President for Public Relations",
       "Gender and Development Representative ",
     ],
+    college: "CEIT - College of Engineering and Information Technology",
   },
   {
     id: 2,
@@ -40,6 +42,7 @@ export const positionTemplate: PositionTemplate = [
       "Business Manager",
       "Public Relations Officer",
     ],
+    college: "CEIT - College of Engineering and Information Technology",
   },
   {
     id: 3,
@@ -55,6 +58,7 @@ export const positionTemplate: PositionTemplate = [
       "Business Manager",
       "Public Relations Officer",
     ],
+    college: "CEIT - College of Engineering and Information Technology",
   },
   {
     id: 4,
@@ -71,6 +75,7 @@ export const positionTemplate: PositionTemplate = [
       "Auditor",
       "Public Relations Officer",
     ],
+    college: "CEIT - College of Engineering and Information Technology",
   },
   {
     id: 5,
@@ -87,6 +92,7 @@ export const positionTemplate: PositionTemplate = [
       "Vice President for Communication",
       "Vice President for Marketing",
     ],
+    college: "CEIT - College of Engineering and Information Technology",
   },
 ];
 

@@ -1,23 +1,22 @@
-import {
-  Button,
-  Center,
-  Container,
-  Stack,
-  Text,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Box, Button, Center, Container, Stack, Text } from "@mantine/core";
+import { modals } from "@mantine/modals";
+import { notifications } from "@mantine/notifications";
 import type { Election } from "@prisma/client";
+import { IconCheck, IconX } from "@tabler/icons-react";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { useRouter } from "next/router";
 import { useState } from "react";
-import ConfirmVote from "../../components/modals/ConfirmVote";
+// import ConfirmVote from "../../components/modals/ConfirmVote";
 import VotingPosition from "../../components/VotingPosition";
+import { useConfetti } from "../../lib/confetti";
 import { getServerAuthSession } from "../../server/auth";
 import { prisma } from "../../server/db";
 import { api } from "../../utils/api";
 
 const VotePage = ({ election }: { election: Election }) => {
+  const router = useRouter();
+  const { fireConfetti } = useConfetti();
   const [selectedCandidates, setSelectedCandidates] = useState<string[]>([]);
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const positions = api.election.getElectionVoting.useQuery(election.id, {
     refetchOnWindowFocus: false,
@@ -25,21 +24,87 @@ const VotePage = ({ election }: { election: Election }) => {
     refetchOnReconnect: false,
     retry: false,
   });
+
+  const voteMutation = api.election.vote.useMutation();
   if (positions.isLoading) return <Text>Loading...</Text>;
 
   if (positions.isError) return <Text>Error:{positions.error.message}</Text>;
 
   if (!positions.data) return <Text>Not found</Text>;
 
+  const openModal = () =>
+    modals.openConfirmModal({
+      title: "Confirm Vote",
+      children: (
+        <>
+          {positions.data.map((position) => {
+            const candidate = position.candidate.find(
+              (candidate) =>
+                candidate.id ===
+                selectedCandidates
+                  .find(
+                    (selectedCandidate) =>
+                      selectedCandidate.split("-")[0] === position.id
+                  )
+                  ?.split("-")[1]
+            );
+
+            return (
+              <Box key={position.id}>
+                <Text size="sm" color="gray.500">
+                  {position.name}
+                </Text>
+                <Text weight="bold">
+                  {candidate
+                    ? `${candidate.last_name}, ${candidate.first_name}${
+                        candidate.middle_name ? ` ${candidate.middle_name}` : ""
+                      } (${candidate.partylist.acronym})`
+                    : "Abstain"}
+                </Text>
+              </Box>
+            );
+          })}
+        </>
+      ),
+      labels: { confirm: "Confirm", cancel: "Cancel" },
+      onConfirm: () => {
+        void (async () => {
+          await router.push(`/${election.slug}/realtime`);
+          notifications.show({
+            title: "Vote casted successfully!",
+            message: "You can now view the realtime results",
+            icon: <IconCheck size="1.1rem" />,
+            autoClose: 5000,
+          });
+          await fireConfetti();
+        })();
+      },
+      onError: () => {
+        notifications.show({
+          title: "Error casting vote",
+          message: voteMutation.error?.message,
+          icon: <IconX size="1.1rem" />,
+          color: "red",
+          autoClose: 5000,
+        });
+      },
+      cancelProps: {
+        disabled: true,
+      },
+      confirmProps: {
+        loading: true,
+      },
+    });
+
   return (
     <>
-      <ConfirmVote
-        isOpen={isOpen}
-        onClose={onClose}
+      {/* <ConfirmVote
+        isOpen={opened}
+        onClose={close}
         election={election}
         positions={positions.data}
         selectedCandidates={selectedCandidates}
-      />
+      /> */}
       <Container>
         <Stack>
           {positions.data.map((position) => {
@@ -53,20 +118,12 @@ const VotePage = ({ election }: { election: Election }) => {
           })}
         </Stack>
 
-        <Center
-          paddingX={[4, 0]}
-          position="sticky"
-          bottom={12}
-          zIndex="sticky"
-          marginTop={16}
-        >
+        <Center>
           <Button
-            isDisabled={positions.data.length !== selectedCandidates.length}
-            onClick={onOpen}
+            disabled={positions.data.length !== selectedCandidates.length}
+            onClick={openModal}
             variant="solid"
-            // leftIcon={<FingerPrintIcon width={22} />}
-
-            borderRadius="full"
+            // leftIcon={<FingerPrintIcon w={22} />}
           >
             Cast Vote
           </Button>

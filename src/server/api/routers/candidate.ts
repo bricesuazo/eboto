@@ -107,7 +107,7 @@ export const candidateRouter = createTRPCRouter({
         partylistId: z.string().min(1),
 
         middleName: z.string().nullable(),
-        description: z.string().min(1).optional(),
+        message: z.string().min(1).optional(),
         image: z.string().min(1).optional(),
       })
     )
@@ -148,7 +148,7 @@ export const candidateRouter = createTRPCRouter({
           positionId: input.position.id,
 
           middle_name: input.middleName,
-          description: input.description,
+
           image: input.image,
         },
       });

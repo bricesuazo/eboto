@@ -1,97 +1,88 @@
 import {
   Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
+  Anchor,
   Button,
+  Center,
   Container,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
   Stack,
-} from "@chakra-ui/react";
+  TextInput,
+} from "@mantine/core";
 import { useRouter } from "next/router";
-import { type SubmitHandler, useForm } from "react-hook-form";
 import { api } from "../utils/api";
 import { useEffect } from "react";
-
-type FormValues = {
-  email: string;
-};
+import { isEmail, isNotEmpty, useForm } from "@mantine/form";
+import { IconAlertCircle, IconAt, IconCircleCheck } from "@tabler/icons-react";
+import Link from "next/link";
 
 const ResetPassword = () => {
   const router = useRouter();
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setValue,
-    formState: { errors },
-  } = useForm<FormValues>();
+
+  const form = useForm({
+    initialValues: {
+      email: "",
+    },
+    validateInputOnBlur: true,
+    validate: {
+      email: isEmail("Invalid email") || isNotEmpty("Email is required"),
+    },
+  });
 
   useEffect(() => {
     if (router.query.email && typeof router.query.email === "string") {
-      setValue("email", router.query.email);
+      form.setValues({ email: router.query.email });
     }
-  }, [router.query.email, setValue]);
+  }, [router.query.email]);
 
   const requestResetPasswordMutation =
     api.user.requestResetPassword.useMutation();
 
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    await requestResetPasswordMutation.mutateAsync(data.email);
-    reset();
-  };
   return (
-    <Container>
+    <Container size="xs">
       {requestResetPasswordMutation.isSuccess ? (
-        <Alert status="success">
-          <AlertIcon />
-          <AlertTitle mr={2}>Success!</AlertTitle>
-          <AlertDescription>
-            Please check your email to reset your password.
-          </AlertDescription>
+        <Alert icon={<IconCircleCheck />} title="Success!" color="green">
+          Please check your email to reset your password.
         </Alert>
       ) : (
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Stack spacing={4}>
-            <FormControl
-              isInvalid={!!errors.email}
-              isRequired
-              isDisabled={requestResetPasswordMutation.isLoading}
-            >
-              <FormLabel>Email</FormLabel>
-              <Input
-                placeholder="Enter your email"
-                type="email"
-                {...register("email", {
-                  required: "This is required.",
-                })}
-              />
-              {errors.email && (
-                <FormErrorMessage>
-                  {errors.email.message?.toString()}
-                </FormErrorMessage>
-              )}
-            </FormControl>
+        <form
+          onSubmit={form.onSubmit((data) => {
+            void (async () => {
+              await requestResetPasswordMutation.mutateAsync(data.email);
+              form.reset();
+            })();
+          })}
+        >
+          <Stack spacing="sm">
+            <TextInput
+              placeholder="Enter your email"
+              type="email"
+              withAsterisk
+              label="Email"
+              required
+              icon={<IconAt size="1rem" />}
+              {...form.getInputProps("email")}
+            />
 
             {requestResetPasswordMutation.isError && (
-              <Alert status="error">
-                <AlertIcon />
-                <AlertTitle>Reset password error.</AlertTitle>
-                <AlertDescription>
-                  {requestResetPasswordMutation.error.message}
-                </AlertDescription>
+              <Alert
+                icon={<IconAlertCircle size="1rem" />}
+                title="Reset password error"
+                color="red"
+              >
+                {requestResetPasswordMutation.error?.message}
               </Alert>
             )}
 
             <Button
               type="submit"
-              isLoading={requestResetPasswordMutation.isLoading}
+              loading={requestResetPasswordMutation.isLoading}
             >
               Reset password
             </Button>
+            <Center>
+              <Anchor component={Link} href="/signin" size="sm">
+                Remembered your password? Sign in.
+              </Anchor>
+            </Center>
           </Stack>
         </form>
       )}

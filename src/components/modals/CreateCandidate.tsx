@@ -1,36 +1,18 @@
 import {
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
   Stack,
-  FormControl,
-  FormLabel,
-  Input,
-  FormErrorMessage,
-  ModalFooter,
   Button,
   Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-  useToast,
   Select,
-} from "@chakra-ui/react";
-import { type SubmitHandler, useForm } from "react-hook-form";
+  Group,
+  TextInput,
+} from "@mantine/core";
 import { api } from "../../utils/api";
 import { useEffect } from "react";
 import type { Partylist, Position } from "@prisma/client";
-
-type FormValues = {
-  firstName: string;
-  lastName: string;
-  slug: string;
-  middleName: string | null;
-  partylistId: string;
-};
+import { notifications } from "@mantine/notifications";
+import { IconCheck } from "@tabler/icons-react";
+import { useForm } from "@mantine/form";
 
 const CreateCandidateModal = ({
   isOpen,
@@ -45,205 +27,111 @@ const CreateCandidateModal = ({
   refetch: () => Promise<unknown>;
   partylists: Partylist[];
 }) => {
-  const toast = useToast();
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormValues>();
-
   const createCandidateMutation = api.candidate.createSingle.useMutation({
     onSuccess: async (data) => {
       await refetch();
-      toast({
+      notifications.show({
         title: `${data.first_name} ${data.last_name} created!`,
-        description: "Successfully created position",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
+        message: "Successfully created position",
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
       });
       onClose();
     },
   });
 
+  const form = useForm({
+    initialValues: {
+      firstName: "",
+      lastName: "",
+      slug: "",
+      partylistId: "",
+      position: "",
+      middleName: "",
+    },
+  });
+
   useEffect(() => {
     if (isOpen) {
-      reset();
+      form.reset();
     } else {
       createCandidateMutation.reset();
     }
-  }, [isOpen, reset]);
-
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    await createCandidateMutation.mutateAsync({
-      firstName: data.firstName,
-      lastName: data.lastName,
-      slug: data.slug,
-      partylistId: data.partylistId,
-      position,
-      middleName: data.middleName,
-    });
-  };
+  }, [isOpen]);
 
   return (
     <Modal
-      isOpen={isOpen || createCandidateMutation.isLoading}
-      onClose={onClose}
+      opened={isOpen || createCandidateMutation.isLoading}
+      onClose={close}
+      title="Create candidate"
     >
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Create candidate</ModalHeader>
-        <ModalCloseButton disabled={createCandidateMutation.isLoading} />
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <ModalBody>
-            <Stack>
-              <FormControl
-                isInvalid={!!errors.firstName}
-                isRequired
-                isDisabled={createCandidateMutation.isLoading}
-              >
-                <FormLabel>First name</FormLabel>
-                <Input
-                  placeholder="Enter position name"
-                  type="text"
-                  {...register("firstName", {
-                    required: "This is required.",
-                    minLength: {
-                      value: 2,
-                      message: "First name must be at least 2 characters long.",
-                    },
-                  })}
-                />
+      <form
+        onSubmit={form.onSubmit((value) => {
+          void (async () => {
+            await createCandidateMutation.mutateAsync({
+              firstName: value.firstName,
+              lastName: value.lastName,
+              slug: value.slug,
+              partylistId: value.partylistId,
+              position,
+              middleName: value.middleName,
+            });
+          })();
+        })}
+      >
+        <Stack>
+          <TextInput
+            placeholder="Enter position name"
+            type="text"
+            {...form.getInputProps("firstName")}
+          />
 
-                {errors.firstName && (
-                  <FormErrorMessage>
-                    {errors.firstName.message?.toString()}
-                  </FormErrorMessage>
-                )}
-              </FormControl>
-              <FormControl
-                isInvalid={!!errors.middleName}
-                isDisabled={createCandidateMutation.isLoading}
-              >
-                <FormLabel>Middle name</FormLabel>
-                <Input
-                  placeholder="Enter middle name"
-                  type="text"
-                  {...register("middleName")}
-                />
+          <TextInput
+            placeholder="Enter middle name"
+            type="text"
+            {...form.getInputProps("middleName")}
+          />
+          <TextInput
+            placeholder="Enter last name"
+            type="text"
+            {...form.getInputProps("lastName")}
+          />
+          <TextInput
+            placeholder="Enter slug"
+            type="text"
+            {...form.getInputProps("slug")}
+          />
 
-                {errors.middleName && (
-                  <FormErrorMessage>
-                    {errors.middleName.message?.toString()}
-                  </FormErrorMessage>
-                )}
-              </FormControl>
-              <FormControl
-                isInvalid={!!errors.lastName}
-                isRequired
-                isDisabled={createCandidateMutation.isLoading}
-              >
-                <FormLabel>Last name</FormLabel>
-                <Input
-                  placeholder="Enter last name"
-                  type="text"
-                  {...register("lastName", {
-                    required: "This is required.",
-                    minLength: {
-                      value: 2,
-                      message: "Last name must be at least 2 characters long.",
-                    },
-                  })}
-                />
+          <Select
+            placeholder="Select partylist"
+            {...form.getInputProps("partylistId")}
+            data={partylists.map((partylist) => {
+              return {
+                label: partylist.name,
+                value: partylist.id,
+              };
+            })}
+          />
+        </Stack>
+        {createCandidateMutation.error && (
+          <Alert color="red" title="Error">
+            {createCandidateMutation.error.message}
+          </Alert>
+        )}
 
-                {errors.lastName && (
-                  <FormErrorMessage>
-                    {errors.lastName.message?.toString()}
-                  </FormErrorMessage>
-                )}
-              </FormControl>
-              <FormControl
-                isInvalid={!!errors.slug}
-                isRequired
-                isDisabled={createCandidateMutation.isLoading}
-              >
-                <FormLabel>Slug</FormLabel>
-                <Input
-                  placeholder="Enter slug"
-                  type="text"
-                  {...register("slug", {
-                    required: "This is required.",
-                    minLength: {
-                      value: 2,
-                      message: "Slug must be at least 2 characters long.",
-                    },
-                  })}
-                />
-
-                {errors.slug && (
-                  <FormErrorMessage>
-                    {errors.slug.message?.toString()}
-                  </FormErrorMessage>
-                )}
-              </FormControl>
-              <FormControl
-                isInvalid={!!errors.partylistId}
-                isRequired
-                isDisabled={createCandidateMutation.isLoading}
-              >
-                <FormLabel>Partylist</FormLabel>
-
-                <Select
-                  placeholder="Select partylist"
-                  {...register("partylistId", {
-                    required: "This is required.",
-                  })}
-                >
-                  {partylists.map((partylist) => (
-                    <option key={partylist.id} value={partylist.id}>
-                      {partylist.name}
-                    </option>
-                  ))}
-                </Select>
-
-                {errors.slug && (
-                  <FormErrorMessage>
-                    {errors.slug.message?.toString()}
-                  </FormErrorMessage>
-                )}
-              </FormControl>
-            </Stack>
-            {createCandidateMutation.error && (
-              <Alert status="error" borderRadius="md">
-                <AlertIcon />
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>
-                  {createCandidateMutation.error.message}
-                </AlertDescription>
-              </Alert>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              variant="ghost"
-              mr={2}
-              onClick={onClose}
-              disabled={createCandidateMutation.isLoading}
-            >
-              Cancel
-            </Button>
-            <Button
-              colorScheme="blue"
-              type="submit"
-              isLoading={createCandidateMutation.isLoading}
-            >
-              Create
-            </Button>
-          </ModalFooter>
-        </form>
-      </ModalContent>
+        <Group>
+          <Button
+            mr={2}
+            onClick={onClose}
+            disabled={createCandidateMutation.isLoading}
+          >
+            Cancel
+          </Button>
+          <Button type="submit" loading={createCandidateMutation.isLoading}>
+            Create
+          </Button>
+        </Group>
+      </form>
     </Modal>
   );
 };

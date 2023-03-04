@@ -1,34 +1,37 @@
-import { Box, Stack, useRadio } from "@chakra-ui/react";
+import { Box, Stack } from "@mantine/core";
 
 const VotingCandidate = ({
   children,
-  ...props
-}: {
+}: // ...props
+{
   children: React.ReactNode;
 }) => {
-  const { getInputProps, getCheckboxProps } = useRadio(props);
+  // const { getInputProps, getCheckboxProps } = useRadio(props);
 
-  const input = getInputProps();
-  const checkbox = getCheckboxProps();
+  // const input = getInputProps();
+  // const checkbox = getCheckboxProps();
   return (
-    <Box as="label" userSelect="none">
-      <input {...input} style={{ display: "none" }} />
+    <Box
+    // as="label"
+    // userSelect="none"
+    >
+      {/* <input {...input} style={{ display: "none" }} /> */}
       <Stack
-        {...checkbox}
-        cursor="pointer"
-        borderWidth="1px"
-        borderRadius="md"
-        boxShadow="md"
-        _checked={{
-          bg: "gray.600",
-          color: "white",
-          borderColor: "gray.600",
-        }}
-        justifyContent="center"
-        alignItems="center"
-        padding={[2, 4]}
-        width={[40, 48]}
-        height={[56, 64]}
+      // {...checkbox}
+      // cursor="pointer"
+      // borderWidth="1px"
+      // borderRadius="md"
+      // boxShadow="md"
+      // _checked={{
+      //   bg: "gray.600",
+      //   color: "white",
+      //   borderColor: "gray.600",
+      // }}
+      // justify="center"
+      // align="center"
+      // padding={[2, 4]}
+      // w={[40, 48]}
+      // h={[56, 64]}
       >
         {children}
       </Stack>

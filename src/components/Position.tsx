@@ -1,12 +1,8 @@
-import {
-  Button,
-  Center,
-  Flex,
-  Text,
-  useDisclosure,
-  useToast,
-} from "@chakra-ui/react";
+import { Button, Center, Flex, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import type { Position } from "@prisma/client";
+import { IconCheck } from "@tabler/icons-react";
 import { api } from "../utils/api";
 import EditPositionModal from "./modals/EditPosition";
 
@@ -17,17 +13,15 @@ const PositionCard = ({
   position: Position;
   refetch: () => Promise<unknown>;
 }) => {
-  const toast = useToast();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [opened, { open, close }] = useDisclosure(false);
   const deletePositionMutation = api.position.deleteSingle.useMutation({
     onSuccess: async (data) => {
       await refetch();
-      toast({
+      notifications.show({
         title: `${data.name} deleted!`,
-        description: "Successfully deleted position",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
+        message: "Successfully deleted position",
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
       });
     },
   });
@@ -35,37 +29,25 @@ const PositionCard = ({
   return (
     <>
       <EditPositionModal
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={opened}
+        onClose={close}
         position={position}
         refetch={refetch}
       />
-      <Center
-        flexDirection="column"
-        gap={2}
-        w={48}
-        h={32}
-        border="1px"
-        borderColor="gray.300"
-        borderRadius="md"
-        _dark={{
-          borderColor: "gray.700",
-        }}
-        p={4}
-      >
-        <Text textAlign="center" w="full">
+      <Center w={48} h={32} p={4}>
+        <Text align="center" w="full">
           {position.name}
         </Text>
 
         <Flex>
-          <Button onClick={onOpen} variant="ghost" size="sm" w="fit-content">
+          <Button onClick={open} variant="ghost" size="sm" w="fit-content">
             Edit
           </Button>
           <Button
             onClick={() => deletePositionMutation.mutate(position.id)}
-            isLoading={deletePositionMutation.isLoading}
+            loading={deletePositionMutation.isLoading}
             variant="ghost"
-            colorScheme="red"
+            color="red"
             size="sm"
             w="fit-content"
           >

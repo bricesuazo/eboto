@@ -1,11 +1,5 @@
-import {
-  Box,
-  Button,
-  Container,
-  Flex,
-  Text,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Box, Button, Container, Flex, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import Link from "next/link";
 import Moment from "react-moment";
 import CreateElectionModal from "../../components/modals/CreateElection";
@@ -13,15 +7,15 @@ import { api } from "../../utils/api";
 import { convertNumberToHour } from "../../utils/convertNumberToHour";
 
 const DashboardPage = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [opened, { open, close }] = useDisclosure(false);
   const myElections = api.election.getMyElections.useQuery();
   const myElectionVote = api.election.getMyElectionsVote.useQuery();
 
   return (
     <>
-      <CreateElectionModal isOpen={isOpen} onClose={onClose} />
-      <Container maxW="4xl">
-        <Button onClick={onOpen}>Create election</Button>
+      <CreateElectionModal isOpen={opened} onClose={close} />
+      <Container maw="4xl">
+        <Button onClick={open}>Create election</Button>
 
         <Text>My elections</Text>
         <Flex gap={2}>
@@ -32,22 +26,9 @@ const DashboardPage = () => {
           ) : (
             myElections.data.map((election) => (
               <Link href={`/dashboard/${election.slug}`} key={election.id}>
-                <Box
-                  _dark={{
-                    bg: "gray.700",
-                    _hover: {
-                      bg: "gray.600",
-                    },
-                  }}
-                  bg="gray.100"
-                  _hover={{ bg: "gray.200" }}
-                  transition="all 0.2s"
-                  px={4}
-                  py={2}
-                  borderRadius="md"
-                >
-                  <Text fontWeight="bold">{election.name}</Text>
-                  <Text fontSize="sm" color="GrayText">
+                <Box px={4} py={2}>
+                  <Text weight="bold">{election.name}</Text>
+                  <Text size="sm" color="GrayText">
                     <Moment format="YYYY/MM/D hA">{election.start_date}</Moment>
                     {" - "}
                     <Moment format="YYYY/MM/D hA">{election.end_date}</Moment>
@@ -71,27 +52,14 @@ const DashboardPage = () => {
                 key={election.id}
                 target="_blank"
               >
-                <Box
-                  _dark={{
-                    bg: "gray.700",
-                    _hover: {
-                      bg: "gray.600",
-                    },
-                  }}
-                  bg="gray.100"
-                  _hover={{ bg: "gray.200" }}
-                  transition="all 0.2s"
-                  px={4}
-                  py={2}
-                  borderRadius="md"
-                >
-                  <Text fontWeight="bold">{election.name}</Text>
-                  <Text fontSize="sm" color="GrayText">
+                <Box px={4} py={2}>
+                  <Text weight="bold">{election.name}</Text>
+                  <Text size="sm" color="GrayText">
                     <Moment format="YYYY/MM/D hA">{election.start_date}</Moment>
                     {" - "}
                     <Moment format="YYYY/MM/D hA">{election.end_date}</Moment>
                   </Text>
-                  <Text fontSize="sm" color="GrayText">
+                  <Text size="sm" color="GrayText">
                     Open from {convertNumberToHour(election.voting_start)} -{" "}
                     {convertNumberToHour(election.voting_end)}
                   </Text>
