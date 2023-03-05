@@ -1,7 +1,7 @@
 import { Button, Flex, Group, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import type { Candidate, Partylist } from "@prisma/client";
+import type { Candidate, Partylist, Position } from "@prisma/client";
 import { api } from "../utils/api";
 import EditCandidateModal from "./modals/EditCandidate";
 import { IconCheck } from "@tabler/icons-react";
@@ -10,10 +10,12 @@ const CandidateCard = ({
   candidate,
   refetch,
   partylists,
+  positions,
 }: {
   candidate: Candidate;
   refetch: () => Promise<unknown>;
   partylists: Partylist[];
+  positions: Position[];
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const deletePositionMutation = api.candidate.deleteSingle.useMutation({
@@ -36,8 +38,22 @@ const CandidateCard = ({
         partylists={partylists}
         candidate={candidate}
         refetch={refetch}
+        positions={positions}
       />
-      <Group w={48} h={32} p={4}>
+      <Flex
+        direction="column"
+        w={172}
+        align="center"
+        p={8}
+        sx={(theme) => ({
+          border: "1px solid",
+          borderColor:
+            theme.colorScheme === "dark"
+              ? theme.colors.dark[5]
+              : theme.colors.gray[3],
+          borderRadius: 8,
+        })}
+      >
         <Text align="center" w="full">
           {candidate.first_name} {candidate.last_name}
         </Text>
@@ -57,7 +73,7 @@ const CandidateCard = ({
             Delete
           </Button>
         </Flex>
-      </Group>
+      </Flex>
     </>
   );
 };

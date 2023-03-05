@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
@@ -35,7 +36,10 @@ export const candidateRouter = createTRPCRouter({
           (commissioner) => commissioner.userId === ctx.session.user.id
         )
       )
-        throw new Error("Unauthorized");
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Unauthorized",
+        });
 
       const candidate = await ctx.prisma.candidate.findFirst({
         where: {
@@ -47,7 +51,11 @@ export const candidateRouter = createTRPCRouter({
         },
       });
 
-      if (candidate) throw new Error("Candidate's slug already exists");
+      if (candidate)
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Candidate's slug already exists",
+        });
 
       return ctx.prisma.candidate.update({
         where: {
@@ -127,7 +135,10 @@ export const candidateRouter = createTRPCRouter({
           (commissioner) => commissioner.userId === ctx.session.user.id
         )
       )
-        throw new Error("Unauthorized");
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Unauthorized",
+        });
 
       const candidate = await ctx.prisma.candidate.findFirst({
         where: {
@@ -136,7 +147,11 @@ export const candidateRouter = createTRPCRouter({
         },
       });
 
-      if (candidate) throw new Error("Candidate's slug already exists");
+      if (candidate)
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Candidate's slug already exists",
+        });
 
       return ctx.prisma.candidate.create({
         data: {

@@ -134,7 +134,7 @@ const CreateElectionModal = ({
               <>
                 This will be used as the URL for your election
                 <br />
-                eboto-mo.com/election-slug
+                eboto-mo.com/{form.values.slug || "election-slug"}
               </>
             }
             withAsterisk
