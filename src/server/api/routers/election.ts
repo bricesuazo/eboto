@@ -420,7 +420,10 @@ export const electionRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       if (takenSlugs.includes(input.slug.trim().toLowerCase())) {
-        throw new Error("Election slug is unavailable. Try another.");
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Election slug is already exists",
+        });
       }
 
       const isElectionExists = await ctx.prisma.election.findUnique({
@@ -430,7 +433,10 @@ export const electionRouter = createTRPCRouter({
       });
 
       if (isElectionExists) {
-        throw new Error("Election slug is already exists");
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Election slug is already exists",
+        });
       }
 
       const newElection = await ctx.prisma.election.create({
