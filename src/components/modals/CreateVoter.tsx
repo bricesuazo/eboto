@@ -1,9 +1,17 @@
-import { Modal, Button, Alert, Group, TextInput } from "@mantine/core";
+import {
+  Modal,
+  Button,
+  Alert,
+  Group,
+  TextInput,
+  Text,
+  Stack,
+} from "@mantine/core";
 import { useEffect } from "react";
 import { api } from "../../utils/api";
 import { notifications } from "@mantine/notifications";
-import { useForm } from "@mantine/form";
-import { IconCheck } from "@tabler/icons-react";
+import { isEmail, useForm } from "@mantine/form";
+import { IconAlertCircle, IconAt, IconCheck } from "@tabler/icons-react";
 
 const CreateVoterModal = ({
   isOpen,
@@ -19,6 +27,10 @@ const CreateVoterModal = ({
   const form = useForm({
     initialValues: {
       email: "",
+    },
+    validateInputOnBlur: true,
+    validate: {
+      email: isEmail("Please enter a valid email address"),
     },
   });
 
@@ -46,8 +58,8 @@ const CreateVoterModal = ({
   return (
     <Modal
       opened={isOpen || createVoterMutation.isLoading}
-      onClose={close}
-      title="Add voter"
+      onClose={onClose}
+      title={<Text weight={600}>Add voter</Text>}
     >
       <form
         onSubmit={form.onSubmit((value) => {
@@ -60,33 +72,49 @@ const CreateVoterModal = ({
           })();
         })}
       >
-        <TextInput
-          placeholder="Enter voter's email"
-          type="text"
-          {...form.getInputProps("email")}
-        />
-        {createVoterMutation.error && (
-          <Alert color="red" title="Error">
-            {createVoterMutation.error.message}
-          </Alert>
-        )}
-        <Group>
-          <Button
-            variant="ghost"
-            mr={2}
-            onClick={onClose}
-            disabled={createVoterMutation.isLoading}
-          >
-            Cancel
-          </Button>
-          <Button
-            color="blue"
-            type="submit"
-            loading={createVoterMutation.isLoading}
-          >
-            Create
-          </Button>
-        </Group>
+        <Stack spacing="sm">
+          <TextInput
+            placeholder="Enter voter's email"
+            label="Email address"
+            required
+            withAsterisk
+            {...form.getInputProps("email")}
+            icon={<IconAt size="1rem" />}
+            error={
+              form.errors.email ||
+              (createVoterMutation.error?.data?.code === "CONFLICT" &&
+                createVoterMutation.error.message)
+            }
+          />
+          {createVoterMutation.isError &&
+            createVoterMutation.error?.data?.code !== "CONFLICT" && (
+              <Alert
+                icon={<IconAlertCircle size="1rem" />}
+                title="Error"
+                color="red"
+              >
+                {createVoterMutation.error?.message}
+              </Alert>
+            )}
+          <Group position="right" spacing="xs">
+            <Group position="right" spacing="xs">
+              <Button
+                variant="default"
+                onClick={onClose}
+                disabled={createVoterMutation.isLoading}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={!form.isValid()}
+                loading={createVoterMutation.isLoading}
+              >
+                Create
+              </Button>
+            </Group>
+          </Group>
+        </Stack>
       </form>
     </Modal>
   );

@@ -42,7 +42,7 @@ const DashboardVoter = () => {
   if (!voters.data) return <Text>No election found</Text>;
 
   return (
-    <Container maw="4xl">
+    <Container>
       <CreateVoterModal
         isOpen={opened}
         electionId={voters.data.election.id}
@@ -59,10 +59,13 @@ const DashboardVoter = () => {
       ) : (
         <>
           {voters.data.voters.map((voter) => (
-            <Flex key={voter.id}>
+            <Flex key={voter.id} columnGap={8}>
               <Text>{voter.user.email}</Text>
 
               <Button
+                compact
+                color="red"
+                variant="subtle"
                 onClick={() =>
                   removeVoterMutation.mutate({
                     electionId: voters.data.election.id,
@@ -77,12 +80,14 @@ const DashboardVoter = () => {
             </Flex>
           ))}
           {voters.data.invitedVoter.map((voter) => (
-            <Flex key={voter.id}>
+            <Flex key={voter.id} columnGap={8}>
               <Text>
                 {voter.email} ({voter.status})
               </Text>
 
               <Button
+                compact
+                color="red"
                 onClick={() =>
                   removeVoterMutation.mutate({
                     electionId: voters.data.election.id,

@@ -10,7 +10,11 @@ import {
 import { api } from "../../utils/api";
 import { useEffect } from "react";
 import { notifications } from "@mantine/notifications";
-import { IconCheck, IconLetterCase } from "@tabler/icons-react";
+import {
+  IconAlertCircle,
+  IconCheck,
+  IconLetterCase,
+} from "@tabler/icons-react";
 import { hasLength, useForm } from "@mantine/form";
 
 const CreatePositionModal = ({
@@ -88,11 +92,16 @@ const CreatePositionModal = ({
             icon={<IconLetterCase size="1rem" />}
           />
 
-          {createPositionMutation.error && (
-            <Alert color="red" title="Error">
-              {createPositionMutation.error.message}
-            </Alert>
-          )}
+          {createPositionMutation.isError &&
+            createPositionMutation.error?.data?.code !== "CONFLICT" && (
+              <Alert
+                icon={<IconAlertCircle size="1rem" />}
+                title="Error"
+                color="red"
+              >
+                {createPositionMutation.error?.message}
+              </Alert>
+            )}
           <Group position="right" spacing="xs">
             <Button
               variant="default"
