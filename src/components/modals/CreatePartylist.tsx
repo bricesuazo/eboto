@@ -1,8 +1,20 @@
-import { Modal, TextInput, Button, Alert, Group, Stack } from "@mantine/core";
+import {
+  Modal,
+  TextInput,
+  Button,
+  Alert,
+  Group,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { api } from "../../utils/api";
 import { useEffect } from "react";
 import { notifications } from "@mantine/notifications";
-import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
+import {
+  IconAlertCircle,
+  IconCheck,
+  IconLetterCase,
+} from "@tabler/icons-react";
 import { hasLength, useForm } from "@mantine/form";
 
 const CreatePartylistModal = ({
@@ -65,17 +77,15 @@ const CreatePartylistModal = ({
     <Modal
       opened={isOpen || createPartylistMutation.isLoading}
       onClose={onClose}
-      title="Create partylist"
+      title={<Text weight={600}>Create partylist</Text>}
     >
       <form
         onSubmit={form.onSubmit((value) => {
-          void (async () => {
-            await createPartylistMutation.mutateAsync({
-              name: value.name,
-              acronym: value.acronym,
-              electionId,
-            });
-          })();
+          createPartylistMutation.mutate({
+            name: value.name,
+            acronym: value.acronym,
+            electionId,
+          });
         })}
       >
         <Stack spacing="sm">
@@ -85,6 +95,7 @@ const CreatePartylistModal = ({
             required
             withAsterisk
             {...form.getInputProps("name")}
+            icon={<IconLetterCase size="1rem" />}
           />
 
           <TextInput
@@ -98,6 +109,7 @@ const CreatePartylistModal = ({
               (createPartylistMutation.error?.data?.code === "CONFLICT" &&
                 createPartylistMutation.error.message)
             }
+            icon={<IconLetterCase size="1rem" />}
           />
 
           {createPartylistMutation.error?.data?.code === "UNAUTHORIZED" && (

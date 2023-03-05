@@ -1,10 +1,22 @@
-import { Modal, Button, TextInput, Group, Stack, Alert } from "@mantine/core";
+import {
+  Modal,
+  Button,
+  TextInput,
+  Group,
+  Stack,
+  Alert,
+  Text,
+} from "@mantine/core";
 import { api } from "../../utils/api";
 import { useEffect } from "react";
 import type { Partylist } from "@prisma/client";
 import { hasLength, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
+import {
+  IconAlertCircle,
+  IconCheck,
+  IconLetterCase,
+} from "@tabler/icons-react";
 
 const EditPartylistModal = ({
   isOpen,
@@ -52,6 +64,7 @@ const EditPartylistModal = ({
         autoClose: 5000,
       });
       onClose();
+      form.resetDirty();
     },
   });
 
@@ -65,7 +78,11 @@ const EditPartylistModal = ({
     <Modal
       opened={isOpen || editPartylistMutation.isLoading}
       onClose={onClose}
-      title={`Edit Partylist - ${partylist.name} (${partylist.acronym})`}
+      title={
+        <Text weight={600}>
+          Edit Partylist - {partylist.name} ({partylist.acronym})
+        </Text>
+      }
     >
       <form
         onSubmit={form.onSubmit((value) => {
@@ -84,6 +101,7 @@ const EditPartylistModal = ({
             required
             withAsterisk
             {...form.getInputProps("name")}
+            icon={<IconLetterCase size="1rem" />}
           />
 
           <TextInput
@@ -92,6 +110,7 @@ const EditPartylistModal = ({
             required
             withAsterisk
             {...form.getInputProps("acronym")}
+            icon={<IconLetterCase size="1rem" />}
             error={
               form.errors.acronym ||
               (editPartylistMutation.error?.data?.code === "CONFLICT" &&

@@ -4,12 +4,14 @@ import {
   Button,
   Alert,
   Group,
+  Text,
+  Stack,
 } from "@mantine/core";
 import { api } from "../../utils/api";
 import { useEffect } from "react";
 import { notifications } from "@mantine/notifications";
-import { IconCheck } from "@tabler/icons-react";
-import { useForm } from "@mantine/form";
+import { IconCheck, IconLetterCase } from "@tabler/icons-react";
+import { hasLength, useForm } from "@mantine/form";
 
 const CreatePositionModal = ({
   isOpen,
@@ -27,6 +29,16 @@ const CreatePositionModal = ({
   const form = useForm({
     initialValues: {
       name: "",
+    },
+    validateInputOnBlur: true,
+    validate: {
+      name: hasLength(
+        {
+          min: 3,
+          max: 50,
+        },
+        "Name must be between 3 and 50 characters"
+      ),
     },
   });
 
@@ -54,48 +66,46 @@ const CreatePositionModal = ({
   return (
     <Modal
       opened={isOpen || createPositionMutation.isLoading}
-      onClose={close}
-      title="Create position"
+      onClose={onClose}
+      title={<Text weight={600}>Create position</Text>}
     >
       <form
         onSubmit={form.onSubmit((value) => {
-          void (async () => {
-            await createPositionMutation.mutateAsync({
-              name: value.name,
-              electionId,
-              order,
-            });
-          })();
+          createPositionMutation.mutate({
+            name: value.name,
+            electionId,
+            order,
+          });
         })}
       >
-        <TextInput
-          placeholder="Enter position name"
-          type="text"
-          {...form.getInputProps("name")}
-        />
+        <Stack spacing="sm">
+          <TextInput
+            placeholder="Enter position name"
+            label="Name"
+            required
+            withAsterisk
+            {...form.getInputProps("name")}
+            icon={<IconLetterCase size="1rem" />}
+          />
 
-        {createPositionMutation.error && (
-          <Alert color="red" title="Error">
-            {createPositionMutation.error.message}
-          </Alert>
-        )}
-        <Group>
-          <Button
-            variant="ghost"
-            mr={2}
-            onClick={onClose}
-            disabled={createPositionMutation.isLoading}
-          >
-            Cancel
-          </Button>
-          <Button
-            color="blue"
-            type="submit"
-            loading={createPositionMutation.isLoading}
-          >
-            Create
-          </Button>
-        </Group>
+          {createPositionMutation.error && (
+            <Alert color="red" title="Error">
+              {createPositionMutation.error.message}
+            </Alert>
+          )}
+          <Group position="right" spacing="xs">
+            <Button
+              variant="default"
+              onClick={onClose}
+              disabled={createPositionMutation.isLoading}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" loading={createPositionMutation.isLoading}>
+              Create
+            </Button>
+          </Group>
+        </Stack>
       </form>
     </Modal>
   );

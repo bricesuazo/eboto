@@ -1,4 +1,5 @@
-import { Button, Container, Flex, Text } from "@mantine/core";
+import { Button, Container, Group, Text } from "@mantine/core";
+import { RadioGroup } from "@mantine/core/lib/Radio/RadioGroup/RadioGroup";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
 import ElectionDashboardHeader from "../../../components/ElectionDashboardHeader";
@@ -38,7 +39,7 @@ const DashboardPosition = () => {
         Add position
       </Button>
 
-      <Flex gap={4} wrap="wrap">
+      <Group>
         {!positions.data.positions.length ? (
           <Text>No position</Text>
         ) : (
@@ -46,11 +47,11 @@ const DashboardPosition = () => {
             <Position
               key={position.id}
               position={position}
-              refetch={async () => await positions.refetch()}
+              refetch={positions.refetch}
             />
           ))
         )}
-      </Flex>
+      </Group>
     </Container>
   );
 };
