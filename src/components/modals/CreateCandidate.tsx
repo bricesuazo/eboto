@@ -63,12 +63,12 @@ const CreateCandidateModal = ({
     validateInputOnBlur: true,
     validate: {
       firstName: hasLength(
-        { min: 3 },
-        "First name must be at least 3 characters"
+        { min: 1 },
+        "First name must be at least 1 characters"
       ),
       lastName: hasLength(
-        { min: 3 },
-        "Last name must be at least 3 characters"
+        { min: 1 },
+        "Last name must be at least 1 characters"
       ),
       slug: (value) => {
         if (!value) {
@@ -206,7 +206,11 @@ const CreateCandidateModal = ({
             >
               Cancel
             </Button>
-            <Button type="submit" loading={createCandidateMutation.isLoading}>
+            <Button
+              type="submit"
+              disabled={!form.isValid()}
+              loading={createCandidateMutation.isLoading}
+            >
               Create
             </Button>
           </Group>

@@ -50,12 +50,12 @@ const EditCandidateModal = ({
     validateInputOnBlur: true,
     validate: {
       firstName: hasLength(
-        { min: 3 },
-        "First name must be at least 3 characters"
+        { min: 1 },
+        "First name must be at least 1 characters"
       ),
       lastName: hasLength(
-        { min: 3 },
-        "Last name must be at least 3 characters"
+        { min: 1 },
+        "Last name must be at least 1 characters"
       ),
       slug: (value) => {
         if (!value) {
@@ -81,12 +81,12 @@ const EditCandidateModal = ({
         autoClose: 5000,
       });
       onClose();
+      form.resetDirty();
     },
   });
 
   useEffect(() => {
     if (isOpen) {
-      form.reset();
       editCandidateMutation.reset();
     }
   }, [isOpen]);
@@ -208,7 +208,11 @@ const EditCandidateModal = ({
             >
               Cancel
             </Button>
-            <Button type="submit" loading={editCandidateMutation.isLoading}>
+            <Button
+              type="submit"
+              disabled={!form.isDirty()}
+              loading={editCandidateMutation.isLoading}
+            >
               Update
             </Button>
           </Group>

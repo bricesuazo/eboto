@@ -248,7 +248,11 @@ const CreateElectionModal = ({
             >
               Cancel
             </Button>
-            <Button type="submit" loading={createElectionMutation.isLoading}>
+            <Button
+              type="submit"
+              disabled={!form.isValid()}
+              loading={createElectionMutation.isLoading}
+            >
               Create
             </Button>
           </Group>

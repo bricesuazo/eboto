@@ -131,7 +131,11 @@ const CreatePartylistModal = ({
             >
               Cancel
             </Button>
-            <Button type="submit" loading={createPartylistMutation.isLoading}>
+            <Button
+              type="submit"
+              disabled={!form.isValid()}
+              loading={createPartylistMutation.isLoading}
+            >
               Create
             </Button>
           </Group>
