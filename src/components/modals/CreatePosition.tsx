@@ -101,7 +101,11 @@ const CreatePositionModal = ({
             >
               Cancel
             </Button>
-            <Button type="submit" loading={createPositionMutation.isLoading}>
+            <Button
+              type="submit"
+              disabled={!form.isValid()}
+              loading={createPositionMutation.isLoading}
+            >
               Create
             </Button>
           </Group>

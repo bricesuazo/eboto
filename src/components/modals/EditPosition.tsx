@@ -56,7 +56,7 @@ const EditPartylistModal = ({
   });
 
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
       editPositionMutation.reset();
     }
   }, [isOpen]);
