@@ -1,4 +1,4 @@
-import { Button, Text } from "@mantine/core";
+import { Button, Text, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import type { Candidate, Partylist, Position } from "@prisma/client";
 import CandidateCard from "./CandidateCard";
@@ -9,11 +9,13 @@ const Candidates = ({
   refetch,
   candidates,
   partylists,
+  positions,
 }: {
   position: Position;
   refetch: () => Promise<unknown>;
   candidates: Candidate[];
   partylists: Partylist[];
+  positions: Position[];
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
   return (
@@ -22,6 +24,7 @@ const Candidates = ({
         isOpen={opened}
         onClose={close}
         position={position}
+        positions={positions}
         refetch={refetch}
         partylists={partylists}
       />
@@ -33,18 +36,21 @@ const Candidates = ({
         Add candidate
       </Button>
 
-      {!candidates.length ? (
-        <Text>No candidates yet</Text>
-      ) : (
-        candidates.map((candidate) => (
-          <CandidateCard
-            key={candidate.id}
-            candidate={candidate}
-            refetch={refetch}
-            partylists={partylists}
-          />
-        ))
-      )}
+      <Group>
+        {!candidates.length ? (
+          <Text>No candidates yet</Text>
+        ) : (
+          candidates.map((candidate) => (
+            <CandidateCard
+              key={candidate.id}
+              candidate={candidate}
+              refetch={refetch}
+              positions={positions}
+              partylists={partylists}
+            />
+          ))
+        )}
+      </Group>
     </>
   );
 };

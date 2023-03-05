@@ -36,6 +36,7 @@ const CandidatePartylist = () => {
               key={position.id}
               position={position}
               partylists={candidates.data.partylists}
+              positions={candidates.data.positions}
               candidates={
                 candidates.data.candidates.filter
                   ? candidates.data.candidates.filter(
