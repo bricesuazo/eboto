@@ -24,7 +24,7 @@ import {
   IconLetterCase,
   IconTemplate,
 } from "@tabler/icons-react";
-import { hasLength, isInRange, useForm } from "@mantine/form";
+import { hasLength, useForm } from "@mantine/form";
 import { DatePickerInput } from "@mantine/dates";
 
 const CreateElectionModal = ({

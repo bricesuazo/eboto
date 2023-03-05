@@ -1,4 +1,4 @@
-import { Button, Container, Flex, Text } from "@mantine/core";
+import { Button, Container, Group, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
 import ElectionDashboardHeader from "../../../components/ElectionDashboardHeader";
@@ -33,11 +33,11 @@ const DashboardPartylist = () => {
         refetch={partylists.refetch}
       />
       <ElectionDashboardHeader slug={partylists.data.election.slug} />
-      <Button onClick={open} mb={4}>
+      <Button onClick={open} mb={16}>
         Add partylist
       </Button>
 
-      <Flex gap={4} wrap="wrap">
+      <Group>
         {!partylists.data.partylists.length ? (
           <Text>No partylist</Text>
         ) : (
@@ -49,7 +49,7 @@ const DashboardPartylist = () => {
             />
           ))
         )}
-      </Flex>
+      </Group>
     </Container>
   );
 };

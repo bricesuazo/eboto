@@ -1,10 +1,10 @@
-import { Modal, Button, Alert, TextInput, Group } from "@mantine/core";
+import { Modal, Button, TextInput, Group, Stack, Alert } from "@mantine/core";
 import { api } from "../../utils/api";
 import { useEffect } from "react";
 import type { Partylist } from "@prisma/client";
-import { useForm } from "@mantine/form";
+import { hasLength, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import { IconCheck } from "@tabler/icons-react";
+import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
 
 const EditPartylistModal = ({
   isOpen,
@@ -22,6 +22,24 @@ const EditPartylistModal = ({
       name: partylist.name,
       acronym: partylist.acronym,
     },
+    validateInputOnBlur: true,
+
+    validate: {
+      name: hasLength(
+        {
+          min: 3,
+          max: 50,
+        },
+        "Name must be between 3 and 50 characters"
+      ),
+      acronym: hasLength(
+        {
+          min: 1,
+          max: 24,
+        },
+        "Acronym must be between 1 and 24 characters"
+      ),
+    },
   });
 
   const editPartylistMutation = api.partylist.editSingle.useMutation({
@@ -38,9 +56,7 @@ const EditPartylistModal = ({
   });
 
   useEffect(() => {
-    if (isOpen) {
-      form.reset();
-    } else {
+    if (!isOpen) {
       editPartylistMutation.reset();
     }
   }, [isOpen]);
@@ -48,54 +64,69 @@ const EditPartylistModal = ({
   return (
     <Modal
       opened={isOpen || editPartylistMutation.isLoading}
-      onClose={close}
+      onClose={onClose}
       title={`Edit Partylist - ${partylist.name} (${partylist.acronym})`}
     >
       <form
         onSubmit={form.onSubmit((value) => {
-          void (async () => {
-            await editPartylistMutation.mutateAsync({
-              id: partylist.id,
-              name: value.name,
-              acronym: value.acronym,
-            });
-          })();
+          editPartylistMutation.mutate({
+            id: partylist.id,
+            name: value.name,
+            acronym:
+              value.acronym === partylist.acronym ? undefined : value.acronym,
+          });
         })}
       >
-        <TextInput
-          placeholder="Enter partylist name"
-          type="text"
-          {...form.getInputProps("name")}
-        />
+        <Stack spacing="sm">
+          <TextInput
+            placeholder="Enter partylist name"
+            label="Name"
+            required
+            withAsterisk
+            {...form.getInputProps("name")}
+          />
 
-        <TextInput
-          placeholder="Enter acronym"
-          type="text"
-          {...form.getInputProps("acronym")}
-        />
+          <TextInput
+            placeholder="Enter acronym"
+            label="Acronym"
+            required
+            withAsterisk
+            {...form.getInputProps("acronym")}
+            error={
+              form.errors.acronym ||
+              (editPartylistMutation.error?.data?.code === "CONFLICT" &&
+                editPartylistMutation.error.message)
+            }
+          />
 
-        {editPartylistMutation.error && (
-          <Alert color="red" title="Error">
-            {editPartylistMutation.error.message}
-          </Alert>
-        )}
-        <Group>
-          <Button
-            variant="ghost"
-            mr={2}
-            onClick={onClose}
-            disabled={editPartylistMutation.isLoading}
-          >
-            Cancel
-          </Button>
-          <Button
-            color="blue"
-            type="submit"
-            loading={editPartylistMutation.isLoading}
-          >
-            Create
-          </Button>
-        </Group>
+          {editPartylistMutation.error?.data?.code === "UNAUTHORIZED" && (
+            <Alert
+              icon={<IconAlertCircle size="1rem" />}
+              color="red"
+              title="Error"
+              variant="filled"
+            >
+              {editPartylistMutation.error.message}
+            </Alert>
+          )}
+
+          <Group position="right" spacing="xs">
+            <Button
+              variant="default"
+              onClick={onClose}
+              disabled={editPartylistMutation.isLoading}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={!form.isDirty()}
+              loading={editPartylistMutation.isLoading}
+            >
+              Update
+            </Button>
+          </Group>
+        </Stack>
       </form>
     </Modal>
   );

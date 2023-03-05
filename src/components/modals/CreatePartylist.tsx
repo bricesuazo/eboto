@@ -1,9 +1,9 @@
-import { Modal, TextInput, Button, Alert, Group } from "@mantine/core";
+import { Modal, TextInput, Button, Alert, Group, Stack } from "@mantine/core";
 import { api } from "../../utils/api";
 import { useEffect } from "react";
 import { notifications } from "@mantine/notifications";
-import { IconCheck } from "@tabler/icons-react";
-import { useForm } from "@mantine/form";
+import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
+import { hasLength, useForm } from "@mantine/form";
 
 const CreatePartylistModal = ({
   isOpen,
@@ -20,6 +20,23 @@ const CreatePartylistModal = ({
     initialValues: {
       name: "",
       acronym: "",
+    },
+    validateInputOnBlur: true,
+    validate: {
+      name: hasLength(
+        {
+          min: 3,
+          max: 50,
+        },
+        "Name must be between 3 and 50 characters"
+      ),
+      acronym: hasLength(
+        {
+          min: 1,
+          max: 24,
+        },
+        "Acronym must be between 1 and 24 characters"
+      ),
     },
   });
 
@@ -47,7 +64,7 @@ const CreatePartylistModal = ({
   return (
     <Modal
       opened={isOpen || createPartylistMutation.isLoading}
-      onClose={close}
+      onClose={onClose}
       title="Create partylist"
     >
       <form
@@ -61,40 +78,52 @@ const CreatePartylistModal = ({
           })();
         })}
       >
-        <TextInput
-          placeholder="Enter partylist name"
-          type="text"
-          {...form.getInputProps("name")}
-        />
+        <Stack spacing="sm">
+          <TextInput
+            placeholder="Enter partylist name"
+            label="Name"
+            required
+            withAsterisk
+            {...form.getInputProps("name")}
+          />
 
-        <TextInput
-          placeholder="Enter acronym"
-          type="text"
-          {...form.getInputProps("acronym")}
-        />
+          <TextInput
+            placeholder="Enter acronym"
+            label="Acronym"
+            required
+            withAsterisk
+            {...form.getInputProps("acronym")}
+            error={
+              form.errors.acronym ||
+              (createPartylistMutation.error?.data?.code === "CONFLICT" &&
+                createPartylistMutation.error.message)
+            }
+          />
 
-        {createPartylistMutation.error && (
-          <Alert color="red" title="Error">
-            {createPartylistMutation.error.message}
-          </Alert>
-        )}
-        <Group>
-          <Button
-            variant="ghost"
-            mr={2}
-            onClick={onClose}
-            disabled={createPartylistMutation.isLoading}
-          >
-            Cancel
-          </Button>
-          <Button
-            color="blue"
-            type="submit"
-            loading={createPartylistMutation.isLoading}
-          >
-            Create
-          </Button>
-        </Group>
+          {createPartylistMutation.error?.data?.code === "UNAUTHORIZED" && (
+            <Alert
+              icon={<IconAlertCircle size="1rem" />}
+              color="red"
+              title="Error"
+              variant="filled"
+            >
+              {createPartylistMutation.error.message}
+            </Alert>
+          )}
+
+          <Group position="right" spacing="xs">
+            <Button
+              variant="default"
+              onClick={onClose}
+              disabled={createPartylistMutation.isLoading}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" loading={createPartylistMutation.isLoading}>
+              Create
+            </Button>
+          </Group>
+        </Stack>
       </form>
     </Modal>
   );
