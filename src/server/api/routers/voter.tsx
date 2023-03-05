@@ -5,6 +5,7 @@ import { z } from "zod";
 import { createTRPCRouter } from "../trpc";
 import ElectionInvitation from "../../../../emails/ElectionInvitation";
 import { render } from "@react-email/render";
+import { TRPCError } from "@trpc/server";
 
 export const voterRouter = createTRPCRouter({
   removeSingle: protectedProcedure
@@ -80,7 +81,10 @@ export const voterRouter = createTRPCRouter({
       });
 
       if (!election) {
-        throw new Error("Election not found");
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election not found",
+        });
       }
 
       if (
@@ -88,7 +92,10 @@ export const voterRouter = createTRPCRouter({
           (commissioner) => commissioner.userId === ctx.session.user.id
         )
       ) {
-        throw new Error("You are not a commissioner of this election");
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not a commissioner of this election",
+        });
       }
 
       const isVoterExistsInElection = await ctx.prisma.voter.findFirst({
@@ -101,7 +108,10 @@ export const voterRouter = createTRPCRouter({
       });
 
       if (isVoterExistsInElection) {
-        throw new Error("Email is already a voter of this election");
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Email is already a voter of this election",
+        });
       }
 
       const isVoterExistsInInvitedVoters =
@@ -113,7 +123,10 @@ export const voterRouter = createTRPCRouter({
         });
 
       if (isVoterExistsInInvitedVoters) {
-        throw new Error("Email is already invited to this election");
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Email is already a voter of this election",
+        });
       }
 
       // TODO: Check if email is the email of this session user. Then just connect the voter to the user
