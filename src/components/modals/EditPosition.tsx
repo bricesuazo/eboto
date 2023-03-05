@@ -1,10 +1,18 @@
-import { Modal, Input, Button, Alert, Group } from "@mantine/core";
+import {
+  Modal,
+  TextInput,
+  Button,
+  Alert,
+  Group,
+  Text,
+  Stack,
+} from "@mantine/core";
 import { api } from "../../utils/api";
 import { useEffect } from "react";
 import type { Position } from "@prisma/client";
-import { useForm } from "@mantine/form";
+import { hasLength, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import { IconCheck } from "@tabler/icons-react";
+import { IconCheck, IconLetterCase } from "@tabler/icons-react";
 
 const EditPartylistModal = ({
   isOpen,
@@ -21,6 +29,16 @@ const EditPartylistModal = ({
     initialValues: {
       name: position.name,
     },
+    validateInputOnBlur: true,
+    validate: {
+      name: hasLength(
+        {
+          min: 3,
+          max: 50,
+        },
+        "Name must be between 3 and 50 characters"
+      ),
+    },
   });
 
   const editPositionMutation = api.position.editSingle.useMutation({
@@ -33,13 +51,12 @@ const EditPartylistModal = ({
         autoClose: 5000,
       });
       onClose();
+      form.resetDirty();
     },
   });
 
   useEffect(() => {
-    if (isOpen) {
-      form.reset();
-    } else {
+    if (!isOpen) {
       editPositionMutation.reset();
     }
   }, [isOpen]);
@@ -47,47 +64,50 @@ const EditPartylistModal = ({
   return (
     <Modal
       opened={isOpen || editPositionMutation.isLoading}
-      onClose={close}
-      title={`Edit Position - ${position.name}`}
+      onClose={onClose}
+      title={<Text weight={600}>Edit Position - {position.name}</Text>}
     >
       <form
         onSubmit={form.onSubmit((value) => {
-          void (async () => {
-            await editPositionMutation.mutateAsync({
-              id: position.id,
-              name: value.name,
-            });
-          })();
+          editPositionMutation.mutate({
+            id: position.id,
+            name: value.name,
+          });
         })}
       >
-        <Input
-          placeholder="Enter position name"
-          type="text"
-          {...form.getInputProps("name")}
-        />
+        <Stack spacing="sm">
+          <TextInput
+            placeholder="Enter position name"
+            label="Name"
+            required
+            withAsterisk
+            {...form.getInputProps("name")}
+            icon={<IconLetterCase size="1rem" />}
+          />
 
-        {editPositionMutation.error && (
-          <Alert color="red" title="Error">
-            {editPositionMutation.error.message}
-          </Alert>
-        )}
-        <Group>
-          <Button
-            variant="ghost"
-            mr={2}
-            onClick={onClose}
-            disabled={editPositionMutation.isLoading}
-          >
-            Cancel
-          </Button>
-          <Button
-            color="blue"
-            type="submit"
-            loading={editPositionMutation.isLoading}
-          >
-            Create
-          </Button>
-        </Group>
+          {editPositionMutation.error && (
+            <Alert color="red" title="Error">
+              {editPositionMutation.error.message}
+            </Alert>
+          )}
+
+          <Group position="right" spacing="xs">
+            <Button
+              variant="default"
+              onClick={onClose}
+              disabled={editPositionMutation.isLoading}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={!form.isDirty()}
+              loading={editPositionMutation.isLoading}
+            >
+              Update
+            </Button>
+          </Group>
+        </Stack>
       </form>
     </Modal>
   );
