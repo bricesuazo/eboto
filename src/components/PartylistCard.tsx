@@ -34,27 +34,46 @@ const PartylistCard = ({
         partylist={partylist}
         refetch={refetch}
       />
-      <Center w={48} h={32} p={4}>
+      <Flex
+        direction="column"
+        w={172}
+        align="center"
+        p={8}
+        sx={(theme) => ({
+          border: "1px solid",
+          borderColor:
+            theme.colorScheme === "dark"
+              ? theme.colors.dark[5]
+              : theme.colors.gray[3],
+          borderRadius: 8,
+        })}
+      >
         <Text align="center" w="full">
           {partylist.name} ({partylist.acronym})
         </Text>
 
         <Flex>
-          <Button onClick={open} variant="ghost" size="sm" w="fit-content">
+          <Button
+            disabled={deletePartylistMutation.isLoading}
+            onClick={open}
+            variant="subtle"
+            size="sm"
+            compact
+          >
             Edit
           </Button>
           <Button
             onClick={() => deletePartylistMutation.mutate(partylist.id)}
             loading={deletePartylistMutation.isLoading}
-            variant="ghost"
+            variant="subtle"
             color="red"
             size="sm"
-            w="fit-content"
+            compact
           >
             Delete
           </Button>
         </Flex>
-      </Center>
+      </Flex>
     </>
   );
 };

@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
@@ -8,14 +9,16 @@ export const partylistRouter = createTRPCRouter({
       z.object({
         id: z.string().min(1),
         name: z.string().min(1),
-        acronym: z.string().min(1),
+        acronym: z.string().min(1).optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
-      if (input.acronym.trim().toUpperCase() === "IND")
-        throw new Error(
-          "IND is reserved for independent partylist. Please use another acronym"
-        );
+      if (input.acronym?.trim().toUpperCase() === "IND")
+        throw new TRPCError({
+          code: "CONFLICT",
+          message:
+            "IND is reserved for independent partylist. Please use another acronym",
+        });
 
       const partylist = await ctx.prisma.partylist.findUniqueOrThrow({
         where: {
@@ -36,15 +39,25 @@ export const partylistRouter = createTRPCRouter({
           (commissioner) => commissioner.userId === ctx.session.user.id
         )
       )
-        throw new Error("Unauthorized");
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Unauthorized",
+        });
 
-      const partylistWithSameAcronym = await ctx.prisma.partylist.findFirst({
-        where: {
-          acronym: input.acronym,
-        },
-      });
+      if (input.acronym) {
+        const partylistWithSameAcronym = await ctx.prisma.partylist.findFirst({
+          where: {
+            electionId: partylist.election.id,
+            acronym: input.acronym,
+          },
+        });
 
-      if (partylistWithSameAcronym) throw new Error("Acronym already exists");
+        if (partylistWithSameAcronym)
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "Acronym already exists",
+          });
+      }
 
       return ctx.prisma.partylist.update({
         where: {
@@ -100,7 +113,25 @@ export const partylistRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       if (input.acronym.trim().toUpperCase() === "IND")
-        throw new Error("IND is reserved for independent partylist");
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "IND is reserved for independent partylist",
+        });
+
+      if (input.acronym) {
+        const partylistWithSameAcronym = await ctx.prisma.partylist.findFirst({
+          where: {
+            electionId: input.electionId,
+            acronym: input.acronym,
+          },
+        });
+
+        if (partylistWithSameAcronym)
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "Acronym already exists",
+          });
+      }
 
       return ctx.prisma.partylist.create({
         data: {
