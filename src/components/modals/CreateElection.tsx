@@ -52,19 +52,21 @@ const CreateElectionModal = ({
         { min: 3 },
         "Election name must be at least 3 characters"
       ),
-      slug: hasLength(
-        { min: 3 },
-        "Election slug must be at least 3 characters"
-      ),
+      slug: (value) => {
+        if (!value) {
+          return "Please enter an election slug";
+        }
+        if (!/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/.test(value)) {
+          return "Election slug must be alphanumeric and can contain dashes";
+        }
+        if (value.length < 3 || value.length > 24) {
+          return "Election slug must be between 3 and 24 characters";
+        }
+      },
+
       date: (value) => {
         if (!value[0] || !value[1]) {
           return "Please select a date range";
-        }
-        if (value[0] > value[1]) {
-          return "Start date must be before end date";
-        }
-        if (value[0] < new Date()) {
-          return "Start date must be in the future";
         }
       },
     },
@@ -96,9 +98,25 @@ const CreateElectionModal = ({
     <Modal
       opened={isOpen || createElectionMutation.isLoading}
       onClose={onClose}
-      title="Create election"
+      title={<Text weight={600}>Create election</Text>}
     >
-      <form onSubmit={form.onSubmit((value) => console.log(value))}>
+      <form
+        onSubmit={form.onSubmit((value) =>
+          createElectionMutation.mutate({
+            name: value.name,
+            slug: value.slug,
+            start_date:
+              value.date[0] ||
+              new Date(new Date().setDate(new Date().getDate() + 1)),
+            end_date:
+              value.date[1] ||
+              new Date(new Date().setDate(new Date().getDate() + 8)),
+            voting_start: parseInt(value.voting_start),
+            voting_end: parseInt(value.voting_end),
+            template: parseInt(value.template),
+          })
+        )}
+      >
         <Stack spacing="sm">
           <TextInput
             data-autofocus
@@ -124,12 +142,18 @@ const CreateElectionModal = ({
             placeholder="Enter election slug"
             {...form.getInputProps("slug")}
             icon={<IconLetterCase size="1rem" />}
+            error={
+              form.errors.slug ||
+              (createElectionMutation.error?.data?.code === "CONFLICT" &&
+                createElectionMutation.error?.message)
+            }
           />
 
           <DatePickerInput
             type="range"
-            label="Pick dates range"
-            placeholder="Pick dates range"
+            label="Election start and end date"
+            placeholder="Enter election date"
+            description="Select a date range for your election"
             required
             withAsterisk
             popoverProps={{
@@ -188,7 +212,7 @@ const CreateElectionModal = ({
           </Stack>
           <Select
             label="Election template"
-            description="Select a position template for your election"
+            description="Select a template for your election"
             withAsterisk
             required
             withinPortal
@@ -204,15 +228,16 @@ const CreateElectionModal = ({
             icon={<IconTemplate size="1rem" />}
           />
 
-          {createElectionMutation.isError && (
-            <Alert
-              icon={<IconAlertCircle size="1rem" />}
-              title="Error"
-              color="red"
-            >
-              {createElectionMutation.error?.message}
-            </Alert>
-          )}
+          {createElectionMutation.isError &&
+            createElectionMutation.error?.data?.code !== "CONFLICT" && (
+              <Alert
+                icon={<IconAlertCircle size="1rem" />}
+                title="Error"
+                color="red"
+              >
+                {createElectionMutation.error?.message}
+              </Alert>
+            )}
 
           <Group position="right" spacing="xs">
             <Button
