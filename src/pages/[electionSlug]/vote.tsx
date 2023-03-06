@@ -145,21 +145,13 @@ export const getServerSideProps: GetServerSideProps = async (
     return { notFound: true };
 
   const session = await getServerAuthSession(context);
-  const electionQuery = await prisma.election.findFirst({
+  const election = await prisma.election.findFirst({
     where: {
       slug: context.query.electionSlug,
     },
   });
 
-  if (!electionQuery) return { notFound: true };
-
-  const election = {
-    ...electionQuery,
-    start_date: electionQuery.start_date.toISOString(),
-    end_date: electionQuery.end_date.toISOString(),
-    createdAt: electionQuery.createdAt.toISOString(),
-    updatedAt: electionQuery.updatedAt.toISOString(),
-  };
+  if (!election) return { notFound: true };
 
   if (election.publicity === "PRIVATE") {
     if (!session)

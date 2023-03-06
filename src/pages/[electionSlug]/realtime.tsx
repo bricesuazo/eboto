@@ -96,13 +96,7 @@ export const getServerSideProps: GetServerSideProps = async (
 
   return {
     props: {
-      election: {
-        ...election,
-        start_date: election.start_date.toISOString(),
-        end_date: election.end_date.toISOString(),
-        createdAt: election.createdAt.toISOString(),
-        updatedAt: election.updatedAt.toISOString(),
-      },
+      election,
     },
   };
 };

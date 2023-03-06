@@ -16,6 +16,14 @@ const config = {
     fontLoaders: [
       { loader: "@next/font/google", options: { subsets: ["latin"] } },
     ],
+    swcPlugins: [
+      [
+        "next-superjson-plugin",
+        {
+          excluded: [],
+        },
+      ],
+    ],
   },
 
   /**
