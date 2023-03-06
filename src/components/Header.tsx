@@ -25,13 +25,14 @@ import {
 } from "@tabler/icons-react";
 import type { Dispatch, SetStateAction } from "react";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 const HeaderComponent = ({
-  opened,
-  setOpened,
+  isNavbarOpen,
+  setIsNavbarOpenOpened,
 }: {
-  opened: boolean;
-  setOpened: Dispatch<SetStateAction<boolean>>;
+  isNavbarOpen: boolean;
+  setIsNavbarOpenOpened: Dispatch<SetStateAction<boolean>>;
 }) => {
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -39,6 +40,7 @@ const HeaderComponent = ({
   const { status, data } = useSession();
 
   const theme = useMantineTheme();
+  const [opened, setOpened] = useState(false);
 
   return (
     <Header height={60} px="md">
@@ -46,8 +48,8 @@ const HeaderComponent = ({
         {router.pathname.includes("/dashboard") && (
           <MediaQuery largerThan="sm" styles={{ display: "none" }}>
             <Burger
-              opened={opened}
-              onClick={() => setOpened((o) => !o)}
+              opened={isNavbarOpen}
+              onClick={() => setIsNavbarOpenOpened((o) => !o)}
               size="sm"
               color={theme.colors.gray[6]}
             />
@@ -99,7 +101,12 @@ const HeaderComponent = ({
             </Group>
           )}
           {status === "authenticated" && (
-            <Menu position="bottom-end" opened={opened} onChange={setOpened}>
+            <Menu
+              position="bottom-end"
+              opened={opened}
+              onChange={setOpened}
+              withinPortal
+            >
               <Menu.Target>
                 <UnstyledButton>
                   <Group>
