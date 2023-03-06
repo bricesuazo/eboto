@@ -3,18 +3,10 @@ import { AppShell } from "@mantine/core";
 import Header from "./Header";
 import Navbar from "./Navbar";
 import { useRouter } from "next/router";
-import { useMediaQuery } from "@mantine/hooks";
 
 const AppShellComponent = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const [opened, setOpened] = useState(false);
-  // const isSm = useMediaQuery("(max-width: 48em)");
-
-  // useEffect(() => {
-  //   if (!isSm) {
-  //     setOpened(false);
-  //   }
-  // }, [isSm]);
 
   return (
     <AppShell
