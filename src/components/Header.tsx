@@ -14,6 +14,7 @@ import {
   Burger,
   useMantineTheme,
   Flex,
+  ActionIcon,
 } from "@mantine/core";
 import {
   IconChartBar,
@@ -22,26 +23,36 @@ import {
   IconSun,
   IconTransitionLeft,
 } from "@tabler/icons-react";
-import { useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import { useRouter } from "next/router";
 
-const HeaderComponent = () => {
+const HeaderComponent = ({
+  opened,
+  setOpened,
+}: {
+  opened: boolean;
+  setOpened: Dispatch<SetStateAction<boolean>>;
+}) => {
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const router = useRouter();
   const { status, data } = useSession();
-  const [opened, setOpened] = useState(false);
+
   const theme = useMantineTheme();
 
   return (
     <Header height={60} px="md">
       <Flex h="100%" align="center" gap="xs">
-        <MediaQuery largerThan="sm" styles={{ display: "none" }}>
-          <Burger
-            opened={opened}
-            onClick={() => setOpened((o) => !o)}
-            size="sm"
-            color={theme.colors.gray[6]}
-          />
-        </MediaQuery>
+        {router.pathname.includes("/dashboard") && (
+          <MediaQuery largerThan="sm" styles={{ display: "none" }}>
+            <Burger
+              opened={opened}
+              onClick={() => setOpened((o) => !o)}
+              size="sm"
+              color={theme.colors.gray[6]}
+            />
+          </MediaQuery>
+        )}
         <Group position="apart" w="100%" spacing={0}>
           <UnstyledButton component={Link} href="/">
             <Group spacing={4}>
@@ -57,6 +68,19 @@ const HeaderComponent = () => {
 
           {status === "unauthenticated" && (
             <Group spacing="xs">
+              <ActionIcon
+                variant="subtle"
+                size={36}
+                onClick={() => {
+                  toggleColorScheme();
+                }}
+              >
+                {colorScheme === "dark" ? (
+                  <IconSun size="1rem" />
+                ) : (
+                  <IconMoon size="1rem" />
+                )}
+              </ActionIcon>
               <MediaQuery largerThan="xs" styles={{ display: "none" }}>
                 <Button component={Link} href="/signin">
                   Sign in
