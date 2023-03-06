@@ -10,13 +10,18 @@ import type {
 import {
   Alert,
   Anchor,
-  Box,
   Button,
-  Center,
+  MediaQuery,
   Container,
   PasswordInput,
   Stack,
   TextInput,
+  Title,
+  Text,
+  Paper,
+  Group,
+  Checkbox,
+  Center,
 } from "@mantine/core";
 
 import { signIn } from "next-auth/react";
@@ -27,10 +32,12 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { hasLength, isEmail, isNotEmpty, useForm } from "@mantine/form";
 import { IconAlertCircle, IconAt, IconLock } from "@tabler/icons-react";
+import { useMediaQuery } from "@mantine/hooks";
 
 const Signin: NextPage = () => {
   const router = useRouter();
   const [error, setError] = useState<string | undefined>();
+  const smallScreen = useMediaQuery("(max-width: 30em)");
   const [loadings, setLoadings] = useState({
     credentials: false,
     google: false,
@@ -54,49 +61,62 @@ const Signin: NextPage = () => {
         <title>Sign in to your account | eBoto Mo</title>
       </Head>
 
-      <Container size="xs">
-        <form
-          onSubmit={form.onSubmit((values) => {
-            setError(undefined);
-            setLoadings({ ...loadings, credentials: true });
-
-            void (async () => {
-              await signIn("credentials", {
-                email: values.email,
-                password: values.password,
-                redirect: false,
-                callbackUrl:
-                  (router.query.callbackUrl as string) || "/dashboard",
-              }).then(async (res) => {
-                if (res?.ok)
-                  await router.push(
-                    (router.query.callbackUrl as string) || "/dashboard"
-                  );
-                if (res?.error) {
-                  setError(res.error);
-
-                  res.error ===
-                    "Email not verified. Email verification sent." &&
-                    form.reset();
-
-                  setLoadings({ ...loadings, credentials: false });
-                }
-              });
-            })();
-          })}
+      <Container size={420} my={40}>
+        <Title align="center">Welcome back!</Title>
+        <Text color="dimmed" size="sm" align="center" mt={5}>
+          Don&apos;t have an account yet?{" "}
+          <Anchor size="sm" component={Link} href="/signup" truncate>
+            Create account
+          </Anchor>
+        </Text>
+        <Paper
+          withBorder
+          shadow="md"
+          p={smallScreen ? "md" : "xl"}
+          mt={30}
+          radius="md"
         >
-          <Stack spacing="sm">
-            <TextInput
-              placeholder="Enter your email address"
-              type="email"
-              withAsterisk
-              label="Email"
-              required
-              {...form.getInputProps("email")}
-              icon={<IconAt size="1rem" />}
-            />
+          <form
+            onSubmit={form.onSubmit((values) => {
+              setError(undefined);
+              setLoadings({ ...loadings, credentials: true });
 
-            <Box>
+              void (async () => {
+                await signIn("credentials", {
+                  email: values.email,
+                  password: values.password,
+                  redirect: false,
+                  callbackUrl:
+                    (router.query.callbackUrl as string) || "/dashboard",
+                }).then(async (res) => {
+                  if (res?.ok)
+                    await router.push(
+                      (router.query.callbackUrl as string) || "/dashboard"
+                    );
+                  if (res?.error) {
+                    setError(res.error);
+
+                    res.error ===
+                      "Email not verified. Email verification sent." &&
+                      form.reset();
+
+                    setLoadings({ ...loadings, credentials: false });
+                  }
+                });
+              })();
+            })}
+          >
+            <Stack>
+              <TextInput
+                placeholder="Enter your email address"
+                type="email"
+                withAsterisk
+                label="Email"
+                required
+                {...form.getInputProps("email")}
+                icon={<IconAt size="1rem" />}
+              />
+
               <PasswordInput
                 placeholder="Enter your password"
                 withAsterisk
@@ -105,39 +125,52 @@ const Signin: NextPage = () => {
                 {...form.getInputProps("password")}
                 icon={<IconLock size="1rem" />}
               />
-              <Anchor
-                size="sm"
-                variant=""
-                component={Link}
-                href={`/reset-password${
-                  form.values.email ? `?email=${form.values.email}` : ""
-                }`}
-              >
-                Forgot password?
-              </Anchor>
-            </Box>
+              <Group position="apart">
+                <Checkbox label="Remember me" size="sm" />
+                <MediaQuery smallerThan="xs" styles={{ display: "none" }}>
+                  <Anchor
+                    size="sm"
+                    variant=""
+                    component={Link}
+                    href={`/reset-password${
+                      form.values.email ? `?email=${form.values.email}` : ""
+                    }`}
+                  >
+                    Forgot password?
+                  </Anchor>
+                </MediaQuery>
+              </Group>
 
-            {error && (
-              <Alert
-                icon={<IconAlertCircle size="1rem" />}
-                title="Error"
-                color="red"
-              >
-                {error}
-              </Alert>
-            )}
+              {error && (
+                <Alert
+                  icon={<IconAlertCircle size="1rem" />}
+                  title="Error"
+                  color="red"
+                >
+                  {error}
+                </Alert>
+              )}
 
-            <Button type="submit" loading={loadings.credentials}>
-              Sign in
-            </Button>
+              <Button type="submit" loading={loadings.credentials}>
+                Sign in
+              </Button>
 
-            <Center>
-              <Anchor component={Link} href="/signup" size="sm">
-                Don&apos;t have an account? Sign up.
-              </Anchor>
-            </Center>
+              <MediaQuery largerThan="xs" styles={{ display: "none" }}>
+                <Center>
+                  <Anchor
+                    size="sm"
+                    variant=""
+                    component={Link}
+                    href={`/reset-password${
+                      form.values.email ? `?email=${form.values.email}` : ""
+                    }`}
+                  >
+                    Forgot your password?
+                  </Anchor>
+                </Center>
+              </MediaQuery>
 
-            {/* <Button
+              {/* <Button
               onClick={() => {
                 setLoadings({ ...loadings, google: true });
                 void (async () => {
@@ -154,8 +187,9 @@ const Signin: NextPage = () => {
             >
               Sign in with Google
             </Button> */}
-          </Stack>
-        </form>
+            </Stack>
+          </form>
+        </Paper>
       </Container>
     </>
   );
