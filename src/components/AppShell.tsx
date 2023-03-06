@@ -1,25 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AppShell } from "@mantine/core";
 import Header from "./Header";
 import Navbar from "./Navbar";
 import { useRouter } from "next/router";
+import { useMediaQuery } from "@mantine/hooks";
 
 const AppShellComponent = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const [opened, setOpened] = useState(false);
+  // const isSm = useMediaQuery("(max-width: 48em)");
+
+  // useEffect(() => {
+  //   if (!isSm) {
+  //     setOpened(false);
+  //   }
+  // }, [isSm]);
 
   return (
     <AppShell
       padding="md"
       navbar={
-        router.pathname.includes("/dashboard/*") ? (
+        router.pathname.includes("/dashboard") ? (
           <Navbar opened={opened} />
         ) : undefined
       }
-      header={<Header opened={opened} setOpened={setOpened} />}
-      navbarOffsetBreakpoint={
-        router.pathname.includes("/dashboard/*") ? "sm" : undefined
+      header={
+        <Header isNavbarOpen={opened} setIsNavbarOpenOpened={setOpened} />
       }
+      // navbarOffsetBreakpoint={
+      //   router.pathname.includes("/dashboard") ? "sm" : undefined
+      // }
       // styles={(theme) => ({
       //   main: {
       //     backgroundColor:
