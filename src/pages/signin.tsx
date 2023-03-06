@@ -115,6 +115,7 @@ const Signin: NextPage = () => {
                 required
                 {...form.getInputProps("email")}
                 icon={<IconAt size="1rem" />}
+                disabled={loadings.credentials}
               />
 
               <PasswordInput
@@ -124,9 +125,14 @@ const Signin: NextPage = () => {
                 required
                 {...form.getInputProps("password")}
                 icon={<IconLock size="1rem" />}
+                disabled={loadings.credentials}
               />
               <Group position="apart">
-                <Checkbox label="Remember me" size="sm" />
+                <Checkbox
+                  label="Remember me"
+                  size="sm"
+                  disabled={loadings.credentials}
+                />
                 <MediaQuery smallerThan="xs" styles={{ display: "none" }}>
                   <Anchor
                     size="sm"

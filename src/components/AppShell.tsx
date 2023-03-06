@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { AppShell } from "@mantine/core";
+import { useState } from "react";
+import { AppShell, Aside } from "@mantine/core";
 import Header from "./Header";
 import Navbar from "./Navbar";
 import { useRouter } from "next/router";
@@ -10,18 +10,22 @@ const AppShellComponent = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AppShell
-      padding="md"
+      // padding="xl"
       navbar={
-        router.pathname.includes("/dashboard") ? (
+        router.pathname.includes("/dashboard/[electionSlug]") ? (
           <Navbar opened={opened} />
         ) : undefined
       }
       header={
         <Header isNavbarOpen={opened} setIsNavbarOpenOpened={setOpened} />
       }
-      // navbarOffsetBreakpoint={
-      //   router.pathname.includes("/dashboard") ? "sm" : undefined
-      // }
+      aside={
+        router.pathname.includes("/dashboard/[electionSlug]") ? (
+          <Aside sx={{ display: "none" }}>
+            <></>
+          </Aside>
+        ) : undefined
+      }
       // styles={(theme) => ({
       //   main: {
       //     backgroundColor:

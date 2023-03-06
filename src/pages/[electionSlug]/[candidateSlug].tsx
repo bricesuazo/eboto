@@ -14,7 +14,7 @@ const CandidatePage = ({
   };
 }) => {
   return (
-    <Container maw="4xl">
+    <Container>
       <Text>{election.name}</Text>
       <Text>
         {candidate.first_name} ({candidate.partylist.acronym})

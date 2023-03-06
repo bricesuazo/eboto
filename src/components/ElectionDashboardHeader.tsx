@@ -1,4 +1,4 @@
-import { Button, Group, Stack } from "@mantine/core";
+import { Button, Group } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
 

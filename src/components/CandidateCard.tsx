@@ -1,4 +1,4 @@
-import { Button, Flex, Group, Text } from "@mantine/core";
+import { Button, Flex, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import type { Candidate, Partylist, Position } from "@prisma/client";

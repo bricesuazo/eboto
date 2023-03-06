@@ -25,7 +25,7 @@ const DashboardPartylist = () => {
   if (partylists.isError) return <Text>Error</Text>;
 
   return (
-    <Container maw="4xl">
+    <>
       <CreatePartylistModal
         isOpen={opened}
         onClose={close}
@@ -50,7 +50,7 @@ const DashboardPartylist = () => {
           ))
         )}
       </Group>
-    </Container>
+    </>
   );
 };
 

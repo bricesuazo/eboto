@@ -1,4 +1,4 @@
-import { Button, Container, Flex, Text } from "@mantine/core";
+import { Button, Flex, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
 import ElectionDashboardHeader from "../../../components/ElectionDashboardHeader";
@@ -42,7 +42,7 @@ const DashboardVoter = () => {
   if (!voters.data) return <Text>No election found</Text>;
 
   return (
-    <Container>
+    <>
       <CreateVoterModal
         isOpen={opened}
         electionId={voters.data.election.id}
@@ -103,7 +103,7 @@ const DashboardVoter = () => {
           ))}
         </>
       )}
-    </Container>
+    </>
   );
 };
 

@@ -34,7 +34,7 @@ const ElectionPage = ({
   );
 
   return (
-    <Container maw="4xl">
+    <Container>
       {positions.isLoading ? (
         <Text>Loading...</Text>
       ) : positions.isError ? (
