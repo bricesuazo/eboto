@@ -9,12 +9,12 @@ import { SessionProvider } from "next-auth/react";
 import type { AppContext, AppProps, AppType } from "next/app";
 import Head from "next/head";
 import { useState } from "react";
-import Header from "../components/Header";
 import { ConfettiProvider } from "../lib/confetti";
 import { api } from "../utils/api";
 import { Poppins } from "next/font/google";
 import { getCookie, setCookie } from "cookies-next";
 import { useHotkeys } from "@mantine/hooks";
+import AppShellComponent from "../components/AppShell";
 
 interface Props extends AppProps {
   pageProps: {
@@ -75,9 +75,9 @@ const App: AppType<Props> = api.withTRPC(function App({
           >
             <Notifications />
             <ConfettiProvider>
-              <Header />
-
-              <Component {...props} />
+              <AppShellComponent>
+                <Component {...props} />
+              </AppShellComponent>
             </ConfettiProvider>
           </MantineProvider>
         </ColorSchemeProvider>
