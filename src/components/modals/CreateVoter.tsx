@@ -52,7 +52,6 @@ const CreateVoterModal = ({
     } else {
       createVoterMutation.reset();
     }
-    // //eslint-disable-next-line
   }, [isOpen]);
 
   return (

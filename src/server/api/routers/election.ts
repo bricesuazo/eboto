@@ -131,7 +131,11 @@ export const electionRouter = createTRPCRouter({
         throw new Error("You are not a commissioner of this election");
       }
 
-      return election;
+      return ctx.prisma.election.findUnique({
+        where: {
+          slug: input,
+        },
+      });
     }),
   getElectionVoter: protectedProcedure
     .input(z.string())
@@ -504,7 +508,10 @@ export const electionRouter = createTRPCRouter({
       });
 
       if (!election) {
-        throw new Error("Election not found");
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election not found",
+        });
       }
 
       if (
@@ -512,12 +519,18 @@ export const electionRouter = createTRPCRouter({
           (commissioner) => commissioner.userId === ctx.session.user.id
         )
       ) {
-        throw new Error("You are not a commissioner of this election");
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You are not a commissioner of this election",
+        });
       }
 
       if (input.slug !== election.slug) {
         if (takenSlugs.includes(input.slug.trim().toLowerCase())) {
-          throw new Error("Election slug is unavailable. Try another.");
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "Election slug is already exists",
+          });
         }
 
         const isElectionExists = await ctx.prisma.election.findUnique({
@@ -527,7 +540,10 @@ export const electionRouter = createTRPCRouter({
         });
 
         if (isElectionExists) {
-          throw new Error("Election slug is already exists");
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "Election slug is already exists",
+          });
         }
       }
 
