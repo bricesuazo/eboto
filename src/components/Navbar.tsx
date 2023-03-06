@@ -1,9 +1,14 @@
 import { Navbar } from "@mantine/core";
 
-const NavbarComponent = () => {
+const NavbarComponent = ({ opened }: { opened: boolean }) => {
   return (
-    <Navbar width={{ base: 300 }} hiddenBreakpoint="md">
-      NavbarComponent
+    <Navbar
+      width={{ sm: 200, lg: 300 }}
+      //   hidden={!(!opened && router.pathname.includes("/dashboard"))}
+
+      //   hiddenBreakpoint="sm"
+    >
+      NavbarComponentdd
     </Navbar>
   );
 };
