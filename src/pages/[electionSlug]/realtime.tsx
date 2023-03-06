@@ -18,7 +18,7 @@ const RealtimePage = ({ election }: { election: Election }) => {
 
   if (!positions.data) return <div>No data</div>;
   return (
-    <Container maw="4xl">
+    <Container>
       <Text>{election.name}</Text>
 
       <h2>Positions</h2>

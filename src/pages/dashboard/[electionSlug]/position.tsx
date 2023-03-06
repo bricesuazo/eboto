@@ -1,5 +1,4 @@
-import { Button, Container, Group, Text } from "@mantine/core";
-import { RadioGroup } from "@mantine/core/lib/Radio/RadioGroup/RadioGroup";
+import { Button, Group, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
 import ElectionDashboardHeader from "../../../components/ElectionDashboardHeader";
@@ -26,7 +25,7 @@ const DashboardPosition = () => {
   if (positions.isError) return <Text>Error</Text>;
 
   return (
-    <Container maw="4xl">
+    <>
       <CreatePositionModal
         isOpen={opened}
         onClose={close}
@@ -52,7 +51,7 @@ const DashboardPosition = () => {
           ))
         )}
       </Group>
-    </Container>
+    </>
   );
 };
 

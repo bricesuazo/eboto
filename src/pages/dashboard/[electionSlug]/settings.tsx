@@ -1,7 +1,6 @@
 import {
   Alert,
   Button,
-  Container,
   Group,
   Select,
   Stack,
@@ -124,167 +123,166 @@ const DashboardSettings = ({ election }: { election: Election }) => {
       <Head>
         <title>{title}</title>
       </Head>
-      <Container maw="4xl">
-        <ElectionDashboardHeader slug={election.slug} />
 
-        <form
-          onSubmit={form.onSubmit((value) => {
-            updateElectionMutation.mutate({
-              id: election.id,
-              name: value.name,
-              slug: value.slug,
-              start_date:
-                value.date[0] ||
-                new Date(new Date().setDate(new Date().getDate() + 1)),
-              end_date:
-                value.date[1] ||
-                new Date(new Date().setDate(new Date().getDate() + 8)),
-              voting_start: parseInt(value.voting_start),
-              voting_end: parseInt(value.voting_end),
-              publicity: value.publicity,
-            });
-          })}
-        >
+      <ElectionDashboardHeader slug={election.slug} />
+
+      <form
+        onSubmit={form.onSubmit((value) => {
+          updateElectionMutation.mutate({
+            id: election.id,
+            name: value.name,
+            slug: value.slug,
+            start_date:
+              value.date[0] ||
+              new Date(new Date().setDate(new Date().getDate() + 1)),
+            end_date:
+              value.date[1] ||
+              new Date(new Date().setDate(new Date().getDate() + 8)),
+            voting_start: parseInt(value.voting_start),
+            voting_end: parseInt(value.voting_end),
+            publicity: value.publicity,
+          });
+        })}
+      >
+        <Stack spacing="sm">
+          <TextInput
+            label="Election name"
+            withAsterisk
+            required
+            placeholder="Enter election name"
+            {...form.getInputProps("name")}
+            icon={<IconLetterCase size="1rem" />}
+            disabled={updateElectionMutation.isLoading}
+          />
+
+          <TextInput
+            label="Election slug"
+            description={
+              <>
+                This will be used as the URL for your election
+                <br />
+                eboto-mo.com/{form.values.slug || "election-slug"}
+              </>
+            }
+            withAsterisk
+            required
+            placeholder="Enter election slug"
+            {...form.getInputProps("slug")}
+            icon={<IconLetterCase size="1rem" />}
+            error={
+              form.errors.slug ||
+              (updateElectionMutation.error?.data?.code === "CONFLICT" &&
+                updateElectionMutation.error?.message)
+            }
+            disabled={updateElectionMutation.isLoading}
+          />
+
+          <DatePickerInput
+            type="range"
+            label="Election start and end date"
+            placeholder="Enter election date"
+            description="Select a date range for your election"
+            required
+            withAsterisk
+            popoverProps={{
+              withinPortal: true,
+              position: "bottom",
+            }}
+            minDate={new Date(new Date().setDate(new Date().getDate() + 1))}
+            firstDayOfWeek={0}
+            {...form.getInputProps("date")}
+            icon={<IconCalendar size="1rem" />}
+            disabled={updateElectionMutation.isLoading}
+          />
           <Stack spacing="sm">
-            <TextInput
-              label="Election name"
-              withAsterisk
-              required
-              placeholder="Enter election name"
-              {...form.getInputProps("name")}
-              icon={<IconLetterCase size="1rem" />}
-              disabled={updateElectionMutation.isLoading}
-            />
-
-            <TextInput
-              label="Election slug"
-              description={
-                <>
-                  This will be used as the URL for your election
-                  <br />
-                  eboto-mo.com/{form.values.slug || "election-slug"}
-                </>
-              }
-              withAsterisk
-              required
-              placeholder="Enter election slug"
-              {...form.getInputProps("slug")}
-              icon={<IconLetterCase size="1rem" />}
-              error={
-                form.errors.slug ||
-                (updateElectionMutation.error?.data?.code === "CONFLICT" &&
-                  updateElectionMutation.error?.message)
-              }
-              disabled={updateElectionMutation.isLoading}
-            />
-
-            <DatePickerInput
-              type="range"
-              label="Election start and end date"
-              placeholder="Enter election date"
-              description="Select a date range for your election"
-              required
-              withAsterisk
-              popoverProps={{
-                withinPortal: true,
-                position: "bottom",
-              }}
-              minDate={new Date(new Date().setDate(new Date().getDate() + 1))}
-              firstDayOfWeek={0}
-              {...form.getInputProps("date")}
-              icon={<IconCalendar size="1rem" />}
-              disabled={updateElectionMutation.isLoading}
-            />
-            <Stack spacing="sm">
-              <Group grow spacing={8}>
-                <Select
-                  label="Voting hour start"
-                  withAsterisk
-                  withinPortal
-                  required
-                  dropdownPosition="bottom"
-                  {...form.getInputProps("voting_start")}
-                  data={[...Array(24).keys()].map((_, i) => ({
-                    label: convertNumberToHour(i),
-                    value: i.toString(),
-                  }))}
-                  icon={<IconClock size="1rem" />}
-                  disabled={updateElectionMutation.isLoading}
-                />
-                <Select
-                  dropdownPosition="bottom"
-                  label="Voting hour start"
-                  withAsterisk
-                  withinPortal
-                  required
-                  {...form.getInputProps("voting_end")}
-                  data={[...Array(24).keys()].map((_, i) => ({
-                    label: convertNumberToHour(i),
-                    value: i.toString(),
-                    disabled: i <= parseInt(form.values.voting_start),
-                  }))}
-                  icon={<IconClock size="1rem" />}
-                  disabled={updateElectionMutation.isLoading}
-                />
-              </Group>
-              <Text
-                align="center"
-                size="sm"
-                opacity={updateElectionMutation.isLoading ? 0.5 : 1}
-              >
-                {parseInt(form.values.voting_end) -
-                  parseInt(form.values.voting_start)}{" "}
-                hour
-                {parseInt(form.values.voting_end) -
-                  parseInt(form.values.voting_start) >
-                1
-                  ? "s"
-                  : ""}
-              </Text>
-            </Stack>
-
-            <Select
-              {...form.getInputProps("publicity")}
-              data={["PRIVATE", "VOTER", "PUBLIC"].map((p) => ({
-                value: p,
-                label: p,
-              }))}
-              disabled={updateElectionMutation.isLoading}
-            />
-
-            {updateElectionMutation.isError &&
-              updateElectionMutation.error?.data?.code !== "CONFLICT" && (
-                <Alert
-                  icon={<IconAlertCircle size="1rem" />}
-                  title="Error"
-                  color="red"
-                >
-                  {updateElectionMutation.error?.message}
-                </Alert>
-              )}
-
-            <Group position="apart">
-              <Button
-                color="blue"
-                type="submit"
-                loading={updateElectionMutation.isLoading}
-                disabled={!form.isDirty() || !form.isValid()}
-              >
-                Update
-              </Button>
-              <Button
-                variant="outline"
-                color="red"
-                onClick={() => deleteElectionMutation.mutate(election.id)}
-                loading={deleteElectionMutation.isLoading}
+            <Group grow spacing={8}>
+              <Select
+                label="Voting hour start"
+                withAsterisk
+                withinPortal
+                required
+                dropdownPosition="bottom"
+                {...form.getInputProps("voting_start")}
+                data={[...Array(24).keys()].map((_, i) => ({
+                  label: convertNumberToHour(i),
+                  value: i.toString(),
+                }))}
+                icon={<IconClock size="1rem" />}
                 disabled={updateElectionMutation.isLoading}
-              >
-                Delete
-              </Button>
+              />
+              <Select
+                dropdownPosition="bottom"
+                label="Voting hour start"
+                withAsterisk
+                withinPortal
+                required
+                {...form.getInputProps("voting_end")}
+                data={[...Array(24).keys()].map((_, i) => ({
+                  label: convertNumberToHour(i),
+                  value: i.toString(),
+                  disabled: i <= parseInt(form.values.voting_start),
+                }))}
+                icon={<IconClock size="1rem" />}
+                disabled={updateElectionMutation.isLoading}
+              />
             </Group>
+            <Text
+              align="center"
+              size="sm"
+              opacity={updateElectionMutation.isLoading ? 0.5 : 1}
+            >
+              {parseInt(form.values.voting_end) -
+                parseInt(form.values.voting_start)}{" "}
+              hour
+              {parseInt(form.values.voting_end) -
+                parseInt(form.values.voting_start) >
+              1
+                ? "s"
+                : ""}
+            </Text>
           </Stack>
-        </form>
-      </Container>
+
+          <Select
+            {...form.getInputProps("publicity")}
+            data={["PRIVATE", "VOTER", "PUBLIC"].map((p) => ({
+              value: p,
+              label: p,
+            }))}
+            disabled={updateElectionMutation.isLoading}
+          />
+
+          {updateElectionMutation.isError &&
+            updateElectionMutation.error?.data?.code !== "CONFLICT" && (
+              <Alert
+                icon={<IconAlertCircle size="1rem" />}
+                title="Error"
+                color="red"
+              >
+                {updateElectionMutation.error?.message}
+              </Alert>
+            )}
+
+          <Group position="apart">
+            <Button
+              color="blue"
+              type="submit"
+              loading={updateElectionMutation.isLoading}
+              disabled={!form.isDirty() || !form.isValid()}
+            >
+              Update
+            </Button>
+            <Button
+              variant="outline"
+              color="red"
+              onClick={() => deleteElectionMutation.mutate(election.id)}
+              loading={deleteElectionMutation.isLoading}
+              disabled={updateElectionMutation.isLoading}
+            >
+              Delete
+            </Button>
+          </Group>
+        </Stack>
+      </form>
     </>
   );
 };
