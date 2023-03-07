@@ -131,15 +131,14 @@ const NavbarComponent = ({
           <UnstyledButton
             key={item.id}
             onClick={() => {
-              opened &&
-                void (async () => {
-                  await router.push(
-                    `/dashboard/${router.query.electionSlug as string}/${
-                      item.path || ""
-                    }`
-                  );
-                  setOpened(false);
-                })();
+              void (async () => {
+                await router.push(
+                  `/dashboard/${router.query.electionSlug as string}/${
+                    item.path || ""
+                  }`
+                );
+                opened && setOpened(false);
+              })();
             }}
             className={cx(classes.link, {
               [classes.linkActive]:
