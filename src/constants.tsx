@@ -1,5 +1,56 @@
 import { z } from "zod";
 
+import {
+  IconFlag,
+  IconLayoutDashboard,
+  IconReplace,
+  IconSettings,
+  IconUsers,
+  IconUserSearch,
+} from "@tabler/icons-react";
+export const electionDashboardNavbar: {
+  id: number;
+  label: string;
+  path?: string;
+  icon: React.FC<{ className?: string }>;
+}[] = [
+  {
+    id: 0,
+    label: "Overview",
+    icon: IconLayoutDashboard,
+  },
+  {
+    id: 1,
+    label: "Partylists",
+    path: "partylist",
+    icon: IconFlag,
+  },
+  {
+    id: 2,
+    label: "Positions",
+    path: "position",
+    icon: IconReplace,
+  },
+  {
+    id: 3,
+    label: "Candidates",
+    path: "candidate",
+    icon: IconUserSearch,
+  },
+  {
+    id: 4,
+    label: "Voters",
+    path: "voter",
+    icon: IconUsers,
+  },
+  {
+    id: 5,
+    label: "Settings",
+    path: "settings",
+    icon: IconSettings,
+  },
+];
+
 const positionTemplateSchema = z.array(
   z.object({
     id: z.number(),

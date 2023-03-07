@@ -21,7 +21,6 @@ import {
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import ElectionDashboardHeader from "../../../components/ElectionDashboardHeader";
 import { getServerAuthSession } from "../../../server/auth";
 import { prisma } from "../../../server/db";
 import { api } from "../../../utils/api";
@@ -123,8 +122,6 @@ const DashboardSettings = ({ election }: { election: Election }) => {
       <Head>
         <title>{title}</title>
       </Head>
-
-      <ElectionDashboardHeader slug={election.slug} />
 
       <form
         onSubmit={form.onSubmit((value) => {

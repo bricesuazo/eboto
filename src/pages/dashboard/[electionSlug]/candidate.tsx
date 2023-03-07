@@ -1,7 +1,6 @@
 import { Text } from "@mantine/core";
 import { useRouter } from "next/router";
 import Candidates from "../../../components/Candidates";
-import ElectionDashboardHeader from "../../../components/ElectionDashboardHeader";
 import { api } from "../../../utils/api";
 
 const CandidatePartylist = () => {
@@ -25,8 +24,6 @@ const CandidatePartylist = () => {
 
   return (
     <>
-      <ElectionDashboardHeader slug={candidates.data.election.slug} />
-
       {candidates.data.positions.length === 0 ? (
         <Text>No positions yet</Text>
       ) : (

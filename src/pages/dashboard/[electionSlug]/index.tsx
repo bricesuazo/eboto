@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import Moment from "react-moment";
 import { convertNumberToHour } from "../../../utils/convertNumberToHour";
 import { api } from "../../../utils/api";
-import ElectionDashboardHeader from "../../../components/ElectionDashboardHeader";
 
 const DashboardOverview = () => {
   const router = useRouter();
@@ -28,8 +27,6 @@ const DashboardOverview = () => {
         <Text>No election found</Text>
       ) : (
         <>
-          <ElectionDashboardHeader slug={electionOverview.data.election.slug} />
-
           <Text>{electionOverview.data.election.name}</Text>
           <Text>{electionOverview.data.election.slug}</Text>
 

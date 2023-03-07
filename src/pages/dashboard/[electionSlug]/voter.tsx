@@ -1,7 +1,6 @@
 import { Button, Flex, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
-import ElectionDashboardHeader from "../../../components/ElectionDashboardHeader";
 import CreateVoterModal from "../../../components/modals/CreateVoter";
 import { api } from "../../../utils/api";
 
@@ -49,7 +48,6 @@ const DashboardVoter = () => {
         onClose={close}
         refetch={voters.refetch}
       />
-      <ElectionDashboardHeader slug={voters.data.election.slug} />
 
       <Button onClick={open}>Add voter</Button>
       <Text>{voters.data.election.name} - voter page</Text>

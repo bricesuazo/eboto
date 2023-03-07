@@ -32,12 +32,10 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { hasLength, isEmail, isNotEmpty, useForm } from "@mantine/form";
 import { IconAlertCircle, IconAt, IconLock } from "@tabler/icons-react";
-import { useMediaQuery } from "@mantine/hooks";
 
 const Signin: NextPage = () => {
   const router = useRouter();
   const [error, setError] = useState<string | undefined>();
-  const smallScreen = useMediaQuery("(max-width: 30em)");
   const [loadings, setLoadings] = useState({
     credentials: false,
     google: false,
@@ -72,7 +70,10 @@ const Signin: NextPage = () => {
         <Paper
           withBorder
           shadow="md"
-          p={smallScreen ? "md" : "xl"}
+          sx={(theme) => ({
+            padding: theme.spacing.sm,
+            [theme.fn.largerThan("xs")]: { padding: theme.spacing.xl },
+          })}
           mt={30}
           radius="md"
         >

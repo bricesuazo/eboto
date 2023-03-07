@@ -13,7 +13,7 @@ const AppShellComponent = ({ children }: { children: React.ReactNode }) => {
       // padding="xl"
       navbar={
         router.pathname.includes("/dashboard/[electionSlug]") ? (
-          <Navbar opened={opened} />
+          <Navbar opened={opened} setOpened={setOpened} />
         ) : undefined
       }
       header={
@@ -26,14 +26,6 @@ const AppShellComponent = ({ children }: { children: React.ReactNode }) => {
           </Aside>
         ) : undefined
       }
-      // styles={(theme) => ({
-      //   main: {
-      //     backgroundColor:
-      //       theme.colorScheme === "dark"
-      //         ? theme.colors.dark[8]
-      //         : theme.colors.gray[0],
-      //   },
-      // })}
     >
       {children}
     </AppShell>
