@@ -1,12 +1,11 @@
-// components/RouterTransition.tsx
-import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { NavigationProgress, nprogress } from "@mantine/nprogress";
+import { useDidUpdate } from "@mantine/hooks";
 
 export function RouterTransition() {
   const router = useRouter();
 
-  useEffect(() => {
+  useDidUpdate(() => {
     const handleStart = (url: string) =>
       url !== router.asPath && nprogress.start();
     const handleComplete = () => nprogress.complete();

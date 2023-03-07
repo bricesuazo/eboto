@@ -10,7 +10,6 @@ import {
   Group,
 } from "@mantine/core";
 import { api } from "../../utils/api";
-import { useEffect } from "react";
 import { positionTemplate } from "../../constants";
 import { useRouter } from "next/router";
 import { convertNumberToHour } from "../../utils/convertNumberToHour";
@@ -26,6 +25,7 @@ import {
 } from "@tabler/icons-react";
 import { hasLength, useForm } from "@mantine/form";
 import { DatePickerInput } from "@mantine/dates";
+import { useDidUpdate } from "@mantine/hooks";
 
 const CreateElectionModal = ({
   isOpen,
@@ -86,10 +86,9 @@ const CreateElectionModal = ({
     },
   });
 
-  useEffect(() => {
+  useDidUpdate(() => {
     if (isOpen) {
       form.reset();
-    } else {
       createElectionMutation.reset();
     }
   }, [isOpen]);
