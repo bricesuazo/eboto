@@ -170,10 +170,10 @@ const NavbarComponent = ({
                       value: election.slug,
                       group:
                         election.start_date > new Date()
-                          ? "Upcoming Elections"
+                          ? "Upcoming"
                           : election.end_date < new Date()
-                          ? "Past Elections"
-                          : "Ongoing Elections",
+                          ? "Completed"
+                          : "Ongoing",
                       selected: election.slug === router.query.electionSlug,
                     }))
                 : []

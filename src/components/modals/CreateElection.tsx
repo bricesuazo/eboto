@@ -217,15 +217,17 @@ const CreateElectionModal = ({
             required
             withinPortal
             {...form.getInputProps("template")}
-            data={positionTemplate.map((position) => ({
-              label: position.org,
-              value: position.id.toString(),
-              group: position.college,
-            }))}
-            searchable
+            data={positionTemplate
+              .sort((a, b) => a.id - b.id)
+              .map((position) => ({
+                label: position.org,
+                value: position.id.toString(),
+                group: position.college,
+              }))}
             dropdownPosition="bottom"
             nothingFound="No position template found"
             icon={<IconTemplate size="1rem" />}
+            // searchable
           />
 
           {createElectionMutation.isError &&
