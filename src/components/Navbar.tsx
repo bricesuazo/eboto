@@ -6,7 +6,7 @@ import {
   rem,
   Select,
 } from "@mantine/core";
-import { IconLogout } from "@tabler/icons-react";
+import { IconFingerprint, IconLogout } from "@tabler/icons-react";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { electionDashboardNavbar } from "../constants";
@@ -110,14 +110,28 @@ const NavbarComponent = ({
         <Select
           defaultValue={router.query.electionSlug as string}
           placeholder="Select election"
+          icon={<IconFingerprint />}
+          size="md"
           data={
             elections.data
               ? elections.data.map((election) => ({
                   label: election.name,
                   value: election.slug,
+                  group:
+                    election.start_date > new Date()
+                      ? "Upcoming Elections"
+                      : election.end_date < new Date()
+                      ? "Past Elections"
+                      : "Ongoing Elections",
+                  selected: election.slug === router.query.electionSlug,
                 }))
               : []
           }
+          itemComponent={(props: React.ComponentPropsWithoutRef<"button">) => (
+            <UnstyledButton {...props} h={48}>
+              {props.value}
+            </UnstyledButton>
+          )}
           onChange={(value) =>
             void (async () => {
               await router.push(`/dashboard/${value || ""}`);
