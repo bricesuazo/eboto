@@ -31,6 +31,7 @@ import {
 import {
   IconAlertCircle,
   IconAt,
+  IconCheck,
   IconLetterCase,
   IconLock,
 } from "@tabler/icons-react";
@@ -39,7 +40,11 @@ import { useDisclosure } from "@mantine/hooks";
 
 const Signup: NextPage = () => {
   const [visible, { toggle }] = useDisclosure(false);
-  const signUpMutation = api.user.signUp.useMutation();
+  const signUpMutation = api.user.signUp.useMutation({
+    onSuccess: () => {
+      form.reset();
+    },
+  });
 
   const form = useForm({
     initialValues: {
@@ -73,109 +78,115 @@ const Signup: NextPage = () => {
       </Head>
 
       <Container size={420} my={40}>
-        <Title align="center" order={2}>
-          Create an account!
-        </Title>
-        <Text color="dimmed" size="sm" align="center" mt={5}>
-          Already have an account?{" "}
-          <Anchor size="sm" component={Link} href="/signin" truncate>
-            Sign in
-          </Anchor>
-        </Text>
-        <Paper
-          withBorder
-          shadow="md"
-          sx={(theme) => ({
-            padding: theme.spacing.sm,
-            [theme.fn.largerThan("xs")]: { padding: theme.spacing.xl },
-          })}
-          mt={30}
-          radius="md"
-        >
-          <form
-            onSubmit={form.onSubmit((values) => {
-              void (async () => {
-                await signUpMutation.mutateAsync({
-                  email: values.email,
-                  password: values.password,
-                  first_name: values.firstName,
-                  last_name: values.lastName,
-                });
-                form.reset();
-              })();
-            })}
-          >
-            <Stack spacing="sm">
-              <Group grow>
-                <TextInput
-                  placeholder="Enter your first name"
-                  withAsterisk
-                  label="First name"
-                  required
-                  {...form.getInputProps("firstName")}
-                  icon={<IconLetterCase size="1rem" />}
-                  disabled={signUpMutation.isLoading}
-                />
-                <TextInput
-                  placeholder="Enter your last name"
-                  withAsterisk
-                  label="Last name"
-                  {...form.getInputProps("lastName")}
-                  disabled={signUpMutation.isLoading}
-                  icon={<IconLetterCase size="1rem" />}
-                />
-              </Group>
+        {signUpMutation.isSuccess ? (
+          <Alert icon={<IconCheck />} title="Success!" color="green">
+            Your account has been created successfully! Check your email for a
+            verification link.
+          </Alert>
+        ) : (
+          <>
+            <Title align="center" order={2}>
+              Create an account!
+            </Title>
+            <Text color="dimmed" size="sm" align="center" mt={5}>
+              Already have an account?{" "}
+              <Anchor size="sm" component={Link} href="/signin" truncate>
+                Sign in
+              </Anchor>
+            </Text>
+            <Paper
+              withBorder
+              shadow="md"
+              sx={(theme) => ({
+                padding: theme.spacing.sm,
+                [theme.fn.largerThan("xs")]: { padding: theme.spacing.xl },
+              })}
+              mt={30}
+              radius="md"
+            >
+              <form
+                onSubmit={form.onSubmit((values) => {
+                  signUpMutation.mutate({
+                    email: values.email,
+                    password: values.password,
+                    first_name: values.firstName,
+                    last_name: values.lastName,
+                  });
+                })}
+              >
+                <Stack spacing="sm">
+                  <Group grow>
+                    <TextInput
+                      placeholder="Enter your first name"
+                      withAsterisk
+                      label="First name"
+                      required
+                      {...form.getInputProps("firstName")}
+                      icon={<IconLetterCase size="1rem" />}
+                      disabled={signUpMutation.isLoading}
+                    />
+                    <TextInput
+                      placeholder="Enter your last name"
+                      withAsterisk
+                      label="Last name"
+                      {...form.getInputProps("lastName")}
+                      disabled={signUpMutation.isLoading}
+                      icon={<IconLetterCase size="1rem" />}
+                    />
+                  </Group>
 
-              <TextInput
-                placeholder="Enter your email address"
-                type="email"
-                withAsterisk
-                label="Email"
-                required
-                icon={<IconAt size="1rem" />}
-                disabled={signUpMutation.isLoading}
-                {...form.getInputProps("email")}
-              />
+                  <TextInput
+                    placeholder="Enter your email address"
+                    type="email"
+                    withAsterisk
+                    label="Email"
+                    required
+                    icon={<IconAt size="1rem" />}
+                    disabled={signUpMutation.isLoading}
+                    {...form.getInputProps("email")}
+                  />
 
-              <PasswordInput
-                placeholder="Enter your password"
-                withAsterisk
-                label="Password"
-                required
-                visible={visible}
-                onVisibilityChange={toggle}
-                {...form.getInputProps("password")}
-                disabled={signUpMutation.isLoading}
-                icon={<IconLock size="1rem" />}
-              />
-              <PasswordInput
-                placeholder="Confirm your password"
-                withAsterisk
-                label="Confirm password"
-                required
-                visible={visible}
-                onVisibilityChange={toggle}
-                {...form.getInputProps("confirmPassword")}
-                disabled={signUpMutation.isLoading}
-                icon={<IconLock size="1rem" />}
-              />
+                  <PasswordInput
+                    placeholder="Enter your password"
+                    withAsterisk
+                    label="Password"
+                    required
+                    visible={visible}
+                    onVisibilityChange={toggle}
+                    {...form.getInputProps("password")}
+                    disabled={signUpMutation.isLoading}
+                    icon={<IconLock size="1rem" />}
+                  />
+                  <PasswordInput
+                    placeholder="Confirm your password"
+                    withAsterisk
+                    label="Confirm password"
+                    required
+                    visible={visible}
+                    onVisibilityChange={toggle}
+                    {...form.getInputProps("confirmPassword")}
+                    disabled={signUpMutation.isLoading}
+                    icon={<IconLock size="1rem" />}
+                  />
 
-              {signUpMutation.isError && (
-                <Alert
-                  icon={<IconAlertCircle size="1rem" />}
-                  title="Error"
-                  color="red"
-                >
-                  {signUpMutation.error.message}
-                </Alert>
-              )}
+                  {signUpMutation.isError && (
+                    <Alert
+                      icon={<IconAlertCircle size="1rem" />}
+                      title="Error"
+                      color="red"
+                    >
+                      {signUpMutation.error.message}
+                    </Alert>
+                  )}
 
-              <Button type="submit" loading={signUpMutation.isLoading}>
-                Sign up
-              </Button>
-            </Stack>
-          </form>
-        </Paper>
+                  <Button type="submit" loading={signUpMutation.isLoading}>
+                    Sign up
+                  </Button>
+                </Stack>
+              </form>
+            </Paper>
+          </>
+        )}
       </Container>
     </>
   );
