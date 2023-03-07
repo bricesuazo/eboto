@@ -15,6 +15,7 @@ import { Poppins } from "next/font/google";
 import { getCookie, setCookie } from "cookies-next";
 import { useHotkeys } from "@mantine/hooks";
 import AppShellComponent from "../components/AppShell";
+import { RouterTransition } from "../components/RouterTransition";
 
 interface Props extends AppProps {
   pageProps: {
@@ -51,7 +52,7 @@ const App: AppType<Props> = api.withTRPC(function App({
         <title>eBoto Mo</title>
         <meta
           name="viewport"
-          content="minimum-scale=1, initial-scale=1, w=device-width"
+          content="minimum-scale=1, initial-scale=1, width=device-width user-scalable=no"
         />
         <link
           rel="shortcut icon"
@@ -76,6 +77,7 @@ const App: AppType<Props> = api.withTRPC(function App({
             >
               <Notifications />
               <AppShellComponent>
+                <RouterTransition />
                 <Component {...props} />
               </AppShellComponent>
             </MantineProvider>
