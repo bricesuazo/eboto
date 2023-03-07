@@ -60,28 +60,28 @@ const App: AppType<Props> = api.withTRPC(function App({
         />
       </Head>
 
-      <SessionProvider session={session}>
-        <ColorSchemeProvider
-          colorScheme={colorScheme}
-          toggleColorScheme={toggleColorScheme}
-        >
-          <MantineProvider
-            withGlobalStyles
-            withNormalizeCSS
-            theme={{
-              colorScheme,
-              fontFamily: poppins.style.fontFamily,
-            }}
+      <ConfettiProvider>
+        <SessionProvider session={session}>
+          <ColorSchemeProvider
+            colorScheme={colorScheme}
+            toggleColorScheme={toggleColorScheme}
           >
-            <Notifications />
-            <ConfettiProvider>
+            <MantineProvider
+              withGlobalStyles
+              withNormalizeCSS
+              theme={{
+                colorScheme,
+                fontFamily: poppins.style.fontFamily,
+              }}
+            >
+              <Notifications />
               <AppShellComponent>
                 <Component {...props} />
               </AppShellComponent>
-            </ConfettiProvider>
-          </MantineProvider>
-        </ColorSchemeProvider>
-      </SessionProvider>
+            </MantineProvider>
+          </ColorSchemeProvider>
+        </SessionProvider>
+      </ConfettiProvider>
     </>
   );
 }) as AppType<Props>;

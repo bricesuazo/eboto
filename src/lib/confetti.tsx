@@ -18,6 +18,7 @@ export function ConfettiProvider({ children }: { children: React.ReactNode }) {
           height: "100%",
           top: 0,
           left: 0,
+          zIndex: 999999,
         }}
       />
       {children}
