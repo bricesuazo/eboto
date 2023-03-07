@@ -7,11 +7,11 @@ import {
   Text,
   Stack,
 } from "@mantine/core";
-import { useEffect } from "react";
 import { api } from "../../utils/api";
 import { notifications } from "@mantine/notifications";
 import { isEmail, useForm } from "@mantine/form";
 import { IconAlertCircle, IconAt, IconCheck } from "@tabler/icons-react";
+import { useDidUpdate } from "@mantine/hooks";
 
 const CreateVoterModal = ({
   isOpen,
@@ -46,10 +46,9 @@ const CreateVoterModal = ({
     },
   });
 
-  useEffect(() => {
+  useDidUpdate(() => {
     if (isOpen) {
       form.reset();
-    } else {
       createVoterMutation.reset();
     }
   }, [isOpen]);

@@ -8,7 +8,6 @@ import {
   Stack,
 } from "@mantine/core";
 import { api } from "../../utils/api";
-import { useEffect } from "react";
 import { notifications } from "@mantine/notifications";
 import {
   IconAlertCircle,
@@ -16,6 +15,7 @@ import {
   IconLetterCase,
 } from "@tabler/icons-react";
 import { hasLength, useForm } from "@mantine/form";
+import { useDidUpdate } from "@mantine/hooks";
 
 const CreatePositionModal = ({
   isOpen,
@@ -59,10 +59,9 @@ const CreatePositionModal = ({
     },
   });
 
-  useEffect(() => {
+  useDidUpdate(() => {
     if (isOpen) {
       form.reset();
-    } else {
       createPositionMutation.reset();
     }
   }, [isOpen]);

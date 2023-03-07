@@ -8,7 +8,6 @@ import {
   Text,
 } from "@mantine/core";
 import { api } from "../../utils/api";
-import { useEffect } from "react";
 import type { Partylist } from "@prisma/client";
 import { hasLength, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
@@ -17,6 +16,7 @@ import {
   IconCheck,
   IconLetterCase,
 } from "@tabler/icons-react";
+import { useDidUpdate } from "@mantine/hooks";
 
 const EditPartylistModal = ({
   isOpen,
@@ -68,7 +68,7 @@ const EditPartylistModal = ({
     },
   });
 
-  useEffect(() => {
+  useDidUpdate(() => {
     if (isOpen) {
       editPartylistMutation.reset();
     }

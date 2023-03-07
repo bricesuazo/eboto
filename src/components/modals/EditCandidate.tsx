@@ -9,7 +9,6 @@ import {
   Stack,
 } from "@mantine/core";
 import { api } from "../../utils/api";
-import { useEffect } from "react";
 import type { Candidate, Partylist, Position } from "@prisma/client";
 import { hasLength, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
@@ -21,6 +20,7 @@ import {
   IconUserSearch,
 } from "@tabler/icons-react";
 import { useRouter } from "next/router";
+import { useDidUpdate } from "@mantine/hooks";
 
 const EditCandidateModal = ({
   isOpen,
@@ -85,7 +85,7 @@ const EditCandidateModal = ({
     },
   });
 
-  useEffect(() => {
+  useDidUpdate(() => {
     if (isOpen) {
       editCandidateMutation.reset();
     }

@@ -9,7 +9,6 @@ import {
   Text,
 } from "@mantine/core";
 import { api } from "../../utils/api";
-import { useEffect } from "react";
 import type { Partylist, Position } from "@prisma/client";
 import { notifications } from "@mantine/notifications";
 import {
@@ -21,6 +20,7 @@ import {
 } from "@tabler/icons-react";
 import { hasLength, useForm } from "@mantine/form";
 import { useRouter } from "next/router";
+import { useDidUpdate } from "@mantine/hooks";
 
 const CreateCandidateModal = ({
   isOpen,
@@ -84,7 +84,7 @@ const CreateCandidateModal = ({
     },
   });
 
-  useEffect(() => {
+  useDidUpdate(() => {
     if (isOpen) {
       form.reset();
       createCandidateMutation.reset();
