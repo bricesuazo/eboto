@@ -84,6 +84,10 @@ const DashboardSettings = () =>
           await election.refetch();
         }
 
+        if (election.data?.name !== data.name) {
+          router.reload();
+        }
+
         form.resetDirty();
         notifications.show({
           title: "Election settings updated.",

@@ -7,7 +7,6 @@ import {
   Select,
   Button,
   Text,
-  Flex,
 } from "@mantine/core";
 import { IconFingerprint, IconLogout, IconPlus } from "@tabler/icons-react";
 import { signOut } from "next-auth/react";
