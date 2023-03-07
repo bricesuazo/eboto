@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { sendEmail } from "../../../utils/sendEmail";
@@ -162,6 +163,19 @@ export const userRouter = createTRPCRouter({
           email: input,
         },
       });
+
+      if (!user.emailVerified) {
+        await sendEmail({
+          type: "EMAIL_VERIFICATION",
+          email: user.email,
+          userId: user.id,
+        });
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message:
+            "Email is not verified. Please verify your email first. We have sent you a new verification email.",
+        });
+      }
 
       await sendEmail({
         type: "PASSWORD_RESET",
