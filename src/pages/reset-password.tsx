@@ -14,24 +14,24 @@ import {
 } from "@mantine/core";
 import { useRouter } from "next/router";
 import { api } from "../utils/api";
-import { useEffect } from "react";
 import { isEmail, isNotEmpty, useForm } from "@mantine/form";
 import {
   IconAlertCircle,
   IconArrowLeft,
   IconAt,
-  IconCircleCheck,
+  IconCheck,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { getServerAuthSession } from "../server/auth";
-import type{ GetServerSideProps, GetServerSidePropsContext } from "next";
+import type { GetServerSideProps, GetServerSidePropsContext } from "next";
+import Head from "next/head";
 
 const ResetPassword = () => {
   const router = useRouter();
 
   const form = useForm({
     initialValues: {
-      email: "",
+      email: router.query.email?.toString() || "",
     },
     validateInputOnBlur: true,
     validate: {
@@ -39,29 +39,30 @@ const ResetPassword = () => {
     },
   });
 
-  useEffect(() => {
-    if (router.query.email && typeof router.query.email === "string") {
-      form.setValues({ email: router.query.email });
-    }
-  }, [router.query.email]);
-
   const requestResetPasswordMutation =
-    api.user.requestResetPassword.useMutation();
+    api.user.requestResetPassword.useMutation({
+      onSuccess: () => {
+        form.reset();
+      },
+    });
 
   return (
-    <Container size={420} my={40}>
-      {requestResetPasswordMutation.isSuccess ? (
-        <Alert icon={<IconCircleCheck />} title="Success!" color="green">
-          Please check your email to reset your password.
-        </Alert>
-      ) : (
-        <>
-          <Title align="center" order={2}>
-            Forgot your password?
-          </Title>
-          <Text color="dimmed" size="sm" align="center" mt={5}>
-            Enter your email to get a reset link
-          </Text>
+    <>
+      <Head>
+        <title>Reset your password | eBoto Mo</title>
+      </Head>
+      <Container size={420} my={40}>
+        <Title align="center" order={2}>
+          Forgot your password?
+        </Title>
+        <Text color="dimmed" size="sm" align="center" mt={5} mb={30}>
+          Enter your email to get a reset link
+        </Text>
+        {requestResetPasswordMutation.isSuccess ? (
+          <Alert icon={<IconCheck />} title="Success!" color="green">
+            Please check your email to reset your password.
+          </Alert>
+        ) : (
           <Paper
             withBorder
             shadow="md"
@@ -69,15 +70,11 @@ const ResetPassword = () => {
               padding: theme.spacing.sm,
               [theme.fn.largerThan("xs")]: { padding: theme.spacing.xl },
             })}
-            mt={30}
             radius="md"
           >
             <form
               onSubmit={form.onSubmit((data) => {
-                void (async () => {
-                  await requestResetPasswordMutation.mutateAsync(data.email);
-                  form.reset();
-                })();
+                requestResetPasswordMutation.mutate(data.email);
               })}
             >
               <Stack spacing="sm">
@@ -89,14 +86,11 @@ const ResetPassword = () => {
                   required
                   icon={<IconAt size="1rem" />}
                   {...form.getInputProps("email")}
+                  disabled={requestResetPasswordMutation.isLoading}
                 />
 
                 {requestResetPasswordMutation.isError && (
-                  <Alert
-                    icon={<IconAlertCircle size="1rem" />}
-                    title="Reset password error"
-                    color="red"
-                  >
+                  <Alert icon={<IconAlertCircle />} title="Error" color="red">
                     {requestResetPasswordMutation.error?.message}
                   </Alert>
                 )}
@@ -124,7 +118,7 @@ const ResetPassword = () => {
                     <Center inline>
                       <IconArrowLeft size={rem(12)} stroke={1.5} />
                       <Text size="xs" ml={5}>
-                        Back to the login page
+                        Back to login page
                       </Text>
                     </Center>
                   </Anchor>
@@ -134,6 +128,8 @@ const ResetPassword = () => {
                         width: "100%",
                       },
                     })}
+                    type="submit"
+                    loading={requestResetPasswordMutation.isLoading}
                   >
                     Reset password
                   </Button>
@@ -141,9 +137,9 @@ const ResetPassword = () => {
               </Stack>
             </form>
           </Paper>
-        </>
-      )}
-    </Container>
+        )}
+      </Container>
+    </>
   );
 };
 
