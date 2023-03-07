@@ -1,7 +1,6 @@
-import { Button, Container, Group, Text } from "@mantine/core";
+import { Button, Group, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
-import ElectionDashboardHeader from "../../../components/ElectionDashboardHeader";
 import CreatePartylistModal from "../../../components/modals/CreatePartylist";
 import PartylistCard from "../../../components/PartylistCard";
 import { api } from "../../../utils/api";
@@ -32,7 +31,6 @@ const DashboardPartylist = () => {
         electionId={partylists.data.election.id}
         refetch={partylists.refetch}
       />
-      <ElectionDashboardHeader slug={partylists.data.election.slug} />
       <Button onClick={open} mb={16}>
         Add partylist
       </Button>

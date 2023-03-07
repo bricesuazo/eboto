@@ -61,6 +61,7 @@ const HeaderComponent = ({
                 onClick={() => setIsNavbarOpenOpened((o) => !o)}
                 size="sm"
                 color={theme.colors.gray[6]}
+                py="xl"
               />
             </MediaQuery>
           )}
@@ -73,7 +74,9 @@ const HeaderComponent = ({
                   width={32}
                   height={32}
                 />
-                <Text weight={600}>eBoto Mo</Text>
+                {!router.pathname.includes("/dashboard") && (
+                  <Text weight={600}>eBoto Mo</Text>
+                )}
               </Group>
             </UnstyledButton>
 
@@ -115,21 +118,22 @@ const HeaderComponent = ({
                 opened={opened}
                 onChange={setOpened}
                 withinPortal
+                width={200}
               >
                 <Menu.Target>
-                  <UnstyledButton>
+                  <UnstyledButton py="md">
                     <Group spacing="xs">
                       <Box
                         sx={{
                           position: "relative",
                           borderRadius: "50%",
                           overflow: "hidden",
-                          width: 32,
-                          height: 32,
+                          width: 24,
+                          height: 24,
 
-                          "@media (max-width: 30em)": {
-                            width: 24,
-                            height: 24,
+                          [theme.fn.largerThan("sm")]: {
+                            width: 32,
+                            height: 32,
                           },
                         }}
                       >
@@ -145,9 +149,9 @@ const HeaderComponent = ({
                         size="xs"
                         truncate
                         sx={{
-                          width: 64,
-                          "@media (max-width: 30em)": {
-                            width: 42,
+                          width: 42,
+                          [theme.fn.largerThan("sm")]: {
+                            width: 64,
                           },
                         }}
                       >
@@ -189,9 +193,10 @@ const HeaderComponent = ({
                   </Menu.Item>
                   <Menu.Item
                     onClick={() =>
-                      signOut({
-                        callbackUrl: "/signin",
-                      })
+                      void (async () =>
+                        await signOut({
+                          callbackUrl: "/signin",
+                        }))()
                     }
                     icon={<IconTransitionLeft size={16} />}
                   >

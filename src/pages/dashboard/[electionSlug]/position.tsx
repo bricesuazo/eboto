@@ -1,7 +1,6 @@
 import { Button, Group, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
-import ElectionDashboardHeader from "../../../components/ElectionDashboardHeader";
 import CreatePositionModal from "../../../components/modals/CreatePosition";
 import Position from "../../../components/Position";
 import { api } from "../../../utils/api";
@@ -33,7 +32,6 @@ const DashboardPosition = () => {
         order={positions.data.positions.length}
         refetch={positions.refetch}
       />
-      <ElectionDashboardHeader slug={positions.data.election.slug} />
       <Button onClick={open} mb={4}>
         Add position
       </Button>
