@@ -287,6 +287,10 @@ const DashboardSettings = () =>
               </Stack>
 
               <Select
+                label="Election publicity"
+                withAsterisk
+                withinPortal
+                required
                 {...form.getInputProps("publicity")}
                 data={["PRIVATE", "VOTER", "PUBLIC"].map((p) => ({
                   value: p,

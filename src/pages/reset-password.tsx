@@ -23,6 +23,8 @@ import {
   IconCircleCheck,
 } from "@tabler/icons-react";
 import Link from "next/link";
+import { getServerAuthSession } from "../server/auth";
+import type{ GetServerSideProps, GetServerSidePropsContext } from "next";
 
 const ResetPassword = () => {
   const router = useRouter();
@@ -146,3 +148,22 @@ const ResetPassword = () => {
 };
 
 export default ResetPassword;
+
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const session = await getServerAuthSession(context);
+
+  if (session) {
+    return {
+      redirect: {
+        destination: "/dashboard",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
