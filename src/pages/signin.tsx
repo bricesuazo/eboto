@@ -60,7 +60,9 @@ const Signin: NextPage = () => {
       </Head>
 
       <Container size={420} my={40}>
-        <Title align="center">Welcome back!</Title>
+        <Title align="center" order={2}>
+          Welcome back!
+        </Title>
         <Text color="dimmed" size="sm" align="center" mt={5}>
           Don&apos;t have an account yet?{" "}
           <Anchor size="sm" component={Link} href="/signup" truncate>

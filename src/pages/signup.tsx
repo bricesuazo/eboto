@@ -9,12 +9,14 @@ import {
   Alert,
   Anchor,
   Button,
-  Center,
   Container,
   Group,
+  Paper,
   PasswordInput,
   Stack,
+  Text,
   TextInput,
+  Title,
 } from "@mantine/core";
 
 import { getServerAuthSession } from "../server/auth";
@@ -70,91 +72,110 @@ const Signup: NextPage = () => {
         <title>Create an account | eBoto Mo</title>
       </Head>
 
-      <Container size="xs">
-        <form
-          onSubmit={form.onSubmit((values) => {
-            void (async () => {
-              await signUpMutation.mutateAsync({
-                email: values.email,
-                password: values.password,
-                first_name: values.firstName,
-                last_name: values.lastName,
-              });
-              form.reset();
-            })();
+      <Container size={420} my={40}>
+        <Title align="center" order={2}>
+          Create an account!
+        </Title>
+        <Text color="dimmed" size="sm" align="center" mt={5}>
+          Already have an account?{" "}
+          <Anchor size="sm" component={Link} href="/signin" truncate>
+            Sign in
+          </Anchor>
+        </Text>
+        <Paper
+          withBorder
+          shadow="md"
+          sx={(theme) => ({
+            padding: theme.spacing.sm,
+            [theme.fn.largerThan("xs")]: { padding: theme.spacing.xl },
           })}
+          mt={30}
+          radius="md"
         >
-          <Stack spacing="sm">
-            <Group grow>
+          <form
+            onSubmit={form.onSubmit((values) => {
+              void (async () => {
+                await signUpMutation.mutateAsync({
+                  email: values.email,
+                  password: values.password,
+                  first_name: values.firstName,
+                  last_name: values.lastName,
+                });
+                form.reset();
+              })();
+            })}
+          >
+            <Stack spacing="sm">
+              <Group grow>
+                <TextInput
+                  placeholder="Enter your first name"
+                  withAsterisk
+                  label="First name"
+                  required
+                  {...form.getInputProps("firstName")}
+                  icon={<IconLetterCase size="1rem" />}
+                  disabled={signUpMutation.isLoading}
+                />
+                <TextInput
+                  placeholder="Enter your last name"
+                  withAsterisk
+                  label="Last name"
+                  {...form.getInputProps("lastName")}
+                  disabled={signUpMutation.isLoading}
+                  icon={<IconLetterCase size="1rem" />}
+                />
+              </Group>
+
               <TextInput
-                placeholder="Enter your first name"
+                placeholder="Enter your email address"
+                type="email"
                 withAsterisk
-                label="First name"
+                label="Email"
                 required
-                {...form.getInputProps("firstName")}
-                icon={<IconLetterCase size="1rem" />}
+                icon={<IconAt size="1rem" />}
+                disabled={signUpMutation.isLoading}
+                {...form.getInputProps("email")}
               />
-              <TextInput
-                placeholder="Enter your last name"
+
+              <PasswordInput
+                placeholder="Enter your password"
                 withAsterisk
-                label="Last name"
-                {...form.getInputProps("lastName")}
-                icon={<IconLetterCase size="1rem" />}
+                label="Password"
+                required
+                visible={visible}
+                onVisibilityChange={toggle}
+                {...form.getInputProps("password")}
+                disabled={signUpMutation.isLoading}
+                icon={<IconLock size="1rem" />}
               />
-            </Group>
+              <PasswordInput
+                placeholder="Confirm your password"
+                withAsterisk
+                label="Confirm password"
+                required
+                visible={visible}
+                onVisibilityChange={toggle}
+                {...form.getInputProps("confirmPassword")}
+                disabled={signUpMutation.isLoading}
+                icon={<IconLock size="1rem" />}
+              />
 
-            <TextInput
-              placeholder="Enter your email address"
-              type="email"
-              withAsterisk
-              label="Email"
-              required
-              icon={<IconAt size="1rem" />}
-              {...form.getInputProps("email")}
-            />
+              {signUpMutation.isError && (
+                <Alert
+                  icon={<IconAlertCircle size="1rem" />}
+                  title="Error"
+                  color="red"
+                >
+                  {signUpMutation.error.message}
+                </Alert>
+              )}
 
-            <PasswordInput
-              placeholder="Enter your password"
-              withAsterisk
-              label="Password"
-              required
-              visible={visible}
-              onVisibilityChange={toggle}
-              {...form.getInputProps("password")}
-              icon={<IconLock size="1rem" />}
-            />
-            <PasswordInput
-              placeholder="Confirm your password"
-              withAsterisk
-              label="Confirm password"
-              required
-              visible={visible}
-              onVisibilityChange={toggle}
-              {...form.getInputProps("confirmPassword")}
-              icon={<IconLock size="1rem" />}
-            />
-
-            {signUpMutation.isError && (
-              <Alert
-                icon={<IconAlertCircle size="1rem" />}
-                title="Error"
-                color="red"
-              >
-                {signUpMutation.error.message}
-              </Alert>
-            )}
-
-            <Button type="submit" loading={signUpMutation.isLoading}>
-              Sign up
-            </Button>
-
-            <Center>
-              <Anchor component={Link} href="/signin" size="sm">
-                Already have an account? Sign in
-              </Anchor>
-            </Center>
-          </Stack>
-        </form>
+              <Button type="submit" loading={signUpMutation.isLoading}>
+                Sign up
+              </Button>
+            </Stack>
+          </form>
+        </Paper>
       </Container>
     </>
   );
