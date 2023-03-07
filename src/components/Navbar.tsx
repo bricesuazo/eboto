@@ -114,17 +114,33 @@ const NavbarComponent = ({
           size="md"
           data={
             elections.data
-              ? elections.data.map((election) => ({
-                  label: election.name,
-                  value: election.slug,
-                  group:
-                    election.start_date > new Date()
-                      ? "Upcoming Elections"
-                      : election.end_date < new Date()
-                      ? "Past Elections"
-                      : "Ongoing Elections",
-                  selected: election.slug === router.query.electionSlug,
-                }))
+              ? elections.data
+                  .sort((a, b) => b.end_date.getTime() - a.end_date.getTime())
+                  .filter(
+                    (election) =>
+                      election.start_date < new Date() &&
+                      election.end_date > new Date()
+                  )
+                  .concat(
+                    elections.data.filter(
+                      (election) =>
+                        !(
+                          election.start_date < new Date() &&
+                          election.end_date > new Date()
+                        )
+                    )
+                  )
+                  .map((election) => ({
+                    label: election.name,
+                    value: election.slug,
+                    group:
+                      election.start_date > new Date()
+                        ? "Upcoming Elections"
+                        : election.end_date < new Date()
+                        ? "Past Elections"
+                        : "Ongoing Elections",
+                    selected: election.slug === router.query.electionSlug,
+                  }))
               : []
           }
           itemComponent={(props: React.ComponentPropsWithoutRef<"button">) => (
