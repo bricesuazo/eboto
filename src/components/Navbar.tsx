@@ -122,7 +122,6 @@ const NavbarComponent = ({
           <Button
             onClick={open}
             w="100%"
-            variant="gradient"
             leftIcon={<IconPlus size="1.25rem" />}
           >
             Create election

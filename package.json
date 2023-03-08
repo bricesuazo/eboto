@@ -59,6 +59,7 @@
     "react-dom": "^18.2.0",
     "react-email": "1.7.13",
     "react-moment": "^1.1.3",
+    "react-wrap-balancer": "^0.4.0",
     "superjson": "1.9.1",
     "zod": "^3.20.2"
   },
