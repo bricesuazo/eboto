@@ -13,7 +13,7 @@ import { ConfettiProvider } from "../lib/confetti";
 import { api } from "../utils/api";
 import { Poppins } from "next/font/google";
 import { getCookie, setCookie } from "cookies-next";
-import { useHotkeys } from "@mantine/hooks";
+import { useDocumentVisibility, useFavicon, useHotkeys } from "@mantine/hooks";
 import AppShellComponent from "../components/AppShell";
 import { RouterTransition } from "../components/RouterTransition";
 
@@ -46,17 +46,23 @@ const App: AppType<Props> = api.withTRPC(function App({
 
   useHotkeys([["alt+d", () => toggleColorScheme()]]);
 
+  useFavicon(
+    useDocumentVisibility() === "visible"
+      ? "/images/logo-4/favicon.ico"
+      : "/images/logo-2/favicon.ico"
+  );
+
   return (
     <>
       <Head>
-        <title>eBoto Mo</title>
+        <title>eBoto Mo - Your One-Stop Online Voting Solution</title>
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width user-scalable=no"
         />
         <link
           rel="shortcut icon"
-          href="/images/favicon.ico"
+          href="/images/logo-4/favicon.ico"
           type="image/x-icon"
         />
       </Head>
