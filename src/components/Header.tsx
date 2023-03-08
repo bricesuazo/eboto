@@ -76,6 +76,11 @@ const HeaderComponent = ({
                 />
                 <Text
                   weight={600}
+                  color={
+                    colorScheme === "dark"
+                      ? theme.colors.gray[0]
+                      : theme.colors.gray[9]
+                  }
                   sx={(theme) => ({
                     [theme.fn.smallerThan("xs")]: { display: "none" },
                   })}

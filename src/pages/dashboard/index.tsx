@@ -26,7 +26,6 @@ const DashboardPage = () => {
         <Stack spacing="xl">
           <Button
             onClick={open}
-            variant="gradient"
             leftIcon={<IconPlus size="1.25rem" />}
             sx={(theme) => ({
               [theme.fn.largerThan("xs")]: { width: "fit-content" },
