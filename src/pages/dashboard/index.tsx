@@ -1,10 +1,18 @@
-import { Box, Button, Container, Flex, Text } from "@mantine/core";
+import {
+  Box,
+  Button,
+  Container,
+  Group,
+  Text,
+  Title,
+  Stack,
+  Skeleton,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import Link from "next/link";
-import Moment from "react-moment";
+import { IconPlus } from "@tabler/icons-react";
+import DashboardCard from "../../components/DashboardCard";
 import CreateElectionModal from "../../components/modals/CreateElection";
 import { api } from "../../utils/api";
-import { convertNumberToHour } from "../../utils/convertNumberToHour";
 
 const DashboardPage = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -15,59 +23,101 @@ const DashboardPage = () => {
     <>
       <CreateElectionModal isOpen={opened} onClose={close} />
       <Container>
-        <Button onClick={open}>Create election</Button>
+        <Stack spacing="xl">
+          <Button
+            onClick={open}
+            variant="gradient"
+            leftIcon={<IconPlus size="1.25rem" />}
+            sx={(theme) => ({
+              [theme.fn.largerThan("xs")]: { width: "fit-content" },
+            })}
+            size="md"
+          >
+            Create election
+          </Button>
 
-        <Text>My elections</Text>
-        <Flex gap={2}>
-          {!myElections.data || myElections.isLoading ? (
-            <Text>Loading...</Text>
-          ) : myElections.data.length === 0 ? (
-            <Text>No elections found</Text>
-          ) : (
-            myElections.data.map((election) => (
-              <Link href={`/dashboard/${election.slug}`} key={election.id}>
-                <Box px={4} py={2}>
-                  <Text weight="bold">{election.name}</Text>
-                  <Text size="sm" color="GrayText">
-                    <Moment format="YYYY/MM/D hA">{election.start_date}</Moment>
-                    {" - "}
-                    <Moment format="YYYY/MM/D hA">{election.end_date}</Moment>
-                  </Text>
+          <Box>
+            <Title order={2}>My elections</Title>
+            <Text
+              size="xs"
+              color="grayText"
+              sx={(theme) => ({
+                marginBottom: theme.spacing.xs,
+              })}
+            >
+              You can manage the elections below.
+            </Text>
+            <Group spacing="xs">
+              {!myElections.data || myElections.isLoading ? (
+                [...Array(3).keys()].map((i) => (
+                  <Skeleton
+                    key={i}
+                    width={264}
+                    height={72}
+                    radius="md"
+                    sx={(theme) => ({
+                      [theme.fn.smallerThan("xs")]: { width: "100%" },
+                    })}
+                  />
+                ))
+              ) : myElections.data.length === 0 ? (
+                <Box h={72}>
+                  <Text>No elections found</Text>
                 </Box>
-              </Link>
-            ))
-          )}
-        </Flex>
+              ) : (
+                myElections.data.map((election) => (
+                  <DashboardCard
+                    election={election}
+                    key={election.id}
+                    type="manage"
+                  />
+                ))
+              )}
+            </Group>
+          </Box>
 
-        <Text>My votes</Text>
-        <Flex gap={2}>
-          {!myElectionVote.data || myElectionVote.isLoading ? (
-            <Text>Loading...</Text>
-          ) : myElectionVote.data.length === 0 ? (
-            <Text>No vote elections found</Text>
-          ) : (
-            myElectionVote.data?.map((election) => (
-              <Link
-                href={`/${election.slug}`}
-                key={election.id}
-                target="_blank"
-              >
-                <Box px={4} py={2}>
-                  <Text weight="bold">{election.name}</Text>
-                  <Text size="sm" color="GrayText">
-                    <Moment format="YYYY/MM/D hA">{election.start_date}</Moment>
-                    {" - "}
-                    <Moment format="YYYY/MM/D hA">{election.end_date}</Moment>
-                  </Text>
-                  <Text size="sm" color="GrayText">
-                    Open from {convertNumberToHour(election.voting_start)} -{" "}
-                    {convertNumberToHour(election.voting_end)}
-                  </Text>
+          <Box>
+            <Title order={2}>My elections I can vote in</Title>
+            <Text
+              size="xs"
+              color="grayText"
+              sx={(theme) => ({
+                marginBottom: theme.spacing.xs,
+              })}
+            >
+              You can vote in the elections below. You can only vote once per
+              election.
+            </Text>
+
+            <Group spacing="xs">
+              {!myElectionVote.data || myElectionVote.isLoading ? (
+                [...Array(3).keys()].map((i) => (
+                  <Skeleton
+                    key={i}
+                    width={264}
+                    height={72}
+                    radius="md"
+                    sx={(theme) => ({
+                      [theme.fn.smallerThan("xs")]: { width: "100%" },
+                    })}
+                  />
+                ))
+              ) : myElectionVote.data.length === 0 ? (
+                <Box h={72}>
+                  <Text>No vote elections found</Text>
                 </Box>
-              </Link>
-            ))
-          )}
-        </Flex>
+              ) : (
+                myElectionVote.data.map((election) => (
+                  <DashboardCard
+                    election={election}
+                    key={election.id}
+                    type="vote"
+                  />
+                ))
+              )}
+            </Group>
+          </Box>
+        </Stack>
       </Container>
     </>
   );

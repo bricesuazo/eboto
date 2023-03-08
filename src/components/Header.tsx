@@ -74,9 +74,14 @@ const HeaderComponent = ({
                   width={32}
                   height={32}
                 />
-                {!router.pathname.includes("/dashboard") && (
-                  <Text weight={600}>eBoto Mo</Text>
-                )}
+                <Text
+                  weight={600}
+                  sx={(theme) => ({
+                    [theme.fn.smallerThan("xs")]: { display: "none" },
+                  })}
+                >
+                  eBoto Mo
+                </Text>
               </Group>
             </UnstyledButton>
 
