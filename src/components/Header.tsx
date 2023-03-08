@@ -66,7 +66,10 @@ const HeaderComponent = ({
             </MediaQuery>
           )}
           <Group position="apart" w="100%" spacing={0}>
-            <UnstyledButton component={Link} href="/">
+            <UnstyledButton
+              component={Link}
+              href={status === "authenticated" ? "/dashboard" : "/"}
+            >
               <Group spacing={4}>
                 <Image
                   src="/images/eboto-mo-logo.png"

@@ -37,7 +37,7 @@ const DashboardCard = ({
         [theme.fn.smallerThan("xs")]: { width: "100%" },
 
         "&:focus": {
-          boxShadow: `0 0 0 2px ${theme.colors.green[6]}`,
+          boxShadow: `0 0 0 2px ${theme.primaryColor}`,
         },
 
         "&:hover": {

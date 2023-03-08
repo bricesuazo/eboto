@@ -3,10 +3,10 @@ import {
   UnstyledButton,
   getStylesRef,
   createStyles,
-  rem,
   Select,
   Button,
   Text,
+  Divider,
 } from "@mantine/core";
 import { IconFingerprint, IconLogout, IconPlus } from "@tabler/icons-react";
 import { signOut } from "next-auth/react";
@@ -22,6 +22,14 @@ const useStyles = createStyles((theme) => ({
   navbar: {
     backgroundColor:
       theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
+  },
+  divider: {
+    backgroundColor:
+      theme.colorScheme === "dark"
+        ? theme.colors.gray[1]
+        : theme.colors.gray[0],
+
+    margin: `${theme.spacing.lg} 0`,
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -77,13 +85,6 @@ const useStyles = createStyles((theme) => ({
       },
     },
   },
-
-  footer: {
-    borderTop: `${rem(1)} solid ${
-      theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]
-    }`,
-    paddingTop: theme.spacing.md,
-  },
 }));
 
 const NavbarComponent = ({
@@ -118,7 +119,7 @@ const NavbarComponent = ({
         p="md"
         className={classes.navbar}
       >
-        <Navbar.Section mb="md">
+        <Navbar.Section>
           <Button
             onClick={open}
             w="100%"
@@ -127,6 +128,7 @@ const NavbarComponent = ({
             Create election
           </Button>
         </Navbar.Section>
+        <Divider className={classes.divider} />
 
         <Navbar.Section mb="md">
           <Select
@@ -244,7 +246,8 @@ const NavbarComponent = ({
             </UnstyledButton>
           ))}
         </Navbar.Section>
-        <Navbar.Section className={classes.footer}>
+        <Divider className={classes.divider} />
+        <Navbar.Section>
           <UnstyledButton
             className={classes.link}
             onClick={() =>

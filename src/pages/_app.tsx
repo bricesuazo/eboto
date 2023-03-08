@@ -74,15 +74,7 @@ const App: AppType<Props> = api.withTRPC(function App({
               theme={{
                 colorScheme,
                 fontFamily: poppins.style.fontFamily,
-
-                // buttons' default color
-                components: {
-                  Button: {
-                    defaultProps: {
-                      color: "green",
-                    },
-                  },
-                },
+                primaryColor: "green",
               }}
             >
               <Notifications />
