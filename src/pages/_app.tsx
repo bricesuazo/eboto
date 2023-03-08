@@ -60,11 +60,6 @@ const App: AppType<Props> = api.withTRPC(function App({
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width user-scalable=no"
         />
-        <link
-          rel="shortcut icon"
-          href="/images/logo-4/favicon.ico"
-          type="image/x-icon"
-        />
       </Head>
 
       <ConfettiProvider>
