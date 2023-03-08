@@ -207,14 +207,6 @@ export const getServerSideProps: GetServerSideProps = async (
         },
       };
     }
-
-    return {
-      props: {
-        isOngoing,
-        hasVoted: !!vote || !session,
-        election,
-      },
-    };
   }
 
   return {
