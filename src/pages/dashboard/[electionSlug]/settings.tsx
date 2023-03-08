@@ -310,7 +310,6 @@ const DashboardSettings = () => {
 
             <Group position="apart">
               <Button
-                color="blue"
                 type="submit"
                 loading={updateElectionMutation.isLoading}
                 disabled={!form.isDirty() || !form.isValid()}

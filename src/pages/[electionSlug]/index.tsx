@@ -19,9 +19,11 @@ import { convertNumberToHour } from "../../utils/convertNumberToHour";
 const ElectionPage = ({
   election,
   hasVoted,
+  type,
 }: {
   election: Election;
   hasVoted: boolean;
+  type: "ongoing" | "finished";
 }) => {
   const positions = api.election.getElectionVotingPageData.useQuery(
     election.id,
@@ -58,7 +60,9 @@ const ElectionPage = ({
               {convertNumberToHour(election.voting_end)}
             </Text>
 
-            {hasVoted ? (
+            {type === "finished" ? (
+              <Text color="red">Voting is not yet open</Text>
+            ) : hasVoted ? (
               <Button component={Link} href={`/${election.slug}/realtime`}>
                 Realtime count
               </Button>
@@ -124,6 +128,14 @@ export const getServerSideProps: GetServerSideProps = async (
 
   if (!election) return { notFound: true };
 
+  const type =
+    (new Date(election.start_date).getTime() <= new Date().getTime() &&
+      new Date(election.end_date).getTime() >= new Date().getTime()) ||
+    (election.voting_start <= new Date().getHours() &&
+      election.voting_end >= new Date().getHours())
+      ? "ongoing"
+      : "finished";
+
   if (election.publicity === "PRIVATE") {
     if (!session)
       return { redirect: { destination: "/signin", permanent: false } };
@@ -139,6 +151,7 @@ export const getServerSideProps: GetServerSideProps = async (
 
     return {
       props: {
+        type,
         hasVoted: true,
         election,
       },
@@ -157,6 +170,7 @@ export const getServerSideProps: GetServerSideProps = async (
     if (vote) {
       return {
         props: {
+          type,
           hasVoted: true,
           election,
         },
@@ -164,6 +178,7 @@ export const getServerSideProps: GetServerSideProps = async (
     } else {
       return {
         props: {
+          type,
           hasVoted: false,
           election,
         },
@@ -179,6 +194,7 @@ export const getServerSideProps: GetServerSideProps = async (
 
     return {
       props: {
+        type,
         hasVoted: !!vote || !session,
         election,
       },
@@ -187,6 +203,7 @@ export const getServerSideProps: GetServerSideProps = async (
 
   return {
     props: {
+      type,
       hasVoted: true,
       election,
     },

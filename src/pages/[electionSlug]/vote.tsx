@@ -153,6 +153,23 @@ export const getServerSideProps: GetServerSideProps = async (
 
   if (!election) return { notFound: true };
 
+  if (
+    !(
+      new Date(election.start_date).getTime() <= new Date().getTime() &&
+      new Date(election.end_date).getTime() >= new Date().getTime()
+    ) ||
+    !(
+      election.voting_start <= new Date().getHours() &&
+      election.voting_end >= new Date().getHours()
+    )
+  )
+    return {
+      redirect: {
+        destination: `/${election.slug}`,
+        permanent: false,
+      },
+    };
+
   if (election.publicity === "PRIVATE") {
     if (!session)
       return { redirect: { destination: "/signin", permanent: false } };
@@ -191,24 +208,22 @@ export const getServerSideProps: GetServerSideProps = async (
         },
       };
   } else if (election.publicity === "PUBLIC") {
+    if (!session)
+      return {
+        redirect: { destination: `/${election.slug}`, permanent: false },
+      };
+
     const vote = await prisma.vote.findFirst({
       where: {
         electionId: election.id,
+        voterId: session.user.id,
       },
     });
-
-    if (!session)
-      return {
-        redirect: {
-          destination: `/${election.slug}`,
-          permanent: false,
-        },
-      };
 
     if (vote)
       return {
         redirect: {
-          destination: `/${election.slug}/realtime`,
+          destination: `/${election.slug}`,
           permanent: false,
         },
       };

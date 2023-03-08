@@ -492,8 +492,8 @@ export const electionRouter = createTRPCRouter({
         slug: z.string(),
         start_date: z.date(),
         end_date: z.date(),
-        voting_start: z.number().nullable(),
-        voting_end: z.number().nullable(),
+        voting_start: z.number(),
+        voting_end: z.number(),
         publicity: z.enum(["PUBLIC", "VOTER", "PRIVATE"]),
       })
     )
@@ -556,8 +556,8 @@ export const electionRouter = createTRPCRouter({
           slug: input.slug.trim().toLowerCase(),
           start_date: input.start_date,
           end_date: input.end_date,
-          voting_start: input.voting_start ? input.voting_start : undefined,
-          voting_end: input.voting_end ? input.voting_end : undefined,
+          voting_start: input.voting_start,
+          voting_end: input.voting_end,
           publicity: input.publicity,
         },
       });

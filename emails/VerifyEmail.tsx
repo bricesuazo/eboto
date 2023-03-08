@@ -15,9 +15,14 @@ interface VerifyEmailProps {
   token: string;
 }
 
-const baseUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+const baseUrl =
+  process.env.VERCEL_ENV === "production"
+    ? "https://eboto-mo.com"
+    : process.env.VERCEL_ENV === "preview"
+    ? "https://eboto-mo-git-dev-bricesuazo.vercel.app/"
+    : process.env.VERCEL_ENV === "development"
+    ? "http://localhost:3000"
+    : "https://eboto-mo.com";
 
 export default function VerifyEmail({ token }: VerifyEmailProps) {
   return (
