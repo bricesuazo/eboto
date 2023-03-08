@@ -19,11 +19,11 @@ import { convertNumberToHour } from "../../utils/convertNumberToHour";
 const ElectionPage = ({
   election,
   hasVoted,
-  type,
+  isOngoing,
 }: {
   election: Election;
   hasVoted: boolean;
-  type: "ongoing" | "finished";
+  isOngoing: boolean;
 }) => {
   const positions = api.election.getElectionVotingPageData.useQuery(
     election.id,
@@ -60,12 +60,12 @@ const ElectionPage = ({
               {convertNumberToHour(election.voting_end)}
             </Text>
 
-            {type === "finished" ? (
-              <Text color="red">Voting is not yet open</Text>
-            ) : hasVoted ? (
+            {hasVoted ? (
               <Button component={Link} href={`/${election.slug}/realtime`}>
                 Realtime count
               </Button>
+            ) : !isOngoing ? (
+              <Text color="red">Voting is not yet open</Text>
             ) : (
               <Button component={Link} href={`/${election.slug}/vote`}>
                 Vote now!
@@ -128,13 +128,11 @@ export const getServerSideProps: GetServerSideProps = async (
 
   if (!election) return { notFound: true };
 
-  const type =
+  const isOngoing =
     (new Date(election.start_date).getTime() <= new Date().getTime() &&
       new Date(election.end_date).getTime() >= new Date().getTime()) ||
     (election.voting_start <= new Date().getHours() &&
-      election.voting_end >= new Date().getHours())
-      ? "ongoing"
-      : "finished";
+      election.voting_end >= new Date().getHours());
 
   if (election.publicity === "PRIVATE") {
     if (!session)
@@ -151,7 +149,7 @@ export const getServerSideProps: GetServerSideProps = async (
 
     return {
       props: {
-        type,
+        isOngoing,
         hasVoted: true,
         election,
       },
@@ -170,7 +168,7 @@ export const getServerSideProps: GetServerSideProps = async (
     if (vote) {
       return {
         props: {
-          type,
+          isOngoing,
           hasVoted: true,
           election,
         },
@@ -178,7 +176,7 @@ export const getServerSideProps: GetServerSideProps = async (
     } else {
       return {
         props: {
-          type,
+          isOngoing,
           hasVoted: false,
           election,
         },
@@ -192,9 +190,27 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     });
 
+    if (vote) {
+      return {
+        props: {
+          isOngoing,
+          hasVoted: true,
+          election,
+        },
+      };
+    } else {
+      return {
+        props: {
+          isOngoing: !isOngoing,
+          hasVoted: !session,
+          election,
+        },
+      };
+    }
+
     return {
       props: {
-        type,
+        isOngoing,
         hasVoted: !!vote || !session,
         election,
       },
@@ -203,7 +219,7 @@ export const getServerSideProps: GetServerSideProps = async (
 
   return {
     props: {
-      type,
+      isOngoing,
       hasVoted: true,
       election,
     },
