@@ -15,6 +15,7 @@ import { getServerAuthSession } from "../../server/auth";
 import { prisma } from "../../server/db";
 import { api } from "../../utils/api";
 import { convertNumberToHour } from "../../utils/convertNumberToHour";
+import { isElectionOngoing } from "../../utils/isElectionOngoing";
 
 const ElectionPage = ({
   election,
@@ -51,9 +52,9 @@ const ElectionPage = ({
             </Text>
 
             <Text>
-              <Moment format="MMMM DD, YYYY hA" date={election.start_date} />
+              <Moment format="MMMM DD, YYYY" date={election.start_date} />
               {" - "}
-              <Moment format="MMMM DD, YYYY hA" date={election.end_date} />
+              <Moment format="MMMM DD, YYYY" date={election.end_date} />
             </Text>
             <Text>
               Open from {convertNumberToHour(election.voting_start)} to{" "}
@@ -128,11 +129,7 @@ export const getServerSideProps: GetServerSideProps = async (
 
   if (!election) return { notFound: true };
 
-  const isOngoing =
-    (new Date(election.start_date).getTime() <= new Date().getTime() &&
-      new Date(election.end_date).getTime() >= new Date().getTime()) ||
-    (election.voting_start <= new Date().getHours() &&
-      election.voting_end >= new Date().getHours());
+  const isOngoing = isElectionOngoing(election);
 
   if (election.publicity === "PRIVATE") {
     if (!session)
@@ -149,7 +146,7 @@ export const getServerSideProps: GetServerSideProps = async (
 
     return {
       props: {
-        isOngoing,
+        isOngoing: true,
         hasVoted: true,
         election,
       },
@@ -202,7 +199,7 @@ export const getServerSideProps: GetServerSideProps = async (
       return {
         props: {
           isOngoing,
-          hasVoted: !session,
+          hasVoted: false,
           election,
         },
       };

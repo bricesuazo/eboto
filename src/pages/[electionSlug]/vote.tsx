@@ -12,6 +12,7 @@ import { useConfetti } from "../../lib/confetti";
 import { getServerAuthSession } from "../../server/auth";
 import { prisma } from "../../server/db";
 import { api } from "../../utils/api";
+import { isElectionOngoing } from "../../utils/isElectionOngoing";
 
 const VotePage = ({ election }: { election: Election }) => {
   const router = useRouter();
@@ -153,16 +154,7 @@ export const getServerSideProps: GetServerSideProps = async (
 
   if (!election) return { notFound: true };
 
-  if (
-    !(
-      new Date(election.start_date).getTime() <= new Date().getTime() &&
-      new Date(election.end_date).getTime() >= new Date().getTime()
-    ) ||
-    !(
-      election.voting_start <= new Date().getHours() &&
-      election.voting_end >= new Date().getHours()
-    )
-  )
+  if (!isElectionOngoing(election))
     return {
       redirect: {
         destination: `/${election.slug}`,
