@@ -180,6 +180,15 @@ export const getServerSideProps: GetServerSideProps = async (
       };
     }
   } else if (election.publicity === "PUBLIC") {
+    if (!session)
+      return {
+        props: {
+          isOngoing,
+          hasVoted: true,
+          election,
+        },
+      };
+
     const vote = await prisma.vote.findFirst({
       where: {
         voterId: session?.user.id,
