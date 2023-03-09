@@ -191,7 +191,7 @@ export const getServerSideProps: GetServerSideProps = async (
 
     const vote = await prisma.vote.findFirst({
       where: {
-        voterId: session?.user.id,
+        voterId: session.user.id,
         electionId: election.id,
       },
     });

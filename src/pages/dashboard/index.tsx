@@ -51,8 +51,8 @@ const DashboardPage = () => {
                 [...Array(3).keys()].map((i) => (
                   <Skeleton
                     key={i}
-                    width={264}
-                    height={72}
+                    width={272}
+                    height={92}
                     radius="md"
                     sx={(theme) => ({
                       [theme.fn.smallerThan("xs")]: { width: "100%" },
@@ -93,8 +93,8 @@ const DashboardPage = () => {
                 [...Array(3).keys()].map((i) => (
                   <Skeleton
                     key={i}
-                    width={264}
-                    height={72}
+                    width={272}
+                    height={116}
                     radius="md"
                     sx={(theme) => ({
                       [theme.fn.smallerThan("xs")]: { width: "100%" },
@@ -111,6 +111,7 @@ const DashboardPage = () => {
                     election={election}
                     key={election.id}
                     type="vote"
+                    vote={election.vote}
                   />
                 ))
               )}

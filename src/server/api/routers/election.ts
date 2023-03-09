@@ -313,6 +313,13 @@ export const electionRouter = createTRPCRouter({
           },
         },
       },
+      include: {
+        vote: {
+          where: {
+            voterId: ctx.session.user.id,
+          },
+        },
+      },
     });
   }),
   getElectionData: publicProcedure

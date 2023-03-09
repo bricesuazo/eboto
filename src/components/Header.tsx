@@ -20,9 +20,9 @@ import {
 import {
   IconChartBar,
   IconChevronDown,
+  IconLogout,
   IconMoon,
   IconSun,
-  IconTransitionLeft,
 } from "@tabler/icons-react";
 import type { Dispatch, SetStateAction } from "react";
 import { useRouter } from "next/router";
@@ -211,7 +211,7 @@ const HeaderComponent = ({
                           callbackUrl: "/signin",
                         }))()
                     }
-                    icon={<IconTransitionLeft size={16} />}
+                    icon={<IconLogout size={16} />}
                   >
                     Log out
                   </Menu.Item>
