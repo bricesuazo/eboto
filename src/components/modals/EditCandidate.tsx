@@ -87,6 +87,8 @@ const EditCandidateModal = ({
 
   useDidUpdate(() => {
     if (isOpen) {
+      form.reset();
+      form.resetDirty();
       editCandidateMutation.reset();
     }
   }, [isOpen]);

@@ -1,14 +1,13 @@
 import {
   Box,
   Button,
-  Center,
   Container,
   Stack,
   Text,
-  Radio,
   Modal,
   Group,
   Alert,
+  Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -27,6 +26,8 @@ import { getServerAuthSession } from "../../server/auth";
 import { prisma } from "../../server/db";
 import { api } from "../../utils/api";
 import { isElectionOngoing } from "../../utils/isElectionOngoing";
+import Balancer from "react-wrap-balancer";
+import VoteCard from "../../VoteCard";
 
 const VotePage = ({ election }: { election: Election }) => {
   const router = useRouter();
@@ -73,118 +74,134 @@ const VotePage = ({ election }: { election: Election }) => {
       <Modal
         opened={opened || voteMutation.isLoading}
         onClose={close}
-        title="Confirm Vote"
+        title={<Text weight={600}>Confirm Vote</Text>}
       >
-        {positions.data.map((position) => {
-          const candidate = position.candidate.find(
-            (candidate) =>
-              candidate.id ===
-              votes
-                .find((vote) => vote.split("-")[0] === position.id)
-                ?.split("-")[1]
-          );
+        <Stack>
+          {positions.data.map((position) => {
+            const candidate = position.candidate.find(
+              (candidate) =>
+                candidate.id ===
+                votes
+                  .find((vote) => vote.split("-")[0] === position.id)
+                  ?.split("-")[1]
+            );
 
-          return (
-            <Box key={position.id}>
-              <Text size="sm" color="gray.500">
-                {position.name}
-              </Text>
-              <Text weight="bold">
-                {candidate
-                  ? `${candidate.last_name}, ${candidate.first_name}${
-                      candidate.middle_name
-                        ? " " + candidate.middle_name.charAt(0) + "."
-                        : ""
-                    } (${candidate.partylist.acronym})`
-                  : "Abstain"}
-              </Text>
-            </Box>
-          );
-        })}
-        {voteMutation.isError &&
-          voteMutation.error?.data?.code !== "CONFLICT" && (
+            return (
+              <Box key={position.id}>
+                <Text color="gray.500" truncate>
+                  {position.name}
+                </Text>
+                <Text weight={600} truncate>
+                  {candidate
+                    ? `${candidate.last_name}, ${candidate.first_name}${
+                        candidate.middle_name
+                          ? " " + candidate.middle_name.charAt(0) + "."
+                          : ""
+                      } (${candidate.partylist.acronym})`
+                    : "Abstain"}
+                </Text>
+              </Box>
+            );
+          })}
+
+          {voteMutation.isError && (
             <Alert
               icon={<IconAlertCircle size="1rem" />}
               title="Error"
               color="red"
             >
-              {voteMutation.error?.message}
+              {voteMutation.error.message}
             </Alert>
           )}
-        <Group position="right" spacing="xs">
-          <Button
-            variant="default"
-            onClick={close}
-            disabled={voteMutation.isLoading}
-          >
-            Cancel
-          </Button>
-          <Button
-            loading={voteMutation.isLoading}
-            onClick={() => {
-              voteMutation.mutate({
-                electionId: election.id,
-                votes,
-              });
-            }}
-          >
-            Confirm
-          </Button>
-        </Group>
+          <Group position="right" spacing="xs">
+            <Button
+              variant="default"
+              onClick={close}
+              disabled={voteMutation.isLoading}
+            >
+              Cancel
+            </Button>
+            <Button
+              loading={voteMutation.isLoading}
+              onClick={() => {
+                voteMutation.mutate({
+                  electionId: election.id,
+                  votes,
+                });
+              }}
+            >
+              Confirm
+            </Button>
+          </Group>
+        </Stack>
       </Modal>
       <Container>
-        <Text size="lg" weight="bold">
-          Cast your vote for {election.name}
-        </Text>
-        <Text>
-          Select your candidates for each position. You can only select one
-        </Text>
-        <Stack>
-          {positions.data.map((position) => {
-            return (
-              <Box key={position.id}>
-                <Text size="xl">{position.name}</Text>
-                <Radio.Group
-                  name={position.id}
-                  onChange={(value) => {
-                    setVotes((prev) => {
-                      return prev
-                        .filter((prev) => prev.split("-")[0] !== position.id)
-                        .concat(value);
-                    });
-                  }}
-                >
-                  {position.candidate.map((candidate) => {
-                    return (
-                      <Radio
-                        key={candidate.id}
-                        value={position.id + "-" + candidate.id}
-                        label={`${candidate.last_name}, ${
-                          candidate.first_name
-                        }${
-                          candidate.middle_name
-                            ? " " + candidate.middle_name.charAt(0) + "."
-                            : ""
-                        } (${candidate.partylist.acronym})`}
-                      />
-                    );
-                  })}
-                  <Radio value={`${position.id}-abstain`} label="Abstain" />
-                </Radio.Group>
-              </Box>
-            );
-          })}
-        </Stack>
+        <Stack
+          sx={{
+            position: "relative",
+          }}
+        >
+          <Box>
+            <Title align="center">
+              <Balancer>Cast your vote for {election.name}</Balancer>
+            </Title>
+            <Text align="center">
+              <Balancer>
+                Select your candidates for each position. You can only select
+                one.
+              </Balancer>
+            </Text>
+          </Box>
+          <Stack>
+            {positions.data.map((position) => {
+              return (
+                <Box key={position.id}>
+                  <Text size="xl">{position.name}</Text>
+                  <Text size="sm" color="gray.500">
+                    Select one candidate
+                  </Text>
 
-        <Center>
+                  <Group>
+                    {position.candidate.map((candidate) => {
+                      return (
+                        <VoteCard
+                          key={candidate.id}
+                          positionId={position.id}
+                          candidate={candidate}
+                          votes={votes}
+                          setVotes={setVotes}
+                        />
+                      );
+                    })}
+                    <VoteCard
+                      votes={votes}
+                      setVotes={setVotes}
+                      positionId={position.id}
+                    />
+                  </Group>
+                </Box>
+              );
+            })}
+          </Stack>
+
           <Button
-            disabled={positions.data.length !== votes.length}
             onClick={open}
+            disabled={votes.length !== positions.data.length}
             leftIcon={<IconFingerprint />}
+            size="lg"
+            sx={{
+              position: "sticky",
+              bottom: 100,
+              alignSelf: "center",
+              width: "fit-content",
+              marginTop: 12,
+              marginBottom: 100,
+            }}
+            radius="xl"
           >
             Cast Vote
           </Button>
-        </Center>
+        </Stack>
       </Container>
     </>
   );
