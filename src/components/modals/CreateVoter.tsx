@@ -95,22 +95,20 @@ const CreateVoterModal = ({
               </Alert>
             )}
           <Group position="right" spacing="xs">
-            <Group position="right" spacing="xs">
-              <Button
-                variant="default"
-                onClick={onClose}
-                disabled={createVoterMutation.isLoading}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={!form.isValid()}
-                loading={createVoterMutation.isLoading}
-              >
-                Create
-              </Button>
-            </Group>
+            <Button
+              variant="default"
+              onClick={onClose}
+              disabled={createVoterMutation.isLoading}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={!form.isValid()}
+              loading={createVoterMutation.isLoading}
+            >
+              Create
+            </Button>
           </Group>
         </Stack>
       </form>

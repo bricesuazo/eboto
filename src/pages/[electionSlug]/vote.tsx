@@ -1,13 +1,27 @@
-import { Box, Button, Center, Container, Stack, Text } from "@mantine/core";
-import { modals } from "@mantine/modals";
+import {
+  Box,
+  Button,
+  Center,
+  Container,
+  Stack,
+  Text,
+  Radio,
+  Modal,
+  Group,
+  Alert,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import type { Election } from "@prisma/client";
-import { IconCheck, IconX } from "@tabler/icons-react";
+import {
+  IconAlertCircle,
+  IconCheck,
+  IconFingerprint,
+  IconX,
+} from "@tabler/icons-react";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
-// import ConfirmVote from "../../components/modals/ConfirmVote";
-import VotingPosition from "../../components/VotingPosition";
 import { useConfetti } from "../../lib/confetti";
 import { getServerAuthSession } from "../../server/auth";
 import { prisma } from "../../server/db";
@@ -17,7 +31,8 @@ import { isElectionOngoing } from "../../utils/isElectionOngoing";
 const VotePage = ({ election }: { election: Election }) => {
   const router = useRouter();
   const { fireConfetti } = useConfetti();
-  const [selectedCandidates, setSelectedCandidates] = useState<string[]>([]);
+  const [votes, setVotes] = useState<string[]>([]);
+  const [opened, { open, close }] = useDisclosure(false);
 
   const positions = api.election.getElectionVoting.useQuery(election.id, {
     refetchOnWindowFocus: false,
@@ -26,105 +41,146 @@ const VotePage = ({ election }: { election: Election }) => {
     retry: false,
   });
 
-  const voteMutation = api.election.vote.useMutation();
+  const voteMutation = api.election.vote.useMutation({
+    onSuccess: async () => {
+      notifications.show({
+        title: "Vote casted successfully!",
+        message: "You can now view the realtime results",
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
+      });
+      await router.push(`/${election.slug}/realtime`);
+      await fireConfetti();
+    },
+    onError: () => {
+      notifications.show({
+        title: "Error casting vote",
+        message: voteMutation.error?.message,
+        icon: <IconX size="1.1rem" />,
+        color: "red",
+        autoClose: 5000,
+      });
+    },
+  });
   if (positions.isLoading) return <Text>Loading...</Text>;
 
   if (positions.isError) return <Text>Error:{positions.error.message}</Text>;
 
   if (!positions.data) return <Text>Not found</Text>;
 
-  const openModal = () =>
-    modals.openConfirmModal({
-      title: "Confirm Vote",
-      children: (
-        <>
-          {positions.data.map((position) => {
-            const candidate = position.candidate.find(
-              (candidate) =>
-                candidate.id ===
-                selectedCandidates
-                  .find(
-                    (selectedCandidate) =>
-                      selectedCandidate.split("-")[0] === position.id
-                  )
-                  ?.split("-")[1]
-            );
-
-            return (
-              <Box key={position.id}>
-                <Text size="sm" color="gray.500">
-                  {position.name}
-                </Text>
-                <Text weight="bold">
-                  {candidate
-                    ? `${candidate.last_name}, ${candidate.first_name}${
-                        candidate.middle_name ? ` ${candidate.middle_name}` : ""
-                      } (${candidate.partylist.acronym})`
-                    : "Abstain"}
-                </Text>
-              </Box>
-            );
-          })}
-        </>
-      ),
-      labels: { confirm: "Confirm", cancel: "Cancel" },
-      onConfirm: () => {
-        void (async () => {
-          await router.push(`/${election.slug}/realtime`);
-          notifications.show({
-            title: "Vote casted successfully!",
-            message: "You can now view the realtime results",
-            icon: <IconCheck size="1.1rem" />,
-            autoClose: 5000,
-          });
-          await fireConfetti();
-        })();
-      },
-      onError: () => {
-        notifications.show({
-          title: "Error casting vote",
-          message: voteMutation.error?.message,
-          icon: <IconX size="1.1rem" />,
-          color: "red",
-          autoClose: 5000,
-        });
-      },
-      cancelProps: {
-        disabled: true,
-      },
-      confirmProps: {
-        loading: true,
-      },
-    });
-
   return (
     <>
-      {/* <ConfirmVote
-        isOpen={opened}
+      <Modal
+        opened={opened || voteMutation.isLoading}
         onClose={close}
-        election={election}
-        positions={positions.data}
-        selectedCandidates={selectedCandidates}
-      /> */}
+        title="Confirm Vote"
+      >
+        {positions.data.map((position) => {
+          const candidate = position.candidate.find(
+            (candidate) =>
+              candidate.id ===
+              votes
+                .find((vote) => vote.split("-")[0] === position.id)
+                ?.split("-")[1]
+          );
+
+          return (
+            <Box key={position.id}>
+              <Text size="sm" color="gray.500">
+                {position.name}
+              </Text>
+              <Text weight="bold">
+                {candidate
+                  ? `${candidate.last_name}, ${candidate.first_name}${
+                      candidate.middle_name
+                        ? " " + candidate.middle_name.charAt(0) + "."
+                        : ""
+                    } (${candidate.partylist.acronym})`
+                  : "Abstain"}
+              </Text>
+            </Box>
+          );
+        })}
+        {voteMutation.isError &&
+          voteMutation.error?.data?.code !== "CONFLICT" && (
+            <Alert
+              icon={<IconAlertCircle size="1rem" />}
+              title="Error"
+              color="red"
+            >
+              {voteMutation.error?.message}
+            </Alert>
+          )}
+        <Group position="right" spacing="xs">
+          <Button
+            variant="default"
+            onClick={close}
+            disabled={voteMutation.isLoading}
+          >
+            Cancel
+          </Button>
+          <Button
+            loading={voteMutation.isLoading}
+            onClick={() => {
+              voteMutation.mutate({
+                electionId: election.id,
+                votes,
+              });
+            }}
+          >
+            Confirm
+          </Button>
+        </Group>
+      </Modal>
       <Container>
+        <Text size="lg" weight="bold">
+          Cast your vote for {election.name}
+        </Text>
+        <Text>
+          Select your candidates for each position. You can only select one
+        </Text>
         <Stack>
           {positions.data.map((position) => {
             return (
-              <VotingPosition
-                key={position.id}
-                position={position}
-                setSelectedCandidates={setSelectedCandidates}
-              />
+              <Box key={position.id}>
+                <Text size="xl">{position.name}</Text>
+                <Radio.Group
+                  name={position.id}
+                  onChange={(value) => {
+                    setVotes((prev) => {
+                      return prev
+                        .filter((prev) => prev.split("-")[0] !== position.id)
+                        .concat(value);
+                    });
+                  }}
+                >
+                  {position.candidate.map((candidate) => {
+                    return (
+                      <Radio
+                        key={candidate.id}
+                        value={position.id + "-" + candidate.id}
+                        label={`${candidate.last_name}, ${
+                          candidate.first_name
+                        }${
+                          candidate.middle_name
+                            ? " " + candidate.middle_name.charAt(0) + "."
+                            : ""
+                        } (${candidate.partylist.acronym})`}
+                      />
+                    );
+                  })}
+                  <Radio value={`${position.id}-abstain`} label="Abstain" />
+                </Radio.Group>
+              </Box>
             );
           })}
         </Stack>
 
         <Center>
           <Button
-            disabled={positions.data.length !== selectedCandidates.length}
-            onClick={openModal}
-            variant="solid"
-            // leftIcon={<FingerPrintIcon w={22} />}
+            disabled={positions.data.length !== votes.length}
+            onClick={open}
+            leftIcon={<IconFingerprint />}
           >
             Cast Vote
           </Button>
