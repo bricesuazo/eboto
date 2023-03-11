@@ -8,15 +8,23 @@ import {
   Text,
   Divider,
 } from "@mantine/core";
-import { IconFingerprint, IconLogout, IconPlus } from "@tabler/icons-react";
+import {
+  IconArrowUpRight,
+  IconFingerprint,
+  IconLogout,
+  IconPlus,
+} from "@tabler/icons-react";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { electionDashboardNavbar } from "../constants";
 import type { Dispatch, SetStateAction } from "react";
 import { api } from "../utils/api";
 import CreateElectionModal from "./modals/CreateElection";
-import { useDisclosure } from "@mantine/hooks";
+import { useDidUpdate, useDisclosure } from "@mantine/hooks";
 import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+import type { Election } from "@prisma/client";
 
 const useStyles = createStyles((theme) => ({
   navbar: {
@@ -96,16 +104,28 @@ const NavbarComponent = ({
 }) => {
   const router = useRouter();
   const [isOpen, { open, close }] = useDisclosure(false);
+  const [election, setElection] = useState<Election | undefined>();
 
   const elections = api.election.getMyElections.useQuery(undefined, {
     enabled: router.isReady,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
+    refetchOnMount: "always",
   });
 
-  const election = elections.data?.find(
-    (election) => election.slug === router.query.electionSlug
-  );
+  useDidUpdate(() => {
+    void (async () => {
+      await elections.refetch();
+    })();
+  }, [router.query.electionSlug]);
+
+  useDidUpdate(() => {
+    setElection(
+      elections.data?.find(
+        (election) => election.slug === router.query.electionSlug
+      )
+    );
+  }, [elections.data]);
 
   const { classes, cx } = useStyles();
 
@@ -132,7 +152,9 @@ const NavbarComponent = ({
 
         <Navbar.Section mb="md">
           <Select
-            defaultValue={router.query.electionSlug as string}
+            defaultValue={
+              election?.slug || (router.query.electionSlug as string)
+            }
             placeholder="Select election"
             iconWidth={48}
             icon={
@@ -166,16 +188,19 @@ const NavbarComponent = ({
                           )
                       )
                     )
-                    .map((election) => ({
-                      label: election.name,
-                      value: election.slug,
+                    .map((selectedElection) => ({
+                      label: selectedElection.name,
+                      value: selectedElection.slug,
                       group:
-                        election.start_date > new Date()
+                        selectedElection.start_date > new Date()
                           ? "Upcoming"
-                          : election.end_date < new Date()
+                          : selectedElection.end_date < new Date()
                           ? "Completed"
                           : "Ongoing",
-                      selected: election.slug === router.query.electionSlug,
+                      selected:
+                        selectedElection.slug === election?.slug ||
+                        selectedElection.slug ===
+                          (router.query.electionSlug as string),
                     }))
                 : []
             }
@@ -213,6 +238,7 @@ const NavbarComponent = ({
                 </UnstyledButton>
               );
             }}
+            value={election?.slug || (router.query.electionSlug as string)}
             onChange={(value) =>
               void (async () => {
                 await router.push(`/dashboard/${value || ""}`);
@@ -220,6 +246,19 @@ const NavbarComponent = ({
               })()
             }
           />
+        </Navbar.Section>
+        <Navbar.Section mb="md">
+          <Button
+            variant="outline"
+            w="100%"
+            loading={!election}
+            rightIcon={<IconArrowUpRight size="1rem" />}
+            component={Link}
+            href={`/${election?.slug || ""}`}
+            target="_blank"
+          >
+            Visit {election?.name || "election"}
+          </Button>
         </Navbar.Section>
         <Navbar.Section grow>
           {electionDashboardNavbar.map((item) => (

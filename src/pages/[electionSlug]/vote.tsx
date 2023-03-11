@@ -157,11 +157,11 @@ const VotePage = ({ election }: { election: Election }) => {
               return (
                 <Box key={position.id}>
                   <Text size="xl">{position.name}</Text>
-                  <Text size="sm" color="gray.500">
+                  <Text size="sm" color="grayText">
                     Select one candidate
                   </Text>
 
-                  <Group>
+                  <Group mt={8}>
                     {position.candidate.map((candidate) => {
                       return (
                         <VoteCard

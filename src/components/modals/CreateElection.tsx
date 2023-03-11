@@ -75,13 +75,13 @@ const CreateElectionModal = ({
   const createElectionMutation = api.election.create.useMutation({
     onSuccess: async (data) => {
       await router.push(`/dashboard/${data.slug}`);
+      onClose();
       notifications.show({
         title: "Election created!",
         message: "Successfully created election",
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
-      onClose();
       await fireConfetti();
     },
   });
@@ -95,7 +95,7 @@ const CreateElectionModal = ({
 
   return (
     <Modal
-      opened={isOpen || createElectionMutation.isLoading}
+      opened={isOpen}
       onClose={onClose}
       title={<Text weight={600}>Create election</Text>}
     >
@@ -226,7 +226,7 @@ const CreateElectionModal = ({
             dropdownPosition="bottom"
             nothingFound="No position template found"
             icon={<IconTemplate size="1rem" />}
-            // searchable
+            searchable
           />
 
           {createElectionMutation.isError &&
