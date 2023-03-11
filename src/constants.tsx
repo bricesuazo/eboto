@@ -166,6 +166,7 @@ export const takenSlugs: TakenSlugs = [
   "verify",
   "dashboard",
   "contact",
+  "account",
   "profile",
   "invite",
   "admin",

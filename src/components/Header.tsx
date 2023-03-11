@@ -23,6 +23,7 @@ import {
   IconLogout,
   IconMoon,
   IconSun,
+  IconUserCircle,
 } from "@tabler/icons-react";
 import type { Dispatch, SetStateAction } from "react";
 import { useRouter } from "next/router";
@@ -190,6 +191,13 @@ const HeaderComponent = ({
                   >
                     Dashboard
                   </Menu.Item>
+                  <Menu.Item
+                    component={Link}
+                    href="/account"
+                    icon={<IconUserCircle size={16} />}
+                  >
+                    Account settings
+                  </Menu.Item>
 
                   <Menu.Item
                     icon={
@@ -211,7 +219,7 @@ const HeaderComponent = ({
                           callbackUrl: "/signin",
                         }))()
                     }
-                    icon={<IconLogout size={16} />}
+                    icon={<IconLogout style={{ marginLeft: 2 }} size={16} />}
                   >
                     Log out
                   </Menu.Item>

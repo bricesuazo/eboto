@@ -173,7 +173,9 @@ const NavbarComponent = ({
             data={
               elections.data
                 ? elections.data
-                    .sort((a, b) => b.end_date.getTime() - a.end_date.getTime())
+                    .sort(
+                      (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()
+                    )
                     .filter(
                       (election) =>
                         election.start_date < new Date() &&
