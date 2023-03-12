@@ -1,14 +1,17 @@
 import {
   Stack,
   Box,
-  Flex,
-  Center,
+  UnstyledButton,
   Button,
   Container,
   Text,
+  Title,
+  Group,
 } from "@mantine/core";
 import type { Election } from "@prisma/client";
+import { IconFingerprint, IconUser } from "@tabler/icons-react";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import Moment from "react-moment";
 import { getServerAuthSession } from "../../server/auth";
@@ -37,7 +40,7 @@ const ElectionPage = ({
   );
 
   return (
-    <Container>
+    <Container py="xl">
       {positions.isLoading ? (
         <Text>Loading...</Text>
       ) : positions.isError ? (
@@ -45,62 +48,123 @@ const ElectionPage = ({
       ) : !positions.data ? (
         <Text>Not found</Text>
       ) : (
-        <Stack spacing={8} align="center">
-          <Box>
-            <Text size="2xl" weight="bold">
-              {election.name}
-            </Text>
+        <Stack align="center">
+          <Box w="100%">
+            <Group position="center" mb={8}>
+              {election.logo ? (
+                <Image src={election.logo} alt="Logo" width={92} height={92} />
+              ) : (
+                <IconFingerprint size={92} style={{ padding: 8 }} />
+              )}
+            </Group>
 
-            <Text>
+            <Title order={2} lineClamp={2} align="center">
+              {election.name} (@{election.slug})
+            </Title>
+
+            <Text align="center">
               <Moment format="MMMM DD, YYYY" date={election.start_date} />
               {" - "}
               <Moment format="MMMM DD, YYYY" date={election.end_date} />
             </Text>
-            <Text>
+            <Text align="center">
               Open from {convertNumberToHour(election.voting_start)} to{" "}
               {convertNumberToHour(election.voting_end)}
             </Text>
 
-            {hasVoted ? (
-              <Button component={Link} href={`/${election.slug}/realtime`}>
-                Realtime count
-              </Button>
-            ) : !isOngoing ? (
-              <Text color="red">Voting is not yet open</Text>
-            ) : (
-              <Button component={Link} href={`/${election.slug}/vote`}>
-                Vote now!
-              </Button>
-            )}
+            <Group position="center" mt={8}>
+              {hasVoted ? (
+                <Button component={Link} href={`/${election.slug}/realtime`}>
+                  Realtime count
+                </Button>
+              ) : !isOngoing ? (
+                <Text color="red">Voting is not yet open</Text>
+              ) : (
+                <Button component={Link} href={`/${election.slug}/vote`}>
+                  Vote now!
+                </Button>
+              )}
+            </Group>
           </Box>
 
           <Stack>
             {positions.data.map((position) => (
-              <Box key={position.id}>
-                <Text size="xl" weight="medium">
+              <Stack spacing={4} key={position.id}>
+                <Title order={3} weight={600} align="center" truncate>
                   {position.name}
-                </Text>
+                </Title>
 
-                <Flex wrap="wrap">
+                <Group position="center" spacing="sm">
                   {position.candidate.map((candidate) => (
-                    <Center
+                    <UnstyledButton
                       component={Link}
                       href={`/${election?.slug || ""}/${candidate.slug}`}
-                      w="44"
-                      h="24"
+                      sx={(theme) => ({
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: 200,
+                        padding: theme.spacing.xs,
+                        borderRadius: theme.radius.md,
+                        backgroundColor:
+                          theme.colorScheme === "dark"
+                            ? theme.colors.dark[6]
+                            : theme.colors.gray[0],
+                        transition: "background-color 0.2s ease",
+                        "&:hover": {
+                          backgroundColor:
+                            theme.colorScheme === "dark"
+                              ? theme.colors.dark[5]
+                              : theme.colors.gray[1],
+                        },
+
+                        [theme.fn.smallerThan("xs")]: {
+                          width: "100%",
+                          flexDirection: "row",
+                          justifyContent: "flex-start",
+                          columnGap: theme.spacing.xs,
+                        },
+                      })}
                       key={candidate.id}
                     >
-                      <Text>
+                      <Box>
+                        {candidate.image ? (
+                          <Image
+                            src={candidate.image}
+                            alt="Candidate's image"
+                            width={92}
+                            height={92}
+                            style={{
+                              objectFit: "cover",
+                            }}
+                          />
+                        ) : (
+                          <IconUser
+                            style={{ width: 92, height: 92, padding: 8 }}
+                          />
+                        )}
+                      </Box>
+
+                      <Text
+                        lineClamp={2}
+                        sx={(theme) => ({
+                          textAlign: "center",
+                          [theme.fn.smallerThan("xs")]: {
+                            textAlign: "left",
+                          },
+                        })}
+                      >
                         {candidate.first_name}{" "}
                         {candidate.middle_name
                           ? candidate.middle_name + " "
                           : ""}
                         {candidate.last_name} ({candidate.partylist.acronym})
                       </Text>
-                    </Center>
+                    </UnstyledButton>
                   ))}
-                </Flex>
-              </Box>
+                </Group>
+              </Stack>
             ))}
           </Stack>
         </Stack>
