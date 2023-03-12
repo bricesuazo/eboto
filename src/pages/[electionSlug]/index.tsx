@@ -9,7 +9,7 @@ import {
   Group,
 } from "@mantine/core";
 import type { Election } from "@prisma/client";
-import { IconFingerprint, IconUser } from "@tabler/icons-react";
+import { IconClock, IconFingerprint, IconUser } from "@tabler/icons-react";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -74,13 +74,25 @@ const ElectionPage = ({
 
             <Group position="center" mt={8}>
               {hasVoted ? (
-                <Button component={Link} href={`/${election.slug}/realtime`}>
+                <Button
+                  radius="xl"
+                  size="md"
+                  component={Link}
+                  leftIcon={<IconClock />}
+                  href={`/${election.slug}/realtime`}
+                >
                   Realtime count
                 </Button>
               ) : !isOngoing ? (
                 <Text color="red">Voting is not yet open</Text>
               ) : (
-                <Button component={Link} href={`/${election.slug}/vote`}>
+                <Button
+                  radius="xl"
+                  size="md"
+                  leftIcon={<IconFingerprint />}
+                  component={Link}
+                  href={`/${election.slug}/vote`}
+                >
                   Vote now!
                 </Button>
               )}
