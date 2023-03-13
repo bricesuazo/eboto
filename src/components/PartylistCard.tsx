@@ -1,13 +1,8 @@
-import {
-  Button,
-  Group,
-  Title,
-  UnstyledButton,
-} from "@mantine/core";
+import { Box, Button, Flex, Group, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import type { Partylist } from "@prisma/client";
-import { IconCheck } from "@tabler/icons-react";
+import { IconCheck, IconFlag } from "@tabler/icons-react";
 import { api } from "../utils/api";
 import EditPartylistModal from "./modals/EditPartylist";
 
@@ -39,36 +34,37 @@ const PartylistCard = ({
         partylist={partylist}
         refetch={refetch}
       />
-      <UnstyledButton
+      <Flex
         sx={(theme) => ({
-          display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
           alignItems: "center",
           width: 172,
-          height: 100,
           padding: theme.spacing.md,
           border: "1px solid",
           borderColor:
             theme.colorScheme === "dark"
               ? theme.colors.dark[5]
               : theme.colors.gray[3],
-          borderRadius: 8,
+          borderRadius: theme.radius.md,
 
           [theme.fn.smallerThan("xs")]: {
             width: "100%",
           },
         })}
       >
+        <Box>
+          <IconFlag size={40} />
+        </Box>
         <Title order={4}>
           {partylist.name} ({partylist.acronym})
         </Title>
 
-        <Group>
+        <Group spacing="xs">
           <Button
             disabled={deletePartylistMutation.isLoading}
             onClick={open}
-            variant="subtle"
+            variant="light"
             size="sm"
             compact
           >
@@ -77,7 +73,7 @@ const PartylistCard = ({
           <Button
             onClick={() => deletePartylistMutation.mutate(partylist.id)}
             loading={deletePartylistMutation.isLoading}
-            variant="subtle"
+            variant="light"
             color="red"
             size="sm"
             compact
@@ -85,7 +81,7 @@ const PartylistCard = ({
             Delete
           </Button>
         </Group>
-      </UnstyledButton>
+      </Flex>
     </>
   );
 };
