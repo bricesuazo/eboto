@@ -1,4 +1,9 @@
-import { Button, Flex, Text } from "@mantine/core";
+import {
+  Button,
+  Group,
+  Title,
+  UnstyledButton,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import type { Partylist } from "@prisma/client";
@@ -34,25 +39,32 @@ const PartylistCard = ({
         partylist={partylist}
         refetch={refetch}
       />
-      <Flex
-        direction="column"
-        w={172}
-        align="center"
-        p={8}
+      <UnstyledButton
         sx={(theme) => ({
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: 172,
+          height: 100,
+          padding: theme.spacing.md,
           border: "1px solid",
           borderColor:
             theme.colorScheme === "dark"
               ? theme.colors.dark[5]
               : theme.colors.gray[3],
           borderRadius: 8,
+
+          [theme.fn.smallerThan("xs")]: {
+            width: "100%",
+          },
         })}
       >
-        <Text align="center" w="full">
+        <Title order={4}>
           {partylist.name} ({partylist.acronym})
-        </Text>
+        </Title>
 
-        <Flex>
+        <Group>
           <Button
             disabled={deletePartylistMutation.isLoading}
             onClick={open}
@@ -72,8 +84,8 @@ const PartylistCard = ({
           >
             Delete
           </Button>
-        </Flex>
-      </Flex>
+        </Group>
+      </UnstyledButton>
     </>
   );
 };

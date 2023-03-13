@@ -31,11 +31,17 @@ const DashboardPartylist = () => {
         electionId={partylists.data.election.id}
         refetch={partylists.refetch}
       />
-      <Button onClick={open} mb={16}>
+      <Button
+        onClick={open}
+        mb={16}
+        sx={(theme) => ({
+          [theme.fn.smallerThan("xs")]: { width: "100%" },
+        })}
+      >
         Add partylist
       </Button>
 
-      <Group>
+      <Group spacing="xs">
         {!partylists.data.partylists.length ? (
           <Text>No partylist</Text>
         ) : (
