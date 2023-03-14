@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Group, Title } from "@mantine/core";
+import { Box, Button, Center, Flex, Group, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import type { Partylist } from "@prisma/client";
@@ -39,7 +39,8 @@ const PartylistCard = ({
           flexDirection: "column",
           justifyContent: "space-between",
           alignItems: "center",
-          width: 172,
+          width: 180,
+          height: 172,
           padding: theme.spacing.md,
           border: "1px solid",
           borderColor:
@@ -53,12 +54,14 @@ const PartylistCard = ({
           },
         })}
       >
-        <Box>
-          <IconFlag size={40} />
-        </Box>
-        <Title order={4}>
-          {partylist.name} ({partylist.acronym})
-        </Title>
+        <Center sx={{ flexDirection: "column" }}>
+          <Box>
+            <IconFlag size={40} />
+          </Box>
+          <Title order={4} lineClamp={2} align="center">
+            {partylist.name} ({partylist.acronym})
+          </Title>
+        </Center>
 
         <Group spacing="xs">
           <Button
