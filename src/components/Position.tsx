@@ -1,4 +1,4 @@
-import { Button, Flex, Text } from "@mantine/core";
+import { Button, Flex, Group, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import type { Position } from "@prisma/client";
@@ -40,33 +40,43 @@ const PositionCard = ({
         align="center"
         p={8}
         sx={(theme) => ({
+          flexDirection: "column",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: 200,
+          height: 128,
+          padding: theme.spacing.md,
           border: "1px solid",
           borderColor:
             theme.colorScheme === "dark"
               ? theme.colors.dark[5]
               : theme.colors.gray[3],
-          borderRadius: 8,
+          borderRadius: theme.radius.md,
+
+          [theme.fn.smallerThan("xs")]: {
+            width: "100%",
+          },
         })}
       >
-        <Text align="center" w="full">
+        <Title order={4} align="center" w="full" lineClamp={2}>
           {position.name}
-        </Text>
+        </Title>
 
-        <Flex>
-          <Button onClick={open} variant="subtle" size="sm" compact>
+        <Group spacing="xs">
+          <Button onClick={open} variant="light" size="sm" compact>
             Edit
           </Button>
           <Button
             onClick={() => deletePositionMutation.mutate(position.id)}
             loading={deletePositionMutation.isLoading}
-            variant="subtle"
+            variant="light"
             color="red"
             size="sm"
             compact
           >
             Delete
           </Button>
-        </Flex>
+        </Group>
       </Flex>
     </>
   );

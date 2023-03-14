@@ -1,4 +1,4 @@
-import { Button, Group, Text } from "@mantine/core";
+import { Box, Button, Group, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
 import CreatePositionModal from "../../../components/modals/CreatePosition";
@@ -32,23 +32,26 @@ const DashboardPosition = () => {
         order={positions.data.positions.length}
         refetch={positions.refetch}
       />
-      <Button onClick={open} mb={4}>
-        Add position
-      </Button>
 
-      <Group>
-        {!positions.data.positions.length ? (
-          <Text>No position</Text>
-        ) : (
-          positions.data.positions.map((position) => (
-            <Position
-              key={position.id}
-              position={position}
-              refetch={positions.refetch}
-            />
-          ))
-        )}
-      </Group>
+      <Stack>
+        <Box>
+          <Button onClick={open}>Add position</Button>
+        </Box>
+
+        <Group spacing="xs">
+          {!positions.data.positions.length ? (
+            <Text>No position</Text>
+          ) : (
+            positions.data.positions.map((position) => (
+              <Position
+                key={position.id}
+                position={position}
+                refetch={positions.refetch}
+              />
+            ))
+          )}
+        </Group>
+      </Stack>
     </>
   );
 };

@@ -1,4 +1,4 @@
-import { Button, Group, Text } from "@mantine/core";
+import { Box, Button, Group, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
 import CreatePartylistModal from "../../../components/modals/CreatePartylist";
@@ -31,29 +31,32 @@ const DashboardPartylist = () => {
         electionId={partylists.data.election.id}
         refetch={partylists.refetch}
       />
-      <Button
-        onClick={open}
-        mb={16}
-        sx={(theme) => ({
-          [theme.fn.smallerThan("xs")]: { width: "100%" },
-        })}
-      >
-        Add partylist
-      </Button>
+      <Stack>
+        <Box>
+          <Button
+            onClick={open}
+            sx={(theme) => ({
+              [theme.fn.smallerThan("xs")]: { width: "100%" },
+            })}
+          >
+            Add partylist
+          </Button>
+        </Box>
 
-      <Group spacing="xs">
-        {!partylists.data.partylists.length ? (
-          <Text>No partylist</Text>
-        ) : (
-          partylists.data.partylists.map((partylist) => (
-            <PartylistCard
-              key={partylist.id}
-              partylist={partylist}
-              refetch={partylists.refetch}
-            />
-          ))
-        )}
-      </Group>
+        <Group spacing="xs">
+          {!partylists.data.partylists.length ? (
+            <Text>No partylist</Text>
+          ) : (
+            partylists.data.partylists.map((partylist) => (
+              <PartylistCard
+                key={partylist.id}
+                partylist={partylist}
+                refetch={partylists.refetch}
+              />
+            ))
+          )}
+        </Group>
+      </Stack>
     </>
   );
 };
