@@ -1,10 +1,11 @@
-import { Button, Flex, Text } from "@mantine/core";
+import { Button, Flex, Text, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import type { Candidate, Partylist, Position } from "@prisma/client";
 import { api } from "../utils/api";
 import EditCandidateModal from "./modals/EditCandidate";
-import { IconCheck } from "@tabler/icons-react";
+import { IconCheck, IconUser } from "@tabler/icons-react";
+import Image from "next/image";
 
 const CandidateCard = ({
   candidate,
@@ -42,9 +43,11 @@ const CandidateCard = ({
       />
       <Flex
         direction="column"
-        w={172}
-        align="center"
+        w={200}
+        h={140}
         p={8}
+        align="center"
+        justify="space-between"
         sx={(theme) => ({
           border: "1px solid",
           borderColor:
@@ -54,25 +57,50 @@ const CandidateCard = ({
           borderRadius: 8,
         })}
       >
-        <Text align="center" w="full">
-          {candidate.first_name} {candidate.last_name}
-        </Text>
+        <Group position="center" spacing={0}>
+          {candidate.image ? (
+            <Image
+              src={candidate.image}
+              width={52}
+              height={52}
+              alt={candidate.first_name}
+            />
+          ) : (
+            <IconUser
+              size={52}
+              style={{
+                padding: 8,
+              }}
+            />
+          )}
+          <Text align="center" w="full" lineClamp={1}>
+            {candidate.first_name} {candidate.last_name}
+            {candidate.middle_name ? ` ${candidate.middle_name}` : ""}
+          </Text>
+        </Group>
 
-        <Flex>
-          <Button onClick={open} variant="ghost" size="sm" w="fit-content">
+        <Group spacing="xs">
+          <Button
+            onClick={open}
+            variant="light"
+            compact
+            size="sm"
+            w="fit-content"
+          >
             Edit
           </Button>
           <Button
             onClick={() => deletePositionMutation.mutate(candidate.id)}
             loading={deletePositionMutation.isLoading}
-            variant="ghost"
+            variant="light"
             color="red"
+            compact
             size="sm"
             w="fit-content"
           >
             Delete
           </Button>
-        </Flex>
+        </Group>
       </Flex>
     </>
   );

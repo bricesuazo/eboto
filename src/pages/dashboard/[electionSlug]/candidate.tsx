@@ -1,4 +1,4 @@
-import { Text } from "@mantine/core";
+import { Stack, Text } from "@mantine/core";
 import { useRouter } from "next/router";
 import Candidates from "../../../components/Candidates";
 import { api } from "../../../utils/api";
@@ -23,7 +23,7 @@ const CandidatePartylist = () => {
   if (!candidates.data) return <Text>No data</Text>;
 
   return (
-    <>
+    <Stack>
       {candidates.data.positions.length === 0 ? (
         <Text>No positions yet</Text>
       ) : (
@@ -46,7 +46,7 @@ const CandidatePartylist = () => {
           );
         })
       )}
-    </>
+    </Stack>
   );
 };
 

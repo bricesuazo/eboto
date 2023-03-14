@@ -25,7 +25,14 @@ const DashboardPosition = () => {
     <>
       <Stack>
         <Box>
-          <Button onClick={open}>Add position</Button>
+          <Button
+            sx={(theme) => ({
+              [theme.fn.smallerThan("xs")]: { width: "100%" },
+            })}
+            onClick={open}
+          >
+            Add position
+          </Button>
         </Box>
 
         <Group spacing="xs">
