@@ -1,4 +1,4 @@
-import { Box, Button, Group, Stack, Text } from "@mantine/core";
+import { Box, Button, Group, Skeleton, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
 import CreatePartylistModal from "../../../components/modals/CreatePartylist";
@@ -19,18 +19,10 @@ const DashboardPartylist = () => {
     }
   );
 
-  if (partylists.isLoading) return <Text>Loading...</Text>;
-
   if (partylists.isError) return <Text>Error</Text>;
 
   return (
     <>
-      <CreatePartylistModal
-        isOpen={opened}
-        onClose={close}
-        electionId={partylists.data.election.id}
-        refetch={partylists.refetch}
-      />
       <Stack>
         <Box>
           <Button
@@ -44,16 +36,41 @@ const DashboardPartylist = () => {
         </Box>
 
         <Group spacing="xs">
-          {!partylists.data.partylists.length ? (
-            <Text>No partylist</Text>
+          {partylists.isLoading ? (
+            <>
+              {[...Array(7).keys()].map((i) => (
+                <Skeleton
+                  key={i}
+                  sx={(theme) => ({
+                    width: 180,
+                    height: 172,
+                    borderRadius: theme.radius.md,
+
+                    [theme.fn.smallerThan("xs")]: { width: "100%" },
+                  })}
+                />
+              ))}
+            </>
           ) : (
-            partylists.data.partylists.map((partylist) => (
-              <PartylistCard
-                key={partylist.id}
-                partylist={partylist}
+            <>
+              <CreatePartylistModal
+                isOpen={opened}
+                onClose={close}
+                electionId={partylists.data.election.id}
                 refetch={partylists.refetch}
               />
-            ))
+              {!partylists.data.partylists.length ? (
+                <Text>No partylist</Text>
+              ) : (
+                partylists.data.partylists.map((partylist) => (
+                  <PartylistCard
+                    key={partylist.id}
+                    partylist={partylist}
+                    refetch={partylists.refetch}
+                  />
+                ))
+              )}
+            </>
           )}
         </Group>
       </Stack>
