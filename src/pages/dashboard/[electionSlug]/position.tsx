@@ -1,4 +1,4 @@
-import { Box, Button, Group, Stack, Text } from "@mantine/core";
+import { Box, Button, Group, Skeleton, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
 import CreatePositionModal from "../../../components/modals/CreatePosition";
@@ -19,36 +19,51 @@ const DashboardPosition = () => {
     }
   );
 
-  if (positions.isLoading) return <Text>Loading...</Text>;
-
   if (positions.isError) return <Text>Error</Text>;
 
   return (
     <>
-      <CreatePositionModal
-        isOpen={opened}
-        onClose={close}
-        electionId={positions.data.election.id}
-        order={positions.data.positions.length}
-        refetch={positions.refetch}
-      />
-
       <Stack>
         <Box>
           <Button onClick={open}>Add position</Button>
         </Box>
 
         <Group spacing="xs">
-          {!positions.data.positions.length ? (
+          {positions.isLoading ? (
+            <>
+              {[...Array(7).keys()].map((i) => (
+                <Skeleton
+                  key={i}
+                  sx={(theme) => ({
+                    width: 200,
+                    height: 128,
+                    borderRadius: theme.radius.md,
+
+                    [theme.fn.smallerThan("xs")]: { width: "100%" },
+                  })}
+                />
+              ))}
+            </>
+          ) : !positions.data.positions.length ? (
             <Text>No position</Text>
           ) : (
-            positions.data.positions.map((position) => (
-              <Position
-                key={position.id}
-                position={position}
+            <>
+              <CreatePositionModal
+                isOpen={opened}
+                onClose={close}
+                electionId={positions.data.election.id}
+                order={positions.data.positions.length}
                 refetch={positions.refetch}
               />
-            ))
+
+              {positions.data.positions.map((position) => (
+                <Position
+                  key={position.id}
+                  position={position}
+                  refetch={positions.refetch}
+                />
+              ))}
+            </>
           )}
         </Group>
       </Stack>
