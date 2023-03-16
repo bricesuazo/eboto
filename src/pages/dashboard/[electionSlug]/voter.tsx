@@ -52,7 +52,30 @@ const DashboardVoter = () => {
       <Button onClick={open}>Add voter</Button>
       <Text>{voters.data.election.name} - voter page</Text>
 
-      {!voters.data.invitedVoter.length && !voters.data.voters.length ? (
+      {voters.data.voters.map((voter) => (
+        <Flex key={voter.id} columnGap={8}>
+          <Text>{voter.email}</Text>
+          <Text>({voter.status})</Text>
+
+          <Button
+            compact
+            color="red"
+            variant="subtle"
+            onClick={() =>
+              removeVoterMutation.mutate({
+                electionId: voters.data.election.id,
+                voterId: voter.id,
+                isInvitedVoter: false,
+              })
+            }
+            loading={removeVoterMutation.isLoading}
+          >
+            Delete
+          </Button>
+        </Flex>
+      ))}
+
+      {/* {!voters.data.invitedVoter.length && !voters.data.voters.length ? (
         <Text>No voters found</Text>
       ) : (
         <>
@@ -100,7 +123,7 @@ const DashboardVoter = () => {
             </Flex>
           ))}
         </>
-      )}
+      )} */}
     </>
   );
 };

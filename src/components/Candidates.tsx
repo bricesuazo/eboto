@@ -20,7 +20,7 @@ const Candidates = ({
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
   return (
-    <Box>
+    <Box mb="xl">
       <CreateCandidateModal
         isOpen={opened}
         onClose={close}

@@ -150,7 +150,10 @@ export const electionRouter = createTRPCRouter({
       });
 
       if (!election) {
-        throw new Error("Election not found");
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election not found",
+        });
       }
 
       if (
@@ -158,20 +161,23 @@ export const electionRouter = createTRPCRouter({
           (commissioner) => commissioner.userId === ctx.session.user.id
         )
       ) {
-        throw new Error("You are not a commissioner of this election");
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not a commissioner of this election",
+        });
       }
 
       const invitedVoter = await ctx.prisma.invitedVoter.findMany({
         where: {
           electionId: election.id,
         },
-        include: {
-          election: {
-            include: {
-              voters: true,
-            },
-          },
-        },
+        // include: {
+        //   election: {
+        //     include: {
+        //       voters: true,
+        //     },
+        //   },
+        // },
       });
 
       const voters = await ctx.prisma.voter.findMany({
@@ -184,8 +190,29 @@ export const electionRouter = createTRPCRouter({
       });
 
       return {
-        invitedVoter,
-        voters,
+        voters: z
+          .array(
+            z.object({
+              id: z.string(),
+              email: z.string(),
+              status: z.enum(["ACCEPTED", "INVITED", "DECLINED"]),
+            })
+          )
+          .parse(
+            voters
+              .map((voter) => ({
+                id: voter.id,
+                email: voter.user.email,
+                status: "ACCEPTED",
+              }))
+              .concat(
+                invitedVoter.map((voter) => ({
+                  id: voter.id,
+                  email: voter.email,
+                  status: voter.status,
+                }))
+              )
+          ),
         election,
       };
     }),
