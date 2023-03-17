@@ -1,22 +1,13 @@
-import { Button, Flex, Text } from "@mantine/core";
+import { Button, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useRouter } from "next/router";
 import CreateVoterModal from "../../../components/modals/CreateVoter";
+import Voter from "../../../components/Voter";
 import { api } from "../../../utils/api";
 
 const DashboardVoter = () => {
   const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
-
-  // const election = api.election.getBySlug.useQuery(
-  //   router.query.electionSlug as string,
-  //   {
-  //     enabled: router.isReady,
-  //     refetchOnWindowFocus: false,
-  //     refetchOnReconnect: false,
-  //     refetchOnMount: false,
-  //   }
-  // );
 
   const voters = api.election.getElectionVoter.useQuery(
     router.query.electionSlug as string,
@@ -27,12 +18,6 @@ const DashboardVoter = () => {
       refetchOnMount: false,
     }
   );
-
-  const removeVoterMutation = api.voter.removeSingle.useMutation({
-    onSuccess: async () => {
-      await voters.refetch();
-    },
-  });
 
   if (voters.isLoading) return <Text>Loading...</Text>;
 
@@ -53,77 +38,13 @@ const DashboardVoter = () => {
       <Text>{voters.data.election.name} - voter page</Text>
 
       {voters.data.voters.map((voter) => (
-        <Flex key={voter.id} columnGap={8}>
-          <Text>{voter.email}</Text>
-          <Text>({voter.status})</Text>
-
-          <Button
-            compact
-            color="red"
-            variant="subtle"
-            onClick={() =>
-              removeVoterMutation.mutate({
-                electionId: voters.data.election.id,
-                voterId: voter.id,
-                isInvitedVoter: false,
-              })
-            }
-            loading={removeVoterMutation.isLoading}
-          >
-            Delete
-          </Button>
-        </Flex>
+        <Voter
+          key={voter.id}
+          electionId={voters.data.election.id}
+          voter={voter}
+          refetch={voters.refetch}
+        />
       ))}
-
-      {/* {!voters.data.invitedVoter.length && !voters.data.voters.length ? (
-        <Text>No voters found</Text>
-      ) : (
-        <>
-          {voters.data.voters.map((voter) => (
-            <Flex key={voter.id} columnGap={8}>
-              <Text>{voter.user.email}</Text>
-
-              <Button
-                compact
-                color="red"
-                variant="subtle"
-                onClick={() =>
-                  removeVoterMutation.mutate({
-                    electionId: voters.data.election.id,
-                    voterId: voter.id,
-                    isInvitedVoter: false,
-                  })
-                }
-                loading={removeVoterMutation.isLoading}
-              >
-                Delete
-              </Button>
-            </Flex>
-          ))}
-          {voters.data.invitedVoter.map((voter) => (
-            <Flex key={voter.id} columnGap={8}>
-              <Text>
-                {voter.email} ({voter.status})
-              </Text>
-
-              <Button
-                compact
-                color="red"
-                onClick={() =>
-                  removeVoterMutation.mutate({
-                    electionId: voters.data.election.id,
-                    voterId: voter.id,
-                    isInvitedVoter: true,
-                  })
-                }
-                loading={removeVoterMutation.isLoading}
-              >
-                Delete
-              </Button>
-            </Flex>
-          ))}
-        </>
-      )} */}
     </>
   );
 };

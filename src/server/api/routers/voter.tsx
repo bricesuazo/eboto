@@ -17,26 +17,19 @@ export const voterRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      // TODO: Add middleware for checking if user is a commissioner of the election
-      const election = await ctx.prisma.election.findUnique({
+      const election = await ctx.prisma.election.findFirst({
         where: {
           id: input.electionId,
-        },
-        include: {
-          commissioners: true,
+          commissioners: {
+            some: {
+              userId: ctx.session.user.id,
+            },
+          },
         },
       });
 
       if (!election) {
         throw new Error("Election not found");
-      }
-
-      if (
-        !election.commissioners.some(
-          (commissioner) => commissioner.userId === ctx.session.user.id
-        )
-      ) {
-        throw new Error("You are not a commissioner of this election");
       }
 
       await ctx.prisma.verificationToken.deleteMany({
