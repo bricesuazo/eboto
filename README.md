@@ -1,6 +1,8 @@
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/bricesuazo/eboto-mo)
 
-# [eBoto Mo](https://eboto-mo.com/) - An online voting system for Cavite State University - Don Severino Delas Alas Campus with realtime voting count.
+# [eBoto Mo](https://eboto-mo.com/) - Your One-Stop Online Voting Solution
+
+Empower your elections with eBoto Mo, the versatile and web-based voting platform that offers secure online elections for any type of organization.
 
 This system is our final project in COSC70A & COSC75A.
 

@@ -266,15 +266,12 @@ const NavbarComponent = ({
           {electionDashboardNavbar.map((item) => (
             <UnstyledButton
               key={item.id}
+              component={Link}
+              href={`/dashboard/${router.query.electionSlug as string}/${
+                item.path || ""
+              }`}
               onClick={() => {
-                void (async () => {
-                  await router.push(
-                    `/dashboard/${router.query.electionSlug as string}/${
-                      item.path || ""
-                    }`
-                  );
-                  opened && setOpened(false);
-                })();
+                opened && setOpened(false);
               }}
               className={cx(classes.link, {
                 [classes.linkActive]:
