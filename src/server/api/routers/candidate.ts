@@ -9,6 +9,7 @@ export const candidateRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         firstName: z.string(),
+        middleName: z.string().nullable(),
         lastName: z.string(),
         slug: z.string(),
         electionId: z.string(),
@@ -63,6 +64,7 @@ export const candidateRouter = createTRPCRouter({
         },
         data: {
           first_name: input.firstName,
+          middle_name: input.middleName,
           last_name: input.lastName,
           slug: input.slug.trim().toLowerCase(),
           electionId: position.election.id,

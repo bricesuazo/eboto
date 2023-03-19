@@ -108,6 +108,7 @@ const EditCandidateModal = ({
           editCandidateMutation.mutate({
             id: candidate.id,
             firstName: value.firstName,
+            middleName: value.middleName,
             lastName: value.lastName,
             slug: value.slug,
             partylistId: value.partylistId,

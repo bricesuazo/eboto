@@ -122,7 +122,6 @@ export const voterRouter = createTRPCRouter({
         });
       }
 
-      // TODO: Check if email is the email of this session user. Then just connect the voter to the user
       if (ctx.session.user.email === input.email) {
         return {
           voter: await ctx.prisma.voter.create({
