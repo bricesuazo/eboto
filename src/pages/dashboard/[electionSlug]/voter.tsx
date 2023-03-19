@@ -1,5 +1,12 @@
-import { Button, Text } from "@mantine/core";
+import {
+  Button,
+  Text,
+  Table,
+  TextInput,
+  Flex,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { IconSearch } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import CreateVoterModal from "../../../components/modals/CreateVoter";
 import Voter from "../../../components/Voter";
@@ -34,17 +41,39 @@ const DashboardVoter = () => {
         refetch={voters.refetch}
       />
 
-      <Button onClick={open}>Add voter</Button>
-      <Text>{voters.data.election.name} - voter page</Text>
-
-      {voters.data.voters.map((voter) => (
-        <Voter
-          key={voter.id}
-          electionId={voters.data.election.id}
-          voter={voter}
-          refetch={voters.refetch}
+      <Flex columnGap="sm">
+        <Button onClick={open}>Add voter</Button>
+        <TextInput
+          placeholder="Search by any field"
+          mb="md"
+          icon={<IconSearch size="0.9rem" stroke={1.5} />}
+          // value={search}
+          // onChange={handleSearchChange}
+          sx={{
+            flex: 1,
+          }}
         />
-      ))}
+      </Flex>
+
+      <Table striped highlightOnHover withBorder>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th />
+          </tr>
+        </thead>
+        <tbody>
+          {voters.data.voters.map((voter) => (
+            <Voter
+              key={voter.id}
+              electionId={voters.data.election.id}
+              voter={voter}
+              refetch={voters.refetch}
+            />
+          ))}
+        </tbody>
+      </Table>
     </>
   );
 };
