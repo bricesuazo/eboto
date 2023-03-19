@@ -1,7 +1,28 @@
-import { Button, Text, useMantineTheme, ActionIcon } from "@mantine/core";
+import {
+  Button,
+  Text,
+  useMantineTheme,
+  ActionIcon,
+  createStyles,
+} from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
 import { api } from "../utils/api";
 
+const useStyles = createStyles((theme) => ({
+  emailCol: {
+    width: "100%",
+
+    position: "relative",
+
+    [theme.fn.largerThan("sm")]: {
+      width: "50%",
+    },
+  },
+
+  statusCol: {
+    width: "100%",
+  },
+}));
 const Voter = ({
   voter,
   refetch,
@@ -15,6 +36,7 @@ const Voter = ({
   refetch: () => Promise<unknown>;
   electionId: string;
 }) => {
+  const { classes } = useStyles();
   const theme = useMantineTheme();
   const removeVoterMutation = api.voter.removeSingle.useMutation({
     onSuccess: async () => {
@@ -23,12 +45,7 @@ const Voter = ({
   });
   return (
     <tr key={voter.id}>
-      <td
-        style={{
-          width: "100%",
-          position: "relative",
-        }}
-      >
+      <td className={classes.emailCol}>
         <Text
           sx={{
             position: "absolute",
@@ -46,7 +63,9 @@ const Voter = ({
           {voter.email}
         </Text>
       </td>
-      <td>{voter.status}</td>
+      <td className={classes.statusCol}>
+        <Text align="center">{voter.status}</Text>
+      </td>
       <td>
         <Button
           compact
@@ -64,6 +83,7 @@ const Voter = ({
             })
           }
           loading={removeVoterMutation.isLoading}
+          loaderPosition="center"
         >
           Delete
         </Button>
@@ -81,6 +101,7 @@ const Voter = ({
               display: "none",
             },
           })}
+          loading={removeVoterMutation.isLoading}
         >
           <IconTrash size="1.25rem" />
         </ActionIcon>

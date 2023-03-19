@@ -1,10 +1,4 @@
-import {
-  Button,
-  Text,
-  Table,
-  TextInput,
-  Flex,
-} from "@mantine/core";
+import { Button, Text, Table, TextInput, Flex } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
 import { useRouter } from "next/router";
@@ -58,8 +52,10 @@ const DashboardVoter = () => {
       <Table striped highlightOnHover withBorder>
         <thead>
           <tr>
-            <th>Name</th>
             <th>Email</th>
+            <th>
+              <Text align="center">Status</Text>
+            </th>
             <th />
           </tr>
         </thead>
