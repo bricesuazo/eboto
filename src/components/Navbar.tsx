@@ -138,6 +138,9 @@ const NavbarComponent = ({
         hiddenBreakpoint="sm"
         p="md"
         className={classes.navbar}
+        sx={{
+          overflow: "auto",
+        }}
       >
         <Navbar.Section>
           <Button
