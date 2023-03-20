@@ -23,7 +23,7 @@ const CandidatePartylist = () => {
   if (!candidates.data) return <Text>No data</Text>;
 
   return (
-    <Stack>
+    <Stack spacing="lg">
       {candidates.data.positions.length === 0 ? (
         <Text>No positions yet</Text>
       ) : (

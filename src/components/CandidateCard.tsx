@@ -45,18 +45,22 @@ const CandidateCard = ({
       <Box>
         <Flex
           direction="column"
-          w={200}
           h={140}
           p={8}
           align="center"
           justify="space-between"
           sx={(theme) => ({
+            width: 200,
             border: "1px solid",
             borderColor:
               theme.colorScheme === "dark"
                 ? theme.colors.dark[5]
                 : theme.colors.gray[3],
             borderRadius: 8,
+
+            [theme.fn.smallerThan("xs")]: {
+              width: 140,
+            },
           })}
         >
           <Flex direction="column" align="center">

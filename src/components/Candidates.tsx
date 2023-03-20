@@ -21,7 +21,7 @@ const Candidates = ({
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
   return (
-    <Box mb="xl">
+    <Box>
       <CreateCandidateModal
         isOpen={opened}
         onClose={close}
@@ -73,7 +73,7 @@ const Candidates = ({
               },
 
               [theme.fn.smallerThan("xs")]: {
-                width: 64,
+                width: 60,
               },
             })}
           >
@@ -100,9 +100,10 @@ const Candidates = ({
           sx={{
             overflow: "auto",
           }}
+          align="center"
         >
           {!candidates.length ? (
-            <Text>No candidate in {position.name} yet...</Text>
+            <Text lineClamp={4}>No candidate in {position.name} yet...</Text>
           ) : (
             candidates.map((candidate) => (
               <CandidateCard
