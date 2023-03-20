@@ -4,6 +4,7 @@ import type { Candidate, Partylist, Position } from "@prisma/client";
 import { IconUserPlus } from "@tabler/icons-react";
 import CandidateCard from "./CandidateCard";
 import CreateCandidateModal from "./modals/CreateCandidate";
+import Balancer from "react-wrap-balancer";
 
 const Candidates = ({
   position,
@@ -30,8 +31,17 @@ const Candidates = ({
         partylists={partylists}
       />
 
-      <Text weight="bold" size="xl" w="100%">
-        {position.name}
+      <Text
+        weight="bold"
+        size="xl"
+        w="100%"
+        sx={(theme) => ({
+          [theme.fn.smallerThan("xs")]: {
+            textAlign: "center",
+          },
+        })}
+      >
+        <Balancer>{position.name}</Balancer>
       </Text>
 
       <Flex gap={12}>
@@ -61,10 +71,27 @@ const Candidates = ({
                     ? theme.colors.dark[5]
                     : theme.colors.gray[1],
               },
+
+              [theme.fn.smallerThan("xs")]: {
+                width: 64,
+              },
             })}
           >
             <IconUserPlus />
-            <Text>Add candidate</Text>
+
+            <Text>
+              Add
+              <Text
+                sx={(theme) => ({
+                  [theme.fn.smallerThan("xs")]: {
+                    display: "none",
+                  },
+                })}
+              >
+                {" "}
+                candidate
+              </Text>
+            </Text>
           </UnstyledButton>
         </Box>
 
