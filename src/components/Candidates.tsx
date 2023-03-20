@@ -1,4 +1,4 @@
-import { Text, Group, UnstyledButton, Box, Flex } from "@mantine/core";
+import { Text, UnstyledButton, Box, Flex } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import type { Candidate, Partylist, Position } from "@prisma/client";
 import { IconUserPlus } from "@tabler/icons-react";
@@ -68,17 +68,15 @@ const Candidates = ({
           </UnstyledButton>
         </Box>
 
-        <Group>
+        <Flex
+          gap="xs"
+          sx={{
+            overflow: "auto",
+          }}
+        >
           {!candidates.length ? (
             <Text>No candidate in {position.name} yet...</Text>
           ) : (
-            // <Box
-            //   sx={{
-            //     flexWrap: "wrap",
-            //     gap: 12,
-            //     overflow: "visible",
-            //   }}
-            // >
             candidates.map((candidate) => (
               <CandidateCard
                 key={candidate.id}
@@ -88,9 +86,8 @@ const Candidates = ({
                 partylists={partylists}
               />
             ))
-            // </Box>
           )}
-        </Group>
+        </Flex>
       </Flex>
     </Box>
   );
