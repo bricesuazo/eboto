@@ -1,6 +1,8 @@
 import { Group, Modal, rem, Text, useMantineTheme } from "@mantine/core";
 import { Dropzone, MS_EXCEL_MIME_TYPE } from "@mantine/dropzone";
 import { IconFileSpreadsheet, IconUpload, IconX } from "@tabler/icons-react";
+import readXlsxFile, { type Row } from "read-excel-file";
+import { useState } from "react";
 
 const UploadBulkVoter = ({
   isOpen,
@@ -14,6 +16,13 @@ const UploadBulkVoter = ({
   refetch: () => Promise<unknown>;
 }) => {
   const theme = useMantineTheme();
+  const [selectedFiles, setSelectedFiles] = useState<
+    {
+      fileName: string;
+      voters: Row[];
+    }[]
+  >();
+  console.log("selectedFile", selectedFiles);
   return (
     <Modal
       onClose={onClose}
@@ -22,7 +31,42 @@ const UploadBulkVoter = ({
       size="lg"
     >
       <Dropzone
-        onDrop={(files) => console.log("accepted files", files)}
+        onDrop={(files) => {
+          // if (selectedFile?.find((f) => f.fileName === file.name)) {
+          //   return;
+          // }
+
+          Array.from(files).forEach((file) => {
+            void (async () =>
+              await readXlsxFile(file).then((rows) => {
+                if (rows.length < 1) {
+                  return;
+                }
+
+                if (
+                  rows[0] &&
+                  (rows[0][0] !== "full_name" || rows[0][1] !== "email")
+                ) {
+                  return;
+                }
+
+                if (selectedFiles?.find((f) => f.fileName === file.name)) {
+                  return;
+                }
+
+                setSelectedFiles((prev) => {
+                  if (prev) {
+                    return [
+                      ...prev,
+                      { fileName: file.name, voters: rows.slice(1) },
+                    ];
+                  } else {
+                    return [{ fileName: file.name, voters: rows.slice(1) }];
+                  }
+                });
+              }))();
+          });
+        }}
         onReject={(files) => console.log("rejected files", files)}
         accept={MS_EXCEL_MIME_TYPE}
       >
@@ -49,7 +93,7 @@ const UploadBulkVoter = ({
             <IconFileSpreadsheet size="3.2rem" stroke={1.5} />
           </Dropzone.Idle>
           <div>
-            <Text size="xl" inline>
+            <Text size="xl" align="center">
               Drag excel file here or click to select files
             </Text>
           </div>
