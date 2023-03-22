@@ -18,7 +18,7 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import readXlsxFile, { type Row } from "read-excel-file";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useDidUpdate } from "@mantine/hooks";
 import Balancer from "react-wrap-balancer";
 
@@ -40,6 +40,7 @@ const UploadBulkVoter = ({
       voters: Row[];
     }[]
   >([]);
+  const openRef = useRef<() => void>(null);
 
   useDidUpdate(() => {
     if (isOpen) {
@@ -54,75 +55,85 @@ const UploadBulkVoter = ({
     >
       <Stack spacing="sm">
         {selectedFiles.length ? (
-          <Stack>
-            {selectedFiles.map((file) => (
-              <Stack key={file.fileName} spacing="sm">
-                <Flex justify="space-between">
-                  <Text weight={600}>{file.fileName}</Text>
-                  <ActionIcon
-                    title="Remove file"
-                    aria-label="Remove file"
-                    onClick={() => {
-                      setSelectedFiles((prev) => {
-                        if (prev) {
-                          return prev.filter(
-                            (f) => f.fileName !== file.fileName
-                          );
-                        } else {
-                          return [];
-                        }
-                      });
-                    }}
-                    disabled={selectedFiles.length === 0}
-                    variant="outline"
-                    color="red"
-                  >
-                    <IconTrash size="1.25rem" />
-                  </ActionIcon>
-                </Flex>
-                <Box>
-                  {file.voters.map((voter) => (
-                    <Flex
-                      key={voter[0]?.toString()}
-                      justify="space-between"
-                      align="center"
+          <>
+            <Button
+              leftIcon={<IconUpload size="1rem" />}
+              onClick={() => openRef.current?.()}
+            >
+              Upload
+            </Button>
+            <Stack>
+              {selectedFiles.map((file) => (
+                <Stack key={file.fileName} spacing="sm">
+                  <Flex justify="space-between">
+                    <Text weight={600}>{file.fileName}</Text>
+                    <ActionIcon
+                      title="Remove file"
+                      aria-label="Remove file"
+                      onClick={() => {
+                        setSelectedFiles((prev) => {
+                          if (prev) {
+                            return prev.filter(
+                              (f) => f.fileName !== file.fileName
+                            );
+                          } else {
+                            return [];
+                          }
+                        });
+                      }}
+                      disabled={selectedFiles.length === 0}
+                      variant="outline"
+                      color="red"
                     >
-                      <Text truncate>{voter[0]?.toString()}</Text>
-                      <ActionIcon
-                        title="Remove voter"
-                        aria-label="Remove voter"
-                        onClick={() => {
-                          setSelectedFiles((prev) => {
-                            return prev
-                              .map((f) => {
-                                if (f.fileName === file.fileName) {
-                                  return {
-                                    ...f,
-
-                                    voters: f.voters.filter(
-                                      (v) => v[0] !== voter[0]
-                                    ),
-                                  };
-                                } else {
-                                  return f;
-                                }
-                              })
-                              .filter((f) => f.voters.length > 0);
-                          });
-                        }}
-                        disabled={selectedFiles.length === 0}
-                        color="red"
+                      <IconTrash size="1.25rem" />
+                    </ActionIcon>
+                  </Flex>
+                  <Box>
+                    {file.voters.map((voter) => (
+                      <Flex
+                        key={voter[0]?.toString()}
+                        justify="space-between"
+                        align="center"
                       >
-                        <IconTrash size="1.25rem" />
-                      </ActionIcon>
-                    </Flex>
-                  ))}
-                </Box>
-              </Stack>
-            ))}
-          </Stack>
+                        <Text truncate>{voter[0]?.toString()}</Text>
+
+                        <ActionIcon
+                          title="Remove voter"
+                          aria-label="Remove voter"
+                          onClick={() => {
+                            setSelectedFiles((prev) => {
+                              return prev
+                                .map((f) => {
+                                  if (f.fileName === file.fileName) {
+                                    return {
+                                      ...f,
+
+                                      voters: f.voters.filter(
+                                        (v) => v[0] !== voter[0]
+                                      ),
+                                    };
+                                  } else {
+                                    return f;
+                                  }
+                                })
+                                .filter((f) => f.voters.length > 0);
+                            });
+                          }}
+                          disabled={selectedFiles.length === 0}
+                          color="red"
+                        >
+                          <IconTrash size="1.25rem" />
+                        </ActionIcon>
+                      </Flex>
+                    ))}
+                  </Box>
+                </Stack>
+              ))}
+            </Stack>
+          </>
         ) : (
           <Dropzone
+            openRef={openRef}
             onDrop={(files) => {
               // if (selectedFile?.find((f) => f.fileName === file.name)) {
               //   return;
