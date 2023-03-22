@@ -14,10 +14,13 @@ import CreateVoterModal from "../../../components/modals/CreateVoter";
 import Voter from "../../../components/Voter";
 import { api } from "../../../utils/api";
 import Balancer from "react-wrap-balancer";
+import UploadBulkVoter from "../../../components/modals/UploadBulkVoter";
 
 const DashboardVoter = () => {
   const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
+  const [openedBulkImport, { open: openBulkVoter, close: closeBulkVoter }] =
+    useDisclosure(false);
 
   const voters = api.election.getElectionVoter.useQuery(
     router.query.electionSlug as string,
@@ -41,6 +44,13 @@ const DashboardVoter = () => {
         isOpen={opened}
         electionId={voters.data.election.id}
         onClose={close}
+        refetch={voters.refetch}
+      />
+
+      <UploadBulkVoter
+        isOpen={openedBulkImport}
+        electionId={voters.data.election.id}
+        onClose={closeBulkVoter}
         refetch={voters.refetch}
       />
 
@@ -68,6 +78,7 @@ const DashboardVoter = () => {
               Add voter
             </Button>
             <Button
+              onClick={openBulkVoter}
               leftIcon={<IconUpload size="1rem" />}
               variant="light"
               sx={(theme) => ({
