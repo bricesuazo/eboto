@@ -167,4 +167,77 @@ export const voterRouter = createTRPCRouter({
       // });
       return { invitedVoter, email: input.email };
     }),
+
+  createMany: protectedProcedure
+
+    .input(
+      z.object({
+        electionId: z.string(),
+        emails: z.array(z.string().email()),
+      })
+    )
+
+    .mutation(async ({ input, ctx }) => {
+      const election = await ctx.prisma.election.findUnique({
+        where: {
+          id: input.electionId,
+        },
+        include: {
+          commissioners: true,
+        },
+      });
+
+      if (!election) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election not found",
+        });
+      }
+
+      if (
+        !election.commissioners.some(
+          (commissioner) => commissioner.userId === ctx.session.user.id
+        )
+      ) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not a commissioner of this election",
+        });
+      }
+
+      const voters = await ctx.prisma.voter.findMany({
+        where: {
+          electionId: input.electionId,
+        },
+        include: {
+          user: true,
+        },
+      });
+
+      const invitedVoters = await ctx.prisma.invitedVoter.findMany({
+        where: {
+          electionId: input.electionId,
+        },
+      });
+
+      const votersEmails = voters.map((voter) => voter.user.email);
+
+      const invitedVotersEmails = invitedVoters.map(
+        (invitedVoter) => invitedVoter.email
+      );
+
+      const emails = input.emails.filter(
+        (email) =>
+          !votersEmails.includes(email) && !invitedVotersEmails.includes(email)
+      );
+
+      const uniqueEmails = [...new Set(emails)];
+
+      return await ctx.prisma.invitedVoter.createMany({
+        data: uniqueEmails.map((email) => ({
+          email,
+          electionId: input.electionId,
+        })),
+      });
+    }),
 });

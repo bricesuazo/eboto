@@ -12,6 +12,7 @@ import {
 } from "@mantine/core";
 import { Dropzone, MS_EXCEL_MIME_TYPE } from "@mantine/dropzone";
 import {
+  IconCheck,
   IconFileSpreadsheet,
   IconTrash,
   IconUpload,
@@ -21,6 +22,8 @@ import readXlsxFile, { type Row } from "read-excel-file";
 import { useRef, useState } from "react";
 import { useDidUpdate } from "@mantine/hooks";
 import Balancer from "react-wrap-balancer";
+import { api } from "../../utils/api";
+import { notifications } from "@mantine/notifications";
 
 const UploadBulkVoter = ({
   isOpen,
@@ -33,6 +36,19 @@ const UploadBulkVoter = ({
   onClose: () => void;
   refetch: () => Promise<unknown>;
 }) => {
+  const createManyVoterMutation = api.voter.createMany.useMutation({
+    onSuccess: async (data) => {
+      await refetch();
+      notifications.show({
+        title: `${data.count} voters added!`,
+        message: "Successfully added voters",
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
+      });
+      onClose();
+    },
+  });
+
   const theme = useMantineTheme();
   const [selectedFiles, setSelectedFiles] = useState<
     {
@@ -47,6 +63,7 @@ const UploadBulkVoter = ({
       setSelectedFiles([]);
     }
   }, [isOpen]);
+
   return (
     <Modal
       onClose={onClose}
@@ -231,7 +248,15 @@ const UploadBulkVoter = ({
             <Button
               type="submit"
               disabled={selectedFiles.length === 0}
-              //   loading={createVoterMutation.isLoading}
+              loading={createManyVoterMutation.isLoading}
+              onClick={() => {
+                createManyVoterMutation.mutate({
+                  electionId,
+                  emails: selectedFiles.flatMap((f) =>
+                    f.voters.map((v) => v[0]?.toString() ?? "")
+                  ),
+                });
+              }}
             >
               Upload
             </Button>
