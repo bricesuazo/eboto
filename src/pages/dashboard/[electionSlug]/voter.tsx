@@ -7,7 +7,7 @@ import {
   Box,
   Stack,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useDidUpdate, useDisclosure } from "@mantine/hooks";
 import { IconSearch, IconUpload, IconUserPlus } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import CreateVoterModal from "../../../components/modals/CreateVoter";
@@ -15,12 +15,21 @@ import Voter from "../../../components/Voter";
 import { api } from "../../../utils/api";
 import Balancer from "react-wrap-balancer";
 import UploadBulkVoter from "../../../components/modals/UploadBulkVoter";
+import { useState } from "react";
 
 const DashboardVoter = () => {
   const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
   const [openedBulkImport, { open: openBulkVoter, close: closeBulkVoter }] =
     useDisclosure(false);
+  const [votersData, setVotersData] = useState<
+    {
+      id: string;
+      email: string;
+      status: "ACCEPTED" | "INVITED" | "DECLINED";
+    }[]
+  >([]);
+  const [search, setSearch] = useState("");
 
   const voters = api.election.getElectionVoter.useQuery(
     router.query.electionSlug as string,
@@ -31,6 +40,9 @@ const DashboardVoter = () => {
       refetchOnMount: false,
     }
   );
+  useDidUpdate(() => {
+    setVotersData(voters.data?.voters ?? []);
+  }, [voters.data?.voters]);
 
   if (voters.isLoading) return <Text>Loading...</Text>;
 
@@ -93,8 +105,17 @@ const DashboardVoter = () => {
           <TextInput
             placeholder="Search by any field"
             icon={<IconSearch size="1rem" />}
-            // value={search}
-            // onChange={handleSearchChange}
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setVotersData(
+                voters.data.voters.filter((voter) =>
+                  voter.email
+                    .toLowerCase()
+                    .includes(e.target.value.toLowerCase())
+                )
+              );
+            }}
             sx={{
               flex: 1,
             }}
@@ -122,14 +143,29 @@ const DashboardVoter = () => {
             </thead>
 
             <tbody>
-              {voters.data.voters.map((voter) => (
-                <Voter
-                  key={voter.id}
-                  electionId={voters.data.election.id}
-                  voter={voter}
-                  refetch={voters.refetch}
-                />
-              ))}
+              {votersData.length === 0 ? (
+                <tr>
+                  <td colSpan={3}>
+                    <Text align="center">
+                      <Balancer>
+                        No voters found. Try searching for something else.
+                      </Balancer>
+                    </Text>
+                  </td>
+                </tr>
+              ) : (
+                votersData.map((voter) => (
+                  <Voter
+                    key={voter.id}
+                    electionId={voters.data.election.id}
+                    voter={voter}
+                    refetch={async () => {
+                      await voters.refetch();
+                      setSearch("");
+                    }}
+                  />
+                ))
+              )}
             </tbody>
           </Table>
         )}
