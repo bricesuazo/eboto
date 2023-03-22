@@ -1,4 +1,6 @@
 import {
+  ActionIcon,
+  Box,
   Button,
   Flex,
   Group,
@@ -9,7 +11,12 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { Dropzone, MS_EXCEL_MIME_TYPE } from "@mantine/dropzone";
-import { IconFileSpreadsheet, IconUpload, IconX } from "@tabler/icons-react";
+import {
+  IconFileSpreadsheet,
+  IconTrash,
+  IconUpload,
+  IconX,
+} from "@tabler/icons-react";
 import readXlsxFile, { type Row } from "read-excel-file";
 import { useState } from "react";
 import { useDidUpdate } from "@mantine/hooks";
@@ -52,7 +59,9 @@ const UploadBulkVoter = ({
               <Stack key={file.fileName} spacing="sm">
                 <Flex justify="space-between">
                   <Text weight={600}>{file.fileName}</Text>
-                  <Button
+                  <ActionIcon
+                    title="Remove file"
+                    aria-label="Remove file"
                     onClick={() => {
                       setSelectedFiles((prev) => {
                         if (prev) {
@@ -64,17 +73,24 @@ const UploadBulkVoter = ({
                         }
                       });
                     }}
+                    disabled={selectedFiles.length === 0}
+                    variant="outline"
                     color="red"
-                    compact
                   >
-                    Delete
-                  </Button>
+                    <IconTrash size="1.25rem" />
+                  </ActionIcon>
                 </Flex>
-                <Stack spacing="xs">
+                <Box>
                   {file.voters.map((voter) => (
-                    <Flex key={voter[0]?.toString()} justify="space-between">
-                      <Text>{voter[0]?.toString()}</Text>
-                      <Button
+                    <Flex
+                      key={voter[0]?.toString()}
+                      justify="space-between"
+                      align="center"
+                    >
+                      <Text truncate>{voter[0]?.toString()}</Text>
+                      <ActionIcon
+                        title="Remove voter"
+                        aria-label="Remove voter"
                         onClick={() => {
                           setSelectedFiles((prev) => {
                             return prev
@@ -94,14 +110,14 @@ const UploadBulkVoter = ({
                               .filter((f) => f.voters.length > 0);
                           });
                         }}
-                        compact
+                        disabled={selectedFiles.length === 0}
                         color="red"
                       >
-                        Delete
-                      </Button>
+                        <IconTrash size="1.25rem" />
+                      </ActionIcon>
                     </Flex>
                   ))}
-                </Stack>
+                </Box>
               </Stack>
             ))}
           </Stack>
@@ -170,25 +186,29 @@ const UploadBulkVoter = ({
                 <IconFileSpreadsheet size="3.2rem" stroke={1.5} />
               </Dropzone.Idle>
               <div>
-                <Text size="xl" align="center">
-                  <Balancer>
+                <Balancer>
+                  <Text size="xl" align="center">
                     Drag excel file here or click to select files
-                  </Balancer>
-                </Text>
+                  </Text>
+                </Balancer>
               </div>
             </Flex>
           </Dropzone>
         )}
-        <Flex justify="space-between">
-          <Button
-            color="red"
+        <Flex justify="space-between" align="center">
+          <ActionIcon
+            title="Clear all"
+            aria-label="Clear all"
             onClick={() => {
               setSelectedFiles([]);
             }}
             disabled={selectedFiles.length === 0}
+            variant="outline"
+            size="lg"
+            color="red"
           >
-            Clear all
-          </Button>
+            <IconTrash size="1.25rem" />
+          </ActionIcon>
           <Group position="right" spacing="xs">
             <Button
               variant="default"
