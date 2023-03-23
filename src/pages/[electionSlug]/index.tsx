@@ -102,7 +102,7 @@ const ElectionPage = ({
           <Stack spacing="lg">
             {positions.data.map((position) => (
               <Stack spacing={4} key={position.id}>
-                <Title order={3} weight={600} align="center" truncate>
+                <Title order={3} weight={600} align="center" lineClamp={2}>
                   {position.name}
                 </Title>
 
@@ -139,6 +139,7 @@ const ElectionPage = ({
                             flexDirection: "row",
                             justifyContent: "flex-start",
                             columnGap: theme.spacing.xs,
+                            height: 128,
                           },
                         })}
                         key={candidate.id}
