@@ -7,6 +7,7 @@ import {
   Text,
   Title,
   Group,
+  Skeleton,
 } from "@mantine/core";
 import type { Election } from "@prisma/client";
 import { IconClock, IconFingerprint, IconUser } from "@tabler/icons-react";
@@ -19,6 +20,7 @@ import { prisma } from "../../server/db";
 import { api } from "../../utils/api";
 import { convertNumberToHour } from "../../utils/convertNumberToHour";
 import { isElectionOngoing } from "../../utils/isElectionOngoing";
+import Balancer from "react-wrap-balancer";
 
 const ElectionPage = ({
   election,
@@ -42,14 +44,48 @@ const ElectionPage = ({
   return (
     <Container py="xl">
       {positions.isLoading ? (
-        <Text>Loading...</Text>
+        <Stack align="center" spacing={12}>
+          <Stack spacing={8} align="center">
+            <Group position="center" mb={4}>
+              <Skeleton w={92} h={92} />
+            </Group>
+            <Skeleton w={228} h={28} />
+            <Skeleton w={248} h={16} />
+            <Skeleton w={200} h={16} />
+            <Skeleton w={172} h={32} radius="lg" />
+          </Stack>
+
+          {[...(Array(8) as unknown as number[])].map((_, i) => (
+            <Stack key={i} spacing={8} align="center" w="100%">
+              <Skeleton w={128} h={28} radius="lg" />
+
+              <Group position="center" w="100%" spacing={12}>
+                {[...(Array(2) as unknown as number[])].map((_, i) => (
+                  <Skeleton
+                    key={i}
+                    sx={(theme) => ({
+                      width: 200,
+                      height: 192,
+                      borderRadius: theme.radius.md,
+
+                      [theme.fn.smallerThan("xs")]: {
+                        width: "100%",
+                        height: 128,
+                      },
+                    })}
+                  />
+                ))}
+              </Group>
+            </Stack>
+          ))}
+        </Stack>
       ) : positions.isError ? (
         <Text>Error: {positions.error.message}</Text>
       ) : !positions.data ? (
         <Text>Not found</Text>
       ) : (
         <Stack align="center">
-          <Box w="100%">
+          <Box>
             <Group position="center" mb={8}>
               {election.logo ? (
                 <Image src={election.logo} alt="Logo" width={92} height={92} />
@@ -103,7 +139,7 @@ const ElectionPage = ({
             {positions.data.map((position) => (
               <Stack spacing={4} key={position.id}>
                 <Title order={3} weight={600} align="center" lineClamp={2}>
-                  {position.name}
+                  <Balancer>{position.name}</Balancer>
                 </Title>
 
                 <Group position="center" spacing="sm">
