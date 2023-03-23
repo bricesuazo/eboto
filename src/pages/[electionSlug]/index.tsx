@@ -99,7 +99,7 @@ const ElectionPage = ({
             </Group>
           </Box>
 
-          <Stack>
+          <Stack spacing="lg">
             {positions.data.map((position) => (
               <Stack spacing={4} key={position.id}>
                 <Title order={3} weight={600} align="center" truncate>
@@ -107,74 +107,78 @@ const ElectionPage = ({
                 </Title>
 
                 <Group position="center" spacing="sm">
-                  {position.candidate.map((candidate) => (
-                    <UnstyledButton
-                      component={Link}
-                      href={`/${election?.slug || ""}/${candidate.slug}`}
-                      sx={(theme) => ({
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: 200,
-                        padding: theme.spacing.xs,
-                        borderRadius: theme.radius.md,
-                        backgroundColor:
-                          theme.colorScheme === "dark"
-                            ? theme.colors.dark[6]
-                            : theme.colors.gray[0],
-                        transition: "background-color 0.2s ease",
-                        "&:hover": {
+                  {position.candidate.length === 0 ? (
+                    <Text>No candidates</Text>
+                  ) : (
+                    position.candidate.map((candidate) => (
+                      <UnstyledButton
+                        component={Link}
+                        href={`/${election?.slug || ""}/${candidate.slug}`}
+                        sx={(theme) => ({
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          width: 200,
+                          height: 192,
+                          padding: theme.spacing.xs,
+                          borderRadius: theme.radius.md,
                           backgroundColor:
                             theme.colorScheme === "dark"
-                              ? theme.colors.dark[5]
-                              : theme.colors.gray[1],
-                        },
+                              ? theme.colors.dark[6]
+                              : theme.colors.gray[0],
+                          transition: "background-color 0.2s ease",
+                          "&:hover": {
+                            backgroundColor:
+                              theme.colorScheme === "dark"
+                                ? theme.colors.dark[5]
+                                : theme.colors.gray[1],
+                          },
 
-                        [theme.fn.smallerThan("xs")]: {
-                          width: "100%",
-                          flexDirection: "row",
-                          justifyContent: "flex-start",
-                          columnGap: theme.spacing.xs,
-                        },
-                      })}
-                      key={candidate.id}
-                    >
-                      <Box>
-                        {candidate.image ? (
-                          <Image
-                            src={candidate.image}
-                            alt="Candidate's image"
-                            width={92}
-                            height={92}
-                            style={{
-                              objectFit: "cover",
-                            }}
-                          />
-                        ) : (
-                          <IconUser
-                            style={{ width: 92, height: 92, padding: 8 }}
-                          />
-                        )}
-                      </Box>
-
-                      <Text
-                        lineClamp={2}
-                        sx={(theme) => ({
-                          textAlign: "center",
                           [theme.fn.smallerThan("xs")]: {
-                            textAlign: "left",
+                            width: "100%",
+                            flexDirection: "row",
+                            justifyContent: "flex-start",
+                            columnGap: theme.spacing.xs,
                           },
                         })}
+                        key={candidate.id}
                       >
-                        {candidate.first_name}{" "}
-                        {candidate.middle_name
-                          ? candidate.middle_name + " "
-                          : ""}
-                        {candidate.last_name} ({candidate.partylist.acronym})
-                      </Text>
-                    </UnstyledButton>
-                  ))}
+                        <Box>
+                          {candidate.image ? (
+                            <Image
+                              src={candidate.image}
+                              alt="Candidate's image"
+                              width={92}
+                              height={92}
+                              style={{
+                                objectFit: "cover",
+                              }}
+                            />
+                          ) : (
+                            <IconUser
+                              style={{ width: 92, height: 92, padding: 8 }}
+                            />
+                          )}
+                        </Box>
+
+                        <Text
+                          lineClamp={2}
+                          sx={(theme) => ({
+                            textAlign: "center",
+                            [theme.fn.smallerThan("xs")]: {
+                              textAlign: "left",
+                            },
+                          })}
+                        >
+                          {candidate.first_name}{" "}
+                          {candidate.middle_name
+                            ? candidate.middle_name + " "
+                            : ""}
+                          {candidate.last_name} ({candidate.partylist.acronym})
+                        </Text>
+                      </UnstyledButton>
+                    ))
+                  )}
                 </Group>
               </Stack>
             ))}
