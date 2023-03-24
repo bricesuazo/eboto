@@ -11,7 +11,7 @@ const AppShellComponent = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AppShell
-      // padding="xl"
+      padding={router.pathname.includes("/account") ? 0 : "md"}
       navbar={
         router.pathname.includes("/dashboard/[electionSlug]") ? (
           <Navbar opened={opened} setOpened={setOpened} />

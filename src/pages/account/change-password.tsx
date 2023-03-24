@@ -1,10 +1,11 @@
-import { Alert, Button, Container, Stack, PasswordInput } from "@mantine/core";
-import { useForm, isNotEmpty, matchesField } from "@mantine/form";
+import { Stack, PasswordInput, Alert, Button } from "@mantine/core";
+import { isNotEmpty, matchesField, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconAlertCircle, IconCheck, IconLock } from "@tabler/icons-react";
-import { api } from "../utils/api";
+import AccountSettingsLayout from "../../components/layouts/AccountSettings";
+import { api } from "../../utils/api";
 
-const AccountPage = () => {
+const ChangePassword = () => {
   const changePasswordMutation = api.user.changePassword.useMutation({
     onSuccess: () => {
       form.reset();
@@ -31,7 +32,7 @@ const AccountPage = () => {
     },
   });
   return (
-    <Container>
+    <AccountSettingsLayout>
       <form
         onSubmit={form.onSubmit((values) => {
           changePasswordMutation.mutate({
@@ -82,8 +83,8 @@ const AccountPage = () => {
           </Button>
         </Stack>
       </form>
-    </Container>
+    </AccountSettingsLayout>
   );
 };
 
-export default AccountPage;
+export default ChangePassword;
