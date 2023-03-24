@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AppShell, Aside } from "@mantine/core";
+import { AppShell, Aside, Box } from "@mantine/core";
 import Header from "./Header";
 import Navbar from "./Navbar";
 import { useRouter } from "next/router";
@@ -29,7 +29,7 @@ const AppShellComponent = ({ children }: { children: React.ReactNode }) => {
       }
       footer={!router.pathname.includes("/dashboard") ? <Footer /> : undefined}
     >
-      {children}
+      <Box mb="xl">{children}</Box>
     </AppShell>
   );
 };

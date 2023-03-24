@@ -294,11 +294,20 @@ export const electionRouter = createTRPCRouter({
           _all: true,
         },
       });
+      const partylists = await ctx.prisma.partylist.aggregate({
+        where: {
+          electionId: election.id,
+        },
+        _count: {
+          _all: true,
+        },
+      });
 
       return {
         election,
         voters,
         voted,
+        partylists,
         positions,
         candidates,
         invitedVoters,
