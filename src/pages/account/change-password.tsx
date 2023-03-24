@@ -78,7 +78,11 @@ const ChangePassword = () => {
               {changePasswordMutation.error.message}
             </Alert>
           )}
-          <Button type="submit" loading={changePasswordMutation.isLoading}>
+          <Button
+            type="submit"
+            loading={changePasswordMutation.isLoading}
+            disabled={!form.isValid()}
+          >
             Change password
           </Button>
         </Stack>

@@ -1,12 +1,14 @@
 import { Flex, Stack, TextInput, Button } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
-import { useDidUpdate } from "@mantine/hooks";
 import { IconLetterCase } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import AccountSettingsLayout from "../../components/layouts/AccountSettings";
+import { useEffect } from "react";
 
 const AccountPage = () => {
   const session = useSession();
+  const router = useRouter();
 
   const form = useForm<{
     firstName: string;
@@ -27,7 +29,7 @@ const AccountPage = () => {
     },
   });
 
-  useDidUpdate(() => {
+  useEffect(() => {
     if (session.status === "authenticated") {
       const data = {
         firstName: session.data.user.firstName,
@@ -39,7 +41,8 @@ const AccountPage = () => {
       form.setValues(data);
       form.resetDirty(data);
     }
-  }, [session.status]);
+  }, [session.status, router.pathname]);
+
   return (
     <AccountSettingsLayout>
       <form
