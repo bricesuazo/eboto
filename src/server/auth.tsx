@@ -23,6 +23,7 @@ declare module "next-auth" {
     user: {
       id: string;
       firstName: string;
+      middleName: string | null;
       lastName: string;
       email: string;
       // ...other properties
@@ -33,6 +34,7 @@ declare module "next-auth" {
   interface User {
     id: string;
     firstName: string;
+    middleName: string | null;
     lastName: string;
     // ...other properties
     // role: UserRole;
@@ -43,6 +45,7 @@ declare module "next-auth/jwt" {
   interface JWT {
     id: string;
     firstName: string;
+    middleName: string | null;
     lastName: string;
   }
 }
@@ -77,6 +80,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.id;
         session.user.firstName = token.firstName;
+        session.user.middleName = token.middleName;
         session.user.lastName = token.lastName;
         // session.user.role = user.role; <-- put other properties on the session here
       }
@@ -86,6 +90,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.firstName = user.firstName;
+        token.middleName = user.middleName;
         token.lastName = user.lastName;
         // token.role = user.role; <-- put other properties on the token here
       }
@@ -143,6 +148,7 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           email: user.email,
           firstName: user.first_name,
+          middleName: user.middle_name,
           lastName: user.last_name,
           image: user.image,
         };

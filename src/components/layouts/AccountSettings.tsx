@@ -23,7 +23,7 @@ const AccountSettingsLayout = ({ children }: { children: React.ReactNode }) => {
     },
     {
       id: 1,
-      label: "Change password",
+      label: "Password",
       value: "change-password",
       icon: IconLock,
     },
@@ -42,8 +42,11 @@ const AccountSettingsLayout = ({ children }: { children: React.ReactNode }) => {
                 : theme.colors.gray[3]
             }`,
 
-            [theme.fn.smallerThan("sm")]: {
+            [theme.fn.smallerThan("md")]: {
               width: "14rem",
+            },
+            [theme.fn.smallerThan("sm")]: {
+              width: "12rem",
             },
             [theme.fn.smallerThan("xs")]: {
               display: "none",
@@ -65,6 +68,12 @@ const AccountSettingsLayout = ({ children }: { children: React.ReactNode }) => {
                   theme.colorScheme === "dark"
                     ? theme.colors.dark[0]
                     : theme.colors.gray[7],
+                backgroundColor:
+                  (router.pathname.split("/")[2] ?? "") === option.value
+                    ? theme.colorScheme === "dark"
+                      ? theme.colors.dark[6]
+                      : theme.colors.gray[1]
+                    : "transparent",
 
                 "&:hover": {
                   backgroundColor:
