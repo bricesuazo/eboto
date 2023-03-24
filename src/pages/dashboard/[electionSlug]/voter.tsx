@@ -109,11 +109,13 @@ const DashboardVoter = () => {
             onChange={(e) => {
               setSearch(e.target.value);
               setVotersData(
-                voters.data.voters.filter((voter) =>
-                  voter.email
-                    .toLowerCase()
-                    .includes(e.target.value.toLowerCase())
-                )
+                search === ""
+                  ? voters.data.voters
+                  : voters.data.voters.filter((voter) =>
+                      voter.email
+                        .toLowerCase()
+                        .includes(e.target.value.toLowerCase())
+                    )
               );
             }}
             sx={{
