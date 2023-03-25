@@ -24,6 +24,7 @@ import { convertNumberToHour } from "../../../utils/convertNumberToHour";
 import type { ElectionPublicity } from "@prisma/client";
 import Link from "next/link";
 import { useDidUpdate } from "@mantine/hooks";
+import { isElectionOngoing } from "../../../utils/isElectionOngoing";
 
 const DashboardSettings = () => {
   const router = useRouter();
@@ -156,7 +157,9 @@ const DashboardSettings = () => {
         </title>
       </Head>
 
-      {!election.isLoading && !election.data && !form.values.id ? (
+      {election.isLoading || !form.values.id ? (
+        <Text>Loading...</Text>
+      ) : !election.data ? (
         <Text>
           Election not found. <Link href="/dashboard">Go back</Link>
         </Text>
@@ -165,8 +168,6 @@ const DashboardSettings = () => {
           {election.error?.message ||
             "An error occurred while loading the election."}
         </Text>
-      ) : election.isLoading || !form.values.id ? (
-        <Text>Loading...</Text>
       ) : (
         <form
           onSubmit={form.onSubmit((value) => {
@@ -234,7 +235,10 @@ const DashboardSettings = () => {
               firstDayOfWeek={0}
               {...form.getInputProps("date")}
               icon={<IconCalendar size="1rem" />}
-              disabled={updateElectionMutation.isLoading}
+              disabled={
+                updateElectionMutation.isLoading ||
+                isElectionOngoing(election.data)
+              }
             />
             <Stack spacing="sm">
               <Group grow spacing={8}>

@@ -6,6 +6,56 @@ import { sendEmail } from "../../../utils/sendEmail";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
+  deleteAccount: protectedProcedure.mutation(async ({ ctx }) => {
+    const user = await ctx.prisma.user.findUniqueOrThrow({
+      where: {
+        id: ctx.session.user.id,
+      },
+    });
+
+    return ctx.prisma.user.delete({
+      where: {
+        id: user.id,
+      },
+    });
+  }),
+
+  checkPassword: protectedProcedure
+    .input(
+      z.object({
+        password: z
+          .string()
+          .min(8, "Password must be at least 8 characters long"),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const user = await ctx.prisma.user.findUniqueOrThrow({
+        where: {
+          id: ctx.session.user.id,
+        },
+      });
+
+      if (!user.password) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Password is not set",
+        });
+      }
+
+      const isPasswordValid = await bcrypt.compare(
+        input.password,
+        user.password
+      );
+
+      if (!isPasswordValid) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Incorrect password",
+        });
+      }
+
+      return true;
+    }),
   changePassword: protectedProcedure
     .input(
       z.object({
