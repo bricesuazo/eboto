@@ -1,7 +1,14 @@
-import { UnstyledButton, Box, Group, Text, ActionIcon } from "@mantine/core";
+import {
+  UnstyledButton,
+  Box,
+  Group,
+  Text,
+  ActionIcon,
+  rem,
+} from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import type { Election, Vote } from "@prisma/client";
-import { IconArrowUpRight, IconFingerprint } from "@tabler/icons-react";
+import { IconExternalLink, IconFingerprint } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import Moment from "react-moment";
@@ -40,7 +47,7 @@ const DashboardCard = ({
             pointerEvents: "none",
           })}
         >
-          <IconArrowUpRight />
+          <IconExternalLink size={rem(20)} />
         </ActionIcon>
       )}
       <UnstyledButton

@@ -9,7 +9,7 @@ import {
   Divider,
 } from "@mantine/core";
 import {
-  IconArrowUpRight,
+  IconExternalLink,
   IconFingerprint,
   IconLogout,
   IconPlus,
@@ -257,7 +257,7 @@ const NavbarComponent = ({
             variant="outline"
             w="100%"
             loading={!election}
-            rightIcon={<IconArrowUpRight size="1rem" />}
+            rightIcon={<IconExternalLink size="1rem" />}
             component={Link}
             href={`/${election?.slug || ""}`}
             target="_blank"

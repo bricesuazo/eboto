@@ -6,12 +6,13 @@ import {
   Box,
   Stack,
   UnstyledButton,
+  rem,
 } from "@mantine/core";
 import { useRouter } from "next/router";
 import Moment from "react-moment";
 import { convertNumberToHour } from "../../../utils/convertNumberToHour";
 import { api } from "../../../utils/api";
-import { IconArrowUpRight } from "@tabler/icons-react";
+import { IconExternalLink } from "@tabler/icons-react";
 import Link from "next/link";
 import { IconFlag, IconReplace, IconUserSearch } from "@tabler/icons-react";
 
@@ -49,12 +50,12 @@ const DashboardOverview = () => {
                 target="_blank"
                 sx={(theme) => ({
                   borderRadius: "50%",
-                  width: 40,
-                  height: 40,
-                  padding: theme.radius.sm,
+                  width: 34,
+                  height: 34,
+                  padding: theme.radius.xs,
                 })}
               >
-                <IconArrowUpRight />
+                <IconExternalLink size={rem(18)} />
               </ActionIcon>
             </Flex>
             <Text>
