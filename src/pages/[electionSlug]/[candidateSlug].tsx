@@ -1,8 +1,20 @@
-import { Container, Text } from "@mantine/core";
-import type { Candidate, Election, Partylist } from "@prisma/client";
+import {
+  Container,
+  Text,
+  Box,
+  Flex,
+  Title,
+  Breadcrumbs,
+  Stack,
+  Anchor,
+} from "@mantine/core";
+import type { Candidate, Election, Partylist, Position } from "@prisma/client";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "../../server/auth";
 import { prisma } from "../../server/db";
+import Image from "next/image";
+import { IconUser } from "@tabler/icons-react";
+import Link from "next/link";
 
 const CandidatePage = ({
   election,
@@ -11,14 +23,104 @@ const CandidatePage = ({
   election: Election;
   candidate: Candidate & {
     partylist: Partylist;
+    position: Position;
   };
 }) => {
   return (
     <Container>
-      <Text>{election.name}</Text>
-      <Text>
-        {candidate.first_name} ({candidate.partylist.acronym})
-      </Text>
+      <Stack>
+        <Breadcrumbs w="100%">
+          <Box>
+            <Anchor
+              component={Link}
+              href={`/${election.slug}`}
+              truncate
+              maw={300}
+            >
+              {election.name}
+            </Anchor>
+          </Box>
+
+          <Text truncate maw={300}>
+            {`${candidate.last_name}, ${candidate.first_name}${
+              candidate.middle_name ? " " + candidate.middle_name : ""
+            }`}
+          </Text>
+        </Breadcrumbs>
+        <Flex
+          gap="md"
+          sx={(theme) => ({
+            [theme.fn.smallerThan("xs")]: {
+              flexDirection: "column",
+            },
+          })}
+        >
+          <Box
+            sx={(theme) => ({
+              position: "sticky",
+              top: 76,
+              height: "100%",
+
+              [theme.fn.smallerThan("xs")]: {
+                position: "initial",
+              },
+            })}
+          >
+            {candidate.image ? (
+              <Box
+                pos="relative"
+                sx={(theme) => ({
+                  width: 280,
+                  aspectRatio: "1/1",
+
+                  [theme.fn.smallerThan("sm")]: {
+                    width: 200,
+                    height: "auto",
+                  },
+                  [theme.fn.smallerThan("xs")]: {
+                    width: "100%",
+                    height: "auto",
+                  },
+                })}
+              >
+                <Image
+                  src={candidate.image}
+                  alt={candidate.first_name + " " + candidate.last_name}
+                  fill
+                />
+              </Box>
+            ) : (
+              <Box
+                sx={(theme) => ({
+                  width: 280,
+                  aspectRatio: "1/1",
+
+                  [theme.fn.smallerThan("sm")]: {
+                    width: 200,
+                    height: "auto",
+                  },
+                  [theme.fn.smallerThan("xs")]: {
+                    width: "100%",
+                    height: "auto",
+                  },
+                })}
+              >
+                <IconUser width="100%" height="100%" stroke={1.5} />
+              </Box>
+            )}
+          </Box>
+
+          <Box sx={{ flex: 1 }}>
+            <Title order={2}>
+              {`${candidate.last_name}, ${candidate.first_name}${
+                candidate.middle_name ? " " + candidate.middle_name : ""
+              }`}
+            </Title>
+            <Text>Running for {candidate.position.name}</Text>
+            <Text>{candidate.partylist.name}</Text>
+          </Box>
+        </Flex>
+      </Stack>
     </Container>
   );
 };
@@ -89,6 +191,7 @@ export const getServerSideProps: GetServerSideProps = async (
     },
     include: {
       partylist: true,
+      position: true,
     },
   });
 
