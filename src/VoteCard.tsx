@@ -1,6 +1,6 @@
-import { UnstyledButton, Text } from "@mantine/core";
+import { UnstyledButton, Text, Box } from "@mantine/core";
 import type { Candidate, Partylist } from "@prisma/client";
-import { IconUser, IconUserX } from "@tabler/icons-react";
+import { IconUser, IconUserQuestion } from "@tabler/icons-react";
 import Image from "next/image";
 
 const VoteCard = ({
@@ -25,7 +25,7 @@ const VoteCard = ({
   return (
     <UnstyledButton
       sx={(theme) => ({
-        width: candidate ? 180 : 140,
+        width: candidate ? 200 : 120,
         height: 140,
         padding: theme.spacing.md,
         borderWidth: 2,
@@ -61,7 +61,7 @@ const VoteCard = ({
 
         [theme.fn.smallerThan("xs")]: {
           width: "100%",
-          height: candidate ? 128 : 80,
+          height: candidate ? 128 : 100,
           flexDirection: "row",
           justifyContent: "flex-start",
         },
@@ -77,7 +77,9 @@ const VoteCard = ({
       }}
     >
       {candidate === undefined ? (
-        <IconUserX size={80} style={{ padding: 8 }} />
+        <Box>
+          <IconUserQuestion size={80} style={{ padding: 8 }} />
+        </Box>
       ) : candidate.image ? (
         <Image
           src={candidate.image}
@@ -89,7 +91,9 @@ const VoteCard = ({
           }}
         />
       ) : (
-        <IconUser size={80} style={{ padding: 8 }} />
+        <Box>
+          <IconUser size={80} style={{ padding: 8 }} />
+        </Box>
       )}
       <Text
         sx={(theme) => ({
@@ -100,7 +104,7 @@ const VoteCard = ({
             textAlign: "left",
           },
         })}
-        truncate
+        lineClamp={1}
       >
         {candidate
           ? `${candidate.last_name}, ${candidate.first_name}${

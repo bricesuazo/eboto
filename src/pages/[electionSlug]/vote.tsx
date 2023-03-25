@@ -162,17 +162,15 @@ const VotePage = ({ election }: { election: Election }) => {
                   </Text>
 
                   <Group mt={8}>
-                    {position.candidate.map((candidate) => {
-                      return (
-                        <VoteCard
-                          key={candidate.id}
-                          positionId={position.id}
-                          candidate={candidate}
-                          votes={votes}
-                          setVotes={setVotes}
-                        />
-                      );
-                    })}
+                    {position.candidate.map((candidate) => (
+                      <VoteCard
+                        key={candidate.id}
+                        positionId={position.id}
+                        candidate={candidate}
+                        votes={votes}
+                        setVotes={setVotes}
+                      />
+                    ))}
                     <VoteCard
                       votes={votes}
                       setVotes={setVotes}
