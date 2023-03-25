@@ -7,7 +7,7 @@ import {
   Box,
   Stack,
 } from "@mantine/core";
-import { useDidUpdate, useDisclosure } from "@mantine/hooks";
+import { useDisclosure } from "@mantine/hooks";
 import { IconSearch, IconUpload, IconUserPlus } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import CreateVoterModal from "../../../components/modals/CreateVoter";
@@ -15,7 +15,7 @@ import Voter from "../../../components/Voter";
 import { api } from "../../../utils/api";
 import Balancer from "react-wrap-balancer";
 import UploadBulkVoter from "../../../components/modals/UploadBulkVoter";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const DashboardVoter = () => {
   const router = useRouter();
@@ -40,9 +40,9 @@ const DashboardVoter = () => {
       refetchOnMount: false,
     }
   );
-  useDidUpdate(() => {
+  useEffect(() => {
     setVotersData(voters.data?.voters ?? []);
-  }, [voters.data?.voters]);
+  }, [voters.data?.voters, router.route]);
 
   if (voters.isLoading) return <Text>Loading...</Text>;
 
