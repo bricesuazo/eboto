@@ -29,7 +29,9 @@ const AppShellComponent = ({ children }: { children: React.ReactNode }) => {
       }
       footer={!router.pathname.includes("/dashboard") ? <Footer /> : undefined}
     >
-      <Box mb="xl">{children}</Box>
+      <Box mb="xl" h="100%">
+        {children}
+      </Box>
     </AppShell>
   );
 };

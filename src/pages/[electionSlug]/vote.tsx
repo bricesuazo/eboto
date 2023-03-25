@@ -8,6 +8,8 @@ import {
   Group,
   Alert,
   Title,
+  Center,
+  Loader,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -63,7 +65,12 @@ const VotePage = ({ election }: { election: Election }) => {
       });
     },
   });
-  if (positions.isLoading) return <Text>Loading...</Text>;
+  if (positions.isLoading)
+    return (
+      <Center h="100%">
+        <Loader size="lg" />
+      </Center>
+    );
 
   if (positions.isError) return <Text>Error:{positions.error.message}</Text>;
 
