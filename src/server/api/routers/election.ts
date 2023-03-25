@@ -93,6 +93,11 @@ export const electionRouter = createTRPCRouter({
           },
           candidate: {
             include: {
+              partylist: {
+                select: {
+                  acronym: true,
+                },
+              },
               vote: {
                 include: {
                   candidate: {
