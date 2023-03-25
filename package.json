@@ -51,7 +51,7 @@
     "cookies-next": "^2.1.1",
     "dayjs": "^1.11.7",
     "embla-carousel-react": "^7.1.0",
-    "next": "^13.2.3",
+    "next": "^13.2.4",
     "next-auth": "^4.19.0",
     "next-superjson-plugin": "^0.5.6",
     "react": "^18.2.0",
