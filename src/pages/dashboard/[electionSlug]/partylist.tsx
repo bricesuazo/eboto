@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import CreatePartylistModal from "../../../components/modals/CreatePartylist";
 import PartylistCard from "../../../components/PartylistCard";
 import { api } from "../../../utils/api";
+import { IconFlag } from "@tabler/icons-react";
 
 const DashboardPartylist = () => {
   const router = useRouter();
@@ -30,6 +31,7 @@ const DashboardPartylist = () => {
             sx={(theme) => ({
               [theme.fn.smallerThan("xs")]: { width: "100%" },
             })}
+            leftIcon={<IconFlag size="1rem" />}
           >
             Add partylist
           </Button>

@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import CreatePositionModal from "../../../components/modals/CreatePosition";
 import Position from "../../../components/Position";
 import { api } from "../../../utils/api";
+import { IconReplace } from "@tabler/icons-react";
 
 const DashboardPosition = () => {
   const router = useRouter();
@@ -30,6 +31,7 @@ const DashboardPosition = () => {
               [theme.fn.smallerThan("xs")]: { width: "100%" },
             })}
             onClick={open}
+            leftIcon={<IconReplace size="1rem" />}
           >
             Add position
           </Button>
