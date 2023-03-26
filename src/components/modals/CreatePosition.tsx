@@ -22,14 +22,13 @@ const CreatePositionModal = ({
   onClose,
   electionId,
   order,
-  refetch,
 }: {
   isOpen: boolean;
   onClose: () => void;
   electionId: string;
   order: number;
-  refetch: () => Promise<unknown>;
 }) => {
+  const context = api.useContext();
   const form = useForm({
     initialValues: {
       name: "",
@@ -48,7 +47,7 @@ const CreatePositionModal = ({
 
   const createPositionMutation = api.position.createSingle.useMutation({
     onSuccess: async (data) => {
-      await refetch();
+      await context.position.getAll.invalidate();
       notifications.show({
         title: `${data.name} created!`,
         message: "Successfully created position",

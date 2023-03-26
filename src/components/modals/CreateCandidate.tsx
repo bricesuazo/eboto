@@ -26,21 +26,20 @@ const CreateCandidateModal = ({
   isOpen,
   onClose,
   position,
-  refetch,
   partylists,
   positions,
 }: {
   isOpen: boolean;
   onClose: () => void;
   position: Position;
-  refetch: () => Promise<unknown>;
   partylists: Partylist[];
   positions: Position[];
 }) => {
+  const context = api.useContext();
   const router = useRouter();
   const createCandidateMutation = api.candidate.createSingle.useMutation({
     onSuccess: async (data) => {
-      await refetch();
+      await context.candidate.getAll.invalidate();
       notifications.show({
         title: `${data.first_name} ${data.last_name} created!`,
         message: "Successfully created position",

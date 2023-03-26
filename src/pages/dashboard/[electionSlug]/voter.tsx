@@ -56,14 +56,12 @@ const DashboardVoter = () => {
         isOpen={opened}
         electionId={voters.data.election.id}
         onClose={close}
-        refetch={voters.refetch}
       />
 
       <UploadBulkVoter
         isOpen={openedBulkImport}
         electionId={voters.data.election.id}
         onClose={closeBulkVoter}
-        refetch={voters.refetch}
       />
 
       <Stack>
@@ -161,10 +159,6 @@ const DashboardVoter = () => {
                     key={voter.id}
                     electionId={voters.data.election.id}
                     voter={voter}
-                    refetch={async () => {
-                      await voters.refetch();
-                      setSearch("");
-                    }}
                   />
                 ))
               )}

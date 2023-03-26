@@ -8,13 +8,11 @@ import Balancer from "react-wrap-balancer";
 
 const Candidates = ({
   position,
-  refetch,
   candidates,
   partylists,
   positions,
 }: {
   position: Position;
-  refetch: () => Promise<unknown>;
   candidates: Candidate[];
   partylists: Partylist[];
   positions: Position[];
@@ -27,7 +25,6 @@ const Candidates = ({
         onClose={close}
         position={position}
         positions={positions}
-        refetch={refetch}
         partylists={partylists}
       />
 
@@ -109,7 +106,6 @@ const Candidates = ({
               <CandidateCard
                 key={candidate.id}
                 candidate={candidate}
-                refetch={refetch}
                 positions={positions}
                 partylists={partylists}
               />

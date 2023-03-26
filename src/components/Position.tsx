@@ -6,17 +6,12 @@ import { IconCheck } from "@tabler/icons-react";
 import { api } from "../utils/api";
 import EditPositionModal from "./modals/EditPosition";
 
-const PositionCard = ({
-  position,
-  refetch,
-}: {
-  position: Position;
-  refetch: () => Promise<unknown>;
-}) => {
+const PositionCard = ({ position }: { position: Position }) => {
+  const context = api.useContext();
   const [opened, { open, close }] = useDisclosure(false);
   const deletePositionMutation = api.position.deleteSingle.useMutation({
     onSuccess: async (data) => {
-      await refetch();
+      await context.position.getAll.invalidate();
       notifications.show({
         title: `${data.name} deleted!`,
         message: "Successfully deleted position",
@@ -28,12 +23,7 @@ const PositionCard = ({
 
   return (
     <>
-      <EditPositionModal
-        isOpen={opened}
-        onClose={close}
-        position={position}
-        refetch={refetch}
-      />
+      <EditPositionModal isOpen={opened} onClose={close} position={position} />
       <Flex
         direction="column"
         w={172}

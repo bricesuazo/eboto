@@ -21,13 +21,13 @@ const CreatePartylistModal = ({
   isOpen,
   onClose,
   electionId,
-  refetch,
 }: {
   isOpen: boolean;
   onClose: () => void;
   electionId: string;
-  refetch: () => Promise<unknown>;
 }) => {
+  const context = api.useContext();
+
   const form = useForm({
     initialValues: {
       name: "",
@@ -54,7 +54,7 @@ const CreatePartylistModal = ({
 
   const createPartylistMutation = api.partylist.createSingle.useMutation({
     onSuccess: async (data) => {
-      await refetch();
+      await context.partylist.getAll.invalidate();
       notifications.show({
         title: `${data.name} (${data.acronym}) created!`,
         message: "Successfully created partylist",

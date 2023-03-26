@@ -57,17 +57,12 @@ const DashboardPartylist = () => {
                 isOpen={opened}
                 onClose={close}
                 electionId={partylists.data.election.id}
-                refetch={partylists.refetch}
               />
               {!partylists.data.partylists.length ? (
                 <Text>No partylist</Text>
               ) : (
                 partylists.data.partylists.map((partylist) => (
-                  <PartylistCard
-                    key={partylist.id}
-                    partylist={partylist}
-                    refetch={partylists.refetch}
-                  />
+                  <PartylistCard key={partylist.id} partylist={partylist} />
                 ))
               )}
             </>

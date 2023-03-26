@@ -41,7 +41,6 @@ const CandidatePartylist = () => {
                     )
                   : []
               }
-              refetch={async () => await candidates.refetch()}
             />
           );
         })

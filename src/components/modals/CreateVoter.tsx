@@ -17,13 +17,12 @@ const CreateVoterModal = ({
   isOpen,
   onClose,
   electionId,
-  refetch,
 }: {
   electionId: string;
   isOpen: boolean;
   onClose: () => void;
-  refetch: () => Promise<unknown>;
 }) => {
+  const context = api.useContext();
   const form = useForm({
     initialValues: {
       email: "",
@@ -36,7 +35,7 @@ const CreateVoterModal = ({
 
   const createVoterMutation = api.voter.createSingle.useMutation({
     onSuccess: async (data) => {
-      await refetch();
+      await context.election.getElectionVoter.invalidate();
       notifications.show({
         title: `${data.email} added!`,
         message: "Successfully added voter",

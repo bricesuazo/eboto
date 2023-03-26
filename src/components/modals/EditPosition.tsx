@@ -18,13 +18,13 @@ const EditPartylistModal = ({
   isOpen,
   onClose,
   position,
-  refetch,
 }: {
   isOpen: boolean;
   onClose: () => void;
   position: Position;
-  refetch: () => Promise<unknown>;
 }) => {
+  const context = api.useContext();
+
   const form = useForm({
     initialValues: {
       name: position.name,
@@ -43,7 +43,7 @@ const EditPartylistModal = ({
 
   const editPositionMutation = api.position.editSingle.useMutation({
     onSuccess: async (data) => {
-      await refetch();
+      await context.position.getAll.invalidate();
       notifications.show({
         title: `${data.name} updated!`,
         message: "Successfully updated position",

@@ -25,7 +25,6 @@ const useStyles = createStyles((theme) => ({
 }));
 const Voter = ({
   voter,
-  refetch,
   electionId,
 }: {
   voter: {
@@ -33,14 +32,14 @@ const Voter = ({
     email: string;
     status: "ACCEPTED" | "INVITED" | "DECLINED";
   };
-  refetch: () => Promise<unknown>;
   electionId: string;
 }) => {
+  const context = api.useContext();
   const { classes } = useStyles();
   const theme = useMantineTheme();
   const removeVoterMutation = api.voter.removeSingle.useMutation({
     onSuccess: async () => {
-      await refetch();
+      await context.election.getElectionVoter.invalidate();
     },
   });
   return (

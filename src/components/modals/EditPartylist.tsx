@@ -22,13 +22,12 @@ const EditPartylistModal = ({
   isOpen,
   onClose,
   partylist,
-  refetch,
 }: {
   isOpen: boolean;
   onClose: () => void;
   partylist: Partylist;
-  refetch: () => Promise<unknown>;
 }) => {
+  const context = api.useContext();
   const form = useForm({
     initialValues: {
       name: partylist.name,
@@ -56,7 +55,7 @@ const EditPartylistModal = ({
 
   const editPartylistMutation = api.partylist.editSingle.useMutation({
     onSuccess: async (data) => {
-      await refetch();
+      await context.partylist.getAll.invalidate();
       notifications.show({
         title: `${data.name} (${data.acronym}) updated!`,
         message: "Successfully updated partylist",

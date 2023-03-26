@@ -9,19 +9,18 @@ import Image from "next/image";
 
 const CandidateCard = ({
   candidate,
-  refetch,
   partylists,
   positions,
 }: {
   candidate: Candidate;
-  refetch: () => Promise<unknown>;
   partylists: Partylist[];
   positions: Position[];
 }) => {
+  const context = api.useContext();
   const [opened, { open, close }] = useDisclosure(false);
   const deletePositionMutation = api.candidate.deleteSingle.useMutation({
     onSuccess: async (data) => {
-      await refetch();
+      await context.candidate.getAll.invalidate();
       notifications.show({
         title: `${data.first_name} ${data.last_name} deleted!`,
         message: "Successfully deleted candidate",
@@ -38,7 +37,6 @@ const CandidateCard = ({
         onClose={close}
         partylists={partylists}
         candidate={candidate}
-        refetch={refetch}
         positions={positions}
       />
 

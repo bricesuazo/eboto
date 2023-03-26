@@ -102,6 +102,7 @@ const NavbarComponent = ({
   opened: boolean;
   setOpened: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const context = api.useContext();
   const router = useRouter();
   const [isOpen, { open, close }] = useDisclosure(false);
   const [election, setElection] = useState<Election | undefined>();
@@ -115,7 +116,7 @@ const NavbarComponent = ({
 
   useDidUpdate(() => {
     void (async () => {
-      await elections.refetch();
+      await context.election.getMyElections.invalidate();
     })();
   }, [router.query.electionSlug]);
 

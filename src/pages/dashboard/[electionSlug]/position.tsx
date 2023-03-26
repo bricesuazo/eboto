@@ -60,15 +60,10 @@ const DashboardPosition = () => {
                 onClose={close}
                 electionId={positions.data.election.id}
                 order={positions.data.positions.length}
-                refetch={positions.refetch}
               />
 
               {positions.data.positions.map((position) => (
-                <Position
-                  key={position.id}
-                  position={position}
-                  refetch={positions.refetch}
-                />
+                <Position key={position.id} position={position} />
               ))}
             </>
           )}

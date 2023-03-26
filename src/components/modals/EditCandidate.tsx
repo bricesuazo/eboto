@@ -27,16 +27,15 @@ const EditCandidateModal = ({
   onClose,
   candidate,
   partylists,
-  refetch,
   positions,
 }: {
   isOpen: boolean;
   onClose: () => void;
   candidate: Candidate;
   partylists: Partylist[];
-  refetch: () => Promise<unknown>;
   positions: Position[];
 }) => {
+  const context = api.useContext();
   const router = useRouter();
   const form = useForm({
     initialValues: {
@@ -73,7 +72,7 @@ const EditCandidateModal = ({
 
   const editCandidateMutation = api.candidate.editSingle.useMutation({
     onSuccess: async (data) => {
-      await refetch();
+      await context.candidate.getAll.invalidate();
       notifications.show({
         title: `${data.first_name} updated!`,
         message: "Successfully updated candidate",

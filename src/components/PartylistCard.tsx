@@ -6,17 +6,12 @@ import { IconCheck, IconFlag } from "@tabler/icons-react";
 import { api } from "../utils/api";
 import EditPartylistModal from "./modals/EditPartylist";
 
-const PartylistCard = ({
-  partylist,
-  refetch,
-}: {
-  partylist: Partylist;
-  refetch: () => Promise<unknown>;
-}) => {
+const PartylistCard = ({ partylist }: { partylist: Partylist }) => {
   const [opened, { open, close }] = useDisclosure(false);
+  const context = api.useContext();
   const deletePartylistMutation = api.partylist.deleteSingle.useMutation({
     onSuccess: async (data) => {
-      await refetch();
+      await context.partylist.getAll.invalidate();
       notifications.show({
         title: `${data.name} (${data.acronym}) deleted!`,
         message: "Successfully deleted partylist",
@@ -32,7 +27,6 @@ const PartylistCard = ({
         isOpen={opened}
         onClose={close}
         partylist={partylist}
-        refetch={refetch}
       />
       <Flex
         sx={(theme) => ({

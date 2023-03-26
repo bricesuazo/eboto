@@ -29,16 +29,15 @@ const UploadBulkVoter = ({
   isOpen,
   onClose,
   electionId,
-  refetch,
 }: {
   electionId: string;
   isOpen: boolean;
   onClose: () => void;
-  refetch: () => Promise<unknown>;
 }) => {
+  const context = api.useContext();
   const createManyVoterMutation = api.voter.createMany.useMutation({
     onSuccess: async (data) => {
-      await refetch();
+      await context.election.getElectionVoter.invalidate();
       notifications.show({
         title: `${data.count} voters added!`,
         message: "Successfully added voters",
