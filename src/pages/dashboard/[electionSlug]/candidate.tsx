@@ -1,4 +1,4 @@
-import { Stack, Text } from "@mantine/core";
+import { Stack, Text, Center, Loader } from "@mantine/core";
 import { useRouter } from "next/router";
 import Candidates from "../../../components/Candidates";
 import { api } from "../../../utils/api";
@@ -16,7 +16,12 @@ const CandidatePartylist = () => {
     }
   );
 
-  if (candidates.isLoading) return <Text>Loading...</Text>;
+  if (candidates.isLoading)
+    return (
+      <Center h="100%">
+        <Loader size="lg" />
+      </Center>
+    );
 
   if (candidates.isError) return <Text>Error</Text>;
 

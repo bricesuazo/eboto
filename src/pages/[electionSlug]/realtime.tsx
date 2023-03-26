@@ -9,6 +9,7 @@ import {
   Stack,
   Box,
   Group,
+  Loader,
 } from "@mantine/core";
 import type { Election } from "@prisma/client";
 import { IconFingerprint } from "@tabler/icons-react";
@@ -29,7 +30,12 @@ const RealtimePage = ({ election }: { election: Election }) => {
     // refetchInterval: 1000,
   });
 
-  if (positions.isLoading) return <div>Loading...</div>;
+  if (positions.isLoading)
+    return (
+      <Center h="100%">
+        <Loader size="lg" />
+      </Center>
+    );
   if (positions.isError) return <div>Error: {positions.error.message}</div>;
 
   if (!positions.data) return <div>No data</div>;

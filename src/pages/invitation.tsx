@@ -1,4 +1,4 @@
-import { Button, Container } from "@mantine/core";
+import { Button, Container, Center, Loader } from "@mantine/core";
 import { useRouter } from "next/router";
 import { api } from "../utils/api";
 
@@ -21,7 +21,12 @@ const Invitation = () => {
   )
     return <Container>No token</Container>;
 
-  if (tokenQuery.isLoading) return <Container>Loading...</Container>;
+  if (tokenQuery.isLoading)
+    return (
+      <Center h="100%">
+        <Loader size="lg" />
+      </Center>
+    );
   if (tokenQuery.isError)
     return <Container>{tokenQuery.error.message}</Container>;
 

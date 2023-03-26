@@ -7,6 +7,8 @@ import {
   Stack,
   UnstyledButton,
   rem,
+  Center,
+  Loader,
 } from "@mantine/core";
 import { useRouter } from "next/router";
 import Moment from "react-moment";
@@ -32,7 +34,9 @@ const DashboardOverview = () => {
   return (
     <>
       {electionOverview.isLoading ? (
-        <Text>Loading...</Text>
+        <Center h="100%">
+          <Loader size="lg" />
+        </Center>
       ) : electionOverview.isError ? (
         <Text>Error: {electionOverview.error.message}</Text>
       ) : !electionOverview.data ? (
@@ -115,7 +119,9 @@ const DashboardOverview = () => {
             {[
               {
                 id: 0,
-                count: electionOverview.data.partylists._count._all.toString(),
+                count: (
+                  electionOverview.data.partylists._count._all - 1
+                ).toString(),
                 title: "Partylists",
                 icon: IconFlag,
                 href: "partylist",

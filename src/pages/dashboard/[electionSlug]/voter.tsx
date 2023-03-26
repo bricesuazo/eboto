@@ -6,6 +6,8 @@ import {
   Flex,
   Box,
   Stack,
+  Center,
+  Loader,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconSearch, IconUpload, IconUserPlus } from "@tabler/icons-react";
@@ -44,7 +46,12 @@ const DashboardVoter = () => {
     setVotersData(voters.data?.voters ?? []);
   }, [voters.data?.voters, router.route]);
 
-  if (voters.isLoading) return <Text>Loading...</Text>;
+  if (voters.isLoading)
+    return (
+      <Center h="100%">
+        <Loader size="lg" />
+      </Center>
+    );
 
   if (voters.isError) return <Text>Error: {voters.error.message}</Text>;
 

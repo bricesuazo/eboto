@@ -1,4 +1,12 @@
-import { Stack, Input, Alert, Button, Container } from "@mantine/core";
+import {
+  Stack,
+  Input,
+  Alert,
+  Button,
+  Container,
+  Center,
+  Loader,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
 import { api } from "../utils/api";
@@ -32,9 +40,9 @@ const VerifyPage = () => {
 
   if (verify.isLoading) {
     return (
-      <div>
-        <h1>Loading...</h1>
-      </div>
+      <Center h="100%">
+        <Loader size="lg" />
+      </Center>
     );
   }
 

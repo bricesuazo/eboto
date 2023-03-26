@@ -6,6 +6,8 @@ import {
   Stack,
   TextInput,
   Text,
+  Center,
+  Loader,
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { hasLength, useForm } from "@mantine/form";
@@ -158,7 +160,9 @@ const DashboardSettings = () => {
       </Head>
 
       {election.isLoading || !form.values.id ? (
-        <Text>Loading...</Text>
+        <Center h="100%">
+          <Loader size="lg" />
+        </Center>
       ) : !election.data ? (
         <Text>
           Election not found. <Link href="/dashboard">Go back</Link>
