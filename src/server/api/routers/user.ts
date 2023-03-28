@@ -6,6 +6,34 @@ import { sendEmail } from "../../../utils/sendEmail";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
+  updateProfile: protectedProcedure
+    .input(
+      z.object({
+        firstName: z.string(),
+        middleName: z.string().nullable(),
+        lastName: z.string(),
+        image: z.string().nullable(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const user = await ctx.prisma.user.findUniqueOrThrow({
+        where: {
+          id: ctx.session.user.id,
+        },
+      });
+
+      return ctx.prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          first_name: input.firstName,
+          middle_name: input.middleName,
+          last_name: input.lastName,
+          image: input.image,
+        },
+      });
+    }),
   deleteAccount: protectedProcedure.mutation(async ({ ctx }) => {
     const user = await ctx.prisma.user.findUniqueOrThrow({
       where: {

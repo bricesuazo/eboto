@@ -68,6 +68,20 @@ const AccountPage = () => {
     },
   });
 
+  const updateProfileMutation = api.user.updateProfile.useMutation({
+    onSuccess: (data) => {
+      const dataFormatted = {
+        firstName: data.first_name,
+        middleName: data.middle_name ?? "",
+        lastName: data.last_name,
+        image: data.image ?? "",
+      };
+
+      accountForm.setValues(dataFormatted);
+      accountForm.resetDirty(dataFormatted);
+    },
+  });
+
   useDidUpdate(() => {
     if (opened) {
       confirmationForm.reset();
@@ -167,7 +181,12 @@ const AccountPage = () => {
       <AccountSettingsLayout>
         <form
           onSubmit={accountForm.onSubmit((values) => {
-            console.log(values);
+            updateProfileMutation.mutate({
+              firstName: values.firstName,
+              middleName: values.middleName || null,
+              lastName: values.lastName,
+              image: values.image || null,
+            });
           })}
         >
           <Stack>
@@ -186,14 +205,20 @@ const AccountPage = () => {
                 required
                 {...accountForm.getInputProps("firstName")}
                 icon={<IconLetterCase size="1rem" />}
-                disabled={session.status === "loading"}
+                disabled={
+                  session.status === "loading" ||
+                  updateProfileMutation.isLoading
+                }
               />
               <TextInput
                 placeholder="Enter your middle name"
                 label="Middle name"
                 {...accountForm.getInputProps("middleName")}
                 icon={<IconLetterCase size="1rem" />}
-                disabled={session.status === "loading"}
+                disabled={
+                  session.status === "loading" ||
+                  updateProfileMutation.isLoading
+                }
               />
               <TextInput
                 placeholder="Enter your last name"
@@ -202,11 +227,19 @@ const AccountPage = () => {
                 required
                 {...accountForm.getInputProps("lastName")}
                 icon={<IconLetterCase size="1rem" />}
-                disabled={session.status === "loading"}
+                disabled={
+                  session.status === "loading" ||
+                  updateProfileMutation.isLoading
+                }
               />
             </Flex>
 
-            <Button disabled={!accountForm.isDirty()} w="fit-content">
+            <Button
+              disabled={!accountForm.isDirty()}
+              w="fit-content"
+              type="submit"
+              loading={updateProfileMutation.isLoading}
+            >
               Update profile
             </Button>
 
