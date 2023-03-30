@@ -149,6 +149,12 @@ const DashboardSettings = () => {
   }, [form.values.slug]);
 
   useDidUpdate(() => {
+    if (opened) {
+      deleteForm.reset();
+    }
+  }, [opened]);
+
+  useDidUpdate(() => {
     if (election.data) {
       const values = {
         id: election.data.id,
