@@ -55,6 +55,7 @@ const EditPartylistModal = ({
 
   const editPartylistMutation = api.partylist.editSingle.useMutation({
     onSuccess: async (data) => {
+      onClose();
       await context.partylist.getAll.invalidate();
       notifications.show({
         title: `${data.name} (${data.acronym}) updated!`,
@@ -62,7 +63,6 @@ const EditPartylistModal = ({
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
-      onClose();
       form.resetDirty();
     },
   });

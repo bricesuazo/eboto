@@ -8,6 +8,7 @@ import {
   Text,
   Center,
   Loader,
+  Modal,
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { hasLength, useForm } from "@mantine/form";
@@ -25,11 +26,12 @@ import { api } from "../../../utils/api";
 import { convertNumberToHour } from "../../../utils/convertNumberToHour";
 import type { ElectionPublicity } from "@prisma/client";
 import Link from "next/link";
-import { useDidUpdate } from "@mantine/hooks";
+import { useDidUpdate, useDisclosure } from "@mantine/hooks";
 import { isElectionOngoing } from "../../../utils/isElectionOngoing";
 
 const DashboardSettings = () => {
   const router = useRouter();
+  const [opened, { open, close }] = useDisclosure(false);
   const election = api.election.getElectionSettings.useQuery(
     router.query.electionSlug as string,
     {
@@ -72,6 +74,20 @@ const DashboardSettings = () => {
       date: (value) => {
         if (!value[0] || !value[1]) {
           return "Please select a date range";
+        }
+      },
+    },
+  });
+  const deleteForm = useForm({
+    initialValues: {
+      name: "",
+    },
+    validateInputOnBlur: true,
+    clearInputErrorOnChange: true,
+    validate: {
+      name: (value) => {
+        if (value !== election.data?.name) {
+          return "Election name does not match";
         }
       },
     },
@@ -158,6 +174,61 @@ const DashboardSettings = () => {
             : "Settings | eBoto Mo"}
         </title>
       </Head>
+
+      <Modal
+        opened={opened}
+        onClose={close}
+        title={<Text weight={600}>Delete election</Text>}
+      >
+        <form
+          onSubmit={deleteForm.onSubmit(() =>
+            deleteElectionMutation.mutate(form.values.id)
+          )}
+        >
+          <Stack spacing="sm">
+            <TextInput
+              data-autofocus
+              label="Election name"
+              withAsterisk
+              required
+              placeholder="Enter election name to confirm deletion"
+              {...deleteForm.getInputProps("name")}
+              icon={<IconLetterCase size="1rem" />}
+              description={
+                election.data?.name ? (
+                  <Text>
+                    Please type{" "}
+                    <Text weight="bold" component="span">
+                      {election.data?.name}
+                    </Text>{" "}
+                    to confirm deletion. This action cannot be undone.
+                  </Text>
+                ) : (
+                  "Please type the election name to confirm deletion. This action cannot be undone."
+                )
+              }
+            />
+
+            <Group position="right" spacing="xs">
+              <Button
+                variant="default"
+                mr={2}
+                onClick={close}
+                disabled={deleteElectionMutation.isLoading}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={!deleteForm.isValid()}
+                loading={deleteElectionMutation.isLoading}
+              >
+                Confirm Delete
+              </Button>
+            </Group>
+          </Stack>
+        </form>
+      </Modal>
 
       {election.isLoading || !form.values.id ? (
         <Center h="100%">
@@ -327,7 +398,7 @@ const DashboardSettings = () => {
               <Button
                 variant="outline"
                 color="red"
-                onClick={() => deleteElectionMutation.mutate(form.values.id)}
+                onClick={open}
                 loading={deleteElectionMutation.isLoading}
                 disabled={updateElectionMutation.isLoading}
               >
