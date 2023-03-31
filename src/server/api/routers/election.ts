@@ -1,7 +1,9 @@
+import type { FileWithPath } from "@mantine/dropzone";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { positionTemplate } from "../../../constants";
 import { takenSlugs } from "../../../constants";
+import { uploadImage } from "../../../utils/uploadImage";
 
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 
@@ -543,6 +545,7 @@ export const electionRouter = createTRPCRouter({
         voting_start: z.number(),
         voting_end: z.number(),
         publicity: z.enum(["PUBLIC", "VOTER", "PRIVATE"]),
+        logo: z.custom<FileWithPath>().or(z.string()).nullable(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -607,6 +610,11 @@ export const electionRouter = createTRPCRouter({
           voting_start: input.voting_start,
           voting_end: input.voting_end,
           publicity: input.publicity,
+          logo: !input.logo
+            ? null
+            : typeof input.logo === "string"
+            ? input.logo
+            : await uploadImage(input.logo),
         },
       });
     }),

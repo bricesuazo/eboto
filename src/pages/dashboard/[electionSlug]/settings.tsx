@@ -9,6 +9,7 @@ import {
   Center,
   Loader,
   Modal,
+  rem,
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { hasLength, useForm } from "@mantine/form";
@@ -19,6 +20,9 @@ import {
   IconCheck,
   IconClock,
   IconLetterCase,
+  IconPhoto,
+  IconUpload,
+  IconX,
 } from "@tabler/icons-react";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -28,6 +32,11 @@ import type { ElectionPublicity } from "@prisma/client";
 import Link from "next/link";
 import { useDidUpdate, useDisclosure } from "@mantine/hooks";
 import { isElectionOngoing } from "../../../utils/isElectionOngoing";
+import {
+  Dropzone,
+  type FileWithPath,
+  IMAGE_MIME_TYPE,
+} from "@mantine/dropzone";
 
 const DashboardSettings = () => {
   const router = useRouter();
@@ -42,7 +51,16 @@ const DashboardSettings = () => {
     }
   );
 
-  const form = useForm({
+  const form = useForm<{
+    id: string;
+    name: string;
+    slug: string;
+    date: [Date, Date];
+    voting_start: string;
+    voting_end: string;
+    publicity: ElectionPublicity;
+    logo: string | null | FileWithPath;
+  }>({
     initialValues: {
       id: "",
       name: "",
@@ -50,7 +68,8 @@ const DashboardSettings = () => {
       date: [new Date(), new Date()],
       voting_start: "",
       voting_end: "",
-      publicity: "PRIVATE" as ElectionPublicity,
+      publicity: "PRIVATE",
+      logo: null,
     },
     validateInputOnBlur: true,
     clearInputErrorOnChange: true,
@@ -78,6 +97,8 @@ const DashboardSettings = () => {
       },
     },
   });
+
+  console.log(form.values);
   const deleteForm = useForm({
     initialValues: {
       name: "",
@@ -164,6 +185,7 @@ const DashboardSettings = () => {
         voting_start: election.data.voting_start.toString(),
         voting_end: election.data.voting_end.toString(),
         publicity: election.data.publicity,
+        logo: election.data.logo,
       } as typeof form.values;
 
       form.setValues(values);
@@ -236,7 +258,7 @@ const DashboardSettings = () => {
         </form>
       </Modal>
 
-      {election.isLoading || !form.values.id ? (
+      {election.isLoading ? (
         <Center h="100%">
           <Loader size="lg" />
         </Center>
@@ -265,6 +287,7 @@ const DashboardSettings = () => {
               voting_start: parseInt(value.voting_start),
               voting_end: parseInt(value.voting_end),
               publicity: value.publicity,
+              logo: value.logo,
             });
           })}
         >
@@ -382,6 +405,44 @@ const DashboardSettings = () => {
               disabled={updateElectionMutation.isLoading}
             />
 
+            <Dropzone
+              onDrop={(files) => {
+                form.setValues({
+                  ...form.values,
+                  logo: files[0],
+                });
+              }}
+              maxSize={3 * 1024 ** 2}
+              accept={IMAGE_MIME_TYPE}
+              multiple={false}
+            >
+              <Group
+                position="center"
+                spacing="xl"
+                style={{ minHeight: rem(220), pointerEvents: "none" }}
+              >
+                <Dropzone.Accept>
+                  <IconUpload size="3.2rem" stroke={1.5} />
+                </Dropzone.Accept>
+                <Dropzone.Reject>
+                  <IconX size="3.2rem" stroke={1.5} />
+                </Dropzone.Reject>
+                <Dropzone.Idle>
+                  <IconPhoto size="3.2rem" stroke={1.5} />
+                </Dropzone.Idle>
+
+                <div>
+                  <Text size="xl" inline>
+                    Drag images here or click to select files
+                  </Text>
+                  <Text size="sm" color="dimmed" inline mt={7}>
+                    Attach as many files as you like, each file should not
+                    exceed 5mb
+                  </Text>
+                </div>
+              </Group>
+            </Dropzone>
+
             {updateElectionMutation.isError &&
               updateElectionMutation.error?.data?.code !== "CONFLICT" && (
                 <Alert
@@ -419,49 +480,3 @@ const DashboardSettings = () => {
 };
 
 export default DashboardSettings;
-
-// export const getServerSideProps: GetServerSideProps = async (
-//   context: GetServerSidePropsContext
-// ) => {
-//   const { electionSlug } = context.query;
-
-//   if (!electionSlug || typeof electionSlug !== "string") {
-//     return {
-//       notFound: true,
-//     };
-//   }
-
-//   const session = await getServerAuthSession(context);
-
-//   if (!session) {
-//     return {
-//       redirect: {
-//         destination: "/signin",
-//         permanent: false,
-//       },
-//     };
-//   }
-
-//   const election = await prisma.election.findFirst({
-//     where: {
-//       slug: electionSlug,
-//       commissioners: {
-//         some: {
-//           userId: session.user.id,
-//         },
-//       },
-//     },
-//   });
-
-//   if (!election) {
-//     return {
-//       notFound: true,
-//     };
-//   }
-
-//   return {
-//     props: {
-//       election,
-//     },
-//   };
-// };
