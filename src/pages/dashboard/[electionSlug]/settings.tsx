@@ -10,6 +10,7 @@ import {
   Loader,
   Modal,
   rem,
+  Box,
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { hasLength, useForm } from "@mantine/form";
@@ -20,8 +21,6 @@ import {
   IconCheck,
   IconClock,
   IconLetterCase,
-  IconPhoto,
-  IconUpload,
   IconX,
 } from "@tabler/icons-react";
 import Head from "next/head";
@@ -37,9 +36,12 @@ import {
   type FileWithPath,
   IMAGE_MIME_TYPE,
 } from "@mantine/dropzone";
+import { useRef } from "react";
+import Image from "next/image";
 
 const DashboardSettings = () => {
   const router = useRouter();
+  const openRef = useRef<() => void>(null);
   const [opened, { open, close }] = useDisclosure(false);
   const election = api.election.getElectionSettings.useQuery(
     router.query.electionSlug as string,
@@ -405,43 +407,129 @@ const DashboardSettings = () => {
               disabled={updateElectionMutation.isLoading}
             />
 
-            <Dropzone
-              onDrop={(files) => {
-                form.setValues({
-                  ...form.values,
-                  logo: files[0],
-                });
-              }}
-              maxSize={3 * 1024 ** 2}
-              accept={IMAGE_MIME_TYPE}
-              multiple={false}
-            >
-              <Group
-                position="center"
-                spacing="xl"
-                style={{ minHeight: rem(220), pointerEvents: "none" }}
+            <Box>
+              <Text
+                size="sm"
+                weight={500}
+                component="label"
+                htmlFor="logo"
+                inline
               >
-                <Dropzone.Accept>
-                  <IconUpload size="3.2rem" stroke={1.5} />
-                </Dropzone.Accept>
-                <Dropzone.Reject>
-                  <IconX size="3.2rem" stroke={1.5} />
-                </Dropzone.Reject>
-                <Dropzone.Idle>
-                  <IconPhoto size="3.2rem" stroke={1.5} />
-                </Dropzone.Idle>
+                Election logo
+              </Text>
+              <Dropzone
+                id="logo"
+                onDrop={(files) => {
+                  form.setValues({
+                    ...form.values,
+                    logo: files[0],
+                  });
+                }}
+                openRef={openRef}
+                maxSize={5 * 1024 ** 2}
+                accept={IMAGE_MIME_TYPE}
+                multiple={false}
+                loading={updateElectionMutation.isLoading}
+              >
+                <Group
+                  position="center"
+                  spacing="xl"
+                  style={{ minHeight: rem(220), pointerEvents: "none" }}
+                >
+                  {form.values.logo ? (
+                    typeof form.values.logo !== "string" && form.values.logo ? (
+                      <Group>
+                        <Box
+                          pos="relative"
+                          sx={(theme) => ({
+                            width: rem(120),
+                            height: rem(120),
 
-                <div>
-                  <Text size="xl" inline>
-                    Drag images here or click to select files
-                  </Text>
-                  <Text size="sm" color="dimmed" inline mt={7}>
-                    Attach as many files as you like, each file should not
-                    exceed 5mb
-                  </Text>
-                </div>
-              </Group>
-            </Dropzone>
+                            [theme.fn.smallerThan("sm")]: {
+                              width: rem(180),
+                              height: rem(180),
+                            },
+                          })}
+                        >
+                          <Image
+                            src={
+                              typeof form.values.logo === "string"
+                                ? form.values.logo
+                                : URL.createObjectURL(form.values.logo)
+                            }
+                            alt="Logo"
+                            fill
+                          />
+                        </Box>
+                        <Text>{form.values.logo.name}</Text>
+                      </Group>
+                    ) : (
+                      election.data.logo && (
+                        <Group>
+                          <Box
+                            pos="relative"
+                            sx={(theme) => ({
+                              width: rem(120),
+                              height: rem(120),
+
+                              [theme.fn.smallerThan("sm")]: {
+                                width: rem(180),
+                                height: rem(180),
+                              },
+                            })}
+                          >
+                            <Image src={election.data.logo} alt="Logo" fill />
+                          </Box>
+                          <Text>Current logo</Text>
+                        </Group>
+                      )
+                    )
+                  ) : (
+                    <Box>
+                      <Text size="xl" inline align="center">
+                        Drag image here or click to select image
+                      </Text>
+                      <Text
+                        size="sm"
+                        color="dimmed"
+                        inline
+                        mt={7}
+                        align="center"
+                      >
+                        Attach a logo to your election. Max file size is 5MB.
+                      </Text>
+                    </Box>
+                  )}
+                  <Dropzone.Reject>
+                    <IconX size="3.2rem" stroke={1.5} />
+                  </Dropzone.Reject>
+                </Group>
+              </Dropzone>
+              <Button
+                onClick={() => {
+                  election.data &&
+                    form.setValues({
+                      ...form.values,
+                      logo: election.data.logo,
+                    });
+                }}
+                disabled={
+                  typeof form.values.logo === "string" ||
+                  !election.data.logo ||
+                  updateElectionMutation.isLoading
+                }
+              >
+                Reset logo
+              </Button>
+              <Button
+                onClick={() => {
+                  form.setFieldValue("logo", null);
+                }}
+                disabled={!form.values.logo || updateElectionMutation.isLoading}
+              >
+                Delete logo
+              </Button>
+            </Box>
 
             {updateElectionMutation.isError &&
               updateElectionMutation.error?.data?.code !== "CONFLICT" && (
