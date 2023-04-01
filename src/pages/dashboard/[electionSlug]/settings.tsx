@@ -100,7 +100,6 @@ const DashboardSettings = () => {
     },
   });
 
-  console.log(form.values);
   const deleteForm = useForm({
     initialValues: {
       name: "",
@@ -276,6 +275,19 @@ const DashboardSettings = () => {
       ) : (
         <form
           onSubmit={form.onSubmit((value) => {
+            const test = (formLogo: FileWithPath | string | null) => {
+              if (!formLogo) return null;
+
+              if (typeof formLogo === "string") return formLogo;
+
+              const reader = new FileReader();
+              reader.readAsDataURL(formLogo);
+              reader.onload = () => {
+                return reader.result;
+              };
+
+              return null;
+            };
             updateElectionMutation.mutate({
               id: value.id,
               name: value.name,
@@ -289,7 +301,7 @@ const DashboardSettings = () => {
               voting_start: parseInt(value.voting_start),
               voting_end: parseInt(value.voting_end),
               publicity: value.publicity,
-              logo: value.logo,
+              logo: test(value.logo),
             });
           })}
         >
@@ -420,10 +432,8 @@ const DashboardSettings = () => {
               <Dropzone
                 id="logo"
                 onDrop={(files) => {
-                  form.setValues({
-                    ...form.values,
-                    logo: files[0],
-                  });
+                  if (!files[0]) return;
+                  form.setFieldValue("logo", files[0]);
                 }}
                 openRef={openRef}
                 maxSize={5 * 1024 ** 2}
