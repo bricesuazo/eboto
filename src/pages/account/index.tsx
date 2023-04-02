@@ -30,7 +30,6 @@ const AccountPage = () => {
   const [loading, setLoading] = useState(false);
   const session = useSession();
   console.log("🚀 ~ file: index.tsx:32 ~ AccountPage ~ session:", session);
-  console.log("🚀 ~ file: index.tsx:32 ~ AccountPage ~ session:", session);
   const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
   const [page, setPage] = useState<number>(0);
@@ -213,6 +212,7 @@ const AccountPage = () => {
                         image: values.image,
                       })),
               });
+              // update the session
               setLoading(false);
             })();
           })}

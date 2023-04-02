@@ -54,6 +54,7 @@ const DashboardSettings = () => {
       retry: false,
     }
   );
+  const getMyElectionsContext = api.useContext().election.getMyElections;
 
   const form = useForm<{
     id: string;
@@ -125,10 +126,7 @@ const DashboardSettings = () => {
         await election.refetch();
       }
 
-      if (election.data?.name !== data.name) {
-        router.reload();
-      }
-
+      await getMyElectionsContext.invalidate();
       form.resetDirty();
       notifications.show({
         title: "Election settings updated.",
