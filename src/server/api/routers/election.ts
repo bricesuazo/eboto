@@ -609,19 +609,7 @@ export const electionRouter = createTRPCRouter({
           voting_start: input.voting_start,
           voting_end: input.voting_end,
           publicity: input.publicity,
-          logo: !input.logo
-            ? null
-            : input.logo === election.logo
-            ? election.logo
-            : await uploadImage({
-                path:
-                  "/elections/" +
-                  election.id +
-                  "/logo/" +
-                  Date.now().toString() +
-                  ".png",
-                image: input.logo,
-              }),
+          logo: input.logo,
         },
       });
     }),

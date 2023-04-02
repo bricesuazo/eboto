@@ -36,10 +36,12 @@ import {
   type FileWithPath,
   IMAGE_MIME_TYPE,
 } from "@mantine/dropzone";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
+import { uploadImage } from "../../../utils/uploadImage";
 
 const DashboardSettings = () => {
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const openRef = useRef<() => void>(null);
   const [opened, { open, close }] = useDisclosure(false);
@@ -275,34 +277,35 @@ const DashboardSettings = () => {
       ) : (
         <form
           onSubmit={form.onSubmit((value) => {
-            const test = (formLogo: FileWithPath | string | null) => {
-              if (!formLogo) return null;
-
-              if (typeof formLogo === "string") return formLogo;
-
-              const reader = new FileReader();
-              reader.readAsDataURL(formLogo);
-              reader.onload = () => {
-                return reader.result;
-              };
-
-              return null;
-            };
-            updateElectionMutation.mutate({
-              id: value.id,
-              name: value.name,
-              slug: value.slug,
-              start_date:
-                value.date[0] ||
-                new Date(new Date().setDate(new Date().getDate() + 1)),
-              end_date:
-                value.date[1] ||
-                new Date(new Date().setDate(new Date().getDate() + 8)),
-              voting_start: parseInt(value.voting_start),
-              voting_end: parseInt(value.voting_end),
-              publicity: value.publicity,
-              logo: test(value.logo),
-            });
+            void (async () => {
+              setLoading(true);
+              await updateElectionMutation.mutateAsync({
+                id: value.id,
+                name: value.name,
+                slug: value.slug,
+                start_date:
+                  value.date[0] ||
+                  new Date(new Date().setDate(new Date().getDate() + 1)),
+                end_date:
+                  value.date[1] ||
+                  new Date(new Date().setDate(new Date().getDate() + 8)),
+                voting_start: parseInt(value.voting_start),
+                voting_end: parseInt(value.voting_end),
+                publicity: value.publicity,
+                logo:
+                  typeof value.logo === "string" || value.logo === null
+                    ? value.logo
+                    : await uploadImage({
+                        path:
+                          "/elections/" +
+                          value.id +
+                          "/logo/" +
+                          Date.now().toString(),
+                        image: value.logo,
+                      }),
+              });
+              setLoading(false);
+            })();
           })}
         >
           <Stack spacing="sm">
@@ -313,7 +316,7 @@ const DashboardSettings = () => {
               placeholder="Enter election name"
               {...form.getInputProps("name")}
               icon={<IconLetterCase size="1rem" />}
-              disabled={updateElectionMutation.isLoading}
+              disabled={loading}
             />
 
             <TextInput
@@ -335,7 +338,7 @@ const DashboardSettings = () => {
                 (updateElectionMutation.error?.data?.code === "CONFLICT" &&
                   updateElectionMutation.error?.message)
               }
-              disabled={updateElectionMutation.isLoading}
+              disabled={loading}
             />
 
             <DatePickerInput
@@ -353,10 +356,7 @@ const DashboardSettings = () => {
               firstDayOfWeek={0}
               {...form.getInputProps("date")}
               icon={<IconCalendar size="1rem" />}
-              disabled={
-                updateElectionMutation.isLoading ||
-                isElectionOngoing(election.data)
-              }
+              disabled={loading || isElectionOngoing(election.data)}
             />
             <Stack spacing="sm">
               <Group grow spacing={8}>
@@ -372,7 +372,7 @@ const DashboardSettings = () => {
                     value: i.toString(),
                   }))}
                   icon={<IconClock size="1rem" />}
-                  disabled={updateElectionMutation.isLoading}
+                  disabled={loading}
                 />
                 <Select
                   dropdownPosition="bottom"
@@ -387,14 +387,10 @@ const DashboardSettings = () => {
                     disabled: i <= parseInt(form.values.voting_start),
                   }))}
                   icon={<IconClock size="1rem" />}
-                  disabled={updateElectionMutation.isLoading}
+                  disabled={loading}
                 />
               </Group>
-              <Text
-                align="center"
-                size="sm"
-                opacity={updateElectionMutation.isLoading ? 0.5 : 1}
-              >
+              <Text align="center" size="sm" opacity={loading ? 0.5 : 1}>
                 {parseInt(form.values.voting_end) -
                   parseInt(form.values.voting_start)}{" "}
                 hour
@@ -416,7 +412,7 @@ const DashboardSettings = () => {
                 value: p,
                 label: p,
               }))}
-              disabled={updateElectionMutation.isLoading}
+              disabled={loading}
             />
 
             <Box>
@@ -439,7 +435,7 @@ const DashboardSettings = () => {
                 maxSize={5 * 1024 ** 2}
                 accept={IMAGE_MIME_TYPE}
                 multiple={false}
-                loading={updateElectionMutation.isLoading}
+                loading={loading}
               >
                 <Group
                   position="center"
@@ -526,7 +522,7 @@ const DashboardSettings = () => {
                 disabled={
                   typeof form.values.logo === "string" ||
                   !election.data.logo ||
-                  updateElectionMutation.isLoading
+                  loading
                 }
               >
                 Reset logo
@@ -535,7 +531,7 @@ const DashboardSettings = () => {
                 onClick={() => {
                   form.setFieldValue("logo", null);
                 }}
-                disabled={!form.values.logo || updateElectionMutation.isLoading}
+                disabled={!form.values.logo || loading}
               >
                 Delete logo
               </Button>
@@ -555,7 +551,7 @@ const DashboardSettings = () => {
             <Group position="apart">
               <Button
                 type="submit"
-                loading={updateElectionMutation.isLoading}
+                loading={loading}
                 disabled={!form.isDirty() || !form.isValid()}
               >
                 Update
@@ -565,7 +561,7 @@ const DashboardSettings = () => {
                 color="red"
                 onClick={open}
                 loading={deleteElectionMutation.isLoading}
-                disabled={updateElectionMutation.isLoading}
+                disabled={loading}
               >
                 Delete
               </Button>

@@ -1,24 +1,18 @@
 import { supabase } from "../lib/supabase";
-import { decode } from "base64-arraybuffer";
+// import { decode } from "base64-arraybuffer";
+import { type FileWithPath } from "@mantine/dropzone";
 
 export const uploadImage = async ({
   path,
   image,
 }: {
   path: string;
-  image: string;
+  image: FileWithPath;
+  // image: string;
 }): Promise<string> => {
-  console.log(
-    "🚀 ~ file: uploadImage.ts:25 ~ uploadImage: lololololololololololllolol"
-  );
-
-  console.log("🚀 ~ file: uploadImage.ts:11 ~ image:", image);
-  const { data } = await supabase.storage
-    .from("eboto-mo")
-    .upload(path, decode(image), {
-      contentType: "image/png",
-    });
-  console.log("🚀 ~ file: uploadImage.ts:16 ~ data:", data);
+  const { data } = await supabase.storage.from("eboto-mo").upload(path, image, {
+    contentType: "image/png",
+  });
 
   const {
     data: { publicUrl },
