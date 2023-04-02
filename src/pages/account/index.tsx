@@ -304,6 +304,7 @@ const AccountPage = () => {
                             }
                             alt="image"
                             fill
+                            sizes="100%"
                           />
                         </Box>
                         <Text>{accountForm.values.image.name}</Text>
@@ -327,6 +328,7 @@ const AccountPage = () => {
                               src={session.data.user.image}
                               alt="image"
                               fill
+                              sizes="100%"
                             />
                           </Box>
                           <Text>Current image</Text>

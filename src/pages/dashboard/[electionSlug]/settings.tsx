@@ -465,6 +465,7 @@ const DashboardSettings = () => {
                             }
                             alt="Logo"
                             fill
+                            sizes="100%"
                           />
                         </Box>
                         <Text>{form.values.logo.name}</Text>

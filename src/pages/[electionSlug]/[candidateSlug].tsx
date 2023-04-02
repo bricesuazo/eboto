@@ -87,6 +87,7 @@ const CandidatePage = ({
                   src={candidate.image}
                   alt={candidate.first_name + " " + candidate.last_name}
                   fill
+                  sizes="100%"
                 />
               </Box>
             ) : (
