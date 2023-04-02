@@ -2,7 +2,6 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { positionTemplate } from "../../../constants";
 import { takenSlugs } from "../../../constants";
-import { uploadImage } from "../../../utils/uploadImage";
 
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 

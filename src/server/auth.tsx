@@ -26,6 +26,7 @@ declare module "next-auth" {
       middleName: string | null;
       lastName: string;
       email: string;
+      image: string | null;
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];
@@ -36,6 +37,7 @@ declare module "next-auth" {
     firstName: string;
     middleName: string | null;
     lastName: string;
+    image: string | null;
     // ...other properties
     // role: UserRole;
   }
@@ -47,6 +49,7 @@ declare module "next-auth/jwt" {
     firstName: string;
     middleName: string | null;
     lastName: string;
+    image: string | null;
   }
 }
 
@@ -82,6 +85,8 @@ export const authOptions: NextAuthOptions = {
         session.user.firstName = token.firstName;
         session.user.middleName = token.middleName;
         session.user.lastName = token.lastName;
+        session.user.image = token.image;
+
         // session.user.role = user.role; <-- put other properties on the session here
       }
       return session;
@@ -92,6 +97,7 @@ export const authOptions: NextAuthOptions = {
         token.firstName = user.firstName;
         token.middleName = user.middleName;
         token.lastName = user.lastName;
+        token.image = user.image;
         // token.role = user.role; <-- put other properties on the token here
       }
       return token;

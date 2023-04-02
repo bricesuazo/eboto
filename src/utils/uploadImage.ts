@@ -1,5 +1,4 @@
 import { supabase } from "../lib/supabase";
-// import { decode } from "base64-arraybuffer";
 import { type FileWithPath } from "@mantine/dropzone";
 
 export const uploadImage = async ({
@@ -8,9 +7,8 @@ export const uploadImage = async ({
 }: {
   path: string;
   image: FileWithPath;
-  // image: string;
 }): Promise<string> => {
-  const { data } = await supabase.storage.from("eboto-mo").upload(path, image, {
+  await supabase.storage.from("eboto-mo").upload(path, image, {
     contentType: "image/png",
   });
 
