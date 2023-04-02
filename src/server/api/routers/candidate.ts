@@ -4,6 +4,42 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const candidateRouter = createTRPCRouter({
+  uploadImage: protectedProcedure
+    .input(z.object({ candidateId: z.string(), file: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const candidate = await ctx.prisma.candidate.findUniqueOrThrow({
+        where: {
+          id: input.candidateId,
+        },
+        select: {
+          election: {
+            select: {
+              id: true,
+              commissioners: true,
+            },
+          },
+        },
+      });
+
+      if (
+        !candidate.election.commissioners.some(
+          (commissioner) => commissioner.userId === ctx.session.user.id
+        )
+      )
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Unauthorized",
+        });
+
+      return ctx.prisma.candidate.update({
+        where: {
+          id: input.candidateId,
+        },
+        data: {
+          image: input.file,
+        },
+      });
+    }),
   editSingle: protectedProcedure
     .input(
       z.object({
@@ -15,6 +51,7 @@ export const candidateRouter = createTRPCRouter({
         electionId: z.string(),
         partylistId: z.string(),
         positionId: z.string(),
+        image: z.string().nullable(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -70,6 +107,7 @@ export const candidateRouter = createTRPCRouter({
           electionId: position.election.id,
           partylistId: input.partylistId,
           positionId: input.positionId,
+          image: input.image,
         },
       });
     }),

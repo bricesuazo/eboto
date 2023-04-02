@@ -53,8 +53,23 @@ const CreateCandidateModal = ({
   const router = useRouter();
   const openRef = useRef<() => void>(null);
   const [loading, setLoading] = useState(false);
+
+  const uploadImageMutation = api.candidate.uploadImage.useMutation();
+
   const createCandidateMutation = api.candidate.createSingle.useMutation({
     onSuccess: async (data) => {
+      if (form.values.image && typeof form.values.image !== "string") {
+        await uploadImageMutation.mutateAsync({
+          candidateId: data.id,
+          file: await uploadImage({
+            path: `elections/${data.electionId}/candidates/${
+              data.id
+            }/image/${Date.now().toString()}`,
+            image: form.values.image,
+          }),
+        });
+      }
+
       await context.candidate.getAll.invalidate();
       notifications.show({
         title: `${data.first_name} ${data.last_name} created!`,
@@ -63,6 +78,16 @@ const CreateCandidateModal = ({
         autoClose: 5000,
       });
       onClose();
+    },
+    onError: (error) => {
+      notifications.show({
+        title: "Error creating candidate",
+        message: error.message,
+        icon: <IconAlertCircle size="1.1rem" />,
+        color: "red",
+        autoClose: 5000,
+      });
+      setLoading(false);
     },
   });
 
@@ -135,12 +160,6 @@ const CreateCandidateModal = ({
                 electionId: position.electionId,
               },
               middleName: value.middleName,
-              image: value.image
-                ? await uploadImage({
-                    path: `elections/${position.electionId}/candidates/image/${value.slug}`,
-                    image: value.image,
-                  })
-                : undefined,
             });
             setLoading(false);
           })();
