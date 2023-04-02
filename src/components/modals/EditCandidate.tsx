@@ -97,7 +97,7 @@ const EditCandidateModal = ({
       opened={isOpen || editCandidateMutation.isLoading}
       onClose={onClose}
       title={
-        <Text weight={600}>
+        <Text weight={600} lineClamp={1}>
           Edit Candidate - {candidate.first_name} {candidate.last_name}
         </Text>
       }
