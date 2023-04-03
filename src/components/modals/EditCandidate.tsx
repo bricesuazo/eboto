@@ -10,6 +10,7 @@ import {
   Tabs,
   rem,
   Box,
+  Flex,
 } from "@mantine/core";
 import { api } from "../../utils/api";
 import type { Candidate, Partylist, Position } from "@prisma/client";
@@ -264,55 +265,28 @@ const EditCandidateModal = ({
             </Tabs.Panel>
 
             <Tabs.Panel value="image" pt="xs">
-              <Dropzone
-                id="image"
-                onDrop={(files) => {
-                  if (!files[0]) return;
-                  form.setFieldValue("image", files[0]);
-                }}
-                openRef={openRef}
-                maxSize={5 * 1024 ** 2}
-                accept={IMAGE_MIME_TYPE}
-                multiple={false}
-                loading={loading}
-                disabled={loading}
-              >
-                <Group
-                  position="center"
-                  spacing="xl"
-                  style={{ minHeight: rem(220), pointerEvents: "none" }}
+              <Stack spacing="xs">
+                <Dropzone
+                  id="image"
+                  onDrop={(files) => {
+                    if (!files[0]) return;
+                    form.setFieldValue("image", files[0]);
+                  }}
+                  openRef={openRef}
+                  maxSize={5 * 1024 ** 2}
+                  accept={IMAGE_MIME_TYPE}
+                  multiple={false}
+                  loading={loading}
+                  disabled={loading}
                 >
-                  {form.values.image ? (
-                    typeof form.values.image !== "string" &&
-                    form.values.image ? (
-                      <Group>
-                        <Box
-                          pos="relative"
-                          sx={(theme) => ({
-                            width: rem(120),
-                            height: rem(120),
-
-                            [theme.fn.smallerThan("sm")]: {
-                              width: rem(180),
-                              height: rem(180),
-                            },
-                          })}
-                        >
-                          <Image
-                            src={
-                              typeof form.values.image === "string"
-                                ? form.values.image
-                                : URL.createObjectURL(form.values.image)
-                            }
-                            alt="image"
-                            fill
-                            sizes="100%"
-                          />
-                        </Box>
-                        <Text>{form.values.image.name}</Text>
-                      </Group>
-                    ) : (
-                      candidate.image && (
+                  <Group
+                    position="center"
+                    spacing="xl"
+                    style={{ minHeight: rem(220), pointerEvents: "none" }}
+                  >
+                    {form.values.image ? (
+                      typeof form.values.image !== "string" &&
+                      form.values.image ? (
                         <Group>
                           <Box
                             pos="relative"
@@ -327,60 +301,93 @@ const EditCandidateModal = ({
                             })}
                           >
                             <Image
-                              src={candidate.image}
+                              src={
+                                typeof form.values.image === "string"
+                                  ? form.values.image
+                                  : URL.createObjectURL(form.values.image)
+                              }
                               alt="image"
                               fill
                               sizes="100%"
                             />
                           </Box>
-                          <Text>Current image</Text>
+                          <Text>{form.values.image.name}</Text>
                         </Group>
+                      ) : (
+                        candidate.image && (
+                          <Group>
+                            <Box
+                              pos="relative"
+                              sx={(theme) => ({
+                                width: rem(120),
+                                height: rem(120),
+
+                                [theme.fn.smallerThan("sm")]: {
+                                  width: rem(180),
+                                  height: rem(180),
+                                },
+                              })}
+                            >
+                              <Image
+                                src={candidate.image}
+                                alt="image"
+                                fill
+                                sizes="100%"
+                              />
+                            </Box>
+                            <Text>Current image</Text>
+                          </Group>
+                        )
                       )
-                    )
-                  ) : (
-                    <Box>
-                      <Text size="xl" inline align="center">
-                        Drag image here or click to select image
-                      </Text>
-                      <Text
-                        size="sm"
-                        color="dimmed"
-                        inline
-                        mt={7}
-                        align="center"
-                      >
-                        Attach a image to your account. Max file size is 5MB.
-                      </Text>
-                    </Box>
-                  )}
-                  <Dropzone.Reject>
-                    <IconX size="3.2rem" stroke={1.5} />
-                  </Dropzone.Reject>
-                </Group>
-              </Dropzone>
-              <Button
-                onClick={() => {
-                  form.setValues({
-                    ...form.values,
-                    image: candidate.image,
-                  });
-                }}
-                disabled={
-                  !candidate.image ||
-                  typeof form.values.image === "string" ||
-                  loading
-                }
-              >
-                Reset image
-              </Button>
-              <Button
-                onClick={() => {
-                  form.setFieldValue("image", null);
-                }}
-                disabled={!form.values.image || loading}
-              >
-                Delete image
-              </Button>
+                    ) : (
+                      <Box>
+                        <Text size="xl" inline align="center">
+                          Drag image here or click to select image
+                        </Text>
+                        <Text
+                          size="sm"
+                          color="dimmed"
+                          inline
+                          mt={7}
+                          align="center"
+                        >
+                          Attach a image to your account. Max file size is 5MB.
+                        </Text>
+                      </Box>
+                    )}
+                    <Dropzone.Reject>
+                      <IconX size="3.2rem" stroke={1.5} />
+                    </Dropzone.Reject>
+                  </Group>
+                </Dropzone>
+                <Flex gap="sm">
+                  <Button
+                    onClick={() => {
+                      form.setValues({
+                        ...form.values,
+                        image: candidate.image,
+                      });
+                    }}
+                    disabled={
+                      !candidate.image ||
+                      typeof form.values.image === "string" ||
+                      loading
+                    }
+                    sx={{ flex: 1 }}
+                  >
+                    Reset image
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      form.setFieldValue("image", null);
+                    }}
+                    disabled={!form.values.image || loading}
+                    sx={{ flex: 1 }}
+                  >
+                    Delete image
+                  </Button>
+                </Flex>
+              </Stack>
             </Tabs.Panel>
 
             {editCandidateMutation.isError &&

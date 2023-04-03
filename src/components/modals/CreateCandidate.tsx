@@ -260,7 +260,7 @@ const CreateCandidateModal = ({
               </Stack>
             </Tabs.Panel>
             <Tabs.Panel value="image" pt="xs">
-              <Stack spacing="sm">
+              <Stack spacing="xs">
                 <Dropzone
                   id="image"
                   onDrop={(files) => {
