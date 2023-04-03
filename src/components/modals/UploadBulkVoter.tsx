@@ -183,7 +183,6 @@ const UploadBulkVoter = ({
                   }))();
               });
             }}
-            onReject={(files) => console.log("rejected files", files)}
             accept={MS_EXCEL_MIME_TYPE}
           >
             <Flex

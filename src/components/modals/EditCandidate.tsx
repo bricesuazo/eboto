@@ -137,7 +137,6 @@ const EditCandidateModal = ({
         </Text>
       }
     >
-      <button onClick={() => console.log(form.values)}>click</button>
       <form
         onSubmit={form.onSubmit((value) => {
           void (async () => {
