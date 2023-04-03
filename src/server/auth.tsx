@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { GetServerSidePropsContext } from "next";
 import {
   getServerSession,
@@ -91,14 +93,20 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-    jwt({ token, user }) {
-      if (user) {
+    jwt({ token, session, trigger, user }) {
+      if (trigger === "update" && session) {
+        token.id = session.id ?? user.id;
+        token.firstName = session.firstName;
+        token.middleName = session.middleName;
+        token.lastName = session.lastName;
+        token.image = session.image;
+        // token.role = user.role; <-- put other properties on the token here
+      } else if (user) {
         token.id = user.id;
         token.firstName = user.firstName;
         token.middleName = user.middleName;
         token.lastName = user.lastName;
         token.image = user.image;
-        // token.role = user.role; <-- put other properties on the token here
       }
       return token;
     },

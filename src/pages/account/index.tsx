@@ -29,7 +29,6 @@ const AccountPage = () => {
   const openRef = useRef<() => void>(null);
   const [loading, setLoading] = useState(false);
   const session = useSession();
-  console.log("🚀 ~ file: index.tsx:32 ~ AccountPage ~ session:", session);
   const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
   const [page, setPage] = useState<number>(0);
@@ -195,24 +194,37 @@ const AccountPage = () => {
           onSubmit={accountForm.onSubmit((values) => {
             void (async () => {
               setLoading(true);
-              await updateProfileMutation.mutateAsync({
-                firstName: values.firstName,
-                middleName: values.middleName || null,
-                lastName: values.lastName,
-                image:
-                  typeof values.image === "string" || values.image === null
-                    ? values.image
-                    : session.data &&
-                      (await uploadImage({
-                        path:
-                          "/users/" +
-                          session.data.user.id +
-                          "/image/" +
-                          Date.now().toString(),
-                        image: values.image,
-                      })),
-              });
-              // update the session
+
+              const image =
+                typeof values.image === "string" || values.image === null
+                  ? values.image
+                  : session.data &&
+                    (await uploadImage({
+                      path:
+                        "/users/" +
+                        session.data.user.id +
+                        "/image/" +
+                        Date.now().toString(),
+                      image: values.image,
+                    }));
+
+              await updateProfileMutation
+                .mutateAsync({
+                  firstName: values.firstName,
+                  middleName: values.middleName || null,
+                  lastName: values.lastName,
+                  image,
+                })
+                .then(async (data) => {
+                  await session.update({
+                    id: data.id,
+                    firstName: data.first_name,
+                    image,
+                    lastName: data.last_name,
+                    middleName: data.middle_name,
+                  });
+                });
+
               setLoading(false);
             })();
           })}
