@@ -98,6 +98,19 @@ const EditCandidateModal = ({
   const editCandidateMutation = api.candidate.editSingle.useMutation({
     onSuccess: async (data) => {
       await context.candidate.getAll.invalidate();
+      const dataForForm = {
+        firstName: data.first_name,
+        middleName: data.middle_name,
+        lastName: data.last_name,
+        slug: data.slug,
+        partylistId: data.partylistId,
+        position: data.positionId,
+        image: data.image,
+      };
+
+      form.setValues(dataForForm);
+      form.resetDirty(dataForForm);
+
       notifications.show({
         title: `${data.first_name} updated!`,
         message: "Successfully updated candidate",
@@ -105,21 +118,18 @@ const EditCandidateModal = ({
         autoClose: 5000,
       });
       onClose();
-      form.resetDirty();
     },
   });
 
   useDidUpdate(() => {
     if (isOpen) {
-      form.reset();
-      form.resetDirty();
       editCandidateMutation.reset();
     }
   }, [isOpen]);
 
   return (
     <Modal
-      opened={isOpen || editCandidateMutation.isLoading}
+      opened={isOpen || loading}
       onClose={onClose}
       title={
         <Text weight={600} lineClamp={1}>
@@ -127,6 +137,7 @@ const EditCandidateModal = ({
         </Text>
       }
     >
+      <button onClick={() => console.log(form.values)}>click</button>
       <form
         onSubmit={form.onSubmit((value) => {
           void (async () => {
@@ -152,9 +163,9 @@ const EditCandidateModal = ({
                     image: value.image,
                   }),
             });
-          });
 
-          setLoading(false);
+            setLoading(false);
+          })();
         })}
       >
         <Tabs variant="outline" radius="xs" defaultValue="basic">
@@ -385,17 +396,13 @@ const EditCandidateModal = ({
               )}
 
             <Group position="right" spacing="xs">
-              <Button
-                variant="default"
-                onClick={onClose}
-                disabled={editCandidateMutation.isLoading}
-              >
+              <Button variant="default" onClick={onClose} disabled={loading}>
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isDirty()}
-                loading={editCandidateMutation.isLoading}
+                loading={loading}
               >
                 Update
               </Button>

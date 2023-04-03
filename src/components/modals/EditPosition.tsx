@@ -44,6 +44,13 @@ const EditPartylistModal = ({
   const editPositionMutation = api.position.editSingle.useMutation({
     onSuccess: async (data) => {
       await context.position.getAll.invalidate();
+      const dataForForm = {
+        name: data.name,
+      };
+
+      form.setValues(dataForForm);
+      form.resetDirty(dataForForm);
+
       notifications.show({
         title: `${data.name} updated!`,
         message: "Successfully updated position",

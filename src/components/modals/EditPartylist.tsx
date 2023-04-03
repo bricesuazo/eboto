@@ -55,15 +55,24 @@ const EditPartylistModal = ({
 
   const editPartylistMutation = api.partylist.editSingle.useMutation({
     onSuccess: async (data) => {
-      onClose();
       await context.partylist.getAll.invalidate();
+
+      const dataForForm = {
+        name: data.name,
+        acronym: data.acronym,
+      };
+
+      form.setValues(dataForForm);
+      form.resetDirty(dataForForm);
+
+      form.resetDirty();
       notifications.show({
         title: `${data.name} (${data.acronym}) updated!`,
         message: "Successfully updated partylist",
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
-      form.resetDirty();
+      onClose();
     },
   });
 
