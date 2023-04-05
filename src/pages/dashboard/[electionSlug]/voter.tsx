@@ -29,6 +29,7 @@ const DashboardVoter = () => {
       id: string;
       email: string;
       status: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
+      createdAt: Date;
     }[]
   >([]);
   const [search, setSearch] = useState("");
@@ -161,13 +162,19 @@ const DashboardVoter = () => {
                   </td>
                 </tr>
               ) : (
-                votersData.map((voter) => (
-                  <Voter
-                    key={voter.id}
-                    electionId={voters.data.election.id}
-                    voter={voter}
-                  />
-                ))
+                votersData
+                  .sort(
+                    (a, b) =>
+                      new Date(a.createdAt).getTime() -
+                      new Date(b.createdAt).getTime()
+                  )
+                  .map((voter) => (
+                    <Voter
+                      key={voter.id}
+                      electionId={voters.data.election.id}
+                      voter={voter}
+                    />
+                  ))
               )}
             </tbody>
           </Table>

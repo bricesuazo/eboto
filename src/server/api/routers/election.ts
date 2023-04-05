@@ -194,6 +194,7 @@ export const electionRouter = createTRPCRouter({
               id: z.string(),
               email: z.string(),
               status: z.enum(["ACCEPTED", "INVITED", "DECLINED", "ADDED"]),
+              createdAt: z.date(),
             })
           )
           .parse(
@@ -202,12 +203,14 @@ export const electionRouter = createTRPCRouter({
                 id: voter.id,
                 email: voter.user.email,
                 status: "ACCEPTED",
+                createdAt: voter.createdAt,
               }))
               .concat(
                 invitedVoter.map((voter) => ({
                   id: voter.id,
                   email: voter.email,
                   status: voter.status,
+                  createdAt: voter.createdAt,
                 }))
               )
           ),
