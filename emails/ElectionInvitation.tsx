@@ -44,7 +44,7 @@ export default function ElectionInvitation({
       <Body style={main}>
         <Container style={container}>
           <Img
-            src={`https://raw.githubusercontent.com/bricesuazo/eboto-mo/main/public/assets/images/eboto-mo-logo.png`}
+            src={`https://raw.githubusercontent.com/bricesuazo/eboto-mo/main/public/images/eboto-mo-logo.png`}
             width="42"
             height="42"
             alt="eBoto Mo"

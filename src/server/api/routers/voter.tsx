@@ -1,10 +1,6 @@
-import { sendEmailTransport } from "../../../../emails/index";
 import { protectedProcedure } from "../trpc";
 import { z } from "zod";
-
 import { createTRPCRouter } from "../trpc";
-import ElectionInvitation from "../../../../emails/ElectionInvitation";
-import { render } from "@react-email/render";
 import { TRPCError } from "@trpc/server";
 
 export const voterRouter = createTRPCRouter({
@@ -141,30 +137,6 @@ export const voterRouter = createTRPCRouter({
         },
       });
 
-      // const token = await ctx.prisma.verificationToken.create({
-      //   data: {
-      //     expiresAt: election.end_date,
-      //     type: "ELECTION_INVITATION",
-      //     invitedVoter: {
-      //       connect: {
-      //         id: invitedVoter.id,
-      //       },
-      //     },
-      //   },
-      // });
-
-      // await sendEmailTransport({
-      //   email: input.email,
-      //   subject: `You have been invited to vote in ${election.name}`,
-      //   html: render(
-      //     <ElectionInvitation
-      //       type="VOTER"
-      //       token={token.id}
-      //       electionName={election.name}
-      //       electionEndDate={election.end_date}
-      //     />
-      //   ),
-      // });
       return { invitedVoter, email: input.email };
     }),
 
