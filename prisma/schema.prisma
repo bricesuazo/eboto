@@ -42,6 +42,8 @@ model InvitedCommissioner {
 
     tokens VerificationToken[]
 
+    createdAt DateTime @default(now())
+
     @@index([electionId])
 }
 
@@ -55,6 +57,8 @@ model InvitedVoter {
     electionId String
 
     tokens VerificationToken[]
+
+    createdAt DateTime @default(now())
 
     @@index([electionId])
 }
