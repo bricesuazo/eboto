@@ -47,6 +47,7 @@
     "@trpc/next": "^10.9.0",
     "@trpc/react-query": "^10.9.0",
     "@trpc/server": "^10.9.0",
+    "@upstash/qstash": "^0.3.6",
     "@vercel/analytics": "^0.1.8",
     "bcryptjs": "^2.4.3",
     "cookies-next": "^2.1.1",
