@@ -16,6 +16,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     const invitedVoters = await prisma.invitedVoter.findMany({
       where: {
         electionId: election.id,
+        status: "ADDED",
       },
     });
 
@@ -43,6 +44,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             electionEndDate={election.end_date}
           />
         ),
+      });
+
+      await prisma.invitedVoter.update({
+        where: {
+          id: voter.id,
+        },
+        data: {
+          status: "INVITED",
+        },
       });
     }
   }

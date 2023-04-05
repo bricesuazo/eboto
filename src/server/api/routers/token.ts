@@ -2,6 +2,7 @@ import { protectedProcedure } from "./../trpc";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
+import { TRPCError } from "@trpc/server";
 
 export const tokenRouter = createTRPCRouter({
   getById: protectedProcedure
@@ -10,18 +11,7 @@ export const tokenRouter = createTRPCRouter({
       const token = await ctx.prisma.verificationToken.findFirst({
         where: {
           id: input,
-          OR: [
-            {
-              invitedVoter: {
-                email: ctx.session.user.email,
-              },
-            },
-            {
-              invitedCommissioner: {
-                email: ctx.session.user.email,
-              },
-            },
-          ],
+          type: "ELECTION_INVITATION",
         },
         include: {
           invitedVoter: true,
@@ -30,14 +20,48 @@ export const tokenRouter = createTRPCRouter({
       });
 
       if (!token) {
-        throw new Error("Invalid token");
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Token not found",
+        });
+      }
+
+      if (!token.invitedVoter && !token.invitedCommissioner) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Token not found",
+        });
       }
 
       if (token.expiresAt < new Date()) {
-        throw new Error("Token expired");
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Token expired",
+        });
       }
 
-      return token;
+      const election = await ctx.prisma.election.findFirstOrThrow({
+        where: {
+          OR: [
+            {
+              invitedVoter: {
+                some: {
+                  id: token.invitedVoter?.id,
+                },
+              },
+            },
+            {
+              invitedCommissioner: {
+                some: {
+                  id: token.invitedCommissioner?.id,
+                },
+              },
+            },
+          ],
+        },
+      });
+
+      return { token, election };
     }),
   verify: publicProcedure
     .input(

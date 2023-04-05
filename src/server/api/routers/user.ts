@@ -140,18 +140,6 @@ export const userRouter = createTRPCRouter({
         where: {
           id: input.tokenId,
           type: "ELECTION_INVITATION",
-          OR: [
-            {
-              invitedVoter: {
-                email: ctx.session.user.email,
-              },
-            },
-            {
-              invitedCommissioner: {
-                email: ctx.session.user.email,
-              },
-            },
-          ],
         },
         include: {
           invitedVoter: true,
