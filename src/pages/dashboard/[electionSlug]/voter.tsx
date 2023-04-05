@@ -28,7 +28,7 @@ const DashboardVoter = () => {
     {
       id: string;
       email: string;
-      status: "ACCEPTED" | "INVITED" | "DECLINED";
+      status: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
     }[]
   >([]);
   const [search, setSearch] = useState("");

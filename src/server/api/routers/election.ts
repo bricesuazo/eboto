@@ -176,13 +176,6 @@ export const electionRouter = createTRPCRouter({
         where: {
           electionId: election.id,
         },
-        // include: {
-        //   election: {
-        //     include: {
-        //       voters: true,
-        //     },
-        //   },
-        // },
       });
 
       const voters = await ctx.prisma.voter.findMany({
@@ -200,7 +193,7 @@ export const electionRouter = createTRPCRouter({
             z.object({
               id: z.string(),
               email: z.string(),
-              status: z.enum(["ACCEPTED", "INVITED", "DECLINED"]),
+              status: z.enum(["ACCEPTED", "INVITED", "DECLINED", "ADDED"]),
             })
           )
           .parse(

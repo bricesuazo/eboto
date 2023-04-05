@@ -49,7 +49,7 @@ model InvitedVoter {
     id String @id @default(cuid())
 
     email  String
-    status AccountStatusType @default(INVITED)
+    status AccountStatusType @default(ADDED)
 
     election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
     electionId String
@@ -60,6 +60,7 @@ model InvitedVoter {
 }
 
 enum AccountStatusType {
+    ADDED
     INVITED
     DECLINED
 }

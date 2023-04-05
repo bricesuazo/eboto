@@ -30,7 +30,7 @@ const Voter = ({
   voter: {
     id: string;
     email: string;
-    status: "ACCEPTED" | "INVITED" | "DECLINED";
+    status: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
   };
   electionId: string;
 }) => {
@@ -78,7 +78,7 @@ const Voter = ({
             removeVoterMutation.mutate({
               electionId,
               voterId: voter.id,
-              isInvitedVoter: voter.status === "INVITED" ? true : false,
+              isInvitedVoter: voter.status !== "ACCEPTED" ? true : false,
             })
           }
           loading={removeVoterMutation.isLoading}
@@ -92,7 +92,7 @@ const Voter = ({
             removeVoterMutation.mutate({
               electionId,
               voterId: voter.id,
-              isInvitedVoter: voter.status === "INVITED" ? true : false,
+              isInvitedVoter: voter.status !== "ACCEPTED" ? true : false,
             })
           }
           sx={(theme) => ({
