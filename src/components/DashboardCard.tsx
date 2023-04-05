@@ -1,11 +1,4 @@
-import {
-  UnstyledButton,
-  Box,
-  Group,
-  Text,
-  ActionIcon,
-  rem,
-} from "@mantine/core";
+import { UnstyledButton, Box, Text, ActionIcon, rem } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import type { Election, Vote } from "@prisma/client";
 import { IconExternalLink, IconFingerprint } from "@tabler/icons-react";
@@ -62,8 +55,9 @@ const DashboardCard = ({
           flexDirection: "column",
           alignItems: "flex-start",
           justifyContent: "center",
-          width: 272,
-          height: type === "vote" ? 116 : 92,
+          gap: theme.spacing.xs,
+          width: 250,
+          height: type === "vote" ? 352 : 332,
           borderRadius: theme.radius.md,
           padding: theme.spacing.sm,
           backgroundColor:
@@ -71,7 +65,7 @@ const DashboardCard = ({
               ? theme.colors.dark[6]
               : theme.colors.gray[1],
 
-          [theme.fn.smallerThan("xs")]: { width: "100%" },
+          // [theme.fn.smallerThan("xs")]: { width: "100%" },
 
           "&:focus": {
             boxShadow: `0 0 0 2px ${theme.primaryColor}`,
@@ -85,37 +79,47 @@ const DashboardCard = ({
           },
         })}
       >
-        <Group spacing="xs" w="100%">
-          {election.logo ? (
+        {election.logo ? (
+          <Box
+            pos="relative"
+            sx={{
+              aspectRatio: "1/1",
+              width: "100%",
+            }}
+          >
             <Image
               src={election.logo}
               alt={election.name + " logo"}
-              width={40}
-              height={40}
+              fill
+              sizes="100%"
+              style={{
+                objectFit: "contain",
+              }}
+              priority
             />
-          ) : (
-            <IconFingerprint size={40} />
-          )}
-          <Box w="75%">
-            <Text weight="bold" truncate>
-              {election.name}
-            </Text>
-            <Text size="sm" color="GrayText" truncate>
-              <Moment format="MMM D, YYYY">{election.start_date}</Moment>
-              {" - "}
-              <Moment format="MMM D, YYYY">{election.end_date}</Moment>
-            </Text>
-            <Text size="sm" truncate color="dimmed">
-              Open from {convertNumberToHour(election.voting_start)} to{" "}
-              {convertNumberToHour(election.voting_end)}
-            </Text>
-            {type === "vote" && (
-              <Text size="sm" color="dimmed" truncate>
-                {vote?.length ? "You have voted" : "You have not voted"}
-              </Text>
-            )}
           </Box>
-        </Group>
+        ) : (
+          <IconFingerprint size={40} />
+        )}
+        <Box w="100%">
+          <Text weight="bold" lineClamp={1} align="center">
+            {election.name}
+          </Text>
+          <Text size="sm" color="GrayText" lineClamp={1} align="center">
+            <Moment format="MMM D, YYYY">{election.start_date}</Moment>
+            {" - "}
+            <Moment format="MMM D, YYYY">{election.end_date}</Moment>
+          </Text>
+          <Text size="sm" lineClamp={1} color="dimmed" align="center">
+            Open from {convertNumberToHour(election.voting_start)} to{" "}
+            {convertNumberToHour(election.voting_end)}
+          </Text>
+          {type === "vote" && (
+            <Text size="sm" color="dimmed" lineClamp={1} align="center">
+              {vote?.length ? "You have voted" : "You have not voted"}
+            </Text>
+          )}
+        </Box>
       </UnstyledButton>
     </div>
   );

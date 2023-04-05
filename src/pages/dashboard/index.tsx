@@ -7,6 +7,7 @@ import {
   Title,
   Stack,
   Skeleton,
+  Flex,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
@@ -23,20 +24,40 @@ const DashboardPage = () => {
     <>
       <CreateElectionModal isOpen={opened} onClose={close} />
       <Container>
-        <Stack spacing="xl">
-          <Button
-            onClick={open}
-            leftIcon={<IconPlus size="1.25rem" />}
-            sx={(theme) => ({
-              [theme.fn.largerThan("xs")]: { width: "fit-content" },
-            })}
-            size="md"
-          >
-            Create election
-          </Button>
-
+        <Stack spacing="lg">
           <Box>
-            <Title order={2}>My elections</Title>
+            <Flex align="center" justify="space-between">
+              <Title
+                order={2}
+                sx={(theme) => ({
+                  [theme.fn.smallerThan("xs")]: {
+                    fontSize: theme.fontSizes.xl,
+                  },
+                })}
+              >
+                My elections
+              </Title>
+
+              <Button
+                onClick={open}
+                leftIcon={<IconPlus size="1.25rem" />}
+                sx={(theme) => ({
+                  [theme.fn.smallerThan("xs")]: { display: "none" },
+                })}
+              >
+                Create election
+              </Button>
+              <Button
+                onClick={open}
+                leftIcon={<IconPlus size="1rem" />}
+                sx={(theme) => ({
+                  [theme.fn.largerThan("xs")]: { display: "none" },
+                })}
+                size="xs"
+              >
+                Create
+              </Button>
+            </Flex>
             <Text
               size="xs"
               color="grayText"
@@ -46,13 +67,13 @@ const DashboardPage = () => {
             >
               You can manage the elections below.
             </Text>
-            <Group spacing="xs">
+            <Group>
               {!myElections.data || myElections.isLoading ? (
                 [...Array(3).keys()].map((i) => (
                   <Skeleton
                     key={i}
-                    width={272}
-                    height={92}
+                    width={250}
+                    height={332}
                     radius="md"
                     sx={(theme) => ({
                       [theme.fn.smallerThan("xs")]: { width: "100%" },
@@ -76,7 +97,16 @@ const DashboardPage = () => {
           </Box>
 
           <Box>
-            <Title order={2}>My elections I can vote in</Title>
+            <Title
+              order={2}
+              sx={(theme) => ({
+                [theme.fn.smallerThan("xs")]: {
+                  fontSize: theme.fontSizes.xl,
+                },
+              })}
+            >
+              My elections I can vote in
+            </Title>
             <Text
               size="xs"
               color="grayText"
@@ -88,13 +118,13 @@ const DashboardPage = () => {
               election.
             </Text>
 
-            <Group spacing="xs">
+            <Group>
               {!myElectionVote.data || myElectionVote.isLoading ? (
                 [...Array(3).keys()].map((i) => (
                   <Skeleton
                     key={i}
-                    width={272}
-                    height={116}
+                    width={250}
+                    height={352}
                     radius="md"
                     sx={(theme) => ({
                       [theme.fn.smallerThan("xs")]: { width: "100%" },
