@@ -282,12 +282,12 @@ const EditCandidateModal = ({
                   <Group
                     position="center"
                     spacing="xl"
-                    style={{ minHeight: rem(220), pointerEvents: "none" }}
+                    style={{ minHeight: rem(140), pointerEvents: "none" }}
                   >
                     {form.values.image ? (
                       typeof form.values.image !== "string" &&
                       form.values.image ? (
-                        <Group>
+                        <Group position="center">
                           <Box
                             pos="relative"
                             sx={(theme) => ({

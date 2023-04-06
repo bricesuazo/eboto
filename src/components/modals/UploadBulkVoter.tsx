@@ -190,7 +190,7 @@ const UploadBulkVoter = ({
               align="center"
               justify="center"
               gap="md"
-              style={{ minHeight: rem(220), pointerEvents: "none" }}
+              style={{ minHeight: rem(140), pointerEvents: "none" }}
             >
               <Dropzone.Accept>
                 <IconUpload

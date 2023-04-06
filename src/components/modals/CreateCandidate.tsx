@@ -276,7 +276,7 @@ const CreateCandidateModal = ({
                   <Group
                     position="center"
                     spacing="xl"
-                    style={{ minHeight: rem(220), pointerEvents: "none" }}
+                    style={{ minHeight: rem(140), pointerEvents: "none" }}
                   >
                     {form.values.image ? (
                       <Group position="center">
