@@ -156,6 +156,7 @@ const HeaderComponent = ({
                           alt="Profile picture"
                           fill
                           sizes="100%"
+                          priority
                         />
                       </Box>
 
@@ -219,7 +220,14 @@ const HeaderComponent = ({
                           callbackUrl: "/signin",
                         }))()
                     }
-                    icon={<IconLogout style={{ marginLeft: 2 }} size={16} />}
+                    icon={
+                      <IconLogout
+                        style={{
+                          transform: "translateX(2px)",
+                        }}
+                        size={16}
+                      />
+                    }
                   >
                     Log out
                   </Menu.Item>

@@ -1,15 +1,7 @@
-import {
-  UnstyledButton,
-  Box,
-  Text,
-  ActionIcon,
-  rem,
-  Center,
-  AspectRatio,
-} from "@mantine/core";
+import { UnstyledButton, Box, Text, ActionIcon, rem } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import type { Election, Vote } from "@prisma/client";
-import { IconExternalLink, IconFingerprint } from "@tabler/icons-react";
+import { IconExternalLink } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import Moment from "react-moment";
