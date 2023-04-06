@@ -8,10 +8,20 @@ import { prisma } from "../../server/db";
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const elections = await prisma.election.findMany({
     where: {
-      start_date: new Date(new Date().toJSON().slice(0, 10).replace(/-/g, "/")),
+      start_date: new Date(
+        new Date().toUTCString().split(" ").slice(0, 4).join(" ")
+      ),
     },
   });
   for (const election of elections) {
+    await prisma.election.update({
+      where: {
+        id: election.id,
+      },
+      data: {
+        publicity: "VOTER",
+      },
+    });
     const invitedVoters = await prisma.invitedVoter.findMany({
       where: {
         electionId: election.id,
@@ -20,15 +30,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     });
 
     for (const voter of invitedVoters) {
-      await prisma.election.update({
-        where: {
-          id: election.id,
-        },
-        data: {
-          publicity: "VOTER",
-        },
-      });
-
       const token = await prisma.verificationToken.create({
         data: {
           expiresAt: election.end_date,
