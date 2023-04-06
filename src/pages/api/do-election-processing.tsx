@@ -8,14 +8,14 @@ import { prisma } from "../../server/db";
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const elections = await prisma.election.findMany({
     where: {
-      start_date: new Date(new Date().toLocaleDateString()),
+      start_date: new Date(new Date().toISOString().slice(0, 10)),
     },
   });
   console.log(
     "🚀 ~ file: do-election-processing.tsx:14 ~ handler ~ elections:",
     elections
   );
-  console.log("date now", new Date(new Date().toLocaleDateString()));
+  console.log("date now", new Date(new Date().toISOString().slice(0, 10)));
 
   for (const election of elections) {
     await prisma.election.update({
