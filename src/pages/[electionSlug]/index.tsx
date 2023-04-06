@@ -88,7 +88,7 @@ const ElectionPage = ({
           <Box>
             <Group position="center" mb={8}>
               {election.logo ? (
-                <Image src={election.logo} alt="Logo" width={92} height={92} />
+                <Image src={election.logo} alt="Logo" width={92} height={92} priority/>
               ) : (
                 <IconFingerprint size={92} style={{ padding: 8 }} />
               )}
@@ -190,6 +190,7 @@ const ElectionPage = ({
                               style={{
                                 objectFit: "cover",
                               }}
+                              priority
                             />
                           ) : (
                             <IconUser

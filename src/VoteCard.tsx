@@ -89,6 +89,7 @@ const VoteCard = ({
           style={{
             objectFit: "cover",
           }}
+          priority
         />
       ) : (
         <Box>

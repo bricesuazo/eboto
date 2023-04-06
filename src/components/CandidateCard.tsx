@@ -68,6 +68,7 @@ const CandidateCard = ({
                 width={52}
                 height={52}
                 alt={candidate.first_name}
+                priority
               />
             ) : (
               <IconUser

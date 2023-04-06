@@ -36,6 +36,7 @@ const FooterComponent = () => {
                 alt="eBoto Mo Logo"
                 width={32}
                 height={32}
+                priority
               />
               <Text weight={600}>eBoto Mo</Text>
             </Group>

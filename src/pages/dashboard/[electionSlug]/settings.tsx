@@ -464,6 +464,7 @@ const DashboardSettings = () => {
                             alt="Logo"
                             fill
                             sizes="100%"
+                            priority
                           />
                         </Box>
                         <Text>{form.values.logo.name}</Text>
@@ -483,7 +484,12 @@ const DashboardSettings = () => {
                               },
                             })}
                           >
-                            <Image src={election.data.logo} alt="Logo" fill />
+                            <Image
+                              src={election.data.logo}
+                              alt="Logo"
+                              fill
+                              priority
+                            />
                           </Box>
                           <Text>Current logo</Text>
                         </Group>

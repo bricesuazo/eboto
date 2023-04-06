@@ -168,6 +168,7 @@ const NavbarComponent = ({
                   alt={election.name}
                   width={28}
                   height={28}
+                  priority
                 />
               ) : (
                 <IconFingerprint size={28} />
@@ -234,6 +235,7 @@ const NavbarComponent = ({
                       alt={election.name}
                       width={20}
                       height={20}
+                      priority
                     />
                   ) : (
                     <IconFingerprint size={20} />

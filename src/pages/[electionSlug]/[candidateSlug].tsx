@@ -88,6 +88,7 @@ const CandidatePage = ({
                   alt={candidate.first_name + " " + candidate.last_name}
                   fill
                   sizes="100%"
+                  priority
                 />
               </Box>
             ) : (

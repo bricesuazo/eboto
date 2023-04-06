@@ -309,6 +309,7 @@ const EditCandidateModal = ({
                               alt="image"
                               fill
                               sizes="100%"
+                              priority
                             />
                           </Box>
                           <Text>{form.values.image.name}</Text>
@@ -333,6 +334,7 @@ const EditCandidateModal = ({
                                 alt="image"
                                 fill
                                 sizes="100%"
+                                priority
                               />
                             </Box>
                             <Text>Current image</Text>

@@ -301,6 +301,7 @@ const CreateCandidateModal = ({
                             alt="image"
                             fill
                             sizes="100%"
+                            priority
                           />
                         </Box>
                         <Text>{form.values.image.name}</Text>

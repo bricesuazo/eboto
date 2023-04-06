@@ -317,6 +317,7 @@ const AccountPage = () => {
                             alt="image"
                             fill
                             sizes="100%"
+                            priority
                           />
                         </Box>
                         <Text>{accountForm.values.image.name}</Text>
@@ -341,6 +342,7 @@ const AccountPage = () => {
                               alt="image"
                               fill
                               sizes="100%"
+                              priority
                             />
                           </Box>
                           <Text>Current image</Text>
