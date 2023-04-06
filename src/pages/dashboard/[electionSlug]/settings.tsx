@@ -423,54 +423,27 @@ const DashboardSettings = () => {
               >
                 Election logo
               </Text>
-              <Dropzone
-                id="logo"
-                onDrop={(files) => {
-                  if (!files[0]) return;
-                  form.setFieldValue("logo", files[0]);
-                }}
-                openRef={openRef}
-                maxSize={5 * 1024 ** 2}
-                accept={IMAGE_MIME_TYPE}
-                multiple={false}
-                loading={loading}
-              >
-                <Group
-                  position="center"
-                  spacing="xl"
-                  style={{ minHeight: rem(220), pointerEvents: "none" }}
+              <Stack spacing="xs">
+                <Dropzone
+                  id="logo"
+                  onDrop={(files) => {
+                    if (!files[0]) return;
+                    form.setFieldValue("logo", files[0]);
+                  }}
+                  openRef={openRef}
+                  maxSize={5 * 1024 ** 2}
+                  accept={IMAGE_MIME_TYPE}
+                  multiple={false}
+                  loading={loading}
                 >
-                  {form.values.logo ? (
-                    typeof form.values.logo !== "string" && form.values.logo ? (
-                      <Group>
-                        <Box
-                          pos="relative"
-                          sx={(theme) => ({
-                            width: rem(120),
-                            height: rem(120),
-
-                            [theme.fn.smallerThan("sm")]: {
-                              width: rem(180),
-                              height: rem(180),
-                            },
-                          })}
-                        >
-                          <Image
-                            src={
-                              typeof form.values.logo === "string"
-                                ? form.values.logo
-                                : URL.createObjectURL(form.values.logo)
-                            }
-                            alt="Logo"
-                            fill
-                            sizes="100%"
-                            priority
-                          />
-                        </Box>
-                        <Text>{form.values.logo.name}</Text>
-                      </Group>
-                    ) : (
-                      election.data.logo && (
+                  <Group
+                    position="center"
+                    spacing="xl"
+                    style={{ minHeight: rem(220), pointerEvents: "none" }}
+                  >
+                    {form.values.logo ? (
+                      typeof form.values.logo !== "string" &&
+                      form.values.logo ? (
                         <Group>
                           <Box
                             pos="relative"
@@ -485,61 +458,96 @@ const DashboardSettings = () => {
                             })}
                           >
                             <Image
-                              src={election.data.logo}
+                              src={
+                                typeof form.values.logo === "string"
+                                  ? form.values.logo
+                                  : URL.createObjectURL(form.values.logo)
+                              }
                               alt="Logo"
                               fill
+                              sizes="100%"
                               priority
                             />
                           </Box>
-                          <Text>Current logo</Text>
+                          <Text>{form.values.logo.name}</Text>
                         </Group>
+                      ) : (
+                        election.data.logo && (
+                          <Group>
+                            <Box
+                              pos="relative"
+                              sx={(theme) => ({
+                                width: rem(120),
+                                height: rem(120),
+
+                                [theme.fn.smallerThan("sm")]: {
+                                  width: rem(180),
+                                  height: rem(180),
+                                },
+                              })}
+                            >
+                              <Image
+                                src={election.data.logo}
+                                alt="Logo"
+                                fill
+                                priority
+                              />
+                            </Box>
+                            <Text>Current logo</Text>
+                          </Group>
+                        )
                       )
-                    )
-                  ) : (
-                    <Box>
-                      <Text size="xl" inline align="center">
-                        Drag image here or click to select image
-                      </Text>
-                      <Text
-                        size="sm"
-                        color="dimmed"
-                        inline
-                        mt={7}
-                        align="center"
-                      >
-                        Attach a logo to your election. Max file size is 5MB.
-                      </Text>
-                    </Box>
-                  )}
-                  <Dropzone.Reject>
-                    <IconX size="3.2rem" stroke={1.5} />
-                  </Dropzone.Reject>
+                    ) : (
+                      <Box>
+                        <Text size="xl" inline align="center">
+                          Drag image here or click to select image
+                        </Text>
+                        <Text
+                          size="sm"
+                          color="dimmed"
+                          inline
+                          mt={7}
+                          align="center"
+                        >
+                          Attach a logo to your election. Max file size is 5MB.
+                        </Text>
+                      </Box>
+                    )}
+                    <Dropzone.Reject>
+                      <IconX size="3.2rem" stroke={1.5} />
+                    </Dropzone.Reject>
+                  </Group>
+                </Dropzone>
+                <Group grow>
+                  <Button
+                    variant="light"
+                    onClick={() => {
+                      election.data &&
+                        form.setValues({
+                          ...form.values,
+                          logo: election.data.logo,
+                        });
+                    }}
+                    disabled={
+                      typeof form.values.logo === "string" ||
+                      !election.data.logo ||
+                      loading
+                    }
+                  >
+                    Reset logo
+                  </Button>
+                  <Button
+                    color="red"
+                    variant="light"
+                    onClick={() => {
+                      form.setFieldValue("logo", null);
+                    }}
+                    disabled={!form.values.logo || loading}
+                  >
+                    Delete logo
+                  </Button>
                 </Group>
-              </Dropzone>
-              <Button
-                onClick={() => {
-                  election.data &&
-                    form.setValues({
-                      ...form.values,
-                      logo: election.data.logo,
-                    });
-                }}
-                disabled={
-                  typeof form.values.logo === "string" ||
-                  !election.data.logo ||
-                  loading
-                }
-              >
-                Reset logo
-              </Button>
-              <Button
-                onClick={() => {
-                  form.setFieldValue("logo", null);
-                }}
-                disabled={!form.values.logo || loading}
-              >
-                Delete logo
-              </Button>
+              </Stack>
             </Box>
 
             {updateElectionMutation.isError &&
@@ -558,8 +566,25 @@ const DashboardSettings = () => {
                 type="submit"
                 loading={loading}
                 disabled={!form.isDirty() || !form.isValid()}
+                sx={(theme) => ({
+                  [theme.fn.largerThan("xs")]: {
+                    display: "none",
+                  },
+                })}
               >
                 Update
+              </Button>
+              <Button
+                type="submit"
+                loading={loading}
+                disabled={!form.isDirty() || !form.isValid()}
+                sx={(theme) => ({
+                  [theme.fn.smallerThan("xs")]: {
+                    display: "none",
+                  },
+                })}
+              >
+                Update election
               </Button>
               <Button
                 variant="outline"
@@ -567,8 +592,27 @@ const DashboardSettings = () => {
                 onClick={open}
                 loading={deleteElectionMutation.isLoading}
                 disabled={loading}
+                sx={(theme) => ({
+                  [theme.fn.largerThan("xs")]: {
+                    display: "none",
+                  },
+                })}
               >
                 Delete
+              </Button>
+              <Button
+                variant="outline"
+                color="red"
+                onClick={open}
+                loading={deleteElectionMutation.isLoading}
+                disabled={loading}
+                sx={(theme) => ({
+                  [theme.fn.smallerThan("xs")]: {
+                    display: "none",
+                  },
+                })}
+              >
+                Delete election
               </Button>
             </Group>
           </Stack>

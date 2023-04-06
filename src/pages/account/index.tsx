@@ -274,147 +274,168 @@ const AccountPage = () => {
               >
                 Profile picture
               </Text>
-              <Dropzone
-                id="image"
-                onDrop={(files) => {
-                  if (!files[0]) return;
-                  accountForm.setFieldValue("image", files[0]);
-                }}
-                openRef={openRef}
-                maxSize={5 * 1024 ** 2}
-                accept={IMAGE_MIME_TYPE}
-                multiple={false}
-                loading={loading}
-                disabled={session.status === "loading"}
-              >
-                <Group
-                  position="center"
-                  spacing="xl"
-                  style={{ minHeight: rem(220), pointerEvents: "none" }}
+              <Stack spacing="xs">
+                <Dropzone
+                  id="image"
+                  onDrop={(files) => {
+                    if (!files[0]) return;
+                    accountForm.setFieldValue("image", files[0]);
+                  }}
+                  openRef={openRef}
+                  maxSize={5 * 1024 ** 2}
+                  accept={IMAGE_MIME_TYPE}
+                  multiple={false}
+                  loading={loading}
+                  disabled={session.status === "loading"}
                 >
-                  {accountForm.values.image ? (
-                    typeof accountForm.values.image !== "string" &&
-                    accountForm.values.image ? (
-                      <Group>
-                        <Box
-                          pos="relative"
-                          sx={(theme) => ({
-                            width: rem(120),
-                            height: rem(120),
-
-                            [theme.fn.smallerThan("sm")]: {
-                              width: rem(180),
-                              height: rem(180),
-                            },
-                          })}
-                        >
-                          <Image
-                            src={
-                              typeof accountForm.values.image === "string"
-                                ? accountForm.values.image
-                                : URL.createObjectURL(accountForm.values.image)
-                            }
-                            alt="image"
-                            fill
-                            sizes="100%"
-                            priority
-                          />
-                        </Box>
-                        <Text>{accountForm.values.image.name}</Text>
-                      </Group>
-                    ) : (
-                      session.data?.user.image && (
+                  <Group
+                    position="center"
+                    spacing="xl"
+                    style={{ minHeight: rem(140), pointerEvents: "none" }}
+                  >
+                    {accountForm.values.image ? (
+                      typeof accountForm.values.image !== "string" &&
+                      accountForm.values.image ? (
                         <Group>
                           <Box
                             pos="relative"
-                            sx={(theme) => ({
+                            sx={{
                               width: rem(120),
                               height: rem(120),
-
-                              [theme.fn.smallerThan("sm")]: {
-                                width: rem(180),
-                                height: rem(180),
-                              },
-                            })}
+                            }}
                           >
                             <Image
-                              src={session.data.user.image}
+                              src={
+                                typeof accountForm.values.image === "string"
+                                  ? accountForm.values.image
+                                  : URL.createObjectURL(
+                                      accountForm.values.image
+                                    )
+                              }
                               alt="image"
                               fill
                               sizes="100%"
                               priority
                             />
                           </Box>
-                          <Text>Current image</Text>
+                          <Text>{accountForm.values.image.name}</Text>
                         </Group>
+                      ) : (
+                        session.data?.user.image && (
+                          <Group>
+                            <Box
+                              pos="relative"
+                              sx={{
+                                width: rem(120),
+                                height: rem(120),
+                              }}
+                            >
+                              <Image
+                                src={session.data.user.image}
+                                alt="image"
+                                fill
+                                sizes="100%"
+                                priority
+                              />
+                            </Box>
+                            <Text>Current image</Text>
+                          </Group>
+                        )
                       )
-                    )
-                  ) : (
-                    <Box>
-                      <Text size="xl" inline align="center">
-                        Drag image here or click to select image
-                      </Text>
-                      <Text
-                        size="sm"
-                        color="dimmed"
-                        inline
-                        mt={7}
-                        align="center"
-                      >
-                        Attach a image to your account. Max file size is 5MB.
-                      </Text>
-                    </Box>
-                  )}
-                  <Dropzone.Reject>
-                    <IconX size="3.2rem" stroke={1.5} />
-                  </Dropzone.Reject>
+                    ) : (
+                      <Box>
+                        <Text size="xl" inline align="center">
+                          Drag image here or click to select image
+                        </Text>
+                        <Text
+                          size="sm"
+                          color="dimmed"
+                          inline
+                          mt={7}
+                          align="center"
+                        >
+                          Attach a image to your account. Max file size is 5MB.
+                        </Text>
+                      </Box>
+                    )}
+                    <Dropzone.Reject>
+                      <IconX size="3.2rem" stroke={1.5} />
+                    </Dropzone.Reject>
+                  </Group>
+                </Dropzone>
+                <Group grow>
+                  <Button
+                    variant="light"
+                    onClick={() => {
+                      session.data &&
+                        accountForm.setValues({
+                          ...accountForm.values,
+                          image: session.data.user.image,
+                        });
+                    }}
+                    disabled={
+                      !!accountForm.values.image ||
+                      typeof accountForm.values.image === "string" ||
+                      session.status === "loading" ||
+                      loading
+                    }
+                  >
+                    Reset image
+                  </Button>
+                  <Button
+                    color="red"
+                    variant="light"
+                    onClick={() => {
+                      accountForm.setFieldValue("image", null);
+                    }}
+                    disabled={!accountForm.values.image || loading}
+                  >
+                    Delete image
+                  </Button>
                 </Group>
-              </Dropzone>
-              <Button
-                onClick={() => {
-                  session.data &&
-                    accountForm.setValues({
-                      ...accountForm.values,
-                      image: session.data.user.image,
-                    });
-                }}
-                disabled={
-                  !accountForm.values.image ||
-                  typeof accountForm.values.image === "string" ||
-                  session.status === "loading" ||
-                  loading
-                }
-              >
-                Reset image
-              </Button>
-              <Button
-                onClick={() => {
-                  accountForm.setFieldValue("image", null);
-                }}
-                disabled={!accountForm.values.image || loading}
-              >
-                Delete image
-              </Button>
+              </Stack>
             </Box>
-
-            <Button
-              disabled={!accountForm.isDirty() || session.status === "loading"}
-              w="fit-content"
-              type="submit"
-              loading={loading}
-            >
-              Update profile
-            </Button>
-
-            <Button
-              variant="outline"
-              color="red"
-              w="fit-content"
-              disabled={session.status === "loading"}
-              onClick={open}
-            >
-              Delete Account
-            </Button>
+            <Group position="apart" spacing={0}>
+              <Button
+                disabled={
+                  !accountForm.isDirty() || session.status === "loading"
+                }
+                w="fit-content"
+                type="submit"
+                loading={loading}
+                sx={(theme) => ({
+                  [theme.fn.largerThan("xs")]: {
+                    display: "none",
+                  },
+                })}
+              >
+                Update
+              </Button>
+              <Button
+                disabled={
+                  !accountForm.isDirty() || session.status === "loading"
+                }
+                w="fit-content"
+                type="submit"
+                loading={loading}
+                sx={(theme) => ({
+                  [theme.fn.smallerThan("xs")]: {
+                    display: "none",
+                  },
+                })}
+              >
+                Update profile
+              </Button>
+              <Button
+                variant="outline"
+                color="red"
+                w="fit-content"
+                disabled={session.status === "loading"}
+                onClick={open}
+              >
+                Delete Account
+              </Button>
+            </Group>
           </Stack>
         </form>
       </AccountSettingsLayout>
