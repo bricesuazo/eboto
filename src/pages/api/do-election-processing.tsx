@@ -8,9 +8,18 @@ import { prisma } from "../../server/db";
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const elections = await prisma.election.findMany({
     where: {
-      createdAt: new Date(new Date().toJSON().slice(0, 10).replace(/-/g, "/")),
+      slug: "ceit",
+      // createdAt: new Date(new Date().toJSON().slice(0, 10).replace(/-/g, "/")),
     },
   });
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:15 ~ handler ~ elections:",
+    elections
+  );
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:14 ~ handler ~ createdAt: new Date(new Date().toJSON().slice(0, 10).replace(/-/g, /)):",
+    new Date(new Date().toJSON().slice(0, 10).replace(/-/g, "/"))
+  );
 
   for (const election of elections) {
     const invitedVoters = await prisma.invitedVoter.findMany({
@@ -21,6 +30,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     });
 
     for (const voter of invitedVoters) {
+      await prisma.election.update({
+        where: {
+          id: election.id,
+        },
+        data: {
+          publicity: "VOTER",
+        },
+      });
+
       const token = await prisma.verificationToken.create({
         data: {
           expiresAt: election.end_date,
