@@ -88,7 +88,13 @@ const ElectionPage = ({
           <Box>
             <Group position="center" mb={8}>
               {election.logo ? (
-                <Image src={election.logo} alt="Logo" width={92} height={92} priority/>
+                <Image
+                  src={election.logo}
+                  alt="Logo"
+                  width={92}
+                  height={92}
+                  priority
+                />
               ) : (
                 <IconFingerprint size={92} style={{ padding: 8 }} />
               )}
@@ -247,7 +253,7 @@ export const getServerSideProps: GetServerSideProps = async (
 
   if (!election) return { notFound: true };
 
-  const isOngoing = isElectionOngoing(election);
+  const isOngoing = isElectionOngoing({ election, withTime: true });
 
   if (election.publicity === "PRIVATE") {
     if (!session)

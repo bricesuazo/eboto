@@ -98,6 +98,7 @@ const DashboardCard = ({
                 objectFit: "contain",
               }}
               priority
+              blurDataURL={election.logo}
             />
           </Box>
         )}

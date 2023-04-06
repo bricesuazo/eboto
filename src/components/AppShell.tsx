@@ -22,8 +22,13 @@ const AppShellComponent = ({ children }: { children: React.ReactNode }) => {
       }
       aside={
         router.pathname.includes("/dashboard/[electionSlug]") ? (
-          <Aside sx={{ display: "none" }}>
-            <></>
+          <Aside
+            display="none"
+            // width={{ lg: 200, xl: 300 }}
+            // hidden
+            // hiddenBreakpoint="lg"
+          >
+            <>Aside</>
           </Aside>
         ) : undefined
       }

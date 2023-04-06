@@ -232,7 +232,7 @@ export const getServerSideProps: GetServerSideProps = async (
 
   if (!election) return { notFound: true };
 
-  if (!isElectionOngoing(election))
+  if (!isElectionOngoing({ election, withTime: true }))
     return {
       redirect: {
         destination: `/${election.slug}`,

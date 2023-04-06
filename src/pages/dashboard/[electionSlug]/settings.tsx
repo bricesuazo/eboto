@@ -354,7 +354,10 @@ const DashboardSettings = () => {
               firstDayOfWeek={0}
               {...form.getInputProps("date")}
               icon={<IconCalendar size="1rem" />}
-              disabled={loading || isElectionOngoing(election.data)}
+              disabled={
+                loading ||
+                isElectionOngoing({ election: election.data, withTime: false })
+              }
             />
             <Stack spacing="sm">
               <Group grow spacing={8}>
