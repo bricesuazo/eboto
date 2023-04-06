@@ -8,81 +8,67 @@ import { prisma } from "../../server/db";
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const elections = await prisma.election.findMany({
     where: {
-      start_date: {
-        in: new Date(
-          new Date().toLocaleDateString("en-US", {
-            timeZone: "Asia/Manila",
-          })
-        ),
-      },
+      start_date: new Date(new Date().toLocaleDateString()),
     },
   });
-
   console.log(
-    "🚀 ~ file: do-election-processing.tsx:16 ~ handler ~ elections:",
+    "🚀 ~ file: do-election-processing.tsx:14 ~ handler ~ elections:",
     elections
   );
+  console.log("date now", new Date(new Date().toLocaleDateString()));
 
-  console.log(
-    "date now",
-    new Date(
-      new Date().toLocaleDateString("en-US", {
-        timeZone: "Asia/Manila",
-      })
-    )
-  );
-  // for (const election of elections) {
-  //   await prisma.election.update({
-  //     where: {
-  //       id: election.id,
-  //     },
-  //     data: {
-  //       publicity: "VOTER",
-  //     },
-  //   });
-  //   const invitedVoters = await prisma.invitedVoter.findMany({
-  //     where: {
-  //       electionId: election.id,
-  //       status: "ADDED",
-  //     },
-  //   });
+  for (const election of elections) {
+    await prisma.election.update({
+      where: {
+        id: election.id,
+      },
+      data: {
+        publicity: "VOTER",
+      },
+    });
+    const invitedVoters = await prisma.invitedVoter.findMany({
+      where: {
+        electionId: election.id,
+        status: "ADDED",
+      },
+    });
 
-  //   for (const voter of invitedVoters) {
-  //     // const token = await prisma.verificationToken.create({
-  //     //   data: {
-  //     //     expiresAt: election.end_date,
-  //     //     type: "ELECTION_INVITATION",
-  //     //     invitedVoter: {
-  //     //       connect: {
-  //     //         id: voter.id,
-  //     //       },
-  //     //     },
-  //     //   },
-  //     // });
+    for (const voter of invitedVoters) {
+      // const token = await prisma.verificationToken.create({
+      //   data: {
+      //     expiresAt: election.end_date,
+      //     type: "ELECTION_INVITATION",
+      //     invitedVoter: {
+      //       connect: {
+      //         id: voter.id,
+      //       },
+      //     },
+      //   },
+      // });
 
-  //     // await sendEmailTransport({
-  //     //   email: voter.email,
-  //     //   subject: `You have been invited to vote in ${election.name}`,
-  //     //   html: render(
-  //     //     <ElectionInvitation
-  //     //       type="VOTER"
-  //     //       token={token.id}
-  //     //       electionName={election.name}
-  //     //       electionEndDate={election.end_date}
-  //     //     />
-  //     //   ),
-  //     // });
+      // await sendEmailTransport({
+      //   email: voter.email,
+      //   subject: `You have been invited to vote in ${election.name}`,
+      //   html: render(
+      //     <ElectionInvitation
+      //       type="VOTER"
+      //       token={token.id}
+      //       electionName={election.name}
+      //       electionEndDate={election.end_date}
+      //     />
+      //   ),
+      // });
 
-  //     await prisma.invitedVoter.update({
-  //       where: {
-  //         id: voter.id,
-  //       },
-  //       data: {
-  //         status: "INVITED",
-  //       },
-  //     });
-  //   }
-  // }
+      await prisma.invitedVoter.update({
+        where: {
+          id: voter.id,
+        },
+        data: {
+          status: "INVITED",
+        },
+      });
+    }
+  }
 
   res.status(200).end();
 }
