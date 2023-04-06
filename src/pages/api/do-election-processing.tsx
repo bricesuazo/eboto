@@ -13,6 +13,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       ),
     },
   });
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:16 ~ handler ~ elections:",
+    elections
+  );
   for (const election of elections) {
     await prisma.election.update({
       where: {
