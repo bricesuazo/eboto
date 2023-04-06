@@ -79,6 +79,7 @@ const EditPartylistModal = ({
   useDidUpdate(() => {
     if (isOpen) {
       editPartylistMutation.reset();
+      form.reset();
     }
   }, [isOpen]);
 

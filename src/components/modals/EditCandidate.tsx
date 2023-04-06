@@ -125,6 +125,7 @@ const EditCandidateModal = ({
   useDidUpdate(() => {
     if (isOpen) {
       editCandidateMutation.reset();
+      form.reset();
     }
   }, [isOpen]);
 
