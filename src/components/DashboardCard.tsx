@@ -1,4 +1,12 @@
-import { UnstyledButton, Box, Text, ActionIcon, rem } from "@mantine/core";
+import {
+  UnstyledButton,
+  Box,
+  Text,
+  ActionIcon,
+  rem,
+  Center,
+  AspectRatio,
+} from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import type { Election, Vote } from "@prisma/client";
 import { IconExternalLink, IconFingerprint } from "@tabler/icons-react";
@@ -18,11 +26,13 @@ const DashboardCard = ({
 }) => {
   const { hovered, ref } = useHover();
   return (
-    <div
+    <Box
       ref={ref}
-      style={{
+      sx={(theme) => ({
         position: "relative",
-      }}
+
+        [theme.fn.smallerThan("xs")]: { width: "100%" },
+      })}
     >
       {type === "vote" && (
         <ActionIcon
@@ -65,7 +75,7 @@ const DashboardCard = ({
               ? theme.colors.dark[6]
               : theme.colors.gray[1],
 
-          // [theme.fn.smallerThan("xs")]: { width: "100%" },
+          [theme.fn.smallerThan("xs")]: { width: "100%" },
 
           "&:focus": {
             boxShadow: `0 0 0 2px ${theme.primaryColor}`,
@@ -79,12 +89,12 @@ const DashboardCard = ({
           },
         })}
       >
-        {election.logo ? (
+        {election.logo && (
           <Box
-            pos="relative"
             sx={{
-              aspectRatio: "1/1",
+              position: "relative",
               width: "100%",
+              aspectRatio: "1/1",
             }}
           >
             <Image
@@ -98,8 +108,6 @@ const DashboardCard = ({
               priority
             />
           </Box>
-        ) : (
-          <IconFingerprint size={40} />
         )}
         <Box w="100%">
           <Text weight="bold" lineClamp={1} align="center">
@@ -121,7 +129,7 @@ const DashboardCard = ({
           )}
         </Box>
       </UnstyledButton>
-    </div>
+    </Box>
   );
 };
 
