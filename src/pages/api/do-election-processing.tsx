@@ -9,7 +9,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   const elections = await prisma.election.findMany({
     where: {
       start_date: {
-        equals: new Date(
+        in: new Date(
           new Date().toLocaleDateString("en-US", {
             timeZone: "Asia/Manila",
           })
@@ -17,9 +17,19 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       },
     },
   });
+
   console.log(
     "🚀 ~ file: do-election-processing.tsx:16 ~ handler ~ elections:",
     elections
+  );
+
+  console.log(
+    "date now",
+    new Date(
+      new Date().toLocaleDateString("en-US", {
+        timeZone: "Asia/Manila",
+      })
+    )
   );
   // for (const election of elections) {
   //   await prisma.election.update({
@@ -77,11 +87,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   res.status(200).end();
 }
 
-// export default handler;
-export default verifySignature(handler);
+export default handler;
+// export default verifySignature(handler);
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// export const config = {
+//   api: {
+//     bodyParser: false,
+//   },
+// };
