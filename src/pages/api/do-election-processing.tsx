@@ -8,9 +8,9 @@ import { prisma } from "../../server/db";
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const elections = await prisma.election.findMany({
     where: {
-      start_date: new Date(
-        new Date().toUTCString().split(" ").slice(0, 4).join(" ")
-      ),
+      start_date: {
+        lte: new Date(),
+      },
     },
   });
   console.log(
