@@ -9,7 +9,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   const elections = await prisma.election.findMany({
     where: {
       start_date: {
-        lte: new Date(),
+        gte: new Date(),
       },
     },
   });
@@ -34,30 +34,30 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     });
 
     for (const voter of invitedVoters) {
-      const token = await prisma.verificationToken.create({
-        data: {
-          expiresAt: election.end_date,
-          type: "ELECTION_INVITATION",
-          invitedVoter: {
-            connect: {
-              id: voter.id,
-            },
-          },
-        },
-      });
+      // const token = await prisma.verificationToken.create({
+      //   data: {
+      //     expiresAt: election.end_date,
+      //     type: "ELECTION_INVITATION",
+      //     invitedVoter: {
+      //       connect: {
+      //         id: voter.id,
+      //       },
+      //     },
+      //   },
+      // });
 
-      await sendEmailTransport({
-        email: voter.email,
-        subject: `You have been invited to vote in ${election.name}`,
-        html: render(
-          <ElectionInvitation
-            type="VOTER"
-            token={token.id}
-            electionName={election.name}
-            electionEndDate={election.end_date}
-          />
-        ),
-      });
+      // await sendEmailTransport({
+      //   email: voter.email,
+      //   subject: `You have been invited to vote in ${election.name}`,
+      //   html: render(
+      //     <ElectionInvitation
+      //       type="VOTER"
+      //       token={token.id}
+      //       electionName={election.name}
+      //       electionEndDate={election.end_date}
+      //     />
+      //   ),
+      // });
 
       await prisma.invitedVoter.update({
         where: {
