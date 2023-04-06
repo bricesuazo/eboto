@@ -9,7 +9,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   const elections = await prisma.election.findMany({
     where: {
       start_date: {
-        gte: new Date(),
+        equals: new Date(
+          new Date().toUTCString().split(" ").slice(0, 4).join(" ")
+        ),
       },
     },
   });
