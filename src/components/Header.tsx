@@ -161,18 +161,21 @@ const HeaderComponent = ({
                         />
                       </Box>
 
-                      <Text
-                        size="xs"
-                        truncate
+                      <Box
                         sx={{
-                          width: 42,
+                          width: 80,
                           [theme.fn.largerThan("sm")]: {
-                            width: 64,
+                            width: 140,
                           },
                         }}
                       >
-                        {data.user.firstName} {data.user.lastName}
-                      </Text>
+                        <Text size="xs" truncate weight="bold">
+                          {data.user.firstName} {data.user.lastName}
+                        </Text>
+                        <Text size="xs" truncate>
+                          {data.user.email}
+                        </Text>
+                      </Box>
 
                       <IconChevronDown
                         size={16}
