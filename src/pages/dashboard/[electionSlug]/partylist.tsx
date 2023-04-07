@@ -34,6 +34,7 @@ const DashboardPartylist = () => {
               [theme.fn.smallerThan("xs")]: { width: "100%" },
             })}
             leftIcon={<IconFlag size="1rem" />}
+            loading={partylists.isLoading}
           >
             Add partylist
           </Button>
