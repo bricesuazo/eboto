@@ -28,7 +28,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   const elections = await prisma.election.findMany({
     where: {
       start_date,
-      voting_start: new Date().getHours(),
+      voting_start: new Date().getUTCHours() + 8,
     },
   });
   console.log(

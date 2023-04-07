@@ -134,7 +134,7 @@ const NavbarComponent = ({
     <>
       <CreateElectionModal isOpen={isOpen} onClose={close} />
       <Navbar
-        width={{ sm: 200, lg: 300 }}
+        width={{ sm: 240, md: 300, xl: 340 }}
         hidden={!opened}
         hiddenBreakpoint="sm"
         p="md"
