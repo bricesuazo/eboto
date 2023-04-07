@@ -8,7 +8,9 @@ import { prisma } from "../../server/db";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const now = new Date(new Date().toDateString());
+  console.log("🚀 ~ file: do-election-processing.tsx:11 ~ handler ~ now:", now);
   now.setDate(now.getDate() - 1);
+  console.log("🚀 ~ file: do-election-processing.tsx:13 ~ handler ~ now:", now);
   const start_date =
     env.NODE_ENV === "production"
       ? now.toISOString().split("T")[0]?.concat("T16:00:00.000Z")
@@ -19,6 +21,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     start_date
   );
 
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:27 ~ handler ~ new Date().getHours():",
+    new Date().getHours()
+  );
   const elections = await prisma.election.findMany({
     where: {
       start_date,
