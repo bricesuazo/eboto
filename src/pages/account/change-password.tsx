@@ -2,6 +2,7 @@ import { Stack, PasswordInput, Alert, Button } from "@mantine/core";
 import { isNotEmpty, matchesField, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconAlertCircle, IconCheck, IconLock } from "@tabler/icons-react";
+import Head from "next/head";
 import AccountSettingsLayout from "../../components/layouts/AccountSettings";
 import { api } from "../../utils/api";
 
@@ -32,62 +33,67 @@ const ChangePassword = () => {
     },
   });
   return (
-    <AccountSettingsLayout>
-      <form
-        onSubmit={form.onSubmit((values) => {
-          changePasswordMutation.mutate({
-            oldPassword: values.oldPassword,
-            newPassword: values.newPassword,
-          });
-        })}
-      >
-        <Stack spacing="sm">
-          <PasswordInput
-            placeholder="Old password"
-            withAsterisk
-            label="Old password"
-            required
-            {...form.getInputProps("oldPassword")}
-            icon={<IconLock size="1rem" />}
-            disabled={changePasswordMutation.isLoading}
-          />
-          <PasswordInput
-            placeholder="New password"
-            withAsterisk
-            label="New password"
-            required
-            {...form.getInputProps("newPassword")}
-            icon={<IconLock size="1rem" />}
-            disabled={changePasswordMutation.isLoading}
-          />
-          <PasswordInput
-            placeholder="Confirm new password"
-            withAsterisk
-            label="Confirm new password"
-            required
-            {...form.getInputProps("newPasswordConfirm")}
-            icon={<IconLock size="1rem" />}
-            disabled={changePasswordMutation.isLoading}
-          />
-          {changePasswordMutation.isError && (
-            <Alert
-              icon={<IconAlertCircle size="1rem" />}
-              title="Error"
-              color="red"
+    <>
+      <Head>
+        <title>Password Settings | eBoto Mo</title>
+      </Head>
+      <AccountSettingsLayout>
+        <form
+          onSubmit={form.onSubmit((values) => {
+            changePasswordMutation.mutate({
+              oldPassword: values.oldPassword,
+              newPassword: values.newPassword,
+            });
+          })}
+        >
+          <Stack spacing="sm">
+            <PasswordInput
+              placeholder="Old password"
+              withAsterisk
+              label="Old password"
+              required
+              {...form.getInputProps("oldPassword")}
+              icon={<IconLock size="1rem" />}
+              disabled={changePasswordMutation.isLoading}
+            />
+            <PasswordInput
+              placeholder="New password"
+              withAsterisk
+              label="New password"
+              required
+              {...form.getInputProps("newPassword")}
+              icon={<IconLock size="1rem" />}
+              disabled={changePasswordMutation.isLoading}
+            />
+            <PasswordInput
+              placeholder="Confirm new password"
+              withAsterisk
+              label="Confirm new password"
+              required
+              {...form.getInputProps("newPasswordConfirm")}
+              icon={<IconLock size="1rem" />}
+              disabled={changePasswordMutation.isLoading}
+            />
+            {changePasswordMutation.isError && (
+              <Alert
+                icon={<IconAlertCircle size="1rem" />}
+                title="Error"
+                color="red"
+              >
+                {changePasswordMutation.error.message}
+              </Alert>
+            )}
+            <Button
+              type="submit"
+              loading={changePasswordMutation.isLoading}
+              disabled={!form.isValid()}
             >
-              {changePasswordMutation.error.message}
-            </Alert>
-          )}
-          <Button
-            type="submit"
-            loading={changePasswordMutation.isLoading}
-            disabled={!form.isValid()}
-          >
-            Change password
-          </Button>
-        </Stack>
-      </form>
-    </AccountSettingsLayout>
+              Change password
+            </Button>
+          </Stack>
+        </form>
+      </AccountSettingsLayout>
+    </>
   );
 };
 

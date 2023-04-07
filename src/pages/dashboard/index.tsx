@@ -11,6 +11,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
+import Head from "next/head";
 import DashboardCard from "../../components/DashboardCard";
 import CreateElectionModal from "../../components/modals/CreateElection";
 import { api } from "../../utils/api";
@@ -22,6 +23,9 @@ const DashboardPage = () => {
 
   return (
     <>
+      <Head>
+        <title>Dashboard | eBoto Mo</title>
+      </Head>
       <CreateElectionModal isOpen={opened} onClose={close} />
       <Container p="md">
         <Stack spacing="lg">

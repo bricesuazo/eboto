@@ -23,6 +23,9 @@ const DashboardPartylist = () => {
 
   return (
     <>
+      <Head>
+        <title>Partylists | eBoto Mo</title>
+      </Head>
       <Stack p="md">
         <Box>
           <Button

@@ -34,6 +34,9 @@ const DashboardOverview = () => {
 
   return (
     <>
+      <Head>
+        <title>Overview | eBoto Mo</title>
+      </Head>
       {electionOverview.isLoading ? (
         <Center h="100%">
           <Loader size="lg" />

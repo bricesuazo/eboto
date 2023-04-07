@@ -24,6 +24,7 @@ import {
 } from "@mantine/dropzone";
 import Image from "next/image";
 import { uploadImage } from "../../utils/uploadImage";
+import Head from "next/head";
 
 const AccountPage = () => {
   const openRef = useRef<() => void>(null);
@@ -123,6 +124,9 @@ const AccountPage = () => {
 
   return (
     <>
+      <Head>
+        <title>Account Settings | eBoto Mo</title>
+      </Head>
       <Modal
         opened={opened || confirmPasswordMutation.isLoading}
         onClose={close}
