@@ -7,12 +7,17 @@ import { env } from "../../env.mjs";
 import { prisma } from "../../server/db";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const now = new Date(new Date(new Date().toLocaleString().slice(0, 8)));
+  const now = new Date(new Date().toDateString());
   now.setDate(now.getDate() - 1);
   const start_date =
     env.NODE_ENV === "production"
       ? now.toISOString().split("T")[0]?.concat("T16:00:00.000Z")
-      : new Date(new Date(new Date().toLocaleString().slice(0, 8)));
+      : new Date(new Date().toDateString());
+
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:13 ~ handler ~ start_date:",
+    start_date
+  );
 
   const elections = await prisma.election.findMany({
     where: {
@@ -20,6 +25,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       voting_start: new Date().getHours(),
     },
   });
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:23 ~ handler ~ elections:",
+    elections
+  );
 
   for (const election of elections) {
     await prisma.election.update({
