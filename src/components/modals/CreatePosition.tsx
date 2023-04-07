@@ -6,6 +6,9 @@ import {
   Group,
   Text,
   Stack,
+  Checkbox,
+  NumberInput,
+  Flex,
 } from "@mantine/core";
 import { api } from "../../utils/api";
 import { notifications } from "@mantine/notifications";
@@ -32,8 +35,13 @@ const CreatePositionModal = ({
   const form = useForm({
     initialValues: {
       name: "",
+      isSingle: false,
+      min: 0,
+      max: 1,
     },
     validateInputOnBlur: true,
+    validateInputOnChange: true,
+    clearInputErrorOnChange: true,
     validate: {
       name: hasLength(
         {
@@ -42,6 +50,24 @@ const CreatePositionModal = ({
         },
         "Name must be between 3 and 50 characters"
       ),
+      min: (value, values) => {
+        if (value >= values.max) {
+          return "Minimum must be less than maximum";
+        }
+      },
+      max: (value, values) => {
+        if (value < form.values.min) {
+          return "Maximum must be greater than minimum";
+        }
+
+        if (values.isSingle && value === 1) {
+          return "Maximum must be greater than 1";
+        }
+
+        if (value < values.min) {
+          return "Maximum must be greater than minimum";
+        }
+      },
     },
   });
 
@@ -77,6 +103,8 @@ const CreatePositionModal = ({
             name: value.name,
             electionId,
             order,
+            min: value.isSingle ? value.min : undefined,
+            max: value.isSingle ? value.max : undefined,
           });
         })}
       >
@@ -89,6 +117,32 @@ const CreatePositionModal = ({
             {...form.getInputProps("name")}
             icon={<IconLetterCase size="1rem" />}
           />
+          <Checkbox
+            label="Select multiple candidates?"
+            description="If checked, you can select multiple candidates for this position when voting"
+            {...form.getInputProps("isSingle")}
+          />
+
+          {form.values.isSingle && (
+            <Flex gap="sm">
+              <NumberInput
+                {...form.getInputProps("min")}
+                placeholder="Enter minimum"
+                label="Minimum"
+                withAsterisk
+                min={0}
+                required={form.values.isSingle}
+              />
+              <NumberInput
+                {...form.getInputProps("max")}
+                placeholder="Enter maximum"
+                label="Maximum"
+                withAsterisk
+                min={1}
+                required={form.values.isSingle}
+              />
+            </Flex>
+          )}
 
           {createPositionMutation.isError &&
             createPositionMutation.error?.data?.code !== "CONFLICT" && (

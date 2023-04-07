@@ -9,6 +9,8 @@ export const positionRouter = createTRPCRouter({
         name: z.string().min(1),
         electionId: z.string().min(1),
         order: z.number().min(0),
+        min: z.number().min(0).optional(),
+        max: z.number().min(0).optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -17,6 +19,8 @@ export const positionRouter = createTRPCRouter({
           name: input.name,
           electionId: input.electionId,
           order: input.order,
+          min: input.min,
+          max: input.max,
         },
       });
     }),
