@@ -125,6 +125,7 @@ const CreateElectionModal = ({
             placeholder="Enter election name"
             {...form.getInputProps("name")}
             icon={<IconLetterCase size="1rem" />}
+            disabled={createElectionMutation.isLoading}
           />
 
           <TextInput
@@ -136,6 +137,7 @@ const CreateElectionModal = ({
                 eboto-mo.com/{form.values.slug || "election-slug"}
               </>
             }
+            disabled={createElectionMutation.isLoading}
             withAsterisk
             required
             placeholder="Enter election slug"
@@ -152,7 +154,7 @@ const CreateElectionModal = ({
             type="range"
             label="Election start and end date"
             placeholder="Enter election date"
-            description="Select a date range for your election"
+            description="You can't change the election date once the election has started."
             required
             withAsterisk
             popoverProps={{
@@ -163,11 +165,13 @@ const CreateElectionModal = ({
             firstDayOfWeek={0}
             {...form.getInputProps("date")}
             icon={<IconCalendar size="1rem" />}
+            disabled={createElectionMutation.isLoading}
           />
           <Stack spacing={8}>
             <Flex columnGap="sm">
               <Select
                 label="Voting hour start"
+                description="You can't change voting hour start once the election is ongoing."
                 withAsterisk
                 withinPortal
                 required
@@ -178,9 +182,11 @@ const CreateElectionModal = ({
                   value: i.toString(),
                 }))}
                 icon={<IconClock size="1rem" />}
+                disabled={createElectionMutation.isLoading}
               />
               <Select
                 dropdownPosition="bottom"
+                description="You can't change voting hour end once the election is ongoing."
                 label="Voting hour start"
                 withAsterisk
                 withinPortal
@@ -192,6 +198,7 @@ const CreateElectionModal = ({
                   disabled: i <= parseInt(form.values.voting_start),
                 }))}
                 icon={<IconClock size="1rem" />}
+                disabled={createElectionMutation.isLoading}
               />
             </Flex>
             <Text
@@ -227,6 +234,7 @@ const CreateElectionModal = ({
             nothingFound="No position template found"
             icon={<IconTemplate size="1rem" />}
             searchable
+            disabled={createElectionMutation.isLoading}
           />
 
           {createElectionMutation.isError &&
