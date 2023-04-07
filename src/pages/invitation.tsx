@@ -12,9 +12,14 @@ import {
 import { useRouter } from "next/router";
 import { api } from "../utils/api";
 import Balancer from "react-wrap-balancer";
+import { useState } from "react";
 
 const Invitation = () => {
   const router = useRouter();
+  const [loadings, setLoadings] = useState({
+    accept: false,
+    decline: false,
+  });
   const tokenQuery = api.token.getById.useQuery(router.query.token as string, {
     enabled: router.isReady && !!router.query.token,
     refetchOnWindowFocus: false,
@@ -61,24 +66,44 @@ const Invitation = () => {
         <Group spacing="sm" position="center">
           <Button
             onClick={() => {
-              invitationMutation.mutate({
-                tokenId: router.query.token as string,
-                isAccepted: true,
-              });
+              void (async () => {
+                setLoadings({
+                  ...loadings,
+                  accept: true,
+                });
+                await invitationMutation.mutateAsync({
+                  tokenId: router.query.token as string,
+                  isAccepted: true,
+                });
+                setLoadings({
+                  ...loadings,
+                  accept: false,
+                });
+              })();
             }}
-            loading={invitationMutation.isLoading}
+            loading={loadings.accept}
             size="md"
           >
             Accept
           </Button>
           <Button
             onClick={() => {
-              invitationMutation.mutate({
-                tokenId: router.query.token as string,
-                isAccepted: false,
-              });
+              void (async () => {
+                setLoadings({
+                  ...loadings,
+                  decline: true,
+                });
+                await invitationMutation.mutateAsync({
+                  tokenId: router.query.token as string,
+                  isAccepted: false,
+                });
+                setLoadings({
+                  ...loadings,
+                  decline: false,
+                });
+              })();
             }}
-            loading={invitationMutation.isLoading}
+            loading={loadings.decline}
             variant="light"
             size="md"
           >
