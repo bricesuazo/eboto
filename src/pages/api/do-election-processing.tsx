@@ -13,20 +13,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     env.NODE_ENV === "production"
       ? now.toISOString().split("T")[0]?.concat("T16:00:00.000Z")
       : new Date(new Date(new Date().toLocaleString().slice(0, 8)));
-  console.log(
-    "🚀 ~ file: do-election-processing.tsx:13 ~ handler ~ start_date:",
-    start_date
-  );
 
   const elections = await prisma.election.findMany({
     where: {
       start_date,
+      voting_start: new Date().getHours(),
     },
   });
-  console.log(
-    "🚀 ~ file: do-election-processing.tsx:26 ~ handler ~ elections:",
-    elections
-  );
 
   for (const election of elections) {
     await prisma.election.update({
