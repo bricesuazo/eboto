@@ -77,7 +77,7 @@ const DashboardCard = ({
             backgroundColor:
               theme.colorScheme === "dark"
                 ? theme.colors.dark[5]
-                : theme.colors.gray[0],
+                : theme.colors.gray[2],
           },
         })}
       >

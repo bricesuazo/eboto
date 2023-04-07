@@ -10,8 +10,9 @@ import {
   Title,
   Center,
   Loader,
+  UnstyledButton,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useDidUpdate, useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import type { Election } from "@prisma/client";
 import {
@@ -22,7 +23,6 @@ import {
 } from "@tabler/icons-react";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import { useConfetti } from "../../lib/confetti";
 import { getServerAuthSession } from "../../server/auth";
 import { prisma } from "../../server/db";
@@ -31,13 +31,23 @@ import { isElectionOngoing } from "../../utils/isElectionOngoing";
 import Balancer from "react-wrap-balancer";
 import VoteCard from "../../VoteCard";
 import Head from "next/head";
+import toWords from "../../lib/toWords";
+import { useState } from "react";
 
 const VotePage = ({ election }: { election: Election }) => {
   const title = `${election.name} – Vote | eBoto Mo`;
   const router = useRouter();
   const { fireConfetti } = useConfetti();
-  const [votes, setVotes] = useState<string[]>([]);
   const [opened, { open, close }] = useDisclosure(false);
+
+  const [votesState, setVotesState] = useState<
+    {
+      positionId: string;
+      votes: string[];
+      min: number;
+      max: number;
+    }[]
+  >([]);
 
   const positions = api.election.getElectionVoting.useQuery(election.id, {
     refetchOnWindowFocus: false,
@@ -68,6 +78,21 @@ const VotePage = ({ election }: { election: Election }) => {
     },
   });
 
+  useDidUpdate(() => {
+    if (positions.data) {
+      setVotesState(
+        positions.data.map((position) => {
+          return {
+            positionId: position.id,
+            votes: [],
+            min: position.min,
+            max: position.max,
+          };
+        })
+      );
+    }
+  }, [positions.data]);
+
   return (
     <>
       <Head>
@@ -85,73 +110,79 @@ const VotePage = ({ election }: { election: Election }) => {
           <Text>Not found</Text>
         ) : (
           <>
-            <Modal
+            {/* <Modal
               opened={opened || voteMutation.isLoading}
               onClose={close}
               title={<Text weight={600}>Confirm Vote</Text>}
             >
-              <Stack>
-                {positions.data.map((position) => {
-                  const candidate = position.candidate.find(
-                    (candidate) =>
-                      candidate.id ===
-                      votes
-                        .find((vote) => vote.split("-")[0] === position.id)
-                        ?.split("-")[1]
-                  );
-
-                  return (
-                    <Box key={position.id}>
-                      <Text lineClamp={1}>{position.name}</Text>
-                      <Text
-                        weight={600}
-                        lineClamp={2}
-                        color="gray.500"
-                        size="lg"
-                      >
-                        {candidate
-                          ? `${candidate.last_name}, ${candidate.first_name}${
-                              candidate.middle_name
-                                ? " " + candidate.middle_name.charAt(0) + "."
-                                : ""
-                            } (${candidate.partylist.acronym})`
-                          : "Abstain"}
-                      </Text>
-                    </Box>
-                  );
+              <form
+                onSubmit={form.onSubmit((values) => {
+                  console.log(values);
                 })}
+              >
+                <Stack>
+                  {positions.data.map((position) => {
+                    const candidate = position.candidate.find(
+                      (candidate) =>
+                        candidate.id ===
+                        votes
+                          .find((vote) => vote.split("-")[0] === position.id)
+                          ?.split("-")[1]
+                    );
 
-                {voteMutation.isError && (
-                  <Alert
-                    icon={<IconAlertCircle size="1rem" />}
-                    title="Error"
-                    color="red"
-                  >
-                    {voteMutation.error.message}
-                  </Alert>
-                )}
-                <Group position="right" spacing="xs">
-                  <Button
-                    variant="default"
-                    onClick={close}
-                    disabled={voteMutation.isLoading}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    loading={voteMutation.isLoading}
-                    onClick={() => {
-                      voteMutation.mutate({
-                        electionId: election.id,
-                        votes,
-                      });
-                    }}
-                  >
-                    Confirm
-                  </Button>
-                </Group>
-              </Stack>
-            </Modal>
+                    return (
+                      <Box key={position.id}>
+                        <Text lineClamp={1}>{position.name}</Text>
+                        <Text
+                          weight={600}
+                          lineClamp={2}
+                          color="gray.500"
+                          size="lg"
+                        >
+                          {candidate
+                            ? `${candidate.last_name}, ${candidate.first_name}${
+                                candidate.middle_name
+                                  ? " " + candidate.middle_name.charAt(0) + "."
+                                  : ""
+                              } (${candidate.partylist.acronym})`
+                            : "Abstain"}
+                        </Text>
+                      </Box>
+                    );
+                  })}
+
+                  {voteMutation.isError && (
+                    <Alert
+                      icon={<IconAlertCircle size="1rem" />}
+                      title="Error"
+                      color="red"
+                    >
+                      {voteMutation.error.message}
+                    </Alert>
+                  )}
+                  <Group position="right" spacing="xs">
+                    <Button
+                      variant="default"
+                      onClick={close}
+                      disabled={voteMutation.isLoading}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      loading={voteMutation.isLoading}
+                      onClick={() => {
+                        voteMutation.mutate({
+                          electionId: election.id,
+                          votes,
+                        });
+                      }}
+                    >
+                      Confirm
+                    </Button>
+                  </Group>
+                </Stack>
+              </form>
+            </Modal> */}
             <Stack
               sx={{
                 position: "relative",
@@ -171,23 +202,36 @@ const VotePage = ({ election }: { election: Election }) => {
                     <Box key={position.id}>
                       <Text size="xl">{position.name}</Text>
                       <Text size="sm" color="grayText">
-                        Select one candidate
+                        {position.min === 0 && position.max === 1
+                          ? "Select only one."
+                          : `Select ${
+                              position.min
+                                ? `at least ${toWords
+                                    .convert(position.min)
+                                    .toLowerCase()} and `
+                                : ""
+                            }at most ${toWords
+                              .convert(position.max)
+                              .toLowerCase()}. (${
+                              position.min ? `${position.min} - ` : ""
+                            }${position.max})`}
                       </Text>
 
-                      <Group mt={8}>
+                      <Group>
                         {position.candidate.map((candidate) => (
                           <VoteCard
                             key={candidate.id}
-                            positionId={position.id}
                             candidate={candidate}
-                            votes={votes}
-                            setVotes={setVotes}
+                            position={position}
+                            setVotesState={setVotesState}
+                            votesState={votesState}
                           />
                         ))}
+
                         <VoteCard
-                          votes={votes}
-                          setVotes={setVotes}
-                          positionId={position.id}
+                          position={position}
+                          setVotesState={setVotesState}
+                          votesState={votesState}
                         />
                       </Group>
                     </Box>
@@ -197,7 +241,24 @@ const VotePage = ({ election }: { election: Election }) => {
 
               <Button
                 onClick={open}
-                disabled={votes.length !== positions.data.length}
+                // disabled={
+                //   voteMutation.isLoading ||
+                //   // if multiple selection has abstain vote, enable button. else, disable
+                //   votesState.some(
+                //     (vote) =>
+                //       vote.max > 1 &&
+                //       vote.votes.some(
+                //         (vote) => vote.split("-")[1] === "abstain"
+                //       )
+                //   ) || // if single selection has no vote, enable button. else, disable
+                //   votesState.some(
+                //     (vote) =>
+                //       vote.max === 1 &&
+                //       vote.votes.every(
+                //         (vote) => vote.split("-")[1] === "abstain"
+                //       )
+                //   )
+                // }
                 leftIcon={<IconFingerprint />}
                 size="lg"
                 sx={{

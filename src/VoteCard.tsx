@@ -1,29 +1,112 @@
 import { UnstyledButton, Text, Box } from "@mantine/core";
-import type { Candidate, Partylist } from "@prisma/client";
+import type { Candidate, Partylist, Position } from "@prisma/client";
 import { IconUser, IconUserQuestion } from "@tabler/icons-react";
 import Image from "next/image";
 
 const VoteCard = ({
   candidate,
-  votes,
-  setVotes,
-  positionId,
+  position,
+  setVotesState,
+  votesState,
 }: {
   candidate?: Candidate & {
     partylist: Partylist;
   };
-  votes: string[];
-  setVotes: React.Dispatch<React.SetStateAction<string[]>>;
-  positionId: string;
+  position: Position;
+  setVotesState: React.Dispatch<
+    React.SetStateAction<
+      { positionId: string; votes: string[]; min: number; max: number }[]
+    >
+  >;
+  votesState: {
+    positionId: string;
+    votes: string[];
+    min: number;
+    max: number;
+  }[];
 }) => {
-  const isSelected = votes.some(
+  const isSelected = votesState.some(
     (vote) =>
-      vote.split("-")[0] === positionId &&
-      vote.split("-")[1] === (candidate ? candidate.id : "abstain")
+      vote.positionId === position.id &&
+      (candidate
+        ? vote.votes.includes(candidate.id)
+        : vote.votes.includes("abstain"))
   );
 
   return (
     <UnstyledButton
+      onClick={() => {
+        if (candidate) {
+          if (position.min === 0 && position.max === 1) {
+            setVotesState((votes) => {
+              const vote = votes.find(
+                (vote) => vote.positionId === position.id
+              );
+
+              if (vote) {
+                vote.votes = [candidate.id];
+              } else {
+                votes.push({
+                  positionId: position.id,
+                  votes: [candidate.id],
+                  min: position.min,
+                  max: position.max,
+                });
+              }
+
+              return [...votes];
+            });
+          } else {
+            setVotesState((votes) => {
+              const vote = votes.find(
+                (vote) => vote.positionId === position.id
+              );
+
+              if (
+                vote &&
+                vote.votes.length === position.max &&
+                !vote.votes.includes(candidate.id)
+              ) {
+                return votes;
+              }
+
+              if (vote && vote.votes.includes("abstain")) {
+                vote.votes = vote.votes.filter((vote) => vote !== "abstain");
+              }
+
+              return votes
+                .filter((vote) => vote.positionId !== position.id)
+                .concat({
+                  positionId: position.id,
+                  votes: vote
+                    ? vote.votes.includes(candidate.id)
+                      ? vote.votes.filter((vote) => vote !== candidate.id)
+                      : vote.votes.concat(candidate.id)
+                    : [candidate.id],
+                  min: position.min,
+                  max: position.max,
+                });
+            });
+          }
+        } else {
+          setVotesState((votes) => {
+            const vote = votes.find((vote) => vote.positionId === position.id);
+
+            if (vote) {
+              vote.votes = ["abstain"];
+            } else {
+              votes.push({
+                positionId: position.id,
+                votes: ["abstain"],
+                min: position.min,
+                max: position.max,
+              });
+            }
+
+            return [...votes];
+          });
+        }
+      }}
       sx={(theme) => ({
         width: candidate ? 200 : 120,
         height: 140,
@@ -66,15 +149,6 @@ const VoteCard = ({
           justifyContent: "flex-start",
         },
       })}
-      onClick={() => {
-        if (isSelected) return;
-
-        setVotes((prev) => {
-          return prev
-            .filter((prev) => prev.split("-")[0] !== positionId)
-            .concat(positionId + "-" + (candidate ? candidate.id : "abstain"));
-        });
-      }}
     >
       {candidate === undefined ? (
         <Box>
