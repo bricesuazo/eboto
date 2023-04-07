@@ -125,7 +125,19 @@ const EditCandidateModal = ({
   useDidUpdate(() => {
     if (isOpen) {
       editCandidateMutation.reset();
-      form.reset();
+
+      const dataForForm = {
+        firstName: candidate.first_name,
+        middleName: candidate.middle_name,
+        lastName: candidate.last_name,
+        slug: candidate.slug,
+        partylistId: candidate.partylistId,
+        position: candidate.positionId,
+        image: candidate.image,
+      };
+
+      form.setValues(dataForForm);
+      form.resetDirty(dataForForm);
     }
   }, [isOpen]);
 

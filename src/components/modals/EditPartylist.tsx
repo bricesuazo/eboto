@@ -65,7 +65,6 @@ const EditPartylistModal = ({
       form.setValues(dataForForm);
       form.resetDirty(dataForForm);
 
-      form.resetDirty();
       notifications.show({
         title: `${data.name} (${data.acronym}) updated!`,
         message: "Successfully updated partylist",
@@ -79,7 +78,14 @@ const EditPartylistModal = ({
   useDidUpdate(() => {
     if (isOpen) {
       editPartylistMutation.reset();
-      form.reset();
+
+      const dataForForm = {
+        name: partylist.name,
+        acronym: partylist.acronym,
+      };
+
+      form.setValues(dataForForm);
+      form.resetDirty(dataForForm);
     }
   }, [isOpen]);
 

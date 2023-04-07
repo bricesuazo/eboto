@@ -36,6 +36,8 @@ const EditPartylistModal = ({
       max: position.max,
     },
     validateInputOnBlur: true,
+    validateInputOnChange: true,
+    clearInputErrorOnChange: true,
     validate: {
       name: hasLength(
         {
@@ -44,13 +46,21 @@ const EditPartylistModal = ({
         },
         "Name must be between 3 and 50 characters"
       ),
-      min: (value) => {
-        if (value > form.values.max) {
+      min: (value, values) => {
+        if (value >= values.max) {
           return "Minimum must be less than maximum";
         }
       },
-      max: (value) => {
+      max: (value, values) => {
         if (value < form.values.min) {
+          return "Maximum must be greater than minimum";
+        }
+
+        if (values.isSingle && value === 1) {
+          return "Maximum must be greater than 1";
+        }
+
+        if (value < values.min) {
           return "Maximum must be greater than minimum";
         }
       },
@@ -77,14 +87,22 @@ const EditPartylistModal = ({
         autoClose: 5000,
       });
       onClose();
-      form.resetDirty();
     },
   });
 
   useDidUpdate(() => {
     if (isOpen) {
       editPositionMutation.reset();
-      form.reset();
+
+      const dataForForm = {
+        name: position.name,
+        min: position.min,
+        max: position.max,
+        isSingle: !(position.min === 0 && position.max === 1),
+      };
+
+      form.setValues(dataForForm);
+      form.resetDirty(dataForForm);
     }
   }, [isOpen]);
 
@@ -99,6 +117,8 @@ const EditPartylistModal = ({
           editPositionMutation.mutate({
             id: position.id,
             name: value.name,
+            min: value.isSingle ? value.min : undefined,
+            max: value.isSingle ? value.max : undefined,
           });
         })}
       >
@@ -115,7 +135,7 @@ const EditPartylistModal = ({
           <Checkbox
             label="Select multiple candidates?"
             description="If checked, you can select multiple candidates for this position when voting"
-            {...form.getInputProps("isSingle")}
+            {...form.getInputProps("isSingle", { type: "checkbox" })}
           />
 
           {form.values.isSingle && (
@@ -126,6 +146,7 @@ const EditPartylistModal = ({
                 label="Minimum"
                 withAsterisk
                 min={0}
+                required={form.values.isSingle}
               />
               <NumberInput
                 {...form.getInputProps("max")}
@@ -133,6 +154,7 @@ const EditPartylistModal = ({
                 label="Maximum"
                 withAsterisk
                 min={1}
+                required={form.values.isSingle}
               />
             </Flex>
           )}
@@ -153,7 +175,7 @@ const EditPartylistModal = ({
             </Button>
             <Button
               type="submit"
-              disabled={!form.isDirty()}
+              disabled={!form.isDirty() || !form.isValid()}
               loading={editPositionMutation.isLoading}
             >
               Update

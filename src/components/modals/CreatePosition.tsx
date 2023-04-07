@@ -91,6 +91,15 @@ const CreatePositionModal = ({
     }
   }, [isOpen]);
 
+  useDidUpdate(() => {
+    if (!form.values.isSingle) {
+      form.setValues({
+        min: 0,
+        max: 1,
+      });
+    }
+  }, [form.values.isSingle]);
+
   return (
     <Modal
       opened={isOpen || createPositionMutation.isLoading}
@@ -120,7 +129,7 @@ const CreatePositionModal = ({
           <Checkbox
             label="Select multiple candidates?"
             description="If checked, you can select multiple candidates for this position when voting"
-            {...form.getInputProps("isSingle")}
+            {...form.getInputProps("isSingle", { type: "checkbox" })}
           />
 
           {form.values.isSingle && (
