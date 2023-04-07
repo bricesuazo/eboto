@@ -31,7 +31,7 @@ const CandidatePartylist = () => {
         <>
           <Head>
             <title>
-              {candidates.data.election.name + " — Candidates | eBoto Mo"}
+              {candidates.data.election.name} &ndash; Candidates | eBoto Mo
             </title>
           </Head>
           <Stack spacing="lg">

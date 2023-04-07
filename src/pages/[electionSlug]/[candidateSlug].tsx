@@ -15,6 +15,7 @@ import { prisma } from "../../server/db";
 import Image from "next/image";
 import { IconUser } from "@tabler/icons-react";
 import Link from "next/link";
+import Head from "next/head";
 
 const CandidatePage = ({
   election,
@@ -26,104 +27,114 @@ const CandidatePage = ({
     position: Position;
   };
 }) => {
+  const title = `${`${candidate.last_name}, ${candidate.first_name}${
+    candidate.middle_name ? " " + candidate.middle_name : ""
+  }`} – ${election.name} | eBoto Mo`;
+
   return (
-    <Container py="xl">
-      <Stack>
-        <Breadcrumbs w="100%">
-          <Box>
-            <Anchor
-              component={Link}
-              href={`/${election.slug}`}
-              truncate
-              maw={300}
-            >
-              {election.name}
-            </Anchor>
-          </Box>
+    <>
+      <Head>
+        <title>{title}</title>
+      </Head>
 
-          <Text truncate maw={300}>
-            {`${candidate.last_name}, ${candidate.first_name}${
-              candidate.middle_name ? " " + candidate.middle_name : ""
-            }`}
-          </Text>
-        </Breadcrumbs>
-        <Flex
-          gap="md"
-          sx={(theme) => ({
-            [theme.fn.smallerThan("xs")]: {
-              flexDirection: "column",
-            },
-          })}
-        >
-          <Box
-            sx={(theme) => ({
-              position: "sticky",
-              top: 76,
-              height: "100%",
-
-              [theme.fn.smallerThan("xs")]: {
-                position: "initial",
-              },
-            })}
-          >
-            {candidate.image ? (
-              <Box
-                pos="relative"
-                sx={(theme) => ({
-                  width: 280,
-                  aspectRatio: "1/1",
-
-                  [theme.fn.smallerThan("sm")]: {
-                    width: 200,
-                    height: "auto",
-                  },
-                  [theme.fn.smallerThan("xs")]: {
-                    width: "100%",
-                    height: "auto",
-                  },
-                })}
+      <Container py="xl">
+        <Stack>
+          <Breadcrumbs w="100%">
+            <Box>
+              <Anchor
+                component={Link}
+                href={`/${election.slug}`}
+                truncate
+                maw={300}
               >
-                <Image
-                  src={candidate.image}
-                  alt={candidate.first_name + " " + candidate.last_name}
-                  fill
-                  sizes="100%"
-                  priority
-                />
-              </Box>
-            ) : (
-              <Box
-                sx={(theme) => ({
-                  width: 280,
-                  aspectRatio: "1/1",
+                {election.name}
+              </Anchor>
+            </Box>
 
-                  [theme.fn.smallerThan("sm")]: {
-                    width: 200,
-                    height: "auto",
-                  },
-                  [theme.fn.smallerThan("xs")]: {
-                    width: "100%",
-                    height: "auto",
-                  },
-                })}
-              >
-                <IconUser width="100%" height="100%" stroke={1.5} />
-              </Box>
-            )}
-          </Box>
-
-          <Box sx={{ flex: 1 }}>
-            <Title order={2}>
+            <Text truncate maw={300}>
               {`${candidate.last_name}, ${candidate.first_name}${
                 candidate.middle_name ? " " + candidate.middle_name : ""
               }`}
-            </Title>
-            <Text>Running for {candidate.position.name}</Text>
-            <Text>{candidate.partylist.name}</Text>
-          </Box>
-        </Flex>
-      </Stack>
-    </Container>
+            </Text>
+          </Breadcrumbs>
+          <Flex
+            gap="md"
+            sx={(theme) => ({
+              [theme.fn.smallerThan("xs")]: {
+                flexDirection: "column",
+              },
+            })}
+          >
+            <Box
+              sx={(theme) => ({
+                position: "sticky",
+                top: 76,
+                height: "100%",
+
+                [theme.fn.smallerThan("xs")]: {
+                  position: "initial",
+                },
+              })}
+            >
+              {candidate.image ? (
+                <Box
+                  pos="relative"
+                  sx={(theme) => ({
+                    width: 280,
+                    aspectRatio: "1/1",
+
+                    [theme.fn.smallerThan("sm")]: {
+                      width: 200,
+                      height: "auto",
+                    },
+                    [theme.fn.smallerThan("xs")]: {
+                      width: "100%",
+                      height: "auto",
+                    },
+                  })}
+                >
+                  <Image
+                    src={candidate.image}
+                    alt={candidate.first_name + " " + candidate.last_name}
+                    fill
+                    sizes="100%"
+                    priority
+                  />
+                </Box>
+              ) : (
+                <Box
+                  sx={(theme) => ({
+                    width: 280,
+                    aspectRatio: "1/1",
+
+                    [theme.fn.smallerThan("sm")]: {
+                      width: 200,
+                      height: "auto",
+                    },
+                    [theme.fn.smallerThan("xs")]: {
+                      width: "100%",
+                      height: "auto",
+                    },
+                  })}
+                >
+                  <IconUser width="100%" height="100%" stroke={1.5} />
+                </Box>
+              )}
+            </Box>
+
+            <Box sx={{ flex: 1 }}>
+              <Title order={2}>
+                {`${candidate.last_name}, ${candidate.first_name}${
+                  candidate.middle_name ? " " + candidate.middle_name : ""
+                }`}
+              </Title>
+              <Text>Running for {candidate.position.name}</Text>
+              <Text>{candidate.partylist.name}</Text>
+            </Box>
+          </Flex>
+        </Stack>
+      </Container>
+    </>
   );
 };
 

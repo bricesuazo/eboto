@@ -153,7 +153,7 @@ const App: AppType<Props> = api.withTRPC(function App({
   return (
     <>
       <Head>
-        <title>eBoto Mo - Your One-Stop Online Voting Solution</title>
+        <title>eBoto Mo &ndash; Your One-Stop Online Voting Solution</title>
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width user-scalable=no"

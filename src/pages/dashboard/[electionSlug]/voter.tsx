@@ -61,7 +61,7 @@ const DashboardVoter = () => {
       ) : (
         <>
           <Head>
-            <title>{voters.data.election.name + " — Voters | eBoto Mo"}</title>
+            <title>{voters.data.election.name} &ndash; Voters | eBoto Mo</title>
           </Head>
           <CreateVoterModal
             isOpen={opened}

@@ -58,7 +58,7 @@ const DashboardPartylist = () => {
             <>
               <Head>
                 <title>
-                  {partylists.data.election.name + " — Partylists | eBoto Mo"}
+                  {partylists.data.election.name} &ndash; Partylists | eBoto Mo
                 </title>
               </Head>
               <CreatePartylistModal

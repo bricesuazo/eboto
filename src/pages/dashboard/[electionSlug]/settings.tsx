@@ -212,7 +212,7 @@ const DashboardSettings = () => {
       ) : (
         <>
           <Head>
-            <title>{election.data.name + " — Settings | eBoto Mo"}</title>
+            <title>{election.data.name} &ndash; Settings | eBoto Mo</title>
           </Head>
           <Modal
             opened={opened}

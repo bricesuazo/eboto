@@ -46,7 +46,7 @@ const DashboardOverview = () => {
         <>
           <Head>
             <title>
-              {electionOverview.data.election.name + " — Overview | eBoto Mo"}
+              {electionOverview.data.election.name} &ndash; Overview | eBoto Mo
             </title>
           </Head>
           <Stack p="md">

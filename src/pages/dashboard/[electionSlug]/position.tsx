@@ -40,7 +40,7 @@ const DashboardPosition = () => {
         <>
           <Head>
             <title>
-              {positions.data.election.name + " — Positions | eBoto Mo"}
+              {positions.data.election.name} &ndash; Positions | eBoto Mo
             </title>
           </Head>
           <CreatePositionModal
