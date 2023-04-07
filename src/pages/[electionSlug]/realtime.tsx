@@ -40,11 +40,11 @@ const RealtimePage = ({ election }: { election: Election }) => {
 
   if (!positions.data) return <div>No data</div>;
   return (
-    <Container>
+    <Container py="xl">
       <Stack spacing="xl">
         <Center>
           <Box>
-            <Group position="center">
+            <Group position="center" mb={8}>
               {election.logo ? (
                 <Image
                   src={election.logo}

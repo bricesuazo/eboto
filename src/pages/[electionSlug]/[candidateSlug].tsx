@@ -27,7 +27,7 @@ const CandidatePage = ({
   };
 }) => {
   return (
-    <Container>
+    <Container py="xl">
       <Stack>
         <Breadcrumbs w="100%">
           <Box>

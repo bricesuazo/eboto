@@ -140,7 +140,7 @@ const VotePage = ({ election }: { election: Election }) => {
           </Group>
         </Stack>
       </Modal>
-      <Container>
+      <Container py="xl">
         <Stack
           sx={{
             position: "relative",
@@ -151,10 +151,7 @@ const VotePage = ({ election }: { election: Election }) => {
               <Balancer>Cast your vote for {election.name}</Balancer>
             </Title>
             <Text align="center">
-              <Balancer>
-                Select your candidates for each position. You can only select
-                one.
-              </Balancer>
+              <Balancer>Select your candidates for each position.</Balancer>
             </Text>
           </Box>
           <Stack>
