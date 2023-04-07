@@ -5,6 +5,7 @@ import CreatePartylistModal from "../../../components/modals/CreatePartylist";
 import PartylistCard from "../../../components/PartylistCard";
 import { api } from "../../../utils/api";
 import { IconFlag } from "@tabler/icons-react";
+import Head from "next/head";
 
 const DashboardPartylist = () => {
   const router = useRouter();
@@ -20,11 +21,9 @@ const DashboardPartylist = () => {
     }
   );
 
-  if (partylists.isError) return <Text>Error</Text>;
-
   return (
     <>
-      <Stack>
+      <Stack p="md">
         <Box>
           <Button
             onClick={open}
@@ -53,8 +52,15 @@ const DashboardPartylist = () => {
                 />
               ))}
             </>
+          ) : partylists.isError ? (
+            <Text>Error</Text>
           ) : (
             <>
+              <Head>
+                <title>
+                  {partylists.data.election.name + " — Partylists | eBoto Mo"}
+                </title>
+              </Head>
               <CreatePartylistModal
                 isOpen={opened}
                 onClose={close}

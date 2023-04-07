@@ -95,10 +95,8 @@ const VotePage = ({ election }: { election: Election }) => {
 
             return (
               <Box key={position.id}>
-                <Text color="gray.500" lineClamp={1}>
-                  {position.name}
-                </Text>
-                <Text weight={600} lineClamp={2}>
+                <Text lineClamp={1}>{position.name}</Text>
+                <Text weight={600} lineClamp={2} color="gray.500" size="lg">
                   {candidate
                     ? `${candidate.last_name}, ${candidate.first_name}${
                         candidate.middle_name

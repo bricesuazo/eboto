@@ -5,6 +5,7 @@ import CreatePositionModal from "../../../components/modals/CreatePosition";
 import Position from "../../../components/Position";
 import { api } from "../../../utils/api";
 import { IconReplace } from "@tabler/icons-react";
+import Head from "next/head";
 
 const DashboardPosition = () => {
   const router = useRouter();
@@ -20,58 +21,66 @@ const DashboardPosition = () => {
     }
   );
 
-  if (positions.isError) return <Text>Error</Text>;
-
   return (
-    <>
-      <Stack>
-        <Box>
-          <Button
-            sx={(theme) => ({
-              [theme.fn.smallerThan("xs")]: { width: "100%" },
-            })}
-            onClick={open}
-            leftIcon={<IconReplace size="1rem" />}
-          >
-            Add position
-          </Button>
-        </Box>
+    <Stack p="md">
+      <Box>
+        <Button
+          sx={(theme) => ({
+            [theme.fn.smallerThan("xs")]: { width: "100%" },
+          })}
+          onClick={open}
+          loading={positions.isLoading}
+          leftIcon={<IconReplace size="1rem" />}
+        >
+          Add position
+        </Button>
+      </Box>
 
-        <Group spacing="xs">
-          {positions.isLoading ? (
-            <>
-              {[...Array(7).keys()].map((i) => (
-                <Skeleton
-                  key={i}
-                  sx={(theme) => ({
-                    width: 200,
-                    height: 128,
-                    borderRadius: theme.radius.md,
+      {positions.data && (
+        <>
+          <Head>
+            <title>
+              {positions.data.election.name + " — Positions | eBoto Mo"}
+            </title>
+          </Head>
+          <CreatePositionModal
+            isOpen={opened}
+            onClose={close}
+            electionId={positions.data.election.id}
+            order={positions.data.positions.length}
+          />
+        </>
+      )}
 
-                    [theme.fn.smallerThan("xs")]: { width: "100%" },
-                  })}
-                />
-              ))}
-            </>
-          ) : !positions.data.positions.length ? (
-            <Text>No position</Text>
-          ) : (
-            <>
-              <CreatePositionModal
-                isOpen={opened}
-                onClose={close}
-                electionId={positions.data.election.id}
-                order={positions.data.positions.length}
+      <Group spacing="xs">
+        {positions.isLoading ? (
+          <>
+            {[...Array(7).keys()].map((i) => (
+              <Skeleton
+                key={i}
+                sx={(theme) => ({
+                  width: 200,
+                  height: 128,
+                  borderRadius: theme.radius.md,
+
+                  [theme.fn.smallerThan("xs")]: { width: "100%" },
+                })}
               />
-
-              {positions.data.positions.map((position) => (
-                <Position key={position.id} position={position} />
-              ))}
-            </>
-          )}
-        </Group>
-      </Stack>
-    </>
+            ))}
+          </>
+        ) : positions.error ? (
+          <Text>Error</Text>
+        ) : !positions.data.positions.length ? (
+          <Text>No position</Text>
+        ) : (
+          <>
+            {positions.data.positions.map((position) => (
+              <Position key={position.id} position={position} />
+            ))}
+          </>
+        )}
+      </Group>
+    </Stack>
   );
 };
 

@@ -7,6 +7,8 @@ import {
   Button,
   Text,
   Divider,
+  Stack,
+  Box,
 } from "@mantine/core";
 import {
   IconExternalLink,
@@ -30,14 +32,6 @@ const useStyles = createStyles((theme) => ({
   navbar: {
     backgroundColor:
       theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
-  },
-  divider: {
-    backgroundColor:
-      theme.colorScheme === "dark"
-        ? theme.colors.gray[1]
-        : theme.colors.gray[0],
-
-    margin: `${theme.spacing.lg} 0`,
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -137,13 +131,12 @@ const NavbarComponent = ({
         width={{ sm: 240, md: 300, xl: 340 }}
         hidden={!opened}
         hiddenBreakpoint="sm"
-        p="md"
         className={classes.navbar}
         sx={{
           overflow: "auto",
         }}
       >
-        <Navbar.Section>
+        <Navbar.Section p="md">
           <Button
             onClick={open}
             w="100%"
@@ -152,146 +145,146 @@ const NavbarComponent = ({
             Create election
           </Button>
         </Navbar.Section>
-        <Divider className={classes.divider} />
+        <Divider />
 
-        <Navbar.Section mb="md">
-          <Select
-            defaultValue={
-              election?.slug || (router.query.electionSlug as string)
-            }
-            placeholder="Select election"
-            iconWidth={48}
-            icon={
-              election?.logo ? (
-                <Image
-                  src={election.logo}
-                  alt={election.name}
-                  width={28}
-                  height={28}
-                  priority
-                />
-              ) : (
-                <IconFingerprint size={28} />
-              )
-            }
-            size="md"
-            data={
-              elections.data
-                ? elections.data
-                    .sort(
-                      (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()
-                    )
-                    .filter(
-                      (election) =>
-                        election.start_date < new Date() &&
-                        election.end_date > new Date()
-                    )
-                    .concat(
-                      elections.data.filter(
-                        (election) =>
-                          !(
-                            election.start_date < new Date() &&
-                            election.end_date > new Date()
-                          )
+        <Navbar.Section grow p="md">
+          <Stack>
+            <Select
+              defaultValue={
+                election?.slug || (router.query.electionSlug as string)
+              }
+              placeholder="Select election"
+              iconWidth={48}
+              icon={
+                election?.logo ? (
+                  <Image
+                    src={election.logo}
+                    alt={election.name}
+                    width={28}
+                    height={28}
+                    priority
+                  />
+                ) : (
+                  <IconFingerprint size={28} />
+                )
+              }
+              size="md"
+              data={
+                elections.data
+                  ? elections.data
+                      .sort(
+                        (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()
                       )
-                    )
-                    .map((selectedElection) => ({
-                      label: selectedElection.name,
-                      value: selectedElection.slug,
-                      group:
-                        selectedElection.start_date > new Date()
-                          ? "Upcoming"
-                          : selectedElection.end_date < new Date()
-                          ? "Completed"
-                          : "Ongoing",
-                      selected:
-                        selectedElection.slug === election?.slug ||
-                        selectedElection.slug ===
-                          (router.query.electionSlug as string),
-                    }))
-                : []
-            }
-            itemComponent={(
-              props: React.ComponentPropsWithoutRef<"button">
-            ) => {
-              const election = elections.data?.find(
-                (election) => election.slug === props.value
-              );
-              if (!election) return null;
+                      .filter(
+                        (election) =>
+                          election.start_date < new Date() &&
+                          election.end_date > new Date()
+                      )
+                      .concat(
+                        elections.data.filter(
+                          (election) =>
+                            !(
+                              election.start_date < new Date() &&
+                              election.end_date > new Date()
+                            )
+                        )
+                      )
+                      .map((selectedElection) => ({
+                        label: selectedElection.name,
+                        value: selectedElection.slug,
+                        group:
+                          selectedElection.start_date > new Date()
+                            ? "Upcoming"
+                            : selectedElection.end_date < new Date()
+                            ? "Completed"
+                            : "Ongoing",
+                        selected:
+                          selectedElection.slug === election?.slug ||
+                          selectedElection.slug ===
+                            (router.query.electionSlug as string),
+                      }))
+                  : []
+              }
+              itemComponent={(
+                props: React.ComponentPropsWithoutRef<"button">
+              ) => {
+                const election = elections.data?.find(
+                  (election) => election.slug === props.value
+                );
+                if (!election) return null;
 
-              return (
+                return (
+                  <UnstyledButton
+                    {...props}
+                    h={48}
+                    sx={(theme) => ({
+                      display: "flex",
+                      alignItems: "center",
+                      gap: theme.spacing.xs,
+                    })}
+                  >
+                    {election.logo ? (
+                      <Image
+                        src={election.logo}
+                        alt={election.name}
+                        width={20}
+                        height={20}
+                        priority
+                      />
+                    ) : (
+                      <IconFingerprint size={20} />
+                    )}
+                    <Text truncate size="sm">
+                      {election.name}
+                    </Text>
+                  </UnstyledButton>
+                );
+              }}
+              value={election?.slug || (router.query.electionSlug as string)}
+              onChange={(value) =>
+                void (async () => {
+                  await router.push(`/dashboard/${value || ""}`);
+                  setOpened(false);
+                })()
+              }
+            />
+            <Button
+              variant="outline"
+              w="100%"
+              loading={!election}
+              rightIcon={<IconExternalLink size="1rem" />}
+              component={Link}
+              href={`/${election?.slug || ""}`}
+              target="_blank"
+            >
+              Visit {election?.name || "election"}
+            </Button>
+            <Box>
+              {electionDashboardNavbar.map((item) => (
                 <UnstyledButton
-                  {...props}
-                  h={48}
-                  sx={(theme) => ({
-                    display: "flex",
-                    alignItems: "center",
-                    gap: theme.spacing.xs,
+                  key={item.id}
+                  component={Link}
+                  href={`/dashboard/${router.query.electionSlug as string}/${
+                    item.path || ""
+                  }`}
+                  onClick={() => {
+                    opened && setOpened(false);
+                  }}
+                  className={cx(classes.link, {
+                    [classes.linkActive]:
+                      item.path ===
+                      router.pathname.split("/dashboard/[electionSlug]/")[1],
                   })}
                 >
-                  {election.logo ? (
-                    <Image
-                      src={election.logo}
-                      alt={election.name}
-                      width={20}
-                      height={20}
-                      priority
-                    />
-                  ) : (
-                    <IconFingerprint size={20} />
-                  )}
-                  <Text truncate size="sm">
-                    {election.name}
-                  </Text>
+                  <item.icon className={classes.linkIcon} />
+                  {item.label}
                 </UnstyledButton>
-              );
-            }}
-            value={election?.slug || (router.query.electionSlug as string)}
-            onChange={(value) =>
-              void (async () => {
-                await router.push(`/dashboard/${value || ""}`);
-                setOpened(false);
-              })()
-            }
-          />
+              ))}
+            </Box>
+          </Stack>
         </Navbar.Section>
-        <Navbar.Section mb="md">
-          <Button
-            variant="outline"
-            w="100%"
-            loading={!election}
-            rightIcon={<IconExternalLink size="1rem" />}
-            component={Link}
-            href={`/${election?.slug || ""}`}
-            target="_blank"
-          >
-            Visit {election?.name || "election"}
-          </Button>
-        </Navbar.Section>
-        <Navbar.Section grow>
-          {electionDashboardNavbar.map((item) => (
-            <UnstyledButton
-              key={item.id}
-              component={Link}
-              href={`/dashboard/${router.query.electionSlug as string}/${
-                item.path || ""
-              }`}
-              onClick={() => {
-                opened && setOpened(false);
-              }}
-              className={cx(classes.link, {
-                [classes.linkActive]:
-                  item.path ===
-                  router.pathname.split("/dashboard/[electionSlug]/")[1],
-              })}
-            >
-              <item.icon className={classes.linkIcon} />
-              {item.label}
-            </UnstyledButton>
-          ))}
-        </Navbar.Section>
-        <Divider className={classes.divider} />
-        <Navbar.Section>
+        <Divider />
+        <Navbar.Section p="md">
           <UnstyledButton
             className={classes.link}
             onClick={() =>

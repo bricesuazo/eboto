@@ -195,15 +195,7 @@ const DashboardSettings = () => {
   }, [election.data]);
 
   return (
-    <>
-      <Head>
-        <title>
-          {election.data?.name
-            ? election.data.name + " - Settings | eBoto Mo"
-            : "Settings | eBoto Mo"}
-        </title>
-      </Head>
-
+    <Box p="md">
       {election.isLoading ? (
         <Center h="100%">
           <Loader size="lg" />
@@ -219,6 +211,9 @@ const DashboardSettings = () => {
         </Text>
       ) : (
         <>
+          <Head>
+            <title>{election.data.name + " — Settings | eBoto Mo"}</title>
+          </Head>
           <Modal
             opened={opened}
             onClose={close}
@@ -643,7 +638,7 @@ const DashboardSettings = () => {
           </form>
         </>
       )}
-    </>
+    </Box>
   );
 };
 

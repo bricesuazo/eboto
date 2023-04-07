@@ -42,7 +42,7 @@ const ElectionPage = ({
   );
 
   return (
-    <Container py="xl">
+    <Container>
       {positions.isLoading ? (
         <Stack align="center" spacing={12}>
           <Stack spacing={8} align="center">

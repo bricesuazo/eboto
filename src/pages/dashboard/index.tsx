@@ -23,7 +23,7 @@ const DashboardPage = () => {
   return (
     <>
       <CreateElectionModal isOpen={opened} onClose={close} />
-      <Container>
+      <Container p="md">
         <Stack spacing="lg">
           <Box>
             <Flex align="center" justify="space-between">

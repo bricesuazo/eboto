@@ -219,6 +219,7 @@ export const candidateRouter = createTRPCRouter({
           id: true,
           slug: true,
           commissioners: true,
+          name: true,
         },
       });
 

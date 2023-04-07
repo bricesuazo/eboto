@@ -99,6 +99,7 @@ export const positionRouter = createTRPCRouter({
           id: true,
           slug: true,
           commissioners: true,
+          name: true,
         },
       });
 

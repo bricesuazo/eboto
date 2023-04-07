@@ -6,6 +6,7 @@ import {
   Center,
   Box,
   Select,
+  Divider,
 } from "@mantine/core";
 import { IconLock, IconUser } from "@tabler/icons-react";
 import Link from "next/link";
@@ -33,18 +34,10 @@ const AccountSettingsLayout = ({ children }: { children: React.ReactNode }) => {
     <Container h="100%" p={0}>
       <Flex h="100%">
         <Box
+          p="sm"
           sx={(theme) => ({
             width: "16rem",
-            padding: theme.spacing.md,
-            borderRight: `1px solid ${
-              theme.colorScheme === "dark"
-                ? theme.colors.dark[4]
-                : theme.colors.gray[3]
-            }`,
 
-            [theme.fn.smallerThan("md")]: {
-              width: "14rem",
-            },
             [theme.fn.smallerThan("sm")]: {
               width: "12rem",
             },
@@ -90,7 +83,13 @@ const AccountSettingsLayout = ({ children }: { children: React.ReactNode }) => {
             </UnstyledButton>
           ))}
         </Box>
-        <Box sx={{ flex: 1 }} p="md">
+        <Divider
+          orientation="vertical"
+          sx={(theme) => ({
+            [theme.fn.smallerThan("xs")]: { display: "none" },
+          })}
+        />
+        <Box sx={{ flex: 1 }} p="sm">
           <Select
             data={options.map((option) => ({
               label: option.label,
