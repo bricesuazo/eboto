@@ -381,8 +381,10 @@ const DashboardSettings = () => {
                     icon={<IconClock size="1rem" />}
                     disabled={
                       loading ||
-                      (election.data.voting_start <= new Date().getHours() &&
-                        election.data.voting_end > new Date().getHours())
+                      isElectionOngoing({
+                        election: election.data,
+                        withTime: true,
+                      })
                     }
                   />
                   <Select
@@ -401,8 +403,10 @@ const DashboardSettings = () => {
                     icon={<IconClock size="1rem" />}
                     disabled={
                       loading ||
-                      (election.data.voting_start <= new Date().getHours() &&
-                        election.data.voting_end > new Date().getHours())
+                      isElectionOngoing({
+                        election: election.data,
+                        withTime: true,
+                      })
                     }
                   />
                 </Group>
