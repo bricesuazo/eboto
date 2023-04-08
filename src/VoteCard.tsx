@@ -1,112 +1,19 @@
 import { UnstyledButton, Text, Box } from "@mantine/core";
-import type { Candidate, Partylist, Position } from "@prisma/client";
+import type { Candidate, Partylist } from "@prisma/client";
 import { IconUser, IconUserQuestion } from "@tabler/icons-react";
 import Image from "next/image";
 
 const VoteCard = ({
   candidate,
-  position,
-  setVotesState,
-  votesState,
+  isSelected,
 }: {
   candidate?: Candidate & {
     partylist: Partylist;
   };
-  position: Position;
-  setVotesState: React.Dispatch<
-    React.SetStateAction<
-      { positionId: string; votes: string[]; min: number; max: number }[]
-    >
-  >;
-  votesState: {
-    positionId: string;
-    votes: string[];
-    min: number;
-    max: number;
-  }[];
+  isSelected: boolean;
 }) => {
-  const isSelected = votesState.some(
-    (vote) =>
-      vote.positionId === position.id &&
-      (candidate
-        ? vote.votes.includes(candidate.id)
-        : vote.votes.includes("abstain"))
-  );
-
   return (
     <UnstyledButton
-      onClick={() => {
-        if (candidate) {
-          if (position.min === 0 && position.max === 1) {
-            setVotesState((votes) => {
-              const vote = votes.find(
-                (vote) => vote.positionId === position.id
-              );
-
-              if (vote) {
-                vote.votes = [candidate.id];
-              } else {
-                votes.push({
-                  positionId: position.id,
-                  votes: [candidate.id],
-                  min: position.min,
-                  max: position.max,
-                });
-              }
-
-              return [...votes];
-            });
-          } else {
-            setVotesState((votes) => {
-              const vote = votes.find(
-                (vote) => vote.positionId === position.id
-              );
-
-              if (
-                vote &&
-                vote.votes.length === position.max &&
-                !vote.votes.includes(candidate.id)
-              ) {
-                return votes;
-              }
-
-              if (vote && vote.votes.includes("abstain")) {
-                vote.votes = vote.votes.filter((vote) => vote !== "abstain");
-              }
-
-              return votes
-                .filter((vote) => vote.positionId !== position.id)
-                .concat({
-                  positionId: position.id,
-                  votes: vote
-                    ? vote.votes.includes(candidate.id)
-                      ? vote.votes.filter((vote) => vote !== candidate.id)
-                      : vote.votes.concat(candidate.id)
-                    : [candidate.id],
-                  min: position.min,
-                  max: position.max,
-                });
-            });
-          }
-        } else {
-          setVotesState((votes) => {
-            const vote = votes.find((vote) => vote.positionId === position.id);
-
-            if (vote) {
-              vote.votes = ["abstain"];
-            } else {
-              votes.push({
-                positionId: position.id,
-                votes: ["abstain"],
-                min: position.min,
-                max: position.max,
-              });
-            }
-
-            return [...votes];
-          });
-        }
-      }}
       sx={(theme) => ({
         width: candidate ? 200 : 120,
         height: 140,

@@ -11,6 +11,8 @@ import {
   Center,
   Loader,
   UnstyledButton,
+  Radio,
+  Checkbox,
 } from "@mantine/core";
 import { useDidUpdate, useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -32,7 +34,7 @@ import Balancer from "react-wrap-balancer";
 import VoteCard from "../../VoteCard";
 import Head from "next/head";
 import toWords from "../../lib/toWords";
-import { useState } from "react";
+import { useForm } from "@mantine/form";
 
 const VotePage = ({ election }: { election: Election }) => {
   const title = `${election.name} – Vote | eBoto Mo`;
@@ -40,14 +42,17 @@ const VotePage = ({ election }: { election: Election }) => {
   const { fireConfetti } = useConfetti();
   const [opened, { open, close }] = useDisclosure(false);
 
-  const [votesState, setVotesState] = useState<
-    {
-      positionId: string;
+  const form = useForm<{
+    [key: string]: {
       votes: string[];
       min: number;
       max: number;
-    }[]
-  >([]);
+      isValid: boolean;
+    };
+  }>({
+    initialValues: {},
+  });
+  console.log("🚀 ~ file: vote.tsx:55 ~ VotePage ~ form:", form.values);
 
   const positions = api.election.getElectionVoting.useQuery(election.id, {
     refetchOnWindowFocus: false,
@@ -80,15 +85,20 @@ const VotePage = ({ election }: { election: Election }) => {
 
   useDidUpdate(() => {
     if (positions.data) {
-      setVotesState(
-        positions.data.map((position) => {
-          return {
-            positionId: position.id,
-            votes: [],
-            min: position.min,
-            max: position.max,
-          };
-        })
+      form.setValues(
+        positions.data.reduce(
+          (acc, position) => {
+            acc[position.id] = {
+              votes: [],
+              min: position.min,
+              max: position.max,
+              isValid: false,
+            };
+            return acc;
+          },
+
+          {} as typeof form.values
+        )
       );
     }
   }, [positions.data]);
@@ -196,83 +206,116 @@ const VotePage = ({ election }: { election: Election }) => {
                   <Balancer>Select your candidates for each position.</Balancer>
                 </Text>
               </Box>
-              <Stack>
-                {positions.data.map((position) => {
-                  return (
-                    <Box key={position.id}>
-                      <Text size="xl">{position.name}</Text>
-                      <Text size="sm" color="grayText">
-                        {position.min === 0 && position.max === 1
-                          ? "Select only one."
-                          : `Select ${
-                              position.min
-                                ? `at least ${toWords
-                                    .convert(position.min)
-                                    .toLowerCase()} and `
-                                : ""
-                            }at most ${toWords
-                              .convert(position.max)
-                              .toLowerCase()}. (${
-                              position.min ? `${position.min} - ` : ""
-                            }${position.max})`}
-                      </Text>
+              <form>
+                <Stack>
+                  {positions.data.map((position) => {
+                    return (
+                      <Box key={position.id}>
+                        <Text size="xl">{position.name}</Text>
+                        <Text size="sm" color="grayText">
+                          {position.min === 0 && position.max === 1
+                            ? "Select only one."
+                            : `Select ${
+                                position.min
+                                  ? `at least ${toWords
+                                      .convert(position.min)
+                                      .toLowerCase()} and `
+                                  : ""
+                              }at most ${toWords
+                                .convert(position.max)
+                                .toLowerCase()}. (${
+                                position.min ? `${position.min} - ` : ""
+                              }${position.max})`}
+                        </Text>
 
-                      <Group>
-                        {position.candidate.map((candidate) => (
-                          <VoteCard
-                            key={candidate.id}
-                            candidate={candidate}
-                            position={position}
-                            setVotesState={setVotesState}
-                            votesState={votesState}
-                          />
-                        ))}
+                        <Group>
+                          {position.min === 0 && position.max === 1 ? (
+                            <Radio.Group
+                              onChange={(e) => {
+                                form.setFieldValue(position.id, {
+                                  votes: [e],
+                                  min: position.min,
+                                  max: position.max,
+                                  isValid: true,
+                                });
+                              }}
+                            >
+                              <Group mt="xs">
+                                {position.candidate.map((candidate) => (
+                                  <Radio
+                                    key={candidate.id}
+                                    value={candidate.id}
+                                    label={candidate.last_name}
+                                  />
+                                ))}
+                                <Radio value="abstain" label="Abstain" />
+                              </Group>
+                            </Radio.Group>
+                          ) : (
+                            <Checkbox.Group
+                              onChange={(e) => {
+                                form.setFieldValue(position.id, {
+                                  votes: e.includes("abstain")
+                                    ? form.values[position.id]?.votes.includes(
+                                        "abstain"
+                                      )
+                                      ? e.filter((e) => e !== "abstain")
+                                      : ["abstain"]
+                                    : e,
+                                  min: position.min,
+                                  max: position.max,
+                                  isValid: e.length >= position.min,
+                                });
+                              }}
+                              value={form.values[position.id]?.votes}
+                            >
+                              <Group mt="xs">
+                                {position.candidate.map((candidate) => (
+                                  <Checkbox
+                                    key={candidate.id}
+                                    value={candidate.id}
+                                    label={candidate.last_name}
+                                  />
+                                ))}
+                                <Checkbox value="abstain" label="Abstain" />
+                              </Group>
+                            </Checkbox.Group>
+                          )}
+                        </Group>
 
-                        <VoteCard
-                          position={position}
-                          setVotesState={setVotesState}
-                          votesState={votesState}
-                        />
-                      </Group>
-                    </Box>
-                  );
-                })}
-              </Stack>
+                        {/* <Group>
+                          {position.candidate.map((candidate) => (
+                            <VoteCard
+                              key={candidate.id}
+                              candidate={candidate}
+                            />
+                          ))}
 
-              <Button
-                onClick={open}
-                // disabled={
-                //   voteMutation.isLoading ||
-                //   // if multiple selection has abstain vote, enable button. else, disable
-                //   votesState.some(
-                //     (vote) =>
-                //       vote.max > 1 &&
-                //       vote.votes.some(
-                //         (vote) => vote.split("-")[1] === "abstain"
-                //       )
-                //   ) || // if single selection has no vote, enable button. else, disable
-                //   votesState.some(
-                //     (vote) =>
-                //       vote.max === 1 &&
-                //       vote.votes.every(
-                //         (vote) => vote.split("-")[1] === "abstain"
-                //       )
-                //   )
-                // }
-                leftIcon={<IconFingerprint />}
-                size="lg"
-                sx={{
-                  position: "sticky",
-                  bottom: 100,
-                  alignSelf: "center",
-                  width: "fit-content",
-                  marginTop: 12,
-                  marginBottom: 100,
-                }}
-                radius="xl"
-              >
-                Cast Vote
-              </Button>
+                          <VoteCard />
+                        </Group> */}
+                      </Box>
+                    );
+                  })}
+                </Stack>
+
+                <Button
+                  onClick={open}
+                  disabled={voteMutation.isLoading || !form.isValid()}
+                  leftIcon={<IconFingerprint />}
+                  size="lg"
+                  sx={{
+                    position: "sticky",
+                    bottom: 100,
+                    alignSelf: "center",
+                    width: "fit-content",
+                    marginTop: 12,
+                    marginBottom: 100,
+                  }}
+                  radius="xl"
+                >
+                  Cast Vote
+                </Button>
+              </form>
             </Stack>
           </>
         )}
