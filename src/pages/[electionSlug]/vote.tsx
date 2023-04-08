@@ -270,13 +270,22 @@ const VotePage = ({ election }: { election: Election }) => {
                               value={form.values[position.id]?.votes}
                             >
                               <Group mt="xs">
-                                {position.candidate.map((candidate) => (
-                                  <Checkbox
-                                    key={candidate.id}
-                                    value={candidate.id}
-                                    label={candidate.last_name}
-                                  />
-                                ))}
+                                {position.candidate.map((candidate) => {
+                                  return (
+                                    <Checkbox
+                                      key={candidate.id}
+                                      value={candidate.id}
+                                      label={candidate.last_name}
+                                      disabled={
+                                        (form.values[position.id]?.votes
+                                          .length ?? 0) >= position.max &&
+                                        !form.values[
+                                          position.id
+                                        ]?.votes.includes(candidate.id)
+                                      }
+                                    />
+                                  );
+                                })}
                                 <Checkbox value="abstain" label="Abstain" />
                               </Group>
                             </Checkbox.Group>
