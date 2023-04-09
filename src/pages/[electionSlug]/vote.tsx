@@ -50,7 +50,6 @@ const VotePage = ({ election }: { election: Election }) => {
       isValid: boolean;
     };
   }>();
-  console.log("🚀 ~ file: vote.tsx:46 ~ VotePage ~ form:", form.values);
 
   const positions = api.election.getElectionVoting.useQuery(election.id, {
     refetchOnWindowFocus: false,
@@ -240,21 +239,27 @@ const VotePage = ({ election }: { election: Election }) => {
                             >
                               <Group mt="xs">
                                 {position.candidate.map((candidate) => (
-                                  <Radio
+                                  <VoteCard
+                                    isSelected={
+                                      form.values[position.id]?.votes.includes(
+                                        candidate.id
+                                      ) ?? false
+                                    }
+                                    candidate={candidate}
+                                    type="radio"
                                     key={candidate.id}
                                     value={candidate.id}
-                                    label={`${candidate.last_name}, ${
-                                      candidate.first_name
-                                    }${
-                                      candidate.middle_name
-                                        ? " " +
-                                          candidate.middle_name.charAt(0) +
-                                          "."
-                                        : ""
-                                    } (${candidate.partylist.acronym})`}
                                   />
                                 ))}
-                                <Radio value="abstain" label="Abstain" />
+                                <VoteCard
+                                  type="radio"
+                                  isSelected={
+                                    form.values[position.id]?.votes.includes(
+                                      "abstain"
+                                    ) ?? false
+                                  }
+                                  value="abstain"
+                                />
                               </Group>
                             </Radio.Group>
                           ) : (
@@ -285,18 +290,15 @@ const VotePage = ({ election }: { election: Election }) => {
                               <Group mt="xs">
                                 {position.candidate.map((candidate) => {
                                   return (
-                                    <Checkbox
-                                      key={candidate.id}
+                                    <VoteCard
+                                      type="checkbox"
+                                      candidate={candidate}
+                                      isSelected={
+                                        form.values[
+                                          position.id
+                                        ]?.votes.includes(candidate.id) ?? false
+                                      }
                                       value={candidate.id}
-                                      label={`${candidate.last_name}, ${
-                                        candidate.first_name
-                                      }${
-                                        candidate.middle_name
-                                          ? " " +
-                                            candidate.middle_name.charAt(0) +
-                                            "."
-                                          : ""
-                                      } (${candidate.partylist.acronym})`}
                                       disabled={
                                         (form.values[position.id]?.votes
                                           .length ?? 0) >= position.max &&
@@ -304,10 +306,19 @@ const VotePage = ({ election }: { election: Election }) => {
                                           position.id
                                         ]?.votes.includes(candidate.id)
                                       }
+                                      key={candidate.id}
                                     />
                                   );
                                 })}
-                                <Checkbox value="abstain" label="Abstain" />
+                                <VoteCard
+                                  type="checkbox"
+                                  isSelected={
+                                    form.values[position.id]?.votes.includes(
+                                      "abstain"
+                                    ) ?? false
+                                  }
+                                  value="abstain"
+                                />
                               </Group>
                             </Checkbox.Group>
                           )}
