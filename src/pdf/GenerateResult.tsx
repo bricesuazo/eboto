@@ -41,6 +41,19 @@ const GenerateResult = ({ result }: { result: ResultType }) => (
         paddingBottom: 80,
       }}
     >
+      <Text
+        style={{
+          position: "absolute",
+          fontSize: 9,
+          bottom: 32,
+          left: 0,
+          right: 0,
+          textAlign: "center",
+          color: "grey",
+        }}
+        render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`}
+        fixed
+      />
       <View
         style={{
           display: "flex",

@@ -5,6 +5,9 @@ import { sendEmailTransport } from "../../../emails";
 import ElectionInvitation from "../../../emails/ElectionInvitation";
 import { env } from "../../env.mjs";
 import { prisma } from "../../server/db";
+import GenerateResult from "../../pdf/GenerateResult";
+import ReactPDF from "@react-pdf/renderer";
+import { supabase } from "../../lib/supabase";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const now = new Date(new Date().toDateString());
@@ -72,6 +75,89 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         },
       });
     }
+  }
+
+  // Generate election results when the election is over
+
+  const end_date =
+    env.NODE_ENV === "production"
+      ? now.toISOString().split("T")[0]?.concat("T16:00:00.000Z")
+      : new Date(new Date().toDateString());
+
+  const electionsEnd = await prisma.election.findMany({
+    where: {
+      end_date: {
+        lte: end_date,
+      },
+      voting_start: new Date().getUTCHours() + 8,
+    },
+    include: {
+      positions: {
+        include: {
+          candidate: {
+            include: {
+              vote: true,
+              partylist: true,
+            },
+          },
+          vote: true,
+        },
+      },
+    },
+  });
+
+  for (const election of electionsEnd) {
+    const result = {
+      id: election.id,
+      name: election.name,
+      slug: election.slug,
+      start_date: election.start_date,
+      end_date: election.end_date,
+      logo: election.logo || null,
+      voting_start: election.voting_start,
+      voting_end: election.voting_end,
+      positions: election.positions.map((position) => ({
+        id: position.id,
+        name: position.name,
+        votes: position.vote.length,
+        candidates: position.candidate.map((candidate) => ({
+          id: candidate.id,
+          name: `${candidate.last_name}, ${candidate.first_name}${
+            candidate.middle_name
+              ? " " + candidate.middle_name.charAt(0) + "."
+              : ""
+          } (${candidate.partylist.acronym})`,
+          votes: candidate.vote.length,
+        })),
+      })),
+    };
+
+    const name = `${Date.now().toString()} - ${
+      election.name
+    } (Result) (${new Date().toDateString()}).pdf`;
+    const path = `elections/${election.id}/results/${name}`;
+
+    await supabase.storage
+      .from("eboto-mo")
+      .upload(
+        path,
+        await ReactPDF.pdf(<GenerateResult result={result} />).toBlob()
+      );
+
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from("eboto-mo").getPublicUrl(path);
+
+    await prisma.generatedElectionResult.create({
+      data: {
+        name: `${Date.now().toString()} - ${
+          election.name
+        } (Result) (${new Date().toDateString()})`,
+        link: publicUrl,
+        electionId: election.id,
+        result: JSON.stringify(result),
+      },
+    });
   }
 
   res.status(200).end();
