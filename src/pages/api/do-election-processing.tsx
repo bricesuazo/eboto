@@ -6,13 +6,7 @@ import ElectionInvitation from "../../../emails/ElectionInvitation";
 import { env } from "../../env.mjs";
 import { prisma } from "../../server/db";
 import { type ResultType } from "../../pdf/GenerateResult";
-
-import ReactPDF from "@react-pdf/renderer";
-import { supabase } from "../../lib/supabase";
-import dynamic from "next/dynamic";
-const GenerateResult = dynamic(import("../../pdf/GenerateResult"), {
-  ssr: false,
-});
+import uploadPdf from "../../utils/uploadPdf";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const now = new Date(new Date().toDateString());
@@ -156,16 +150,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       "🚀 ~ file: do-election-processing.tsx:147 ~ handler ~ path:",
       path
     );
-    await supabase.storage
-      .from("eboto-mo")
-      .upload(
-        path,
-        await ReactPDF.pdf(<GenerateResult result={result} />).toBlob()
-      );
 
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from("eboto-mo").getPublicUrl(path);
+    const publicUrl = await uploadPdf({ path, result });
 
     await prisma.generatedElectionResult.create({
       data: {
