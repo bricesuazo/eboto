@@ -6,8 +6,6 @@ import {
   Image as PdfImage,
 } from "@react-pdf/renderer";
 
-import Moment from "react-moment";
-
 export interface ResultType {
   id: string;
   name: string;
@@ -116,18 +114,9 @@ const GenerateResult = ({ result }: { result: ResultType }) => (
           </Text>
           <Text>https://eboto-mo.com/{result.slug}</Text>
           <Text>
-            <Moment
-              format="MMMM DD, YYYY"
-              element={Text}
-              date={result.start_date}
-            />
+            {result.start_date.toDateString()}
             {" - "}
-
-            <Moment
-              format="MMMM DD, YYYY"
-              element={Text}
-              date={result.end_date}
-            />
+            {result.end_date.toDateString()}
           </Text>
           <Text>
             Open from {convertNumberToHour(result.voting_start)} to{" "}
@@ -136,11 +125,7 @@ const GenerateResult = ({ result }: { result: ResultType }) => (
           <View style={{ marginVertical: 8 }}>
             <Text>Generated on:</Text>
 
-            <Moment
-              format="MMMM DD, YYYY, h:mmA"
-              element={Text}
-              date={new Date()}
-            />
+            {new Date().toLocaleString()}
           </View>
           <Text style={{ fontFamily: "Helvetica-Bold" }}>Results</Text>
         </View>
