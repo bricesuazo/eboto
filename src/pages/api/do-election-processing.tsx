@@ -83,7 +83,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   // Generate election results when the election is over
-  now.setDate(now.getDate() - 1);
+  now.setDate(now.getDate() + 2);
   const end_date =
     env.NODE_ENV === "production"
       ? now.toISOString().split("T")[0]?.concat("T16:00:00.000Z")
