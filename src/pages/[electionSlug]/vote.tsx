@@ -49,10 +49,12 @@ const VotePage = ({ election }: { election: Election }) => {
       max: number;
       isValid: boolean;
     };
-  }>({
-    initialValues: {},
-  });
-  console.log("🚀 ~ file: vote.tsx:55 ~ VotePage ~ form:", form.values);
+  }>();
+
+  console.log(
+    "🚀 ~ file: vote.tsx:46 ~ VotePage ~ form:",
+    form.values["clf6qca79000nfcusiinvc9bf"]
+  );
 
   const positions = api.election.getElectionVoting.useQuery(election.id, {
     refetchOnWindowFocus: false,
@@ -245,7 +247,15 @@ const VotePage = ({ election }: { election: Election }) => {
                                   <Radio
                                     key={candidate.id}
                                     value={candidate.id}
-                                    label={candidate.last_name}
+                                    label={`${candidate.last_name}, ${
+                                      candidate.first_name
+                                    }${
+                                      candidate.middle_name
+                                        ? " " +
+                                          candidate.middle_name.charAt(0) +
+                                          "."
+                                        : ""
+                                    } (${candidate.partylist.acronym})`}
                                   />
                                 ))}
                                 <Radio value="abstain" label="Abstain" />
@@ -264,7 +274,10 @@ const VotePage = ({ election }: { election: Election }) => {
                                     : e,
                                   min: position.min,
                                   max: position.max,
-                                  isValid: e.length >= position.min,
+                                  isValid:
+                                    e.includes("abstain") ||
+                                    (e.length >= position.min &&
+                                      e.length <= position.max),
                                 });
                               }}
                               value={form.values[position.id]?.votes}
@@ -275,7 +288,15 @@ const VotePage = ({ election }: { election: Election }) => {
                                     <Checkbox
                                       key={candidate.id}
                                       value={candidate.id}
-                                      label={candidate.last_name}
+                                      label={`${candidate.last_name}, ${
+                                        candidate.first_name
+                                      }${
+                                        candidate.middle_name
+                                          ? " " +
+                                            candidate.middle_name.charAt(0) +
+                                            "."
+                                          : ""
+                                      } (${candidate.partylist.acronym})`}
                                       disabled={
                                         (form.values[position.id]?.votes
                                           .length ?? 0) >= position.max &&
@@ -309,7 +330,10 @@ const VotePage = ({ election }: { election: Election }) => {
 
                 <Button
                   onClick={open}
-                  disabled={voteMutation.isLoading || !form.isValid()}
+                  disabled={
+                    voteMutation.isLoading ||
+                    !Object.values(form.values).every((value) => value?.isValid)
+                  }
                   leftIcon={<IconFingerprint />}
                   size="lg"
                   sx={{
