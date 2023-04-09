@@ -5,6 +5,8 @@ import { takenSlugs } from "../../../constants";
 
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 import { supabase } from "../../../lib/supabase";
+import ReactPDF from "@react-pdf/renderer";
+import GenerateResult from "../../../pdf/GenerateResult";
 
 export const electionRouter = createTRPCRouter({
   generateResult: publicProcedure.mutation(async ({ ctx }) => {
@@ -30,34 +32,13 @@ export const electionRouter = createTRPCRouter({
     });
 
     for (const election of elections) {
-      /**
-         {
-            id: string;
-            name: string;
-            slug: string;
-            start_date: Date;
-            end_date: Date;
-            voting_start: number
-            voting_end: number
-
-            positions: {
-                id: string;
-                name: string;
-                votes: number;
-                candidates: {
-                    id: string;
-                    name: string;
-                    votes: number;
-                }[];
-            }[]
-          }
-       */
       const result = {
         id: election.id,
         name: election.name,
         slug: election.slug,
         start_date: election.start_date,
         end_date: election.end_date,
+        logo: election.logo || null,
         voting_start: election.voting_start,
         voting_end: election.voting_end,
         positions: election.positions.map((position) => ({
@@ -76,15 +57,17 @@ export const electionRouter = createTRPCRouter({
         })),
       };
 
-      const path = `elections/${
-        election.id
-      }/results/${Date.now().toString()} - ${
+      const name = `${Date.now().toString()} - ${
         election.name
-      } (Result) (${new Date().toDateString()})`;
+      } (Result) (${new Date().toDateString()}).pdf`;
+      const path = `elections/${election.id}/results/${name}`;
 
-      await supabase.storage.from("eboto-mo").upload(path, "", {
-        contentType: "image/png",
-      });
+      await supabase.storage
+        .from("eboto-mo")
+        .upload(
+          path,
+          await ReactPDF.pdf(<GenerateResult result={result} />).toBlob()
+        );
 
       const {
         data: { publicUrl },
