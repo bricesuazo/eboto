@@ -5,9 +5,14 @@ import { sendEmailTransport } from "../../../emails";
 import ElectionInvitation from "../../../emails/ElectionInvitation";
 import { env } from "../../env.mjs";
 import { prisma } from "../../server/db";
-import GenerateResult, { type ResultType } from "../../pdf/GenerateResult";
+import { type ResultType } from "../../pdf/GenerateResult";
+
 import ReactPDF from "@react-pdf/renderer";
 import { supabase } from "../../lib/supabase";
+import dynamic from "next/dynamic";
+const GenerateResult = dynamic(import("../../pdf/GenerateResult"), {
+  ssr: false,
+});
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const now = new Date(new Date().toDateString());
@@ -78,7 +83,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   // Generate election results when the election is over
-
+  now.setDate(now.getDate() - 1);
   const end_date =
     env.NODE_ENV === "production"
       ? now.toISOString().split("T")[0]?.concat("T16:00:00.000Z")
