@@ -83,13 +83,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     env.NODE_ENV === "production"
       ? now.toISOString().split("T")[0]?.concat("T16:00:00.000Z")
       : new Date(new Date().toDateString());
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:83 ~ handler ~ end_date:",
+    end_date
+  );
 
   const electionsEnd = await prisma.election.findMany({
     where: {
       end_date: {
         lte: end_date,
       },
-      voting_start: new Date().getUTCHours() + 8,
+      voting_end: new Date().getUTCHours() + 8,
     },
     include: {
       positions: {
@@ -105,6 +109,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       },
     },
   });
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:109 ~ handler ~ electionsEnd:",
+    electionsEnd
+  );
 
   for (const election of electionsEnd) {
     const result = {
