@@ -7,7 +7,6 @@ import {
 } from "@react-pdf/renderer";
 
 import Moment from "react-moment";
-import { convertNumberToHour } from "../utils/convertNumberToHour";
 
 export interface ResultType {
   id: string;
@@ -29,6 +28,16 @@ export interface ResultType {
     }[];
   }[];
 }
+
+const convertNumberToHour = (hour: number): string => {
+  return hour === 0
+    ? "12 AM"
+    : hour < 12
+    ? `${hour} AM`
+    : hour === 12
+    ? "12 PM"
+    : `${hour - 12} PM`;
+};
 
 const GenerateResult = ({ result }: { result: ResultType }) => (
   <Document>

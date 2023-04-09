@@ -15,8 +15,7 @@ model GeneratedElectionResult {
     id   String @id @default(cuid())
     name String
 
-    result String @db.LongText
-    link   String
+    link String @db.LongText
 
     createdAt DateTime @default(now())
 

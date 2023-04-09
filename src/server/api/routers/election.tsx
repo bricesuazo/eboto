@@ -80,7 +80,6 @@ export const electionRouter = createTRPCRouter({
           } (Result) (${new Date().toDateString()})`,
           link: publicUrl,
           electionId: election.id,
-          result: JSON.stringify(result),
         },
       });
     }

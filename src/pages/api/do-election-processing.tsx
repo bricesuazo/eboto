@@ -5,7 +5,7 @@ import { sendEmailTransport } from "../../../emails";
 import ElectionInvitation from "../../../emails/ElectionInvitation";
 import { env } from "../../env.mjs";
 import { prisma } from "../../server/db";
-import GenerateResult from "../../pdf/GenerateResult";
+import GenerateResult, { type ResultType } from "../../pdf/GenerateResult";
 import ReactPDF from "@react-pdf/renderer";
 import { supabase } from "../../lib/supabase";
 
@@ -90,9 +90,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   const electionsEnd = await prisma.election.findMany({
     where: {
-      end_date: {
-        lte: end_date,
-      },
+      end_date,
       voting_end: new Date().getUTCHours() + 8,
     },
     include: {
@@ -138,13 +136,21 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           votes: candidate.vote.length,
         })),
       })),
-    };
+    } satisfies ResultType;
 
     const name = `${Date.now().toString()} - ${
       election.name
     } (Result) (${new Date().toDateString()}).pdf`;
+    console.log(
+      "🚀 ~ file: do-election-processing.tsx:144 ~ name ~ name:",
+      name
+    );
     const path = `elections/${election.id}/results/${name}`;
 
+    console.log(
+      "🚀 ~ file: do-election-processing.tsx:147 ~ handler ~ path:",
+      path
+    );
     await supabase.storage
       .from("eboto-mo")
       .upload(
@@ -163,7 +169,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         } (Result) (${new Date().toDateString()})`,
         link: publicUrl,
         electionId: election.id,
-        result: JSON.stringify(result),
       },
     });
   }
@@ -171,6 +176,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   res.status(200).end();
 }
 
+// export default handler;
 export default verifySignature(handler);
 
 export const config = {
