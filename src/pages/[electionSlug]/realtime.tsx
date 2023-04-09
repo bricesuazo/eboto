@@ -193,10 +193,11 @@ export const getServerSideProps: GetServerSideProps = async (
         },
       });
 
-      if (!vote)
+      if (!vote && election.end_date > new Date())
         return {
           redirect: { destination: `/${election.slug}`, permanent: false },
         };
+
       break;
   }
 
