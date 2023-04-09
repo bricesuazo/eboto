@@ -6,6 +6,56 @@ import { takenSlugs } from "../../../constants";
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 
 export const electionRouter = createTRPCRouter({
+  generateResult: publicProcedure.mutation(async ({ ctx }) => {
+    const elections = await ctx.prisma.election.findMany({
+      where: {
+        end_date: {
+          lte: new Date(),
+        },
+      },
+      include: {
+        positions: {
+          include: {
+            candidate: {
+              include: {
+                vote: true,
+              },
+            },
+            vote: true,
+          },
+        },
+      },
+    });
+
+    const results = elections.map((election) => {
+      const positions = election.positions.map((position) => {
+        const candidates = position.candidate.map((candidate) => {
+          const votes = candidate.vote.length;
+          return {
+            id: candidate.id,
+            name: candidate.first_name,
+            votes,
+          };
+        });
+
+        const votes = position.vote.length;
+        return {
+          id: position.id,
+          name: position.name,
+          votes,
+          candidates,
+        };
+      });
+
+      return {
+        id: election.id,
+        name: election.name,
+        positions,
+      };
+    });
+
+    return results;
+  }),
   vote: protectedProcedure
     .input(
       z.object({
