@@ -36,6 +36,9 @@ const client = z.object({
   // NEXT_PUBLIC_CLIENTVAR: z.string().min(1),
   NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
   NEXT_PUBLIC_SUPABASE_KEY: z.string().min(1),
+  NEXT_PUBLIC_NODE_ENV: z
+    .enum(["development", "test", "production"])
+    .optional(),
 });
 
 /**
@@ -54,6 +57,7 @@ const processEnv = {
   EMAIL_FROM: process.env.EMAIL_FROM,
   NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
   NEXT_PUBLIC_SUPABASE_KEY: process.env.NEXT_PUBLIC_SUPABASE_KEY,
+  NEXT_PUBLIC_NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 

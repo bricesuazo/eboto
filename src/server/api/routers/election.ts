@@ -10,7 +10,12 @@ export const electionRouter = createTRPCRouter({
     .input(
       z.object({
         electionId: z.string(),
-        votes: z.array(z.string()),
+        votes: z.array(
+          z.object({
+            positionId: z.string(),
+            votes: z.array(z.string()),
+          })
+        ),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -19,43 +24,42 @@ export const electionRouter = createTRPCRouter({
           id: input.electionId,
         },
       });
-
       const existingVotes = await ctx.prisma.vote.findMany({
         where: {
           voterId: ctx.session.user.id,
           electionId: election.id,
         },
       });
-
       if (existingVotes.length > 0) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "You have already voted in this election",
         });
       }
-
       await ctx.prisma.voter.findFirstOrThrow({
         where: {
           userId: ctx.session.user.id,
           electionId: election.id,
         },
       });
-
       return ctx.prisma.vote.createMany({
-        data: input.votes.map((vote) => {
-          const [positionId, candidateId] = vote.split("-");
-          return {
-            candidateId: candidateId === "abstain" ? null : candidateId,
-            positionId:
-              positionId === "abstain"
-                ? null
-                : candidateId !== "abstain"
-                ? null
-                : positionId,
-            voterId: ctx.session.user.id,
-            electionId: election.id,
-          };
-        }),
+        data: input.votes
+          .map((vote) =>
+            vote.votes.map((candidateId) =>
+              candidateId === "abstain"
+                ? {
+                    positionId: vote.positionId,
+                    voterId: ctx.session.user.id,
+                    electionId: input.electionId,
+                  }
+                : {
+                    candidateId,
+                    voterId: ctx.session.user.id,
+                    electionId: input.electionId,
+                  }
+            )
+          )
+          .flat(),
       });
     }),
   getElectionVoting: publicProcedure

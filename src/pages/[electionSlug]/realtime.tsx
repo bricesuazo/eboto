@@ -22,6 +22,7 @@ import { api } from "../../utils/api";
 import { convertNumberToHour } from "../../utils/convertNumberToHour";
 import Balancer from "react-wrap-balancer";
 import Head from "next/head";
+import { env } from "../../env.mjs";
 
 const RealtimePage = ({ election }: { election: Election }) => {
   const title = `${election.name} – Realtime | eBoto Mo`;
@@ -29,7 +30,8 @@ const RealtimePage = ({ election }: { election: Election }) => {
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchOnReconnect: false,
-    refetchInterval: 1000,
+    refetchInterval:
+      env.NEXT_PUBLIC_NODE_ENV === "production" ? 1000 : undefined,
   });
 
   if (positions.isLoading)
@@ -116,11 +118,13 @@ const RealtimePage = ({ election }: { election: Election }) => {
                     <tr key={candidate.id}>
                       <td>
                         <Flex justify="space-between" align="center">
-                          <Text lineClamp={2}>{`${candidate.last_name}, ${
-                            candidate.first_name
-                          }${candidate.middle_name ?? " "} (${
-                            candidate.partylist.acronym
-                          })`}</Text>
+                          <Text lineClamp={2}>
+                            {candidate.last_name}, {candidate.first_name}
+                            {candidate.middle_name
+                              ? " " + candidate.middle_name.charAt(0) + "."
+                              : ""}{" "}
+                            ({candidate.partylist.acronym})
+                          </Text>
                           <Text>{candidate.vote.length}</Text>
                         </Flex>
                       </td>

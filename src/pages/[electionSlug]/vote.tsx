@@ -123,7 +123,13 @@ const VotePage = ({ election }: { election: Election }) => {
             >
               <form
                 onSubmit={form.onSubmit((values) => {
-                  console.log(values);
+                  voteMutation.mutate({
+                    electionId: election.id,
+                    votes: Object.entries(values).map(([key, value]) => ({
+                      positionId: key,
+                      votes: value.votes,
+                    })),
+                  });
                 })}
               >
                 <Stack>
