@@ -51,7 +51,7 @@ const GenerateResult = ({ result }: { result: ResultType }) => (
       >
         <View style={{ display: "flex", alignItems: "center" }}>
           <PdfImage
-            src="/images/eboto-mo-logo.png"
+            src="https://raw.githubusercontent.com/bricesuazo/eboto-mo/main/public/images/eboto-mo-logo.png"
             style={{ width: 32, height: 32 }}
           />
           <Text
