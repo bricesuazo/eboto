@@ -1,6 +1,11 @@
+import dynamic from "next/dynamic";
 import ReactPDF from "@react-pdf/renderer";
+
+const GenerateResult = dynamic(() => import("../pdf/GenerateResult"), {
+  ssr: false,
+});
 import { supabase } from "../lib/supabase";
-import GenerateResult, { type ResultType } from "../pdf/GenerateResult";
+import { type ResultType } from "../pdf/GenerateResult";
 
 const uploadPdf = async ({
   result,
