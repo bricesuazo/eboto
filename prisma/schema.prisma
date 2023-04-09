@@ -11,6 +11,21 @@ datasource db {
     relationMode = "prisma"
 }
 
+model GeneratedElectionResult {
+    id   String @id @default(cuid())
+    name String
+
+    result String @db.LongText
+    link   String
+
+    createdAt DateTime @default(now())
+
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId String
+
+    @@index([electionId])
+}
+
 model User {
     id            String    @id @default(cuid())
     email         String    @unique
@@ -119,14 +134,15 @@ model Election {
     createdAt    DateTime          @default(now())
     updatedAt    DateTime          @updatedAt
 
-    commissioners       Commissioner[]
-    voters              Voter[]
-    candidates          Candidate[]
-    positions           Position[]
-    vote                Vote[]
-    partylists          Partylist[]
-    invitedVoter        InvitedVoter[]
-    invitedCommissioner InvitedCommissioner[]
+    commissioners           Commissioner[]
+    voters                  Voter[]
+    candidates              Candidate[]
+    positions               Position[]
+    vote                    Vote[]
+    partylists              Partylist[]
+    invitedVoter            InvitedVoter[]
+    invitedCommissioner     InvitedCommissioner[]
+    generatedElectionResult GeneratedElectionResult[]
 
     @@index([id, slug])
 }

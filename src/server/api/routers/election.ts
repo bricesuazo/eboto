@@ -4,6 +4,7 @@ import { positionTemplate } from "../../../constants";
 import { takenSlugs } from "../../../constants";
 
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
+import { supabase } from "../../../lib/supabase";
 
 export const electionRouter = createTRPCRouter({
   generateResult: publicProcedure.mutation(async ({ ctx }) => {
@@ -19,6 +20,7 @@ export const electionRouter = createTRPCRouter({
             candidate: {
               include: {
                 vote: true,
+                partylist: true,
               },
             },
             vote: true,
@@ -27,34 +29,78 @@ export const electionRouter = createTRPCRouter({
       },
     });
 
-    const results = elections.map((election) => {
-      const positions = election.positions.map((position) => {
-        const candidates = position.candidate.map((candidate) => {
-          const votes = candidate.vote.length;
-          return {
-            id: candidate.id,
-            name: candidate.first_name,
-            votes,
-          };
-        });
+    for (const election of elections) {
+      /**
+         {
+            id: string;
+            name: string;
+            slug: string;
+            start_date: Date;
+            end_date: Date;
+            voting_start: number
+            voting_end: number
 
-        const votes = position.vote.length;
-        return {
-          id: position.id,
-          name: position.name,
-          votes,
-          candidates,
-        };
-      });
-
-      return {
+            positions: {
+                id: string;
+                name: string;
+                votes: number;
+                candidates: {
+                    id: string;
+                    name: string;
+                    votes: number;
+                }[];
+            }[]
+          }
+       */
+      const result = {
         id: election.id,
         name: election.name,
-        positions,
+        slug: election.slug,
+        start_date: election.start_date,
+        end_date: election.end_date,
+        voting_start: election.voting_start,
+        voting_end: election.voting_end,
+        positions: election.positions.map((position) => ({
+          id: position.id,
+          name: position.name,
+          votes: position.vote.length,
+          candidates: position.candidate.map((candidate) => ({
+            id: candidate.id,
+            name: `${candidate.last_name}, ${candidate.first_name}${
+              candidate.middle_name
+                ? " " + candidate.middle_name.charAt(0) + "."
+                : ""
+            } (${candidate.partylist.acronym})`,
+            votes: candidate.vote.length,
+          })),
+        })),
       };
-    });
 
-    return results;
+      const path = `elections/${
+        election.id
+      }/results/${Date.now().toString()} - ${
+        election.name
+      } (Result) (${new Date().toDateString()})`;
+
+      await supabase.storage.from("eboto-mo").upload(path, "", {
+        contentType: "image/png",
+      });
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("eboto-mo").getPublicUrl(path);
+
+      await ctx.prisma.generatedElectionResult.create({
+        data: {
+          name: `${Date.now().toString()} - ${
+            election.name
+          } (Result) (${new Date().toDateString()})`,
+          link: publicUrl,
+          electionId: election.id,
+          result: JSON.stringify(result),
+        },
+      });
+    }
   }),
   vote: protectedProcedure
     .input(
