@@ -42,6 +42,8 @@ export const electionRouter = createTRPCRouter({
           electionId: election.id,
         },
       });
+
+      // await ctx.prisma.({
       return ctx.prisma.vote.createMany({
         data: input.votes
           .map((vote) =>

@@ -122,7 +122,7 @@ const ElectionPage = ({
               </Text>
 
               <Group position="center" mt={8}>
-                {hasVoted ? (
+                {hasVoted || election.end_date < new Date() ? (
                   <Button
                     radius="xl"
                     size="md"
