@@ -50,11 +50,7 @@ const VotePage = ({ election }: { election: Election }) => {
       isValid: boolean;
     };
   }>();
-
-  console.log(
-    "🚀 ~ file: vote.tsx:46 ~ VotePage ~ form:",
-    form.values["clf6qca79000nfcusiinvc9bf"]
-  );
+  console.log("🚀 ~ file: vote.tsx:46 ~ VotePage ~ form:", form.values);
 
   const positions = api.election.getElectionVoting.useQuery(election.id, {
     refetchOnWindowFocus: false,
@@ -264,20 +260,24 @@ const VotePage = ({ election }: { election: Election }) => {
                           ) : (
                             <Checkbox.Group
                               onChange={(e) => {
+                                const votes = e.includes("abstain")
+                                  ? form.values[position.id]?.votes.includes(
+                                      "abstain"
+                                    )
+                                    ? e.filter((e) => e !== "abstain")
+                                    : ["abstain"]
+                                  : e;
+
                                 form.setFieldValue(position.id, {
-                                  votes: e.includes("abstain")
-                                    ? form.values[position.id]?.votes.includes(
-                                        "abstain"
-                                      )
-                                      ? e.filter((e) => e !== "abstain")
-                                      : ["abstain"]
-                                    : e,
+                                  votes,
                                   min: position.min,
                                   max: position.max,
                                   isValid:
-                                    e.includes("abstain") ||
-                                    (e.length >= position.min &&
-                                      e.length <= position.max),
+                                    votes.length !== 0 &&
+                                    ((votes.includes("abstain") &&
+                                      votes.length === 1) ||
+                                      (votes.length >= position.min &&
+                                        votes.length <= position.max)),
                                 });
                               }}
                               value={form.values[position.id]?.votes}
