@@ -180,6 +180,7 @@ export const electionRouter = createTRPCRouter({
         where: {
           electionId: input,
         },
+
         include: {
           vote: {
             include: {
@@ -191,6 +192,11 @@ export const electionRouter = createTRPCRouter({
             },
           },
           candidate: {
+            orderBy: {
+              vote: {
+                _count: "desc",
+              },
+            },
             include: {
               partylist: {
                 select: {
