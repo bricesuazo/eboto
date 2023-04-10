@@ -171,6 +171,60 @@ model VerificationToken {
     @@index([invitedCommissionerId])
 }
 
+model Credential {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    affiliations   Affiliation[]
+    achievements   Achievements[]
+    eventsAttended EventAttended[]
+
+    candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+    candidateId String    @unique
+}
+
+model EventAttended {
+    id String @id @default(cuid())
+
+    name      String
+    createdAt DateTime @default(now())
+    year      DateTime
+
+    credential   Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
+    credentialId String
+
+    @@index([credentialId])
+}
+
+model Affiliation {
+    id String @id @default(cuid())
+
+    org_name    String
+    org_postion String
+    start_year  DateTime
+    end_year    DateTime
+    createdAt   DateTime @default(now())
+
+    credential   Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
+    credentialId String
+
+    @@index([credentialId])
+}
+
+model Achievements {
+    id String @id @default(cuid())
+
+    name      String
+    year      DateTime
+    createdAt DateTime @default(now())
+
+    credential   Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
+    credentialId String
+
+    @@index([credentialId])
+}
+
 model Candidate {
     id          String   @id @default(cuid())
     slug        String
@@ -191,7 +245,8 @@ model Candidate {
     partylist   Partylist @relation(fields: [partylistId], references: [id], onDelete: Cascade)
     partylistId String
 
-    vote Vote[]
+    credential Credential?
+    vote       Vote[]
 
     @@index([electionId])
     @@index([positionId])
