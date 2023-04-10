@@ -292,7 +292,7 @@ export const getServerSideProps: GetServerSideProps = async (
     if (!vote)
       return {
         props: {
-          isOngoing: true,
+          isOngoing,
           hasVoted: false,
           election,
         },
@@ -300,7 +300,7 @@ export const getServerSideProps: GetServerSideProps = async (
 
     return {
       props: {
-        isOngoing: true,
+        isOngoing,
         hasVoted: true,
         election,
       },
