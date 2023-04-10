@@ -114,9 +114,13 @@ const GenerateResult = ({ result }: { result: ResultType }) => (
           </Text>
           <Text>https://eboto-mo.com/{result.slug}</Text>
           <Text>
-            {result.start_date.toLocaleString()}
+            {result.start_date.toLocaleString("en-US", {
+              timeZone: "Asia/Manila",
+            })}
             {" - "}
-            {result.end_date.toLocaleString()}
+            {result.end_date.toLocaleString("en-US", {
+              timeZone: "Asia/Manila",
+            })}
           </Text>
           <Text>
             Open from {convertNumberToHour(result.voting_start)} to{" "}
@@ -125,7 +129,11 @@ const GenerateResult = ({ result }: { result: ResultType }) => (
           <View style={{ marginVertical: 8 }}>
             <Text>Generated on:</Text>
 
-            <Text>{new Date().toLocaleString()}</Text>
+            <Text>
+              {new Date().toLocaleString("en-US", {
+                timeZone: "Asia/Manila",
+              })}
+            </Text>
           </View>
           <Text style={{ fontFamily: "Helvetica-Bold" }}>Results</Text>
         </View>
