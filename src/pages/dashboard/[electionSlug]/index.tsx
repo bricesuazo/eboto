@@ -9,18 +9,35 @@ import {
   rem,
   Center,
   Loader,
+  Group,
+  Button,
 } from "@mantine/core";
 import { useRouter } from "next/router";
 import Moment from "react-moment";
 import { convertNumberToHour } from "../../../utils/convertNumberToHour";
 import { api } from "../../../utils/api";
-import { IconExternalLink } from "@tabler/icons-react";
+import { IconDownload, IconExternalLink } from "@tabler/icons-react";
 import Link from "next/link";
 import { IconFlag, IconReplace, IconUserSearch } from "@tabler/icons-react";
 import Head from "next/head";
+import type { GeneratedElectionResult } from "@prisma/client";
+import { supabase } from "../../../lib/supabase";
+import { useState } from "react";
 
 const DashboardOverview = () => {
   const router = useRouter();
+
+  const generateResults = api.election.getAllGeneratedResults.useQuery(
+    {
+      slug: router.query.electionSlug as string,
+    },
+    {
+      enabled: router.isReady,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      retry: false,
+    }
+  );
 
   const electionOverview = api.election.getElectionOverview.useQuery(
     router.query.electionSlug as string,
@@ -307,6 +324,29 @@ const DashboardOverview = () => {
                 );
               })}
             </Box>
+            <Box>
+              <Title
+                order={3}
+                sx={(theme) => ({
+                  [theme.fn.smallerThan("xs")]: {
+                    textAlign: "center",
+                  },
+                })}
+              >
+                Generated Results
+              </Title>
+              <Box>
+                {electionOverview.isLoading ? (
+                  <Text>Loading...</Text>
+                ) : !generateResults.data ? (
+                  <Text>There are no results to generate</Text>
+                ) : (
+                  generateResults.data.map((result) => (
+                    <GenerateResultRow result={result} key={result.id} />
+                  ))
+                )}
+              </Box>
+            </Box>
           </Stack>
         </>
       )}
@@ -315,3 +355,89 @@ const DashboardOverview = () => {
 };
 
 export default DashboardOverview;
+
+const GenerateResultRow = ({ result }: { result: GeneratedElectionResult }) => {
+  const [states, setStates] = useState<{
+    isGenerating: boolean;
+    error: string | null;
+  }>({
+    isGenerating: false,
+    error: null,
+  });
+
+  return (
+    <Group
+      position="apart"
+      align="center"
+      sx={(theme) => ({
+        padding: theme.spacing.md,
+        borderRadius: theme.radius.md,
+
+        "&:hover": {
+          backgroundColor:
+            theme.colorScheme === "dark"
+              ? theme.colors.dark[5]
+              : theme.colors.gray[2],
+        },
+      })}
+    >
+      <Box>
+        <Text>{result.name}</Text>
+        <Text size="sm" color="dimmed">
+          Generated{" "}
+          <Moment date={new Date(result.createdAt).toLocaleString()} fromNow />{" "}
+          (
+          <Moment
+            date={new Date(result.createdAt).toLocaleString()}
+            format="MMMM DD, YYYY hh:mmA"
+          />
+          )
+        </Text>
+      </Box>
+      <Button
+        size="xs"
+        leftIcon={<IconDownload size="1rem" />}
+        loading={states.isGenerating}
+        onClick={async () => {
+          setStates({
+            isGenerating: true,
+            error: null,
+          });
+
+          const { data, error } = await supabase.storage
+            .from("eboto-mo")
+            .download(`elections/${result.electionId}/results/${result.name}`);
+
+          if (error) {
+            setStates({
+              isGenerating: false,
+              error: error.message,
+            });
+            return;
+          }
+
+          const url = URL.createObjectURL(data);
+
+          const anchor = document.createElement("a");
+          anchor.href = url;
+          anchor.download = result.name;
+
+          document.body.appendChild(anchor);
+
+          anchor.click();
+
+          document.body.removeChild(anchor);
+
+          URL.revokeObjectURL(url);
+
+          setStates({
+            isGenerating: false,
+            error: null,
+          });
+        }}
+      >
+        Download
+      </Button>
+    </Group>
+  );
+};

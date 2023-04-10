@@ -13,7 +13,8 @@ const config = {
     domains: [
       "lh3.googleusercontent.com",
       "avatars.githubusercontent.com",
-      "prcvrbfgwwgbugyumqhw.supabase.co",
+      "inbvimtxppihfyzbpbjo.supabase.co", // dev
+      "prcvrbfgwwgbugyumqhw.supabase.co", // prod
     ],
   },
   experimental: {

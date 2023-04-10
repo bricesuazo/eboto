@@ -77,11 +77,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   // Generate election results when the election is over
-  now.setDate(now.getDate() + 1);
+
+  console.log("🚀 ~ file: do-election-processing.tsx:82 ~ handler ~ now:", now);
+  env.NODE_ENV === "production"
+    ? now.setDate(now.getDate() + 1)
+    : now.setDate(now.getDate() + 2);
+
   const end_date =
     env.NODE_ENV === "production"
       ? now.toISOString().split("T")[0]?.concat("T16:00:00.000Z")
-      : new Date(new Date().toDateString());
+      : now;
   console.log(
     "🚀 ~ file: do-election-processing.tsx:83 ~ handler ~ end_date:",
     end_date
@@ -137,9 +142,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       })),
     } satisfies ResultType;
 
-    const name = `${Date.now().toString()} - ${
+    const nowForName = new Date();
+
+    const name = `${nowForName.getTime().toString()} - ${
       election.name
-    } (Result) (${new Date().toDateString()}).pdf`;
+    } (Result) (${nowForName.toDateString()}).pdf`;
     console.log(
       "🚀 ~ file: do-election-processing.tsx:144 ~ name ~ name:",
       name
@@ -155,9 +162,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     await prisma.generatedElectionResult.create({
       data: {
-        name: `${Date.now().toString()} - ${
-          election.name
-        } (Result) (${new Date().toDateString()})`,
+        name,
         link: publicUrl,
         electionId: election.id,
       },
@@ -167,11 +172,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   res.status(200).end();
 }
 
-// export default handler;
-export default verifySignature(handler);
+export default handler;
+// export default verifySignature(handler);
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// export const config = {
+//   api: {
+//     bodyParser: false,
+//   },
+// };

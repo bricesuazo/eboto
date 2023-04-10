@@ -9,6 +9,21 @@ import ReactPDF from "@react-pdf/renderer";
 import GenerateResult from "../../../pdf/GenerateResult";
 
 export const electionRouter = createTRPCRouter({
+  getAllGeneratedResults: protectedProcedure
+    .input(z.object({ slug: z.string().min(1) }))
+    .query(async ({ input, ctx }) => {
+      return ctx.prisma.generatedElectionResult.findMany({
+        where: {
+          election: {
+            slug: input.slug,
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+    }),
+
   generateResult: publicProcedure.mutation(async ({ ctx }) => {
     const elections = await ctx.prisma.election.findMany({
       where: {
