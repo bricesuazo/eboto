@@ -1,8 +1,5 @@
-const GenerateResult = lazy(() => import("../pdf/GenerateResult"));
-import { lazy } from "react";
-
 import { supabase } from "../lib/supabase";
-import { type ResultType } from "../pdf/GenerateResult";
+import GenerateResult, { type ResultType } from "../pdf/GenerateResult";
 import ReactPDF from "@react-pdf/renderer";
 
 const uploadPdf = async ({
