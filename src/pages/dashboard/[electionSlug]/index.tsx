@@ -335,11 +335,29 @@ const DashboardOverview = () => {
               >
                 Generated Results
               </Title>
+
               <Box>
                 {electionOverview.isLoading ? (
-                  <Text>Loading...</Text>
-                ) : !generateResults.data ? (
-                  <Text>There are no results to generate</Text>
+                  <Text
+                    sx={(theme) => ({
+                      [theme.fn.smallerThan("xs")]: {
+                        textAlign: "center",
+                      },
+                    })}
+                  >
+                    Loading...
+                  </Text>
+                ) : !generateResults.data ||
+                  generateResults.data.length === 0 ? (
+                  <Text
+                    sx={(theme) => ({
+                      [theme.fn.smallerThan("xs")]: {
+                        textAlign: "center",
+                      },
+                    })}
+                  >
+                    No generated results yet.
+                  </Text>
                 ) : (
                   generateResults.data.map((result) => (
                     <GenerateResultRow result={result} key={result.id} />

@@ -114,9 +114,9 @@ const GenerateResult = ({ result }: { result: ResultType }) => (
           </Text>
           <Text>https://eboto-mo.com/{result.slug}</Text>
           <Text>
-            {result.start_date.toDateString()}
+            {result.start_date.toLocaleString()}
             {" - "}
-            {result.end_date.toDateString()}
+            {result.end_date.toLocaleString()}
           </Text>
           <Text>
             Open from {convertNumberToHour(result.voting_start)} to{" "}

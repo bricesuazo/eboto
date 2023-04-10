@@ -5,8 +5,9 @@ import { sendEmailTransport } from "../../../emails";
 import ElectionInvitation from "../../../emails/ElectionInvitation";
 import { env } from "../../env.mjs";
 import { prisma } from "../../server/db";
-import { type ResultType } from "../../pdf/GenerateResult";
-import uploadPdf from "../../utils/uploadPdf";
+import GenerateResult, { type ResultType } from "../../pdf/GenerateResult";
+import { supabase } from "../../lib/supabase";
+import ReactPDF from "@react-pdf/renderer";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const now = new Date(new Date().toDateString());
@@ -158,7 +159,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       path
     );
 
-    const publicUrl = await uploadPdf({ path, result });
+    await supabase.storage
+      .from("eboto-mo")
+      .upload(
+        path,
+        await ReactPDF.renderToStream(<GenerateResult result={result} />)
+      );
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from("eboto-mo").getPublicUrl(path);
 
     await prisma.generatedElectionResult.create({
       data: {
@@ -172,11 +181,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   res.status(200).end();
 }
 
-export default handler;
-// export default verifySignature(handler);
+// export default handler;
+export default verifySignature(handler);
 
-// export const config = {
-//   api: {
-//     bodyParser: false,
-//   },
-// };
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
