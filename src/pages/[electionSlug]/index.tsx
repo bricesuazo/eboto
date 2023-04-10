@@ -254,7 +254,7 @@ export const getServerSideProps: GetServerSideProps = async (
     return { notFound: true };
 
   const session = await getServerAuthSession(context);
-  const election = await prisma.election.findFirst({
+  const election = await prisma.election.findUnique({
     where: {
       slug: context.query.electionSlug,
     },
@@ -266,7 +266,12 @@ export const getServerSideProps: GetServerSideProps = async (
 
   if (election.publicity === "PRIVATE") {
     if (!session)
-      return { redirect: { destination: "/signin", permanent: false } };
+      return {
+        redirect: {
+          destination: `/signin?callbackUrl=https://eboto-mo.com/${election.slug}`,
+          permanent: false,
+        },
+      };
 
     const commissioner = await prisma.commissioner.findFirst({
       where: {
@@ -286,7 +291,12 @@ export const getServerSideProps: GetServerSideProps = async (
     };
   } else if (election.publicity === "VOTER") {
     if (!session)
-      return { redirect: { destination: "/signin", permanent: false } };
+      return {
+        redirect: {
+          destination: `/signin?callbackUrl=https://eboto-mo.com/${election.slug}`,
+          permanent: false,
+        },
+      };
 
     const vote = await prisma.vote.findFirst({
       where: {
@@ -295,23 +305,13 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     });
 
-    if (vote) {
-      return {
-        props: {
-          isOngoing,
-          hasVoted: true,
-          election,
-        },
-      };
-    } else {
-      return {
-        props: {
-          isOngoing,
-          hasVoted: false,
-          election,
-        },
-      };
-    }
+    return {
+      props: {
+        isOngoing,
+        hasVoted: !!vote,
+        election,
+      },
+    };
   } else if (election.publicity === "PUBLIC") {
     if (!session)
       return {
@@ -329,23 +329,13 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     });
 
-    if (vote) {
-      return {
-        props: {
-          isOngoing,
-          hasVoted: true,
-          election,
-        },
-      };
-    } else {
-      return {
-        props: {
-          isOngoing,
-          hasVoted: false,
-          election,
-        },
-      };
-    }
+    return {
+      props: {
+        isOngoing,
+        hasVoted: !!vote,
+        election,
+      },
+    };
   }
 
   return {

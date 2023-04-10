@@ -23,6 +23,7 @@ import { convertNumberToHour } from "../../utils/convertNumberToHour";
 import Balancer from "react-wrap-balancer";
 import Head from "next/head";
 import { env } from "../../env.mjs";
+import { isElectionOngoing } from "../../utils/isElectionOngoing";
 
 const RealtimePage = ({ election }: { election: Election }) => {
   const title = `${election.name} – Realtime | eBoto Mo`;
@@ -160,7 +161,7 @@ export const getServerSideProps: GetServerSideProps = async (
     return { notFound: true };
 
   const session = await getServerAuthSession(context);
-  const election = await prisma.election.findFirst({
+  const election = await prisma.election.findUnique({
     where: {
       slug: context.query.electionSlug,
     },
@@ -171,7 +172,12 @@ export const getServerSideProps: GetServerSideProps = async (
   switch (election.publicity) {
     case "PRIVATE":
       if (!session)
-        return { redirect: { destination: "/signin", permanent: false } };
+        return {
+          redirect: {
+            destination: `/signin?callbackUrl=https://eboto-mo.com/${election.slug}/realtime`,
+            permanent: false,
+          },
+        };
 
       const commissioner = await prisma.commissioner.findFirst({
         where: {
@@ -184,7 +190,12 @@ export const getServerSideProps: GetServerSideProps = async (
       break;
     case "VOTER":
       if (!session)
-        return { redirect: { destination: "/signin", permanent: false } };
+        return {
+          redirect: {
+            destination: `/signin?callbackUrl=https://eboto-mo.com/${election.slug}/realtime`,
+            permanent: false,
+          },
+        };
 
       const vote = await prisma.vote.findFirst({
         where: {
@@ -193,7 +204,7 @@ export const getServerSideProps: GetServerSideProps = async (
         },
       });
 
-      if (!vote && election.end_date > new Date())
+      if (!vote && !isElectionOngoing({ election, withTime: true }))
         return {
           redirect: { destination: `/${election.slug}`, permanent: false },
         };

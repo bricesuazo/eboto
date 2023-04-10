@@ -401,7 +401,7 @@ export const getServerSideProps: GetServerSideProps = async (
     return { notFound: true };
 
   const session = await getServerAuthSession(context);
-  const election = await prisma.election.findFirst({
+  const election = await prisma.election.findUnique({
     where: {
       slug: context.query.electionSlug,
     },
@@ -419,7 +419,12 @@ export const getServerSideProps: GetServerSideProps = async (
 
   if (election.publicity === "PRIVATE") {
     if (!session)
-      return { redirect: { destination: "/signin", permanent: false } };
+      return {
+        redirect: {
+          destination: `/signin?callbackUrl=https://eboto-mo.com/${election.slug}/vote`,
+          permanent: false,
+        },
+      };
 
     const commissioner = await prisma.commissioner.findFirst({
       where: {
@@ -436,9 +441,14 @@ export const getServerSideProps: GetServerSideProps = async (
         permanent: false,
       },
     };
-  } else if (election.publicity === "VOTER") {
+  } else if (election.publicity === ("VOTER" || "PUBLIC")) {
     if (!session)
-      return { redirect: { destination: "/signin", permanent: false } };
+      return {
+        redirect: {
+          destination: `/signin?callbackUrl=https://eboto-mo.com/${election.slug}/vote`,
+          permanent: false,
+        },
+      };
 
     const vote = await prisma.vote.findFirst({
       where: {
@@ -451,26 +461,6 @@ export const getServerSideProps: GetServerSideProps = async (
       return {
         redirect: {
           destination: `/${election.slug}/realtime`,
-          permanent: false,
-        },
-      };
-  } else if (election.publicity === "PUBLIC") {
-    if (!session)
-      return {
-        redirect: { destination: `/${election.slug}`, permanent: false },
-      };
-
-    const vote = await prisma.vote.findFirst({
-      where: {
-        electionId: election.id,
-        voterId: session.user.id,
-      },
-    });
-
-    if (vote)
-      return {
-        redirect: {
-          destination: `/${election.slug}`,
           permanent: false,
         },
       };
