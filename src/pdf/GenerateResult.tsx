@@ -125,7 +125,7 @@ const GenerateResult = ({ result }: { result: ResultType }) => (
           <View style={{ marginVertical: 8 }}>
             <Text>Generated on:</Text>
 
-            {new Date().toLocaleString()}
+            <Text>{new Date().toLocaleString()}</Text>
           </View>
           <Text style={{ fontFamily: "Helvetica-Bold" }}>Results</Text>
         </View>

@@ -1,11 +1,9 @@
-// import dynamic from "next/dynamic";
-import { pdf } from "@react-pdf/renderer";
+const GenerateResult = lazy(() => import("../pdf/GenerateResult"));
+import { lazy } from "react";
 
-// const GenerateResult = dynamic(() => import("../pdf/GenerateResult"), {
-//   ssr: false,
-// });
 import { supabase } from "../lib/supabase";
-import GenerateResult, { type ResultType } from "../pdf/GenerateResult";
+import { type ResultType } from "../pdf/GenerateResult";
+import ReactPDF from "@react-pdf/renderer";
 
 const uploadPdf = async ({
   result,
@@ -16,7 +14,10 @@ const uploadPdf = async ({
 }) => {
   await supabase.storage
     .from("eboto-mo")
-    .upload(path, await pdf(<GenerateResult result={result} />).toBlob());
+    .upload(
+      path,
+      await ReactPDF.pdf(<GenerateResult result={result} />).toBlob()
+    );
 
   const {
     data: { publicUrl },
