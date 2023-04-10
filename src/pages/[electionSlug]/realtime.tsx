@@ -169,47 +169,58 @@ export const getServerSideProps: GetServerSideProps = async (
 
   if (!election) return { notFound: true };
 
-  switch (election.publicity) {
-    case "PRIVATE":
-      if (!session)
-        return {
-          redirect: {
-            destination: `/signin?callbackUrl=https://eboto-mo.com/${election.slug}/realtime`,
-            permanent: false,
-          },
-        };
-
-      const commissioner = await prisma.commissioner.findFirst({
-        where: {
-          electionId: election.id,
-          userId: session.user.id,
+  if (election.publicity === "PRIVATE") {
+    if (!session)
+      return {
+        redirect: {
+          destination: `/signin?callbackUrl=https://eboto-mo.com/${election.slug}/realtime`,
+          permanent: false,
         },
-      });
+      };
 
-      if (!commissioner) return { notFound: true };
-      break;
-    case "VOTER":
-      if (!session)
-        return {
-          redirect: {
-            destination: `/signin?callbackUrl=https://eboto-mo.com/${election.slug}/realtime`,
-            permanent: false,
-          },
-        };
+    const commissioner = await prisma.commissioner.findFirst({
+      where: {
+        electionId: election.id,
+        userId: session.user.id,
+      },
+    });
 
-      const vote = await prisma.vote.findFirst({
-        where: {
-          voterId: session.user.id,
-          electionId: election.id,
+    if (!commissioner) return { notFound: true };
+
+    const vote = await prisma.vote.findFirst({
+      where: {
+        voterId: commissioner.userId,
+        electionId: election.id,
+      },
+    });
+
+    if (!vote)
+      return {
+        redirect: {
+          destination: `/${election.slug}`,
+          permanent: false,
         },
-      });
+      };
+  } else if (election.publicity === "VOTER") {
+    if (!session)
+      return {
+        redirect: {
+          destination: `/signin?callbackUrl=https://eboto-mo.com/${election.slug}/realtime`,
+          permanent: false,
+        },
+      };
 
-      if (!vote && !isElectionOngoing({ election, withTime: true }))
-        return {
-          redirect: { destination: `/${election.slug}`, permanent: false },
-        };
+    const vote = await prisma.vote.findFirst({
+      where: {
+        voterId: session.user.id,
+        electionId: election.id,
+      },
+    });
 
-      break;
+    if (!vote || !isElectionOngoing({ election, withTime: true }))
+      return {
+        redirect: { destination: `/${election.slug}`, permanent: false },
+      };
   }
 
   return {

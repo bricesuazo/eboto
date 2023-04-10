@@ -282,6 +282,22 @@ export const getServerSideProps: GetServerSideProps = async (
 
     if (!commissioner) return { notFound: true };
 
+    const vote = await prisma.vote.findFirst({
+      where: {
+        voterId: commissioner.userId,
+        electionId: election.id,
+      },
+    });
+
+    if (!vote)
+      return {
+        props: {
+          isOngoing: true,
+          hasVoted: false,
+          election,
+        },
+      };
+
     return {
       props: {
         isOngoing: true,
