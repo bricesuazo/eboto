@@ -16,7 +16,7 @@ const uploadPdf = async ({
     .from("eboto-mo")
     .upload(
       path,
-      await ReactPDF.pdf(<GenerateResult result={result} />).toBlob()
+      await ReactPDF.renderToStream(<GenerateResult result={result} />)
     );
 
   const {
