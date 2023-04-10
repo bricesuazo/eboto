@@ -165,8 +165,8 @@ const CreateCandidateModal = ({
           })();
         })}
       >
-        <Tabs variant="outline" radius="xs" defaultValue="basic">
-          <Tabs.List>
+        <Tabs radius="xs" defaultValue="basic">
+          <Tabs.List grow>
             <Tabs.Tab value="basic" icon={<IconUserSearch size="0.8rem" />}>
               Basic Info
             </Tabs.Tab>
@@ -176,7 +176,6 @@ const CreateCandidateModal = ({
             <Tabs.Tab
               value="credentials"
               icon={<IconInfoCircle size="0.8rem" />}
-              disabled
             >
               Credentials
             </Tabs.Tab>
@@ -336,6 +335,36 @@ const CreateCandidateModal = ({
                   Delete image
                 </Button>
               </Stack>
+            </Tabs.Panel>
+            <Tabs.Panel value="credentials" pt="xs">
+              <Tabs variant="outline" radius="xs" defaultValue="achievements">
+                <Tabs.List grow>
+                  <Tabs.Tab value="achievements">
+                    <Text size="xs" truncate>
+                      Achievements
+                    </Text>
+                  </Tabs.Tab>
+                  <Tabs.Tab value="affiliations">
+                    <Text size="xs" truncate>
+                      Affiliations
+                    </Text>
+                  </Tabs.Tab>
+                  <Tabs.Tab value="events-attended">
+                    <Text size="xs" truncate>
+                      Seminars Attended
+                    </Text>
+                  </Tabs.Tab>
+                </Tabs.List>
+                <Tabs.Panel value="achievements" pt="xs">
+                  achievements
+                </Tabs.Panel>
+                <Tabs.Panel value="affiliations" pt="xs">
+                  affiliations
+                </Tabs.Panel>
+                <Tabs.Panel value="events-attended" pt="xs">
+                  events-attended
+                </Tabs.Panel>
+              </Tabs>
             </Tabs.Panel>
 
             {createCandidateMutation.isError &&

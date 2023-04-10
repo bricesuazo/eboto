@@ -181,8 +181,8 @@ const EditCandidateModal = ({
           })();
         })}
       >
-        <Tabs variant="outline" radius="xs" defaultValue="basic">
-          <Tabs.List>
+        <Tabs radius="xs" defaultValue="basic">
+          <Tabs.List grow>
             <Tabs.Tab value="basic" icon={<IconUserSearch size="0.8rem" />}>
               Basic Info
             </Tabs.Tab>
