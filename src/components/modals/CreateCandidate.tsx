@@ -35,6 +35,7 @@ import {
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { uploadImage } from "../../utils/uploadImage";
+import { YearPickerInput } from "@mantine/dates";
 
 const CreateCandidateModal = ({
   isOpen,
@@ -99,6 +100,22 @@ const CreateCandidateModal = ({
     middleName: string;
     position: string;
     image: FileWithPath | null;
+    credentials: {
+      achievements: {
+        name: string;
+        year: Date;
+      }[];
+      affiliations: {
+        org_name: string;
+        org_postion: string;
+        start_year: Date;
+        end_year: Date;
+      }[];
+      eventAttended: {
+        name: string;
+        year: Date;
+      }[];
+    };
   }>({
     initialValues: {
       firstName: "",
@@ -108,6 +125,11 @@ const CreateCandidateModal = ({
       middleName: "",
       position: position.id,
       image: null,
+      credentials: {
+        achievements: [],
+        affiliations: [],
+        eventAttended: [],
+      },
     },
     validateInputOnBlur: true,
     validate: {
@@ -132,6 +154,7 @@ const CreateCandidateModal = ({
       },
     },
   });
+  console.log("🚀 ~ file: CreateCandidate.tsx:96 ~ form:", form.values);
 
   useDidUpdate(() => {
     if (isOpen) {
@@ -165,9 +188,12 @@ const CreateCandidateModal = ({
           })();
         })}
       >
-        <Tabs radius="xs" defaultValue="basic">
+        <Tabs radius="xs" defaultValue="basic-info">
           <Tabs.List grow>
-            <Tabs.Tab value="basic" icon={<IconUserSearch size="0.8rem" />}>
+            <Tabs.Tab
+              value="basic-info"
+              icon={<IconUserSearch size="0.8rem" />}
+            >
               Basic Info
             </Tabs.Tab>
             <Tabs.Tab value="image" icon={<IconPhoto size="0.8rem" />}>
@@ -181,7 +207,7 @@ const CreateCandidateModal = ({
             </Tabs.Tab>
           </Tabs.List>
           <Stack spacing="sm">
-            <Tabs.Panel value="basic" pt="xs">
+            <Tabs.Panel value="basic-info" pt="xs">
               <Stack spacing="xs">
                 <TextInput
                   label="First name"
@@ -356,7 +382,70 @@ const CreateCandidateModal = ({
                   </Tabs.Tab>
                 </Tabs.List>
                 <Tabs.Panel value="achievements" pt="xs">
-                  achievements
+                  <Stack spacing="xs">
+                    <Stack spacing="lg">
+                      {form.values.credentials.achievements.map(
+                        (achievement, index) => {
+                          return (
+                            <Stack key={index} spacing="xs">
+                              <TextInput
+                                label="Achievement"
+                                placeholder="Enter achievement"
+                                required
+                                {...form.getInputProps(
+                                  `credentials.achievements[${index}].achievement`
+                                )}
+                              />
+                              <YearPickerInput
+                                label="Year"
+                                placeholder="Enter year"
+                                {...form.getInputProps(
+                                  `credentials.achievements[${index}].year`
+                                )}
+                                required
+                              />
+                              <Button
+                                onClick={() => {
+                                  form.setValues({
+                                    ...form.values,
+                                    credentials: {
+                                      ...form.values.credentials,
+                                      achievements:
+                                        form.values.credentials.achievements.filter(
+                                          (_, i) => i !== index
+                                        ),
+                                    },
+                                  });
+                                }}
+                              >
+                                Delete achievement
+                              </Button>
+                            </Stack>
+                          );
+                        }
+                      )}
+                    </Stack>
+
+                    <Button
+                      onClick={() => {
+                        form.setValues({
+                          ...form.values,
+                          credentials: {
+                            ...form.values.credentials,
+                            achievements: [
+                              ...form.values.credentials.achievements,
+                              {
+                                name: "",
+                                year: new Date(new Date().getFullYear(), 0),
+                              },
+                            ],
+                          },
+                        });
+                      }}
+                    >
+                      Add achievement
+                    </Button>
+                  </Stack>
                 </Tabs.Panel>
                 <Tabs.Panel value="affiliations" pt="xs">
                   affiliations
