@@ -480,7 +480,159 @@ const CreateCandidateModal = ({
                   </Stack>
                 </Tabs.Panel>
                 <Tabs.Panel value="affiliations" pt="xs">
-                  affiliations
+                  <Stack spacing="md">
+                    {form.values.affiliations.map((_, index) => {
+                      return (
+                        <Box key={index}>
+                          <TextInput
+                            w="100%"
+                            label="Organization name"
+                            placeholder="Enter organization name"
+                            required
+                            value={
+                              form.values.affiliations[index]?.org_name ?? ""
+                            }
+                            onChange={(e) => {
+                              form.setValues({
+                                ...form.values,
+                                affiliations: form.values.affiliations.map(
+                                  (affiliation, i) =>
+                                    i === index
+                                      ? {
+                                          ...affiliation,
+                                          org_name: e.target.value,
+                                        }
+                                      : affiliation
+                                ),
+                              });
+                            }}
+                          />
+                          <TextInput
+                            w="100%"
+                            label="Position"
+                            placeholder="Enter your position in the organization"
+                            required
+                            value={
+                              form.values.affiliations[index]?.org_postion ?? ""
+                            }
+                            onChange={(e) => {
+                              form.setValues({
+                                ...form.values,
+                                affiliations: form.values.affiliations.map(
+                                  (affiliation, i) =>
+                                    i === index
+                                      ? {
+                                          ...affiliation,
+                                          org_postion: e.target.value,
+                                        }
+                                      : affiliation
+                                ),
+                              });
+                            }}
+                          />
+
+                          <Flex gap="xs">
+                            <YearPickerInput
+                              label="Start year"
+                              placeholder="Enter start year"
+                              w="100%"
+                              popoverProps={{
+                                withinPortal: true,
+                              }}
+                              value={
+                                form.values.affiliations[index]?.start_year ??
+                                new Date()
+                              }
+                              onChange={(date) => {
+                                form.setValues({
+                                  ...form.values,
+                                  affiliations: form.values.affiliations.map(
+                                    (affiliation, i) =>
+                                      i === index
+                                        ? {
+                                            ...affiliation,
+                                            start_year: date,
+                                          }
+                                        : affiliation
+                                  ),
+                                });
+                              }}
+                              required
+                            />
+                            <YearPickerInput
+                              label="End year"
+                              placeholder="Enter end year"
+                              w="100%"
+                              popoverProps={{
+                                withinPortal: true,
+                              }}
+                              value={
+                                form.values.affiliations[index]?.end_year ??
+                                new Date()
+                              }
+                              onChange={(date) => {
+                                form.setValues({
+                                  ...form.values,
+                                  affiliations: form.values.affiliations.map(
+                                    (affiliation, i) =>
+                                      i === index
+                                        ? {
+                                            ...affiliation,
+                                            end_year: date,
+                                          }
+                                        : affiliation
+                                  ),
+                                });
+                              }}
+                              required
+                            />
+                          </Flex>
+                          <Button
+                            variant="outline"
+                            mt="xs"
+                            size="xs"
+                            w="100%"
+                            color="red"
+                            onClick={() => {
+                              form.setValues({
+                                ...form.values,
+
+                                affiliations: form.values.affiliations.filter(
+                                  (_, i) => i !== index
+                                ),
+                              });
+                            }}
+                          >
+                            Delete affiliation
+                          </Button>
+                        </Box>
+                      );
+                    })}
+
+                    <Button
+                      leftIcon={<IconPlus size="1.25rem" />}
+                      onClick={() => {
+                        form.setValues({
+                          ...form.values,
+
+                          affiliations: [
+                            ...form.values.affiliations,
+                            {
+                              org_name: "",
+                              org_postion: "",
+                              start_year: new Date(
+                                new Date().getFullYear(),
+                                -1
+                              ),
+                              end_year: new Date(new Date().getFullYear(), 0),
+                            },
+                          ],
+                        });
+                      }}
+                    >
+                      Add affiliation
+                    </Button>
+                  </Stack>
                 </Tabs.Panel>
                 <Tabs.Panel value="events-attended" pt="xs">
                   events-attended
