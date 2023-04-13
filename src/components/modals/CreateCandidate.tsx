@@ -154,7 +154,6 @@ const CreateCandidateModal = ({
       },
     },
   });
-  console.log("🚀 ~ file: CreateCandidate.tsx:96 ~ form:", form.values);
 
   useDidUpdate(() => {
     if (isOpen) {
@@ -635,7 +634,102 @@ const CreateCandidateModal = ({
                   </Stack>
                 </Tabs.Panel>
                 <Tabs.Panel value="events-attended" pt="xs">
-                  events-attended
+                  <Stack spacing="md">
+                    {form.values.eventAttended.map((_, index) => {
+                      return (
+                        <Box key={index}>
+                          <Flex gap="xs">
+                            <TextInput
+                              w="100%"
+                              label="Seminars attended"
+                              placeholder="Enter seminars attended"
+                              required
+                              value={
+                                form.values.eventAttended[index]?.name ?? ""
+                              }
+                              onChange={(e) => {
+                                form.setValues({
+                                  ...form.values,
+                                  eventAttended: form.values.eventAttended.map(
+                                    (achievement, i) =>
+                                      i === index
+                                        ? {
+                                            ...achievement,
+                                            name: e.target.value,
+                                          }
+                                        : achievement
+                                  ),
+                                });
+                              }}
+                            />
+                            <YearPickerInput
+                              label="Year"
+                              placeholder="Enter year"
+                              popoverProps={{
+                                withinPortal: true,
+                              }}
+                              value={
+                                form.values.eventAttended[index]?.year ??
+                                new Date()
+                              }
+                              onChange={(date) => {
+                                form.setValues({
+                                  ...form.values,
+                                  eventAttended: form.values.eventAttended.map(
+                                    (achievement, i) =>
+                                      i === index
+                                        ? {
+                                            ...achievement,
+                                            year: date,
+                                          }
+                                        : achievement
+                                  ),
+                                });
+                              }}
+                              required
+                            />
+                          </Flex>
+                          <Button
+                            variant="outline"
+                            mt="xs"
+                            size="xs"
+                            w="100%"
+                            color="red"
+                            onClick={() => {
+                              form.setValues({
+                                ...form.values,
+
+                                eventAttended: form.values.eventAttended.filter(
+                                  (_, i) => i !== index
+                                ),
+                              });
+                            }}
+                          >
+                            Delete seminar attended
+                          </Button>
+                        </Box>
+                      );
+                    })}
+
+                    <Button
+                      leftIcon={<IconPlus size="1.25rem" />}
+                      onClick={() => {
+                        form.setValues({
+                          ...form.values,
+
+                          eventAttended: [
+                            ...form.values.eventAttended,
+                            {
+                              name: "",
+                              year: new Date(new Date().getFullYear(), 0),
+                            },
+                          ],
+                        });
+                      }}
+                    >
+                      Add seminar attended
+                    </Button>
+                  </Stack>
                 </Tabs.Panel>
               </Tabs>
             </Tabs.Panel>
@@ -657,7 +751,7 @@ const CreateCandidateModal = ({
               </Button>
               <Button
                 type="submit"
-                disabled={!form.isValid()}
+                disabled={!form.isValid() || loading}
                 loading={loading}
               >
                 Create

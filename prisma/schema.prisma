@@ -188,8 +188,8 @@ model EventAttended {
     id String @id @default(cuid())
 
     name      String
-    createdAt DateTime @default(now())
     year      DateTime
+    createdAt DateTime @default(now())
 
     credential   Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
     credentialId String
