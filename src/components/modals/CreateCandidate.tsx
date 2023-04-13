@@ -10,6 +10,7 @@ import {
   Tabs,
   rem,
   Box,
+  Flex,
 } from "@mantine/core";
 import { api } from "../../utils/api";
 import type { Partylist, Position } from "@prisma/client";
@@ -23,6 +24,7 @@ import {
   IconPhoto,
   IconUserSearch,
   IconX,
+  IconPlus,
 } from "@tabler/icons-react";
 import { hasLength, useForm } from "@mantine/form";
 import { useRouter } from "next/router";
@@ -35,7 +37,7 @@ import {
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { uploadImage } from "../../utils/uploadImage";
-import { YearPickerInput } from "@mantine/dates";
+import { type DateValue, YearPickerInput } from "@mantine/dates";
 
 const CreateCandidateModal = ({
   isOpen,
@@ -100,22 +102,21 @@ const CreateCandidateModal = ({
     middleName: string;
     position: string;
     image: FileWithPath | null;
-    credentials: {
-      achievements: {
-        name: string;
-        year: Date;
-      }[];
-      affiliations: {
-        org_name: string;
-        org_postion: string;
-        start_year: Date;
-        end_year: Date;
-      }[];
-      eventAttended: {
-        name: string;
-        year: Date;
-      }[];
-    };
+
+    achievements: {
+      name: string;
+      year: DateValue;
+    }[];
+    affiliations: {
+      org_name: string;
+      org_postion: string;
+      start_year: DateValue;
+      end_year: DateValue;
+    }[];
+    eventAttended: {
+      name: string;
+      year: DateValue;
+    }[];
   }>({
     initialValues: {
       firstName: "",
@@ -125,11 +126,10 @@ const CreateCandidateModal = ({
       middleName: "",
       position: position.id,
       image: null,
-      credentials: {
-        achievements: [],
-        affiliations: [],
-        eventAttended: [],
-      },
+
+      achievements: [],
+      affiliations: [],
+      eventAttended: [],
     },
     validateInputOnBlur: true,
     validate: {
@@ -382,64 +382,96 @@ const CreateCandidateModal = ({
                   </Tabs.Tab>
                 </Tabs.List>
                 <Tabs.Panel value="achievements" pt="xs">
-                  <Stack spacing="xs">
-                    <Stack spacing="lg">
-                      {form.values.credentials.achievements.map(
-                        (achievement, index) => {
-                          return (
-                            <Stack key={index} spacing="xs">
-                              <TextInput
-                                label="Achievement"
-                                placeholder="Enter achievement"
-                                required
-                                {...form.getInputProps(
-                                  `credentials.achievements[${index}].achievement`
-                                )}
-                              />
-                              <YearPickerInput
-                                label="Year"
-                                placeholder="Enter year"
-                                {...form.getInputProps(
-                                  `credentials.achievements[${index}].year`
-                                )}
-                                required
-                              />
-                              <Button
-                                onClick={() => {
-                                  form.setValues({
-                                    ...form.values,
-                                    credentials: {
-                                      ...form.values.credentials,
-                                      achievements:
-                                        form.values.credentials.achievements.filter(
-                                          (_, i) => i !== index
-                                        ),
-                                    },
-                                  });
-                                }}
-                              >
-                                Delete achievement
-                              </Button>
-                            </Stack>
-                          );
-                        }
-                      )}
-                    </Stack>
+                  <Stack spacing="md">
+                    {form.values.achievements.map((_, index) => {
+                      return (
+                        <Box key={index}>
+                          <Flex gap="xs">
+                            <TextInput
+                              w="100%"
+                              label="Achievement"
+                              placeholder="Enter achievement"
+                              required
+                              value={
+                                form.values.achievements[index]?.name ?? ""
+                              }
+                              onChange={(e) => {
+                                form.setValues({
+                                  ...form.values,
+                                  achievements: form.values.achievements.map(
+                                    (achievement, i) =>
+                                      i === index
+                                        ? {
+                                            ...achievement,
+                                            name: e.target.value,
+                                          }
+                                        : achievement
+                                  ),
+                                });
+                              }}
+                            />
+                            <YearPickerInput
+                              label="Year"
+                              placeholder="Enter year"
+                              popoverProps={{
+                                withinPortal: true,
+                              }}
+                              value={
+                                form.values.achievements[index]?.year ??
+                                new Date()
+                              }
+                              onChange={(date) => {
+                                form.setValues({
+                                  ...form.values,
+                                  achievements: form.values.achievements.map(
+                                    (achievement, i) =>
+                                      i === index
+                                        ? {
+                                            ...achievement,
+                                            year: date,
+                                          }
+                                        : achievement
+                                  ),
+                                });
+                              }}
+                              required
+                            />
+                          </Flex>
+                          <Button
+                            variant="outline"
+                            mt="xs"
+                            size="xs"
+                            w="100%"
+                            color="red"
+                            onClick={() => {
+                              form.setValues({
+                                ...form.values,
+
+                                achievements: form.values.achievements.filter(
+                                  (_, i) => i !== index
+                                ),
+                              });
+                            }}
+                          >
+                            Delete achievement
+                          </Button>
+                        </Box>
+                      );
+                    })}
 
                     <Button
+                      leftIcon={<IconPlus size="1.25rem" />}
                       onClick={() => {
                         form.setValues({
                           ...form.values,
-                          credentials: {
-                            ...form.values.credentials,
-                            achievements: [
-                              ...form.values.credentials.achievements,
-                              {
-                                name: "",
-                                year: new Date(new Date().getFullYear(), 0),
-                              },
-                            ],
-                          },
+
+                          achievements: [
+                            ...form.values.achievements,
+                            {
+                              name: "",
+                              year: new Date(new Date().getFullYear(), 0),
+                            },
+                          ],
                         });
                       }}
                     >
