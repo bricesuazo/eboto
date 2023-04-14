@@ -157,6 +157,27 @@ export const candidateRouter = createTRPCRouter({
         middleName: z.string().nullable(),
         message: z.string().min(1).optional(),
         image: z.string().min(1).optional(),
+
+        achievements: z.array(
+          z.object({
+            name: z.string().min(1),
+            year: z.date(),
+          })
+        ),
+        affiliations: z.array(
+          z.object({
+            org_name: z.string().min(1),
+            org_postion: z.string().min(1),
+            start_year: z.date(),
+            end_year: z.date(),
+          })
+        ),
+        eventsAttended: z.array(
+          z.object({
+            name: z.string().min(1),
+            year: z.date(),
+          })
+        ),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -205,6 +226,26 @@ export const candidateRouter = createTRPCRouter({
           middle_name: input.middleName,
 
           image: input.image,
+
+          credential: {
+            create: {
+              affiliations: {
+                createMany: {
+                  data: input.affiliations,
+                },
+              },
+              eventsAttended: {
+                createMany: {
+                  data: input.eventsAttended,
+                },
+              },
+              achievements: {
+                createMany: {
+                  data: input.achievements,
+                },
+              },
+            },
+          },
         },
       });
     }),

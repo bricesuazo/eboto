@@ -182,6 +182,21 @@ const CreateCandidateModal = ({
                 electionId: position.electionId,
               },
               middleName: value.middleName,
+
+              achievements: value.achievements.map((a) => ({
+                name: a.name,
+                year: new Date(a.year?.toDateString() ?? ""),
+              })),
+              affiliations: value.affiliations.map((a) => ({
+                org_name: a.org_name,
+                org_postion: a.org_postion,
+                start_year: new Date(a.start_year?.toDateString() ?? ""),
+                end_year: new Date(a.end_year?.toDateString() ?? ""),
+              })),
+              eventsAttended: value.eventAttended.map((a) => ({
+                name: a.name,
+                year: new Date(a.year?.toDateString() ?? ""),
+              })),
             });
             setLoading(false);
           })();
