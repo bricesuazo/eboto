@@ -251,6 +251,218 @@ const EditCandidateModal = ({
               value="credentials"
               icon={<IconInfoCircle size="0.8rem" />}
             >
+              Credentials
+            </Tabs.Tab>
+          </Tabs.List>
+
+          <Stack spacing="sm">
+            <Tabs.Panel value="basic" pt="xs">
+              <Stack spacing="xs">
+                <TextInput
+                  label="First name"
+                  placeholder="Enter first name"
+                  required
+                  withAsterisk
+                  {...form.getInputProps("firstName")}
+                  icon={<IconLetterCase size="1rem" />}
+                />
+
+                <TextInput
+                  label="Middle name"
+                  placeholder="Enter middle name"
+                  {...form.getInputProps("middleName")}
+                  icon={<IconLetterCase size="1rem" />}
+                />
+                <TextInput
+                  label="Last name"
+                  placeholder="Enter last name"
+                  required
+                  withAsterisk
+                  {...form.getInputProps("lastName")}
+                  icon={<IconLetterCase size="1rem" />}
+                />
+
+                <TextInput
+                  label="Slug"
+                  placeholder="Enter slug"
+                  description={
+                    <Text>
+                      This will be used as the candidate&apos;s URL.
+                      <br />
+                      eboto-mo.com/{router.query.electionSlug?.toString()}/
+                      {form.values.slug || "candidate-slug"}
+                    </Text>
+                  }
+                  required
+                  withAsterisk
+                  {...form.getInputProps("slug")}
+                  error={
+                    form.errors.slug ||
+                    (editCandidateMutation.error?.data?.code === "CONFLICT" &&
+                      editCandidateMutation.error?.message)
+                  }
+                  icon={<IconLetterCase size="1rem" />}
+                />
+
+                <Select
+                  withinPortal
+                  placeholder="Select partylist"
+                  label="Partylist"
+                  icon={<IconFlag size="1rem" />}
+                  {...form.getInputProps("partylistId")}
+                  data={partylists.map((partylist) => {
+                    return {
+                      label: partylist.name,
+                      value: partylist.id,
+                    };
+                  })}
+                />
+
+                <Select
+                  withinPortal
+                  placeholder="Select position"
+                  label="Position"
+                  icon={<IconUserSearch size="1rem" />}
+                  {...form.getInputProps("position")}
+                  data={positions.map((position) => {
+                    return {
+                      label: position.name,
+                      value: position.id,
+                    };
+                  })}
+                />
+              </Stack>
+            </Tabs.Panel>
+
+            <Tabs.Panel value="image" pt="xs">
+              <Stack spacing="xs">
+                <Dropzone
+                  id="image"
+                  onDrop={(files) => {
+                    if (!files[0]) return;
+                    form.setFieldValue("image", files[0]);
+                  }}
+                  openRef={openRef}
+                  maxSize={5 * 1024 ** 2}
+                  accept={IMAGE_MIME_TYPE}
+                  multiple={false}
+                  loading={loading}
+                  disabled={loading}
+                >
+                  <Group
+                    position="center"
+                    spacing="xl"
+                    style={{ minHeight: rem(140), pointerEvents: "none" }}
+                  >
+                    {form.values.image ? (
+                      typeof form.values.image !== "string" &&
+                      form.values.image ? (
+                        <Group position="center">
+                          <Box
+                            pos="relative"
+                            sx={(theme) => ({
+                              width: rem(120),
+                              height: rem(120),
+
+                              [theme.fn.smallerThan("sm")]: {
+                                width: rem(180),
+                                height: rem(180),
+                              },
+                            })}
+                          >
+                            <Image
+                              src={
+                                typeof form.values.image === "string"
+                                  ? form.values.image
+                                  : URL.createObjectURL(form.values.image)
+                              }
+                              alt="image"
+                              fill
+                              sizes="100%"
+                              priority
+                            />
+                          </Box>
+                          <Text>{form.values.image.name}</Text>
+                        </Group>
+                      ) : (
+                        candidate.image && (
+                          <Group>
+                            <Box
+                              pos="relative"
+                              sx={(theme) => ({
+                                width: rem(120),
+                                height: rem(120),
+
+                                [theme.fn.smallerThan("sm")]: {
+                                  width: rem(180),
+                                  height: rem(180),
+                                },
+                              })}
+                            >
+                              <Image
+                                src={candidate.image}
+                                alt="image"
+                                fill
+                                sizes="100%"
+                                priority
+                              />
+                            </Box>
+                            <Text>Current image</Text>
+                          </Group>
+                        )
+                      )
+                    ) : (
+                      <Box>
+                        <Text size="xl" inline align="center">
+                          Drag image here or click to select image
+                        </Text>
+                        <Text
+                          size="sm"
+                          color="dimmed"
+                          inline
+                          mt={7}
+                          align="center"
+                        >
+                          Attach a image to your account. Max file size is 5MB.
+                        </Text>
+                      </Box>
+                    )}
+                    <Dropzone.Reject>
+                      <IconX size="3.2rem" stroke={1.5} />
+                    </Dropzone.Reject>
+                  </Group>
+                </Dropzone>
+                <Flex gap="sm">
+                  <Button
+                    onClick={() => {
+                      form.setValues({
+                        ...form.values,
+                        image: candidate.image,
+                      });
+                    }}
+                    disabled={
+                      !candidate.image ||
+                      typeof form.values.image === "string" ||
+                      loading
+                    }
+                    sx={{ flex: 1 }}
+                  >
+                    Reset image
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      form.setFieldValue("image", null);
+                    }}
+                    disabled={!form.values.image || loading}
+                    sx={{ flex: 1 }}
+                  >
+                    Delete image
+                  </Button>
+                </Flex>
+              </Stack>
+            </Tabs.Panel>
+
+            <Tabs.Panel value="credentials" pt="xs">
               <Tabs variant="outline" radius="xs" defaultValue="achievements">
                 <Tabs.List grow>
                   <Tabs.Tab value="achievements">
@@ -269,6 +481,7 @@ const EditCandidateModal = ({
                     </Text>
                   </Tabs.Tab>
                 </Tabs.List>
+
                 <Tabs.Panel value="achievements" pt="xs">
                   <Stack spacing="md">
                     {form.values.achievements.map((_, index) => {
@@ -624,214 +837,6 @@ const EditCandidateModal = ({
                   </Stack>
                 </Tabs.Panel>
               </Tabs>
-            </Tabs.Tab>
-          </Tabs.List>
-
-          <Stack spacing="sm">
-            <Tabs.Panel value="basic" pt="xs">
-              <Stack spacing="xs">
-                <TextInput
-                  label="First name"
-                  placeholder="Enter first name"
-                  required
-                  withAsterisk
-                  {...form.getInputProps("firstName")}
-                  icon={<IconLetterCase size="1rem" />}
-                />
-
-                <TextInput
-                  label="Middle name"
-                  placeholder="Enter middle name"
-                  {...form.getInputProps("middleName")}
-                  icon={<IconLetterCase size="1rem" />}
-                />
-                <TextInput
-                  label="Last name"
-                  placeholder="Enter last name"
-                  required
-                  withAsterisk
-                  {...form.getInputProps("lastName")}
-                  icon={<IconLetterCase size="1rem" />}
-                />
-
-                <TextInput
-                  label="Slug"
-                  placeholder="Enter slug"
-                  description={
-                    <Text>
-                      This will be used as the candidate&apos;s URL.
-                      <br />
-                      eboto-mo.com/{router.query.electionSlug?.toString()}/
-                      {form.values.slug || "candidate-slug"}
-                    </Text>
-                  }
-                  required
-                  withAsterisk
-                  {...form.getInputProps("slug")}
-                  error={
-                    form.errors.slug ||
-                    (editCandidateMutation.error?.data?.code === "CONFLICT" &&
-                      editCandidateMutation.error?.message)
-                  }
-                  icon={<IconLetterCase size="1rem" />}
-                />
-
-                <Select
-                  withinPortal
-                  placeholder="Select partylist"
-                  label="Partylist"
-                  icon={<IconFlag size="1rem" />}
-                  {...form.getInputProps("partylistId")}
-                  data={partylists.map((partylist) => {
-                    return {
-                      label: partylist.name,
-                      value: partylist.id,
-                    };
-                  })}
-                />
-
-                <Select
-                  withinPortal
-                  placeholder="Select position"
-                  label="Position"
-                  icon={<IconUserSearch size="1rem" />}
-                  {...form.getInputProps("position")}
-                  data={positions.map((position) => {
-                    return {
-                      label: position.name,
-                      value: position.id,
-                    };
-                  })}
-                />
-              </Stack>
-            </Tabs.Panel>
-
-            <Tabs.Panel value="image" pt="xs">
-              <Stack spacing="xs">
-                <Dropzone
-                  id="image"
-                  onDrop={(files) => {
-                    if (!files[0]) return;
-                    form.setFieldValue("image", files[0]);
-                  }}
-                  openRef={openRef}
-                  maxSize={5 * 1024 ** 2}
-                  accept={IMAGE_MIME_TYPE}
-                  multiple={false}
-                  loading={loading}
-                  disabled={loading}
-                >
-                  <Group
-                    position="center"
-                    spacing="xl"
-                    style={{ minHeight: rem(140), pointerEvents: "none" }}
-                  >
-                    {form.values.image ? (
-                      typeof form.values.image !== "string" &&
-                      form.values.image ? (
-                        <Group position="center">
-                          <Box
-                            pos="relative"
-                            sx={(theme) => ({
-                              width: rem(120),
-                              height: rem(120),
-
-                              [theme.fn.smallerThan("sm")]: {
-                                width: rem(180),
-                                height: rem(180),
-                              },
-                            })}
-                          >
-                            <Image
-                              src={
-                                typeof form.values.image === "string"
-                                  ? form.values.image
-                                  : URL.createObjectURL(form.values.image)
-                              }
-                              alt="image"
-                              fill
-                              sizes="100%"
-                              priority
-                            />
-                          </Box>
-                          <Text>{form.values.image.name}</Text>
-                        </Group>
-                      ) : (
-                        candidate.image && (
-                          <Group>
-                            <Box
-                              pos="relative"
-                              sx={(theme) => ({
-                                width: rem(120),
-                                height: rem(120),
-
-                                [theme.fn.smallerThan("sm")]: {
-                                  width: rem(180),
-                                  height: rem(180),
-                                },
-                              })}
-                            >
-                              <Image
-                                src={candidate.image}
-                                alt="image"
-                                fill
-                                sizes="100%"
-                                priority
-                              />
-                            </Box>
-                            <Text>Current image</Text>
-                          </Group>
-                        )
-                      )
-                    ) : (
-                      <Box>
-                        <Text size="xl" inline align="center">
-                          Drag image here or click to select image
-                        </Text>
-                        <Text
-                          size="sm"
-                          color="dimmed"
-                          inline
-                          mt={7}
-                          align="center"
-                        >
-                          Attach a image to your account. Max file size is 5MB.
-                        </Text>
-                      </Box>
-                    )}
-                    <Dropzone.Reject>
-                      <IconX size="3.2rem" stroke={1.5} />
-                    </Dropzone.Reject>
-                  </Group>
-                </Dropzone>
-                <Flex gap="sm">
-                  <Button
-                    onClick={() => {
-                      form.setValues({
-                        ...form.values,
-                        image: candidate.image,
-                      });
-                    }}
-                    disabled={
-                      !candidate.image ||
-                      typeof form.values.image === "string" ||
-                      loading
-                    }
-                    sx={{ flex: 1 }}
-                  >
-                    Reset image
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      form.setFieldValue("image", null);
-                    }}
-                    disabled={!form.values.image || loading}
-                    sx={{ flex: 1 }}
-                  >
-                    Delete image
-                  </Button>
-                </Flex>
-              </Stack>
             </Tabs.Panel>
 
             {editCandidateMutation.isError &&
