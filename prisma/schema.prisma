@@ -177,7 +177,7 @@ model Credential {
     updatedAt DateTime @updatedAt
 
     affiliations   Affiliation[]
-    achievements   Achievements[]
+    achievements   Achievement[]
     eventsAttended EventAttended[]
 
     candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
@@ -212,7 +212,7 @@ model Affiliation {
     @@index([credentialId])
 }
 
-model Achievements {
+model Achievement {
     id String @id @default(cuid())
 
     name      String

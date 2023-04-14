@@ -113,7 +113,7 @@ const CreateCandidateModal = ({
       start_year: DateValue;
       end_year: DateValue;
     }[];
-    eventAttended: {
+    eventsAttended: {
       name: string;
       year: DateValue;
     }[];
@@ -129,7 +129,7 @@ const CreateCandidateModal = ({
 
       achievements: [],
       affiliations: [],
-      eventAttended: [],
+      eventsAttended: [],
     },
     validateInputOnBlur: true,
     validate: {
@@ -193,7 +193,7 @@ const CreateCandidateModal = ({
                 start_year: new Date(a.start_year?.toDateString() ?? ""),
                 end_year: new Date(a.end_year?.toDateString() ?? ""),
               })),
-              eventsAttended: value.eventAttended.map((a) => ({
+              eventsAttended: value.eventsAttended.map((a) => ({
                 name: a.name,
                 year: new Date(a.year?.toDateString() ?? ""),
               })),
@@ -381,7 +381,7 @@ const CreateCandidateModal = ({
                 <Tabs.List grow>
                   <Tabs.Tab value="achievements">
                     <Text size="xs" truncate>
-                      Achievements
+                      Achievement
                     </Text>
                   </Tabs.Tab>
                   <Tabs.Tab value="affiliations">
@@ -650,7 +650,7 @@ const CreateCandidateModal = ({
                 </Tabs.Panel>
                 <Tabs.Panel value="events-attended" pt="xs">
                   <Stack spacing="md">
-                    {form.values.eventAttended.map((_, index) => {
+                    {form.values.eventsAttended.map((_, index) => {
                       return (
                         <Box key={index}>
                           <Flex gap="xs">
@@ -660,20 +660,21 @@ const CreateCandidateModal = ({
                               placeholder="Enter seminars attended"
                               required
                               value={
-                                form.values.eventAttended[index]?.name ?? ""
+                                form.values.eventsAttended[index]?.name ?? ""
                               }
                               onChange={(e) => {
                                 form.setValues({
                                   ...form.values,
-                                  eventAttended: form.values.eventAttended.map(
-                                    (achievement, i) =>
-                                      i === index
-                                        ? {
-                                            ...achievement,
-                                            name: e.target.value,
-                                          }
-                                        : achievement
-                                  ),
+                                  eventsAttended:
+                                    form.values.eventsAttended.map(
+                                      (achievement, i) =>
+                                        i === index
+                                          ? {
+                                              ...achievement,
+                                              name: e.target.value,
+                                            }
+                                          : achievement
+                                    ),
                                 });
                               }}
                             />
@@ -684,21 +685,22 @@ const CreateCandidateModal = ({
                                 withinPortal: true,
                               }}
                               value={
-                                form.values.eventAttended[index]?.year ??
+                                form.values.eventsAttended[index]?.year ??
                                 new Date()
                               }
                               onChange={(date) => {
                                 form.setValues({
                                   ...form.values,
-                                  eventAttended: form.values.eventAttended.map(
-                                    (achievement, i) =>
-                                      i === index
-                                        ? {
-                                            ...achievement,
-                                            year: date,
-                                          }
-                                        : achievement
-                                  ),
+                                  eventsAttended:
+                                    form.values.eventsAttended.map(
+                                      (achievement, i) =>
+                                        i === index
+                                          ? {
+                                              ...achievement,
+                                              year: date,
+                                            }
+                                          : achievement
+                                    ),
                                 });
                               }}
                               required
@@ -714,9 +716,10 @@ const CreateCandidateModal = ({
                               form.setValues({
                                 ...form.values,
 
-                                eventAttended: form.values.eventAttended.filter(
-                                  (_, i) => i !== index
-                                ),
+                                eventsAttended:
+                                  form.values.eventsAttended.filter(
+                                    (_, i) => i !== index
+                                  ),
                               });
                             }}
                           >
@@ -732,8 +735,8 @@ const CreateCandidateModal = ({
                         form.setValues({
                           ...form.values,
 
-                          eventAttended: [
-                            ...form.values.eventAttended,
+                          eventsAttended: [
+                            ...form.values.eventsAttended,
                             {
                               name: "",
                               year: new Date(new Date().getFullYear(), 0),

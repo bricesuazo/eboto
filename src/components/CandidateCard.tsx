@@ -1,7 +1,15 @@
 import { Button, Flex, Text, Group, Box } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import type { Candidate, Partylist, Position } from "@prisma/client";
+import type {
+  Achievement,
+  Affiliation,
+  Candidate,
+  Credential,
+  EventAttended,
+  Partylist,
+  Position,
+} from "@prisma/client";
 import { api } from "../utils/api";
 import EditCandidateModal from "./modals/EditCandidate";
 import { IconCheck, IconUser } from "@tabler/icons-react";
@@ -12,7 +20,15 @@ const CandidateCard = ({
   partylists,
   positions,
 }: {
-  candidate: Candidate;
+  candidate: Candidate & {
+    credential:
+      | (Credential & {
+          achievements: Achievement[];
+          affiliations: Affiliation[];
+          eventsAttended: EventAttended[];
+        })
+      | null;
+  };
   partylists: Partylist[];
   positions: Position[];
 }) => {

@@ -52,6 +52,30 @@ export const candidateRouter = createTRPCRouter({
         partylistId: z.string(),
         positionId: z.string(),
         image: z.string().nullable(),
+
+        achievements: z.array(
+          z.object({
+            id: z.string(),
+            name: z.string().min(1),
+            year: z.date(),
+          })
+        ),
+        affiliations: z.array(
+          z.object({
+            id: z.string(),
+            org_name: z.string().min(1),
+            org_postion: z.string().min(1),
+            start_year: z.date(),
+            end_year: z.date(),
+          })
+        ),
+        eventsAttended: z.array(
+          z.object({
+            id: z.string(),
+            name: z.string().min(1),
+            year: z.date(),
+          })
+        ),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -99,6 +123,15 @@ export const candidateRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
+        include: {
+          credential: {
+            include: {
+              achievements: true,
+              affiliations: true,
+              eventsAttended: true,
+            },
+          },
+        },
         data: {
           first_name: input.firstName,
           middle_name: input.middleName,
@@ -108,6 +141,60 @@ export const candidateRouter = createTRPCRouter({
           partylistId: input.partylistId,
           positionId: input.positionId,
           image: input.image,
+
+          credential: {
+            update: {
+              achievements: {
+                upsert: input.achievements.map((achievement) => ({
+                  where: {
+                    id: achievement.id,
+                  },
+                  create: {
+                    name: achievement.name,
+                    year: achievement.year,
+                  },
+                  update: {
+                    name: achievement.name,
+                    year: achievement.year,
+                  },
+                })),
+              },
+              affiliations: {
+                upsert: input.affiliations.map((affiliation) => ({
+                  where: {
+                    id: affiliation.id,
+                  },
+                  create: {
+                    org_name: affiliation.org_name,
+                    org_postion: affiliation.org_postion,
+                    start_year: affiliation.start_year,
+                    end_year: affiliation.end_year,
+                  },
+                  update: {
+                    org_name: affiliation.org_name,
+                    org_postion: affiliation.org_postion,
+                    start_year: affiliation.start_year,
+                    end_year: affiliation.end_year,
+                  },
+                })),
+              },
+              eventsAttended: {
+                upsert: input.eventsAttended.map((eventAttended) => ({
+                  where: {
+                    id: eventAttended.id,
+                  },
+                  create: {
+                    name: eventAttended.name,
+                    year: eventAttended.year,
+                  },
+                  update: {
+                    name: eventAttended.name,
+                    year: eventAttended.year,
+                  },
+                })),
+              },
+            },
+          },
         },
       });
     }),
@@ -282,6 +369,15 @@ export const candidateRouter = createTRPCRouter({
       const candidates = await ctx.prisma.candidate.findMany({
         where: {
           electionId: election.id,
+        },
+        include: {
+          credential: {
+            include: {
+              affiliations: true,
+              eventsAttended: true,
+              achievements: true,
+            },
+          },
         },
         orderBy: {
           position: {

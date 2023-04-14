@@ -1,6 +1,14 @@
 import { Text, UnstyledButton, Box, Flex } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import type { Candidate, Partylist, Position } from "@prisma/client";
+import type {
+  Achievement,
+  Affiliation,
+  Candidate,
+  Credential,
+  EventAttended,
+  Partylist,
+  Position,
+} from "@prisma/client";
 import { IconUserPlus } from "@tabler/icons-react";
 import CandidateCard from "./CandidateCard";
 import CreateCandidateModal from "./modals/CreateCandidate";
@@ -13,7 +21,15 @@ const Candidates = ({
   positions,
 }: {
   position: Position;
-  candidates: Candidate[];
+  candidates: (Candidate & {
+    credential:
+      | (Credential & {
+          achievements: Achievement[];
+          affiliations: Affiliation[];
+          eventsAttended: EventAttended[];
+        })
+      | null;
+  })[];
   partylists: Partylist[];
   positions: Position[];
 }) => {

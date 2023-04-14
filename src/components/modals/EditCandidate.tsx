@@ -13,7 +13,15 @@ import {
   Flex,
 } from "@mantine/core";
 import { api } from "../../utils/api";
-import type { Candidate, Partylist, Position } from "@prisma/client";
+import type {
+  Achievement,
+  Affiliation,
+  Candidate,
+  Credential,
+  EventAttended,
+  Partylist,
+  Position,
+} from "@prisma/client";
 import { hasLength, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import {
@@ -23,6 +31,7 @@ import {
   IconInfoCircle,
   IconLetterCase,
   IconPhoto,
+  IconPlus,
   IconUserSearch,
   IconX,
 } from "@tabler/icons-react";
@@ -36,6 +45,7 @@ import {
 } from "@mantine/dropzone";
 import Image from "next/image";
 import { uploadImage } from "../../utils/uploadImage";
+import { YearPickerInput, type DateValue } from "@mantine/dates";
 
 const EditCandidateModal = ({
   isOpen,
@@ -46,7 +56,15 @@ const EditCandidateModal = ({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  candidate: Candidate;
+  candidate: Candidate & {
+    credential:
+      | (Credential & {
+          achievements: Achievement[];
+          affiliations: Affiliation[];
+          eventsAttended: EventAttended[];
+        })
+      | null;
+  };
   partylists: Partylist[];
   positions: Position[];
 }) => {
@@ -62,6 +80,16 @@ const EditCandidateModal = ({
     partylistId: string;
     position: string;
     image: FileWithPath | null | string;
+
+    achievements: { id: string; name: string; year: DateValue }[];
+    affiliations: {
+      id: string;
+      org_name: string;
+      org_postion: string;
+      start_year: DateValue;
+      end_year: DateValue;
+    }[];
+    eventAttended: { id: string; name: string; year: DateValue }[];
   }>({
     initialValues: {
       firstName: candidate.first_name,
@@ -71,6 +99,10 @@ const EditCandidateModal = ({
       partylistId: candidate.partylistId,
       position: candidate.positionId,
       image: candidate.image,
+
+      achievements: candidate.credential?.achievements ?? [],
+      affiliations: candidate.credential?.affiliations ?? [],
+      eventAttended: candidate.credential?.eventsAttended ?? [],
     },
     validateInputOnBlur: true,
     validate: {
@@ -107,6 +139,10 @@ const EditCandidateModal = ({
         partylistId: data.partylistId,
         position: data.positionId,
         image: data.image,
+
+        achievements: data.credential?.achievements ?? [],
+        affiliations: data.credential?.affiliations ?? [],
+        eventAttended: data.credential?.eventsAttended ?? [],
       };
 
       form.setValues(dataForForm);
@@ -134,6 +170,10 @@ const EditCandidateModal = ({
         partylistId: candidate.partylistId,
         position: candidate.positionId,
         image: candidate.image,
+
+        achievements: candidate.credential?.achievements ?? [],
+        affiliations: candidate.credential?.affiliations ?? [],
+        eventAttended: candidate.credential?.eventsAttended ?? [],
       };
 
       form.setValues(dataForForm);
@@ -175,6 +215,24 @@ const EditCandidateModal = ({
                     }/image/${Date.now().toString()}`,
                     image: value.image,
                   }),
+              achievements: value.achievements.map((a) => ({
+                id: a.id,
+                name: a.name,
+                year: new Date(a.year?.toDateString() ?? ""),
+              })),
+
+              affiliations: value.affiliations.map((a) => ({
+                id: a.id,
+                org_name: a.org_name,
+                org_postion: a.org_postion,
+                start_year: new Date(a.start_year?.toDateString() ?? ""),
+                end_year: new Date(a.end_year?.toDateString() ?? ""),
+              })),
+              eventsAttended: value.eventAttended.map((a) => ({
+                id: a.id,
+                name: a.name,
+                year: new Date(a.year?.toDateString() ?? ""),
+              })),
             });
 
             setLoading(false);
@@ -192,9 +250,380 @@ const EditCandidateModal = ({
             <Tabs.Tab
               value="credentials"
               icon={<IconInfoCircle size="0.8rem" />}
-              disabled
             >
-              Credentials
+              <Tabs variant="outline" radius="xs" defaultValue="achievements">
+                <Tabs.List grow>
+                  <Tabs.Tab value="achievements">
+                    <Text size="xs" truncate>
+                      Achievement
+                    </Text>
+                  </Tabs.Tab>
+                  <Tabs.Tab value="affiliations">
+                    <Text size="xs" truncate>
+                      Affiliations
+                    </Text>
+                  </Tabs.Tab>
+                  <Tabs.Tab value="events-attended">
+                    <Text size="xs" truncate>
+                      Seminars Attended
+                    </Text>
+                  </Tabs.Tab>
+                </Tabs.List>
+                <Tabs.Panel value="achievements" pt="xs">
+                  <Stack spacing="md">
+                    {form.values.achievements.map((_, index) => {
+                      return (
+                        <Box key={index}>
+                          <Flex gap="xs">
+                            <TextInput
+                              w="100%"
+                              label="Achievement"
+                              placeholder="Enter achievement"
+                              required
+                              value={
+                                form.values.achievements[index]?.name ?? ""
+                              }
+                              onChange={(e) => {
+                                form.setValues({
+                                  ...form.values,
+                                  achievements: form.values.achievements.map(
+                                    (achievement, i) =>
+                                      i === index
+                                        ? {
+                                            ...achievement,
+                                            name: e.target.value,
+                                          }
+                                        : achievement
+                                  ),
+                                });
+                              }}
+                            />
+                            <YearPickerInput
+                              label="Year"
+                              placeholder="Enter year"
+                              popoverProps={{
+                                withinPortal: true,
+                              }}
+                              value={
+                                form.values.achievements[index]?.year ??
+                                new Date()
+                              }
+                              onChange={(date) => {
+                                form.setValues({
+                                  ...form.values,
+                                  achievements: form.values.achievements.map(
+                                    (achievement, i) =>
+                                      i === index
+                                        ? {
+                                            ...achievement,
+                                            year: date,
+                                          }
+                                        : achievement
+                                  ),
+                                });
+                              }}
+                              required
+                            />
+                          </Flex>
+                          <Button
+                            variant="outline"
+                            mt="xs"
+                            size="xs"
+                            w="100%"
+                            color="red"
+                            onClick={() => {
+                              form.setValues({
+                                ...form.values,
+
+                                achievements: form.values.achievements.filter(
+                                  (_, i) => i !== index
+                                ),
+                              });
+                            }}
+                          >
+                            Delete achievement
+                          </Button>
+                        </Box>
+                      );
+                    })}
+
+                    <Button
+                      leftIcon={<IconPlus size="1.25rem" />}
+                      onClick={() => {
+                        form.setValues({
+                          ...form.values,
+
+                          achievements: [
+                            ...form.values.achievements,
+                            {
+                              id: "",
+                              name: "",
+                              year: new Date(new Date().getFullYear(), 0),
+                            },
+                          ],
+                        });
+                      }}
+                    >
+                      Add achievement
+                    </Button>
+                  </Stack>
+                </Tabs.Panel>
+                <Tabs.Panel value="affiliations" pt="xs">
+                  <Stack spacing="md">
+                    {form.values.affiliations.map((_, index) => {
+                      return (
+                        <Box key={index}>
+                          <TextInput
+                            w="100%"
+                            label="Organization name"
+                            placeholder="Enter organization name"
+                            required
+                            value={
+                              form.values.affiliations[index]?.org_name ?? ""
+                            }
+                            onChange={(e) => {
+                              form.setValues({
+                                ...form.values,
+                                affiliations: form.values.affiliations.map(
+                                  (affiliation, i) =>
+                                    i === index
+                                      ? {
+                                          ...affiliation,
+                                          org_name: e.target.value,
+                                        }
+                                      : affiliation
+                                ),
+                              });
+                            }}
+                          />
+                          <TextInput
+                            w="100%"
+                            label="Position"
+                            placeholder="Enter your position in the organization"
+                            required
+                            value={
+                              form.values.affiliations[index]?.org_postion ?? ""
+                            }
+                            onChange={(e) => {
+                              form.setValues({
+                                ...form.values,
+                                affiliations: form.values.affiliations.map(
+                                  (affiliation, i) =>
+                                    i === index
+                                      ? {
+                                          ...affiliation,
+                                          org_postion: e.target.value,
+                                        }
+                                      : affiliation
+                                ),
+                              });
+                            }}
+                          />
+
+                          <Flex gap="xs">
+                            <YearPickerInput
+                              label="Start year"
+                              placeholder="Enter start year"
+                              w="100%"
+                              popoverProps={{
+                                withinPortal: true,
+                              }}
+                              value={
+                                form.values.affiliations[index]?.start_year ??
+                                new Date()
+                              }
+                              onChange={(date) => {
+                                form.setValues({
+                                  ...form.values,
+                                  affiliations: form.values.affiliations.map(
+                                    (affiliation, i) =>
+                                      i === index
+                                        ? {
+                                            ...affiliation,
+                                            start_year: date,
+                                          }
+                                        : affiliation
+                                  ),
+                                });
+                              }}
+                              required
+                            />
+                            <YearPickerInput
+                              label="End year"
+                              placeholder="Enter end year"
+                              w="100%"
+                              popoverProps={{
+                                withinPortal: true,
+                              }}
+                              value={
+                                form.values.affiliations[index]?.end_year ??
+                                new Date()
+                              }
+                              onChange={(date) => {
+                                form.setValues({
+                                  ...form.values,
+                                  affiliations: form.values.affiliations.map(
+                                    (affiliation, i) =>
+                                      i === index
+                                        ? {
+                                            ...affiliation,
+                                            end_year: date,
+                                          }
+                                        : affiliation
+                                  ),
+                                });
+                              }}
+                              required
+                            />
+                          </Flex>
+                          <Button
+                            variant="outline"
+                            mt="xs"
+                            size="xs"
+                            w="100%"
+                            color="red"
+                            onClick={() => {
+                              form.setValues({
+                                ...form.values,
+
+                                affiliations: form.values.affiliations.filter(
+                                  (_, i) => i !== index
+                                ),
+                              });
+                            }}
+                          >
+                            Delete affiliation
+                          </Button>
+                        </Box>
+                      );
+                    })}
+
+                    <Button
+                      leftIcon={<IconPlus size="1.25rem" />}
+                      onClick={() => {
+                        form.setValues({
+                          ...form.values,
+
+                          affiliations: [
+                            ...form.values.affiliations,
+                            {
+                              id: "",
+                              org_name: "",
+                              org_postion: "",
+                              start_year: new Date(
+                                new Date().getFullYear(),
+                                -1
+                              ),
+                              end_year: new Date(new Date().getFullYear(), 0),
+                            },
+                          ],
+                        });
+                      }}
+                    >
+                      Add affiliation
+                    </Button>
+                  </Stack>
+                </Tabs.Panel>
+                <Tabs.Panel value="events-attended" pt="xs">
+                  <Stack spacing="md">
+                    {form.values.eventAttended.map((_, index) => {
+                      return (
+                        <Box key={index}>
+                          <Flex gap="xs">
+                            <TextInput
+                              w="100%"
+                              label="Seminars attended"
+                              placeholder="Enter seminars attended"
+                              required
+                              value={
+                                form.values.eventAttended[index]?.name ?? ""
+                              }
+                              onChange={(e) => {
+                                form.setValues({
+                                  ...form.values,
+                                  eventAttended: form.values.eventAttended.map(
+                                    (achievement, i) =>
+                                      i === index
+                                        ? {
+                                            ...achievement,
+                                            name: e.target.value,
+                                          }
+                                        : achievement
+                                  ),
+                                });
+                              }}
+                            />
+                            <YearPickerInput
+                              label="Year"
+                              placeholder="Enter year"
+                              popoverProps={{
+                                withinPortal: true,
+                              }}
+                              value={
+                                form.values.eventAttended[index]?.year ??
+                                new Date()
+                              }
+                              onChange={(date) => {
+                                form.setValues({
+                                  ...form.values,
+                                  eventAttended: form.values.eventAttended.map(
+                                    (achievement, i) =>
+                                      i === index
+                                        ? {
+                                            ...achievement,
+                                            year: date,
+                                          }
+                                        : achievement
+                                  ),
+                                });
+                              }}
+                              required
+                            />
+                          </Flex>
+                          <Button
+                            variant="outline"
+                            mt="xs"
+                            size="xs"
+                            w="100%"
+                            color="red"
+                            onClick={() => {
+                              form.setValues({
+                                ...form.values,
+
+                                eventAttended: form.values.eventAttended.filter(
+                                  (_, i) => i !== index
+                                ),
+                              });
+                            }}
+                          >
+                            Delete seminar attended
+                          </Button>
+                        </Box>
+                      );
+                    })}
+
+                    <Button
+                      leftIcon={<IconPlus size="1.25rem" />}
+                      onClick={() => {
+                        form.setValues({
+                          ...form.values,
+
+                          eventAttended: [
+                            ...form.values.eventAttended,
+                            {
+                              id: "",
+                              name: "",
+                              year: new Date(new Date().getFullYear(), 0),
+                            },
+                          ],
+                        });
+                      }}
+                    >
+                      Add seminar attended
+                    </Button>
+                  </Stack>
+                </Tabs.Panel>
+              </Tabs>
             </Tabs.Tab>
           </Tabs.List>
 
