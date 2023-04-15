@@ -7,8 +7,17 @@ import {
   Breadcrumbs,
   Stack,
   Anchor,
+  List,
 } from "@mantine/core";
-import type { Candidate, Election, Partylist, Position } from "@prisma/client";
+import type {
+  Achievement,
+  Affiliation,
+  Candidate,
+  Election,
+  EventAttended,
+  Partylist,
+  Position,
+} from "@prisma/client";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { getServerAuthSession } from "../../server/auth";
 import { prisma } from "../../server/db";
@@ -16,6 +25,7 @@ import Image from "next/image";
 import { IconUser } from "@tabler/icons-react";
 import Link from "next/link";
 import Head from "next/head";
+import Moment from "react-moment";
 
 const CandidatePage = ({
   election,
@@ -23,8 +33,15 @@ const CandidatePage = ({
 }: {
   election: Election;
   candidate: Candidate & {
-    partylist: Partylist;
+    credential:
+      | (Credential & {
+          affiliations: Affiliation[];
+          achievements: Achievement[];
+          eventsAttended: EventAttended[];
+        })
+      | null;
     position: Position;
+    partylist: Partylist;
   };
 }) => {
   const title = `${`${candidate.last_name}, ${candidate.first_name}${
@@ -130,6 +147,73 @@ const CandidatePage = ({
               </Title>
               <Text>Running for {candidate.position.name}</Text>
               <Text>{candidate.partylist.name}</Text>
+
+              {(candidate.credential?.affiliations.length ||
+                candidate.credential?.achievements.length ||
+                candidate.credential?.eventsAttended.length) && (
+                <Stack mt="xl" spacing="xs">
+                  <Title order={3}>Credentials</Title>
+
+                  {candidate.credential?.achievements.length && (
+                    <Box>
+                      <Title order={5}>Achievements</Title>
+                      <List>
+                        {candidate.credential?.achievements.map(
+                          (achievement) => (
+                            <List.Item key={achievement.id}>
+                              {achievement.name} (
+                              <Moment date={achievement.year} format="YYYY" />)
+                            </List.Item>
+                          )
+                        )}
+                      </List>
+                    </Box>
+                  )}
+
+                  {candidate.credential?.affiliations.length && (
+                    <Box>
+                      <Title order={5}>Affiliations</Title>
+                      <List>
+                        {candidate.credential?.affiliations.map(
+                          (affiliation) => (
+                            <List.Item key={affiliation.id}>
+                              {affiliation.org_name} (
+                              <Moment
+                                format="YYYY"
+                                date={affiliation.start_year}
+                              />
+                              -
+                              <Moment
+                                format="YYYY"
+                                date={affiliation.end_year}
+                              />
+                              )
+                            </List.Item>
+                          )
+                        )}
+                      </List>
+                    </Box>
+                  )}
+
+                  {candidate.credential?.eventsAttended.length && (
+                    <Box>
+                      <Title order={5}>Seminars/Events Attended</Title>
+
+                      <List>
+                        {candidate.credential?.eventsAttended.map(
+                          (eventAttended) => (
+                            <List.Item key={eventAttended.id}>
+                              {eventAttended.name} (
+                              <Moment date={eventAttended.year} format="YYYY" />
+                              )
+                            </List.Item>
+                          )
+                        )}
+                      </List>
+                    </Box>
+                  )}
+                </Stack>
+              )}
             </Box>
           </Flex>
         </Stack>
@@ -205,6 +289,13 @@ export const getServerSideProps: GetServerSideProps = async (
     include: {
       partylist: true,
       position: true,
+      credential: {
+        include: {
+          achievements: true,
+          affiliations: true,
+          eventsAttended: true,
+        },
+      },
     },
   });
 
