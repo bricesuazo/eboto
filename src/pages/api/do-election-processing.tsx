@@ -81,8 +81,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   console.log("🚀 ~ file: do-election-processing.tsx:82 ~ handler ~ now:", now);
   env.NODE_ENV === "production"
-    ? now.setDate(now.getDate() + 1)
-    : now.setDate(now.getDate() + 2);
+    ? now.setDate(now.getDate() + 2)
+    : now.setDate(now.getDate() + 3);
 
   const end_date =
     env.NODE_ENV === "production"

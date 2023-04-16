@@ -390,7 +390,7 @@ const DashboardSettings = () => {
                     />
                     <Select
                       dropdownPosition="bottom"
-                      label="Voting hour start"
+                      label="Voting hour end"
                       description="You can't change voting hour end once the election is ongoing."
                       withAsterisk
                       withinPortal
