@@ -11,6 +11,7 @@ import {
   rem,
   Box,
   Flex,
+  ActionIcon,
 } from "@mantine/core";
 import { api } from "../../utils/api";
 import type {
@@ -879,8 +880,25 @@ const EditCandidateModal = ({
                 </Alert>
               )}
 
-            <Group position="apart">
+            <Group position="apart" spacing={0}>
+              <ActionIcon
+                size="lg"
+                variant="outline"
+                color="green"
+                sx={(theme) => ({
+                  [theme.fn.largerThan("xs")]: {
+                    display: "none",
+                  },
+                })}
+              >
+                <IconExternalLink size="1.25rem" />
+              </ActionIcon>
               <Button
+                sx={(theme) => ({
+                  [theme.fn.smallerThan("xs")]: {
+                    display: "none",
+                  },
+                })}
                 leftIcon={<IconExternalLink size="1.25rem" />}
                 variant="outline"
                 component={Link}
