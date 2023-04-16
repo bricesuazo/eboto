@@ -181,6 +181,75 @@ const EditCandidateModal = ({
     }
   }, [isOpen]);
 
+  const DeleteCredentialButton = ({
+    type,
+    id,
+  }: {
+    type: "ACHIEVEMENT" | "AFFILIATION" | "EVENTATTENDED";
+    id: string;
+  }) => {
+    const deleteCredentialMutation =
+      api.candidate.deleteSingleCredential.useMutation();
+    return (
+      <Button
+        variant="outline"
+        mt="xs"
+        size="xs"
+        w="100%"
+        color="red"
+        onClick={async () => {
+          if (type === "ACHIEVEMENT") {
+            if (candidate.credential?.achievements.find((a) => a.id === id)) {
+              await deleteCredentialMutation.mutateAsync({ id, type });
+              await context.candidate.getAll.invalidate();
+              onClose();
+            } else {
+              form.setValues({
+                ...form.values,
+                achievements: form.values.achievements.filter(
+                  (a) => a.id !== id
+                ),
+              });
+            }
+          } else if (type === "AFFILIATION") {
+            if (candidate.credential?.affiliations.find((a) => a.id === id)) {
+              await deleteCredentialMutation.mutateAsync({ id, type });
+              await context.candidate.getAll.invalidate();
+              onClose();
+            } else {
+              form.setValues({
+                ...form.values,
+                affiliations: form.values.affiliations.filter(
+                  (a) => a.id !== id
+                ),
+              });
+            }
+          } else {
+            if (candidate.credential?.eventsAttended.find((a) => a.id === id)) {
+              await deleteCredentialMutation.mutateAsync({ id, type });
+              await context.candidate.getAll.invalidate();
+              onClose();
+            } else {
+              form.setValues({
+                ...form.values,
+                eventAttended: form.values.eventAttended.filter(
+                  (a) => a.id !== id
+                ),
+              });
+            }
+          }
+        }}
+        loading={deleteCredentialMutation.isLoading}
+      >
+        {type === "ACHIEVEMENT"
+          ? "Delete Achievement"
+          : type === "AFFILIATION"
+          ? "Delete Affiliation"
+          : "Delete Event Attended"}
+      </Button>
+    );
+  };
+
   return (
     <Modal
       opened={isOpen || loading}
@@ -484,7 +553,7 @@ const EditCandidateModal = ({
 
                 <Tabs.Panel value="achievements" pt="xs">
                   <Stack spacing="md">
-                    {form.values.achievements.map((_, index) => {
+                    {form.values.achievements.map((achievement, index) => {
                       return (
                         <Box key={index}>
                           <Flex gap="xs">
@@ -538,24 +607,10 @@ const EditCandidateModal = ({
                               required
                             />
                           </Flex>
-                          <Button
-                            variant="outline"
-                            mt="xs"
-                            size="xs"
-                            w="100%"
-                            color="red"
-                            onClick={() => {
-                              form.setValues({
-                                ...form.values,
-
-                                achievements: form.values.achievements.filter(
-                                  (_, i) => i !== index
-                                ),
-                              });
-                            }}
-                          >
-                            Delete achievement
-                          </Button>
+                          <DeleteCredentialButton
+                            type="ACHIEVEMENT"
+                            id={achievement.id}
+                          />
                         </Box>
                       );
                     })}
@@ -583,7 +638,7 @@ const EditCandidateModal = ({
                 </Tabs.Panel>
                 <Tabs.Panel value="affiliations" pt="xs">
                   <Stack spacing="md">
-                    {form.values.affiliations.map((_, index) => {
+                    {form.values.affiliations.map((affiliation, index) => {
                       return (
                         <Box key={index}>
                           <TextInput
@@ -689,24 +744,10 @@ const EditCandidateModal = ({
                               required
                             />
                           </Flex>
-                          <Button
-                            variant="outline"
-                            mt="xs"
-                            size="xs"
-                            w="100%"
-                            color="red"
-                            onClick={() => {
-                              form.setValues({
-                                ...form.values,
-
-                                affiliations: form.values.affiliations.filter(
-                                  (_, i) => i !== index
-                                ),
-                              });
-                            }}
-                          >
-                            Delete affiliation
-                          </Button>
+                          <DeleteCredentialButton
+                            type="AFFILIATION"
+                            id={affiliation.id}
+                          />
                         </Box>
                       );
                     })}
@@ -739,7 +780,7 @@ const EditCandidateModal = ({
                 </Tabs.Panel>
                 <Tabs.Panel value="events-attended" pt="xs">
                   <Stack spacing="md">
-                    {form.values.eventAttended.map((_, index) => {
+                    {form.values.eventAttended.map((eventAttended, index) => {
                       return (
                         <Box key={index}>
                           <Flex gap="xs">
@@ -793,24 +834,10 @@ const EditCandidateModal = ({
                               required
                             />
                           </Flex>
-                          <Button
-                            variant="outline"
-                            mt="xs"
-                            size="xs"
-                            w="100%"
-                            color="red"
-                            onClick={() => {
-                              form.setValues({
-                                ...form.values,
-
-                                eventAttended: form.values.eventAttended.filter(
-                                  (_, i) => i !== index
-                                ),
-                              });
-                            }}
-                          >
-                            Delete seminar attended
-                          </Button>
+                          <DeleteCredentialButton
+                            type="EVENTATTENDED"
+                            id={eventAttended.id}
+                          />
                         </Box>
                       );
                     })}

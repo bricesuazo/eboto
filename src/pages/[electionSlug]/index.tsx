@@ -294,7 +294,7 @@ export const getServerSideProps: GetServerSideProps = async (
         props: {
           isOngoing,
           hasVoted: false,
-          election,
+          election: JSON.parse(JSON.stringify(election)) as Election,
         },
       };
 
@@ -302,7 +302,7 @@ export const getServerSideProps: GetServerSideProps = async (
       props: {
         isOngoing,
         hasVoted: true,
-        election,
+        election: JSON.parse(JSON.stringify(election)) as Election,
       },
     };
   } else if (election.publicity === "VOTER") {
@@ -325,7 +325,7 @@ export const getServerSideProps: GetServerSideProps = async (
       props: {
         isOngoing,
         hasVoted: !!vote,
-        election,
+        election: JSON.parse(JSON.stringify(election)) as Election,
       },
     };
   } else if (election.publicity === "PUBLIC") {
@@ -334,7 +334,7 @@ export const getServerSideProps: GetServerSideProps = async (
         props: {
           isOngoing,
           hasVoted: true,
-          election,
+          election: JSON.parse(JSON.stringify(election)) as Election,
         },
       };
 
@@ -349,7 +349,7 @@ export const getServerSideProps: GetServerSideProps = async (
       props: {
         isOngoing,
         hasVoted: !!vote,
-        election,
+        election: JSON.parse(JSON.stringify(election)) as Election,
       },
     };
   }
@@ -358,7 +358,7 @@ export const getServerSideProps: GetServerSideProps = async (
     props: {
       isOngoing,
       hasVoted: true,
-      election,
+      election: JSON.parse(JSON.stringify(election)) as Election,
     },
   };
 };

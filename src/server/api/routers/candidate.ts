@@ -4,6 +4,34 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const candidateRouter = createTRPCRouter({
+  deleteSingleCredential: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        type: z.enum(["ACHIEVEMENT", "AFFILIATION", "EVENTATTENDED"]),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      if (input.type === "ACHIEVEMENT") {
+        return ctx.prisma.achievement.delete({
+          where: {
+            id: input.id,
+          },
+        });
+      } else if (input.type === "AFFILIATION") {
+        return ctx.prisma.affiliation.delete({
+          where: {
+            id: input.id,
+          },
+        });
+      } else if (input.type === "EVENTATTENDED") {
+        return ctx.prisma.eventAttended.delete({
+          where: {
+            id: input.id,
+          },
+        });
+      }
+    }),
   uploadImage: protectedProcedure
     .input(z.object({ candidateId: z.string(), file: z.string() }))
     .mutation(async ({ input, ctx }) => {
