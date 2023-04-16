@@ -1,31 +1,30 @@
 import { Box, Button, Center, Flex, Group, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
 import type { Partylist } from "@prisma/client";
-import { IconCheck, IconFlag } from "@tabler/icons-react";
-import { api } from "../utils/api";
 import EditPartylistModal from "./modals/EditPartylist";
+import ConfirmDeletePartylistModal from "./modals/ConfirmDeletePartylistModal";
+import { IconFlag } from "@tabler/icons-react";
 
 const PartylistCard = ({ partylist }: { partylist: Partylist }) => {
-  const [opened, { open, close }] = useDisclosure(false);
-  const context = api.useContext();
-  const deletePartylistMutation = api.partylist.deleteSingle.useMutation({
-    onSuccess: async (data) => {
-      await context.partylist.getAll.invalidate();
-      notifications.show({
-        title: `${data.name} (${data.acronym}) deleted!`,
-        message: "Successfully deleted partylist",
-        icon: <IconCheck size="1.1rem" />,
-        autoClose: 5000,
-      });
-    },
-  });
+  const [
+    openedEditPartylist,
+    { open: openEditPartylist, close: closeEditPartylist },
+  ] = useDisclosure(false);
+  const [
+    openedConfirmDeletePartylist,
+    { open: openConfirmDeletePartylist, close: closeConfirmDeletePartylist },
+  ] = useDisclosure(false);
 
   return (
     <>
+      <ConfirmDeletePartylistModal
+        isOpen={openedConfirmDeletePartylist}
+        onClose={closeConfirmDeletePartylist}
+        partylist={partylist}
+      />
       <EditPartylistModal
-        isOpen={opened}
-        onClose={close}
+        isOpen={openedEditPartylist}
+        onClose={closeEditPartylist}
         partylist={partylist}
       />
       <Flex
@@ -58,18 +57,11 @@ const PartylistCard = ({ partylist }: { partylist: Partylist }) => {
         </Center>
 
         <Group spacing="xs">
-          <Button
-            disabled={deletePartylistMutation.isLoading}
-            onClick={open}
-            variant="light"
-            size="sm"
-            compact
-          >
+          <Button onClick={openEditPartylist} variant="light" size="sm" compact>
             Edit
           </Button>
           <Button
-            onClick={() => deletePartylistMutation.mutate(partylist.id)}
-            loading={deletePartylistMutation.isLoading}
+            onClick={openConfirmDeletePartylist}
             variant="light"
             color="red"
             size="sm"
