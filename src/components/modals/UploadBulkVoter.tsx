@@ -13,6 +13,7 @@ import {
 import { Dropzone, MS_EXCEL_MIME_TYPE } from "@mantine/dropzone";
 import {
   IconCheck,
+  IconDownload,
   IconFileSpreadsheet,
   IconTrash,
   IconUpload,
@@ -24,6 +25,7 @@ import { useDidUpdate } from "@mantine/hooks";
 import Balancer from "react-wrap-balancer";
 import { api } from "../../utils/api";
 import { notifications } from "@mantine/notifications";
+import { supabase } from "../../lib/supabase";
 
 const UploadBulkVoter = ({
   isOpen,
@@ -34,6 +36,13 @@ const UploadBulkVoter = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
+  const [downloadSample, setDownloadSample] = useState<{
+    loading: boolean;
+    error: string | null;
+  }>({
+    loading: false,
+    error: null,
+  });
   const context = api.useContext();
   const createManyVoterMutation = api.voter.createMany.useMutation({
     onSuccess: async (data) => {
@@ -221,6 +230,51 @@ const UploadBulkVoter = ({
             </Flex>
           </Dropzone>
         )}
+        <Button
+          size="xs"
+          variant="outline"
+          leftIcon={<IconDownload size="1rem" />}
+          loading={downloadSample.loading}
+          onClick={async () => {
+            setDownloadSample({
+              loading: true,
+              error: null,
+            });
+
+            const { data, error } = await supabase.storage
+              .from("eboto-mo")
+              .download(`assets/voters.xlsx`);
+
+            if (error) {
+              setDownloadSample({
+                loading: false,
+                error: error.message,
+              });
+              return;
+            }
+
+            const url = URL.createObjectURL(data);
+
+            const anchor = document.createElement("a");
+            anchor.href = url;
+            anchor.download = "voters.xlsx";
+
+            document.body.appendChild(anchor);
+
+            anchor.click();
+
+            document.body.removeChild(anchor);
+
+            URL.revokeObjectURL(url);
+
+            setDownloadSample({
+              loading: false,
+              error: null,
+            });
+          }}
+        >
+          Download sample excel file
+        </Button>
         <Flex justify="space-between" align="center">
           <ActionIcon
             title="Clear all"
