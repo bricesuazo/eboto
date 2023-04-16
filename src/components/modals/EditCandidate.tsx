@@ -46,6 +46,8 @@ import {
 import Image from "next/image";
 import { uploadImage } from "../../utils/uploadImage";
 import { YearPickerInput, type DateValue } from "@mantine/dates";
+import { IconExternalLink } from "@tabler/icons-react";
+import Link from "next/link";
 
 const EditCandidateModal = ({
   isOpen,
@@ -877,17 +879,31 @@ const EditCandidateModal = ({
                 </Alert>
               )}
 
-            <Group position="right" spacing="xs">
-              <Button variant="default" onClick={onClose} disabled={loading}>
-                Cancel
-              </Button>
+            <Group position="apart">
               <Button
-                type="submit"
-                disabled={!form.isDirty()}
-                loading={loading}
+                leftIcon={<IconExternalLink size="1.25rem" />}
+                variant="outline"
+                component={Link}
+                href={`/${router.query.electionSlug as string}/${
+                  candidate.slug
+                }`}
+                target="_blank"
               >
-                Update
+                Visit
               </Button>
+
+              <Group position="right" spacing="xs">
+                <Button variant="default" onClick={onClose} disabled={loading}>
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={!form.isDirty()}
+                  loading={loading}
+                >
+                  Update
+                </Button>
+              </Group>
             </Group>
           </Stack>
         </Tabs>
