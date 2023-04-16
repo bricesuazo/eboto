@@ -1,29 +1,31 @@
 import { Button, Flex, Group, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
 import type { Position } from "@prisma/client";
-import { IconCheck } from "@tabler/icons-react";
-import { api } from "../utils/api";
 import EditPositionModal from "./modals/EditPosition";
+import ConfirmDeletePositionModal from "./modals/ConfirmDeletePositionModal";
 
 const PositionCard = ({ position }: { position: Position }) => {
-  const context = api.useContext();
-  const [opened, { open, close }] = useDisclosure(false);
-  const deletePositionMutation = api.position.deleteSingle.useMutation({
-    onSuccess: async (data) => {
-      await context.position.getAll.invalidate();
-      notifications.show({
-        title: `${data.name} deleted!`,
-        message: "Successfully deleted position",
-        icon: <IconCheck size="1.1rem" />,
-        autoClose: 5000,
-      });
-    },
-  });
+  const [
+    openedConfirmDeletePosition,
+    { open: openConfirmDeletePosition, close: closeConfirmDeletePosition },
+  ] = useDisclosure(false);
+  const [
+    openedEditPosition,
+    { open: openEditPosition, close: closeEditPosition },
+  ] = useDisclosure(false);
 
   return (
     <>
-      <EditPositionModal isOpen={opened} onClose={close} position={position} />
+      <ConfirmDeletePositionModal
+        isOpen={openedConfirmDeletePosition}
+        onClose={closeConfirmDeletePosition}
+        position={position}
+      />
+      <EditPositionModal
+        isOpen={openedEditPosition}
+        onClose={closeEditPosition}
+        position={position}
+      />
       <Flex
         direction="column"
         w={172}
@@ -53,12 +55,11 @@ const PositionCard = ({ position }: { position: Position }) => {
         </Title>
 
         <Group spacing="xs">
-          <Button onClick={open} variant="light" size="sm" compact>
+          <Button onClick={openEditPosition} variant="light" size="sm" compact>
             Edit
           </Button>
           <Button
-            onClick={() => deletePositionMutation.mutate(position.id)}
-            loading={deletePositionMutation.isLoading}
+            onClick={openConfirmDeletePosition}
             variant="light"
             color="red"
             size="sm"
