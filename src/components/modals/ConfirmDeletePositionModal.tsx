@@ -57,7 +57,7 @@ const ConfirmDeletePositionModal = ({
         <Group position="right" spacing="xs">
           <Button
             variant="default"
-            onClick={close}
+            onClick={onClose}
             disabled={deletePositionMutation.isLoading}
           >
             Cancel

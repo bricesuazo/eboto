@@ -1,6 +1,5 @@
 import { Button, Flex, Text, Group, Box } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
 import type {
   Achievement,
   Affiliation,
@@ -10,10 +9,10 @@ import type {
   Partylist,
   Position,
 } from "@prisma/client";
-import { api } from "../utils/api";
 import EditCandidateModal from "./modals/EditCandidate";
-import { IconCheck, IconUser } from "@tabler/icons-react";
+import { IconUser } from "@tabler/icons-react";
 import Image from "next/image";
+import ConfirmDeleteCandidateModal from "./modals/ConfirmDeleteCandidateModal";
 
 const CandidateCard = ({
   candidate,
@@ -32,25 +31,25 @@ const CandidateCard = ({
   partylists: Partylist[];
   positions: Position[];
 }) => {
-  const context = api.useContext();
-  const [opened, { open, close }] = useDisclosure(false);
-  const deletePositionMutation = api.candidate.deleteSingle.useMutation({
-    onSuccess: async (data) => {
-      await context.candidate.getAll.invalidate();
-      notifications.show({
-        title: `${data.first_name} ${data.last_name} deleted!`,
-        message: "Successfully deleted candidate",
-        icon: <IconCheck size="1.1rem" />,
-        autoClose: 5000,
-      });
-    },
-  });
+  const [
+    openedConfirmDeleteCandidate,
+    { open: openConfirmDeleteCandidate, close: closeConfirmDeleteCandidate },
+  ] = useDisclosure(false);
+  const [
+    openedEditCandidate,
+    { open: openEditCandidate, close: closeEditCandidate },
+  ] = useDisclosure(false);
 
   return (
     <>
+      <ConfirmDeleteCandidateModal
+        isOpen={openedConfirmDeleteCandidate}
+        onClose={closeConfirmDeleteCandidate}
+        candidate={candidate}
+      />
       <EditCandidateModal
-        isOpen={opened}
-        onClose={close}
+        isOpen={openedEditCandidate}
+        onClose={closeEditCandidate}
         partylists={partylists}
         candidate={candidate}
         positions={positions}
@@ -102,7 +101,7 @@ const CandidateCard = ({
 
           <Group spacing="xs">
             <Button
-              onClick={open}
+              onClick={openEditCandidate}
               variant="light"
               compact
               size="sm"
@@ -111,8 +110,7 @@ const CandidateCard = ({
               Edit
             </Button>
             <Button
-              onClick={() => deletePositionMutation.mutate(candidate.id)}
-              loading={deletePositionMutation.isLoading}
+              onClick={openConfirmDeleteCandidate}
               variant="light"
               color="red"
               compact

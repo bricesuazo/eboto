@@ -1,26 +1,26 @@
-import { Alert, Button, Group, Mark, Modal, Stack, Text } from "@mantine/core";
-import type { Partylist } from "@prisma/client";
+import { Alert, Button, Group, Modal, Stack, Text } from "@mantine/core";
+import type { Candidate } from "@prisma/client";
 import { api } from "../../utils/api";
 import { notifications } from "@mantine/notifications";
 import { IconCheck } from "@tabler/icons-react";
 import { IconAlertCircle } from "@tabler/icons-react";
 
-const ConfirmDeletePartylistModal = ({
+const ConfirmDeleteCandidateModal = ({
   isOpen,
   onClose,
-  partylist,
+  candidate,
 }: {
   isOpen: boolean;
   onClose: () => void;
-  partylist: Partylist;
+  candidate: Candidate;
 }) => {
   const context = api.useContext();
-  const deletePartylistMutation = api.partylist.deleteSingle.useMutation({
+  const deletePositionMutation = api.candidate.deleteSingle.useMutation({
     onSuccess: async (data) => {
-      await context.partylist.getAll.invalidate();
+      await context.candidate.getAll.invalidate();
       notifications.show({
-        title: `${data.name} (${data.acronym}) deleted!`,
-        message: "Successfully deleted partylist",
+        title: `${data.first_name} ${data.last_name} deleted!`,
+        message: "Successfully deleted candidate",
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
@@ -28,45 +28,43 @@ const ConfirmDeletePartylistModal = ({
   });
   return (
     <Modal
-      opened={isOpen || deletePartylistMutation.isLoading}
+      opened={isOpen || deletePositionMutation.isLoading}
       onClose={onClose}
       title={
         <Text weight={600}>
-          Confirm Delete Partylist - {partylist.name} ({partylist.acronym})
+          Confirm Delete Candidate - {candidate.first_name}{" "}
+          {candidate.last_name}
+          {candidate.middle_name ? ` ${candidate.middle_name}` : ""}
         </Text>
       }
     >
       <Stack spacing="sm">
         <Stack>
-          <Text>Are you sure you want to delete this partylist?</Text>
-          <Mark p="sm" color="red">
-            This will also delete all the candidates under this partylist. Make
-            sure you change the partylist of the candidates first.
-          </Mark>
+          <Text>Are you sure you want to delete this candidate?</Text>
           <Text>This action cannot be undone.</Text>
         </Stack>
-        {deletePartylistMutation.error?.data?.code === "UNAUTHORIZED" && (
+        {deletePositionMutation.error?.data?.code === "UNAUTHORIZED" && (
           <Alert
             icon={<IconAlertCircle size="1rem" />}
             color="red"
             title="Error"
             variant="filled"
           >
-            {deletePartylistMutation.error.message}
+            {deletePositionMutation.error.message}
           </Alert>
         )}
         <Group position="right" spacing="xs">
           <Button
             variant="default"
             onClick={onClose}
-            disabled={deletePartylistMutation.isLoading}
+            disabled={deletePositionMutation.isLoading}
           >
             Cancel
           </Button>
           <Button
             color="red"
-            loading={deletePartylistMutation.isLoading}
-            onClick={() => deletePartylistMutation.mutate(partylist.id)}
+            loading={deletePositionMutation.isLoading}
+            onClick={() => deletePositionMutation.mutate(candidate.id)}
             type="submit"
           >
             Confirm Delete
@@ -77,4 +75,4 @@ const ConfirmDeletePartylistModal = ({
   );
 };
 
-export default ConfirmDeletePartylistModal;
+export default ConfirmDeleteCandidateModal;
