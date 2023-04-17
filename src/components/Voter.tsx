@@ -4,10 +4,23 @@ import {
   useMantineTheme,
   ActionIcon,
   createStyles,
+  Modal,
+  Stack,
+  Group,
+  Flex,
+  Box,
 } from "@mantine/core";
-import { IconTrash } from "@tabler/icons-react";
+import {
+  IconCheck,
+  IconMailForward,
+  IconTrash,
+  IconUserPlus,
+  IconX,
+} from "@tabler/icons-react";
 import ConfirmDeleteVoterModal from "./modals/ConfirmDeleteVoterModal";
 import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
+import { api } from "../utils/api";
 
 const useStyles = createStyles((theme) => ({
   emailCol: {
@@ -35,15 +48,71 @@ const Voter = ({
   };
   electionId: string;
 }) => {
+  const context = api.useContext();
+  const [
+    openedInviteVoter,
+    { open: openInviteVoter, close: closeInviteVoter },
+  ] = useDisclosure(false);
   const [
     openedConfirmDeleteVoter,
     { open: openConfirmDeleteVoter, close: closeConfirmDeleteVoter },
   ] = useDisclosure(false);
+
+  const sendSingleInvitationMutation =
+    api.voter.sendSingleInvitation.useMutation({
+      onSuccess: async () => {
+        await context.election.getElectionVoter.invalidate();
+        notifications.show({
+          title: "Invitation sent!",
+          message: "Successfully sent invitation",
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        closeInviteVoter();
+      },
+    });
   const { classes } = useStyles();
   const theme = useMantineTheme();
 
   return (
     <>
+      <Modal
+        opened={openedInviteVoter || sendSingleInvitationMutation.isLoading}
+        onClose={closeInviteVoter}
+        title={
+          <Text weight={600}>
+            Are you sure you want to invite {voter.email}
+            {voter.status === "INVITED" && " again"}?
+          </Text>
+        }
+      >
+        <Stack spacing="sm">
+          <Text>
+            This will send{voter.status === "INVITED" && " again"} an invitation
+            to this voter to join the election.
+          </Text>
+          <Group position="right" spacing="xs">
+            <Button
+              variant="default"
+              onClick={closeInviteVoter}
+              disabled={sendSingleInvitationMutation.isLoading}
+            >
+              Cancel
+            </Button>
+            <Button
+              loading={sendSingleInvitationMutation.isLoading}
+              onClick={() =>
+                sendSingleInvitationMutation.mutate({
+                  electionId,
+                  voterId: voter.id,
+                })
+              }
+            >
+              Invite{voter.status === "INVITED" && " again"}
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
       <ConfirmDeleteVoterModal
         isOpen={openedConfirmDeleteVoter}
         onClose={closeConfirmDeleteVoter}
@@ -70,33 +139,90 @@ const Voter = ({
           </Text>
         </td>
         <td className={classes.statusCol}>
-          <Text align="center">{voter.status}</Text>
-        </td>
-        <td>
-          <Button
-            compact
-            color="red"
+          <Text
+            align="center"
             sx={(theme) => ({
               [theme.fn.smallerThan("xs")]: {
                 display: "none",
               },
             })}
-            onClick={openConfirmDeleteVoter}
-            loaderPosition="center"
           >
-            Delete
-          </Button>
-          <ActionIcon
-            color="red"
-            onClick={openConfirmDeleteVoter}
+            {voter.status}
+          </Text>
+          <Flex
+            justify="center"
             sx={(theme) => ({
               [theme.fn.largerThan("xs")]: {
                 display: "none",
               },
             })}
           >
-            <IconTrash size="1.25rem" />
-          </ActionIcon>
+            {voter.status === "ACCEPTED" ? (
+              <IconCheck />
+            ) : voter.status === "DECLINED" ? (
+              <IconX />
+            ) : voter.status === "INVITED" ? (
+              <IconMailForward />
+            ) : voter.status === "ADDED" ? (
+              <IconUserPlus />
+            ) : null}
+          </Flex>
+        </td>
+        <td>
+          <Flex justify="flex-end" gap="xs">
+            {(voter.status === "INVITED" || voter.status === "ADDED") && (
+              <Button
+                compact
+                onClick={openInviteVoter}
+                loaderPosition="center"
+                variant={voter.status === "INVITED" ? "subtle" : "light"}
+              >
+                <Text
+                  sx={(theme) => ({
+                    [theme.fn.smallerThan("xs")]: {
+                      display: "none",
+                    },
+                  })}
+                >
+                  Invite{voter.status === "INVITED" && " again"}
+                </Text>
+                <Box
+                  sx={(theme) => ({
+                    [theme.fn.largerThan("xs")]: {
+                      display: "none",
+                    },
+                  })}
+                >
+                  <IconMailForward size="1.25rem" />
+                </Box>
+              </Button>
+            )}
+
+            <Button
+              compact
+              color="red"
+              sx={(theme) => ({
+                [theme.fn.smallerThan("xs")]: {
+                  display: "none",
+                },
+              })}
+              onClick={openConfirmDeleteVoter}
+              loaderPosition="center"
+            >
+              Delete
+            </Button>
+            <ActionIcon
+              color="red"
+              onClick={openConfirmDeleteVoter}
+              sx={(theme) => ({
+                [theme.fn.largerThan("xs")]: {
+                  display: "none",
+                },
+              })}
+            >
+              <IconTrash size="1.25rem" />
+            </ActionIcon>
+          </Flex>
         </td>
       </tr>
     </>
