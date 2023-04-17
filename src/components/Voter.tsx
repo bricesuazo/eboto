@@ -9,6 +9,7 @@ import {
   Group,
   Flex,
   Box,
+  Tooltip,
 } from "@mantine/core";
 import {
   IconCheck,
@@ -149,24 +150,28 @@ const Voter = ({
           >
             {voter.status}
           </Text>
-          <Flex
-            justify="center"
-            sx={(theme) => ({
-              [theme.fn.largerThan("xs")]: {
-                display: "none",
-              },
-            })}
+          <Tooltip
+            label={voter.status.charAt(0) + voter.status.slice(1).toLowerCase()}
           >
-            {voter.status === "ACCEPTED" ? (
-              <IconCheck />
-            ) : voter.status === "DECLINED" ? (
-              <IconX />
-            ) : voter.status === "INVITED" ? (
-              <IconMailForward />
-            ) : voter.status === "ADDED" ? (
-              <IconUserPlus />
-            ) : null}
-          </Flex>
+            <Flex
+              justify="center"
+              sx={(theme) => ({
+                [theme.fn.largerThan("xs")]: {
+                  display: "none",
+                },
+              })}
+            >
+              {voter.status === "ACCEPTED" ? (
+                <IconCheck aria-label="Accepted" />
+              ) : voter.status === "DECLINED" ? (
+                <IconX aria-label="Declined" />
+              ) : voter.status === "INVITED" ? (
+                <IconMailForward aria-label="Invited" />
+              ) : voter.status === "ADDED" ? (
+                <IconUserPlus aria-label="Added" />
+              ) : null}
+            </Flex>
+          </Tooltip>
         </td>
         <td>
           <Flex justify="flex-end" gap="xs">
@@ -186,15 +191,21 @@ const Voter = ({
                 >
                   Invite{voter.status === "INVITED" && " again"}
                 </Text>
-                <Box
-                  sx={(theme) => ({
-                    [theme.fn.largerThan("xs")]: {
-                      display: "none",
-                    },
-                  })}
+                <Tooltip
+                  label={
+                    "Invite" + (voter.status === "INVITED" ? " again" : "")
+                  }
                 >
-                  <IconMailForward size="1.25rem" />
-                </Box>
+                  <Box
+                    sx={(theme) => ({
+                      [theme.fn.largerThan("xs")]: {
+                        display: "none",
+                      },
+                    })}
+                  >
+                    <IconMailForward size="1.25rem" />
+                  </Box>
+                </Tooltip>
               </Button>
             )}
 
