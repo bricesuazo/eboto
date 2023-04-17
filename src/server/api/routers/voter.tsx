@@ -59,6 +59,12 @@ export const voterRouter = createTRPCRouter({
         });
       }
 
+      await ctx.prisma.verificationToken.deleteMany({
+        where: {
+          invitedVoterId: voter.id,
+        },
+      });
+
       const token = await ctx.prisma.verificationToken.create({
         data: {
           expiresAt: election.end_date,
@@ -136,6 +142,12 @@ export const voterRouter = createTRPCRouter({
 
       // send email to all invited voters
       for (const voter of invitedVoters) {
+        await ctx.prisma.verificationToken.deleteMany({
+          where: {
+            invitedVoterId: voter.id,
+          },
+        });
+
         const token = await ctx.prisma.verificationToken.create({
           data: {
             expiresAt: election.end_date,
