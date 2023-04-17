@@ -2,8 +2,90 @@ import { protectedProcedure } from "../trpc";
 import { z } from "zod";
 import { createTRPCRouter } from "../trpc";
 import { TRPCError } from "@trpc/server";
+import { sendEmailTransport } from "../../../../emails";
+import ElectionInvitation from "../../../../emails/ElectionInvitation";
+import { render } from "@react-email/render";
 
 export const voterRouter = createTRPCRouter({
+  sendManyInvitations: protectedProcedure
+    .input(
+      z.object({
+        electionId: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const election = await ctx.prisma.election.findUnique({
+        where: {
+          id: input.electionId,
+        },
+        include: {
+          commissioners: true,
+        },
+      });
+
+      if (!election) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election not found",
+        });
+      }
+
+      if (
+        !election.commissioners.some(
+          (commissioner) => commissioner.userId === ctx.session.user.id
+        )
+      ) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not a commissioner of this election",
+        });
+      }
+
+      const invitedVoters = await ctx.prisma.invitedVoter.findMany({
+        where: {
+          electionId: input.electionId,
+          status: "ADDED",
+        },
+      });
+
+      // send email to all invited voters
+      for (const voter of invitedVoters) {
+        const token = await ctx.prisma.verificationToken.create({
+          data: {
+            expiresAt: election.end_date,
+            type: "ELECTION_INVITATION",
+            invitedVoter: {
+              connect: {
+                id: voter.id,
+              },
+            },
+          },
+        });
+
+        await sendEmailTransport({
+          email: voter.email,
+          subject: `You have been invited to vote in ${election.name}`,
+          html: render(
+            <ElectionInvitation
+              type="VOTER"
+              token={token.id}
+              electionName={election.name}
+              electionEndDate={election.end_date}
+            />
+          ),
+        });
+
+        await ctx.prisma.invitedVoter.update({
+          where: {
+            id: voter.id,
+          },
+          data: {
+            status: "INVITED",
+          },
+        });
+      }
+      return invitedVoters;
+    }),
   removeSingle: protectedProcedure
     .input(
       z.object({

@@ -8,9 +8,17 @@ import {
   Stack,
   Center,
   Loader,
+  Modal,
+  Group,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconSearch, IconUpload, IconUserPlus } from "@tabler/icons-react";
+import {
+  IconCheck,
+  IconMailForward,
+  IconSearch,
+  IconUpload,
+  IconUserPlus,
+} from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import CreateVoterModal from "../../../components/modals/CreateVoter";
 import Voter from "../../../components/Voter";
@@ -19,10 +27,19 @@ import Balancer from "react-wrap-balancer";
 import UploadBulkVoter from "../../../components/modals/UploadBulkVoter";
 import { useEffect, useState } from "react";
 import Head from "next/head";
+import { notifications } from "@mantine/notifications";
 
 const DashboardVoter = () => {
+  const context = api.useContext();
   const router = useRouter();
-  const [opened, { open, close }] = useDisclosure(false);
+  const [
+    openedInviteVoters,
+    { open: openInviteVoters, close: closeInviteVoters },
+  ] = useDisclosure(false);
+  const [
+    openedCreateVoter,
+    { open: openCreateVoter, close: closeCreateVoter },
+  ] = useDisclosure(false);
   const [openedBulkImport, { open: openBulkVoter, close: closeBulkVoter }] =
     useDisclosure(false);
   const [votersData, setVotersData] = useState<
@@ -34,6 +51,21 @@ const DashboardVoter = () => {
     }[]
   >([]);
   const [search, setSearch] = useState("");
+
+  const sendManyInvitationsMutation = api.voter.sendManyInvitations.useMutation(
+    {
+      onSuccess: async (data) => {
+        await context.election.getElectionVoter.invalidate();
+        notifications.show({
+          title: `${data.length} invitations sent!`,
+          message: "Successfully sent invitations",
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        closeInviteVoters();
+      },
+    }
+  );
 
   const voters = api.election.getElectionVoter.useQuery(
     router.query.electionSlug as string,
@@ -53,6 +85,7 @@ const DashboardVoter = () => {
       <Head>
         <title>Voters | eBoto Mo</title>
       </Head>
+
       <Box p="md" h="100%">
         {voters.isLoading ? (
           <Center h="100%">
@@ -69,10 +102,47 @@ const DashboardVoter = () => {
                 {voters.data.election.name} &ndash; Voters | eBoto Mo
               </title>
             </Head>
+            <Modal
+              opened={
+                openedInviteVoters || sendManyInvitationsMutation.isLoading
+              }
+              onClose={closeInviteVoters}
+              title={
+                <Text weight={600}>
+                  Are you sure you want to invite all voters?
+                </Text>
+              }
+            >
+              <Stack spacing="sm">
+                <Text>
+                  This will send an email to all voters that are not yet invited
+                  and has status of &quot;ADDED&quot;.
+                </Text>
+                <Group position="right" spacing="xs">
+                  <Button
+                    variant="default"
+                    onClick={closeInviteVoters}
+                    disabled={sendManyInvitationsMutation.isLoading}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    loading={sendManyInvitationsMutation.isLoading}
+                    onClick={() =>
+                      sendManyInvitationsMutation.mutate({
+                        electionId: voters.data.election.id,
+                      })
+                    }
+                  >
+                    Invite All
+                  </Button>
+                </Group>
+              </Stack>
+            </Modal>
             <CreateVoterModal
-              isOpen={opened}
+              isOpen={openedCreateVoter}
               electionId={voters.data.election.id}
-              onClose={close}
+              onClose={closeCreateVoter}
             />
 
             <UploadBulkVoter
@@ -91,29 +161,45 @@ const DashboardVoter = () => {
                   },
                 })}
               >
-                <Flex gap="xs">
+                <Flex
+                  gap="xs"
+                  sx={(theme) => ({
+                    [theme.fn.smallerThan("xs")]: {
+                      flexDirection: "column",
+                    },
+                  })}
+                >
+                  <Flex gap="xs">
+                    <Button
+                      leftIcon={<IconUserPlus size="1rem" />}
+                      onClick={openCreateVoter}
+                      sx={(theme) => ({
+                        [theme.fn.smallerThan("xs")]: {
+                          width: "100%",
+                        },
+                      })}
+                    >
+                      Add voter
+                    </Button>
+                    <Button
+                      onClick={openBulkVoter}
+                      leftIcon={<IconUpload size="1rem" />}
+                      variant="light"
+                      sx={(theme) => ({
+                        [theme.fn.smallerThan("xs")]: {
+                          width: "100%",
+                        },
+                      })}
+                    >
+                      Import
+                    </Button>
+                  </Flex>
                   <Button
-                    leftIcon={<IconUserPlus size="1rem" />}
-                    onClick={open}
-                    sx={(theme) => ({
-                      [theme.fn.smallerThan("xs")]: {
-                        width: "100%",
-                      },
-                    })}
-                  >
-                    Add voter
-                  </Button>
-                  <Button
-                    onClick={openBulkVoter}
-                    leftIcon={<IconUpload size="1rem" />}
                     variant="light"
-                    sx={(theme) => ({
-                      [theme.fn.smallerThan("xs")]: {
-                        width: "100%",
-                      },
-                    })}
+                    leftIcon={<IconMailForward size="1rem" />}
+                    onClick={openInviteVoters}
                   >
-                    Import
+                    Invite
                   </Button>
                 </Flex>
                 <TextInput
