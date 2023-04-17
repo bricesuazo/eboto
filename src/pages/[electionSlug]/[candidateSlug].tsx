@@ -154,7 +154,7 @@ const CandidatePage = ({
                 <Stack mt="xl" spacing="xs">
                   <Title order={3}>Credentials</Title>
 
-                  {candidate.credential?.achievements.length && (
+                  {candidate.credential?.achievements.length ? (
                     <Box>
                       <Title order={5}>Achievements</Title>
                       <List>
@@ -168,9 +168,9 @@ const CandidatePage = ({
                         )}
                       </List>
                     </Box>
-                  )}
+                  ) : null}
 
-                  {candidate.credential?.affiliations.length && (
+                  {candidate.credential?.affiliations.length ? (
                     <Box>
                       <Title order={5}>Affiliations</Title>
                       <List>
@@ -193,9 +193,9 @@ const CandidatePage = ({
                         )}
                       </List>
                     </Box>
-                  )}
+                  ) : null}
 
-                  {candidate.credential?.eventsAttended.length && (
+                  {candidate.credential?.eventsAttended.length ? (
                     <Box>
                       <Title order={5}>Seminars/Events Attended</Title>
 
@@ -211,7 +211,7 @@ const CandidatePage = ({
                         )}
                       </List>
                     </Box>
-                  )}
+                  ) : null}
                 </Stack>
               )}
             </Box>
