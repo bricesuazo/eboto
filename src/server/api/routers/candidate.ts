@@ -171,55 +171,79 @@ export const candidateRouter = createTRPCRouter({
           image: input.image,
 
           credential: {
-            update: {
-              achievements: {
-                upsert: input.achievements.map((achievement) => ({
-                  where: {
-                    id: achievement.id,
-                  },
-                  create: {
-                    name: achievement.name,
-                    year: achievement.year,
-                  },
-                  update: {
-                    name: achievement.name,
-                    year: achievement.year,
-                  },
-                })),
+            upsert: {
+              update: {
+                achievements: {
+                  upsert: input.achievements.map((achievement) => ({
+                    where: {
+                      id: achievement.id,
+                    },
+                    create: {
+                      name: achievement.name,
+                      year: achievement.year,
+                    },
+                    update: {
+                      name: achievement.name,
+                      year: achievement.year,
+                    },
+                  })),
+                },
+                affiliations: {
+                  upsert: input.affiliations.map((affiliation) => ({
+                    where: {
+                      id: affiliation.id,
+                    },
+                    create: {
+                      org_name: affiliation.org_name,
+                      org_postion: affiliation.org_postion,
+                      start_year: affiliation.start_year,
+                      end_year: affiliation.end_year,
+                    },
+                    update: {
+                      org_name: affiliation.org_name,
+                      org_postion: affiliation.org_postion,
+                      start_year: affiliation.start_year,
+                      end_year: affiliation.end_year,
+                    },
+                  })),
+                },
+                eventsAttended: {
+                  upsert: input.eventsAttended.map((eventAttended) => ({
+                    where: {
+                      id: eventAttended.id,
+                    },
+                    create: {
+                      name: eventAttended.name,
+                      year: eventAttended.year,
+                    },
+                    update: {
+                      name: eventAttended.name,
+                      year: eventAttended.year,
+                    },
+                  })),
+                },
               },
-              affiliations: {
-                upsert: input.affiliations.map((affiliation) => ({
-                  where: {
-                    id: affiliation.id,
-                  },
-                  create: {
+              create: {
+                achievements: {
+                  create: input.achievements.map((achievement) => ({
+                    name: achievement.name,
+                    year: achievement.year,
+                  })),
+                },
+                affiliations: {
+                  create: input.affiliations.map((affiliation) => ({
                     org_name: affiliation.org_name,
                     org_postion: affiliation.org_postion,
                     start_year: affiliation.start_year,
                     end_year: affiliation.end_year,
-                  },
-                  update: {
-                    org_name: affiliation.org_name,
-                    org_postion: affiliation.org_postion,
-                    start_year: affiliation.start_year,
-                    end_year: affiliation.end_year,
-                  },
-                })),
-              },
-              eventsAttended: {
-                upsert: input.eventsAttended.map((eventAttended) => ({
-                  where: {
-                    id: eventAttended.id,
-                  },
-                  create: {
+                  })),
+                },
+                eventsAttended: {
+                  create: input.eventsAttended.map((eventAttended) => ({
                     name: eventAttended.name,
                     year: eventAttended.year,
-                  },
-                  update: {
-                    name: eventAttended.name,
-                    year: eventAttended.year,
-                  },
-                })),
+                  })),
+                },
               },
             },
           },

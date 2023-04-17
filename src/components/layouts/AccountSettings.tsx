@@ -34,7 +34,7 @@ const AccountSettingsLayout = ({ children }: { children: React.ReactNode }) => {
     <Container h="100%" p={0}>
       <Flex h="100%">
         <Box
-          p="sm"
+          p="md"
           sx={(theme) => ({
             width: "16rem",
 
@@ -89,7 +89,7 @@ const AccountSettingsLayout = ({ children }: { children: React.ReactNode }) => {
             [theme.fn.smallerThan("xs")]: { display: "none" },
           })}
         />
-        <Box sx={{ flex: 1 }} p="sm">
+        <Box sx={{ flex: 1 }} p="md">
           <Select
             data={options.map((option) => ({
               label: option.label,
