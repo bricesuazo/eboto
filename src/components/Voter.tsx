@@ -8,7 +8,6 @@ import {
   Stack,
   Group,
   Flex,
-  Box,
   Tooltip,
 } from "@mantine/core";
 import {
@@ -176,27 +175,35 @@ const Voter = ({
         <td>
           <Flex justify="flex-end" gap="xs">
             {(voter.status === "INVITED" || voter.status === "ADDED") && (
-              <Button
-                compact
-                onClick={openInviteVoter}
-                loaderPosition="center"
-                variant={voter.status === "INVITED" ? "subtle" : "light"}
-              >
-                <Text
+              <>
+                <Button
+                  compact
+                  onClick={openInviteVoter}
+                  loaderPosition="center"
+                  variant={voter.status === "INVITED" ? "subtle" : "light"}
                   sx={(theme) => ({
                     [theme.fn.smallerThan("xs")]: {
                       display: "none",
                     },
                   })}
                 >
-                  Invite{voter.status === "INVITED" && " again"}
-                </Text>
+                  <Text
+                    sx={(theme) => ({
+                      [theme.fn.smallerThan("xs")]: {
+                        display: "none",
+                      },
+                    })}
+                  >
+                    Invite{voter.status === "INVITED" && " again"}
+                  </Text>
+                </Button>
                 <Tooltip
                   label={
                     "Invite" + (voter.status === "INVITED" ? " again" : "")
                   }
                 >
-                  <Box
+                  <ActionIcon
+                    variant={voter.status === "INVITED" ? "default" : "filled"}
                     sx={(theme) => ({
                       [theme.fn.largerThan("xs")]: {
                         display: "none",
@@ -204,9 +211,9 @@ const Voter = ({
                     })}
                   >
                     <IconMailForward size="1.25rem" />
-                  </Box>
+                  </ActionIcon>
                 </Tooltip>
-              </Button>
+              </>
             )}
 
             <Button
@@ -224,6 +231,7 @@ const Voter = ({
             </Button>
             <ActionIcon
               color="red"
+              variant="light"
               onClick={openConfirmDeleteVoter}
               sx={(theme) => ({
                 [theme.fn.largerThan("xs")]: {
