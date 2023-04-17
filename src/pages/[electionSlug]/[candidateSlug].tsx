@@ -249,36 +249,40 @@ export const getServerSideProps: GetServerSideProps = async (
 
   if (!election) return { notFound: true };
 
-  switch (election.publicity) {
-    case "PRIVATE":
-      if (!session)
-        return { redirect: { destination: "/signin", permanent: false } };
+  if (election.publicity === "PRIVATE") {
+    if (!session)
+      return { redirect: { destination: "/signin", permanent: false } };
 
-      const commissioner = await prisma.commissioner.findFirst({
-        where: {
-          electionId: election.id,
-          userId: session.user.id,
-        },
-      });
+    const commissioner = await prisma.commissioner.findFirst({
+      where: {
+        electionId: election.id,
+        userId: session.user.id,
+      },
+    });
 
-      if (!commissioner) return { notFound: true };
-      break;
-    case "VOTER":
-      if (!session)
-        return { redirect: { destination: "/signin", permanent: false } };
+    if (!commissioner) return { notFound: true };
+  } else if (election.publicity === "VOTER") {
+    if (!session)
+      return { redirect: { destination: "/signin", permanent: false } };
 
-      const voter = await prisma.voter.findFirst({
-        where: {
-          electionId: election.id,
-          userId: session.user.id,
-        },
-      });
+    const voter = await prisma.voter.findFirst({
+      where: {
+        electionId: election.id,
+        userId: session.user.id,
+      },
+    });
 
-      if (!voter)
-        return {
-          redirect: { destination: "/signin", permanent: false },
-        };
-      break;
+    const commissioner = await prisma.commissioner.findFirst({
+      where: {
+        electionId: election.id,
+        userId: session.user.id,
+      },
+    });
+
+    if (!voter && !commissioner)
+      return {
+        redirect: { destination: "/signin", permanent: false },
+      };
   }
 
   const candidate = await prisma.candidate.findFirst({
