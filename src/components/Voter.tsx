@@ -29,7 +29,7 @@ const useStyles = createStyles((theme) => ({
     position: "relative",
 
     [theme.fn.largerThan("sm")]: {
-      width: "50%",
+      width: "75%",
     },
   },
 
@@ -147,7 +147,7 @@ const Voter = ({
               },
             })}
           >
-            {voter.status}
+            {voter.status.charAt(0) + voter.status.slice(1).toLowerCase()}
           </Text>
           <Tooltip
             label={voter.status.charAt(0) + voter.status.slice(1).toLowerCase()}
