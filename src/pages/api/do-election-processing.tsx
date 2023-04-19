@@ -93,14 +93,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     end_date
   );
   console.log(
-    "🚀 ~ file: do-election-processing.tsx:101 ~ handler ~ new Date().getUTCHours() + 8:",
-    new Date().getUTCHours() + 8
+    "🚀 ~ file: do-election-processing.tsx:101 ~ handler ~ new Date().getHours()",
+    new Date().getHours()
   );
 
   const electionsEnd = await prisma.election.findMany({
     where: {
       end_date,
-      voting_end: new Date().getUTCHours() + 8,
+      voting_end: new Date().getHours(),
     },
     include: {
       positions: {
