@@ -92,6 +92,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     "🚀 ~ file: do-election-processing.tsx:83 ~ handler ~ end_date:",
     end_date
   );
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:101 ~ handler ~ new Date().getUTCHours() + 8:",
+    new Date().getUTCHours() + 8
+  );
 
   const electionsEnd = await prisma.election.findMany({
     where: {
