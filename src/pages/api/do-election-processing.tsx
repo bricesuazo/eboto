@@ -95,14 +95,18 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     end_date
   );
   console.log(
-    "🚀 ~ file: do-election-processing.tsx:101 ~ handler ~ new Date(new Date().getUTCHours() + 8).getHours()",
-    new Date(new Date().getUTCHours() + 8).getHours()
+    "🚀 ~ file: do-election-processing.tsx:105 ~ handler ~ new Date(new Date().toLocaleString(en-US, { timeZone: Asia/Manila })).getHours():",
+    new Date(
+      new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" })
+    ).getHours()
   );
 
   const electionsEnd = await prisma.election.findMany({
     where: {
       end_date,
-      voting_end: new Date(new Date().getUTCHours() + 8).getHours(),
+      voting_end: new Date(
+        new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" })
+      ).getHours(),
     },
     include: {
       positions: {
