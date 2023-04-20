@@ -79,10 +79,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   // Generate election results when the election is over
 
-  console.log("🚀 ~ file: do-election-processing.tsx:82 ~ handler ~ now:", now);
-  env.NODE_ENV === "production"
-    ? now.setDate(now.getDate() + 1)
-    : now.setDate(now.getDate() + 2);
+  // console.log("🚀 ~ file: do-election-processing.tsx:82 ~ handler ~ now:", now);
+  // env.NODE_ENV === "production"
+  //   ? now.setDate(now.getDate() + 1)
+  //   : now.setDate(now.getDate() + 2);
+
   console.log("🚀 ~ file: do-election-processing.tsx:82 ~ handler ~ now:", now);
 
   const end_date =
@@ -94,14 +95,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     end_date
   );
   console.log(
-    "🚀 ~ file: do-election-processing.tsx:101 ~ handler ~ new Date().getUTCHours() + 8:",
-    new Date().getUTCHours() + 8
+    "🚀 ~ file: do-election-processing.tsx:101 ~ handler ~ new Date(new Date().toUTCString() + +8:00).getUTCHours()",
+    new Date(new Date().toUTCString() + "+8:00").getUTCHours()
   );
 
   const electionsEnd = await prisma.election.findMany({
     where: {
       end_date,
-      voting_end: new Date().getUTCHours() + 8,
+      voting_end: new Date(new Date().toUTCString() + "+8:00").getUTCHours(),
     },
     include: {
       positions: {
