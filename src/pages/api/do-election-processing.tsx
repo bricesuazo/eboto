@@ -15,7 +15,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   const elections = await prisma.election.findMany({
     where: {
-      start_date: new Date(now.toDateString()),
+      start_date: new Date(now.toDateString()).toLocaleString("en-US", {
+        timeZone: "Asia/Manila",
+      }),
       voting_start: now.getHours(),
     },
   });
@@ -77,7 +79,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   const electionsEnd = await prisma.election.findMany({
     where: {
-      end_date: new Date(now.toDateString()),
+      end_date: new Date(now.toDateString()).toLocaleString("en-US", {
+        timeZone: "Asia/Manila",
+      }),
       voting_end: now.getHours(),
     },
     include: {
