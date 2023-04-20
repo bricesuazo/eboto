@@ -95,14 +95,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     end_date
   );
   console.log(
-    "🚀 ~ file: do-election-processing.tsx:101 ~ handler ~ new Date(new Date().toUTCString() + +8:00).getHours()",
-    new Date(new Date().toUTCString() + "+8:00").getHours()
+    "🚀 ~ file: do-election-processing.tsx:101 ~ handler ~ new Date(new Date().toLocaleString() +  GMT+08:00)).getHours()",
+    new Date(new Date().toLocaleString() + " GMT+08:00").getHours()
   );
 
   const electionsEnd = await prisma.election.findMany({
     where: {
       end_date,
-      voting_end: new Date(new Date().toUTCString() + "+8:00").getHours(),
+      voting_end: new Date(
+        new Date().toLocaleString() + " GMT+08:00"
+      ).getHours(),
     },
     include: {
       positions: {
