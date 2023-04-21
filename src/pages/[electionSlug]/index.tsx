@@ -332,7 +332,7 @@ export const getServerSideProps: GetServerSideProps = async (
     if (!session)
       return {
         props: {
-          isOngoing,
+          isOngoing: true,
           hasVoted: true,
           election: JSON.parse(JSON.stringify(election)) as Election,
         },
