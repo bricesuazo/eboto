@@ -217,7 +217,17 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     });
 
-    if (!vote || !isElectionOngoing({ election, withTime: true }))
+    const commissioner = await prisma.commissioner.findFirst({
+      where: {
+        electionId: election.id,
+        userId: session.user.id,
+      },
+    });
+
+    if (
+      !vote ||
+      (!isElectionOngoing({ election, withTime: true }) && !commissioner)
+    )
       return {
         redirect: { destination: `/${election.slug}`, permanent: false },
       };
