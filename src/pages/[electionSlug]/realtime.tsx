@@ -225,8 +225,10 @@ export const getServerSideProps: GetServerSideProps = async (
     });
 
     if (
-      !vote ||
-      (!isElectionOngoing({ election, withTime: true }) && !commissioner)
+      !(
+        vote ||
+        (isElectionOngoing({ election, withTime: true }) && commissioner)
+      )
     )
       return {
         redirect: { destination: `/${election.slug}`, permanent: false },
