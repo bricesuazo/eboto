@@ -345,6 +345,31 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     });
 
+    if (commissioner && !isOngoing)
+      return {
+        props: {
+          isOngoing,
+          hasVoted: true,
+          election: JSON.parse(JSON.stringify(election)) as Election,
+        },
+      };
+
+    const voter = await prisma.voter.findFirst({
+      where: {
+        electionId: election.id,
+        userId: session.user.id,
+      },
+    });
+
+    if (!voter)
+      return {
+        props: {
+          isOngoing,
+          hasVoted: true,
+          election: JSON.parse(JSON.stringify(election)) as Election,
+        },
+      };
+
     const vote = await prisma.vote.findFirst({
       where: {
         voterId: session.user.id,
@@ -355,7 +380,7 @@ export const getServerSideProps: GetServerSideProps = async (
     return {
       props: {
         isOngoing,
-        hasVoted: !!vote || (!!commissioner && !isOngoing),
+        hasVoted: !!vote,
         election: JSON.parse(JSON.stringify(election)) as Election,
       },
     };
