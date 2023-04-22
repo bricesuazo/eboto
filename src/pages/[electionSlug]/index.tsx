@@ -22,6 +22,8 @@ import { convertNumberToHour } from "../../utils/convertNumberToHour";
 import { isElectionOngoing } from "../../utils/isElectionOngoing";
 import Balancer from "react-wrap-balancer";
 import Head from "next/head";
+import { env } from "../../env.mjs";
+import moment from "moment";
 
 const ElectionPage = ({
   election,
@@ -33,6 +35,20 @@ const ElectionPage = ({
   isOngoing: boolean;
 }) => {
   const title = `${election.name} | eBoto Mo`;
+  const imageContent = `${
+    env.NEXT_PUBLIC_NODE_ENV === "production"
+      ? "https://eboto-mo.com"
+      : "http://localhost:3000"
+  }/api/og?type=election&election_name=${encodeURIComponent(
+    election.name
+  )}&election_logo=${encodeURIComponent(
+    election.logo ?? ""
+  )}&election_date=${encodeURIComponent(
+    moment(election.start_date).format("MMMM D, YYYY hA") +
+      " - " +
+      moment(election.end_date).format("MMMM D, YYYY hA")
+  )}`;
+  const metaDescription = `See details about ${election.name} | eBoto Mo`;
   const positions = api.election.getElectionVotingPageData.useQuery(
     election.id,
     {
@@ -47,6 +63,10 @@ const ElectionPage = ({
     <>
       <Head>
         <title>{title}</title>
+        <meta property="og:title" content={title} />
+        <meta property="og:image" content={imageContent} />
+        <meta name="description" content={metaDescription} />
+        <meta property="og:description" content={metaDescription} />
       </Head>
 
       <Container py="xl">

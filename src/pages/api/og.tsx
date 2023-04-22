@@ -10,7 +10,7 @@ export default function OG(req: NextRequest) {
   const eBotoMoLogo =
     "https://raw.githubusercontent.com/bricesuazo/eboto-mo/main/public/images/eboto-mo-logo.png";
   const cvsuFront =
-    "https://raw.githubusercontent.com/bricesuazo/eboto-mo/main/public/images/cvsu-front.png";
+    "https://raw.githubusercontent.com/bricesuazo/eboto-mo/main/public/images/cvsu-front.jpg";
   const { searchParams } = req.nextUrl;
   const type = searchParams.get("type") as "candidate" | "election" | null;
   const NotFoundPage = () => {
@@ -118,17 +118,16 @@ export default function OG(req: NextRequest) {
               transform: "translateX(-50%)",
             }}
           >
-            <p style={{ color: "#ffde59", fontWeight: "bold", fontSize: 18 }}>
+            <p style={{ color: "#fff", fontWeight: "bold", fontSize: 18 }}>
               eBoto Mo
             </p>
             <img
-              src={eBotoMoLogo}
+              src="https://raw.githubusercontent.com/bricesuazo/eboto-mo/main/public/images/eboto-mo-logo-white.png"
               alt="eBoto Mo Logo"
               style={{
                 width: 32,
                 height: 32,
                 marginLeft: 8,
-                filter: "invert(1)",
               }}
             />
           </div>
@@ -185,7 +184,6 @@ export default function OG(req: NextRequest) {
               style={{
                 width: 164,
                 height: 164,
-                boxShadow: "1px -1px 76px 1px rgba(0,0,0,0.25)",
               }}
             />
             <div
@@ -197,7 +195,9 @@ export default function OG(req: NextRequest) {
                 lineHeight: -3.5,
               }}
             >
-              <p style={{ fontSize: 42, fontWeight: "bold" }}>{electionName}</p>
+              <p style={{ fontSize: 42, fontWeight: "bolder" }}>
+                {electionName}
+              </p>
               <p
                 style={{
                   fontSize: 20,
@@ -207,7 +207,7 @@ export default function OG(req: NextRequest) {
               </p>
               <p
                 style={{
-                  backgroundColor: "#459845",
+                  backgroundColor: "#2f9e44",
                   color: "white",
                   width: 156,
                   height: 38,
@@ -232,17 +232,16 @@ export default function OG(req: NextRequest) {
               transform: "translateX(-50%)",
             }}
           >
-            <p style={{ color: "#ffde59", fontWeight: "bold", fontSize: 18 }}>
+            <p style={{ color: "#fff", fontWeight: "bold", fontSize: 18 }}>
               eBoto Mo
             </p>
             <img
-              src={eBotoMoLogo}
+              src="https://raw.githubusercontent.com/bricesuazo/eboto-mo/main/public/images/eboto-mo-logo-white.png"
               alt="eBoto Mo Logo"
               style={{
                 width: 32,
                 height: 32,
                 marginLeft: 8,
-                filter: "invert(1)",
               }}
             />
           </div>

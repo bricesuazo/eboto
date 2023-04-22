@@ -26,6 +26,7 @@ import { IconUser } from "@tabler/icons-react";
 import Link from "next/link";
 import Head from "next/head";
 import Moment from "react-moment";
+import { env } from "../../env.mjs";
 
 const CandidatePage = ({
   election,
@@ -48,10 +49,34 @@ const CandidatePage = ({
     candidate.middle_name ? " " + candidate.middle_name : ""
   }`} – ${election.name} | eBoto Mo`;
 
+  const imageContent = `${
+    env.NEXT_PUBLIC_NODE_ENV === "production"
+      ? "https://eboto-mo.com"
+      : "http://localhost:3000"
+  }/api/og?type=candidate&candidate_name=${encodeURIComponent(
+    candidate.first_name
+  )}${
+    (candidate.middle_name &&
+      `%20${encodeURIComponent(candidate.middle_name ?? "")}`) ??
+    ""
+  }%20${encodeURIComponent(
+    candidate.last_name
+  )}&candidate_position=${encodeURIComponent(
+    candidate.position.name
+  )}&candidate_img=${encodeURIComponent(candidate.image ?? "")}`;
+
+  const metaDescription = `${candidate.first_name}${
+    (candidate.middle_name && ` ${candidate.middle_name ?? ""}`) ?? ""
+  } ${candidate.last_name} credential page - ${election.name} | eBoto Mo`;
+
   return (
     <>
       <Head>
         <title>{title}</title>
+        <meta property="og:title" content={title} />
+        <meta property="og:image" content={imageContent} />
+        <meta name="description" content={metaDescription} />
+        <meta property="og:description" content={metaDescription} />
       </Head>
 
       <Container py="xl">
