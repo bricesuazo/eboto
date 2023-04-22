@@ -59,6 +59,10 @@ const App: AppType<Props> = api.withTRPC(function App({
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width user-scalable=no"
         />
+        <meta
+          name="description"
+          content="Empower your elections with eBoto Mo, the versatile and web-based voting platform that offers secure online elections for any type of organization."
+        />
       </Head>
 
       <ConfettiProvider>

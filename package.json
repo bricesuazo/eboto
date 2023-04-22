@@ -50,6 +50,7 @@
     "@trpc/server": "^10.19.1",
     "@upstash/qstash": "^0.3.6",
     "@vercel/analytics": "^0.1.8",
+    "@vercel/og": "^0.5.3",
     "bcryptjs": "^2.4.3",
     "cookies-next": "^2.1.1",
     "dayjs": "^1.11.7",
