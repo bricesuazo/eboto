@@ -20,6 +20,7 @@ import {
 import AppShellComponent from "../components/AppShell";
 import { RouterTransition } from "../components/RouterTransition";
 import { Analytics } from "@vercel/analytics/react";
+import { env } from "../env.mjs";
 
 interface Props extends AppProps {
   pageProps: {
@@ -34,6 +35,9 @@ const App: AppType<Props> = api.withTRPC(function App({
   Component,
   pageProps: { session, ...props },
 }: Props) {
+  const title = "eBoto Mo – Your One-Stop Online Voting Solution";
+  const description =
+    "Empower your elections with eBoto Mo, the versatile and web-based voting platform that offers secure online elections for any type of organization.";
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
     key: "theme",
     defaultValue: "light",
@@ -54,15 +58,23 @@ const App: AppType<Props> = api.withTRPC(function App({
   return (
     <>
       <Head>
-        <title>eBoto Mo &ndash; Your One-Stop Online Voting Solution</title>
+        <title>{title}</title>
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width user-scalable=no"
         />
+        <meta name="description" content={description} />
+
+        <meta property="og:title" content={title} />
         <meta
-          name="description"
-          content="Empower your elections with eBoto Mo, the versatile and web-based voting platform that offers secure online elections for any type of organization."
+          property="og:image"
+          content={`${
+            env.NEXT_PUBLIC_NODE_ENV === "production"
+              ? "https://eboto-mo.com"
+              : "http://localhost:3000"
+          }/api/og?type=website`}
         />
+        <meta property="og:description" content={description} />
       </Head>
 
       <ConfettiProvider>

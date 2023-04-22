@@ -12,7 +12,11 @@ export default function OG(req: NextRequest) {
   const cvsuFront =
     "https://raw.githubusercontent.com/bricesuazo/eboto-mo/main/public/images/cvsu-front.jpg";
   const { searchParams } = req.nextUrl;
-  const type = searchParams.get("type") as "candidate" | "election" | null;
+  const type = searchParams.get("type") as
+    | "candidate"
+    | "election"
+    | "website"
+    | null;
   const NotFoundPage = () => {
     return new ImageResponse(<div>404</div>, {
       width: 1200,
@@ -23,7 +27,88 @@ export default function OG(req: NextRequest) {
     return NotFoundPage();
   }
 
-  if (type === "candidate") {
+  if (type === "website") {
+    return new ImageResponse(
+      (
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            color: "white",
+          }}
+        >
+          <img
+            src={cvsuFront}
+            alt=""
+            style={{
+              width: "100%",
+              objectFit: "cover",
+              objectPosition: "center",
+              position: "absolute",
+              top: 0,
+              filter: "brightness(0.35)",
+            }}
+          />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+              height: "100%",
+              textAlign: "center",
+            }}
+          >
+            <img
+              src={eBotoMoLogo}
+              alt={`eBoto Mo Logo`}
+              style={{
+                width: 164,
+                height: 164,
+              }}
+            />
+            <div
+              style={{
+                width: 550,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <p
+                style={{
+                  color: "#fff",
+                  fontWeight: "bold",
+                  fontSize: 60,
+                  lineHeight: 0.25,
+                }}
+              >
+                eBoto Mo
+              </p>
+              <p
+                style={{
+                  color: "#fff",
+                  fontWeight: "bold",
+                  fontSize: 20,
+                }}
+              >
+                Empower your elections with eBoto Mo, the versatile and
+                web-based voting platform that offers secure online elections
+                for any type of organization.
+              </p>
+            </div>
+          </div>
+        </div>
+      ),
+      {
+        width: 1200,
+        height: 600,
+      }
+    );
+  } else if (type === "candidate") {
     const candidateName = searchParams.get("candidate_name");
     const candidateImg = searchParams.get("candidate_img");
     const candidatePosition = searchParams.get("candidate_position");
