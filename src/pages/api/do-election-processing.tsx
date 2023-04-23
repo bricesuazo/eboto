@@ -9,12 +9,16 @@ import { supabase } from "../../lib/supabase";
 import ReactPDF from "@react-pdf/renderer";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const now = new Date(
-    new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" })
+  const nowUTC = new Date();
+  const nowPHT = new Date(
+    nowUTC.toLocaleString("en-US", { timeZone: "Asia/Manila" })
   );
-  console.log("🚀 ~ file: do-election-processing.tsx:15 ~ handler ~ now:", now);
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:15 ~ handler ~ now:",
+    nowPHT
+  );
 
-  const start_date = now;
+  const start_date = nowUTC;
   start_date.setHours(0, 0, 0, 0);
   console.log(
     "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ start_date:",
@@ -25,6 +29,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ start_date:",
     start_date
   );
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ start_date.toISOString():",
+    start_date.toISOString()
+  );
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ start_date.toISOString().split(T)[0]?.concat(T16:00:00.000Z):",
+    start_date.toISOString().split("T")[0]?.concat("T16:00:00.000Z")
+  );
 
   const elections = await prisma.election.findMany({
     where: {
@@ -32,7 +44,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         .toISOString()
         .split("T")[0]
         ?.concat("T16:00:00.000Z"),
-      voting_start: now.getHours(),
+      voting_start: nowPHT.getHours(),
     },
   });
 
@@ -92,7 +104,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   // Generate election results when the election is over
   console.log("--------------------------");
-  const end_date = now;
+  const end_date = nowUTC;
   console.log(
     "🚀 ~ file: do-election-processing.tsx:96 ~ handler ~ end_date:",
     end_date
@@ -106,7 +118,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   const electionsEnd = await prisma.election.findMany({
     where: {
       end_date: end_date.toISOString().split("T")[0]?.concat("T16:00:00.000Z"),
-      voting_end: now.getHours(),
+      voting_end: nowPHT.getHours(),
     },
     include: {
       positions: {
