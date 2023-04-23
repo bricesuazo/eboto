@@ -10,18 +10,17 @@ import { supabase } from "../../lib/supabase";
 import ReactPDF from "@react-pdf/renderer";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const now = new Date(
-    new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" })
+  const now = new Date();
+  const start_date = new Date(
+    now.toLocaleString("en-US", { timeZone: "Asia/Manila" })
   );
-  console.log("🚀 ~ file: do-election-processing.tsx:16 ~ handler ~ now:", now);
 
-  const start_date =
-    env.NODE_ENV === "production"
-      ? now.toISOString().split("T")[0]?.concat("T16:00:00.000Z")
-      : now;
+  env.NODE_ENV === "production"
+    ? start_date.setHours(start_date.getHours() - 8)
+    : start_date;
 
   console.log(
-    "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ start_date:",
+    "🚀 ~ file: do-election-processing.tsx:16 ~ handler ~ start_date:",
     start_date
   );
 
@@ -35,6 +34,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     "🚀 ~ file: do-election-processing.tsx:21 ~ handler ~ new Date(now.toDateString()):",
     new Date(now.toDateString())
   );
+
   console.log(
     "🚀 ~ file: do-election-processing.tsx:22 ~ handler ~ now.getHours():",
     now.getHours()
