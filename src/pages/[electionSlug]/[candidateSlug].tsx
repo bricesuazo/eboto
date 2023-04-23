@@ -173,17 +173,17 @@ const CandidatePage = ({
               <Text>Running for {candidate.position.name}</Text>
               <Text>{candidate.partylist.name}</Text>
 
-              {(candidate.credential?.affiliations.length ||
-                candidate.credential?.achievements.length ||
-                candidate.credential?.eventsAttended.length) && (
+              {candidate.credential?.affiliations.length ||
+              candidate.credential?.achievements.length ||
+              candidate.credential?.eventsAttended.length ? (
                 <Stack mt="xl" spacing="xs">
                   <Title order={3}>Credentials</Title>
 
-                  {candidate.credential?.achievements.length ? (
+                  {candidate.credential.achievements.length ? (
                     <Box>
                       <Title order={5}>Achievements</Title>
                       <List>
-                        {candidate.credential?.achievements.map(
+                        {candidate.credential.achievements.map(
                           (achievement) => (
                             <List.Item key={achievement.id}>
                               {achievement.name} (
@@ -195,11 +195,11 @@ const CandidatePage = ({
                     </Box>
                   ) : null}
 
-                  {candidate.credential?.affiliations.length ? (
+                  {candidate.credential.affiliations.length ? (
                     <Box>
                       <Title order={5}>Affiliations</Title>
                       <List>
-                        {candidate.credential?.affiliations.map(
+                        {candidate.credential.affiliations.map(
                           (affiliation) => (
                             <List.Item key={affiliation.id}>
                               {affiliation.org_name} (
@@ -220,12 +220,12 @@ const CandidatePage = ({
                     </Box>
                   ) : null}
 
-                  {candidate.credential?.eventsAttended.length ? (
+                  {candidate.credential.eventsAttended.length ? (
                     <Box>
                       <Title order={5}>Seminars/Events Attended</Title>
 
                       <List>
-                        {candidate.credential?.eventsAttended.map(
+                        {candidate.credential.eventsAttended.map(
                           (eventAttended) => (
                             <List.Item key={eventAttended.id}>
                               {eventAttended.name} (
@@ -238,7 +238,7 @@ const CandidatePage = ({
                     </Box>
                   ) : null}
                 </Stack>
-              )}
+              ) : null}
             </Box>
           </Flex>
         </Stack>
