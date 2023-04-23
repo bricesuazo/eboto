@@ -122,6 +122,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     "🚀 ~ file: do-election-processing.tsx:96 ~ handler ~ end_date:",
     end_date
   );
+  end_date.setDate(end_date.getDate() - 1);
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:96 ~ handler ~ end_date:",
+    end_date
+  );
   console.log(
     "🚀 ~ file: do-election-processing.tsx:130 ~ handler ~ nowPHT.getHours():",
     nowPHT.getHours()
