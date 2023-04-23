@@ -10,15 +10,19 @@ import ReactPDF from "@react-pdf/renderer";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const nowUTC = new Date();
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:13 ~ handler ~ nowUTC:",
+    nowUTC
+  );
   const nowPHT = new Date(
     nowUTC.toLocaleString("en-US", { timeZone: "Asia/Manila" })
   );
   console.log(
-    "🚀 ~ file: do-election-processing.tsx:15 ~ handler ~ now:",
+    "🚀 ~ file: do-election-processing.tsx:15 ~ handler ~ nowPHT:",
     nowPHT
   );
 
-  const start_date = nowUTC;
+  const start_date = new Date(nowUTC);
   start_date.setHours(0, 0, 0, 0);
   console.log(
     "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ start_date:",
@@ -38,6 +42,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     start_date.toISOString().split("T")[0]?.concat("T16:00:00.000Z")
   );
 
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:52 ~ handler ~ nowPHT.getHours():",
+    nowPHT.getHours()
+  );
   const elections = await prisma.election.findMany({
     where: {
       start_date: start_date
@@ -104,7 +112,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   // Generate election results when the election is over
   console.log("--------------------------");
-  const end_date = nowUTC;
+  const end_date = new Date(nowUTC);
   console.log(
     "🚀 ~ file: do-election-processing.tsx:96 ~ handler ~ end_date:",
     end_date
@@ -113,6 +121,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   console.log(
     "🚀 ~ file: do-election-processing.tsx:96 ~ handler ~ end_date:",
     end_date
+  );
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:130 ~ handler ~ nowPHT.getHours():",
+    nowPHT.getHours()
   );
 
   const electionsEnd = await prisma.election.findMany({
