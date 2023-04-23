@@ -7,6 +7,7 @@ import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 import { supabase } from "../../../lib/supabase";
 import ReactPDF from "@react-pdf/renderer";
 import GenerateResult from "../../../pdf/GenerateResult";
+import { isElectionOngoing } from "../../../utils/isElectionOngoing";
 
 export const electionRouter = createTRPCRouter({
   getAllGeneratedResults: protectedProcedure
@@ -117,6 +118,13 @@ export const electionRouter = createTRPCRouter({
           id: input.electionId,
         },
       });
+
+      if (!isElectionOngoing({ election, withTime: true }))
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Election is not ongoing",
+        });
+
       const existingVotes = await ctx.prisma.vote.findMany({
         where: {
           voterId: ctx.session.user.id,
