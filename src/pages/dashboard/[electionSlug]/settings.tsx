@@ -361,7 +361,7 @@ const DashboardSettings = () => {
                     loading ||
                     isElectionOngoing({
                       election: election.data,
-                      withTime: false,
+                      withTime: true,
                     })
                   }
                 />

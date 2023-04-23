@@ -142,7 +142,8 @@ const ElectionPage = ({
               </Text>
 
               <Group position="center" mt={8}>
-                {hasVoted || election.end_date < new Date() ? (
+                {hasVoted ||
+                election.end_date.getTime() < new Date().getTime() ? (
                   <Button
                     radius="xl"
                     size="md"
@@ -352,7 +353,7 @@ export const getServerSideProps: GetServerSideProps = async (
     if (!session)
       return {
         props: {
-          isOngoing: true,
+          isOngoing,
           hasVoted: true,
           election: JSON.parse(JSON.stringify(election)) as Election,
         },
