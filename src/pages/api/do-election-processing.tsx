@@ -13,41 +13,30 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   const now = new Date();
   console.log("🚀 ~ file: do-election-processing.tsx:14 ~ handler ~ now:", now);
 
-  const midnight = now;
+  const start_date = new Date(now.getDate() - 1);
   console.log(
-    "🚀 ~ file: do-election-processing.tsx:16 ~ handler ~ midnight:",
-    midnight
+    "🚀 ~ file: do-election-processing.tsx:16 ~ handler ~ start_date:",
+    start_date
   );
-  midnight.setHours(0, 0, 0, 0);
-  console.log(
-    "🚀 ~ file: do-election-processing.tsx:16 ~ handler ~ midnight:",
-    midnight
-  );
-
-  const start_date = new Date(
-    midnight.toLocaleDateString("en-US", { timeZone: "Asia/Manila" })
-  );
-
+  start_date.setHours(0, 0, 0, 0);
   console.log(
     "🚀 ~ file: do-election-processing.tsx:16 ~ handler ~ start_date:",
     start_date
   );
 
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:25 ~ handler ~ now.getHours():",
+    now.getHours()
+  );
   const elections = await prisma.election.findMany({
     where: {
-      start_date,
+      start_date: start_date
+        .toISOString()
+        .split("T")[0]
+        ?.concat("T16:00:00.000Z"),
       voting_start: now.getHours(),
     },
   });
-  console.log(
-    "🚀 ~ file: do-election-processing.tsx:21 ~ handler ~ new Date(now.toDateString()):",
-    new Date(now.toDateString())
-  );
-
-  console.log(
-    "🚀 ~ file: do-election-processing.tsx:22 ~ handler ~ now.getHours():",
-    now.getHours()
-  );
 
   for (const election of elections) {
     await prisma.election.update({
