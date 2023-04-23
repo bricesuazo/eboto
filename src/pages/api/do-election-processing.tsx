@@ -15,12 +15,26 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   );
   console.log("🚀 ~ file: do-election-processing.tsx:16 ~ handler ~ now:", now);
 
+  const start_date =
+    env.NODE_ENV === "production"
+      ? now.toISOString().split("T")[0]?.concat("T16:00:00.000Z")
+      : now;
+
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ start_date:",
+    start_date
+  );
+
   const elections = await prisma.election.findMany({
     where: {
-      start_date: new Date(now.toDateString()),
+      start_date,
       voting_start: now.getHours(),
     },
   });
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:21 ~ handler ~ new Date(now.toDateString()):",
+    new Date(now.toDateString())
+  );
   console.log(
     "🚀 ~ file: do-election-processing.tsx:22 ~ handler ~ now.getHours():",
     now.getHours()
