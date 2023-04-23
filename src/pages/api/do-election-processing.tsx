@@ -3,40 +3,20 @@ import { verifySignature } from "@upstash/qstash/nextjs";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { sendEmailTransport } from "../../../emails";
 import ElectionInvitation from "../../../emails/ElectionInvitation";
-import { env } from "../../env.mjs";
 import { prisma } from "../../server/db";
 import GenerateResult, { type ResultType } from "../../pdf/GenerateResult";
 import { supabase } from "../../lib/supabase";
 import ReactPDF from "@react-pdf/renderer";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const now = new Date();
-  console.log("🚀 ~ file: do-election-processing.tsx:14 ~ handler ~ now:", now);
-  const nowPHT = new Date(
-    now.toLocaleString("en-US", { timeZone: "Asia/Manila" })
-  );
-  console.log(
-    "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ nowPHT:",
-    nowPHT
+  const now = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" })
   );
 
   const start_date = now;
   start_date.setHours(0, 0, 0, 0);
+  start_date.setDate(start_date.getDate() - 1);
 
-  console.log(
-    "🚀 ~ file: do-election-processing.tsx:16 ~ handler ~ start_date:",
-    start_date
-  );
-  start_date.setDate(start_date.getDate() + 1);
-  console.log(
-    "🚀 ~ file: do-election-processing.tsx:16 ~ handler ~ start_date:",
-    start_date
-  );
-
-  console.log(
-    "🚀 ~ file: do-election-processing.tsx:25 ~ handler ~ now.getHours():",
-    now.getHours()
-  );
   const elections = await prisma.election.findMany({
     where: {
       start_date: start_date
@@ -102,32 +82,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   // Generate election results when the election is over
 
-  // console.log("🚀 ~ file: do-election-processing.tsx:82 ~ handler ~ now:", now);
-  // env.NODE_ENV === "production"
-  //   ? now.setDate(now.getDate() + 1)
-  //   : now.setDate(now.getDate() + 2);
-
-  const end_date =
-    env.NODE_ENV === "production"
-      ? now.toISOString().split("T")[0]?.concat("T16:00:00.000Z")
-      : now;
-  console.log(
-    "🚀 ~ file: do-election-processing.tsx:83 ~ handler ~ end_date:",
-    end_date
-  );
-  console.log(
-    "🚀 ~ file: do-election-processing.tsx:83 ~ handler ~ new Date(new Date().toLocaleString(en-US, { timeZone: Asia/Manila })).getHours():",
-    new Date(
-      new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" })
-    ).getHours()
-  );
+  const end_date = now;
+  end_date.setHours(0, 0, 0, 0);
 
   const electionsEnd = await prisma.election.findMany({
     where: {
       end_date,
-      voting_end: new Date(
-        new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" })
-      ).getHours(),
+      voting_end: now.getHours(),
     },
     include: {
       positions: {
@@ -143,10 +104,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       },
     },
   });
-  console.log(
-    "🚀 ~ file: do-election-processing.tsx:109 ~ handler ~ electionsEnd:",
-    electionsEnd
-  );
 
   for (const election of electionsEnd) {
     const result = {
@@ -179,16 +136,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     const name = `${nowForName.getTime().toString()} - ${
       election.name
     } (Result) (${nowForName.toDateString()}).pdf`;
-    console.log(
-      "🚀 ~ file: do-election-processing.tsx:144 ~ name ~ name:",
-      name
-    );
-    const path = `elections/${election.id}/results/${name}`;
 
-    console.log(
-      "🚀 ~ file: do-election-processing.tsx:147 ~ handler ~ path:",
-      path
-    );
+    const path = `elections/${election.id}/results/${name}`;
 
     await supabase.storage
       .from("eboto-mo")
