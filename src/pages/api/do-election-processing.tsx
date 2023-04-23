@@ -10,21 +10,21 @@ import { supabase } from "../../lib/supabase";
 import ReactPDF from "@react-pdf/renderer";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const now = new Date(new Date().toDateString());
-  now.setDate(now.getDate() - 1);
-  const start_date =
-    env.NODE_ENV === "production"
-      ? now.toISOString().split("T")[0]?.concat("T16:00:00.000Z")
-      : new Date(new Date().toDateString());
+  const now = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" })
+  );
+  console.log("🚀 ~ file: do-election-processing.tsx:16 ~ handler ~ now:", now);
 
   const elections = await prisma.election.findMany({
     where: {
-      start_date,
-      voting_start: new Date(
-        new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" })
-      ).getHours(),
+      start_date: new Date(now.toDateString()),
+      voting_start: now.getHours(),
     },
   });
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:22 ~ handler ~ now.getHours():",
+    now.getHours()
+  );
 
   for (const election of elections) {
     await prisma.election.update({
