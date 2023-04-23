@@ -142,8 +142,7 @@ const ElectionPage = ({
               </Text>
 
               <Group position="center" mt={8}>
-                {hasVoted ||
-                election.end_date.getTime() < new Date().getTime() ? (
+                {hasVoted || election.end_date < new Date() ? (
                   <Button
                     radius="xl"
                     size="md"
