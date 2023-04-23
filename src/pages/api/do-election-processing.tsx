@@ -11,17 +11,19 @@ import ReactPDF from "@react-pdf/renderer";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const now = new Date();
+  console.log("🚀 ~ file: do-election-processing.tsx:14 ~ handler ~ now:", now);
   const start_date = new Date(
-    now.toLocaleString("en-US", { timeZone: "Asia/Manila" })
+    now.toLocaleDateString("en-US", { timeZone: "Asia/Manila" })
   );
-
-  env.NODE_ENV === "production"
-    ? start_date.setHours(start_date.getHours() - 8)
-    : start_date;
 
   console.log(
     "🚀 ~ file: do-election-processing.tsx:16 ~ handler ~ start_date:",
     start_date
+  );
+
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ start_date.toISOString():",
+    start_date.toISOString()
   );
 
   const elections = await prisma.election.findMany({
