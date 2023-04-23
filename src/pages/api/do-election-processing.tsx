@@ -12,10 +12,19 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   const now = new Date(
     new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" })
   );
+  console.log("🚀 ~ file: do-election-processing.tsx:15 ~ handler ~ now:", now);
 
   const start_date = now;
   start_date.setHours(0, 0, 0, 0);
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ start_date:",
+    start_date
+  );
   start_date.setDate(start_date.getDate() - 1);
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ start_date:",
+    start_date
+  );
 
   const elections = await prisma.election.findMany({
     where: {
@@ -28,14 +37,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   });
 
   for (const election of elections) {
-    await prisma.election.update({
-      where: {
-        id: election.id,
-      },
-      data: {
-        publicity: "VOTER",
-      },
-    });
     const invitedVoters = await prisma.invitedVoter.findMany({
       where: {
         electionId: election.id,
@@ -78,16 +79,33 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         },
       });
     }
+
+    await prisma.election.update({
+      where: {
+        id: election.id,
+      },
+      data: {
+        publicity: "VOTER",
+      },
+    });
   }
 
   // Generate election results when the election is over
-
+  console.log("--------------------------");
   const end_date = now;
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:96 ~ handler ~ end_date:",
+    end_date
+  );
   end_date.setHours(0, 0, 0, 0);
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:96 ~ handler ~ end_date:",
+    end_date
+  );
 
   const electionsEnd = await prisma.election.findMany({
     where: {
-      end_date,
+      end_date: end_date.toISOString().split("T")[0]?.concat("T16:00:00.000Z"),
       voting_end: now.getHours(),
     },
     include: {
