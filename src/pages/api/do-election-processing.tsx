@@ -12,13 +12,22 @@ import ReactPDF from "@react-pdf/renderer";
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const now = new Date();
   console.log("🚀 ~ file: do-election-processing.tsx:14 ~ handler ~ now:", now);
+  const nowPHT = new Date(
+    now.toLocaleString("en-US", { timeZone: "Asia/Manila" })
+  );
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ nowPHT:",
+    nowPHT
+  );
 
-  const start_date = new Date(now.getDate() - 1);
+  const start_date = now;
+  start_date.setHours(0, 0, 0, 0);
+
   console.log(
     "🚀 ~ file: do-election-processing.tsx:16 ~ handler ~ start_date:",
     start_date
   );
-  start_date.setHours(0, 0, 0, 0);
+  start_date.setDate(start_date.getDate() + 1);
   console.log(
     "🚀 ~ file: do-election-processing.tsx:16 ~ handler ~ start_date:",
     start_date
