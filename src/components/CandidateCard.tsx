@@ -7,6 +7,7 @@ import type {
   Credential,
   EventAttended,
   Partylist,
+  Platform,
   Position,
 } from "@prisma/client";
 import EditCandidateModal from "./modals/EditCandidate";
@@ -20,6 +21,7 @@ const CandidateCard = ({
   positions,
 }: {
   candidate: Candidate & {
+    platform: Platform[];
     credential:
       | (Credential & {
           achievements: Achievement[];

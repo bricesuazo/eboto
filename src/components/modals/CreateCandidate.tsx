@@ -103,6 +103,11 @@ const CreateCandidateModal = ({
     position: string;
     image: FileWithPath | null;
 
+    platforms: {
+      title: string;
+      description: string;
+    }[];
+
     achievements: {
       name: string;
       year: DateValue;
@@ -126,6 +131,8 @@ const CreateCandidateModal = ({
       middleName: "",
       position: position.id,
       image: null,
+
+      platforms: [],
 
       achievements: [],
       affiliations: [],
@@ -182,6 +189,11 @@ const CreateCandidateModal = ({
                 electionId: position.electionId,
               },
               middleName: value.middleName,
+
+              platforms: value.platforms.map((p) => ({
+                title: p.title,
+                description: p.description,
+              })),
 
               achievements: value.achievements.map((a) => ({
                 name: a.name,

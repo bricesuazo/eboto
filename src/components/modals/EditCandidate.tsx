@@ -21,6 +21,7 @@ import type {
   Credential,
   EventAttended,
   Partylist,
+  Platform,
   Position,
 } from "@prisma/client";
 import { hasLength, useForm } from "@mantine/form";
@@ -60,6 +61,7 @@ const EditCandidateModal = ({
   isOpen: boolean;
   onClose: () => void;
   candidate: Candidate & {
+    platform: Platform[];
     credential:
       | (Credential & {
           achievements: Achievement[];
@@ -84,6 +86,12 @@ const EditCandidateModal = ({
     position: string;
     image: FileWithPath | null | string;
 
+    platforms: {
+      id: string;
+      title: string;
+      description: string;
+    }[];
+
     achievements: { id: string; name: string; year: DateValue }[];
     affiliations: {
       id: string;
@@ -102,6 +110,8 @@ const EditCandidateModal = ({
       partylistId: candidate.partylistId,
       position: candidate.positionId,
       image: candidate.image,
+
+      platforms: candidate.platform,
 
       achievements: candidate.credential?.achievements ?? [],
       affiliations: candidate.credential?.affiliations ?? [],
@@ -143,6 +153,8 @@ const EditCandidateModal = ({
         position: data.positionId,
         image: data.image,
 
+        platforms: data.platform,
+
         achievements: data.credential?.achievements ?? [],
         affiliations: data.credential?.affiliations ?? [],
         eventAttended: data.credential?.eventsAttended ?? [],
@@ -173,6 +185,8 @@ const EditCandidateModal = ({
         partylistId: candidate.partylistId,
         position: candidate.positionId,
         image: candidate.image,
+
+        platforms: candidate.platform,
 
         achievements: candidate.credential?.achievements ?? [],
         affiliations: candidate.credential?.affiliations ?? [],
@@ -287,6 +301,13 @@ const EditCandidateModal = ({
                     }/image/${Date.now().toString()}`,
                     image: value.image,
                   }),
+
+              platforms: candidate.platform.map((p) => ({
+                id: p.id,
+                title: p.title,
+                description: p.description,
+              })),
+
               achievements: value.achievements.map((a) => ({
                 id: a.id,
                 name: a.name,

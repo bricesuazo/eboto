@@ -81,6 +81,14 @@ export const candidateRouter = createTRPCRouter({
         positionId: z.string(),
         image: z.string().nullable(),
 
+        platforms: z.array(
+          z.object({
+            id: z.string(),
+            title: z.string().min(1),
+            description: z.string().min(1),
+          })
+        ),
+
         achievements: z.array(
           z.object({
             id: z.string(),
@@ -152,6 +160,7 @@ export const candidateRouter = createTRPCRouter({
           id: input.id,
         },
         include: {
+          platform: true,
           credential: {
             include: {
               achievements: true,
@@ -169,6 +178,22 @@ export const candidateRouter = createTRPCRouter({
           partylistId: input.partylistId,
           positionId: input.positionId,
           image: input.image,
+
+          platform: {
+            upsert: input.platforms.map((platform) => ({
+              where: {
+                id: platform.id,
+              },
+              create: {
+                title: platform.title,
+                description: platform.description,
+              },
+              update: {
+                title: platform.title,
+                description: platform.description,
+              },
+            })),
+          },
 
           credential: {
             upsert: {
@@ -297,6 +322,13 @@ export const candidateRouter = createTRPCRouter({
         message: z.string().min(1).optional(),
         image: z.string().min(1).optional(),
 
+        platforms: z.array(
+          z.object({
+            title: z.string().min(1),
+            description: z.string().min(1),
+          })
+        ),
+
         achievements: z.array(
           z.object({
             name: z.string().min(1),
@@ -366,6 +398,12 @@ export const candidateRouter = createTRPCRouter({
 
           image: input.image,
 
+          platform: {
+            createMany: {
+              data: input.platforms,
+            },
+          },
+
           credential: {
             create: {
               affiliations: {
@@ -423,6 +461,7 @@ export const candidateRouter = createTRPCRouter({
           electionId: election.id,
         },
         include: {
+          platform: true,
           credential: {
             include: {
               affiliations: true,

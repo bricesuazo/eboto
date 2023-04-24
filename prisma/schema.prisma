@@ -190,9 +190,9 @@ model Platform {
 
     title       String
     description String
-    createdAt   DateTime   @default(now())
-    candidate   Candidate? @relation(fields: [candidateId], references: [id], onDelete: Cascade)
-    candidateId String?
+    createdAt   DateTime  @default(now())
+    candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+    candidateId String
 
     @@index([candidateId])
 }

@@ -7,6 +7,7 @@ import type {
   Credential,
   EventAttended,
   Partylist,
+  Platform,
   Position,
 } from "@prisma/client";
 import { IconUserPlus } from "@tabler/icons-react";
@@ -22,6 +23,7 @@ const Candidates = ({
 }: {
   position: Position;
   candidates: (Candidate & {
+    platform: Platform[];
     credential:
       | (Credential & {
           achievements: Achievement[];
