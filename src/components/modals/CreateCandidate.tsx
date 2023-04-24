@@ -11,6 +11,7 @@ import {
   rem,
   Box,
   Flex,
+  Textarea,
 } from "@mantine/core";
 import { api } from "../../utils/api";
 import type { Partylist, Position } from "@prisma/client";
@@ -114,7 +115,7 @@ const CreateCandidateModal = ({
     }[];
     affiliations: {
       org_name: string;
-      org_postion: string;
+      org_position: string;
       start_year: DateValue;
       end_year: DateValue;
     }[];
@@ -201,7 +202,7 @@ const CreateCandidateModal = ({
               })),
               affiliations: value.affiliations.map((a) => ({
                 org_name: a.org_name,
-                org_postion: a.org_postion,
+                org_postion: a.org_position,
                 start_year: new Date(a.start_year?.toDateString() ?? ""),
                 end_year: new Date(a.end_year?.toDateString() ?? ""),
               })),
@@ -219,15 +220,28 @@ const CreateCandidateModal = ({
             <Tabs.Tab
               value="basic-info"
               icon={<IconUserSearch size="0.8rem" />}
+              px="2rem"
             >
               Basic Info
             </Tabs.Tab>
-            <Tabs.Tab value="image" icon={<IconPhoto size="0.8rem" />}>
+            <Tabs.Tab
+              value="image"
+              icon={<IconPhoto size="0.8rem" />}
+              px="2rem"
+            >
               Image
+            </Tabs.Tab>
+            <Tabs.Tab
+              value="platforms"
+              icon={<IconInfoCircle size="0.8rem" />}
+              px="2rem"
+            >
+              Platforms
             </Tabs.Tab>
             <Tabs.Tab
               value="credentials"
               icon={<IconInfoCircle size="0.8rem" />}
+              px="2rem"
             >
               Credentials
             </Tabs.Tab>
@@ -388,6 +402,93 @@ const CreateCandidateModal = ({
                 </Button>
               </Stack>
             </Tabs.Panel>
+            <Tabs.Panel value="platforms" pt="xs">
+              <Stack spacing="xs">
+                {form.values.platforms.map((platform, index) => (
+                  <Box key={index}>
+                    <TextInput
+                      w="100%"
+                      label="Title"
+                      placeholder="Enter title"
+                      required
+                      value={platform.title}
+                      onChange={(e) => {
+                        form.setValues({
+                          ...form.values,
+                          platforms: form.values.platforms.map((p, i) => {
+                            if (i === index) {
+                              return {
+                                ...p,
+                                title: e.target.value,
+                              };
+                            }
+                            return p;
+                          }),
+                        });
+                      }}
+                    />
+                    <Textarea
+                      w="100%"
+                      label="Description"
+                      placeholder="Enter description"
+                      required
+                      value={platform.description}
+                      onChange={(e) => {
+                        form.setValues({
+                          ...form.values,
+                          platforms: form.values.platforms.map((p, i) => {
+                            if (i === index) {
+                              return {
+                                ...p,
+                                description: e.target.value,
+                              };
+                            }
+                            return p;
+                          }),
+                        });
+                      }}
+                    />
+
+                    <Button
+                      variant="outline"
+                      mt="xs"
+                      size="xs"
+                      w="100%"
+                      color="red"
+                      onClick={() => {
+                        form.setValues({
+                          ...form.values,
+
+                          platforms: form.values.platforms.filter(
+                            (_, i) => i !== index
+                          ),
+                        });
+                      }}
+                    >
+                      Delete platform
+                    </Button>
+                  </Box>
+                ))}
+                <Button
+                  leftIcon={<IconPlus size="1.25rem" />}
+                  onClick={() => {
+                    form.setValues({
+                      ...form.values,
+
+                      platforms: [
+                        ...form.values.platforms,
+                        {
+                          title: "",
+                          description: "",
+                        },
+                      ],
+                    });
+                  }}
+                >
+                  Add platform
+                </Button>
+              </Stack>
+            </Tabs.Panel>
             <Tabs.Panel value="credentials" pt="xs">
               <Tabs variant="outline" radius="xs" defaultValue="achievements">
                 <Tabs.List grow>
@@ -409,81 +510,74 @@ const CreateCandidateModal = ({
                 </Tabs.List>
                 <Tabs.Panel value="achievements" pt="xs">
                   <Stack spacing="md">
-                    {form.values.achievements.map((_, index) => {
-                      return (
-                        <Box key={index}>
-                          <Flex gap="xs">
-                            <TextInput
-                              w="100%"
-                              label="Achievement"
-                              placeholder="Enter achievement"
-                              required
-                              value={
-                                form.values.achievements[index]?.name ?? ""
-                              }
-                              onChange={(e) => {
-                                form.setValues({
-                                  ...form.values,
-                                  achievements: form.values.achievements.map(
-                                    (achievement, i) =>
-                                      i === index
-                                        ? {
-                                            ...achievement,
-                                            name: e.target.value,
-                                          }
-                                        : achievement
-                                  ),
-                                });
-                              }}
-                            />
-                            <YearPickerInput
-                              label="Year"
-                              placeholder="Enter year"
-                              popoverProps={{
-                                withinPortal: true,
-                              }}
-                              value={
-                                form.values.achievements[index]?.year ??
-                                new Date()
-                              }
-                              onChange={(date) => {
-                                form.setValues({
-                                  ...form.values,
-                                  achievements: form.values.achievements.map(
-                                    (achievement, i) =>
-                                      i === index
-                                        ? {
-                                            ...achievement,
-                                            year: date,
-                                          }
-                                        : achievement
-                                  ),
-                                });
-                              }}
-                              required
-                            />
-                          </Flex>
-                          <Button
-                            variant="outline"
-                            mt="xs"
-                            size="xs"
+                    {form.values.achievements.map((achievement, index) => (
+                      <Box key={index}>
+                        <Flex gap="xs">
+                          <TextInput
                             w="100%"
-                            color="red"
-                            onClick={() => {
+                            label="Achievement"
+                            placeholder="Enter achievement"
+                            required
+                            value={achievement.name}
+                            onChange={(e) => {
                               form.setValues({
                                 ...form.values,
-
-                                achievements: form.values.achievements.filter(
-                                  (_, i) => i !== index
+                                achievements: form.values.achievements.map(
+                                  (achievement, i) =>
+                                    i === index
+                                      ? {
+                                          ...achievement,
+                                          name: e.target.value,
+                                        }
+                                      : achievement
                                 ),
                               });
                             }}
-                          >
-                            Delete achievement
-                          </Button>
-                        </Box>
-                      );
-                    })}
+                          />
+                          <YearPickerInput
+                            label="Year"
+                            placeholder="Enter year"
+                            popoverProps={{
+                              withinPortal: true,
+                            }}
+                            value={achievement.year}
+                            onChange={(date) => {
+                              form.setValues({
+                                ...form.values,
+                                achievements: form.values.achievements.map(
+                                  (achievement, i) =>
+                                    i === index
+                                      ? {
+                                          ...achievement,
+                                          year: date,
+                                        }
+                                      : achievement
+                                ),
+                              });
+                            }}
+                            required
+                          />
+                        </Flex>
+                        <Button
+                          variant="outline"
+                          mt="xs"
+                          size="xs"
+                          w="100%"
+                          color="red"
+                          onClick={() => {
+                            form.setValues({
+                              ...form.values,
+
+                              achievements: form.values.achievements.filter(
+                                (_, i) => i !== index
+                              ),
+                            });
+                          }}
+                        >
+                          Delete achievement
+                        </Button>
+                      </Box>
+                    ))}
 
                     <Button
                       leftIcon={<IconPlus size="1.25rem" />}
@@ -507,18 +601,61 @@ const CreateCandidateModal = ({
                 </Tabs.Panel>
                 <Tabs.Panel value="affiliations" pt="xs">
                   <Stack spacing="md">
-                    {form.values.affiliations.map((_, index) => {
-                      return (
-                        <Box key={index}>
-                          <TextInput
+                    {form.values.affiliations.map((affiliation, index) => (
+                      <Box key={index}>
+                        <TextInput
+                          w="100%"
+                          label="Organization name"
+                          placeholder="Enter organization name"
+                          required
+                          value={affiliation.org_name}
+                          onChange={(e) => {
+                            form.setValues({
+                              ...form.values,
+                              affiliations: form.values.affiliations.map(
+                                (affiliation, i) =>
+                                  i === index
+                                    ? {
+                                        ...affiliation,
+                                        org_name: e.target.value,
+                                      }
+                                    : affiliation
+                              ),
+                            });
+                          }}
+                        />
+                        <TextInput
+                          w="100%"
+                          label="Position"
+                          placeholder="Enter your position in the organization"
+                          required
+                          value={affiliation.org_position}
+                          onChange={(e) => {
+                            form.setValues({
+                              ...form.values,
+                              affiliations: form.values.affiliations.map(
+                                (affiliation, i) =>
+                                  i === index
+                                    ? {
+                                        ...affiliation,
+                                        org_postion: e.target.value,
+                                      }
+                                    : affiliation
+                              ),
+                            });
+                          }}
+                        />
+
+                        <Flex gap="xs">
+                          <YearPickerInput
+                            label="Start year"
+                            placeholder="Enter start year"
                             w="100%"
-                            label="Organization name"
-                            placeholder="Enter organization name"
-                            required
-                            value={
-                              form.values.affiliations[index]?.org_name ?? ""
-                            }
-                            onChange={(e) => {
+                            popoverProps={{
+                              withinPortal: true,
+                            }}
+                            value={affiliation.start_year}
+                            onChange={(date) => {
                               form.setValues({
                                 ...form.values,
                                 affiliations: form.values.affiliations.map(
@@ -526,22 +663,23 @@ const CreateCandidateModal = ({
                                     i === index
                                       ? {
                                           ...affiliation,
-                                          org_name: e.target.value,
+                                          start_year: date,
                                         }
                                       : affiliation
                                 ),
                               });
                             }}
-                          />
-                          <TextInput
-                            w="100%"
-                            label="Position"
-                            placeholder="Enter your position in the organization"
                             required
-                            value={
-                              form.values.affiliations[index]?.org_postion ?? ""
-                            }
-                            onChange={(e) => {
+                          />
+                          <YearPickerInput
+                            label="End year"
+                            placeholder="Enter end year"
+                            w="100%"
+                            popoverProps={{
+                              withinPortal: true,
+                            }}
+                            value={affiliation.end_year}
+                            onChange={(date) => {
                               form.setValues({
                                 ...form.values,
                                 affiliations: form.values.affiliations.map(
@@ -549,91 +687,35 @@ const CreateCandidateModal = ({
                                     i === index
                                       ? {
                                           ...affiliation,
-                                          org_postion: e.target.value,
+                                          end_year: date,
                                         }
                                       : affiliation
                                 ),
                               });
                             }}
+                            required
                           />
+                        </Flex>
+                        <Button
+                          variant="outline"
+                          mt="xs"
+                          size="xs"
+                          w="100%"
+                          color="red"
+                          onClick={() => {
+                            form.setValues({
+                              ...form.values,
 
-                          <Flex gap="xs">
-                            <YearPickerInput
-                              label="Start year"
-                              placeholder="Enter start year"
-                              w="100%"
-                              popoverProps={{
-                                withinPortal: true,
-                              }}
-                              value={
-                                form.values.affiliations[index]?.start_year ??
-                                new Date()
-                              }
-                              onChange={(date) => {
-                                form.setValues({
-                                  ...form.values,
-                                  affiliations: form.values.affiliations.map(
-                                    (affiliation, i) =>
-                                      i === index
-                                        ? {
-                                            ...affiliation,
-                                            start_year: date,
-                                          }
-                                        : affiliation
-                                  ),
-                                });
-                              }}
-                              required
-                            />
-                            <YearPickerInput
-                              label="End year"
-                              placeholder="Enter end year"
-                              w="100%"
-                              popoverProps={{
-                                withinPortal: true,
-                              }}
-                              value={
-                                form.values.affiliations[index]?.end_year ??
-                                new Date()
-                              }
-                              onChange={(date) => {
-                                form.setValues({
-                                  ...form.values,
-                                  affiliations: form.values.affiliations.map(
-                                    (affiliation, i) =>
-                                      i === index
-                                        ? {
-                                            ...affiliation,
-                                            end_year: date,
-                                          }
-                                        : affiliation
-                                  ),
-                                });
-                              }}
-                              required
-                            />
-                          </Flex>
-                          <Button
-                            variant="outline"
-                            mt="xs"
-                            size="xs"
-                            w="100%"
-                            color="red"
-                            onClick={() => {
-                              form.setValues({
-                                ...form.values,
-
-                                affiliations: form.values.affiliations.filter(
-                                  (_, i) => i !== index
-                                ),
-                              });
-                            }}
-                          >
-                            Delete affiliation
-                          </Button>
-                        </Box>
-                      );
-                    })}
+                              affiliations: form.values.affiliations.filter(
+                                (_, i) => i !== index
+                              ),
+                            });
+                          }}
+                        >
+                          Delete affiliation
+                        </Button>
+                      </Box>
+                    ))}
 
                     <Button
                       leftIcon={<IconPlus size="1.25rem" />}
@@ -645,7 +727,7 @@ const CreateCandidateModal = ({
                             ...form.values.affiliations,
                             {
                               org_name: "",
-                              org_postion: "",
+                              org_position: "",
                               start_year: new Date(
                                 new Date().getFullYear(),
                                 -1
@@ -662,84 +744,74 @@ const CreateCandidateModal = ({
                 </Tabs.Panel>
                 <Tabs.Panel value="events-attended" pt="xs">
                   <Stack spacing="md">
-                    {form.values.eventsAttended.map((_, index) => {
-                      return (
-                        <Box key={index}>
-                          <Flex gap="xs">
-                            <TextInput
-                              w="100%"
-                              label="Seminars attended"
-                              placeholder="Enter seminars attended"
-                              required
-                              value={
-                                form.values.eventsAttended[index]?.name ?? ""
-                              }
-                              onChange={(e) => {
-                                form.setValues({
-                                  ...form.values,
-                                  eventsAttended:
-                                    form.values.eventsAttended.map(
-                                      (achievement, i) =>
-                                        i === index
-                                          ? {
-                                              ...achievement,
-                                              name: e.target.value,
-                                            }
-                                          : achievement
-                                    ),
-                                });
-                              }}
-                            />
-                            <YearPickerInput
-                              label="Year"
-                              placeholder="Enter year"
-                              popoverProps={{
-                                withinPortal: true,
-                              }}
-                              value={
-                                form.values.eventsAttended[index]?.year ??
-                                new Date()
-                              }
-                              onChange={(date) => {
-                                form.setValues({
-                                  ...form.values,
-                                  eventsAttended:
-                                    form.values.eventsAttended.map(
-                                      (achievement, i) =>
-                                        i === index
-                                          ? {
-                                              ...achievement,
-                                              year: date,
-                                            }
-                                          : achievement
-                                    ),
-                                });
-                              }}
-                              required
-                            />
-                          </Flex>
-                          <Button
-                            variant="outline"
-                            mt="xs"
-                            size="xs"
+                    {form.values.eventsAttended.map((eventAttended, index) => (
+                      <Box key={index}>
+                        <Flex gap="xs">
+                          <TextInput
                             w="100%"
-                            color="red"
-                            onClick={() => {
+                            label="Seminars attended"
+                            placeholder="Enter seminars attended"
+                            required
+                            value={eventAttended.name}
+                            onChange={(e) => {
                               form.setValues({
                                 ...form.values,
-
-                                eventsAttended:
-                                  form.values.eventsAttended.filter(
-                                    (_, i) => i !== index
-                                  ),
+                                eventsAttended: form.values.eventsAttended.map(
+                                  (achievement, i) =>
+                                    i === index
+                                      ? {
+                                          ...achievement,
+                                          name: e.target.value,
+                                        }
+                                      : achievement
+                                ),
                               });
                             }}
-                          >
-                            Delete seminar attended
-                          </Button>
-                        </Box>
-                      );
-                    })}
+                          />
+                          <YearPickerInput
+                            label="Year"
+                            placeholder="Enter year"
+                            popoverProps={{
+                              withinPortal: true,
+                            }}
+                            value={eventAttended.year}
+                            onChange={(date) => {
+                              form.setValues({
+                                ...form.values,
+                                eventsAttended: form.values.eventsAttended.map(
+                                  (achievement, i) =>
+                                    i === index
+                                      ? {
+                                          ...achievement,
+                                          year: date,
+                                        }
+                                      : achievement
+                                ),
+                              });
+                            }}
+                            required
+                          />
+                        </Flex>
+                        <Button
+                          variant="outline"
+                          mt="xs"
+                          size="xs"
+                          w="100%"
+                          color="red"
+                          onClick={() => {
+                            form.setValues({
+                              ...form.values,
+
+                              eventsAttended: form.values.eventsAttended.filter(
+                                (_, i) => i !== index
+                              ),
+                            });
+                          }}
+                        >
+                          Delete seminar attended
+                        </Button>
+                      </Box>
+                    ))}
 
                     <Button
                       leftIcon={<IconPlus size="1.25rem" />}
