@@ -185,6 +185,18 @@ model Credential {
     candidateId String    @unique
 }
 
+model Platform {
+    id String @id @default(cuid())
+
+    title       String
+    description String
+    createdAt   DateTime   @default(now())
+    candidate   Candidate? @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+    candidateId String?
+
+    @@index([candidateId])
+}
+
 model EventAttended {
     id String @id @default(cuid())
 
@@ -247,6 +259,7 @@ model Candidate {
     partylistId String
 
     credential Credential?
+    platform   Platform[]
     vote       Vote[]
 
     @@index([electionId])
