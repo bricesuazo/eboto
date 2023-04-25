@@ -16,6 +16,7 @@ import type {
   Election,
   EventAttended,
   Partylist,
+  Platform,
   Position,
 } from "@prisma/client";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
@@ -41,6 +42,7 @@ const CandidatePage = ({
           eventsAttended: EventAttended[];
         })
       | null;
+    platform: Platform[];
     position: Position;
     partylist: Partylist;
   };
@@ -173,6 +175,22 @@ const CandidatePage = ({
               <Text>Running for {candidate.position.name}</Text>
               <Text>{candidate.partylist.name}</Text>
 
+              {candidate.platform.length ? (
+                <Stack mt="xl" spacing="xs">
+                  <Title order={3}>
+                    Platform{candidate.platform.length > 1 ? "s" : ""}
+                  </Title>
+                  <List withPadding>
+                    {candidate.platform.map((platform) => (
+                      <List.Item key={platform.id}>
+                        <Title order={4}>{platform.title}</Title>
+                        <Text>{platform.description}</Text>
+                      </List.Item>
+                    ))}
+                  </List>
+                </Stack>
+              ) : null}
+
               {candidate.credential?.affiliations.length ||
               candidate.credential?.achievements.length ||
               candidate.credential?.eventsAttended.length ? (
@@ -182,7 +200,7 @@ const CandidatePage = ({
                   {candidate.credential.achievements.length ? (
                     <Box>
                       <Title order={5}>Achievements</Title>
-                      <List>
+                      <List withPadding>
                         {candidate.credential.achievements.map(
                           (achievement) => (
                             <List.Item key={achievement.id}>
@@ -198,7 +216,7 @@ const CandidatePage = ({
                   {candidate.credential.affiliations.length ? (
                     <Box>
                       <Title order={5}>Affiliations</Title>
-                      <List>
+                      <List withPadding>
                         {candidate.credential.affiliations.map(
                           (affiliation) => (
                             <List.Item key={affiliation.id}>
@@ -224,7 +242,7 @@ const CandidatePage = ({
                     <Box>
                       <Title order={5}>Seminars/Events Attended</Title>
 
-                      <List>
+                      <List withPadding>
                         {candidate.credential.eventsAttended.map(
                           (eventAttended) => (
                             <List.Item key={eventAttended.id}>
@@ -318,6 +336,7 @@ export const getServerSideProps: GetServerSideProps = async (
     include: {
       partylist: true,
       position: true,
+      platform: true,
       credential: {
         include: {
           achievements: true,
