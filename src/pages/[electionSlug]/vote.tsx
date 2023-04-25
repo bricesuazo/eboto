@@ -458,6 +458,21 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     });
 
+    const isVoter = await prisma.voter.findFirst({
+      where: {
+        userId: session.user.id,
+        electionId: election.id,
+      },
+    });
+
+    if (!isVoter)
+      return {
+        redirect: {
+          destination: `/${election.slug}`,
+          permanent: false,
+        },
+      };
+
     if (vote)
       return {
         redirect: {
