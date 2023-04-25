@@ -158,6 +158,7 @@ const HeaderComponent = ({
                           fill
                           sizes="100%"
                           priority
+                          style={{ objectFit: "cover" }}
                         />
                       </Box>
 

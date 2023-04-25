@@ -320,6 +320,7 @@ const AccountPage = () => {
                               fill
                               sizes="100%"
                               priority
+                              style={{ objectFit: "cover" }}
                             />
                           </Box>
                           <Text>{accountForm.values.image.name}</Text>
@@ -340,6 +341,7 @@ const AccountPage = () => {
                                 fill
                                 sizes="100%"
                                 priority
+                                style={{ objectFit: "cover" }}
                               />
                             </Box>
                             <Text>Current image</Text>

@@ -86,6 +86,7 @@ const CandidateCard = ({
                 height={52}
                 alt={candidate.first_name}
                 priority
+                style={{ objectFit: "cover" }}
               />
             ) : (
               <IconUser

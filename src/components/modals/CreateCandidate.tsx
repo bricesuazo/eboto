@@ -367,6 +367,7 @@ const CreateCandidateModal = ({
                             fill
                             sizes="100%"
                             priority
+                            style={{ objectFit: "cover" }}
                           />
                         </Box>
                         <Text>{form.values.image.name}</Text>
