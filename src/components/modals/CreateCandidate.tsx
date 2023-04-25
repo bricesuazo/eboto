@@ -202,7 +202,7 @@ const CreateCandidateModal = ({
               })),
               affiliations: value.affiliations.map((a) => ({
                 org_name: a.org_name,
-                org_postion: a.org_position,
+                org_position: a.org_position,
                 start_year: new Date(a.start_year?.toDateString() ?? ""),
                 end_year: new Date(a.end_year?.toDateString() ?? ""),
               })),
@@ -638,7 +638,7 @@ const CreateCandidateModal = ({
                                   i === index
                                     ? {
                                         ...affiliation,
-                                        org_postion: e.target.value,
+                                        org_position: e.target.value,
                                       }
                                     : affiliation
                               ),

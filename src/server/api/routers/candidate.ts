@@ -4,6 +4,15 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const candidateRouter = createTRPCRouter({
+  deleteSinglePlatform: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      return ctx.prisma.platform.delete({
+        where: {
+          id: input.id,
+        },
+      });
+    }),
   deleteSingleCredential: protectedProcedure
     .input(
       z.object({
@@ -100,7 +109,7 @@ export const candidateRouter = createTRPCRouter({
           z.object({
             id: z.string(),
             org_name: z.string().min(1),
-            org_postion: z.string().min(1),
+            org_position: z.string().min(1),
             start_year: z.date(),
             end_year: z.date(),
           })
@@ -220,13 +229,13 @@ export const candidateRouter = createTRPCRouter({
                     },
                     create: {
                       org_name: affiliation.org_name,
-                      org_postion: affiliation.org_postion,
+                      org_position: affiliation.org_position,
                       start_year: affiliation.start_year,
                       end_year: affiliation.end_year,
                     },
                     update: {
                       org_name: affiliation.org_name,
-                      org_postion: affiliation.org_postion,
+                      org_position: affiliation.org_position,
                       start_year: affiliation.start_year,
                       end_year: affiliation.end_year,
                     },
@@ -258,7 +267,7 @@ export const candidateRouter = createTRPCRouter({
                 affiliations: {
                   create: input.affiliations.map((affiliation) => ({
                     org_name: affiliation.org_name,
-                    org_postion: affiliation.org_postion,
+                    org_position: affiliation.org_position,
                     start_year: affiliation.start_year,
                     end_year: affiliation.end_year,
                   })),
@@ -338,7 +347,7 @@ export const candidateRouter = createTRPCRouter({
         affiliations: z.array(
           z.object({
             org_name: z.string().min(1),
-            org_postion: z.string().min(1),
+            org_position: z.string().min(1),
             start_year: z.date(),
             end_year: z.date(),
           })

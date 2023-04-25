@@ -213,11 +213,11 @@ model EventAttended {
 model Affiliation {
     id String @id @default(cuid())
 
-    org_name    String
-    org_postion String
-    start_year  DateTime
-    end_year    DateTime
-    createdAt   DateTime @default(now())
+    org_name     String
+    org_position String
+    start_year   DateTime
+    end_year     DateTime
+    createdAt    DateTime @default(now())
 
     credential   Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
     credentialId String

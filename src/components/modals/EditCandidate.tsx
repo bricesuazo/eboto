@@ -12,6 +12,7 @@ import {
   Box,
   Flex,
   ActionIcon,
+  Textarea,
 } from "@mantine/core";
 import { api } from "../../utils/api";
 import type {
@@ -96,7 +97,7 @@ const EditCandidateModal = ({
     affiliations: {
       id: string;
       org_name: string;
-      org_postion: string;
+      org_position: string;
       start_year: DateValue;
       end_year: DateValue;
     }[];
@@ -111,7 +112,11 @@ const EditCandidateModal = ({
       position: candidate.positionId,
       image: candidate.image,
 
-      platforms: candidate.platform,
+      platforms: candidate.platform.map((platform) => ({
+        id: platform.id,
+        title: platform.title,
+        description: platform.description,
+      })),
 
       achievements: candidate.credential?.achievements ?? [],
       affiliations: candidate.credential?.affiliations ?? [],
@@ -153,7 +158,11 @@ const EditCandidateModal = ({
         position: data.positionId,
         image: data.image,
 
-        platforms: data.platform,
+        platforms: data.platform.map((platform) => ({
+          id: platform.id,
+          title: platform.title,
+          description: platform.description,
+        })),
 
         achievements: data.credential?.achievements ?? [],
         affiliations: data.credential?.affiliations ?? [],
@@ -202,11 +211,13 @@ const EditCandidateModal = ({
     type,
     id,
   }: {
-    type: "ACHIEVEMENT" | "AFFILIATION" | "EVENTATTENDED";
+    type: "PLATFORM" | "ACHIEVEMENT" | "AFFILIATION" | "EVENTATTENDED";
     id: string;
   }) => {
     const deleteCredentialMutation =
       api.candidate.deleteSingleCredential.useMutation();
+    const deletePlatformMutation =
+      api.candidate.deleteSinglePlatform.useMutation();
     return (
       <Button
         variant="outline"
@@ -215,7 +226,18 @@ const EditCandidateModal = ({
         w="100%"
         color="red"
         onClick={async () => {
-          if (type === "ACHIEVEMENT") {
+          if (type === "PLATFORM") {
+            if (candidate.platform.find((a) => a.id === id)) {
+              await deletePlatformMutation.mutateAsync({ id });
+              await context.candidate.getAll.invalidate();
+              onClose();
+            } else {
+              form.setValues({
+                ...form.values,
+                platforms: form.values.platforms.filter((a) => a.id !== id),
+              });
+            }
+          } else if (type === "ACHIEVEMENT") {
             if (candidate.credential?.achievements.find((a) => a.id === id)) {
               await deleteCredentialMutation.mutateAsync({ id, type });
               await context.candidate.getAll.invalidate();
@@ -256,13 +278,18 @@ const EditCandidateModal = ({
             }
           }
         }}
-        loading={deleteCredentialMutation.isLoading}
+        loading={
+          deleteCredentialMutation.isLoading || deletePlatformMutation.isLoading
+        }
       >
-        {type === "ACHIEVEMENT"
-          ? "Delete Achievement"
+        Delete{" "}
+        {type === "PLATFORM"
+          ? "Platform"
+          : type === "ACHIEVEMENT"
+          ? "Achievement"
           : type === "AFFILIATION"
-          ? "Delete Affiliation"
-          : "Delete Event Attended"}
+          ? "Affiliation"
+          : "Event Attended"}
       </Button>
     );
   };
@@ -302,11 +329,7 @@ const EditCandidateModal = ({
                     image: value.image,
                   }),
 
-              platforms: candidate.platform.map((p) => ({
-                id: p.id,
-                title: p.title,
-                description: p.description,
-              })),
+              platforms: value.platforms,
 
               achievements: value.achievements.map((a) => ({
                 id: a.id,
@@ -317,7 +340,7 @@ const EditCandidateModal = ({
               affiliations: value.affiliations.map((a) => ({
                 id: a.id,
                 org_name: a.org_name,
-                org_postion: a.org_postion,
+                org_position: a.org_position,
                 start_year: new Date(a.start_year?.toDateString() ?? ""),
                 end_year: new Date(a.end_year?.toDateString() ?? ""),
               })),
@@ -332,24 +355,40 @@ const EditCandidateModal = ({
           })();
         })}
       >
-        <Tabs radius="xs" defaultValue="basic">
+        <Tabs radius="xs" defaultValue="basic-info">
           <Tabs.List grow>
-            <Tabs.Tab value="basic" icon={<IconUserSearch size="0.8rem" />}>
+            <Tabs.Tab
+              value="basic-info"
+              icon={<IconUserSearch size="0.8rem" />}
+              px="2rem"
+            >
               Basic Info
             </Tabs.Tab>
-            <Tabs.Tab value="image" icon={<IconPhoto size="0.8rem" />}>
+            <Tabs.Tab
+              value="image"
+              icon={<IconPhoto size="0.8rem" />}
+              px="2rem"
+            >
               Image
+            </Tabs.Tab>
+            <Tabs.Tab
+              value="platforms"
+              icon={<IconInfoCircle size="0.8rem" />}
+              px="2rem"
+            >
+              Platforms
             </Tabs.Tab>
             <Tabs.Tab
               value="credentials"
               icon={<IconInfoCircle size="0.8rem" />}
+              px="2rem"
             >
               Credentials
             </Tabs.Tab>
           </Tabs.List>
 
           <Stack spacing="sm">
-            <Tabs.Panel value="basic" pt="xs">
+            <Tabs.Panel value="basic-info" pt="xs">
               <Stack spacing="xs">
                 <TextInput
                   label="First name"
@@ -555,6 +594,78 @@ const EditCandidateModal = ({
               </Stack>
             </Tabs.Panel>
 
+            <Tabs.Panel value="platforms" pt="xs">
+              <Stack spacing="xs">
+                {form.values.platforms.map((platform, index) => (
+                  <Box key={index}>
+                    <TextInput
+                      w="100%"
+                      label="Title"
+                      placeholder="Enter title"
+                      required
+                      value={platform.title}
+                      onChange={(e) => {
+                        form.setValues({
+                          ...form.values,
+                          platforms: form.values.platforms.map((p, i) => {
+                            if (i === index) {
+                              return {
+                                ...p,
+                                title: e.target.value,
+                              };
+                            }
+                            return p;
+                          }),
+                        });
+                      }}
+                    />
+                    <Textarea
+                      w="100%"
+                      label="Description"
+                      placeholder="Enter description"
+                      required
+                      value={platform.description}
+                      onChange={(e) => {
+                        form.setValues({
+                          ...form.values,
+                          platforms: form.values.platforms.map((p, i) => {
+                            if (i === index) {
+                              return {
+                                ...p,
+                                description: e.target.value,
+                              };
+                            }
+                            return p;
+                          }),
+                        });
+                      }}
+                    />
+
+                    <DeleteCredentialButton type="PLATFORM" id={platform.id} />
+                  </Box>
+                ))}
+                <Button
+                  leftIcon={<IconPlus size="1.25rem" />}
+                  onClick={() => {
+                    form.setValues({
+                      ...form.values,
+
+                      platforms: [
+                        ...form.values.platforms,
+                        {
+                          id: "",
+                          title: "",
+                          description: "",
+                        },
+                      ],
+                    });
+                  }}
+                >
+                  Add platform
+                </Button>
+              </Stack>
+            </Tabs.Panel>
+
             <Tabs.Panel value="credentials" pt="xs">
               <Tabs variant="outline" radius="xs" defaultValue="achievements">
                 <Tabs.List grow>
@@ -586,9 +697,7 @@ const EditCandidateModal = ({
                               label="Achievement"
                               placeholder="Enter achievement"
                               required
-                              value={
-                                form.values.achievements[index]?.name ?? ""
-                              }
+                              value={achievement.name}
                               onChange={(e) => {
                                 form.setValues({
                                   ...form.values,
@@ -610,10 +719,7 @@ const EditCandidateModal = ({
                               popoverProps={{
                                 withinPortal: true,
                               }}
-                              value={
-                                form.values.achievements[index]?.year ??
-                                new Date()
-                              }
+                              value={achievement.year}
                               onChange={(date) => {
                                 form.setValues({
                                   ...form.values,
@@ -670,9 +776,7 @@ const EditCandidateModal = ({
                             label="Organization name"
                             placeholder="Enter organization name"
                             required
-                            value={
-                              form.values.affiliations[index]?.org_name ?? ""
-                            }
+                            value={affiliation.org_name}
                             onChange={(e) => {
                               form.setValues({
                                 ...form.values,
@@ -693,9 +797,7 @@ const EditCandidateModal = ({
                             label="Position"
                             placeholder="Enter your position in the organization"
                             required
-                            value={
-                              form.values.affiliations[index]?.org_postion ?? ""
-                            }
+                            value={affiliation.org_position}
                             onChange={(e) => {
                               form.setValues({
                                 ...form.values,
@@ -704,7 +806,7 @@ const EditCandidateModal = ({
                                     i === index
                                       ? {
                                           ...affiliation,
-                                          org_postion: e.target.value,
+                                          org_position: e.target.value,
                                         }
                                       : affiliation
                                 ),
@@ -787,7 +889,7 @@ const EditCandidateModal = ({
                             {
                               id: "",
                               org_name: "",
-                              org_postion: "",
+                              org_position: "",
                               start_year: new Date(
                                 new Date().getFullYear(),
                                 -1
