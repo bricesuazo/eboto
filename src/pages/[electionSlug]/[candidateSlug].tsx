@@ -180,7 +180,7 @@ const CandidatePage = ({
                   <Title order={3}>
                     Platform{candidate.platform.length > 1 ? "s" : ""}
                   </Title>
-                  <List withPadding>
+                  <List withPadding listStyleType="none">
                     {candidate.platform.map((platform) => (
                       <List.Item key={platform.id}>
                         <Title order={4}>{platform.title}</Title>
@@ -199,8 +199,13 @@ const CandidatePage = ({
 
                   {candidate.credential.achievements.length ? (
                     <Box>
-                      <Title order={5}>Achievements</Title>
-                      <List withPadding>
+                      <Title order={5}>
+                        Achievement
+                        {candidate.credential.achievements.length > 1
+                          ? "s"
+                          : ""}
+                      </Title>
+                      <List withPadding listStyleType="none">
                         {candidate.credential.achievements.map(
                           (achievement) => (
                             <List.Item key={achievement.id}>
@@ -215,8 +220,13 @@ const CandidatePage = ({
 
                   {candidate.credential.affiliations.length ? (
                     <Box>
-                      <Title order={5}>Affiliations</Title>
-                      <List withPadding>
+                      <Title order={5}>
+                        Affiliation
+                        {candidate.credential.affiliations.length > 1
+                          ? "s"
+                          : ""}
+                      </Title>
+                      <List withPadding listStyleType="none">
                         {candidate.credential.affiliations.map(
                           (affiliation) => (
                             <List.Item key={affiliation.id}>
@@ -240,9 +250,19 @@ const CandidatePage = ({
 
                   {candidate.credential.eventsAttended.length ? (
                     <Box>
-                      <Title order={5}>Seminars/Events Attended</Title>
+                      <Title order={5}>
+                        Seminar
+                        {candidate.credential.eventsAttended.length > 1
+                          ? "s"
+                          : ""}
+                        /Event
+                        {candidate.credential.eventsAttended.length > 1
+                          ? "s"
+                          : ""}{" "}
+                        Attended
+                      </Title>
 
-                      <List withPadding>
+                      <List withPadding listStyleType="none">
                         {candidate.credential.eventsAttended.map(
                           (eventAttended) => (
                             <List.Item key={eventAttended.id}>
