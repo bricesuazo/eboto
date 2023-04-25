@@ -491,6 +491,7 @@ const DashboardSettings = () => {
                                   fill
                                   sizes="100%"
                                   priority
+                                  style={{ objectFit: "cover" }}
                                 />
                               </Box>
                               <Text>{form.values.logo.name}</Text>
@@ -515,6 +516,7 @@ const DashboardSettings = () => {
                                     alt="Logo"
                                     fill
                                     priority
+                                    style={{ objectFit: "cover" }}
                                   />
                                 </Box>
                                 <Text>Current logo</Text>
