@@ -25,7 +25,13 @@ import Head from "next/head";
 import { env } from "../../env.mjs";
 import { isElectionOngoing } from "../../utils/isElectionOngoing";
 
-const RealtimePage = ({ election }: { election: Election }) => {
+const RealtimePage = ({
+  election,
+  isOngoing,
+}: {
+  election: Election;
+  isOngoing: boolean;
+}) => {
   const title = `${election.name} – Realtime | eBoto Mo`;
   const positions = api.election.getElectionRealtime.useQuery(election.id, {
     refetchOnWindowFocus: false,
@@ -115,22 +121,29 @@ const RealtimePage = ({ election }: { election: Election }) => {
                 </thead>
 
                 <tbody>
-                  {position.candidate.map((candidate) => (
-                    <tr key={candidate.id}>
-                      <td>
-                        <Flex justify="space-between" align="center">
-                          <Text lineClamp={2}>
-                            {candidate.last_name}, {candidate.first_name}
-                            {candidate.middle_name
-                              ? " " + candidate.middle_name.charAt(0) + "."
-                              : ""}{" "}
-                            ({candidate.partylist.acronym})
-                          </Text>
-                          <Text>{candidate.vote.length}</Text>
-                        </Flex>
-                      </td>
-                    </tr>
-                  ))}
+                  {position.candidate
+                    .sort((a, b) => b.vote.length - a.vote.length)
+                    .map((candidate, i) => (
+                      <tr key={candidate.id}>
+                        <td>
+                          <Flex justify="space-between" align="center">
+                            <Text lineClamp={2}>
+                              {isOngoing
+                                ? `Candidate ${i + 1}`
+                                : `${candidate.last_name}, ${
+                                    candidate.first_name
+                                  }
+                            ${
+                              candidate.middle_name
+                                ? " " + candidate.middle_name.charAt(0) + "."
+                                : ""
+                            } (${candidate.partylist.acronym})`}
+                            </Text>
+                            <Text>{candidate.vote.length}</Text>
+                          </Flex>
+                        </td>
+                      </tr>
+                    ))}
                   <tr>
                     <td>
                       <Flex justify="space-between">
@@ -245,6 +258,7 @@ export const getServerSideProps: GetServerSideProps = async (
   return {
     props: {
       election,
+      isOngoing: isElectionOngoing({ election, withTime: true }),
     },
   };
 };
