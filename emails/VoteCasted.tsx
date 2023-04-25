@@ -1,3 +1,4 @@
+import type { Candidate, Election, Position } from "@prisma/client";
 import { Body } from "@react-email/body";
 import { Button } from "@react-email/button";
 import { Container } from "@react-email/container";
@@ -12,8 +13,8 @@ import { Section } from "@react-email/section";
 import { Text } from "@react-email/text";
 
 interface VoteCastedProps {
-  electionName: string;
-  electionSlug: string;
+  votes: { position: Position; votes: Candidate[] }[];
+  election: Election;
 }
 
 const baseUrl =
@@ -25,41 +26,145 @@ const baseUrl =
     ? "http://localhost:3000"
     : "https://eboto-mo.com";
 
-export default function VoteCasted({
-  electionName,
-  electionSlug,
-}: VoteCastedProps) {
+export default function VoteCasted({ votes, election }: VoteCastedProps) {
   return (
     <Html>
       <Head />
       <Preview>
-        Resibo: You have successfully casted your vote in {electionName}
+        Resibo: You have successfully casted your vote in {election.name}
       </Preview>
-      <Body style={main}>
-        <Container style={container}>
+      <Body
+        style={{
+          backgroundColor: "#ffffff",
+          fontFamily:
+            '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
+        }}
+      >
+        <Container
+          style={{
+            margin: "0 auto",
+            padding: "20px 0 48px",
+            width: "560px",
+          }}
+        >
           <Img
             src={`https://raw.githubusercontent.com/bricesuazo/eboto-mo/main/public/images/eboto-mo-logo.png`}
             width="42"
             height="42"
             alt="eBoto Mo"
-            style={logo}
+            style={{
+              borderRadius: 21,
+              width: 42,
+              height: 42,
+            }}
           />
-          <Heading style={heading}>
-            Resibo: You have successfully casted your vote in {electionName}
+          <Heading
+            style={{
+              fontSize: "24px",
+              letterSpacing: "-0.5px",
+              lineHeight: "1.3",
+              fontWeight: "600",
+              color: "#484848",
+              padding: "17px 0 0",
+            }}
+          >
+            Resibo: You have successfully casted your vote in {election.name}
           </Heading>
-          <Section style={buttonContainer}>
+
+          <Heading
+            as="h4"
+            style={{
+              fontSize: "20px",
+              letterSpacing: "-0.5px",
+              lineHeight: "1.3",
+              fontWeight: "600",
+              color: "#484848",
+              padding: "12px 0 0",
+            }}
+          >
+            Your votes:
+          </Heading>
+          <Section>
+            {votes.map((vote) => (
+              <Section key={vote.position.id} style={{ marginBottom: 16 }}>
+                <Heading
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: "400",
+                    margin: 4,
+                  }}
+                >
+                  {vote.position.name}:
+                </Heading>
+                <Section
+                  style={{
+                    marginLeft: 16,
+                  }}
+                >
+                  {!vote.votes.length ? (
+                    <Text
+                      style={{
+                        margin: 0,
+                      }}
+                    >
+                      - Abstain
+                    </Text>
+                  ) : (
+                    vote.votes.map((candidate) => (
+                      <Text
+                        key={candidate.id}
+                        style={{
+                          margin: 0,
+                        }}
+                      >
+                        - {candidate.last_name}, {candidate.first_name}
+                        {candidate.middle_name
+                          ? ` ${candidate.middle_name}`
+                          : ""}
+                      </Text>
+                    ))
+                  )}
+                </Section>
+              </Section>
+            ))}
+          </Section>
+          <Section
+            style={{
+              padding: "27px 0 27px",
+            }}
+          >
             <Button
               pY={11}
               pX={23}
-              style={button}
-              href={`${baseUrl}/${electionSlug}`}
+              style={{
+                backgroundColor: "#5e6ad2",
+                borderRadius: "3px",
+                fontWeight: "600",
+                color: "#fff",
+                fontSize: "15px",
+                textDecoration: "none",
+                textAlign: "center" as const,
+                display: "block",
+              }}
+              href={`${baseUrl}/${election.slug}`}
             >
               View Election
             </Button>
           </Section>
 
-          <Hr style={hr} />
-          <Link href={baseUrl} style={reportLink}>
+          <Hr
+            style={{
+              borderColor: "#dfe1e4",
+              margin: "42px 0 26px",
+            }}
+          />
+          <Link
+            href={baseUrl}
+            style={{
+              fontSize: "14px",
+              color: "#b4becc",
+            }}
+          >
             eBoto Mo
           </Link>
         </Container>
@@ -67,62 +172,3 @@ export default function VoteCasted({
     </Html>
   );
 }
-
-const logo = {
-  borderRadius: 21,
-  width: 42,
-  height: 42,
-};
-
-const main = {
-  backgroundColor: "#ffffff",
-  fontFamily:
-    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
-};
-
-const container = {
-  margin: "0 auto",
-  padding: "20px 0 48px",
-  width: "560px",
-};
-
-const heading = {
-  fontSize: "24px",
-  letterSpacing: "-0.5px",
-  lineHeight: "1.3",
-  fontWeight: "400",
-  color: "#484848",
-  padding: "17px 0 0",
-};
-
-const paragraph = {
-  margin: "0 0 15px",
-  fontSize: "15px",
-  lineHeight: "1.4",
-  color: "#3c4149",
-};
-
-const buttonContainer = {
-  padding: "27px 0 27px",
-};
-
-const button = {
-  backgroundColor: "#5e6ad2",
-  borderRadius: "3px",
-  fontWeight: "600",
-  color: "#fff",
-  fontSize: "15px",
-  textDecoration: "none",
-  textAlign: "center" as const,
-  display: "block",
-};
-
-const reportLink = {
-  fontSize: "14px",
-  color: "#b4becc",
-};
-
-const hr = {
-  borderColor: "#dfe1e4",
-  margin: "42px 0 26px",
-};

@@ -116,88 +116,82 @@ export const electionRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      // const election = await ctx.prisma.election.findUniqueOrThrow({
-      //   where: {
-      //     id: input.electionId,
-      //   },
-      // });
+      const election = await ctx.prisma.election.findUniqueOrThrow({
+        where: {
+          id: input.electionId,
+        },
+      });
+      if (!isElectionOngoing({ election, withTime: true }))
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Election is not ongoing",
+        });
+      const existingVotes = await ctx.prisma.vote.findMany({
+        where: {
+          voterId: ctx.session.user.id,
+          electionId: election.id,
+        },
+      });
+      if (existingVotes.length > 0) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You have already voted in this election",
+        });
+      }
+      await ctx.prisma.voter.findFirstOrThrow({
+        where: {
+          userId: ctx.session.user.id,
+          electionId: election.id,
+        },
+      });
+      await ctx.prisma.vote.createMany({
+        data: input.votes
+          .map((vote) =>
+            vote.votes.map((candidateId) =>
+              candidateId === "abstain"
+                ? {
+                    positionId: vote.positionId,
+                    voterId: ctx.session.user.id,
+                    electionId: input.electionId,
+                  }
+                : {
+                    candidateId,
+                    voterId: ctx.session.user.id,
+                    electionId: input.electionId,
+                  }
+            )
+          )
+          .flat(),
+      });
 
-      // if (!isElectionOngoing({ election, withTime: true }))
-      //   throw new TRPCError({
-      //     code: "UNAUTHORIZED",
-      //     message: "Election is not ongoing",
-      //   });
-
-      // const existingVotes = await ctx.prisma.vote.findMany({
-      //   where: {
-      //     voterId: ctx.session.user.id,
-      //     electionId: election.id,
-      //   },
-      // });
-      // if (existingVotes.length > 0) {
-      //   throw new TRPCError({
-      //     code: "UNAUTHORIZED",
-      //     message: "You have already voted in this election",
-      //   });
-      // }
-      // await ctx.prisma.voter.findFirstOrThrow({
-      //   where: {
-      //     userId: ctx.session.user.id,
-      //     electionId: election.id,
-      //   },
-      // });
-
-      // const votes = await ctx.prisma.vote.createMany({
-      //   data: input.votes
-      //     .map((vote) =>
-      //       vote.votes.map((candidateId) =>
-      //         candidateId === "abstain"
-      //           ? {
-      //               positionId: vote.positionId,
-      //               voterId: ctx.session.user.id,
-      //               electionId: input.electionId,
-      //             }
-      //           : {
-      //               candidateId,
-      //               voterId: ctx.session.user.id,
-      //               electionId: input.electionId,
-      //             }
-      //       )
-      //     )
-      //     .flat(),
-      // });
+      const positions = await ctx.prisma.position.findMany({
+        where: {
+          electionId: election.id,
+        },
+      });
 
       const candidates = await ctx.prisma.candidate.findMany({
         where: {
-          id: {
-            in: input.votes
-              .map((vote) => vote.votes)
-              .flat()
-              .filter((candidateId) => candidateId !== "abstain"),
-          },
-        },
-        include: {
-          position: true,
-          partylist: true,
+          electionId: election.id,
         },
       });
-      console.log(
-        "🚀 ~ file: election.tsx:184 ~ .mutation ~ candidates:",
-        candidates
-      );
 
-      // await sendEmailTransport({
-      //   email: ctx.session.user.email,
-      //   subject: `Resibo: You have successfully casted your vote in ${election.name}`,
-      //   html: render(
-      //     <VoteCasted
-      //       electionName={election.name}
-      //       electionSlug={election.slug}
-      //     />
-      //   ),
-      // });
+      const votes = positions.map((position) => {
+        return {
+          position,
+          votes: candidates.filter((candidate) =>
+            input.votes
+              .find((vote) => vote.positionId === position.id)
+              ?.votes.includes(candidate.id)
+          ),
+        };
+      });
 
-      return votes;
+      await sendEmailTransport({
+        email: ctx.session.user.email,
+        subject: `Resibo: You have successfully casted your vote in ${election.name}`,
+        html: render(<VoteCasted election={election} votes={votes} />),
+      });
     }),
   getElectionVoting: publicProcedure
     .input(z.string())

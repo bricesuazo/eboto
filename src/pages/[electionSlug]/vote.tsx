@@ -59,13 +59,13 @@ const VotePage = ({ election }: { election: Election }) => {
 
   const voteMutation = api.election.vote.useMutation({
     onSuccess: async () => {
+      await router.push(`/${election.slug}/realtime`);
       notifications.show({
         title: "Vote casted successfully!",
         message: "You can now view the realtime results",
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
-      await router.push(`/${election.slug}/realtime`);
       await fireConfetti();
     },
     onError: () => {
@@ -436,12 +436,20 @@ export const getServerSideProps: GetServerSideProps = async (
 
     if (!commissioner) return { notFound: true };
 
-    return {
-      redirect: {
-        destination: `/${election.slug}/realtime`,
-        permanent: false,
+    const isVoter = await prisma.voter.findFirst({
+      where: {
+        userId: commissioner.userId,
+        electionId: election.id,
       },
-    };
+    });
+
+    if (!isVoter)
+      return {
+        redirect: {
+          destination: `/${election.slug}/realtime`,
+          permanent: false,
+        },
+      };
   } else if (election.publicity === ("VOTER" || "PUBLIC")) {
     const vote = await prisma.vote.findFirst({
       where: {
