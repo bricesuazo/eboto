@@ -538,6 +538,7 @@ const EditCandidateModal = ({
                                 fill
                                 sizes="100%"
                                 priority
+                                style={{ objectFit: "cover" }}
                               />
                             </Box>
                             <Text>Current image</Text>
