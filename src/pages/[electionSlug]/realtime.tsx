@@ -187,6 +187,13 @@ export const getServerSideProps: GetServerSideProps = async (
 
     if (!commissioner) return { notFound: true };
 
+    const isVoter = await prisma.voter.findFirst({
+      where: {
+        userId: commissioner.userId,
+        electionId: election.id,
+      },
+    });
+
     const vote = await prisma.vote.findFirst({
       where: {
         voterId: commissioner.userId,
@@ -194,7 +201,7 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     });
 
-    if (!vote)
+    if (isVoter && !vote)
       return {
         redirect: {
           destination: `/${election.slug}`,

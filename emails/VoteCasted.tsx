@@ -11,11 +11,9 @@ import { Preview } from "@react-email/preview";
 import { Section } from "@react-email/section";
 import { Text } from "@react-email/text";
 
-interface ElectionInvitationProps {
-  token: string;
-  type: "VOTER" | "COMMISSIONER";
+interface VoteCastedProps {
   electionName: string;
-  electionEndDate: Date;
+  electionSlug: string;
 }
 
 const baseUrl =
@@ -27,19 +25,15 @@ const baseUrl =
     ? "http://localhost:3000"
     : "https://eboto-mo.com";
 
-export default function ElectionInvitation({
-  token,
-  type,
+export default function VoteCasted({
   electionName,
-  electionEndDate,
-}: ElectionInvitationProps) {
+  electionSlug,
+}: VoteCastedProps) {
   return (
     <Html>
       <Head />
       <Preview>
-        {type === "VOTER"
-          ? `You have been invited to vote in ${electionName}`
-          : `You have been invited to be a commissioner in ${electionName}`}
+        Resibo: You have successfully casted your vote in {electionName}
       </Preview>
       <Body style={main}>
         <Container style={container}>
@@ -51,28 +45,19 @@ export default function ElectionInvitation({
             style={logo}
           />
           <Heading style={heading}>
-            {type === "VOTER"
-              ? `You have been invited to vote in ${electionName}`
-              : `You have been invited to be a commissioner in ${electionName}`}
+            Resibo: You have successfully casted your vote in {electionName}
           </Heading>
           <Section style={buttonContainer}>
             <Button
               pY={11}
               pX={23}
               style={button}
-              href={`${baseUrl}/invitation?token=${token}`}
+              href={`${baseUrl}/${electionSlug}`}
             >
-              View Invitation
+              View Election
             </Button>
           </Section>
-          <Text style={paragraph}>
-            This invitation will expire on{" "}
-            {electionEndDate.toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </Text>
+
           <Hr style={hr} />
           <Link href={baseUrl} style={reportLink}>
             eBoto Mo

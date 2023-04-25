@@ -19,7 +19,7 @@ const baseUrl =
   process.env.VERCEL_ENV === "production"
     ? "https://eboto-mo.com"
     : process.env.VERCEL_ENV === "preview"
-    ? "https://eboto-mo-git-dev-bricesuazo.vercel.app/"
+    ? "https://eboto-mo-git-dev-bricesuazo.vercel.app"
     : process.env.VERCEL_ENV === "development"
     ? "http://localhost:3000"
     : "https://eboto-mo.com";

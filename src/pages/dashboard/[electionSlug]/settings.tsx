@@ -432,7 +432,7 @@ const DashboardSettings = () => {
                   {...form.getInputProps("publicity")}
                   data={["PRIVATE", "VOTER", "PUBLIC"].map((p) => ({
                     value: p,
-                    label: p,
+                    label: p.charAt(0) + p.slice(1).toLowerCase(),
                   }))}
                   disabled={loading}
                 />
