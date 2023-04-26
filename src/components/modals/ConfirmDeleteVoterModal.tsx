@@ -15,7 +15,7 @@ const ConfirmDeleteVoterModal = ({
   voter: {
     id: string;
     email: string;
-    status: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
+    accountStatus: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
   };
   electionId: string;
 }) => {
@@ -69,7 +69,8 @@ const ConfirmDeleteVoterModal = ({
               removeVoterMutation.mutate({
                 electionId,
                 voterId: voter.id,
-                isInvitedVoter: voter.status !== "ACCEPTED" ? true : false,
+                isInvitedVoter:
+                  voter.accountStatus !== "ACCEPTED" ? true : false,
               })
             }
           >

@@ -324,7 +324,15 @@ export const electionRouter = createTRPCRouter({
           electionId: election.id,
         },
         include: {
-          user: true,
+          user: {
+            include: {
+              votes: {
+                where: {
+                  electionId: election.id,
+                },
+              },
+            },
+          },
         },
       });
 
@@ -334,7 +342,13 @@ export const electionRouter = createTRPCRouter({
             z.object({
               id: z.string(),
               email: z.string(),
-              status: z.enum(["ACCEPTED", "INVITED", "DECLINED", "ADDED"]),
+              accountStatus: z.enum([
+                "ACCEPTED",
+                "INVITED",
+                "DECLINED",
+                "ADDED",
+              ]),
+              hasVoted: z.boolean(),
               createdAt: z.date(),
             })
           )
@@ -343,15 +357,17 @@ export const electionRouter = createTRPCRouter({
               .map((voter) => ({
                 id: voter.id,
                 email: voter.user.email,
-                status: "ACCEPTED",
+                accountStatus: "ACCEPTED",
                 createdAt: voter.createdAt,
+                hasVoted: voter.user.votes.length > 0,
               }))
               .concat(
                 invitedVoter.map((voter) => ({
                   id: voter.id,
                   email: voter.email,
-                  status: voter.status,
+                  accountStatus: voter.status,
                   createdAt: voter.createdAt,
+                  hasVoted: false,
                 }))
               )
           ),

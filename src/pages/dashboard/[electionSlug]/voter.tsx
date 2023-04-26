@@ -46,7 +46,8 @@ const DashboardVoter = () => {
     {
       id: string;
       email: string;
-      status: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
+      accountStatus: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
+      hasVoted: boolean;
       createdAt: Date;
     }[]
   >([]);
@@ -238,7 +239,10 @@ const DashboardVoter = () => {
                     <tr>
                       <th>Email</th>
                       <th>
-                        <Text align="center">Status</Text>
+                        <Text align="center">Vote Status</Text>
+                      </th>
+                      <th>
+                        <Text align="center">Account Status</Text>
                       </th>
                       <th />
                     </tr>
@@ -247,7 +251,7 @@ const DashboardVoter = () => {
                   <tbody>
                     {votersData.length === 0 ? (
                       <tr>
-                        <td colSpan={3}>
+                        <td colSpan={4}>
                           <Text align="center">
                             <Balancer>
                               No voters found. Try searching for something else.

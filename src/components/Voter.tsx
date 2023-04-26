@@ -12,6 +12,8 @@ import {
 } from "@mantine/core";
 import {
   IconCheck,
+  IconCircleCheck,
+  IconCircleX,
   IconMailForward,
   IconTrash,
   IconUserPlus,
@@ -28,12 +30,15 @@ const useStyles = createStyles((theme) => ({
 
     position: "relative",
 
-    [theme.fn.largerThan("sm")]: {
-      width: "75%",
+    [theme.fn.largerThan("md")]: {
+      width: "50%",
     },
   },
 
-  statusCol: {
+  voteStatusCol: {
+    width: "25%",
+  },
+  accountStatusCol: {
     width: "100%",
   },
 }));
@@ -44,7 +49,8 @@ const Voter = ({
   voter: {
     id: string;
     email: string;
-    status: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
+    accountStatus: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
+    hasVoted: boolean;
   };
   electionId: string;
 }) => {
@@ -82,14 +88,14 @@ const Voter = ({
         title={
           <Text weight={600}>
             Are you sure you want to invite {voter.email}
-            {voter.status === "INVITED" && " again"}?
+            {voter.accountStatus === "INVITED" && " again"}?
           </Text>
         }
       >
         <Stack spacing="sm">
           <Text>
-            This will send{voter.status === "INVITED" && " again"} an invitation
-            to this voter to join the election.
+            This will send{voter.accountStatus === "INVITED" && " again"} an
+            invitation to this voter to join the election.
           </Text>
           <Group position="right" spacing="xs">
             <Button
@@ -108,7 +114,7 @@ const Voter = ({
                 })
               }
             >
-              Invite{voter.status === "INVITED" && " again"}
+              Invite{voter.accountStatus === "INVITED" && " again"}
             </Button>
           </Group>
         </Stack>
@@ -138,7 +144,21 @@ const Voter = ({
             {voter.email}
           </Text>
         </td>
-        <td className={classes.statusCol}>
+        <td className={classes.voteStatusCol}>
+          <Tooltip label={voter.hasVoted ? "Voted" : "Not yet voted"}>
+            <Flex
+              justify="center"
+              sx={(theme) => ({
+                color: voter.hasVoted
+                  ? theme.colors.green[6]
+                  : theme.colors.red[8],
+              })}
+            >
+              {voter.hasVoted ? <IconCircleCheck /> : <IconCircleX />}
+            </Flex>
+          </Tooltip>
+        </td>
+        <td className={classes.accountStatusCol}>
           <Text
             align="center"
             sx={(theme) => ({
@@ -147,10 +167,14 @@ const Voter = ({
               },
             })}
           >
-            {voter.status.charAt(0) + voter.status.slice(1).toLowerCase()}
+            {voter.accountStatus.charAt(0) +
+              voter.accountStatus.slice(1).toLowerCase()}
           </Text>
           <Tooltip
-            label={voter.status.charAt(0) + voter.status.slice(1).toLowerCase()}
+            label={
+              voter.accountStatus.charAt(0) +
+              voter.accountStatus.slice(1).toLowerCase()
+            }
           >
             <Flex
               justify="center"
@@ -160,13 +184,13 @@ const Voter = ({
                 },
               })}
             >
-              {voter.status === "ACCEPTED" ? (
+              {voter.accountStatus === "ACCEPTED" ? (
                 <IconCheck aria-label="Accepted" />
-              ) : voter.status === "DECLINED" ? (
+              ) : voter.accountStatus === "DECLINED" ? (
                 <IconX aria-label="Declined" />
-              ) : voter.status === "INVITED" ? (
+              ) : voter.accountStatus === "INVITED" ? (
                 <IconMailForward aria-label="Invited" />
-              ) : voter.status === "ADDED" ? (
+              ) : voter.accountStatus === "ADDED" ? (
                 <IconUserPlus aria-label="Added" />
               ) : null}
             </Flex>
@@ -174,13 +198,16 @@ const Voter = ({
         </td>
         <td>
           <Flex justify="flex-end" gap="xs">
-            {(voter.status === "INVITED" || voter.status === "ADDED") && (
+            {(voter.accountStatus === "INVITED" ||
+              voter.accountStatus === "ADDED") && (
               <>
                 <Button
                   compact
                   onClick={openInviteVoter}
                   loaderPosition="center"
-                  variant={voter.status === "INVITED" ? "subtle" : "light"}
+                  variant={
+                    voter.accountStatus === "INVITED" ? "subtle" : "light"
+                  }
                   sx={(theme) => ({
                     [theme.fn.smallerThan("xs")]: {
                       display: "none",
@@ -194,16 +221,19 @@ const Voter = ({
                       },
                     })}
                   >
-                    Invite{voter.status === "INVITED" && " again"}
+                    Invite{voter.accountStatus === "INVITED" && " again"}
                   </Text>
                 </Button>
                 <Tooltip
                   label={
-                    "Invite" + (voter.status === "INVITED" ? " again" : "")
+                    "Invite" +
+                    (voter.accountStatus === "INVITED" ? " again" : "")
                   }
                 >
                   <ActionIcon
-                    variant={voter.status === "INVITED" ? "default" : "filled"}
+                    variant={
+                      voter.accountStatus === "INVITED" ? "default" : "filled"
+                    }
                     sx={(theme) => ({
                       [theme.fn.largerThan("xs")]: {
                         display: "none",
