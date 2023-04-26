@@ -175,7 +175,6 @@ const CreateElectionModal = ({
                 withAsterisk
                 withinPortal
                 required
-                dropdownPosition="bottom"
                 {...form.getInputProps("voting_start")}
                 data={[...Array(24).keys()].map((_, i) => ({
                   label: convertNumberToHour(i),
@@ -185,7 +184,6 @@ const CreateElectionModal = ({
                 disabled={createElectionMutation.isLoading}
               />
               <Select
-                dropdownPosition="bottom"
                 description="You can't change voting hour end once the election is ongoing."
                 label="Voting hour start"
                 withAsterisk
@@ -230,7 +228,6 @@ const CreateElectionModal = ({
                 value: position.id.toString(),
                 group: position.college,
               }))}
-            dropdownPosition="bottom"
             nothingFound="No position template found"
             icon={<IconTemplate size="1rem" />}
             searchable

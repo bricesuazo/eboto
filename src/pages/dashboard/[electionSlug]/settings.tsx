@@ -373,7 +373,6 @@ const DashboardSettings = () => {
                       withAsterisk
                       withinPortal
                       required
-                      dropdownPosition="bottom"
                       {...form.getInputProps("voting_start")}
                       data={[...Array(24).keys()].map((_, i) => ({
                         label: convertNumberToHour(i),
@@ -389,7 +388,6 @@ const DashboardSettings = () => {
                       }
                     />
                     <Select
-                      dropdownPosition="bottom"
                       label="Voting hour end"
                       description="You can't change voting hour end once the election is ongoing."
                       withAsterisk
