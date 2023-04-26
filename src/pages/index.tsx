@@ -6,9 +6,14 @@ import {
   Container,
   rem,
 } from "@mantine/core";
-import type { NextPage } from "next";
+import type {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  NextPage,
+} from "next";
 import Link from "next/link";
 import Balancer from "react-wrap-balancer";
+import { getServerAuthSession } from "../server/auth";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -277,3 +282,21 @@ function Dots({ size = 185, radius = 2.5, ...others }: DotsProps) {
     </svg>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const session = await getServerAuthSession(context);
+
+  if (session)
+    return {
+      redirect: {
+        destination: "/dashboard",
+        permanent: false,
+      },
+    };
+
+  return {
+    props: {},
+  };
+};
