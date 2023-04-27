@@ -96,6 +96,7 @@ export const positionTemplate: PositionTemplate = [
       "Auditor",
       "Business Manager",
       "Public Relations Officer",
+      "Gender and Development Representative",
     ],
     college: "CEIT - College of Engineering and Information Technology",
   },

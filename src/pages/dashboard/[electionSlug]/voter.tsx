@@ -28,6 +28,7 @@ import UploadBulkVoter from "../../../components/modals/UploadBulkVoter";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { notifications } from "@mantine/notifications";
+import { isElectionOngoing } from "../../../utils/isElectionOngoing";
 
 const DashboardVoter = () => {
   const context = api.useContext();
@@ -195,13 +196,18 @@ const DashboardVoter = () => {
                       Import
                     </Button>
                   </Flex>
-                  <Button
-                    variant="light"
-                    leftIcon={<IconMailForward size="1rem" />}
-                    onClick={openInviteVoters}
-                  >
-                    Invite
-                  </Button>
+                  {isElectionOngoing({
+                    election: voters.data.election,
+                    withTime: true,
+                  }) && (
+                    <Button
+                      variant="light"
+                      leftIcon={<IconMailForward size="1rem" />}
+                      onClick={openInviteVoters}
+                    >
+                      Invite
+                    </Button>
+                  )}
                 </Flex>
                 <TextInput
                   placeholder="Search by any field"
