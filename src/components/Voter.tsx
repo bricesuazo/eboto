@@ -23,6 +23,8 @@ import ConfirmDeleteVoterModal from "./modals/ConfirmDeleteVoterModal";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { api } from "../utils/api";
+import { isElectionOngoing } from "../utils/isElectionOngoing";
+import type { Election } from "@prisma/client";
 
 const useStyles = createStyles((theme) => ({
   emailCol: {
@@ -44,7 +46,7 @@ const useStyles = createStyles((theme) => ({
 }));
 const Voter = ({
   voter,
-  electionId,
+  election,
 }: {
   voter: {
     id: string;
@@ -52,7 +54,7 @@ const Voter = ({
     accountStatus: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
     hasVoted: boolean;
   };
-  electionId: string;
+  election: Election;
 }) => {
   const context = api.useContext();
   const [
@@ -109,7 +111,7 @@ const Voter = ({
               loading={sendSingleInvitationMutation.isLoading}
               onClick={() =>
                 sendSingleInvitationMutation.mutate({
-                  electionId,
+                  electionId: election.id,
                   voterId: voter.id,
                 })
               }
@@ -123,7 +125,7 @@ const Voter = ({
         isOpen={openedConfirmDeleteVoter}
         onClose={closeConfirmDeleteVoter}
         voter={voter}
-        electionId={electionId}
+        electionId={election.id}
       />
       <tr key={voter.id}>
         <td className={classes.emailCol}>
@@ -198,53 +200,57 @@ const Voter = ({
         </td>
         <td>
           <Flex justify="flex-end" gap="xs">
-            {(voter.accountStatus === "INVITED" ||
-              voter.accountStatus === "ADDED") && (
-              <>
-                <Button
-                  compact
-                  onClick={openInviteVoter}
-                  loaderPosition="center"
-                  variant={
-                    voter.accountStatus === "INVITED" ? "subtle" : "light"
-                  }
-                  sx={(theme) => ({
-                    [theme.fn.smallerThan("xs")]: {
-                      display: "none",
-                    },
-                  })}
-                >
-                  <Text
+            {isElectionOngoing({
+              election,
+              withTime: true,
+            }) &&
+              (voter.accountStatus === "INVITED" ||
+                voter.accountStatus === "ADDED") && (
+                <>
+                  <Button
+                    compact
+                    onClick={openInviteVoter}
+                    loaderPosition="center"
+                    variant={
+                      voter.accountStatus === "INVITED" ? "subtle" : "light"
+                    }
                     sx={(theme) => ({
                       [theme.fn.smallerThan("xs")]: {
                         display: "none",
                       },
                     })}
                   >
-                    Invite{voter.accountStatus === "INVITED" && " again"}
-                  </Text>
-                </Button>
-                <Tooltip
-                  label={
-                    "Invite" +
-                    (voter.accountStatus === "INVITED" ? " again" : "")
-                  }
-                >
-                  <ActionIcon
-                    variant={
-                      voter.accountStatus === "INVITED" ? "default" : "filled"
+                    <Text
+                      sx={(theme) => ({
+                        [theme.fn.smallerThan("xs")]: {
+                          display: "none",
+                        },
+                      })}
+                    >
+                      Invite{voter.accountStatus === "INVITED" && " again"}
+                    </Text>
+                  </Button>
+                  <Tooltip
+                    label={
+                      "Invite" +
+                      (voter.accountStatus === "INVITED" ? " again" : "")
                     }
-                    sx={(theme) => ({
-                      [theme.fn.largerThan("xs")]: {
-                        display: "none",
-                      },
-                    })}
                   >
-                    <IconMailForward size="1.25rem" />
-                  </ActionIcon>
-                </Tooltip>
-              </>
-            )}
+                    <ActionIcon
+                      variant={
+                        voter.accountStatus === "INVITED" ? "default" : "filled"
+                      }
+                      sx={(theme) => ({
+                        [theme.fn.largerThan("xs")]: {
+                          display: "none",
+                        },
+                      })}
+                    >
+                      <IconMailForward size="1.25rem" />
+                    </ActionIcon>
+                  </Tooltip>
+                </>
+              )}
 
             <Button
               compact

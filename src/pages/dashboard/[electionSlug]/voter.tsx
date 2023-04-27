@@ -275,7 +275,7 @@ const DashboardVoter = () => {
                         .map((voter) => (
                           <Voter
                             key={voter.id}
-                            electionId={voters.data.election.id}
+                            election={voters.data.election}
                             voter={voter}
                           />
                         ))
