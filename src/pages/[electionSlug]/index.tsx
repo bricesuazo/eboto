@@ -72,6 +72,7 @@ const ElectionPage = ({
               </Group>
               <Skeleton w={228} h={28} />
               <Skeleton w={248} h={16} />
+              <Skeleton w={372} h={16} />
               <Skeleton w={200} h={16} />
               <Skeleton w={172} h={32} radius="lg" />
             </Stack>
@@ -133,6 +134,21 @@ const ElectionPage = ({
               <Text align="center">
                 Open from {convertNumberToHour(election.voting_start)} to{" "}
                 {convertNumberToHour(election.voting_end)}
+              </Text>
+              <Text align="center">
+                Publicity:{" "}
+                {(() => {
+                  switch (election.publicity) {
+                    case "PRIVATE":
+                      return "Private (Only commissioners can see this election)";
+                    case "VOTER":
+                      return "Voter (Only voters and commissioners can see this election)";
+                    case "PUBLIC":
+                      return "Public (Everyone can see this election)";
+                    default:
+                      return null;
+                  }
+                })()}
               </Text>
 
               <Group position="center" mt={8}>
