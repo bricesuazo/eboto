@@ -14,7 +14,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     "🚀 ~ file: do-election-processing.tsx:13 ~ handler ~ nowUTC:",
     nowUTC
   );
-  // 2023-04-23T06:04:52.678Z
   const nowPHT = new Date(
     nowUTC.toLocaleString("en-US", { timeZone: "Asia/Manila" })
   );
@@ -22,38 +21,35 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     "🚀 ~ file: do-election-processing.tsx:15 ~ handler ~ nowPHT:",
     nowPHT
   );
-  // 2023-04-23T14:04:52.000Z
 
-  const start_date = new Date(nowUTC);
+  const start_date = new Date(nowPHT);
   start_date.setHours(0, 0, 0, 0);
   console.log(
     "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ start_date:",
     start_date
   );
-  // 2023-04-23T00:00:00.000Z
+  start_date.setHours(start_date.getHours() - 8);
+
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ start_date:",
+    start_date
+  );
 
   // start_date.setDate(start_date.getDate() - 1);
   // console.log(
   //   "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ start_date:",
   //   start_date
   // );
-  // 2023-04-22T00:00:00.000Z
+
   console.log(
     "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ start_date.toISOString():",
     start_date.toISOString()
-  );
-  // 2023-04-22T00:00:00.000Z
-
-  console.log(
-    "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ new Date(start_date.toLocaleString(en-US, { timeZone: Asia/Manila })):",
-    new Date(start_date.toLocaleString("en-US", { timeZone: "Asia/Manila" }))
   );
 
   console.log(
     "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ start_date.toISOString().split(T)[0]?.concat(T16:00:00.000Z):",
     start_date.toISOString().split("T")[0]?.concat("T16:00:00.000Z")
   );
-  // 2023-04-22T16:00:00.000Z
 
   console.log(
     "🚀 ~ file: do-election-processing.tsx:52 ~ handler ~ nowPHT.getHours():",
@@ -131,7 +127,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     "🚀 ~ file: do-election-processing.tsx:96 ~ handler ~ end_date:",
     end_date
   );
-  // 2023-04-23T06:04:52.678Z
 
   end_date.setHours(0, 0, 0, 0);
   console.log(
@@ -145,13 +140,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     "🚀 ~ file: do-election-processing.tsx:96 ~ handler ~ end_date:",
     end_date
   );
-  // 2023-04-22T00:00:00.000Z
 
   console.log(
     "🚀 ~ file: do-election-processing.tsx:130 ~ handler ~ nowPHT.getHours():",
     nowPHT.getHours()
   );
-  // 14
 
   const electionsEnd = await prisma.election.findMany({
     where: {
