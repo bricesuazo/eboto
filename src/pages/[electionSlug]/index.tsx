@@ -350,7 +350,10 @@ export const getServerSideProps: GetServerSideProps = async (
     return {
       props: {
         isOngoing,
-        hasVoted: vote && (isVoter || isCommissioner),
+        hasVoted:
+          (vote && isVoter) ||
+          (vote && isCommissioner && isVoter) ||
+          (!isVoter && isCommissioner),
         election: JSON.parse(JSON.stringify(election)) as Election,
       },
     };
