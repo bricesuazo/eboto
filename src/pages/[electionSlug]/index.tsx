@@ -293,42 +293,33 @@ export const getServerSideProps: GetServerSideProps = async (
         },
       };
 
-    const commissioner = await prisma.commissioner.findFirst({
+    const isCommissioner = await prisma.commissioner.findFirst({
       where: {
         electionId: election.id,
         userId: session.user.id,
       },
     });
 
-    if (!commissioner) return { notFound: true };
+    if (!isCommissioner) return { notFound: true };
 
     const vote = await prisma.vote.findFirst({
       where: {
-        voterId: commissioner.userId,
+        voterId: isCommissioner.userId,
         electionId: election.id,
       },
     });
 
     const isVoter = await prisma.voter.findFirst({
       where: {
-        userId: commissioner.userId,
+        userId: isCommissioner.userId,
         electionId: election.id,
       },
     });
 
-    if (isVoter && !vote)
-      return {
-        props: {
-          isOngoing,
-          hasVoted: false,
-          election: JSON.parse(JSON.stringify(election)) as Election,
-        },
-      };
-
     return {
       props: {
         isOngoing,
-        hasVoted: true,
+        hasVoted: vote && (isVoter || isCommissioner),
         election: JSON.parse(JSON.stringify(election)) as Election,
       },
     };
@@ -355,10 +346,17 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     });
 
+    const isCommissioner = await prisma.commissioner.findFirst({
+      where: {
+        electionId: election.id,
+        userId: session.user.id,
+      },
+    });
+
     return {
       props: {
         isOngoing,
-        hasVoted: vote && isVoter,
+        hasVoted: vote && (isVoter || isCommissioner),
         election: JSON.parse(JSON.stringify(election)) as Election,
       },
     };
@@ -372,37 +370,19 @@ export const getServerSideProps: GetServerSideProps = async (
         },
       };
 
-    const commissioner = await prisma.commissioner.findFirst({
+    const isCommissioner = await prisma.commissioner.findFirst({
       where: {
         electionId: election.id,
         userId: session.user.id,
       },
     });
 
-    if (commissioner && !isOngoing)
-      return {
-        props: {
-          isOngoing,
-          hasVoted: true,
-          election: JSON.parse(JSON.stringify(election)) as Election,
-        },
-      };
-
-    const voter = await prisma.voter.findFirst({
+    const isVoter = await prisma.voter.findFirst({
       where: {
         electionId: election.id,
         userId: session.user.id,
       },
     });
-
-    if (!voter)
-      return {
-        props: {
-          isOngoing,
-          hasVoted: true,
-          election: JSON.parse(JSON.stringify(election)) as Election,
-        },
-      };
 
     const vote = await prisma.vote.findFirst({
       where: {
@@ -414,7 +394,7 @@ export const getServerSideProps: GetServerSideProps = async (
     return {
       props: {
         isOngoing,
-        hasVoted: !!vote,
+        hasVoted: vote && (isVoter || isCommissioner),
         election: JSON.parse(JSON.stringify(election)) as Election,
       },
     };

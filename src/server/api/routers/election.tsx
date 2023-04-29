@@ -264,22 +264,24 @@ export const electionRouter = createTRPCRouter({
       return realtimeResult.map((position) => {
         return {
           ...position,
-          candidate: position.candidate.map((candidate, index) => {
-            return {
-              id: candidate.id,
-              first_name: isElectionOngoing({ election, withTime: true })
-                ? `Candidate ${index + 1}`
-                : candidate.first_name,
-              last_name: isElectionOngoing({ election, withTime: true })
-                ? ""
-                : candidate.last_name,
-              middle_name: isElectionOngoing({ election, withTime: true })
-                ? ""
-                : candidate.middle_name,
-              partylist: candidate.partylist,
-              vote: candidate.vote,
-            };
-          }),
+          candidate: position.candidate
+            .sort((a, b) => b.vote.length - a.vote.length)
+            .map((candidate, index) => {
+              return {
+                id: candidate.id,
+                first_name: isElectionOngoing({ election, withTime: true })
+                  ? `Candidate ${index + 1}`
+                  : candidate.first_name,
+                last_name: isElectionOngoing({ election, withTime: true })
+                  ? ""
+                  : candidate.last_name,
+                middle_name: isElectionOngoing({ election, withTime: true })
+                  ? ""
+                  : candidate.middle_name,
+                partylist: candidate.partylist,
+                vote: candidate.vote,
+              };
+            }),
         };
       });
     }),
