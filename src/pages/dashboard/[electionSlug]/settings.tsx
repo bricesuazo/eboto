@@ -196,7 +196,7 @@ const DashboardSettings = () => {
       <Head>
         <title>Settings | eBoto Mo</title>
       </Head>
-      <Box p="md">
+      <Box p="md" h="100%">
         {election.isLoading ? (
           <Center h="100%">
             <Loader size="lg" />

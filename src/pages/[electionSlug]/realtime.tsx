@@ -32,6 +32,7 @@ const RealtimePage = ({
   election: Election;
   isOngoing: boolean;
 }) => {
+  const now = new Date();
   const title = `${election.name} – Realtime | eBoto Mo`;
   const positions = api.election.getElectionRealtime.useQuery(election.id, {
     refetchInterval:
@@ -84,7 +85,7 @@ const RealtimePage = ({
               <Text align="center" size="xs" color="dimmed">
                 <Balancer>
                   Realtime result as of{" "}
-                  <Moment date={new Date()} format="MMMM Do YYYY, h:mm:ss a" />
+                  <Moment date={now} format="MMMM Do YYYY, h:mm:ss a" />
                 </Balancer>
               </Text>
             </Box>
@@ -106,8 +107,7 @@ const RealtimePage = ({
                 h="fit-content"
               >
                 <caption>
-                  As of{" "}
-                  <Moment date={new Date()} format="MMMM Do YYYY, h:mm:ss a" />
+                  As of <Moment date={now} format="MMMM Do YYYY, h:mm:ss a" />
                 </caption>
                 <thead>
                   <tr>
