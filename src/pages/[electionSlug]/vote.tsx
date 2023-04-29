@@ -461,6 +461,13 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     });
 
+    const isCommissioner = await prisma.commissioner.findFirst({
+      where: {
+        electionId: election.id,
+        userId: session.user.id,
+      },
+    });
+
     const isVoter = await prisma.voter.findFirst({
       where: {
         userId: session.user.id,
@@ -468,15 +475,7 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     });
 
-    if (!isVoter)
-      return {
-        redirect: {
-          destination: `/${election.slug}`,
-          permanent: false,
-        },
-      };
-
-    if (vote)
+    if (vote || (isCommissioner && !isVoter) || !isVoter)
       return {
         redirect: {
           destination: `/${election.slug}/realtime`,
