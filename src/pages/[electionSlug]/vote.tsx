@@ -450,7 +450,10 @@ export const getServerSideProps: GetServerSideProps = async (
           permanent: false,
         },
       };
-  } else if (election.publicity === ("VOTER" || "PUBLIC")) {
+  } else if (
+    election.publicity === "VOTER" ||
+    election.publicity === "PUBLIC"
+  ) {
     const vote = await prisma.vote.findFirst({
       where: {
         voterId: session.user.id,
