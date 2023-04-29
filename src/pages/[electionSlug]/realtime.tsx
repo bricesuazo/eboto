@@ -123,13 +123,13 @@ const RealtimePage = ({
                 <tbody>
                   {position.candidate
                     .sort((a, b) => b.vote.length - a.vote.length)
-                    .map((candidate, i) => (
+                    .map((candidate) => (
                       <tr key={candidate.id}>
                         <td>
                           <Flex justify="space-between" align="center">
                             <Text lineClamp={2}>
                               {isOngoing
-                                ? `Candidate ${i + 1}`
+                                ? candidate.first_name
                                 : `${candidate.last_name}, ${
                                     candidate.first_name
                                   }

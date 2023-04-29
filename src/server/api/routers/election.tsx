@@ -212,7 +212,7 @@ export const electionRouter = createTRPCRouter({
   getElectionRealtime: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
-      return ctx.prisma.position.findMany({
+      const realtimeResult = await ctx.prisma.position.findMany({
         where: {
           electionId: input,
         },
@@ -251,6 +251,36 @@ export const electionRouter = createTRPCRouter({
             },
           },
         },
+      });
+
+      // make the candidate as "Candidate 1"... "Candidate N" if the election is ongoing
+
+      const election = await ctx.prisma.election.findUniqueOrThrow({
+        where: {
+          id: input,
+        },
+      });
+
+      return realtimeResult.map((position) => {
+        return {
+          ...position,
+          candidate: position.candidate.map((candidate, index) => {
+            return {
+              id: candidate.id,
+              first_name: isElectionOngoing({ election, withTime: true })
+                ? `Candidate ${index + 1}`
+                : candidate.first_name,
+              last_name: isElectionOngoing({ election, withTime: true })
+                ? ""
+                : candidate.last_name,
+              middle_name: isElectionOngoing({ election, withTime: true })
+                ? ""
+                : candidate.middle_name,
+              partylist: candidate.partylist,
+              vote: candidate.vote,
+            };
+          }),
+        };
       });
     }),
   getElectionSettings: protectedProcedure
