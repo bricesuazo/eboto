@@ -34,9 +34,6 @@ const RealtimePage = ({
 }) => {
   const title = `${election.name} – Realtime | eBoto Mo`;
   const positions = api.election.getElectionRealtime.useQuery(election.id, {
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
     refetchInterval:
       env.NEXT_PUBLIC_NODE_ENV === "production" ? 1000 : undefined,
   });

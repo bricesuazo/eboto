@@ -50,12 +50,7 @@ const VotePage = ({ election }: { election: Election }) => {
     };
   }>();
 
-  const positions = api.election.getElectionVoting.useQuery(election.id, {
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    retry: false,
-  });
+  const positions = api.election.getElectionVoting.useQuery(election.id);
 
   const voteMutation = api.election.vote.useMutation({
     onSuccess: async () => {

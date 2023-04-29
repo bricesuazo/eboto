@@ -33,9 +33,6 @@ const DashboardOverview = () => {
     },
     {
       enabled: router.isReady,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      retry: false,
     }
   );
 
@@ -43,9 +40,6 @@ const DashboardOverview = () => {
     router.query.electionSlug as string,
     {
       enabled: router.isReady,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      retry: false,
     }
   );
 

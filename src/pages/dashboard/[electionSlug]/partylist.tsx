@@ -15,9 +15,6 @@ const DashboardPartylist = () => {
     router.query.electionSlug as string,
     {
       enabled: router.isReady,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      retry: false,
     }
   );
 

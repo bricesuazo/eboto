@@ -22,9 +22,6 @@ const Invitation = () => {
   });
   const tokenQuery = api.token.getById.useQuery(router.query.token as string, {
     enabled: router.isReady && !!router.query.token,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    retry: false,
   });
   const invitationMutation = api.user.invitation.useMutation({
     onSuccess: async () => await router.push("/dashboard"),

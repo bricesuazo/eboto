@@ -29,11 +29,6 @@ const VerifyPage = () => {
     },
     {
       enabled: router.isReady,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchInterval: false,
-      retry: false,
     }
   );
   const resetPasswordMutation = api.user.resetPassword.useMutation();

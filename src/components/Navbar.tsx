@@ -103,9 +103,6 @@ const NavbarComponent = ({
 
   const elections = api.election.getMyElections.useQuery(undefined, {
     enabled: router.isReady,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    refetchOnMount: "always",
   });
 
   useDidUpdate(() => {

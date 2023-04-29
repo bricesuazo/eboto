@@ -50,13 +50,7 @@ const ElectionPage = ({
   )}`;
   const metaDescription = `See details about ${election.name} | eBoto Mo`;
   const positions = api.election.getElectionVotingPageData.useQuery(
-    election.id,
-    {
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      retry: false,
-    }
+    election.id
   );
 
   return (
