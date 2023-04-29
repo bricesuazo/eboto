@@ -107,7 +107,7 @@ const RealtimePage = ({
                 h="fit-content"
               >
                 <caption>
-                  As of <Moment date={now} format="MMMM Do YYYY, h:mm:ss a" />
+                  As of <Moment date={now} format="MMMM Do YYYY, h:mm:ss A" />
                 </caption>
                 <thead>
                   <tr>
