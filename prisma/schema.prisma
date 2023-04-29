@@ -189,7 +189,7 @@ model Platform {
     id String @id @default(cuid())
 
     title       String
-    description String
+    description String    @db.LongText
     createdAt   DateTime  @default(now())
     candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
     candidateId String
