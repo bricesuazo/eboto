@@ -314,8 +314,7 @@ export const getServerSideProps: GetServerSideProps = async (
   if (!election) return { notFound: true };
 
   if (election.publicity === "PRIVATE") {
-    if (!session)
-      return { redirect: { destination: "/signin", permanent: false } };
+    if (!session) return { notFound: true };
 
     const commissioner = await prisma.commissioner.findFirst({
       where: {
@@ -326,8 +325,14 @@ export const getServerSideProps: GetServerSideProps = async (
 
     if (!commissioner) return { notFound: true };
   } else if (election.publicity === "VOTER") {
+    const callbackUrl = `/signin?callbackUrl=https://eboto-mo.com/${context.query.electionSlug}/${context.query.candidateSlug}`;
     if (!session)
-      return { redirect: { destination: "/signin", permanent: false } };
+      return {
+        redirect: {
+          destination: callbackUrl,
+          permanent: false,
+        },
+      };
 
     const voter = await prisma.voter.findFirst({
       where: {
@@ -345,7 +350,7 @@ export const getServerSideProps: GetServerSideProps = async (
 
     if (!voter && !commissioner)
       return {
-        redirect: { destination: "/signin", permanent: false },
+        redirect: { destination: callbackUrl, permanent: false },
       };
   }
 
