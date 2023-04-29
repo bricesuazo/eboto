@@ -191,25 +191,25 @@ export const getServerSideProps: GetServerSideProps = async (
         },
       };
 
-    const commissioner = await prisma.commissioner.findFirst({
+    const isCommissioner = await prisma.commissioner.findFirst({
       where: {
         electionId: election.id,
         userId: session.user.id,
       },
     });
 
-    if (!commissioner) return { notFound: true };
+    if (!isCommissioner) return { notFound: true };
 
     const isVoter = await prisma.voter.findFirst({
       where: {
-        userId: commissioner.userId,
+        userId: isCommissioner.userId,
         electionId: election.id,
       },
     });
 
     const vote = await prisma.vote.findFirst({
       where: {
-        voterId: commissioner.userId,
+        voterId: isCommissioner.userId,
         electionId: election.id,
       },
     });
