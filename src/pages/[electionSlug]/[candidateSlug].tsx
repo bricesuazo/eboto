@@ -231,7 +231,7 @@ const CandidatePage = ({
                         {candidate.credential.affiliations.map(
                           (affiliation) => (
                             <List.Item key={affiliation.id}>
-                              {affiliation.org_name} (
+                              {affiliation.org_name} - {affiliation.org_position} (
                               <Moment
                                 format="YYYY"
                                 date={affiliation.start_year}
