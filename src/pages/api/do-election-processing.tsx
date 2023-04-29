@@ -31,17 +31,24 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     start_date
   );
   // 2023-04-23T00:00:00.000Z
-  start_date.setDate(start_date.getDate() - 1);
-  console.log(
-    "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ start_date:",
-    start_date
-  );
+
+  // start_date.setDate(start_date.getDate() - 1);
+  // console.log(
+  //   "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ start_date:",
+  //   start_date
+  // );
   // 2023-04-22T00:00:00.000Z
   console.log(
     "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ start_date.toISOString():",
     start_date.toISOString()
   );
   // 2023-04-22T00:00:00.000Z
+
+  console.log(
+    "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ new Date(start_date.toLocaleString(en-US, { timeZone: Asia/Manila })):",
+    new Date(start_date.toLocaleString("en-US", { timeZone: "Asia/Manila" }))
+  );
+
   console.log(
     "🚀 ~ file: do-election-processing.tsx:18 ~ handler ~ start_date.toISOString().split(T)[0]?.concat(T16:00:00.000Z):",
     start_date.toISOString().split("T")[0]?.concat("T16:00:00.000Z")
