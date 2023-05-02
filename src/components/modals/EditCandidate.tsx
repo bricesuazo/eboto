@@ -656,7 +656,7 @@ const EditCandidateModal = ({
                       platforms: [
                         ...form.values.platforms,
                         {
-                          id: "",
+                          id: (form.values.platforms.length + 1).toString(),
                           title: "",
                           description: "",
                         },
@@ -757,7 +757,9 @@ const EditCandidateModal = ({
                           achievements: [
                             ...form.values.achievements,
                             {
-                              id: "",
+                              id: (
+                                form.values.achievements.length + 1
+                              ).toString(),
                               name: "",
                               year: new Date(new Date().getFullYear(), 0),
                             },
@@ -890,7 +892,9 @@ const EditCandidateModal = ({
                           affiliations: [
                             ...form.values.affiliations,
                             {
-                              id: "",
+                              id: (
+                                form.values.affiliations.length + 1
+                              ).toString(),
                               org_name: "",
                               org_position: "",
                               start_year: new Date(
@@ -980,7 +984,9 @@ const EditCandidateModal = ({
                           eventAttended: [
                             ...form.values.eventAttended,
                             {
-                              id: "",
+                              id: (
+                                form.values.eventAttended.length + 1
+                              ).toString(),
                               name: "",
                               year: new Date(new Date().getFullYear(), 0),
                             },
