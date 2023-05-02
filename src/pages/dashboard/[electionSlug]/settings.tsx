@@ -124,7 +124,16 @@ const DashboardSettings = () => {
       }
 
       await getMyElectionsContext.invalidate();
-      form.resetDirty();
+      form.resetDirty({
+        id: data.id,
+        name: data.name,
+        slug: data.slug,
+        date: [data.start_date, data.end_date],
+        voting_start: data.voting_start.toString(),
+        voting_end: data.voting_end.toString(),
+        logo: data.logo,
+        publicity: data.publicity,
+      });
       notifications.show({
         title: "Election settings updated.",
         icon: <IconCheck size="1.1rem" />,
