@@ -98,6 +98,7 @@ const CreateElectionModal = ({
       opened={isOpen}
       onClose={onClose}
       title={<Text weight={600}>Create election</Text>}
+      closeOnClickOutside={false}
     >
       <form
         onSubmit={form.onSubmit((value) =>

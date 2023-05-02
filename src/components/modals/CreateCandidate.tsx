@@ -175,6 +175,7 @@ const CreateCandidateModal = ({
       opened={isOpen || loading}
       onClose={onClose}
       title={<Text weight={600}>Create candidate</Text>}
+      closeOnClickOutside={false}
     >
       <form
         onSubmit={form.onSubmit((value) => {

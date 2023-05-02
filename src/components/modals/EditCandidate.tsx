@@ -303,6 +303,7 @@ const EditCandidateModal = ({
           Edit Candidate - {candidate.first_name} {candidate.last_name}
         </Text>
       }
+      closeOnClickOutside={false}
     >
       <form
         onSubmit={form.onSubmit((value) => {
