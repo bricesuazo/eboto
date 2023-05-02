@@ -314,14 +314,14 @@ export const getServerSideProps: GetServerSideProps = async (
 
     const vote = await prisma.vote.findFirst({
       where: {
-        voterId: isCommissioner.userId ?? "",
+        voterId: isCommissioner.userId,
         electionId: election.id,
       },
     });
 
     const isVoter = await prisma.voter.findFirst({
       where: {
-        userId: isCommissioner.userId ?? "",
+        userId: isCommissioner.userId,
         electionId: election.id,
       },
     });
