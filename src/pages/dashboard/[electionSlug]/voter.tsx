@@ -30,6 +30,8 @@ import { useEffect, useState } from "react";
 import Head from "next/head";
 import { notifications } from "@mantine/notifications";
 import { isElectionOngoing } from "../../../utils/isElectionOngoing";
+import { env } from "../../../env.mjs";
+import UpdateVoterField from "../../../components/modals/UpdateVoterField";
 
 const DashboardVoter = () => {
   const context = api.useContext();
@@ -141,33 +143,12 @@ const DashboardVoter = () => {
                 </Group>
               </Stack>
             </Modal>
-            <Modal
-              opened={openedVoterField || sendManyInvitationsMutation.isLoading}
+
+            <UpdateVoterField
+              isOpen={openedVoterField}
+              electionId={voters.data.election.id}
               onClose={closeVoterField}
-              title={<Text weight={600}>Voter Field</Text>}
-            >
-              <Stack spacing="sm">
-                <Group position="right" spacing="xs">
-                  <Button
-                    variant="default"
-                    onClick={closeVoterField}
-                    disabled={sendManyInvitationsMutation.isLoading}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    loading={sendManyInvitationsMutation.isLoading}
-                    onClick={() =>
-                      sendManyInvitationsMutation.mutate({
-                        electionId: voters.data.election.id,
-                      })
-                    }
-                  >
-                    Update
-                  </Button>
-                </Group>
-              </Stack>
-            </Modal>
+            />
             <CreateVoterModal
               isOpen={openedCreateVoter}
               electionId={voters.data.election.id}
@@ -228,7 +209,7 @@ const DashboardVoter = () => {
                     variant="light"
                     leftIcon={<IconUsersGroup size="1rem" />}
                     onClick={openVoterField}
-                    disabled
+                    disabled={env.NEXT_PUBLIC_NODE_ENV === "production"}
                   >
                     Group
                   </Button>

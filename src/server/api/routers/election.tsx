@@ -13,6 +13,53 @@ import { render } from "@react-email/render";
 import VoteCasted from "../../../../emails/VoteCasted";
 
 export const electionRouter = createTRPCRouter({
+  updateVoterField: protectedProcedure
+    .input(
+      z.object({
+        electionId: z.string(),
+        field: z.array(z.object({ id: z.string(), name: z.string() })),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const election = await ctx.prisma.election.findUnique({
+        where: {
+          id: input.electionId,
+        },
+      });
+
+      if (!election)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election not found",
+        });
+
+      if (isElectionOngoing({ election, withTime: true }))
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Election is ongoing",
+        });
+
+      if (election.end_date < new Date())
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Election is already finished",
+        });
+
+      for (const field of input.field) {
+        await ctx.prisma.voterField.upsert({
+          where: {
+            id: field.id,
+          },
+          update: {
+            name: field.name,
+          },
+          create: {
+            name: field.name,
+            electionId: input.electionId,
+          },
+        });
+      }
+    }),
   getAllGeneratedResults: protectedProcedure
     .input(z.object({ slug: z.string().min(1) }))
     .query(async ({ input, ctx }) => {
