@@ -143,9 +143,11 @@ const DashboardVoter = () => {
   return (
     <>
       <Head>
-        <title>
-          {voters.data && `${voters.data.election.name} – `}Voters | eBoto Mo
-        </title>
+        {voters.data ? (
+          <title>{`${voters.data.election.name} – `}Voters | eBoto Mo</title>
+        ) : (
+          <title>Voters | eBoto Mo</title>
+        )}
       </Head>
 
       <Box p="md" h="100%">
@@ -310,9 +312,6 @@ const DashboardVoter = () => {
             enableClickToCopy={true}
             mantineTableContainerProps={{
               sx: { maxHeight: "70vh" },
-            }}
-            mantinePaginationProps={{
-              rowsPerPageOptions: ["5", "10", "15", "20", "30", "50", "100"],
             }}
             mantineProgressProps={({ isTopToolbar }) => ({
               sx: {
