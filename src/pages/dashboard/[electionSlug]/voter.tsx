@@ -12,12 +12,12 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import {
   IconCheck,
-  IconEdit,
   IconMailForward,
   IconUpload,
   IconUserPlus,
   IconUsersGroup,
   IconTrash,
+  IconRefresh,
 } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import CreateVoterModal from "../../../components/modals/CreateVoter";
@@ -118,6 +118,7 @@ const DashboardVoter = () => {
         accessorKey: "accountStatus",
         header: "Account status",
         size: 75,
+        enableClickToCopy: false,
         Cell: ({ cell }) =>
           cell.getValue<string>().charAt(0) +
           cell.getValue<string>().slice(1).toLowerCase(),
@@ -133,9 +134,7 @@ const DashboardVoter = () => {
         accessorKey: "createdAt",
         header: "Created",
         size: 100,
-        Cell: ({ cell }) =>
-          moment(cell.getValue<Date>()).format("MMMM D, YYYY H:MM:SS A") +
-          ` (${moment(cell.getValue<Date>()).fromNow()})`,
+        Cell: ({ cell }) => moment(cell.getValue<Date>()).fromNow(),
       },
     ],
     []
@@ -322,18 +321,81 @@ const DashboardVoter = () => {
             })}
             positionToolbarAlertBanner="bottom"
             renderTopToolbarCustomActions={() => (
-              <Button
-                onClick={openConfirmDeleteBulkVoters}
-                disabled={
-                  voters.isLoading ||
-                  !voters.data ||
-                  Object.keys(rowSelection).length === 0
-                }
-                variant="filled"
-                leftIcon={<IconUserMinus size="1rem" />}
-              >
-                Delete Selected
-              </Button>
+              <Group spacing="xs">
+                <Tooltip withArrow label="Refresh">
+                  <ActionIcon
+                    variant="light"
+                    onClick={() => voters.refetch()}
+                    loading={voters.isRefetching}
+                    size="lg"
+                    sx={(theme) => ({
+                      [theme.fn.largerThan("xs")]: {
+                        display: "none",
+                      },
+                    })}
+                    loaderProps={{
+                      width: 18,
+                    }}
+                  >
+                    <IconRefresh size="1.25rem" />
+                  </ActionIcon>
+                </Tooltip>
+
+                <Tooltip withArrow label="Delete selected">
+                  <ActionIcon
+                    color="red"
+                    onClick={openConfirmDeleteBulkVoters}
+                    size="lg"
+                    variant="outline"
+                    sx={(theme) => ({
+                      [theme.fn.largerThan("xs")]: {
+                        display: "none",
+                      },
+                    })}
+                    disabled={
+                      voters.isLoading ||
+                      !voters.data ||
+                      Object.keys(rowSelection).length === 0
+                    }
+                  >
+                    <IconUserMinus size="1.25rem" />
+                  </ActionIcon>
+                </Tooltip>
+                <Button
+                  variant="light"
+                  onClick={() => voters.refetch()}
+                  loading={voters.isRefetching}
+                  leftIcon={<IconRefresh size="1.25rem" />}
+                  sx={(theme) => ({
+                    [theme.fn.smallerThan("xs")]: {
+                      display: "none",
+                    },
+                  })}
+                  loaderProps={{
+                    width: 20,
+                  }}
+                >
+                  Refresh
+                </Button>
+                <Button
+                  color="red"
+                  variant="outline"
+                  onClick={openConfirmDeleteBulkVoters}
+                  disabled={
+                    voters.isLoading ||
+                    !voters.data ||
+                    Object.keys(rowSelection).length === 0
+                  }
+                  leftIcon={<IconUserMinus size="1.25rem" />}
+                  sx={(theme) => ({
+                    [theme.fn.smallerThan("xs")]: {
+                      display: "none",
+                    },
+                  })}
+                >
+                  Delete selected
+                </Button>
+              </Group>
             )}
             enableRowActions
             positionActionsColumn="last"
