@@ -1,11 +1,23 @@
-import { Button, Text, Flex, Box, Stack, Modal, Group } from "@mantine/core";
+import {
+  Button,
+  Text,
+  Flex,
+  Box,
+  Stack,
+  Modal,
+  Group,
+  Tooltip,
+  ActionIcon,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
   IconCheck,
+  IconEdit,
   IconMailForward,
   IconUpload,
   IconUserPlus,
   IconUsersGroup,
+  IconTrash,
 } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import CreateVoterModal from "../../../components/modals/CreateVoter";
@@ -22,6 +34,8 @@ import { notifications } from "@mantine/notifications";
 import { isElectionOngoing } from "../../../utils/isElectionOngoing";
 import { env } from "../../../env.mjs";
 import UpdateVoterField from "../../../components/modals/UpdateVoterField";
+import moment from "moment";
+import ConfirmDeleteVoterModal from "../../../components/modals/ConfirmDeleteVoterModal";
 
 const DashboardVoter = () => {
   const context = api.useContext();
@@ -38,6 +52,10 @@ const DashboardVoter = () => {
     useDisclosure(false);
   const [openedBulkImport, { open: openBulkVoter, close: closeBulkVoter }] =
     useDisclosure(false);
+  const [
+    openedConfirmDeleteVoter,
+    { open: openConfirmDeleteVoter, close: closeConfirmDeleteVoter },
+  ] = useDisclosure(false);
   const [votersData, setVotersData] = useState<
     {
       id: string;
@@ -47,6 +65,16 @@ const DashboardVoter = () => {
       createdAt: Date;
     }[]
   >([]);
+
+  const [voter, setVoter] = useState<{
+    id: string;
+    email: string;
+    accountStatus: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
+  }>({
+    id: "",
+    email: "",
+    accountStatus: "ADDED",
+  });
   const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
 
   const sendManyInvitationsMutation = api.voter.sendManyInvitations.useMutation(
@@ -83,16 +111,26 @@ const DashboardVoter = () => {
       {
         accessorKey: "accountStatus",
         header: "Account status",
+        size: 75,
+        Cell: ({ cell }) =>
+          cell.getValue<string>().charAt(0) +
+          cell.getValue<string>().slice(1).toLowerCase(),
       },
       {
         accessorKey: "hasVoted",
         header: "Has voted?",
+        size: 75,
+        Cell: ({ cell }) => (cell.getValue<boolean>() ? "Yes" : "No"),
+        enableClickToCopy: false,
       },
-      // {
-      //   accessorKey: "createdAt",
-      //   header: "Created at",
-      //   columnDefType: "display",
-      // },
+      {
+        accessorKey: "createdAt",
+        header: "Created",
+        size: 100,
+        Cell: ({ cell }) =>
+          moment(cell.getValue<Date>()).format("MMMM D, YYYY H:MM:SS A") +
+          ` (${moment(cell.getValue<Date>()).fromNow()})`,
+      },
     ],
     []
   );
@@ -158,6 +196,13 @@ const DashboardVoter = () => {
           isOpen={openedBulkImport}
           electionId={voters.data?.election.id ?? ""}
           onClose={closeBulkVoter}
+        />
+
+        <ConfirmDeleteVoterModal
+          voter={voter}
+          isOpen={openedConfirmDeleteVoter}
+          electionId={voters.data?.election.id ?? ""}
+          onClose={closeConfirmDeleteVoter}
         />
 
         <Stack h="100%">
@@ -230,6 +275,7 @@ const DashboardVoter = () => {
             enableFullScreenToggle={false}
             enableDensityToggle={false}
             enableRowSelection
+            enableColumnOrdering
             onRowSelectionChange={setRowSelection}
             getRowId={(row) => row.id}
             enableStickyHeader
@@ -249,6 +295,40 @@ const DashboardVoter = () => {
             mantinePaginationProps={{
               rowsPerPageOptions: ["5", "10", "15", "20", "30", "50", "100"],
             }}
+            mantineProgressProps={({ isTopToolbar }) => ({
+              sx: {
+                display: isTopToolbar ? "block" : "none",
+              },
+            })}
+            enableRowActions
+            positionActionsColumn="last"
+            renderRowActions={({ row }) => (
+              <Box sx={{ display: "flex", gap: "16px" }}>
+                <Tooltip withArrow label="Edit">
+                  <ActionIcon>
+                    <IconEdit size="1.25rem" />
+                  </ActionIcon>
+                </Tooltip>
+
+                <Tooltip withArrow label="Delete">
+                  <ActionIcon
+                    color="red"
+                    onClick={() => {
+                      openConfirmDeleteVoter();
+                      setVoter({
+                        id: row.id,
+                        email: row.getValue<"string">("email"),
+                        accountStatus: row.getValue<
+                          "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED"
+                        >("accountStatus"),
+                      });
+                    }}
+                  >
+                    <IconTrash size="1.25rem" />
+                  </ActionIcon>
+                </Tooltip>
+              </Box>
+            )}
           />
         </Stack>
       </Box>
