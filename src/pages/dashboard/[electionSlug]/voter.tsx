@@ -55,8 +55,12 @@ const DashboardVoter = () => {
   const [openedBulkImport, { open: openBulkVoter, close: closeBulkVoter }] =
     useDisclosure(false);
   const [
-    openedConfirmDeleteVoters,
-    { open: openConfirmDeleteVoters, close: closeConfirmDeleteVoters },
+    openedConfirmDeleteVoter,
+    { open: openConfirmDeleteVoter, close: closeConfirmDeleteVoter },
+  ] = useDisclosure(false);
+  const [
+    openedConfirmDeleteBulkVoters,
+    { open: openConfirmDeleteBulkVoters, close: closeConfirmDeleteBulkVoters },
   ] = useDisclosure(false);
   const [votersData, setVotersData] = useState<
     {
@@ -202,9 +206,9 @@ const DashboardVoter = () => {
 
         <ConfirmDeleteVoterModal
           voter={voter}
-          isOpen={openedConfirmDeleteVoters}
+          isOpen={openedConfirmDeleteVoter}
           electionId={voters.data?.election.id ?? ""}
-          onClose={closeConfirmDeleteVoters}
+          onClose={closeConfirmDeleteVoter}
         />
         <ConfirmDeleteBulkVoterModal
           voters={
@@ -216,9 +220,9 @@ const DashboardVoter = () => {
               })) ?? []
           }
           setRowSelection={setRowSelection}
-          isOpen={openedConfirmDeleteVoters}
+          isOpen={openedConfirmDeleteBulkVoters}
           electionId={voters.data?.election.id ?? ""}
-          onClose={closeConfirmDeleteVoters}
+          onClose={closeConfirmDeleteBulkVoters}
         />
 
         <Stack h="100%">
@@ -319,7 +323,7 @@ const DashboardVoter = () => {
             positionToolbarAlertBanner="bottom"
             renderTopToolbarCustomActions={() => (
               <Button
-                onClick={openConfirmDeleteVoters}
+                onClick={openConfirmDeleteBulkVoters}
                 disabled={
                   voters.isLoading ||
                   !voters.data ||
@@ -335,11 +339,11 @@ const DashboardVoter = () => {
             positionActionsColumn="last"
             renderRowActions={({ row }) => (
               <Box sx={{ display: "flex", gap: "16px" }}>
-                <Tooltip withArrow label="Edit">
+                {/* <Tooltip withArrow label="Edit">
                   <ActionIcon>
                     <IconEdit size="1.25rem" />
                   </ActionIcon>
-                </Tooltip>
+                </Tooltip> */}
 
                 <Tooltip withArrow label="Delete">
                   <ActionIcon
@@ -352,7 +356,7 @@ const DashboardVoter = () => {
                           "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED"
                         >("accountStatus"),
                       });
-                      openConfirmDeleteVoters();
+                      openConfirmDeleteVoter();
                     }}
                   >
                     <IconTrash size="1.25rem" />
