@@ -134,8 +134,6 @@ model Election {
     createdAt    DateTime          @default(now())
     updatedAt    DateTime          @updatedAt
 
-    voter_field Json?
-
     commissioners           Commissioner[]
     voters                  Voter[]
     candidates              Candidate[]
@@ -145,8 +143,21 @@ model Election {
     invitedVoter            InvitedVoter[]
     invitedCommissioner     InvitedCommissioner[]
     generatedElectionResult GeneratedElectionResult[]
+    voterField              VoterField[]
 
     @@index([id, slug])
+}
+
+model VoterField {
+    id String @id @default(cuid())
+
+    name      String
+    createdAt DateTime @default(now())
+
+    election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+    electionId String
+
+    @@index([electionId])
 }
 
 enum TokenType {

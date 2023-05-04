@@ -18,6 +18,7 @@ import {
   IconSearch,
   IconUpload,
   IconUserPlus,
+  IconUsersGroup,
 } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import CreateVoterModal from "../../../components/modals/CreateVoter";
@@ -41,6 +42,8 @@ const DashboardVoter = () => {
     openedCreateVoter,
     { open: openCreateVoter, close: closeCreateVoter },
   ] = useDisclosure(false);
+  const [openedVoterField, { open: openVoterField, close: closeVoterField }] =
+    useDisclosure(false);
   const [openedBulkImport, { open: openBulkVoter, close: closeBulkVoter }] =
     useDisclosure(false);
   const [votersData, setVotersData] = useState<
@@ -138,6 +141,33 @@ const DashboardVoter = () => {
                 </Group>
               </Stack>
             </Modal>
+            <Modal
+              opened={openedVoterField || sendManyInvitationsMutation.isLoading}
+              onClose={closeVoterField}
+              title={<Text weight={600}>Voter Field</Text>}
+            >
+              <Stack spacing="sm">
+                <Group position="right" spacing="xs">
+                  <Button
+                    variant="default"
+                    onClick={closeVoterField}
+                    disabled={sendManyInvitationsMutation.isLoading}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    loading={sendManyInvitationsMutation.isLoading}
+                    onClick={() =>
+                      sendManyInvitationsMutation.mutate({
+                        electionId: voters.data.election.id,
+                      })
+                    }
+                  >
+                    Update
+                  </Button>
+                </Group>
+              </Stack>
+            </Modal>
             <CreateVoterModal
               isOpen={openedCreateVoter}
               electionId={voters.data.election.id}
@@ -193,6 +223,15 @@ const DashboardVoter = () => {
                       Import
                     </Button>
                   </Flex>
+                  <Button
+                    w="full"
+                    variant="light"
+                    leftIcon={<IconUsersGroup size="1rem" />}
+                    onClick={openVoterField}
+                    disabled
+                  >
+                    Group
+                  </Button>
                   {isElectionOngoing({
                     election: voters.data.election,
                     withTime: true,
