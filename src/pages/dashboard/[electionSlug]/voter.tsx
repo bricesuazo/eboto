@@ -9,7 +9,11 @@ import {
 } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import CreateVoterModal from "../../../components/modals/CreateVoter";
-import { MantineReactTable, type MRT_ColumnDef } from "mantine-react-table";
+import {
+  MantineReactTable,
+  type MRT_RowSelectionState,
+  type MRT_ColumnDef,
+} from "mantine-react-table";
 import { api } from "../../../utils/api";
 import UploadBulkVoter from "../../../components/modals/UploadBulkVoter";
 import { useEffect, useMemo, useState } from "react";
@@ -43,6 +47,7 @@ const DashboardVoter = () => {
       createdAt: Date;
     }[]
   >([]);
+  const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
 
   const sendManyInvitationsMutation = api.voter.sendManyInvitations.useMutation(
     {
@@ -69,7 +74,7 @@ const DashboardVoter = () => {
     setVotersData(voters.data?.voters ?? []);
   }, [voters.data?.voters, router.route]);
 
-  const columns = useMemo<MRT_ColumnDef[]>(
+  const columns = useMemo<MRT_ColumnDef<(typeof votersData)[0]>[]>(
     () => [
       {
         accessorKey: "email",
@@ -224,6 +229,9 @@ const DashboardVoter = () => {
             data={votersData}
             enableFullScreenToggle={false}
             enableDensityToggle={false}
+            enableRowSelection
+            onRowSelectionChange={setRowSelection}
+            getRowId={(row) => row.id}
             enableStickyHeader
             initialState={{
               density: "xs",
@@ -232,6 +240,7 @@ const DashboardVoter = () => {
             state={{
               isLoading: voters.isLoading,
               showAlertBanner: voters.isError,
+              rowSelection,
             }}
             enableClickToCopy={true}
             mantineTableContainerProps={{
