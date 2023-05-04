@@ -1,8 +1,6 @@
 import {
   Button,
   Text,
-  Table,
-  TextInput,
   Flex,
   Box,
   Stack,
@@ -15,18 +13,17 @@ import { useDisclosure } from "@mantine/hooks";
 import {
   IconCheck,
   IconMailForward,
-  IconSearch,
   IconUpload,
   IconUserPlus,
   IconUsersGroup,
 } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import CreateVoterModal from "../../../components/modals/CreateVoter";
-import Voter from "../../../components/Voter";
+import { MantineReactTable, type MRT_ColumnDef } from "mantine-react-table";
 import { api } from "../../../utils/api";
 import Balancer from "react-wrap-balancer";
 import UploadBulkVoter from "../../../components/modals/UploadBulkVoter";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
 import { notifications } from "@mantine/notifications";
 import { isElectionOngoing } from "../../../utils/isElectionOngoing";
@@ -57,7 +54,6 @@ const DashboardVoter = () => {
       createdAt: Date;
     }[]
   >([]);
-  const [search, setSearch] = useState("");
 
   const sendManyInvitationsMutation = api.voter.sendManyInvitations.useMutation(
     {
@@ -83,6 +79,28 @@ const DashboardVoter = () => {
   useEffect(() => {
     setVotersData(voters.data?.voters ?? []);
   }, [voters.data?.voters, router.route]);
+
+  const columns = useMemo<MRT_ColumnDef[]>(
+    () => [
+      {
+        accessorKey: "email",
+        header: "Email address",
+      },
+      {
+        accessorKey: "accountStatus",
+        header: "Account status",
+      },
+      {
+        accessorKey: "hasVoted",
+        header: "Has voted?",
+      },
+      // {
+      //   accessorKey: "createdAt",
+      //   header: "Created at",
+      // },
+    ],
+    []
+  );
 
   return (
     <>
@@ -160,145 +178,82 @@ const DashboardVoter = () => {
               electionId={voters.data.election.id}
               onClose={closeBulkVoter}
             />
-            <Stack>
-              <Flex
-                sx={(theme) => ({
-                  gap: theme.spacing.xs,
 
+            <Stack h="100%">
+              <Flex
+                gap="xs"
+                sx={(theme) => ({
                   [theme.fn.smallerThan("xs")]: {
-                    gap: theme.spacing.sm,
                     flexDirection: "column",
                   },
                 })}
               >
-                <Flex
-                  gap="xs"
-                  sx={(theme) => ({
-                    [theme.fn.smallerThan("xs")]: {
-                      flexDirection: "column",
-                    },
-                  })}
-                >
-                  <Flex gap="xs">
-                    <Button
-                      leftIcon={<IconUserPlus size="1rem" />}
-                      onClick={openCreateVoter}
-                      sx={(theme) => ({
-                        [theme.fn.smallerThan("xs")]: {
-                          width: "100%",
-                        },
-                      })}
-                    >
-                      Add voter
-                    </Button>
-                    <Button
-                      onClick={openBulkVoter}
-                      leftIcon={<IconUpload size="1rem" />}
-                      variant="light"
-                      sx={(theme) => ({
-                        [theme.fn.smallerThan("xs")]: {
-                          width: "100%",
-                        },
-                      })}
-                    >
-                      Import
-                    </Button>
-                  </Flex>
+                <Flex gap="xs">
                   <Button
-                    w="full"
-                    variant="light"
-                    leftIcon={<IconUsersGroup size="1rem" />}
-                    onClick={openVoterField}
-                    disabled={env.NEXT_PUBLIC_NODE_ENV === "production"}
+                    leftIcon={<IconUserPlus size="1rem" />}
+                    onClick={openCreateVoter}
+                    sx={(theme) => ({
+                      [theme.fn.smallerThan("xs")]: {
+                        width: "100%",
+                      },
+                    })}
                   >
-                    Group
+                    Add voter
                   </Button>
-                  {isElectionOngoing({
-                    election: voters.data.election,
-                    withTime: true,
-                  }) && (
-                    <Button
-                      variant="light"
-                      leftIcon={<IconMailForward size="1rem" />}
-                      onClick={openInviteVoters}
-                    >
-                      Invite
-                    </Button>
-                  )}
+                  <Button
+                    onClick={openBulkVoter}
+                    leftIcon={<IconUpload size="1rem" />}
+                    variant="light"
+                    sx={(theme) => ({
+                      [theme.fn.smallerThan("xs")]: {
+                        width: "100%",
+                      },
+                    })}
+                  >
+                    Import
+                  </Button>
                 </Flex>
-                <TextInput
-                  placeholder="Search by any field"
-                  icon={<IconSearch size="1rem" />}
-                  value={search}
-                  onChange={(e) => {
-                    setSearch(e.target.value);
-                    setVotersData(
-                      search === ""
-                        ? voters.data.voters
-                        : voters.data.voters.filter((voter) =>
-                            voter.email
-                              .toLowerCase()
-                              .includes(e.target.value.toLowerCase())
-                          )
-                    );
-                  }}
-                  sx={{
-                    flex: 1,
-                  }}
-                />
+                <Button
+                  w="full"
+                  variant="light"
+                  leftIcon={<IconUsersGroup size="1rem" />}
+                  onClick={openVoterField}
+                  disabled={env.NEXT_PUBLIC_NODE_ENV === "production"}
+                >
+                  Group
+                </Button>
+                {isElectionOngoing({
+                  election: voters.data.election,
+                  withTime: true,
+                }) && (
+                  <Button
+                    variant="light"
+                    leftIcon={<IconMailForward size="1rem" />}
+                    onClick={openInviteVoters}
+                  >
+                    Invite
+                  </Button>
+                )}
               </Flex>
 
               {!voters.data.voters.length ? (
-                <Box>
-                  <Text align="center">
-                    <Balancer>
-                      No voters found. Add one by clicking the button above.
-                    </Balancer>
-                  </Text>
-                </Box>
+                <Text align="center">
+                  <Balancer>
+                    No voters found. Add one by clicking the button above.
+                  </Balancer>
+                </Text>
               ) : (
-                <Table striped highlightOnHover withBorder>
-                  <thead>
-                    <tr>
-                      <th>Email</th>
-                      <th>
-                        <Text align="center">Vote Status</Text>
-                      </th>
-                      <th>
-                        <Text align="center">Account Status</Text>
-                      </th>
-                      <th />
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {votersData.length === 0 ? (
-                      <tr>
-                        <td colSpan={4}>
-                          <Text align="center">
-                            <Balancer>
-                              No voters found. Try searching for something else.
-                            </Balancer>
-                          </Text>
-                        </td>
-                      </tr>
-                    ) : (
-                      votersData
-                        .sort(
-                          (a, b) =>
-                            new Date(a.createdAt).getTime() -
-                            new Date(b.createdAt).getTime()
-                        )
-                        .map((voter) => (
-                          <Voter
-                            key={voter.id}
-                            election={voters.data.election}
-                            voter={voter}
-                          />
-                        ))
-                    )}
-                  </tbody>
-                </Table>
+                <MantineReactTable
+                  columns={columns}
+                  data={votersData}
+                  enableFullScreenToggle={false}
+                  enableDensityToggle={false}
+                  enableStickyHeader
+                  initialState={{ density: "xs" }}
+                  mantineTableContainerProps={{
+                    sx: { maxHeight: "70vh" },
+                  }}
+                />
               )}
             </Stack>
           </>

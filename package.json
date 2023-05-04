@@ -55,6 +55,7 @@
     "cookies-next": "^2.1.1",
     "dayjs": "^1.11.7",
     "embla-carousel-react": "^7.1.0",
+    "mantine-react-table": "^1.0.0-beta.5",
     "next": "^13.2.3",
     "next-auth": "^4.21.1",
     "next-superjson-plugin": "^0.5.6",
