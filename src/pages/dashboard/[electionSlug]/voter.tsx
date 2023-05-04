@@ -36,6 +36,8 @@ import { env } from "../../../env.mjs";
 import UpdateVoterField from "../../../components/modals/UpdateVoterField";
 import moment from "moment";
 import ConfirmDeleteVoterModal from "../../../components/modals/ConfirmDeleteVoterModal";
+import ConfirmDeleteBulkVoterModal from "../../../components/modals/ConfirmDeleteBulkVoterModal";
+import { IconUserMinus } from "@tabler/icons-react";
 
 const DashboardVoter = () => {
   const context = api.useContext();
@@ -53,8 +55,8 @@ const DashboardVoter = () => {
   const [openedBulkImport, { open: openBulkVoter, close: closeBulkVoter }] =
     useDisclosure(false);
   const [
-    openedConfirmDeleteVoter,
-    { open: openConfirmDeleteVoter, close: closeConfirmDeleteVoter },
+    openedConfirmDeleteVoters,
+    { open: openConfirmDeleteVoters, close: closeConfirmDeleteVoters },
   ] = useDisclosure(false);
   const [votersData, setVotersData] = useState<
     {
@@ -200,9 +202,23 @@ const DashboardVoter = () => {
 
         <ConfirmDeleteVoterModal
           voter={voter}
-          isOpen={openedConfirmDeleteVoter}
+          isOpen={openedConfirmDeleteVoters}
           electionId={voters.data?.election.id ?? ""}
-          onClose={closeConfirmDeleteVoter}
+          onClose={closeConfirmDeleteVoters}
+        />
+        <ConfirmDeleteBulkVoterModal
+          voters={
+            votersData
+              .filter((voter) => rowSelection[voter.id])
+              .map((voter) => ({
+                id: voter.id,
+                email: voter.email,
+              })) ?? []
+          }
+          setRowSelection={setRowSelection}
+          isOpen={openedConfirmDeleteVoters}
+          electionId={voters.data?.election.id ?? ""}
+          onClose={closeConfirmDeleteVoters}
         />
 
         <Stack h="100%">
@@ -300,6 +316,21 @@ const DashboardVoter = () => {
                 display: isTopToolbar ? "block" : "none",
               },
             })}
+            positionToolbarAlertBanner="bottom"
+            renderTopToolbarCustomActions={() => (
+              <Button
+                onClick={openConfirmDeleteVoters}
+                disabled={
+                  voters.isLoading ||
+                  !voters.data ||
+                  Object.keys(rowSelection).length === 0
+                }
+                variant="filled"
+                leftIcon={<IconUserMinus size="1rem" />}
+              >
+                Delete Selected
+              </Button>
+            )}
             enableRowActions
             positionActionsColumn="last"
             renderRowActions={({ row }) => (
@@ -314,7 +345,6 @@ const DashboardVoter = () => {
                   <ActionIcon
                     color="red"
                     onClick={() => {
-                      openConfirmDeleteVoter();
                       setVoter({
                         id: row.id,
                         email: row.getValue<"string">("email"),
@@ -322,6 +352,7 @@ const DashboardVoter = () => {
                           "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED"
                         >("accountStatus"),
                       });
+                      openConfirmDeleteVoters();
                     }}
                   >
                     <IconTrash size="1.25rem" />

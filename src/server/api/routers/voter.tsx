@@ -184,6 +184,61 @@ export const voterRouter = createTRPCRouter({
       }
       return invitedVoters;
     }),
+  removeBulk: protectedProcedure
+
+    .input(
+      z.object({
+        electionId: z.string(),
+        voterIds: z.array(z.string()),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const election = await ctx.prisma.election.findFirst({
+        where: {
+          id: input.electionId,
+          commissioners: {
+            some: {
+              userId: ctx.session.user.id,
+            },
+          },
+        },
+      });
+
+      if (!election) {
+        throw new Error("Election not found");
+      }
+
+      await ctx.prisma.verificationToken.deleteMany({
+        where: {
+          invitedVoterId: {
+            in: input.voterIds,
+          },
+          userId: {
+            in: input.voterIds,
+          },
+          type: "ELECTION_INVITATION",
+        },
+      });
+
+      await ctx.prisma.invitedVoter.deleteMany({
+        where: {
+          electionId: input.electionId,
+          id: {
+            in: input.voterIds,
+          },
+        },
+      });
+
+      await ctx.prisma.voter.deleteMany({
+        where: {
+          electionId: input.electionId,
+          id: {
+            in: input.voterIds,
+          },
+        },
+      });
+    }),
+
   removeSingle: protectedProcedure
     .input(
       z.object({
