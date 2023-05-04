@@ -1,14 +1,4 @@
-import {
-  Button,
-  Text,
-  Flex,
-  Box,
-  Stack,
-  Center,
-  Loader,
-  Modal,
-  Group,
-} from "@mantine/core";
+import { Button, Text, Flex, Box, Stack, Modal, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
   IconCheck,
@@ -21,7 +11,6 @@ import { useRouter } from "next/router";
 import CreateVoterModal from "../../../components/modals/CreateVoter";
 import { MantineReactTable, type MRT_ColumnDef } from "mantine-react-table";
 import { api } from "../../../utils/api";
-import Balancer from "react-wrap-balancer";
 import UploadBulkVoter from "../../../components/modals/UploadBulkVoter";
 import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
@@ -97,6 +86,7 @@ const DashboardVoter = () => {
       // {
       //   accessorKey: "createdAt",
       //   header: "Created at",
+      //   columnDefType: "display",
       // },
     ],
     []
@@ -105,159 +95,153 @@ const DashboardVoter = () => {
   return (
     <>
       <Head>
-        <title>Voters | eBoto Mo</title>
+        <title>
+          {voters.data && `${voters.data.election.name} – `}Voters | eBoto Mo
+        </title>
       </Head>
 
       <Box p="md" h="100%">
-        {voters.isLoading ? (
-          <Center h="100%">
-            <Loader size="lg" />
-          </Center>
-        ) : voters.isError ? (
-          <Text>Error: {voters.error.message}</Text>
-        ) : !voters.data ? (
-          <Text>No election found</Text>
-        ) : (
-          <>
-            <Head>
-              <title>
-                {voters.data.election.name} &ndash; Voters | eBoto Mo
-              </title>
-            </Head>
-            <Modal
-              opened={
-                openedInviteVoters || sendManyInvitationsMutation.isLoading
-              }
-              onClose={closeInviteVoters}
-              title={
-                <Text weight={600}>
-                  Are you sure you want to invite all voters?
-                </Text>
-              }
-            >
-              <Stack spacing="sm">
-                <Text>
-                  This will send an email to all voters that are not yet invited
-                  and has status of &quot;ADDED&quot;.
-                </Text>
-                <Group position="right" spacing="xs">
-                  <Button
-                    variant="default"
-                    onClick={closeInviteVoters}
-                    disabled={sendManyInvitationsMutation.isLoading}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    loading={sendManyInvitationsMutation.isLoading}
-                    onClick={() =>
-                      sendManyInvitationsMutation.mutate({
-                        electionId: voters.data.election.id,
-                      })
-                    }
-                  >
-                    Invite All
-                  </Button>
-                </Group>
-              </Stack>
-            </Modal>
+        <Modal
+          opened={openedInviteVoters || sendManyInvitationsMutation.isLoading}
+          onClose={closeInviteVoters}
+          title={
+            <Text weight={600}>
+              Are you sure you want to invite all voters?
+            </Text>
+          }
+        >
+          <Stack spacing="sm">
+            <Text>
+              This will send an email to all voters that are not yet invited and
+              has status of &quot;ADDED&quot;.
+            </Text>
+            <Group position="right" spacing="xs">
+              <Button
+                variant="default"
+                onClick={closeInviteVoters}
+                disabled={sendManyInvitationsMutation.isLoading}
+              >
+                Cancel
+              </Button>
+              <Button
+                loading={sendManyInvitationsMutation.isLoading}
+                onClick={() =>
+                  sendManyInvitationsMutation.mutate({
+                    electionId: voters.data?.election.id ?? "",
+                  })
+                }
+                disabled={voters.isLoading || !voters.data}
+              >
+                Invite All
+              </Button>
+            </Group>
+          </Stack>
+        </Modal>
 
-            <UpdateVoterField
-              isOpen={openedVoterField}
-              electionId={voters.data.election.id}
-              onClose={closeVoterField}
-            />
-            <CreateVoterModal
-              isOpen={openedCreateVoter}
-              electionId={voters.data.election.id}
-              onClose={closeCreateVoter}
-            />
+        <UpdateVoterField
+          isOpen={openedVoterField}
+          electionId={voters.data?.election.id ?? ""}
+          onClose={closeVoterField}
+        />
+        <CreateVoterModal
+          isOpen={openedCreateVoter}
+          electionId={voters.data?.election.id ?? ""}
+          onClose={closeCreateVoter}
+        />
 
-            <UploadBulkVoter
-              isOpen={openedBulkImport}
-              electionId={voters.data.election.id}
-              onClose={closeBulkVoter}
-            />
+        <UploadBulkVoter
+          isOpen={openedBulkImport}
+          electionId={voters.data?.election.id ?? ""}
+          onClose={closeBulkVoter}
+        />
 
-            <Stack h="100%">
-              <Flex
-                gap="xs"
+        <Stack h="100%">
+          <Flex
+            gap="xs"
+            sx={(theme) => ({
+              [theme.fn.smallerThan("xs")]: {
+                flexDirection: "column",
+              },
+            })}
+          >
+            <Flex gap="xs">
+              <Button
+                leftIcon={<IconUserPlus size="1rem" />}
+                onClick={openCreateVoter}
+                disabled={voters.isLoading || !voters.data}
                 sx={(theme) => ({
                   [theme.fn.smallerThan("xs")]: {
-                    flexDirection: "column",
+                    width: "100%",
                   },
                 })}
               >
-                <Flex gap="xs">
-                  <Button
-                    leftIcon={<IconUserPlus size="1rem" />}
-                    onClick={openCreateVoter}
-                    sx={(theme) => ({
-                      [theme.fn.smallerThan("xs")]: {
-                        width: "100%",
-                      },
-                    })}
-                  >
-                    Add voter
-                  </Button>
-                  <Button
-                    onClick={openBulkVoter}
-                    leftIcon={<IconUpload size="1rem" />}
-                    variant="light"
-                    sx={(theme) => ({
-                      [theme.fn.smallerThan("xs")]: {
-                        width: "100%",
-                      },
-                    })}
-                  >
-                    Import
-                  </Button>
-                </Flex>
+                Add voter
+              </Button>
+              <Button
+                onClick={openBulkVoter}
+                leftIcon={<IconUpload size="1rem" />}
+                variant="light"
+                disabled={voters.isLoading || !voters.data}
+                sx={(theme) => ({
+                  [theme.fn.smallerThan("xs")]: {
+                    width: "100%",
+                  },
+                })}
+              >
+                Import
+              </Button>
+            </Flex>
+            <Button
+              w="full"
+              variant="light"
+              leftIcon={<IconUsersGroup size="1rem" />}
+              onClick={openVoterField}
+              disabled={
+                voters.isLoading ||
+                !voters.data ||
+                env.NEXT_PUBLIC_NODE_ENV === "production"
+              }
+            >
+              Group
+            </Button>
+            {voters.data &&
+              isElectionOngoing({
+                election: voters.data.election,
+                withTime: true,
+              }) && (
                 <Button
-                  w="full"
                   variant="light"
-                  leftIcon={<IconUsersGroup size="1rem" />}
-                  onClick={openVoterField}
-                  disabled={env.NEXT_PUBLIC_NODE_ENV === "production"}
+                  leftIcon={<IconMailForward size="1rem" />}
+                  onClick={openInviteVoters}
                 >
-                  Group
+                  Invite
                 </Button>
-                {isElectionOngoing({
-                  election: voters.data.election,
-                  withTime: true,
-                }) && (
-                  <Button
-                    variant="light"
-                    leftIcon={<IconMailForward size="1rem" />}
-                    onClick={openInviteVoters}
-                  >
-                    Invite
-                  </Button>
-                )}
-              </Flex>
-
-              {!voters.data.voters.length ? (
-                <Text align="center">
-                  <Balancer>
-                    No voters found. Add one by clicking the button above.
-                  </Balancer>
-                </Text>
-              ) : (
-                <MantineReactTable
-                  columns={columns}
-                  data={votersData}
-                  enableFullScreenToggle={false}
-                  enableDensityToggle={false}
-                  enableStickyHeader
-                  initialState={{ density: "xs" }}
-                  mantineTableContainerProps={{
-                    sx: { maxHeight: "70vh" },
-                  }}
-                />
               )}
-            </Stack>
-          </>
-        )}
+          </Flex>
+
+          <MantineReactTable
+            columns={columns}
+            data={votersData}
+            enableFullScreenToggle={false}
+            enableDensityToggle={false}
+            enableStickyHeader
+            initialState={{
+              density: "xs",
+              pagination: { pageSize: 15, pageIndex: 0 },
+            }}
+            state={{
+              isLoading: voters.isLoading,
+              showAlertBanner: voters.isError,
+            }}
+            enableClickToCopy={true}
+            mantineTableContainerProps={{
+              sx: { maxHeight: "70vh" },
+            }}
+            mantinePaginationProps={{
+              rowsPerPageOptions: ["5", "10", "15", "20", "30", "50", "100"],
+            }}
+          />
+        </Stack>
       </Box>
     </>
   );
