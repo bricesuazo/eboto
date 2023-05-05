@@ -36,7 +36,9 @@ const RealtimePage = ({
   const title = `${election.name} – Realtime | eBoto Mo`;
   const positions = api.election.getElectionRealtime.useQuery(election.id, {
     refetchInterval:
-      env.NEXT_PUBLIC_NODE_ENV === "production" ? 1000 : undefined,
+      env.NEXT_PUBLIC_NODE_ENV === "production" && election.end_date > now
+        ? 1000
+        : undefined,
   });
 
   if (positions.isLoading)
@@ -82,12 +84,14 @@ const RealtimePage = ({
                 Open from {convertNumberToHour(election.voting_start)} to{" "}
                 {convertNumberToHour(election.voting_end)}
               </Text>
-              <Text align="center" size="xs" color="dimmed">
-                <Balancer>
-                  Realtime result as of{" "}
-                  <Moment date={now} format="MMMM Do YYYY, h:mm:ss a" />
-                </Balancer>
-              </Text>
+              {election.end_date > now && (
+                <Text align="center" size="xs" color="dimmed">
+                  <Balancer>
+                    Realtime result as of{" "}
+                    <Moment date={now} format="MMMM Do YYYY, h:mm:ss a" />
+                  </Balancer>
+                </Text>
+              )}
             </Box>
           </Center>
           <SimpleGrid
@@ -106,9 +110,11 @@ const RealtimePage = ({
                 captionSide="bottom"
                 h="fit-content"
               >
-                <caption>
-                  As of <Moment date={now} format="MMMM Do YYYY, h:mm:ss A" />
-                </caption>
+                {election.end_date > now && (
+                  <caption>
+                    As of <Moment date={now} format="MMMM Do YYYY, h:mm:ss A" />
+                  </caption>
+                )}
                 <thead>
                   <tr>
                     <th>
