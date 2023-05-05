@@ -76,7 +76,7 @@ const DashboardVoter = () => {
       hasVoted: boolean;
       createdAt: Date;
       field: {
-        [key: string]: string;
+        [key: string]: string | undefined;
       } | null;
     }[]
   >([]);
@@ -167,83 +167,87 @@ const DashboardVoter = () => {
       </Head>
 
       <Box p="md">
-        <Modal
-          opened={openedInviteVoters || sendManyInvitationsMutation.isLoading}
-          onClose={closeInviteVoters}
-          title={
-            <Text weight={600}>
-              Are you sure you want to invite all voters?
-            </Text>
-          }
-        >
-          <Stack spacing="sm">
-            <Text>
-              This will send an email to all voters that are not yet invited and
-              has status of &quot;ADDED&quot;.
-            </Text>
-            <Group position="right" spacing="xs">
-              <Button
-                variant="default"
-                onClick={closeInviteVoters}
-                disabled={sendManyInvitationsMutation.isLoading}
-              >
-                Cancel
-              </Button>
-              <Button
-                loading={sendManyInvitationsMutation.isLoading}
-                onClick={() =>
-                  sendManyInvitationsMutation.mutate({
-                    electionId: voters.data?.election.id ?? "",
-                  })
-                }
-                disabled={voters.isLoading || !voters.data}
-              >
-                Invite All
-              </Button>
-            </Group>
-          </Stack>
-        </Modal>
+        {voters.data && (
+          <>
+            <Modal
+              opened={
+                openedInviteVoters || sendManyInvitationsMutation.isLoading
+              }
+              onClose={closeInviteVoters}
+              title={
+                <Text weight={600}>
+                  Are you sure you want to invite all voters?
+                </Text>
+              }
+            >
+              <Stack spacing="sm">
+                <Text>
+                  This will send an email to all voters that are not yet invited
+                  and has status of &quot;ADDED&quot;.
+                </Text>
+                <Group position="right" spacing="xs">
+                  <Button
+                    variant="default"
+                    onClick={closeInviteVoters}
+                    disabled={sendManyInvitationsMutation.isLoading}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    loading={sendManyInvitationsMutation.isLoading}
+                    onClick={() =>
+                      sendManyInvitationsMutation.mutate({
+                        electionId: voters.data.election.id,
+                      })
+                    }
+                    disabled={voters.isLoading || !voters.data}
+                  >
+                    Invite All
+                  </Button>
+                </Group>
+              </Stack>
+            </Modal>
+            <UpdateVoterField
+              isOpen={openedVoterField}
+              electionId={voters.data.election.id}
+              onClose={closeVoterField}
+              voterFields={voters.data.election.voterField}
+            />
 
-        <UpdateVoterField
-          isOpen={openedVoterField}
-          electionId={voters.data?.election.id ?? ""}
-          onClose={closeVoterField}
-          voterFields={voters.data?.election.voterField ?? []}
-        />
+            <CreateVoterModal
+              isOpen={openedCreateVoter}
+              voterFields={voters.data.election.voterField}
+              electionId={voters.data.election.id}
+              onClose={closeCreateVoter}
+            />
 
-        <CreateVoterModal
-          isOpen={openedCreateVoter}
-          voterFields={voters.data?.election.voterField ?? []}
-          electionId={voters.data?.election.id ?? ""}
-          onClose={closeCreateVoter}
-        />
+            <UploadBulkVoter
+              isOpen={openedBulkImport}
+              electionId={voters.data.election.id}
+              onClose={closeBulkVoter}
+            />
 
-        <UploadBulkVoter
-          isOpen={openedBulkImport}
-          electionId={voters.data?.election.id ?? ""}
-          onClose={closeBulkVoter}
-        />
+            <ConfirmDeleteVoterModal
+              voter={voter}
+              isOpen={openedConfirmDeleteVoter}
+              electionId={voters.data.election.id}
+              onClose={closeConfirmDeleteVoter}
+            />
 
-        <ConfirmDeleteVoterModal
-          voter={voter}
-          isOpen={openedConfirmDeleteVoter}
-          electionId={voters.data?.election.id ?? ""}
-          onClose={closeConfirmDeleteVoter}
-        />
-        <ConfirmDeleteBulkVoterModal
-          voters={
-            votersData
-              .filter((voter) => rowSelection[voter.id])
-              .map((voter) => ({
-                id: voter.id,
-                email: voter.email,
-              })) ?? []
-          }
-          setRowSelection={setRowSelection}
-          isOpen={openedConfirmDeleteBulkVoters}
-          electionId={voters.data?.election.id ?? ""}
-          onClose={closeConfirmDeleteBulkVoters}
-        />
+            <ConfirmDeleteBulkVoterModal
+              voters={votersData
+                .filter((voter) => rowSelection[voter.id])
+                .map((voter) => ({
+                  id: voter.id,
+                  email: voter.email,
+                }))}
+              setRowSelection={setRowSelection}
+              isOpen={openedConfirmDeleteBulkVoters}
+              electionId={voters.data.election.id}
+              onClose={closeConfirmDeleteBulkVoters}
+            />
+          </>
+        )}
 
         <Stack>
           <Flex

@@ -45,6 +45,11 @@ const CreateVoterModal = ({
     validateInputOnBlur: true,
     validate: {
       email: isEmail("Please enter a valid email address"),
+      ...voterFields.reduce((acc, field) => {
+        acc[field.name] = (value) =>
+          value?.trim() === "" ? `${field.name} is required` : undefined;
+        return acc;
+      }, {} as Record<string, (value: string) => string | undefined>),
     },
   });
 
