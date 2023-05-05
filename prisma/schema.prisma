@@ -73,6 +73,8 @@ model InvitedVoter {
 
     tokens VerificationToken[]
 
+    field Json?
+
     createdAt DateTime @default(now())
 
     @@index([electionId])
@@ -109,6 +111,8 @@ model Voter {
 
     election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
     electionId String
+
+    field Json?
 
     @@index([userId])
     @@index([electionId])
