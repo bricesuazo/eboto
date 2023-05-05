@@ -42,6 +42,12 @@ import { IconUserMinus } from "@tabler/icons-react";
 const DashboardVoter = () => {
   const context = api.useContext();
   const router = useRouter();
+  const voters = api.election.getElectionVoter.useQuery(
+    router.query.electionSlug as string,
+    {
+      enabled: router.isReady,
+    }
+  );
   const [
     openedInviteVoters,
     { open: openInviteVoters, close: closeInviteVoters },
@@ -69,6 +75,9 @@ const DashboardVoter = () => {
       accountStatus: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
       hasVoted: boolean;
       createdAt: Date;
+      voterField: {
+        [key: string]: string;
+      };
     }[]
   >([]);
 
@@ -98,18 +107,25 @@ const DashboardVoter = () => {
     }
   );
 
-  const voters = api.election.getElectionVoter.useQuery(
-    router.query.electionSlug as string,
-    {
-      enabled: router.isReady,
-    }
-  );
   useEffect(() => {
-    setVotersData(voters.data?.voters ?? []);
-  }, [voters.data?.voters, router.route]);
+    setVotersData(
+      voters.data?.voters.map((voter) => ({
+        id: voter.id,
+        email: voter.email,
+        accountStatus: voter.accountStatus,
+        hasVoted: voter.hasVoted,
+        createdAt: voter.createdAt,
+        voterField: {},
+      })) ?? []
+    );
+  }, [voters.data?.voters, router.route, voters.data?.election.voterField]);
 
   const columns = useMemo<MRT_ColumnDef<(typeof votersData)[0]>[]>(
     () => [
+      ...((voters.data?.election.voterField.map((voterField) => ({
+        accessorKey: "voterField." + voterField.name,
+        header: voterField.name,
+      })) ?? []) as MRT_ColumnDef<(typeof votersData)[0]>[]),
       {
         accessorKey: "email",
         header: "Email address",
@@ -137,7 +153,7 @@ const DashboardVoter = () => {
         Cell: ({ cell }) => moment(cell.getValue<Date>()).fromNow(),
       },
     ],
-    []
+    [voters.data?.election.voterField]
   );
 
   return (
