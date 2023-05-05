@@ -1,13 +1,4 @@
-import {
-  Alert,
-  Box,
-  Button,
-  Group,
-  List,
-  Modal,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { Alert, Button, Group, List, Modal, Stack, Text } from "@mantine/core";
 import { api } from "../../utils/api";
 import { notifications } from "@mantine/notifications";
 import { IconCheck } from "@tabler/icons-react";
@@ -50,22 +41,19 @@ const ConfirmDeleteBulkVoterModal = ({
     <Modal
       opened={isOpen || removeBulkVoterMutation.isLoading}
       onClose={onClose}
-      title={<Text weight={600}>Confirm Delete Voters</Text>}
+      title={<Text weight={600}>Confirm Delete Voter(s)</Text>}
     >
       <Stack spacing="sm">
         <Text>
-          Are you sure you want to delete this voter? This action cannot be
+          Are you sure you want to delete this voter(s)? This action cannot be
           undone.
         </Text>
 
-        <Box>
-          <Text weight={600}>Voters</Text>
-          <List>
-            {voters.map((voter) => (
-              <List.Item key={voter.id}>{voter.email}</List.Item>
-            ))}
-          </List>
-        </Box>
+        <List>
+          {voters.map((voter) => (
+            <List.Item key={voter.id}>{voter.email}</List.Item>
+          ))}
+        </List>
         {removeBulkVoterMutation.error?.data?.code === "UNAUTHORIZED" && (
           <Alert
             icon={<IconAlertCircle size="1rem" />}

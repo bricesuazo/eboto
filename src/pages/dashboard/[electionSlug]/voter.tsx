@@ -150,7 +150,7 @@ const DashboardVoter = () => {
         )}
       </Head>
 
-      <Box p="md" h="100%">
+      <Box p="md">
         <Modal
           opened={openedInviteVoters || sendManyInvitationsMutation.isLoading}
           onClose={closeInviteVoters}
@@ -226,7 +226,7 @@ const DashboardVoter = () => {
           onClose={closeConfirmDeleteBulkVoters}
         />
 
-        <Stack h="100%">
+        <Stack>
           <Flex
             gap="xs"
             sx={(theme) => ({
@@ -310,9 +310,12 @@ const DashboardVoter = () => {
               rowSelection,
             }}
             enableClickToCopy={true}
-            mantineTableContainerProps={{
-              sx: { maxHeight: "70vh" },
-            }}
+            mantineTableContainerProps={
+              {
+                // sx: { maxHeight: "70vh" },
+                // width: "100%",
+              }
+            }
             mantineProgressProps={({ isTopToolbar }) => ({
               sx: {
                 display: isTopToolbar ? "block" : "none",
