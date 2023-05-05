@@ -262,32 +262,43 @@ const DashboardVoter = () => {
                 Import
               </Button>
             </Flex>
-            <Button
-              w="full"
-              variant="light"
-              leftIcon={<IconUsersGroup size="1rem" />}
-              onClick={openVoterField}
-              disabled={
-                voters.isLoading ||
-                !voters.data ||
-                env.NEXT_PUBLIC_NODE_ENV === "production"
-              }
-            >
-              Group
-            </Button>
-            {voters.data &&
-              isElectionOngoing({
-                election: voters.data.election,
-                withTime: true,
-              }) && (
-                <Button
-                  variant="light"
-                  leftIcon={<IconMailForward size="1rem" />}
-                  onClick={openInviteVoters}
-                >
-                  Invite
-                </Button>
-              )}
+            <Flex gap="xs">
+              <Button
+                variant="light"
+                leftIcon={<IconUsersGroup size="1rem" />}
+                onClick={openVoterField}
+                disabled={
+                  voters.isLoading ||
+                  !voters.data ||
+                  env.NEXT_PUBLIC_NODE_ENV === "production"
+                }
+                sx={(theme) => ({
+                  [theme.fn.smallerThan("xs")]: {
+                    width: "100%",
+                  },
+                })}
+              >
+                Group
+              </Button>
+              {voters.data &&
+                isElectionOngoing({
+                  election: voters.data.election,
+                  withTime: true,
+                }) && (
+                  <Button
+                    variant="light"
+                    leftIcon={<IconMailForward size="1rem" />}
+                    onClick={openInviteVoters}
+                    sx={(theme) => ({
+                      [theme.fn.smallerThan("xs")]: {
+                        width: "100%",
+                      },
+                    })}
+                  >
+                    Invite
+                  </Button>
+                )}
+            </Flex>
           </Flex>
 
           <MantineReactTable
