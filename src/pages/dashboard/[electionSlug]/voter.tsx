@@ -310,12 +310,10 @@ const DashboardVoter = () => {
               rowSelection,
             }}
             enableClickToCopy={true}
-            mantineTableContainerProps={
-              {
-                // sx: { maxHeight: "70vh" },
-                // width: "100%",
-              }
-            }
+            mantineTableContainerProps={{
+              sx: { maxHeight: "70vh" },
+              width: "100%",
+            }}
             mantineProgressProps={({ isTopToolbar }) => ({
               sx: {
                 display: isTopToolbar ? "block" : "none",
