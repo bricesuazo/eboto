@@ -84,12 +84,16 @@ const RealtimePage = ({
                 Open from {convertNumberToHour(election.voting_start)} to{" "}
                 {convertNumberToHour(election.voting_end)}
               </Text>
-              {election.end_date > now && (
+              {election.end_date > now ? (
                 <Text align="center" size="xs" color="dimmed">
                   <Balancer>
                     Realtime result as of{" "}
                     <Moment date={now} format="MMMM Do YYYY, h:mm:ss a" />
                   </Balancer>
+                </Text>
+              ) : (
+                <Text align="center" weight="bold">
+                  Official result
                 </Text>
               )}
             </Box>

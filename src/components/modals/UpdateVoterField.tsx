@@ -9,27 +9,32 @@ import {
   TextInput,
 } from "@mantine/core";
 import { api } from "../../utils/api";
-import { useForm } from "@mantine/form";
+import { type UseFormReturnType, useForm } from "@mantine/form";
 import { useDidUpdate } from "@mantine/hooks";
 import { IconTrash } from "@tabler/icons-react";
+import type { VoterField } from "@prisma/client";
+
+type Field = { id: string; name: string; type: "fromDb" | "fromInput" };
+type FormType = { field: Field[] };
 
 const UpdateVoterField = ({
   isOpen,
   onClose,
   electionId,
+  voterFields,
 }: {
   electionId: string;
   isOpen: boolean;
   onClose: () => void;
+  voterFields: VoterField[];
 }) => {
-  const form = useForm<{
-    field: {
-      id: string;
-      name: string;
-    }[];
-  }>({
+  const form = useForm<FormType>({
     initialValues: {
-      field: [],
+      field: voterFields.map((field) => ({
+        type: "fromDb",
+        id: field.id,
+        name: field.name,
+      })),
     },
     validate: {
       field: (value) => {
@@ -41,16 +46,26 @@ const UpdateVoterField = ({
     },
   });
 
+  const context = api.useContext();
+
   const updateVoterFieldMutation = api.election.updateVoterField.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
+      await context.election.getElectionVoter.invalidate();
       onClose();
     },
   });
 
   useDidUpdate(() => {
     if (isOpen) {
-      form.reset();
       updateVoterFieldMutation.reset();
+      const data: typeof form.values.field = voterFields.map((field) => ({
+        id: field.id,
+        name: field.name,
+        type: "fromDb",
+      }));
+      form.setValues({ field: data });
+
+      form.resetDirty({ field: data });
     }
   }, [isOpen]);
 
@@ -80,42 +95,12 @@ const UpdateVoterField = ({
           </Flex>
 
           {form.values.field.map((field) => (
-            <Flex gap="xs" key={field.id} align="end">
-              <TextInput
-                w="100%"
-                placeholder="Enter field"
-                value={field.name}
-                label="Voter field"
-                withAsterisk
-                onChange={(e) => {
-                  form.setFieldValue(
-                    "field",
-                    form.values.field.map((f) => {
-                      if (f.id === field.id) {
-                        return {
-                          ...f,
-                          name: e.currentTarget.value,
-                        };
-                      }
-                      return f;
-                    })
-                  );
-                }}
-              />
-              <ActionIcon
-                color="red"
-                variant="outline"
-                size="2.25rem"
-                onClick={() => {
-                  form.setFieldValue(
-                    "field",
-                    form.values.field.filter((f) => f.id !== field.id)
-                  );
-                }}
-              >
-                <IconTrash size="1.125rem" />
-              </ActionIcon>
-            </Flex>
+            <VoterFieldInput
+              key={field.id}
+              form={form}
+              field={field}
+              electionId={electionId}
+            />
           ))}
 
           <Button
@@ -129,6 +114,7 @@ const UpdateVoterField = ({
                 {
                   id: Math.random().toString(),
                   name: "",
+                  type: "fromInput",
                 },
               ]);
             }}
@@ -145,14 +131,9 @@ const UpdateVoterField = ({
               Cancel
             </Button>
             <Button
+              type="submit"
               loading={updateVoterFieldMutation.isLoading}
-              disabled={!form.isValid()}
-              onClick={() =>
-                updateVoterFieldMutation.mutate({
-                  electionId,
-                  field: [],
-                })
-              }
+              disabled={!(form.isValid() && form.isDirty())}
             >
               Update
             </Button>
@@ -164,3 +145,69 @@ const UpdateVoterField = ({
 };
 
 export default UpdateVoterField;
+
+const VoterFieldInput = ({
+  form,
+  field,
+  electionId,
+}: {
+  form: UseFormReturnType<FormType, (values: FormType) => FormType>;
+  field: Field;
+  electionId: string;
+}) => {
+  const context = api.useContext();
+  const deleteSingleVoterFieldMutation =
+    api.election.deleteSingleVoterField.useMutation({
+      onSuccess: async () => {
+        await context.election.getElectionVoter.invalidate();
+      },
+    });
+  return (
+    <Flex gap="xs" align="end">
+      <TextInput
+        w="100%"
+        placeholder="Enter field"
+        value={field.name}
+        label="Voter field"
+        withAsterisk
+        onChange={(e) => {
+          form.setFieldValue(
+            "field",
+            form.values.field.map((f) => {
+              if (f.id === field.id) {
+                return {
+                  ...f,
+                  name: e.currentTarget.value,
+                };
+              }
+              return f;
+            })
+          );
+        }}
+      />
+      <ActionIcon
+        color="red"
+        variant="outline"
+        size="2.25rem"
+        loading={deleteSingleVoterFieldMutation.isLoading}
+        loaderProps={{
+          w: 18,
+        }}
+        onClick={async () => {
+          if (field.type === "fromDb") {
+            await deleteSingleVoterFieldMutation.mutateAsync({
+              electionId,
+              voterFieldId: field.id,
+            });
+          }
+          form.setFieldValue(
+            "field",
+            form.values.field.filter((f) => f.id !== field.id)
+          );
+        }}
+      >
+        <IconTrash size="1.125rem" />
+      </ActionIcon>
+    </Flex>
+  );
+};

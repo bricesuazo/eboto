@@ -192,7 +192,9 @@ const DashboardVoter = () => {
           isOpen={openedVoterField}
           electionId={voters.data?.election.id ?? ""}
           onClose={closeVoterField}
+          voterFields={voters.data?.election.voterField ?? []}
         />
+
         <CreateVoterModal
           isOpen={openedCreateVoter}
           electionId={voters.data?.election.id ?? ""}
@@ -270,6 +272,10 @@ const DashboardVoter = () => {
                 disabled={
                   voters.isLoading ||
                   !voters.data ||
+                  isElectionOngoing({
+                    election: voters.data.election,
+                    withTime: true,
+                  }) ||
                   env.NEXT_PUBLIC_NODE_ENV === "production"
                 }
                 sx={(theme) => ({

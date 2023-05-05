@@ -13,6 +13,45 @@ import { render } from "@react-email/render";
 import VoteCasted from "../../../../emails/VoteCasted";
 
 export const electionRouter = createTRPCRouter({
+  deleteSingleVoterField: protectedProcedure
+    .input(
+      z.object({
+        electionId: z.string(),
+        voterFieldId: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const election = await ctx.prisma.election.findUnique({
+        where: {
+          id: input.electionId,
+        },
+      });
+
+      if (!election)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election not found",
+        });
+
+      if (isElectionOngoing({ election, withTime: true }))
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Election is ongoing",
+        });
+
+      if (election.end_date < new Date())
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Election is already finished",
+        });
+
+      await ctx.prisma.voterField.delete({
+        where: {
+          id: input.voterFieldId,
+        },
+      });
+    }),
+
   updateVoterField: protectedProcedure
     .input(
       z.object({
@@ -43,6 +82,16 @@ export const electionRouter = createTRPCRouter({
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Election is already finished",
+        });
+
+      if (election.publicity === "PRIVATE")
+        await ctx.prisma.election.update({
+          where: {
+            id: election.id,
+          },
+          data: {
+            publicity: "VOTER",
+          },
         });
 
       for (const field of input.field) {
@@ -371,6 +420,7 @@ export const electionRouter = createTRPCRouter({
         },
         include: {
           commissioners: true,
+          voterField: true,
         },
       });
 

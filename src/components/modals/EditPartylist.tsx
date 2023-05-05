@@ -57,7 +57,7 @@ const EditPartylistModal = ({
     onSuccess: async (data) => {
       await context.partylist.getAll.invalidate();
 
-      const dataForForm = {
+      const dataForForm: typeof form.values = {
         name: data.name,
         acronym: data.acronym,
       };
@@ -79,7 +79,7 @@ const EditPartylistModal = ({
     if (isOpen) {
       editPartylistMutation.reset();
 
-      const dataForForm = {
+      const dataForForm: typeof form.values = {
         name: partylist.name,
         acronym: partylist.acronym,
       };
