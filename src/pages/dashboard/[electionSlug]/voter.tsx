@@ -230,6 +230,7 @@ const DashboardVoter = () => {
           <UploadBulkVoter
             isOpen={openedBulkImport}
             electionId={voters.data.election.id}
+            voterFields={voters.data.election.voterField}
             onClose={closeBulkVoter}
           />
 

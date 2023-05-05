@@ -25,24 +25,20 @@ import { useDidUpdate } from "@mantine/hooks";
 import Balancer from "react-wrap-balancer";
 import { api } from "../../utils/api";
 import { notifications } from "@mantine/notifications";
-import { supabase } from "../../lib/supabase";
+import * as XLSX from "xlsx";
+import type { VoterField } from "@prisma/client";
 
 const UploadBulkVoter = ({
   isOpen,
   onClose,
   electionId,
+  voterFields,
 }: {
   electionId: string;
   isOpen: boolean;
   onClose: () => void;
+  voterFields: VoterField[];
 }) => {
-  const [downloadSample, setDownloadSample] = useState<{
-    loading: boolean;
-    error: string | null;
-  }>({
-    loading: false,
-    error: null,
-  });
   const context = api.useContext();
   const createManyVoterMutation = api.voter.createMany.useMutation({
     onSuccess: async (data) => {
@@ -234,43 +230,30 @@ const UploadBulkVoter = ({
           size="xs"
           variant="outline"
           leftIcon={<IconDownload size="1rem" />}
-          loading={downloadSample.loading}
-          onClick={async () => {
-            setDownloadSample({
-              loading: true,
-              error: null,
-            });
-
-            const { data, error } = await supabase.storage
-              .from("eboto-mo")
-              .download(`assets/voters.xlsx`);
-
-            if (error) {
-              setDownloadSample({
-                loading: false,
-                error: error.message,
-              });
-              return;
-            }
-
-            const url = URL.createObjectURL(data);
-
-            const anchor = document.createElement("a");
-            anchor.href = url;
-            anchor.download = "voters.xlsx";
-
-            document.body.appendChild(anchor);
-
-            anchor.click();
-
-            document.body.removeChild(anchor);
-
-            URL.revokeObjectURL(url);
-
-            setDownloadSample({
-              loading: false,
-              error: null,
-            });
+          onClick={() => {
+            const worksheet = XLSX.utils.json_to_sheet([
+              {
+                Email: "juan.delacruz@cvsu.edu.ph",
+                ...voterFields.reduce((prev, curr) => {
+                  return {
+                    ...prev,
+                    [curr.name]: "",
+                  };
+                }, {}),
+              },
+              {
+                Email: "pedro.penduko@cvsu.edu.ph",
+                ...voterFields.reduce((prev, curr) => {
+                  return {
+                    ...prev,
+                    [curr.name]: "",
+                  };
+                }, {}),
+              },
+            ]);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+            XLSX.writeFile(workbook, "voters.xlsx");
           }}
         >
           Download sample excel file
