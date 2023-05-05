@@ -479,6 +479,7 @@ export const electionRouter = createTRPCRouter({
               ]),
               hasVoted: z.boolean(),
               createdAt: z.date(),
+              field: z.record(z.string(), z.string()).nullable(),
             })
           )
           .parse(
@@ -489,6 +490,7 @@ export const electionRouter = createTRPCRouter({
                 accountStatus: "ACCEPTED",
                 createdAt: voter.createdAt,
                 hasVoted: voter.user.votes.length > 0,
+                field: voter.field,
               }))
               .concat(
                 invitedVoter.map((voter) => ({
@@ -497,6 +499,7 @@ export const electionRouter = createTRPCRouter({
                   accountStatus: voter.status,
                   createdAt: voter.createdAt,
                   hasVoted: false,
+                  field: voter.field,
                 }))
               )
           ),

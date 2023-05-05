@@ -173,6 +173,7 @@ export const userRouter = createTRPCRouter({
             data: {
               userId: ctx.session.user.id,
               electionId: token.invitedVoter.electionId,
+              field: token.invitedVoter.field?.toString(),
             },
           });
 

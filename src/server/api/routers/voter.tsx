@@ -292,6 +292,12 @@ export const voterRouter = createTRPCRouter({
       z.object({
         electionId: z.string(),
         email: z.string().email(),
+        fields: z.array(
+          z.object({
+            name: z.string(),
+            value: z.string(),
+          })
+        ),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -353,12 +359,21 @@ export const voterRouter = createTRPCRouter({
         });
       }
 
+      const field: { [key: string]: string } = input.fields.reduce(
+        (result: { [key: string]: string }, item) => {
+          result[item.name] = item.value;
+          return result;
+        },
+        {}
+      );
+
       if (ctx.session.user.email === input.email) {
         return {
           voter: await ctx.prisma.voter.create({
             data: {
               userId: ctx.session.user.id,
               electionId: input.electionId,
+              field,
             },
           }),
           email: input.email,
@@ -369,6 +384,7 @@ export const voterRouter = createTRPCRouter({
         data: {
           email: input.email,
           electionId: input.electionId,
+          field,
         },
       });
 

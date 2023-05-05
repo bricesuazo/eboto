@@ -75,9 +75,9 @@ const DashboardVoter = () => {
       accountStatus: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
       hasVoted: boolean;
       createdAt: Date;
-      voterField: {
+      field: {
         [key: string]: string;
-      };
+      } | null;
     }[]
   >([]);
 
@@ -115,7 +115,7 @@ const DashboardVoter = () => {
         accountStatus: voter.accountStatus,
         hasVoted: voter.hasVoted,
         createdAt: voter.createdAt,
-        voterField: {},
+        field: voter.field,
       })) ?? []
     );
   }, [voters.data?.voters, router.route, voters.data?.election.voterField]);
@@ -123,7 +123,7 @@ const DashboardVoter = () => {
   const columns = useMemo<MRT_ColumnDef<(typeof votersData)[0]>[]>(
     () => [
       ...((voters.data?.election.voterField.map((voterField) => ({
-        accessorKey: "voterField." + voterField.name,
+        accessorKey: "field." + voterField.name,
         header: voterField.name,
       })) ?? []) as MRT_ColumnDef<(typeof votersData)[0]>[]),
       {
@@ -213,6 +213,7 @@ const DashboardVoter = () => {
 
         <CreateVoterModal
           isOpen={openedCreateVoter}
+          voterFields={voters.data?.election.voterField ?? []}
           electionId={voters.data?.election.id ?? ""}
           onClose={closeCreateVoter}
         />

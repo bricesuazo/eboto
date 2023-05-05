@@ -10,22 +10,37 @@ import {
 import { api } from "../../utils/api";
 import { notifications } from "@mantine/notifications";
 import { isEmail, useForm } from "@mantine/form";
-import { IconAlertCircle, IconAt, IconCheck } from "@tabler/icons-react";
+import {
+  IconAlertCircle,
+  IconAt,
+  IconCheck,
+  IconLetterCase,
+} from "@tabler/icons-react";
 import { useDidUpdate } from "@mantine/hooks";
+import type { VoterField } from "@prisma/client";
 
 const CreateVoterModal = ({
   isOpen,
   onClose,
   electionId,
+  voterFields,
 }: {
   electionId: string;
   isOpen: boolean;
   onClose: () => void;
+  voterFields: VoterField[];
 }) => {
   const context = api.useContext();
-  const form = useForm({
+  const form = useForm<{
+    email: string;
+    [key: string]: string;
+  }>({
     initialValues: {
       email: "",
+      ...voterFields.reduce((acc, field) => {
+        acc[field.name] = "";
+        return acc;
+      }, {} as Record<string, string>),
     },
     validateInputOnBlur: true,
     validate: {
@@ -64,6 +79,10 @@ const CreateVoterModal = ({
             await createVoterMutation.mutateAsync({
               electionId,
               email: value.email,
+              fields: voterFields.map((field) => ({
+                name: field.name,
+                value: value[field.name] || "",
+              })),
             });
             onClose();
           })();
@@ -83,6 +102,22 @@ const CreateVoterModal = ({
                 createVoterMutation.error.message)
             }
           />
+          {voterFields.map((field) => (
+            <TextInput
+              key={field.id}
+              placeholder={`Enter ${field.name}`}
+              label={field.name}
+              {...form.getInputProps(field.name)}
+              required
+              withAsterisk
+              icon={<IconLetterCase size="1rem" />}
+              error={
+                form.errors[field.name] ||
+                (createVoterMutation.error?.data?.code === "CONFLICT" &&
+                  createVoterMutation.error.message)
+              }
+            />
+          ))}
           {createVoterMutation.isError &&
             createVoterMutation.error?.data?.code !== "CONFLICT" && (
               <Alert
