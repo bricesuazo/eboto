@@ -50,10 +50,6 @@ const DashboardOverview = () => {
       enabled: router.isReady,
     }
   );
-  console.log(
-    "🚀 ~ file: index.tsx:51 ~ DashboardOverview ~ voterFieldStats:",
-    voterFieldStats.data
-  );
 
   return (
     <>
@@ -355,14 +351,6 @@ const DashboardOverview = () => {
                   }}
                   breakpoints={[
                     {
-                      maxWidth: "xs",
-                      cols: 1,
-                    },
-                    {
-                      maxWidth: "sm",
-                      cols: 2,
-                    },
-                    {
                       maxWidth: "md",
                       cols: 1,
                     },
@@ -379,14 +367,16 @@ const DashboardOverview = () => {
                       <thead>
                         <tr>
                           <th>{voterFieldStat.fieldName}</th>
-                          <th>Population (Accepted)</th>
-                          <th>Population (Invited)</th>
+                          <th>Voted</th>
+                          <th>Voter (Accepted)</th>
+                          <th>Voter (Invited)</th>
                         </tr>
                       </thead>
                       <tbody>
                         {voterFieldStat.fields.map((field) => (
                           <tr key={field.fieldValue}>
                             <td>{field.fieldValue}</td>
+                            <td>{field.voteCount}</td>
                             <td>{field.allCountAccepted}</td>
                             <td>{field.allCountInvited}</td>
                           </tr>

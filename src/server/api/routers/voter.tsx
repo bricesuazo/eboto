@@ -39,17 +39,22 @@ export const voterRouter = createTRPCRouter({
           electionId: election.id,
         },
       });
+
       const invitedVoters = await ctx.prisma.invitedVoter.findMany({
         where: {
           electionId: election.id,
         },
       });
 
-      // const votes = await ctx.prisma.vote.findMany({
-      //   where: {
-      //     electionId: election.id,
-      //   },
-      // });
+      const votes = await ctx.prisma.vote.findMany({
+        where: {
+          electionId: election.id,
+        },
+      });
+
+      const votersThatVoted = voters.filter((voter) =>
+        votes.some((vote) => vote.voterId === voter.userId)
+      );
 
       return election.voterField.map((field) => {
         const fieldValuesAccepted = voters.map((voter) => {
@@ -72,6 +77,12 @@ export const voterRouter = createTRPCRouter({
         const fieldStats = uniqueFieldValues.map((value) => {
           return {
             fieldValue: value,
+            voteCount: votersThatVoted.filter((voter) => {
+              if (typeof voter.field !== "object" || Array.isArray(voter.field))
+                return false;
+              const voterFields = voter.field ?? {};
+              return voterFields[field.name] === value;
+            }).length,
             allCountAccepted: fieldValuesAccepted.filter((v) => v === value)
               .length,
             allCountInvited: fieldValuesInvited.filter((v) => v === value)
