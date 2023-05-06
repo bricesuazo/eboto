@@ -185,7 +185,6 @@ export const voterRouter = createTRPCRouter({
       return invitedVoters;
     }),
   removeBulk: protectedProcedure
-
     .input(
       z.object({
         electionId: z.string(),
@@ -220,7 +219,7 @@ export const voterRouter = createTRPCRouter({
         },
       });
 
-      await ctx.prisma.invitedVoter.deleteMany({
+      const invitedVoters = await ctx.prisma.invitedVoter.deleteMany({
         where: {
           electionId: input.electionId,
           id: {
@@ -229,7 +228,7 @@ export const voterRouter = createTRPCRouter({
         },
       });
 
-      await ctx.prisma.voter.deleteMany({
+      const voters = await ctx.prisma.voter.deleteMany({
         where: {
           electionId: input.electionId,
           id: {
@@ -237,6 +236,8 @@ export const voterRouter = createTRPCRouter({
           },
         },
       });
+
+      return invitedVoters.count + voters.count;
     }),
 
   removeSingle: protectedProcedure
@@ -405,6 +406,7 @@ export const voterRouter = createTRPCRouter({
     )
 
     .mutation(async ({ input, ctx }) => {
+      let counter = 0;
       const election = await ctx.prisma.election.findUnique({
         where: {
           id: input.electionId,
@@ -453,18 +455,39 @@ export const voterRouter = createTRPCRouter({
         (invitedVoter) => invitedVoter.email
       );
 
+      if (
+        input.voters.some((voter) => voter.email === ctx.session.user.email)
+      ) {
+        await ctx.prisma.voter
+          .create({
+            data: {
+              userId: ctx.session.user.id,
+              electionId: input.electionId,
+              field: input.voters.find(
+                (voter) => voter.email === ctx.session.user.email
+              )?.field,
+            },
+          })
+          .then(() => {
+            counter += 1;
+          });
+      }
+
       const votersInput = input.voters.filter(
         (voter) =>
+          ctx.session.user.email !== voter.email &&
           !votersEmails.includes(voter.email) &&
           !invitedVotersEmails.includes(voter.email)
       );
 
-      return await ctx.prisma.invitedVoter.createMany({
+      const invited = await ctx.prisma.invitedVoter.createMany({
         data: votersInput.map((voter) => ({
           email: voter.email,
           field: voter.field,
           electionId: input.electionId,
         })),
       });
+
+      return invited.count + counter;
     }),
 });

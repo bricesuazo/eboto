@@ -41,10 +41,10 @@ const UploadBulkVoter = ({
 }) => {
   const context = api.useContext();
   const createManyVoterMutation = api.voter.createMany.useMutation({
-    onSuccess: async (data) => {
+    onSuccess: async (counter) => {
       await context.election.getElectionVoter.invalidate();
       notifications.show({
-        title: `${data.count} voters added!`,
+        title: `${counter} voter(s) added!`,
         message: "Successfully added voters",
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,

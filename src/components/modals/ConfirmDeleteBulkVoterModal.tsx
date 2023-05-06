@@ -24,13 +24,13 @@ const ConfirmDeleteBulkVoterModal = ({
 }) => {
   const context = api.useContext();
   const removeBulkVoterMutation = api.voter.removeBulk.useMutation({
-    onSuccess: async () => {
+    onSuccess: async (counter) => {
       onClose();
       await context.election.getElectionVoter.invalidate();
       setRowSelection({});
 
       notifications.show({
-        title: "Successfully deleted!",
+        title: `${counter} voter(s) successfully deleted!`,
         message: `Successfully deleted voters`,
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
