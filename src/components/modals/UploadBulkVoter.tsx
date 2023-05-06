@@ -60,6 +60,7 @@ const UploadBulkVoter = ({
       voters: Row[];
     }[]
   >([]);
+
   const openRef = useRef<() => void>(null);
 
   useDidUpdate(() => {
@@ -75,7 +76,7 @@ const UploadBulkVoter = ({
       title={<Text weight={600}>Upload bulk voters</Text>}
     >
       <Stack spacing="sm">
-        {selectedFiles.length ? (
+        {!!selectedFiles.length && (
           <>
             <Button
               leftIcon={<IconUpload size="1rem" />}
@@ -152,80 +153,77 @@ const UploadBulkVoter = ({
               ))}
             </Stack>
           </>
-        ) : (
-          <Dropzone
-            openRef={openRef}
-            onDrop={(files) => {
-              // if (selectedFile?.find((f) => f.fileName === file.name)) {
-              //   return;
-              // }
-
-              Array.from(files).forEach((file) => {
-                void (async () =>
-                  await readXlsxFile(file).then((rows) => {
-                    if (rows.length < 1) {
-                      return;
-                    }
-
-                    if (rows[0] && rows[0][0] !== "email") {
-                      return;
-                    }
-
-                    if (selectedFiles?.find((f) => f.fileName === file.name)) {
-                      return;
-                    }
-
-                    setSelectedFiles((prev) => {
-                      if (prev) {
-                        return [
-                          ...prev,
-                          { fileName: file.name, voters: rows.slice(1) },
-                        ];
-                      } else {
-                        return [{ fileName: file.name, voters: rows.slice(1) }];
-                      }
-                    });
-                  }))();
-              });
-            }}
-            accept={MS_EXCEL_MIME_TYPE}
-          >
-            <Flex
-              direction="column"
-              align="center"
-              justify="center"
-              gap="md"
-              style={{ minHeight: rem(140), pointerEvents: "none" }}
-            >
-              <Dropzone.Accept>
-                <IconUpload
-                  size="3.2rem"
-                  stroke={1.5}
-                  color={
-                    theme.colors.green[theme.colorScheme === "dark" ? 4 : 6]
-                  }
-                />
-              </Dropzone.Accept>
-              <Dropzone.Reject>
-                <IconX
-                  size="3.2rem"
-                  stroke={1.5}
-                  color={theme.colors.red[theme.colorScheme === "dark" ? 4 : 6]}
-                />
-              </Dropzone.Reject>
-              <Dropzone.Idle>
-                <IconFileSpreadsheet size="3.2rem" stroke={1.5} />
-              </Dropzone.Idle>
-              <div>
-                <Balancer>
-                  <Text size="xl" align="center">
-                    Drag excel file here or click to select files
-                  </Text>
-                </Balancer>
-              </div>
-            </Flex>
-          </Dropzone>
         )}
+        <Dropzone
+          openRef={openRef}
+          hidden={!!selectedFiles.length}
+          onDrop={(files) => {
+            if (
+              selectedFiles.find((sf) =>
+                files.find((f) => f.name === sf.fileName)
+              )
+            ) {
+              return;
+            }
+
+            Array.from(files).forEach((file) => {
+              void (async () =>
+                await readXlsxFile(file).then((rows) => {
+                  if (rows.length < 1) {
+                    return;
+                  }
+
+                  if (rows[0] && rows[0][0] !== "Email") {
+                    return;
+                  }
+
+                  if (selectedFiles.find((f) => f.fileName === file.name)) {
+                    return;
+                  }
+
+                  setSelectedFiles((prev) => [
+                    ...prev,
+                    { fileName: file.name, voters: rows.slice(1) },
+                  ]);
+                }))();
+            });
+          }}
+          accept={MS_EXCEL_MIME_TYPE}
+        >
+          <Flex
+            direction="column"
+            align="center"
+            justify="center"
+            gap="md"
+            style={{ minHeight: rem(140), pointerEvents: "none" }}
+          >
+            <Dropzone.Accept>
+              <IconUpload
+                size="3.2rem"
+                stroke={1.5}
+                color={theme.colors.green[theme.colorScheme === "dark" ? 4 : 6]}
+              />
+            </Dropzone.Accept>
+            <Dropzone.Reject>
+              <IconX
+                size="3.2rem"
+                stroke={1.5}
+                color={theme.colors.red[theme.colorScheme === "dark" ? 4 : 6]}
+              />
+            </Dropzone.Reject>
+            <Dropzone.Idle>
+              <IconFileSpreadsheet size="3.2rem" stroke={1.5} />
+            </Dropzone.Idle>
+            <div>
+              <Balancer>
+                <Text size="xl" align="center">
+                  Drag excel file here or click to select files
+                </Text>
+              </Balancer>
+            </div>
+          </Flex>
+        </Dropzone>
+
         <Button
           size="xs"
           variant="outline"
