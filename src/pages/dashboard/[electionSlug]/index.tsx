@@ -331,6 +331,16 @@ const DashboardOverview = () => {
               })}
             </Box>
             <Box>
+              <Title
+                order={3}
+                sx={(theme) => ({
+                  [theme.fn.smallerThan("xs")]: {
+                    textAlign: "center",
+                  },
+                })}
+              >
+                Voter Stats
+              </Title>
               {voterFieldStats.isLoading ? (
                 <Center>
                   <Loader size="sm" />
@@ -339,7 +349,7 @@ const DashboardOverview = () => {
                 <Text>No voter stats</Text>
               ) : (
                 <SimpleGrid
-                  cols={3}
+                  cols={2}
                   sx={{
                     alignItems: "start",
                   }}
@@ -356,14 +366,6 @@ const DashboardOverview = () => {
                       maxWidth: "md",
                       cols: 1,
                     },
-                    {
-                      maxWidth: "lg",
-                      cols: 2,
-                    },
-                    {
-                      maxWidth: "xl",
-                      cols: 2,
-                    },
                   ]}
                 >
                   {voterFieldStats.data.map((voterFieldStat) => (
@@ -377,16 +379,16 @@ const DashboardOverview = () => {
                       <thead>
                         <tr>
                           <th>{voterFieldStat.fieldName}</th>
-                          <th>Voted count</th>
-                          <th>Population</th>
+                          <th>Population (Accepted)</th>
+                          <th>Population (Invited)</th>
                         </tr>
                       </thead>
                       <tbody>
                         {voterFieldStat.fields.map((field) => (
                           <tr key={field.fieldValue}>
                             <td>{field.fieldValue}</td>
-                            <td>n/a</td>
-                            <td>{field.allCount}</td>
+                            <td>{field.allCountAccepted}</td>
+                            <td>{field.allCountInvited}</td>
                           </tr>
                         ))}
                       </tbody>
