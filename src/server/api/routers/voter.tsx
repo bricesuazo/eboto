@@ -398,14 +398,26 @@ export const voterRouter = createTRPCRouter({
         electionId: z.string(),
         voters: z.array(
           z.object({
-            email: z.string().email(),
+            email: z.string().email({ message: "Email is invalid" }),
             field: z.record(z.string(), z.string()),
           })
         ),
       })
     )
-
     .mutation(async ({ input, ctx }) => {
+      if (
+        input.voters.some((voter) =>
+          Object.values(voter.field).some(
+            (value) =>
+              value === "" || !value || !value.trim() || value.length === 0
+          )
+        )
+      )
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Field value cannot be empty",
+        });
+
       let counter = 0;
       const election = await ctx.prisma.election.findUnique({
         where: {

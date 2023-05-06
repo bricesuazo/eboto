@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Alert,
   Button,
   Flex,
   Group,
@@ -12,6 +13,7 @@ import {
 } from "@mantine/core";
 import { Dropzone, MS_EXCEL_MIME_TYPE } from "@mantine/dropzone";
 import {
+  IconAlertCircle,
   IconCheck,
   IconDownload,
   IconFileSpreadsheet,
@@ -73,8 +75,13 @@ const UploadBulkVoter = ({
   useDidUpdate(() => {
     if (isOpen) {
       setSelectedFiles([]);
+      createManyVoterMutation.reset();
     }
   }, [isOpen]);
+
+  useDidUpdate(() => {
+    createManyVoterMutation.reset();
+  }, [selectedFiles]);
 
   return (
     <Modal
@@ -219,9 +226,8 @@ const UploadBulkVoter = ({
                         return {
                           email: row[0]?.toString() ?? "",
                           field: voterFields.reduce((acc, val, i) => {
-                            if (row[i + 1]) {
-                              acc[val.name] = row[i + 1]?.toString() ?? "";
-                            }
+                            acc[val.name] = row[i + 1]?.toString() ?? "";
+
                             return acc;
                           }, {} as Record<string, string>),
                         };
@@ -266,6 +272,16 @@ const UploadBulkVoter = ({
             </div>
           </Flex>
         </Dropzone>
+
+        {createManyVoterMutation.isError && (
+          <Alert
+            icon={<IconAlertCircle size="1rem" />}
+            color="red"
+            title="Error"
+          >
+            {createManyVoterMutation.error.message}
+          </Alert>
+        )}
 
         <Button
           size="xs"

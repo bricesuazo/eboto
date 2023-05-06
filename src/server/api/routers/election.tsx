@@ -84,6 +84,23 @@ export const electionRouter = createTRPCRouter({
           message: "Election is already finished",
         });
 
+      const hasVoter = await ctx.prisma.voter.findFirst({
+        where: {
+          electionId: input.electionId,
+        },
+      });
+      const hasInvitedVoter = await ctx.prisma.invitedVoter.findFirst({
+        where: {
+          electionId: input.electionId,
+        },
+      });
+
+      if (hasVoter || hasInvitedVoter)
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Election already has voters",
+        });
+
       if (election.publicity === "PRIVATE")
         await ctx.prisma.election.update({
           where: {
