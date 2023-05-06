@@ -1,12 +1,12 @@
 import {
   ActionIcon,
-  Box,
   Button,
   Flex,
   Group,
   Modal,
   rem,
   Stack,
+  Table,
   Text,
   useMantineTheme,
 } from "@mantine/core";
@@ -19,7 +19,7 @@ import {
   IconUpload,
   IconX,
 } from "@tabler/icons-react";
-import readXlsxFile, { type Row } from "read-excel-file";
+import readXlsxFile from "read-excel-file";
 import { useRef, useState } from "react";
 import { useDidUpdate } from "@mantine/hooks";
 import Balancer from "react-wrap-balancer";
@@ -57,9 +57,16 @@ const UploadBulkVoter = ({
   const [selectedFiles, setSelectedFiles] = useState<
     {
       fileName: string;
-      voters: Row[];
+      voters: {
+        email: string;
+        field: Record<string, string>;
+      }[];
     }[]
   >([]);
+  console.log(
+    "🚀 ~ file: UploadBulkVoter.tsx:58 ~ selectedFiles:",
+    selectedFiles
+  );
 
   const openRef = useRef<() => void>(null);
 
@@ -110,45 +117,62 @@ const UploadBulkVoter = ({
                       <IconTrash size="1.25rem" />
                     </ActionIcon>
                   </Flex>
-                  <Box>
-                    {file.voters.map((voter) => (
-                      <Flex
-                        key={voter[0]?.toString()}
-                        justify="space-between"
-                        align="center"
-                      >
-                        <Text truncate>{voter[0]?.toString()}</Text>
+                  <Table>
+                    <thead>
+                      <tr>
+                        <th>Email</th>
+                        {voterFields.map((field) => (
+                          <th key={field.name}>{field.name}</th>
+                        ))}
+                        <th />
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {file.voters.map((voter) => (
+                        <tr key={voter.email}>
+                          <td>
+                            <Text truncate>{voter.email}</Text>
+                          </td>
+                          {voterFields.map((field) => (
+                            <td key={field.name}>
+                              <Text truncate>
+                                {voter.field[field.name] ?? ""}
+                              </Text>
+                            </td>
+                          ))}
+                          <td>
+                            <ActionIcon
+                              title="Remove voter"
+                              aria-label="Remove voter"
+                              onClick={() => {
+                                setSelectedFiles((prev) => {
+                                  return prev
+                                    .map((f) => {
+                                      if (f.fileName === file.fileName) {
+                                        return {
+                                          ...f,
 
-                        <ActionIcon
-                          title="Remove voter"
-                          aria-label="Remove voter"
-                          onClick={() => {
-                            setSelectedFiles((prev) => {
-                              return prev
-                                .map((f) => {
-                                  if (f.fileName === file.fileName) {
-                                    return {
-                                      ...f,
-
-                                      voters: f.voters.filter(
-                                        (v) => v[0] !== voter[0]
-                                      ),
-                                    };
-                                  } else {
-                                    return f;
-                                  }
-                                })
-                                .filter((f) => f.voters.length > 0);
-                            });
-                          }}
-                          disabled={selectedFiles.length === 0}
-                          color="red"
-                        >
-                          <IconTrash size="1.25rem" />
-                        </ActionIcon>
-                      </Flex>
-                    ))}
-                  </Box>
+                                          voters: f.voters.filter(
+                                            (v) => v.email !== voter.email
+                                          ),
+                                        };
+                                      } else {
+                                        return f;
+                                      }
+                                    })
+                                    .filter((f) => f.voters.length > 0);
+                                });
+                              }}
+                              disabled={selectedFiles.length === 0}
+                              color="red"
+                            >
+                              <IconTrash size="1.25rem" />
+                            </ActionIcon>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
                 </Stack>
               ))}
             </Stack>
@@ -173,7 +197,13 @@ const UploadBulkVoter = ({
                     return;
                   }
 
-                  if (rows[0] && rows[0][0] !== "Email") {
+                  if (
+                    rows[0] &&
+                    rows[0][0] !== "Email" &&
+                    !voterFields.some(
+                      (val, i) => rows[0] && val.name === rows[0][i + 1]
+                    )
+                  ) {
                     return;
                   }
 
@@ -183,7 +213,20 @@ const UploadBulkVoter = ({
 
                   setSelectedFiles((prev) => [
                     ...prev,
-                    { fileName: file.name, voters: rows.slice(1) },
+                    {
+                      fileName: file.name,
+                      voters: rows.slice(1).map((row) => {
+                        return {
+                          email: row[0]?.toString() ?? "",
+                          field: voterFields.reduce((acc, val, i) => {
+                            if (row[i + 1]) {
+                              acc[val.name] = row[i + 1]?.toString() ?? "";
+                            }
+                            return acc;
+                          }, {} as Record<string, string>),
+                        };
+                      }),
+                    },
                   ]);
                 }))();
             });
@@ -285,9 +328,7 @@ const UploadBulkVoter = ({
               onClick={() => {
                 createManyVoterMutation.mutate({
                   electionId,
-                  emails: selectedFiles.flatMap((f) =>
-                    f.voters.map((v) => v[0]?.toString() ?? "")
-                  ),
+                  voters: selectedFiles.flatMap((f) => f.voters),
                 });
               }}
             >

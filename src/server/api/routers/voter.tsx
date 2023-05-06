@@ -392,11 +392,15 @@ export const voterRouter = createTRPCRouter({
     }),
 
   createMany: protectedProcedure
-
     .input(
       z.object({
         electionId: z.string(),
-        emails: z.array(z.string().email()),
+        voters: z.array(
+          z.object({
+            email: z.string().email(),
+            field: z.record(z.string(), z.string()),
+          })
+        ),
       })
     )
 
@@ -449,16 +453,16 @@ export const voterRouter = createTRPCRouter({
         (invitedVoter) => invitedVoter.email
       );
 
-      const emails = input.emails.filter(
-        (email) =>
-          !votersEmails.includes(email) && !invitedVotersEmails.includes(email)
+      const votersInput = input.voters.filter(
+        (voter) =>
+          !votersEmails.includes(voter.email) &&
+          !invitedVotersEmails.includes(voter.email)
       );
 
-      const uniqueEmails = [...new Set(emails)];
-
       return await ctx.prisma.invitedVoter.createMany({
-        data: uniqueEmails.map((email) => ({
-          email,
+        data: votersInput.map((voter) => ({
+          email: voter.email,
+          field: voter.field,
           electionId: input.electionId,
         })),
       });
