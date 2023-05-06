@@ -13,6 +13,7 @@ import { type UseFormReturnType, useForm } from "@mantine/form";
 import { useDidUpdate } from "@mantine/hooks";
 import { IconTrash } from "@tabler/icons-react";
 import type { VoterField } from "@prisma/client";
+import { useRouter } from "next/router";
 
 type Field = { id: string; name: string; type: "fromDb" | "fromInput" };
 type FormType = { field: Field[] };
@@ -28,6 +29,7 @@ const UpdateVoterField = ({
   onClose: () => void;
   voterFields: VoterField[];
 }) => {
+  const router = useRouter();
   const form = useForm<FormType>({
     initialValues: {
       field: voterFields.map((field) => ({
@@ -46,11 +48,9 @@ const UpdateVoterField = ({
     },
   });
 
-  const context = api.useContext();
-
   const updateVoterFieldMutation = api.election.updateVoterField.useMutation({
-    onSuccess: async () => {
-      await context.election.getElectionVoter.invalidate();
+    onSuccess: () => {
+      router.reload();
       onClose();
     },
   });

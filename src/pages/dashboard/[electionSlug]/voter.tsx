@@ -213,12 +213,14 @@ const DashboardVoter = () => {
               </Group>
             </Stack>
           </Modal>
-          <UpdateVoterField
-            isOpen={openedVoterField}
-            electionId={voters.data.election.id}
-            onClose={closeVoterField}
-            voterFields={voters.data.election.voterField}
-          />
+          {!voters.data.voters.length && (
+            <UpdateVoterField
+              isOpen={openedVoterField}
+              electionId={voters.data.election.id}
+              onClose={closeVoterField}
+              voterFields={voters.data.election.voterField}
+            />
+          )}
 
           <CreateVoterModal
             isOpen={openedCreateVoter}
@@ -290,22 +292,36 @@ const DashboardVoter = () => {
                 </Button>
               </Flex>
               <Flex gap="xs">
-                <Button
-                  variant="light"
-                  leftIcon={<IconUsersGroup size="1rem" />}
-                  onClick={openVoterField}
-                  disabled={isElectionOngoing({
-                    election: voters.data.election,
-                    withTime: true,
-                  })}
-                  sx={(theme) => ({
-                    [theme.fn.smallerThan("xs")]: {
-                      width: "100%",
-                    },
-                  })}
+                <Tooltip
+                  label={
+                    <Text>
+                      You can&apos;t change the voter&apos;s group once the{" "}
+                      <br />
+                      election is ongoing and if there&apos;s already a voter
+                    </Text>
+                  }
                 >
-                  Group
-                </Button>
+                  <Button
+                    variant="light"
+                    leftIcon={<IconUsersGroup size="1rem" />}
+                    onClick={openVoterField}
+                    disabled={
+                      !!voters.data.voters.length ||
+                      isElectionOngoing({
+                        election: voters.data.election,
+                        withTime: true,
+                      })
+                    }
+                    sx={(theme) => ({
+                      [theme.fn.smallerThan("xs")]: {
+                        width: "100%",
+                      },
+                    })}
+                  >
+                    Group
+                  </Button>
+                </Tooltip>
+
                 {isElectionOngoing({
                   election: voters.data.election,
                   withTime: true,
