@@ -42,6 +42,16 @@ const DashboardOverview = () => {
       enabled: router.isReady,
     }
   );
+  const voterFieldStats = api.voter.getFieldStats.useQuery(
+    { electionSlug: router.query.electionSlug as string },
+    {
+      enabled: router.isReady,
+    }
+  );
+  console.log(
+    "🚀 ~ file: index.tsx:51 ~ DashboardOverview ~ voterFieldStats:",
+    voterFieldStats.data
+  );
 
   return (
     <>

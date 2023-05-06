@@ -7,6 +7,63 @@ import ElectionInvitation from "../../../../emails/ElectionInvitation";
 import { render } from "@react-email/render";
 
 export const voterRouter = createTRPCRouter({
+  getFieldStats: protectedProcedure
+    .input(
+      z.object({
+        electionSlug: z.string(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const election = await ctx.prisma.election.findFirst({
+        where: {
+          slug: input.electionSlug,
+          commissioners: {
+            some: {
+              userId: ctx.session.user.id,
+            },
+          },
+        },
+        include: {
+          voterField: true,
+        },
+      });
+
+      if (!election)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election not found",
+        });
+
+      const voters = await ctx.prisma.voter.findMany({
+        where: {
+          electionId: election.id,
+        },
+      });
+
+      return election.voterField.map((field) => {
+        const fieldValues = voters.map((voter) => {
+          if (typeof voter.field !== "object" || Array.isArray(voter.field))
+            return "";
+          const voterFields = voter.field ?? {};
+          return voterFields[field.name] as string;
+        });
+
+        const uniqueFieldValues = [...new Set(fieldValues)];
+
+        const fieldStats = uniqueFieldValues.map((value) => {
+          return {
+            fieldValue: value,
+            allCount: fieldValues.filter((v) => v === value).length,
+          };
+        });
+
+        return {
+          fieldName: field.name,
+          fields: fieldStats,
+        };
+      });
+    }),
+
   sendSingleInvitation: protectedProcedure
     .input(
       z.object({
