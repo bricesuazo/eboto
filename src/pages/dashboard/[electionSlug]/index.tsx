@@ -11,6 +11,8 @@ import {
   Loader,
   Group,
   Button,
+  Table,
+  SimpleGrid,
 } from "@mantine/core";
 import { useRouter } from "next/router";
 import Moment from "react-moment";
@@ -327,6 +329,71 @@ const DashboardOverview = () => {
                   </Box>
                 );
               })}
+            </Box>
+            <Box>
+              {voterFieldStats.isLoading ? (
+                <Center>
+                  <Loader size="sm" />
+                </Center>
+              ) : !voterFieldStats.data || voterFieldStats.data.length === 0 ? (
+                <Text>No voter stats</Text>
+              ) : (
+                <SimpleGrid
+                  cols={3}
+                  sx={{
+                    alignItems: "start",
+                  }}
+                  breakpoints={[
+                    {
+                      maxWidth: "xs",
+                      cols: 1,
+                    },
+                    {
+                      maxWidth: "sm",
+                      cols: 2,
+                    },
+                    {
+                      maxWidth: "md",
+                      cols: 1,
+                    },
+                    {
+                      maxWidth: "lg",
+                      cols: 2,
+                    },
+                    {
+                      maxWidth: "xl",
+                      cols: 2,
+                    },
+                  ]}
+                >
+                  {voterFieldStats.data.map((voterFieldStat) => (
+                    <Table
+                      key={voterFieldStat.fieldName}
+                      striped
+                      highlightOnHover
+                      withBorder
+                      withColumnBorders
+                    >
+                      <thead>
+                        <tr>
+                          <th>{voterFieldStat.fieldName}</th>
+                          <th>Voted count</th>
+                          <th>Population</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {voterFieldStat.fields.map((field) => (
+                          <tr key={field.fieldValue}>
+                            <td>{field.fieldValue}</td>
+                            <td>n/a</td>
+                            <td>{field.allCount}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  ))}
+                </SimpleGrid>
+              )}
             </Box>
             <Box>
               <Title

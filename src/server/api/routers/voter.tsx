@@ -40,6 +40,12 @@ export const voterRouter = createTRPCRouter({
         },
       });
 
+      // const votes = await ctx.prisma.vote.findMany({
+      //   where: {
+      //     electionId: election.id,
+      //   },
+      // });
+
       return election.voterField.map((field) => {
         const fieldValues = voters.map((voter) => {
           if (typeof voter.field !== "object" || Array.isArray(voter.field))
@@ -59,7 +65,9 @@ export const voterRouter = createTRPCRouter({
 
         return {
           fieldName: field.name,
-          fields: fieldStats,
+          fields: fieldStats.sort((a, b) =>
+            a.fieldValue.localeCompare(b.fieldValue)
+          ),
         };
       });
     }),
