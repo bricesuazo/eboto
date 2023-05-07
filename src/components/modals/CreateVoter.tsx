@@ -165,6 +165,7 @@ const CreateVoterModal = ({
               nothingFound="Nothing found"
               searchable
               creatable
+              withinPortal
               getCreateLabel={(query) => `+ Create ${query}`}
               error={
                 form.errors[field.name] ||

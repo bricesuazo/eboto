@@ -197,6 +197,7 @@ const EditVoterModal = ({
               nothingFound="Nothing found"
               searchable
               creatable
+              withinPortal
               getCreateLabel={(query) => `+ Create ${query}`}
               error={
                 form.errors[["field", field.name].join(".")] ||
@@ -210,22 +211,6 @@ const EditVoterModal = ({
             />
           ))}
 
-          {/* {voterFields.map((field) => (
-            <TextInput
-              key={field.id}
-              placeholder={`Enter ${field.name}`}
-              label={field.name}
-              required
-              withAsterisk
-              {...form.getInputProps(["field", field.name].join("."))}
-              icon={<IconLetterCase size="1rem" />}
-              error={
-                form.errors[["field", field.name].join(".")] ||
-                (editVoterMutation.error?.data?.code === "CONFLICT" &&
-                  editVoterMutation.error.message)
-              }
-            />
-          ))} */}
           {editVoterMutation.isError &&
             editVoterMutation.error?.data?.code !== "CONFLICT" && (
               <Alert
