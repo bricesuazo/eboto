@@ -6,6 +6,7 @@ import {
   TextInput,
   Text,
   Stack,
+  Select,
 } from "@mantine/core";
 import { api } from "../../utils/api";
 import { notifications } from "@mantine/notifications";
@@ -18,6 +19,7 @@ import {
 } from "@tabler/icons-react";
 import { useDidUpdate } from "@mantine/hooks";
 import type { VoterField } from "@prisma/client";
+import { useState } from "react";
 
 const EditVoterModal = ({
   isOpen,
@@ -37,6 +39,14 @@ const EditVoterModal = ({
   };
   voterFields: VoterField[];
 }) => {
+  const [data, setData] = useState<
+    {
+      fieldName: string;
+      values: {
+        value: string;
+      }[];
+    }[]
+  >([]);
   const context = api.useContext();
   const form = useForm<{
     email: string;
@@ -60,6 +70,26 @@ const EditVoterModal = ({
       }, {} as Record<string, (value: string | undefined) => string | undefined>),
     },
   });
+
+  const voterFieldsQuery = api.voter.getFields.useQuery(
+    { electionId },
+    {
+      enabled: isOpen,
+    }
+  );
+
+  useDidUpdate(() => {
+    if (voterFieldsQuery.data) {
+      setData(
+        voterFieldsQuery.data.map((field) => ({
+          fieldName: field.fieldName,
+          values: field.fields.map((value) => ({
+            value: value.fieldValue,
+          })),
+        }))
+      );
+    }
+  }, [voterFieldsQuery.data, isOpen]);
 
   const editVoterMutation = api.voter.editSingle.useMutation({
     onSuccess: async (data) => {
@@ -140,6 +170,47 @@ const EditVoterModal = ({
           />
 
           {voterFields.map((field) => (
+            <Select
+              key={field.id}
+              disabled={voterFieldsQuery.isLoading}
+              data={
+                data
+                  .find((item) => item.fieldName === field.name)
+                  ?.values.map((item) => ({
+                    value: item.value,
+                    label: item.value,
+                  })) || []
+              }
+              onCreate={(query) => {
+                setData((prev) =>
+                  prev.map((item) => {
+                    if (item.fieldName === field.name) {
+                      item.values.push({ value: query });
+                    }
+                    return item;
+                  })
+                );
+                return query;
+              }}
+              label={field.name}
+              placeholder={`Enter ${field.name}`}
+              nothingFound="Nothing found"
+              searchable
+              creatable
+              getCreateLabel={(query) => `+ Create ${query}`}
+              error={
+                form.errors[["field", field.name].join(".")] ||
+                (editVoterMutation.error?.data?.code === "CONFLICT" &&
+                  editVoterMutation.error.message)
+              }
+              {...form.getInputProps(["field", field.name].join("."))}
+              required
+              withAsterisk
+              icon={<IconLetterCase size="1rem" />}
+            />
+          ))}
+
+          {/* {voterFields.map((field) => (
             <TextInput
               key={field.id}
               placeholder={`Enter ${field.name}`}
@@ -154,7 +225,7 @@ const EditVoterModal = ({
                   editVoterMutation.error.message)
               }
             />
-          ))}
+          ))} */}
           {editVoterMutation.isError &&
             editVoterMutation.error?.data?.code !== "CONFLICT" && (
               <Alert

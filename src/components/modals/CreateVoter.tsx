@@ -6,6 +6,7 @@ import {
   TextInput,
   Text,
   Stack,
+  Select,
 } from "@mantine/core";
 import { api } from "../../utils/api";
 import { notifications } from "@mantine/notifications";
@@ -18,6 +19,7 @@ import {
 } from "@tabler/icons-react";
 import { useDidUpdate } from "@mantine/hooks";
 import type { VoterField } from "@prisma/client";
+import { useState } from "react";
 
 const CreateVoterModal = ({
   isOpen,
@@ -30,6 +32,14 @@ const CreateVoterModal = ({
   onClose: () => void;
   voterFields: VoterField[];
 }) => {
+  const [data, setData] = useState<
+    {
+      fieldName: string;
+      values: {
+        value: string;
+      }[];
+    }[]
+  >([]);
   const context = api.useContext();
   const form = useForm<{
     email: string;
@@ -65,12 +75,32 @@ const CreateVoterModal = ({
     },
   });
 
+  const voterFieldsQuery = api.voter.getFields.useQuery(
+    { electionId },
+    {
+      enabled: isOpen,
+    }
+  );
+
   useDidUpdate(() => {
     if (isOpen) {
       form.reset();
       createVoterMutation.reset();
     }
   }, [isOpen]);
+
+  useDidUpdate(() => {
+    if (voterFieldsQuery.data) {
+      setData(
+        voterFieldsQuery.data.map((field) => ({
+          fieldName: field.fieldName,
+          values: field.fields.map((value) => ({
+            value: value.fieldValue,
+          })),
+        }))
+      );
+    }
+  }, [voterFieldsQuery.data, isOpen]);
 
   return (
     <Modal
@@ -108,19 +138,43 @@ const CreateVoterModal = ({
             }
           />
           {voterFields.map((field) => (
-            <TextInput
+            <Select
               key={field.id}
-              placeholder={`Enter ${field.name}`}
+              disabled={voterFieldsQuery.isLoading}
+              data={
+                data
+                  .find((item) => item.fieldName === field.name)
+                  ?.values.map((item) => ({
+                    value: item.value,
+                    label: item.value,
+                  })) || []
+              }
+              onCreate={(query) => {
+                setData((prev) =>
+                  prev.map((item) => {
+                    if (item.fieldName === field.name) {
+                      item.values.push({ value: query });
+                    }
+                    return item;
+                  })
+                );
+                return query;
+              }}
               label={field.name}
-              {...form.getInputProps(field.name)}
-              required
-              withAsterisk
-              icon={<IconLetterCase size="1rem" />}
+              placeholder={`Enter ${field.name}`}
+              nothingFound="Nothing found"
+              searchable
+              creatable
+              getCreateLabel={(query) => `+ Create ${query}`}
               error={
                 form.errors[field.name] ||
                 (createVoterMutation.error?.data?.code === "CONFLICT" &&
                   createVoterMutation.error.message)
               }
+              {...form.getInputProps(field.name)}
+              required
+              withAsterisk
+              icon={<IconLetterCase size="1rem" />}
             />
           ))}
           {createVoterMutation.isError &&

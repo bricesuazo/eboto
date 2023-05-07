@@ -44,7 +44,7 @@ const DashboardOverview = () => {
       enabled: router.isReady,
     }
   );
-  const voterFieldStats = api.voter.getFieldStats.useQuery(
+  const voterFieldsStats = api.voter.getFieldsStats.useQuery(
     { electionSlug: router.query.electionSlug as string },
     {
       enabled: router.isReady,
@@ -337,11 +337,12 @@ const DashboardOverview = () => {
               >
                 Voter Stats
               </Title>
-              {voterFieldStats.isLoading ? (
+              {voterFieldsStats.isLoading ? (
                 <Center>
                   <Loader size="sm" />
                 </Center>
-              ) : !voterFieldStats.data || voterFieldStats.data.length === 0 ? (
+              ) : !voterFieldsStats.data ||
+                voterFieldsStats.data.length === 0 ? (
                 <Text>No voter stats</Text>
               ) : (
                 <SimpleGrid
@@ -356,7 +357,7 @@ const DashboardOverview = () => {
                     },
                   ]}
                 >
-                  {voterFieldStats.data.map((voterFieldStat) => (
+                  {voterFieldsStats.data.map((voterFieldStat) => (
                     <Table
                       key={voterFieldStat.fieldName}
                       striped

@@ -101,7 +101,7 @@ export const voterRouter = createTRPCRouter({
       }
     }),
 
-  getFieldStats: protectedProcedure
+  getFieldsStats: protectedProcedure
     .input(
       z.object({
         electionSlug: z.string(),
@@ -181,6 +181,77 @@ export const voterRouter = createTRPCRouter({
               .length,
             allCountInvited: fieldValuesInvited.filter((v) => v === value)
               .length,
+          };
+        });
+
+        return {
+          fieldName: field.name,
+          fields: fieldStats.sort((a, b) =>
+            a.fieldValue.localeCompare(b.fieldValue)
+          ),
+        };
+      });
+    }),
+  getFields: protectedProcedure
+    .input(
+      z.object({
+        electionId: z.string(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const election = await ctx.prisma.election.findFirst({
+        where: {
+          id: input.electionId,
+          commissioners: {
+            some: {
+              userId: ctx.session.user.id,
+            },
+          },
+        },
+        include: {
+          voterField: true,
+        },
+      });
+
+      if (!election)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election not found",
+        });
+
+      const voters = await ctx.prisma.voter.findMany({
+        where: {
+          electionId: election.id,
+        },
+      });
+
+      const invitedVoters = await ctx.prisma.invitedVoter.findMany({
+        where: {
+          electionId: election.id,
+        },
+      });
+
+      return election.voterField.map((field) => {
+        const fieldValuesAccepted = voters.map((voter) => {
+          if (typeof voter.field !== "object" || Array.isArray(voter.field))
+            return "";
+          const voterFields = voter.field ?? {};
+          return voterFields[field.name] as string;
+        });
+        const fieldValuesInvited = invitedVoters.map((voter) => {
+          if (typeof voter.field !== "object" || Array.isArray(voter.field))
+            return "";
+          const voterFields = voter.field ?? {};
+          return voterFields[field.name] as string;
+        });
+
+        const uniqueFieldValues = [
+          ...new Set(fieldValuesAccepted.concat(fieldValuesInvited)),
+        ];
+
+        const fieldStats = uniqueFieldValues.map((value) => {
+          return {
+            fieldValue: value,
           };
         });
 
