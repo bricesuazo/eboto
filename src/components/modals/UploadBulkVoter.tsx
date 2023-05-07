@@ -65,10 +65,6 @@ const UploadBulkVoter = ({
       }[];
     }[]
   >([]);
-  console.log(
-    "🚀 ~ file: UploadBulkVoter.tsx:58 ~ selectedFiles:",
-    selectedFiles
-  );
 
   const openRef = useRef<() => void>(null);
 

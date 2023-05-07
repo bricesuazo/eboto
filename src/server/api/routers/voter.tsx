@@ -7,6 +7,64 @@ import ElectionInvitation from "../../../../emails/ElectionInvitation";
 import { render } from "@react-email/render";
 
 export const voterRouter = createTRPCRouter({
+  editSingle: protectedProcedure
+    .input(
+      z.object({
+        voterId: z.string(),
+        electionId: z.string(),
+        voterEmail: z.string().email(),
+        field: z.record(z.string()),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const election = await ctx.prisma.election.findUnique({
+        where: {
+          id: input.electionId,
+        },
+        include: {
+          commissioners: true,
+        },
+      });
+
+      if (!election)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election not found",
+        });
+
+      if (!election.commissioners.some((c) => c.userId === ctx.session.user.id))
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not authorized to edit this election",
+        });
+
+      const voter = await ctx.prisma.voter.findFirst({
+        where: {
+          id: input.voterId,
+          electionId: election.id,
+        },
+      });
+
+      if (!voter)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Voter not found",
+        });
+
+      return await ctx.prisma.voter.update({
+        where: {
+          id: input.voterId,
+        },
+        data: {
+          
+          field: input.field,
+        },
+        include: {
+          user: true,
+        },
+      });
+    }),
+
   getFieldStats: protectedProcedure
     .input(
       z.object({

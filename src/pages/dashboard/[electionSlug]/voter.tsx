@@ -20,6 +20,7 @@ import {
   IconUsersGroup,
   IconTrash,
   IconRefresh,
+  IconEdit,
 } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import CreateVoterModal from "../../../components/modals/CreateVoter";
@@ -39,6 +40,7 @@ import moment from "moment";
 import ConfirmDeleteVoterModal from "../../../components/modals/ConfirmDeleteVoterModal";
 import ConfirmDeleteBulkVoterModal from "../../../components/modals/ConfirmDeleteBulkVoterModal";
 import { IconUserMinus } from "@tabler/icons-react";
+import EditVoterModal from "../../../components/modals/EditVoterModal";
 
 const DashboardVoter = () => {
   const context = api.useContext();
@@ -53,6 +55,8 @@ const DashboardVoter = () => {
     openedInviteVoters,
     { open: openInviteVoters, close: closeInviteVoters },
   ] = useDisclosure(false);
+  const [openedEditVoter, { open: openEditVoter, close: closeEditVoter }] =
+    useDisclosure(false);
   const [
     openedCreateVoter,
     { open: openCreateVoter, close: closeCreateVoter },
@@ -81,8 +85,7 @@ const DashboardVoter = () => {
       } | null;
     }[]
   >([]);
-
-  const [voter, setVoter] = useState<{
+  const [voterToDelete, setVoterToDelete] = useState<{
     id: string;
     email: string;
     accountStatus: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
@@ -91,6 +94,16 @@ const DashboardVoter = () => {
     email: "",
     accountStatus: "ADDED",
   });
+  const [voterToEdit, setVoterToEdit] = useState<{
+    id: string;
+    email: string;
+    field: { [key: string]: string | undefined };
+  }>({
+    id: "",
+    email: "",
+    field: {},
+  });
+
   const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
 
   const sendManyInvitationsMutation = api.voter.sendManyInvitations.useMutation(
@@ -229,6 +242,14 @@ const DashboardVoter = () => {
             onClose={closeCreateVoter}
           />
 
+          <EditVoterModal
+            isOpen={openedEditVoter}
+            voterFields={voters.data.election.voterField}
+            electionId={voters.data.election.id}
+            onClose={closeEditVoter}
+            voter={voterToEdit}
+          />
+
           <UploadBulkVoter
             isOpen={openedBulkImport}
             electionId={voters.data.election.id}
@@ -237,7 +258,7 @@ const DashboardVoter = () => {
           />
 
           <ConfirmDeleteVoterModal
-            voter={voter}
+            voter={voterToDelete}
             isOpen={openedConfirmDeleteVoter}
             electionId={voters.data.election.id}
             onClose={closeConfirmDeleteVoter}
@@ -453,19 +474,30 @@ const DashboardVoter = () => {
               positionActionsColumn="last"
               renderRowActions={({ row }) => (
                 <Box sx={{ display: "flex", gap: "16px" }}>
-                  {/* <Tooltip withArrow label="Edit">
-                  <ActionIcon>
-                    <IconEdit size="1.25rem" />
-                  </ActionIcon>
-                </Tooltip> */}
+                  <Tooltip withArrow label="Edit">
+                    <ActionIcon
+                      onClick={() => {
+                        setVoterToEdit({
+                          id: row.id,
+                          email: row.getValue<string>("email"),
+                          field:
+                            votersData.find((v) => v.id === row.id)?.field ??
+                            {},
+                        });
+                        openEditVoter();
+                      }}
+                    >
+                      <IconEdit size="1.25rem" />
+                    </ActionIcon>
+                  </Tooltip>
 
                   <Tooltip withArrow label="Delete">
                     <ActionIcon
                       color="red"
                       onClick={() => {
-                        setVoter({
+                        setVoterToDelete({
                           id: row.id,
-                          email: row.getValue<"string">("email"),
+                          email: row.getValue<string>("email"),
                           accountStatus: row.getValue<
                             "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED"
                           >("accountStatus"),
