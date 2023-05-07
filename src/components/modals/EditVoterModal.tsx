@@ -33,6 +33,7 @@ const EditVoterModal = ({
     id: string;
     field: { [key: string]: string | undefined };
     email: string;
+    accountStatus: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
   };
   voterFields: VoterField[];
 }) => {
@@ -63,8 +64,13 @@ const EditVoterModal = ({
   const editVoterMutation = api.voter.editSingle.useMutation({
     onSuccess: async (data) => {
       await context.election.getElectionVoter.invalidate();
+
       notifications.show({
-        title: `${data.user.email} updated!`,
+        title: `${
+          data.type === "voter"
+            ? data.voter.user.email
+            : data.invitedVoter.email
+        } updated!`,
         message: "Successfully updated voter!",
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
@@ -90,7 +96,7 @@ const EditVoterModal = ({
     <Modal
       opened={isOpen || editVoterMutation.isLoading}
       onClose={onClose}
-      title={<Text weight={600}>Edit voter</Text>}
+      title={<Text weight={600}>Edit voter - {voter.email}</Text>}
     >
       <form
         onSubmit={form.onSubmit((value) => {
@@ -106,7 +112,8 @@ const EditVoterModal = ({
                 }
                 return acc;
               }, {} as Record<string, string>),
-              voterEmail: voter.email,
+              voterEmail: value.email,
+              accountStatus: voter.accountStatus,
             });
             onClose();
           })();
@@ -120,12 +127,18 @@ const EditVoterModal = ({
             withAsterisk
             {...form.getInputProps("email")}
             icon={<IconAt size="1rem" />}
+            disabled={voter.accountStatus !== "ADDED"}
+            description={
+              voter.accountStatus !== "ADDED" &&
+              "You can only edit the email address of a voter if they have not yet accepted their invitation."
+            }
             error={
               form.errors.email ||
               (editVoterMutation.error?.data?.code === "CONFLICT" &&
                 editVoterMutation.error.message)
             }
           />
+
           {voterFields.map((field) => (
             <TextInput
               key={field.id}

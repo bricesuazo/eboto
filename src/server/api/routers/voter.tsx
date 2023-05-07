@@ -5,6 +5,7 @@ import { TRPCError } from "@trpc/server";
 import { sendEmailTransport } from "../../../../emails";
 import ElectionInvitation from "../../../../emails/ElectionInvitation";
 import { render } from "@react-email/render";
+import type { InvitedVoter, User, Voter } from "@prisma/client";
 
 export const voterRouter = createTRPCRouter({
   editSingle: protectedProcedure
@@ -14,6 +15,7 @@ export const voterRouter = createTRPCRouter({
         electionId: z.string(),
         voterEmail: z.string().email(),
         field: z.record(z.string()),
+        accountStatus: z.enum(["ACCEPTED", "INVITED", "DECLINED", "ADDED"]),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -38,31 +40,65 @@ export const voterRouter = createTRPCRouter({
           message: "You are not authorized to edit this election",
         });
 
-      const voter = await ctx.prisma.voter.findFirst({
-        where: {
-          id: input.voterId,
-          electionId: election.id,
-        },
-      });
-
-      if (!voter)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Voter not found",
+      if (input.accountStatus === "ACCEPTED") {
+        const voter = await ctx.prisma.voter.findFirst({
+          where: {
+            id: input.voterId,
+            electionId: election.id,
+          },
         });
-
-      return await ctx.prisma.voter.update({
-        where: {
-          id: input.voterId,
-        },
-        data: {
-          
-          field: input.field,
-        },
-        include: {
-          user: true,
-        },
-      });
+        if (!voter)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Voter not found",
+          });
+        return {
+          type: "voter",
+          voter: await ctx.prisma.voter.update({
+            where: {
+              id: input.voterId,
+            },
+            data: {
+              field: input.field,
+            },
+            include: {
+              user: true,
+            },
+          }),
+        } as {
+          type: "voter";
+          voter: Voter & {
+            user: User;
+          };
+        };
+      } else {
+        const voter = await ctx.prisma.invitedVoter.findFirst({
+          where: {
+            id: input.voterId,
+            electionId: election.id,
+          },
+        });
+        if (!voter)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Voter not found",
+          });
+        return {
+          type: "invitedVoter",
+          invitedVoter: await ctx.prisma.invitedVoter.update({
+            where: {
+              id: input.voterId,
+            },
+            data: {
+              email: input.voterEmail,
+              field: input.field,
+            },
+          }),
+        } as {
+          type: "invitedVoter";
+          invitedVoter: InvitedVoter;
+        };
+      }
     }),
 
   getFieldStats: protectedProcedure

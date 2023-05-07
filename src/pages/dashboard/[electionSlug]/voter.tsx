@@ -98,10 +98,12 @@ const DashboardVoter = () => {
     id: string;
     email: string;
     field: { [key: string]: string | undefined };
+    accountStatus: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
   }>({
     id: "",
     email: "",
     field: {},
+    accountStatus: "ADDED",
   });
 
   const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
@@ -483,6 +485,9 @@ const DashboardVoter = () => {
                           field:
                             votersData.find((v) => v.id === row.id)?.field ??
                             {},
+                          accountStatus: row.getValue<
+                            "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED"
+                          >("accountStatus"),
                         });
                         openEditVoter();
                       }}
