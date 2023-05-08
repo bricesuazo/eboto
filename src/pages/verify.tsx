@@ -6,10 +6,13 @@ import {
   Container,
   Center,
   Loader,
+  Title,
+  Text,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useRouter } from "next/router";
 import { api } from "../utils/api";
+import Link from "next/link";
 
 const VerifyPage = () => {
   const router = useRouter();
@@ -33,51 +36,45 @@ const VerifyPage = () => {
   );
   const resetPasswordMutation = api.user.resetPassword.useMutation();
 
-  if (verify.isLoading) {
-    return (
-      <Center h="100%">
-        <Loader size="lg" />
-      </Center>
-    );
-  }
+  return (
 
-  if (verify.isError) {
-    return (
-      <div>
-        <h1>Error</h1>
-        <p>{verify.error.message}</p>
-      </div>
-    );
-  }
+    {
+      verify.isLoading ?
+        (<Center h="100%">
+          <Loader size="lg" />
+        </Center>)
+        : verify.isError ?
+          (<Stack>
+            <Title>Error</Title>
+            <Text>{verify.error.message}</Text>
+          </Stack>)
+          :
+          verify.data || verify.data.length === 0 &&
 
-  if (!verify.data || verify.data.length === 0) {
-    return (
-      <div>
-        <h1>Error</h1>
-        <p>Token not found</p>
-      </div>
-    );
-  }
+          (<Stack>
+            <Title>Error</Title>
+            <Text>Token not found</Text>
+          </Stack>)
+    }
 
-  switch (verify.data) {
-    case "EMAIL_VERIFICATION":
-      return (
-        <div>
-          <h1>Success! </h1>
-          <p>Your account has been verified. Please sign in.</p>
-        </div>
-      );
-    case "PASSWORD_RESET":
-      if (resetPasswordMutation.isSuccess) {
-        return (
-          <div>
-            <h1>Success! </h1>
-            <p>Your password has been reset. Please sign in.</p>
-          </div>
-        );
-      } else {
-        return (
-          <Container>
+ 
+      <Container>
+        {
+          verify.data === "EMAIL_VERIFICATION" &&
+ (       <Stack>
+          <Title>Success!</Title>
+          <Text>Your account has been verified. Please sign in.</Text>
+          <Button component={Link} href="/signin">
+            Sign in
+          </Button>
+        </Stack>)
+        }
+          {   verify.data ===  "PASSWORD_RESET"&& resetPasswordMutation.isSuccess ? (
+            <Stack>
+              <Title>Success!</Title>
+              <Text>Your password has been reset. Please sign in.</Text>
+            </Stack>
+          ) : (
             <form
               onSubmit={form.onSubmit((value) => {
                 resetPasswordMutation.mutate({
@@ -110,10 +107,12 @@ const VerifyPage = () => {
                 </Button>
               </Stack>
             </form>
-          </Container>
-        );
-      }
-  }
+          )}
+        </Container>
+
+  
+  );
+  
 };
 
 export default VerifyPage;
