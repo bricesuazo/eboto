@@ -24,6 +24,7 @@ import Balancer from "react-wrap-balancer";
 import Head from "next/head";
 import { env } from "../../env.mjs";
 import moment from "moment";
+import ScrollToTopButton from "../../components/ScrollToTopButton";
 
 const ElectionPage = ({
   election,
@@ -62,6 +63,8 @@ const ElectionPage = ({
         <meta name="description" content={metaDescription} />
         <meta property="og:description" content={metaDescription} />
       </Head>
+
+      <ScrollToTopButton />
 
       <Container py="xl">
         {positions.isLoading ? (
