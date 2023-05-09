@@ -41,6 +41,16 @@ const RealtimePage = ({
         : undefined,
   });
 
+  const voterFieldsStats = api.voter.getFieldsStats.useQuery(
+    { electionSlug: election.slug },
+    {
+      refetchInterval:
+        env.NEXT_PUBLIC_NODE_ENV === "production" && election.end_date > now
+          ? 1000
+          : undefined,
+    }
+  );
+
   if (positions.isLoading)
     return (
       <Center h="100%">
@@ -98,71 +108,130 @@ const RealtimePage = ({
               )}
             </Box>
           </Center>
-          <SimpleGrid
-            cols={3}
-            breakpoints={[
-              { maxWidth: "md", cols: 2, spacing: "md" },
-              { maxWidth: "xs", cols: 1, spacing: "sm" },
-            ]}
-          >
-            {positions.data.map((position) => (
-              <Table
-                key={position.id}
-                striped
-                highlightOnHover
-                withBorder
-                captionSide="bottom"
-                h="fit-content"
-              >
-                {election.end_date > now && (
-                  <caption>
-                    As of <Moment date={now} format="MMMM Do YYYY, h:mm:ss A" />
-                  </caption>
-                )}
-                <thead>
-                  <tr>
-                    <th>
-                      <Text lineClamp={2}>{position.name}</Text>
-                    </th>
-                  </tr>
-                </thead>
 
-                <tbody>
-                  {position.candidate
-                    .sort((a, b) => b.vote.length - a.vote.length)
-                    .map((candidate) => (
-                      <tr key={candidate.id}>
-                        <td>
-                          <Flex justify="space-between" align="center">
-                            <Text lineClamp={2}>
-                              {isOngoing
-                                ? candidate.first_name
-                                : `${candidate.last_name}, ${
-                                    candidate.first_name
-                                  }
+          <Stack spacing="xl">
+            <SimpleGrid
+              cols={3}
+              breakpoints={[
+                { maxWidth: "md", cols: 2, spacing: "md" },
+                { maxWidth: "xs", cols: 1, spacing: "sm" },
+              ]}
+            >
+              {positions.data.map((position) => (
+                <Table
+                  key={position.id}
+                  striped
+                  highlightOnHover
+                  withBorder
+                  captionSide="bottom"
+                  h="fit-content"
+                >
+                  {election.end_date > now && (
+                    <caption>
+                      As of{" "}
+                      <Moment date={now} format="MMMM Do YYYY, h:mm:ss A" />
+                    </caption>
+                  )}
+                  <thead>
+                    <tr>
+                      <th>
+                        <Text lineClamp={2}>{position.name}</Text>
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {position.candidate
+                      .sort((a, b) => b.vote.length - a.vote.length)
+                      .map((candidate) => (
+                        <tr key={candidate.id}>
+                          <td>
+                            <Flex justify="space-between" align="center">
+                              <Text lineClamp={2}>
+                                {isOngoing
+                                  ? candidate.first_name
+                                  : `${candidate.last_name}, ${
+                                      candidate.first_name
+                                    }
                             ${
                               candidate.middle_name
                                 ? " " + candidate.middle_name.charAt(0) + "."
                                 : ""
                             } (${candidate.partylist.acronym})`}
-                            </Text>
-                            <Text>{candidate.vote.length}</Text>
-                          </Flex>
-                        </td>
-                      </tr>
-                    ))}
-                  <tr>
-                    <td>
-                      <Flex justify="space-between">
-                        <Text>Abstain</Text>
-                        <Text>{position.vote.length}</Text>
-                      </Flex>
-                    </td>
-                  </tr>
-                </tbody>
-              </Table>
-            ))}
-          </SimpleGrid>
+                              </Text>
+                              <Text>{candidate.vote.length}</Text>
+                            </Flex>
+                          </td>
+                        </tr>
+                      ))}
+                    <tr>
+                      <td>
+                        <Flex justify="space-between">
+                          <Text>Abstain</Text>
+                          <Text>{position.vote.length}</Text>
+                        </Flex>
+                      </td>
+                    </tr>
+                  </tbody>
+                </Table>
+              ))}
+            </SimpleGrid>
+            <Stack spacing="sm">
+              <Title order={3} align="center">
+                Voter Stats
+              </Title>
+              {voterFieldsStats.isLoading ? (
+                <Center>
+                  <Loader size="sm" />
+                </Center>
+              ) : !voterFieldsStats.data ||
+                voterFieldsStats.data.length === 0 ? (
+                <Text>No voter stats</Text>
+              ) : (
+                <SimpleGrid
+                  cols={2}
+                  sx={{
+                    alignItems: "start",
+                  }}
+                  breakpoints={[
+                    {
+                      maxWidth: "md",
+                      cols: 1,
+                    },
+                  ]}
+                >
+                  {voterFieldsStats.data.map((voterFieldStat) => (
+                    <Table
+                      key={voterFieldStat.fieldName}
+                      striped
+                      highlightOnHover
+                      withBorder
+                      withColumnBorders
+                    >
+                      <thead>
+                        <tr>
+                          <th>{voterFieldStat.fieldName}</th>
+                          <th>Voted</th>
+                          <th>Voter (Accepted)</th>
+                          <th>Voter (Invited)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {voterFieldStat.fields.map((field) => (
+                          <tr key={field.fieldValue}>
+                            <td>{field.fieldValue}</td>
+                            <td>{field.voteCount}</td>
+                            <td>{field.allCountAccepted}</td>
+                            <td>{field.allCountInvited}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  ))}
+                </SimpleGrid>
+              )}
+            </Stack>
+          </Stack>
         </Stack>
       </Container>
     </>
