@@ -27,8 +27,8 @@ const VerifyPage = () => {
 
   const verify = api.token.verify.useQuery(
     {
-      token: token as string,
-      type: type as "EMAIL_VERIFICATION" | "PASSWORD_RESET",
+      token: token as string | undefined,
+      type: type as "EMAIL_VERIFICATION" | "PASSWORD_RESET" | undefined,
     },
     {
       enabled: router.isReady,
@@ -37,82 +37,73 @@ const VerifyPage = () => {
   const resetPasswordMutation = api.user.resetPassword.useMutation();
 
   return (
-
-    {
-      verify.isLoading ?
-        (<Center h="100%">
-          <Loader size="lg" />
-        </Center>)
-        : verify.isError ?
-          (<Stack>
+    <Container h="100%">
+      <Stack align="center" h="100%" my="xl">
+        {verify.isLoading ? (
+          <Center h="100%">
+            <Loader size="lg" />
+          </Center>
+        ) : verify.isError ? (
+          <>
             <Title>Error</Title>
             <Text>{verify.error.message}</Text>
-          </Stack>)
-          :
-          verify.data || verify.data.length === 0 &&
-
-          (<Stack>
+          </>
+        ) : !verify.data || verify.data.length === 0 ? (
+          <>
             <Title>Error</Title>
             <Text>Token not found</Text>
-          </Stack>)
-    }
+          </>
+        ) : verify.data === "EMAIL_VERIFICATION" ? (
+          <>
+            <Title>Success!</Title>
+            <Text>Your account has been verified. Please sign in.</Text>
+            <Button component={Link} href="/signin">
+              Sign in
+            </Button>
+          </>
+        ) : verify.data === "PASSWORD_RESET" &&
+          resetPasswordMutation.isSuccess ? (
+          <>
+            <Title>Success!</Title>
+            <Text>Your password has been reset. Please sign in.</Text>
+          </>
+        ) : (
+          <form
+            onSubmit={form.onSubmit((value) => {
+              resetPasswordMutation.mutate({
+                token: token as string,
+                password: value.password,
+              });
+            })}
+          >
+            <Stack spacing={4}>
+              <Input
+                placeholder="Enter your password"
+                type="password"
+                {...form.getInputProps("password")}
+              />
 
- 
-      <Container>
-        {
-          verify.data === "EMAIL_VERIFICATION" &&
- (       <Stack>
-          <Title>Success!</Title>
-          <Text>Your account has been verified. Please sign in.</Text>
-          <Button component={Link} href="/signin">
-            Sign in
-          </Button>
-        </Stack>)
-        }
-          {   verify.data ===  "PASSWORD_RESET"&& resetPasswordMutation.isSuccess ? (
-            <Stack>
-              <Title>Success!</Title>
-              <Text>Your password has been reset. Please sign in.</Text>
+              <Input
+                placeholder="Confirm your password"
+                type="password"
+                {...form.getInputProps("confirmPassword")}
+              />
+
+              {resetPasswordMutation.isError && (
+                <Alert title="Error" color="red">
+                  {resetPasswordMutation.error.message}
+                </Alert>
+              )}
+
+              <Button type="submit" loading={resetPasswordMutation.isLoading}>
+                Sign in
+              </Button>
             </Stack>
-          ) : (
-            <form
-              onSubmit={form.onSubmit((value) => {
-                resetPasswordMutation.mutate({
-                  token: token as string,
-                  password: value.password,
-                });
-              })}
-            >
-              <Stack spacing={4}>
-                <Input
-                  placeholder="Enter your password"
-                  type="password"
-                  {...form.getInputProps("password")}
-                />
-
-                <Input
-                  placeholder="Confirm your password"
-                  type="password"
-                  {...form.getInputProps("confirmPassword")}
-                />
-
-                {resetPasswordMutation.isError && (
-                  <Alert title="Error" color="red">
-                    {resetPasswordMutation.error.message}
-                  </Alert>
-                )}
-
-                <Button type="submit" loading={resetPasswordMutation.isLoading}>
-                  Sign in
-                </Button>
-              </Stack>
-            </form>
-          )}
-        </Container>
-
-  
+          </form>
+        )}
+      </Stack>
+    </Container>
   );
-  
 };
 
 export default VerifyPage;

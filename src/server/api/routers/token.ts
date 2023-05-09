@@ -78,11 +78,23 @@ export const tokenRouter = createTRPCRouter({
   verify: publicProcedure
     .input(
       z.object({
-        type: z.enum(["EMAIL_VERIFICATION", "PASSWORD_RESET"]),
-        token: z.string(),
+        type: z.enum(["EMAIL_VERIFICATION", "PASSWORD_RESET"]).nullish(),
+        token: z.string().nullish(),
       })
     )
     .query(async ({ input, ctx }) => {
+      if (!input.type)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Type is required",
+        });
+
+      if (!input.token)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Token is required",
+        });
+
       const token = await ctx.prisma.verificationToken.findFirst({
         where: {
           id: input.token,
@@ -90,13 +102,17 @@ export const tokenRouter = createTRPCRouter({
         },
       });
 
-      if (!token) {
-        throw new Error("Invalid token");
-      }
+      if (!token)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Token not found",
+        });
 
-      if (token.expiresAt < new Date()) {
-        throw new Error("Token expired");
-      }
+      if (token.expiresAt < new Date())
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Token expired",
+        });
 
       switch (input.type) {
         case "EMAIL_VERIFICATION":
