@@ -24,6 +24,7 @@ import Balancer from "react-wrap-balancer";
 import Head from "next/head";
 import { env } from "../../env.mjs";
 import { isElectionOngoing } from "../../utils/isElectionOngoing";
+import ScrollToTopButton from "../../components/ScrollToTopButton";
 
 const RealtimePage = ({
   election,
@@ -62,6 +63,7 @@ const RealtimePage = ({
   if (!positions.data) return <div>No data</div>;
   return (
     <>
+      <ScrollToTopButton />
       <Head>
         <title>{title}</title>
       </Head>
