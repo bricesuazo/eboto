@@ -18,6 +18,7 @@ import {
   Box,
 } from "@mantine/core";
 import {
+  IconAlertCircle,
   IconChartBar,
   IconChevronDown,
   IconLogout,
@@ -28,6 +29,8 @@ import {
 import type { Dispatch, SetStateAction } from "react";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import ReportAProblem from "./modals/ReportAProblem";
+import { useDisclosure } from "@mantine/hooks";
 
 const HeaderComponent = ({
   isNavbarOpen,
@@ -43,9 +46,17 @@ const HeaderComponent = ({
 
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
+  const [
+    openedReportAProblem,
+    { open: openReportAProblem, close: closeReportAProblem },
+  ] = useDisclosure(false);
 
   return (
     <Header height={60}>
+      <ReportAProblem
+        isOpen={openedReportAProblem}
+        onClose={closeReportAProblem}
+      />
       <Container
         h="100%"
         size={
@@ -217,6 +228,12 @@ const HeaderComponent = ({
                     closeMenuOnClick={false}
                   >
                     {colorScheme === "light" ? "Dark mode" : "Light mode"}
+                  </Menu.Item>
+                  <Menu.Item
+                    icon={<IconAlertCircle size={16} />}
+                    onClick={openReportAProblem}
+                  >
+                    Report a problem
                   </Menu.Item>
                   <Menu.Item
                     onClick={() =>
