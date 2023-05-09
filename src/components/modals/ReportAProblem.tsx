@@ -7,9 +7,11 @@ import {
   TextInput,
   Textarea,
 } from "@mantine/core";
-import { hasLength, isEmail, useForm } from "@mantine/form";
+import { hasLength, useForm } from "@mantine/form";
 import { useDidUpdate } from "@mantine/hooks";
-import { useSession } from "next-auth/react";
+import { api } from "../../utils/api";
+import { notifications } from "@mantine/notifications";
+import { IconCheck } from "@tabler/icons-react";
 
 const ReportAProblem = ({
   isOpen,
@@ -18,47 +20,42 @@ const ReportAProblem = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const session = useSession();
-  const form = useForm<{ email: string; subject: string; description: string }>(
-    {
-      initialValues: {
-        email: session.data?.user.email ?? "",
-        subject: "",
-        description: "",
-      },
-      validateInputOnBlur: true,
-      clearInputErrorOnChange: true,
-      validate: {
-        email: isEmail("Please enter a valid email address"),
-        subject: hasLength(
-          {
-            min: 3,
-            max: 50,
-          },
-          "Subject must be between 3 and 50 characters"
-        ),
-        description: hasLength(
-          {
-            min: 10,
-            max: 500,
-          },
-          "Description must be between 10 and 500 characters"
-        ),
-      },
-    }
-  );
+  const reportProblemMutation = api.system.reportProblem.useMutation({
+    onSuccess: () => {
+      onClose();
 
-  useDidUpdate(() => {
-    if (session.data) {
-      form.setValues({
-        email: session.data.user.email,
+      notifications.show({
+        title: "Success!",
+        message: "Your problem has been reported.",
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
       });
-      form.resetDirty({
-        ...form.values,
-        email: session.data.user.email,
-      });
-    }
-  }, [session.data]);
+    },
+  });
+  const form = useForm<{ subject: string; description: string }>({
+    initialValues: {
+      subject: "",
+      description: "",
+    },
+    validateInputOnBlur: true,
+    clearInputErrorOnChange: true,
+    validate: {
+      subject: hasLength(
+        {
+          min: 3,
+          max: 50,
+        },
+        "Subject must be between 3 and 50 characters"
+      ),
+      description: hasLength(
+        {
+          min: 10,
+          max: 500,
+        },
+        "Description must be between 10 and 500 characters"
+      ),
+    },
+  });
 
   useDidUpdate(() => {
     if (isOpen) {
@@ -74,25 +71,20 @@ const ReportAProblem = ({
     >
       <form
         onSubmit={form.onSubmit((values) => {
-          console.log(values);
+          reportProblemMutation.mutate({
+            subject: values.subject,
+            description: values.description,
+          });
         })}
       >
         <Stack>
-          <TextInput
-            label="Email address"
-            placeholder="Enter your email address"
-            required
-            withAsterisk
-            readOnly
-            disabled
-            {...form.getInputProps("email")}
-          />
           <TextInput
             label="Subject"
             placeholder="What's the problem?"
             required
             withAsterisk
             {...form.getInputProps("subject")}
+            disabled={reportProblemMutation.isLoading}
           />
           <Textarea
             label="Description"
@@ -102,14 +94,23 @@ const ReportAProblem = ({
             autosize
             minRows={4}
             maxRows={8}
+            disabled={reportProblemMutation.isLoading}
             {...form.getInputProps("description")}
           />
 
           <Group position="right" spacing="xs">
-            <Button variant="default" onClick={onClose}>
+            <Button
+              variant="default"
+              onClick={onClose}
+              disabled={reportProblemMutation.isLoading}
+            >
               Cancel
             </Button>
-            <Button disabled={!form.isValid()} type="submit">
+            <Button
+              disabled={!form.isValid()}
+              type="submit"
+              loading={reportProblemMutation.isLoading}
+            >
               Submit
             </Button>
           </Group>

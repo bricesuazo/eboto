@@ -42,6 +42,7 @@ model User {
     tokens        VerificationToken[]
     commissioners Commissioner[]
     voters        Voter[]
+    ReportProblem ReportProblem[]
 
     @@index([id, email])
 }
@@ -339,4 +340,17 @@ model Partylist {
     candidate Candidate[]
 
     @@index([electionId])
+}
+
+model ReportProblem {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String
+
+    subject     String
+    description String
+
+    @@index([userId])
 }

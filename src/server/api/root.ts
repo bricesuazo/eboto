@@ -6,6 +6,7 @@ import { tokenRouter } from "./routers/token";
 import { voterRouter } from "./routers/voter";
 import { candidateRouter } from "./routers/candidate";
 import { partylistRouter } from "./routers/partylist";
+import { systemRouter } from "./routers/system";
 
 /**
  * This is the primary router for your server.
@@ -20,6 +21,7 @@ export const appRouter = createTRPCRouter({
   position: positionRouter,
   candidate: candidateRouter,
   partylist: partylistRouter,
+  system: systemRouter,
 });
 
 // export type definition of API
