@@ -12,6 +12,7 @@ import {
   rem,
   Box,
   Anchor,
+  Textarea,
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { hasLength, useForm } from "@mantine/form";
@@ -58,6 +59,7 @@ const DashboardSettings = () => {
     id: string;
     name: string;
     slug: string;
+    description: string | null;
     date: [Date, Date];
     voting_start: string;
     voting_end: string;
@@ -68,6 +70,7 @@ const DashboardSettings = () => {
       id: "",
       name: "",
       slug: "",
+      description: null,
       date: [new Date(), new Date()],
       voting_start: "",
       voting_end: "",
@@ -129,6 +132,7 @@ const DashboardSettings = () => {
         id: data.id,
         name: data.name,
         slug: data.slug,
+        description: data.description,
         date: [data.start_date, data.end_date],
         voting_start: data.voting_start.toString(),
         voting_end: data.voting_end.toString(),
@@ -189,6 +193,7 @@ const DashboardSettings = () => {
         id: election.data.id,
         name: election.data.name,
         slug: election.data.slug,
+        description: election.data.description,
         date: [election.data.start_date, election.data.end_date],
         voting_start: election.data.voting_start.toString(),
         voting_end: election.data.voting_end.toString(),
@@ -292,6 +297,7 @@ const DashboardSettings = () => {
                     id: value.id,
                     name: value.name,
                     slug: value.slug,
+                    description: value.description,
                     start_date:
                       value.date[0] ||
                       new Date(new Date().setDate(new Date().getDate() + 1)),
@@ -344,6 +350,23 @@ const DashboardSettings = () => {
                   icon={<IconLetterCase size="1rem" />}
                   error={
                     form.errors.slug ||
+                    (updateElectionMutation.error?.data?.code === "CONFLICT" &&
+                      updateElectionMutation.error?.message)
+                  }
+                  disabled={loading}
+                />
+
+                <Textarea
+                  label="Election description"
+                  description="This will be shown on the election page."
+                  placeholder="Enter election description"
+                  {...form.getInputProps("description")}
+                  icon={<IconLetterCase size="1rem" />}
+                  minRows={3}
+                  maxRows={8}
+                  autosize
+                  error={
+                    form.errors.description ||
                     (updateElectionMutation.error?.data?.code === "CONFLICT" &&
                       updateElectionMutation.error?.message)
                   }

@@ -8,6 +8,7 @@ import {
   Title,
   Group,
   Skeleton,
+  Spoiler,
 } from "@mantine/core";
 import type { Election } from "@prisma/client";
 import { IconClock, IconFingerprint, IconUser } from "@tabler/icons-react";
@@ -153,6 +154,25 @@ const ElectionPage = ({
                   }
                 })()}
               </Text>
+
+              {election.description && (
+                <Box
+                  maw="40rem"
+                  mt="sm"
+                  sx={{
+                    textAlign: "center",
+                  }}
+                >
+                  <Text>About this election:</Text>
+                  <Spoiler
+                    maxHeight={50}
+                    showLabel="Show more"
+                    hideLabel="Hide"
+                  >
+                    {election.description}
+                  </Spoiler>
+                </Box>
+              )}
 
               <Group position="center" mt={8}>
                 {hasVoted || election.end_date < new Date() ? (

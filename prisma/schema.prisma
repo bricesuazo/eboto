@@ -129,7 +129,7 @@ model Election {
     id           String            @id @default(cuid())
     slug         String            @unique
     name         String
-    description  String?
+    description  String?           @db.LongText
     start_date   DateTime
     end_date     DateTime
     publicity    ElectionPublicity @default(PRIVATE)

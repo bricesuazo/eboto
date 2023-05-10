@@ -349,7 +349,15 @@ const DashboardOverview = () => {
                 </Center>
               ) : !voterFieldsStats.data ||
                 voterFieldsStats.data.length === 0 ? (
-                <Text>No voter stats</Text>
+                <Text
+                  sx={(theme) => ({
+                    [theme.fn.smallerThan("xs")]: {
+                      textAlign: "center",
+                    },
+                  })}
+                >
+                  No voter stats
+                </Text>
               ) : (
                 <SimpleGrid
                   cols={2}

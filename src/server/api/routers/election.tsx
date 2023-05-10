@@ -840,6 +840,7 @@ export const electionRouter = createTRPCRouter({
         id: z.string(),
         name: z.string(),
         slug: z.string(),
+        description: z.string().nullable(),
         start_date: z.date(),
         end_date: z.date(),
         voting_start: z.number(),
@@ -905,6 +906,7 @@ export const electionRouter = createTRPCRouter({
         data: {
           name: input.name,
           slug: input.slug.trim().toLowerCase(),
+          description: input.description,
           start_date: input.start_date,
           end_date: input.end_date,
           voting_start: input.voting_start,
