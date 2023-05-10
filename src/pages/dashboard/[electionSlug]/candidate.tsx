@@ -1,8 +1,9 @@
-import { Stack, Text, Center, Loader, Box } from "@mantine/core";
+import { Stack, Text, Center, Loader, Box, Anchor } from "@mantine/core";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Candidates from "../../../components/Candidates";
 import { api } from "../../../utils/api";
+import Link from "next/link";
 
 const CandidatePartylist = () => {
   const router = useRouter();
@@ -37,7 +38,18 @@ const CandidatePartylist = () => {
             </Head>
             <Stack spacing="lg">
               {candidates.data.positions.length === 0 ? (
-                <Text>No positions yet</Text>
+                <Box>
+                  <Text>
+                    No positions yet. Please add{" "}
+                    <Anchor
+                      component={Link}
+                      href={`/dashboard/${candidates.data.election.slug}/position`}
+                    >
+                      positions
+                    </Anchor>{" "}
+                    first.
+                  </Text>
+                </Box>
               ) : (
                 candidates.data.positions.map((position) => {
                   return (

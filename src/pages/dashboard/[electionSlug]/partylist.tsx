@@ -54,7 +54,7 @@ const DashboardPartylist = () => {
               ))}
             </>
           ) : partylists.isError ? (
-            <Text>Error</Text>
+            <Text>Error: {partylists.error.message}</Text>
           ) : (
             <>
               <Head>
@@ -68,7 +68,7 @@ const DashboardPartylist = () => {
                 electionId={partylists.data.election.id}
               />
               {!partylists.data.partylists.length ? (
-                <Text>No partylist</Text>
+                <Text>No partylists yet.</Text>
               ) : (
                 partylists.data.partylists.map((partylist) => (
                   <PartylistCard key={partylist.id} partylist={partylist} />

@@ -70,9 +70,9 @@ const DashboardPosition = () => {
               ))}
             </>
           ) : positions.error ? (
-            <Text>Error</Text>
+              <Text>Error: { positions.error.message}</Text>
           ) : !positions.data.positions.length ? (
-            <Text>No position</Text>
+            <Text>No positions yet.</Text>
           ) : (
             <>
               {positions.data.positions.map((position) => (

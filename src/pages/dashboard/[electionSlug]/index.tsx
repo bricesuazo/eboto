@@ -13,6 +13,7 @@ import {
   Button,
   Table,
   SimpleGrid,
+  Anchor,
 } from "@mantine/core";
 import { useRouter } from "next/router";
 import Moment from "react-moment";
@@ -63,7 +64,12 @@ const DashboardOverview = () => {
       ) : electionOverview.isError ? (
         <Text>Error: {electionOverview.error.message}</Text>
       ) : !electionOverview.data ? (
-        <Text>No election found</Text>
+        <Text>
+          No election found.{" "}
+          <Anchor component={Link} href="/dashboard">
+            Go back to dashboard
+          </Anchor>
+        </Text>
       ) : (
         <>
           <Head>

@@ -11,6 +11,7 @@ import {
   Modal,
   rem,
   Box,
+  Anchor,
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { hasLength, useForm } from "@mantine/form";
@@ -212,7 +213,10 @@ const DashboardSettings = () => {
           </Center>
         ) : !election.data ? (
           <Text>
-            Election not found. <Link href="/dashboard">Go back</Link>
+            Election not found.{" "}
+            <Anchor component={Link} href="/dashboard">
+              Go back to dashboard
+            </Anchor>
           </Text>
         ) : election.isError ? (
           <Text>
