@@ -5,6 +5,10 @@ import {
   Button,
   Container,
   rem,
+  Box,
+  Grid,
+  Col,
+  Accordion,
 } from "@mantine/core";
 import type {
   GetServerSideProps,
@@ -14,6 +18,8 @@ import type {
 import Link from "next/link";
 import Balancer from "react-wrap-balancer";
 import { getServerAuthSession } from "../server/auth";
+import Image from "next/image";
+import { FAQs } from "../constants";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -25,11 +31,6 @@ const useStyles = createStyles((theme) => ({
       paddingTop: rem(80),
       paddingBottom: rem(60),
     },
-  },
-
-  inner: {
-    position: "relative",
-    zIndex: 1,
   },
 
   dots: {
@@ -109,13 +110,13 @@ const Home: NextPage = () => {
   const { classes } = useStyles();
 
   return (
-    <Container className={classes.wrapper} size={1400}>
+    <Container className={classes.wrapper}>
       <Dots className={classes.dots} style={{ left: 0, top: 0 }} />
       <Dots className={classes.dots} style={{ left: 60, top: 0 }} />
       <Dots className={classes.dots} style={{ left: 0, top: 140 }} />
       <Dots className={classes.dots} style={{ right: 0, top: 60 }} />
 
-      <div className={classes.inner}>
+      <Box pos="relative" mih="52vh">
         <Title className={classes.title}>
           <Balancer>
             Your{" "}
@@ -126,7 +127,7 @@ const Home: NextPage = () => {
           </Balancer>
         </Title>
 
-        <Container p={0} size={752}>
+        <Container p={0}>
           <Text size="lg" color="dimmed" className={classes.description}>
             <Balancer>
               Empower your elections with eBoto Mo, the versatile and web-based
@@ -136,7 +137,7 @@ const Home: NextPage = () => {
           </Text>
         </Container>
 
-        <div className={classes.controls}>
+        <Box className={classes.controls}>
           <Button
             component={Link}
             href="/signin"
@@ -155,8 +156,56 @@ const Home: NextPage = () => {
           >
             Get started
           </Button>
-        </div>
-      </div>
+        </Box>
+      </Box>
+
+      <Grid>
+        <Col span={12} sm={6}>
+          <Box
+            pos="relative"
+            sx={{
+              aspectRatio: "3/2",
+            }}
+          >
+            <Image
+              src="/images/faq.svg"
+              fill
+              alt="Frequently Asked Questions"
+              style={{
+                userSelect: "none",
+                pointerEvents: "none",
+              }}
+            />
+          </Box>
+        </Col>
+        <Col span={12} sm={6}>
+          <Title
+            order={2}
+            ta="left"
+            p="md"
+            sx={(theme) => ({
+              [theme.fn.smallerThan("sm")]: {
+                textAlign: "center",
+              },
+            })}
+          >
+            Frequently Asked Questions
+          </Title>
+
+          <Accordion
+            chevronPosition="right"
+            defaultValue={FAQs[0]?.id ?? ""}
+            variant="separated"
+          >
+            {FAQs.map((item) => (
+              <Accordion.Item key={item.id} value={item.id}>
+                <Accordion.Control>{item.question}</Accordion.Control>
+                <Accordion.Panel>{item.answer}</Accordion.Panel>
+              </Accordion.Item>
+            ))}
+          </Accordion>
+        </Col>
+      </Grid>
     </Container>
   );
 };
