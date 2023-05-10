@@ -188,7 +188,7 @@ const RealtimePage = ({
                 </Center>
               ) : !voterFieldsStats.data ||
                 voterFieldsStats.data.length === 0 ? (
-                <Text>No voter stats</Text>
+                <Text align="center">No voter stats</Text>
               ) : (
                 <SimpleGrid
                   cols={2}
@@ -315,13 +315,6 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     });
 
-    const isCommissioner = await prisma.commissioner.findFirst({
-      where: {
-        electionId: election.id,
-        userId: session.user.id,
-      },
-    });
-
     const isVoter = await prisma.voter.findFirst({
       where: {
         userId: session.user.id,
@@ -331,7 +324,7 @@ export const getServerSideProps: GetServerSideProps = async (
 
     if (
       (!vote && isVoter) ||
-      (!isElectionOngoing({ election, withTime: true }) && !isCommissioner)
+      (!isElectionOngoing({ election, withTime: true }) && isVoter && !vote)
     )
       return {
         redirect: { destination: `/${election.slug}`, permanent: false },
