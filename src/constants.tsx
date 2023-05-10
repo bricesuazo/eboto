@@ -213,7 +213,7 @@ export const FAQs: { id: string; question: string; answer: string }[] = [
     id: "can-i-view-the-elections-real-time-vote-count-even-if-im-not-a-voter",
     question:
       "Can I view the election's real-time vote count even if I'm not a voter?",
-    answer: `It depends on the election's publicity settings. eBoto Mo offers three types of publicity settings: "Private," where only the election commissioner can see the election; "Voter," where the election is visible to both the commissioner and voters; and "Public," where the election's information and real-time vote count are publicly available.`,
+    answer: `It depends on the election's publicity settings. eBoto Mo offers three types of publicity settings: "Private" where only the election commissioner can see the election; "Voter" where the election is visible to both the commissioner and voters; and "Public" where the election's information and real-time vote count are publicly available.`,
   },
   {
     id: "can-an-election-commissioner-vote-in-their-own-election",
