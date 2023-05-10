@@ -25,7 +25,7 @@
     "@mantine/nprogress": "^6.0.6",
     "@mantine/prism": "^6.0.6",
     "@mantine/spotlight": "^6.0.6",
-    "@prisma/client": "^4.13.0",
+    "@prisma/client": "^4.14.0",
     "@react-email/body": "^0.0.2",
     "@react-email/button": "0.0.8",
     "@react-email/container": "^0.0.8",
@@ -84,7 +84,7 @@
     "eslint": "^8.37.0",
     "eslint-config-next": "13.3.0",
     "prettier": "^2.8.7",
-    "prisma": "^4.13.0",
+    "prisma": "^4.14.0",
     "typescript": "^5.0.3"
   },
   "ct3aMetadata": {
