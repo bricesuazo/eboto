@@ -84,7 +84,7 @@ export const authOptions: NextAuthOptions = {
             first_name = name_parts[0] || "";
             last_name = name_parts[1] || "";
           } else if (name_parts.length > 2) {
-            first_name = name_parts[0] || "";
+            first_name = name_parts.slice(0, -1).join(" ") || "";
             last_name = name_parts[name_parts.length - 1] || "";
           }
 
