@@ -143,8 +143,7 @@ const Home: NextPage = () => {
             href="/signin"
             className={classes.control}
             size="md"
-            variant="default"
-            color="gray"
+            variant="outline"
           >
             Sign in
           </Button>

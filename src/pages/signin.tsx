@@ -22,16 +22,22 @@ import {
   Group,
   Checkbox,
   Center,
+  Divider,
 } from "@mantine/core";
 
 import { signIn } from "next-auth/react";
 
-// import { AiOutlineGoogle } from "react-icons/ai";
 import { getServerAuthSession } from "../server/auth";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { hasLength, isEmail, isNotEmpty, useForm } from "@mantine/form";
-import { IconAlertCircle, IconAt, IconLock } from "@tabler/icons-react";
+import {
+  IconAlertCircle,
+  IconAt,
+  IconBrandGoogle,
+  IconLock,
+} from "@tabler/icons-react";
+import { env } from "../env.mjs";
 
 const Signin: NextPage = () => {
   const router = useRouter();
@@ -79,107 +85,8 @@ const Signin: NextPage = () => {
           mt={30}
           radius="md"
         >
-          <form
-            onSubmit={form.onSubmit((values) => {
-              setError(undefined);
-              setLoadings({ ...loadings, credentials: true });
-
-              void (async () => {
-                await signIn("credentials", {
-                  email: values.email,
-                  password: values.password,
-                  redirect: false,
-                  callbackUrl:
-                    (router.query.callbackUrl as string) || "/dashboard",
-                }).then(async (res) => {
-                  if (res?.ok)
-                    await router.push(
-                      (router.query.callbackUrl as string) || "/dashboard"
-                    );
-                  if (res?.error) {
-                    setError(res.error);
-
-                    res.error ===
-                      "Email not verified. Email verification sent." &&
-                      form.reset();
-
-                    setLoadings({ ...loadings, credentials: false });
-                  }
-                });
-              })();
-            })}
-          >
-            <Stack>
-              <TextInput
-                placeholder="Enter your email address"
-                type="email"
-                withAsterisk
-                label="Email"
-                required
-                {...form.getInputProps("email")}
-                icon={<IconAt size="1rem" />}
-                disabled={loadings.credentials}
-              />
-
-              <PasswordInput
-                placeholder="Enter your password"
-                withAsterisk
-                label="Password"
-                required
-                {...form.getInputProps("password")}
-                icon={<IconLock size="1rem" />}
-                disabled={loadings.credentials}
-              />
-              <Group position="apart">
-                <Checkbox
-                  label="Remember me"
-                  size="sm"
-                  disabled={loadings.credentials}
-                />
-                <MediaQuery smallerThan="xs" styles={{ display: "none" }}>
-                  <Anchor
-                    size="sm"
-                    variant=""
-                    component={Link}
-                    href={`/reset-password${
-                      form.values.email ? `?email=${form.values.email}` : ""
-                    }`}
-                  >
-                    Forgot password?
-                  </Anchor>
-                </MediaQuery>
-              </Group>
-
-              {error && (
-                <Alert
-                  icon={<IconAlertCircle size="1rem" />}
-                  title="Error"
-                  color="red"
-                >
-                  {error}
-                </Alert>
-              )}
-
-              <Button type="submit" loading={loadings.credentials}>
-                Sign in
-              </Button>
-
-              <MediaQuery largerThan="xs" styles={{ display: "none" }}>
-                <Center>
-                  <Anchor
-                    size="sm"
-                    variant=""
-                    component={Link}
-                    href={`/reset-password${
-                      form.values.email ? `?email=${form.values.email}` : ""
-                    }`}
-                  >
-                    Forgot your password?
-                  </Anchor>
-                </Center>
-              </MediaQuery>
-
-              {/* <Button
+          <Stack>
+            <Button
               onClick={() => {
                 setLoadings({ ...loadings, google: true });
                 void (async () => {
@@ -189,15 +96,125 @@ const Signin: NextPage = () => {
                   });
                 })();
               }}
-              leftIcon={<AiOutlineGoogle size={18} />}
+              disabled={
+                env.NEXT_PUBLIC_NODE_ENV === "production" ||
+                loadings.credentials
+              }
+              leftIcon={<IconBrandGoogle size={18} />}
               variant="outline"
               loading={loadings.google}
-              loadingText="Loading..."
             >
               Sign in with Google
-            </Button> */}
-            </Stack>
-          </form>
+            </Button>
+
+            <Divider label="Or continue with email" labelPosition="center" />
+
+            <form
+              onSubmit={form.onSubmit((values) => {
+                setError(undefined);
+                setLoadings({ ...loadings, credentials: true });
+
+                void (async () => {
+                  await signIn("credentials", {
+                    email: values.email,
+                    password: values.password,
+                    redirect: false,
+                    callbackUrl:
+                      (router.query.callbackUrl as string) || "/dashboard",
+                  }).then(async (res) => {
+                    if (res?.ok)
+                      await router.push(
+                        (router.query.callbackUrl as string) || "/dashboard"
+                      );
+                    if (res?.error) {
+                      setError(res.error);
+
+                      res.error ===
+                        "Email not verified. Email verification sent." &&
+                        form.reset();
+
+                      setLoadings({ ...loadings, credentials: false });
+                    }
+                  });
+                })();
+              })}
+            >
+              <Stack>
+                <TextInput
+                  placeholder="Enter your email address"
+                  type="email"
+                  withAsterisk
+                  label="Email"
+                  required
+                  {...form.getInputProps("email")}
+                  icon={<IconAt size="1rem" />}
+                  disabled={loadings.credentials || loadings.google}
+                />
+
+                <PasswordInput
+                  placeholder="Enter your password"
+                  withAsterisk
+                  label="Password"
+                  required
+                  {...form.getInputProps("password")}
+                  icon={<IconLock size="1rem" />}
+                  disabled={loadings.credentials || loadings.google}
+                />
+                <Group position="apart">
+                  <Checkbox
+                    label="Remember me"
+                    size="sm"
+                    disabled={loadings.credentials || loadings.google}
+                  />
+                  <MediaQuery smallerThan="xs" styles={{ display: "none" }}>
+                    <Anchor
+                      size="sm"
+                      variant=""
+                      component={Link}
+                      href={`/reset-password${
+                        form.values.email ? `?email=${form.values.email}` : ""
+                      }`}
+                    >
+                      Forgot password?
+                    </Anchor>
+                  </MediaQuery>
+                </Group>
+
+                {error && (
+                  <Alert
+                    icon={<IconAlertCircle size="1rem" />}
+                    title="Error"
+                    color="red"
+                  >
+                    {error}
+                  </Alert>
+                )}
+
+                <Button
+                  type="submit"
+                  loading={loadings.credentials}
+                  disabled={loadings.google}
+                >
+                  Sign in
+                </Button>
+
+                <MediaQuery largerThan="xs" styles={{ display: "none" }}>
+                  <Center>
+                    <Anchor
+                      size="sm"
+                      variant=""
+                      component={Link}
+                      href={`/reset-password${
+                        form.values.email ? `?email=${form.values.email}` : ""
+                      }`}
+                    >
+                      Forgot your password?
+                    </Anchor>
+                  </Center>
+                </MediaQuery>
+              </Stack>
+            </form>
+          </Stack>
         </Paper>
       </Container>
     </>
