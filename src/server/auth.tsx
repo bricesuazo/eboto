@@ -63,33 +63,43 @@ declare module "next-auth/jwt" {
  **/
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    // async signIn({ credentials }) {
-    //   if (credentials && credentials.email) {
-    //     const isUserExists = await prisma.user.findUnique({
-    //       where: {
-    //         email: credentials.email as string,
-    //       },
-    //     });
+    async signIn({ account, profile }) {
+      if (account?.provider === "google") {
+        if (!profile || !profile.email) return false;
 
-    //     if (isUserExists && !isUserExists.emailVerified) {
-    //       await SendEmailVerification({
-    //         email: isUserExists.email,
-    //         userId: isUserExists.id,
-    //       });
-    //       throw new Error("Email not verified");
-    //     }
-    //   }
-    //   return true;
-    // },
-    session({ session, token }) {
+        const user = await prisma.user.findUnique({
+          where: { email: profile.email },
+        });
+
+        if (!user) {
+          console.log("created");
+          await prisma.user.create({
+            data: {
+              email: profile.email,
+              first_name: profile.name ?? "",
+              middle_name: profile.name,
+              last_name: profile.name ?? "",
+              image: profile.image,
+              emailVerified: new Date(),
+            },
+          });
+        }
+
+        console.log("true");
+        return true;
+      }
+      return false;
+    },
+    async session({ session }) {
+      const user = await prisma.user.findUniqueOrThrow({
+        where: { email: session.user.email },
+      });
       if (session.user) {
-        session.user.id = token.id;
-        session.user.firstName = token.firstName;
-        session.user.middleName = token.middleName;
-        session.user.lastName = token.lastName;
-        session.user.image = token.image;
-
-        // session.user.role = user.role; <-- put other properties on the session here
+        session.user.id = user.id;
+        session.user.firstName = user.first_name;
+        session.user.middleName = user.middle_name;
+        session.user.lastName = user.last_name;
+        session.user.image = user.image;
       }
       return session;
     },
@@ -100,7 +110,6 @@ export const authOptions: NextAuthOptions = {
         token.middleName = session.middleName;
         token.lastName = session.lastName;
         token.image = session.image;
-        // token.role = user.role; <-- put other properties on the token here
       } else if (user) {
         token.id = user.id;
         token.firstName = user.firstName;
