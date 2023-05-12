@@ -10,6 +10,7 @@ import {
   Anchor,
   Button,
   Container,
+  Divider,
   Group,
   Paper,
   PasswordInput,
@@ -37,9 +38,15 @@ import {
 } from "@tabler/icons-react";
 import { api } from "../utils/api";
 import { useDisclosure } from "@mantine/hooks";
+import { useState } from "react";
+import { IconBrandGoogle } from "@tabler/icons-react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/router";
 
 const Signup: NextPage = () => {
+  const router = useRouter();
   const [visible, { toggle }] = useDisclosure(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const signUpMutation = api.user.signUp.useMutation({
     onSuccess: () => {
       form.reset();
@@ -102,86 +109,111 @@ const Signup: NextPage = () => {
             })}
             radius="md"
           >
-            <form
-              onSubmit={form.onSubmit((values) => {
-                signUpMutation.mutate({
-                  email: values.email,
-                  password: values.password,
-                  first_name: values.firstName,
-                  last_name: values.lastName,
-                });
-              })}
-            >
-              <Stack spacing="sm">
-                <Group grow>
+            <Stack>
+              <Button
+                onClick={() => {
+                  setIsGoogleLoading(true);
+                  void (async () => {
+                    await signIn("google", {
+                      callbackUrl:
+                        (router.query.callbackUrl as string) || "/dashboard",
+                    });
+                  })();
+                }}
+                disabled={signUpMutation.isLoading}
+                leftIcon={<IconBrandGoogle size={18} />}
+                variant="outline"
+                loading={isGoogleLoading}
+              >
+                Sign up with Google
+              </Button>
+
+              <Divider label="Or continue with email" labelPosition="center" />
+              <form
+                onSubmit={form.onSubmit((values) => {
+                  signUpMutation.mutate({
+                    email: values.email,
+                    password: values.password,
+                    first_name: values.firstName,
+                    last_name: values.lastName,
+                  });
+                })}
+              >
+                <Stack spacing="sm">
+                  <Group grow>
+                    <TextInput
+                      placeholder="Enter your first name"
+                      withAsterisk
+                      label="First name"
+                      required
+                      {...form.getInputProps("firstName")}
+                      icon={<IconLetterCase size="1rem" />}
+                      disabled={signUpMutation.isLoading}
+                    />
+                    <TextInput
+                      placeholder="Enter your last name"
+                      withAsterisk
+                      label="Last name"
+                      {...form.getInputProps("lastName")}
+                      disabled={signUpMutation.isLoading}
+                      icon={<IconLetterCase size="1rem" />}
+                    />
+                  </Group>
+
                   <TextInput
-                    placeholder="Enter your first name"
+                    placeholder="Enter your email address"
+                    type="email"
                     withAsterisk
-                    label="First name"
+                    label="Email"
                     required
-                    {...form.getInputProps("firstName")}
-                    icon={<IconLetterCase size="1rem" />}
+                    icon={<IconAt size="1rem" />}
                     disabled={signUpMutation.isLoading}
+                    {...form.getInputProps("email")}
                   />
-                  <TextInput
-                    placeholder="Enter your last name"
+
+                  <PasswordInput
+                    placeholder="Enter your password"
                     withAsterisk
-                    label="Last name"
-                    {...form.getInputProps("lastName")}
+                    label="Password"
+                    required
+                    visible={visible}
+                    onVisibilityChange={toggle}
+                    {...form.getInputProps("password")}
                     disabled={signUpMutation.isLoading}
-                    icon={<IconLetterCase size="1rem" />}
+                    icon={<IconLock size="1rem" />}
                   />
-                </Group>
+                  <PasswordInput
+                    placeholder="Confirm your password"
+                    withAsterisk
+                    label="Confirm password"
+                    required
+                    visible={visible}
+                    onVisibilityChange={toggle}
+                    {...form.getInputProps("confirmPassword")}
+                    disabled={signUpMutation.isLoading}
+                    icon={<IconLock size="1rem" />}
+                  />
 
-                <TextInput
-                  placeholder="Enter your email address"
-                  type="email"
-                  withAsterisk
-                  label="Email"
-                  required
-                  icon={<IconAt size="1rem" />}
-                  disabled={signUpMutation.isLoading}
-                  {...form.getInputProps("email")}
-                />
+                  {signUpMutation.isError && (
+                    <Alert
+                      icon={<IconAlertCircle size="1rem" />}
+                      title="Error"
+                      color="red"
+                    >
+                      {signUpMutation.error.message}
+                    </Alert>
+                  )}
 
-                <PasswordInput
-                  placeholder="Enter your password"
-                  withAsterisk
-                  label="Password"
-                  required
-                  visible={visible}
-                  onVisibilityChange={toggle}
-                  {...form.getInputProps("password")}
-                  disabled={signUpMutation.isLoading}
-                  icon={<IconLock size="1rem" />}
-                />
-                <PasswordInput
-                  placeholder="Confirm your password"
-                  withAsterisk
-                  label="Confirm password"
-                  required
-                  visible={visible}
-                  onVisibilityChange={toggle}
-                  {...form.getInputProps("confirmPassword")}
-                  disabled={signUpMutation.isLoading}
-                  icon={<IconLock size="1rem" />}
-                />
-
-                {signUpMutation.isError && (
-                  <Alert
-                    icon={<IconAlertCircle size="1rem" />}
-                    title="Error"
-                    color="red"
+                  <Button
+                    type="submit"
+                    loading={signUpMutation.isLoading}
+                    disabled={isGoogleLoading}
                   >
-                    {signUpMutation.error.message}
-                  </Alert>
-                )}
-
-                <Button type="submit" loading={signUpMutation.isLoading}>
-                  Sign up
-                </Button>
-              </Stack>
-            </form>
+                    Sign up
+                  </Button>
+                </Stack>
+              </form>
+            </Stack>
           </Paper>
         )}
       </Container>

@@ -37,7 +37,6 @@ import {
   IconBrandGoogle,
   IconLock,
 } from "@tabler/icons-react";
-import { env } from "../env.mjs";
 
 const Signin: NextPage = () => {
   const router = useRouter();
@@ -96,10 +95,7 @@ const Signin: NextPage = () => {
                   });
                 })();
               }}
-              disabled={
-                env.NEXT_PUBLIC_NODE_ENV === "production" ||
-                loadings.credentials
-              }
+              disabled={loadings.credentials}
               leftIcon={<IconBrandGoogle size={18} />}
               variant="outline"
               loading={loadings.google}
