@@ -63,7 +63,7 @@ declare module "next-auth/jwt" {
  **/
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    async signIn({ account, profile }) {
+    async signIn({ account, profile, credentials }) {
       if (account?.provider === "google") {
         if (!profile || !profile.email) return false;
 
@@ -72,20 +72,35 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user) {
-          console.log("created");
+          let first_name = "";
+          let last_name = "";
+
+          if (!profile.name) return false;
+          const name_parts: string[] = profile.name.split(" ");
+
+          if (name_parts.length === 1) {
+            first_name = name_parts[0] || "";
+          } else if (name_parts.length === 2) {
+            first_name = name_parts[0] || "";
+            last_name = name_parts[1] || "";
+          } else if (name_parts.length > 2) {
+            first_name = name_parts[0] || "";
+            last_name = name_parts[name_parts.length - 1] || "";
+          }
+
           await prisma.user.create({
             data: {
               email: profile.email,
-              first_name: profile.name ?? "",
-              middle_name: profile.name,
-              last_name: profile.name ?? "",
+              first_name,
+              last_name,
               image: profile.image,
               emailVerified: new Date(),
             },
           });
         }
 
-        console.log("true");
+        return true;
+      } else if (credentials) {
         return true;
       }
       return false;
