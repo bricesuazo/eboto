@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Alert,
   Button,
   Flex,
   Group,
@@ -14,6 +15,7 @@ import { useDidUpdate } from "@mantine/hooks";
 import { IconTrash } from "@tabler/icons-react";
 import type { VoterField } from "@prisma/client";
 import { useRouter } from "next/router";
+import { IconAlertCircle } from "@tabler/icons-react";
 
 type Field = { id: string; name: string; type: "fromDb" | "fromInput" };
 type FormType = { field: Field[] };
@@ -121,6 +123,17 @@ const UpdateVoterField = ({
           >
             Add voter field
           </Button>
+
+          {updateVoterFieldMutation.isError && (
+            <Alert
+              icon={<IconAlertCircle size="1rem" />}
+              color="red"
+              title="Error"
+              variant="filled"
+            >
+              {updateVoterFieldMutation.error.message}
+            </Alert>
+          )}
 
           <Group position="right" spacing="xs">
             <Button
