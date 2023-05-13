@@ -1,6 +1,7 @@
-import { Box, Button, Modal, Stack, Text } from "@mantine/core";
+import { Button, Center, Modal, Stack, Text } from "@mantine/core";
 import type { Election } from "@prisma/client";
-import ReactQRCode from "react-qr-code";
+import { IconDownload } from "@tabler/icons-react";
+import { QRCodeCanvas } from "qrcode.react";
 
 const QRCode = ({
   isOpen,
@@ -22,25 +23,76 @@ const QRCode = ({
       }
     >
       <Stack>
-        <ReactQRCode
-          id="qr-code"
-          size={256}
-          style={{
-            height: "auto",
-            maxWidth: "100%",
-            width: "100%",
-          }}
-          value={`https://eboto-mo.com/${election.slug}`}
-        />
+        <Center
+          sx={(theme) => ({
+            [theme.fn.largerThan("xs")]: {
+              display: "none",
+            },
+          })}
+        >
+          <QRCodeCanvas
+            id="qr-gen"
+            value={`https://eboto-mo.com/${election.slug}`}
+            includeMargin
+            size={256}
+            imageSettings={{
+              src: "/images/eboto-mo-pfp.png",
+              x: undefined,
+              y: undefined,
+              height: 54,
+              width: 54,
+              excavate: true,
+            }}
+          />
+        </Center>
+        <Center
+          sx={(theme) => ({
+            [theme.fn.smallerThan("xs")]: {
+              display: "none",
+            },
+          })}
+        >
+          <QRCodeCanvas
+            id="qr-gen"
+            value={`https://eboto-mo.com/${election.slug}`}
+            includeMargin
+            size={408}
+            imageSettings={{
+              src: "/images/eboto-mo-pfp.png",
+              x: undefined,
+              y: undefined,
+              height: 86,
+              width: 86,
+              excavate: true,
+            }}
+          />
+        </Center>
 
         <Button
-        // onClick={() => {
-        //   canvas.getContext("qr-code")?.drawImage(img, 0, 0);
-        //   const a = document.createElement("a");
-        //   a.download = "my-image.png";
-        //   a.href = canvas.toDataURL();
-        //   a.click();
-        // }}
+          onClick={() => {
+            const canvas = document.getElementById(
+              "qr-gen"
+            ) as HTMLCanvasElement | null;
+
+            if (canvas) {
+              const pngUrl = canvas
+                .toDataURL("image/png")
+                .replace("image/png", "image/octet-stream");
+
+              const downloadLink = document.createElement("a");
+              downloadLink.href = pngUrl;
+              downloadLink.download = "qr.png";
+
+              document.body.appendChild(downloadLink);
+
+              downloadLink.click();
+
+              document.body.removeChild(downloadLink);
+            } else {
+              console.log("Could not find QR code element");
+            }
+          }}
+          leftIcon={<IconDownload size="1rem" />}
         >
           Download
         </Button>
