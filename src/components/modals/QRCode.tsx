@@ -81,7 +81,7 @@ const QRCode = ({
 
               const downloadLink = document.createElement("a");
               downloadLink.href = pngUrl;
-              downloadLink.download = "qr.png";
+              downloadLink.download = `${election.name} (@${election.slug}) - QR Code.png`;
 
               document.body.appendChild(downloadLink);
 
