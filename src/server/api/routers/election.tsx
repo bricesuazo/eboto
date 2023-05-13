@@ -841,6 +841,7 @@ export const electionRouter = createTRPCRouter({
         name: z.string(),
         slug: z.string(),
         description: z.string().nullable(),
+        voter_domain: z.string().nullable(),
         start_date: z.date(),
         end_date: z.date(),
         voting_start: z.number(),
@@ -899,6 +900,24 @@ export const electionRouter = createTRPCRouter({
         }
       }
 
+      if (
+        input.voter_domain &&
+        input.voter_domain.trim().toLowerCase() === "gmail.com"
+      )
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Gmail is not allowed as voter domain",
+        });
+
+      if (
+        isElectionOngoing({ election, withTime: false }) &&
+        input.voter_domain !== election.voter_domain
+      )
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Voter domain cannot be changed while election is ongoing",
+        });
+
       return await ctx.prisma.election.update({
         where: {
           id: input.id,
@@ -907,6 +926,7 @@ export const electionRouter = createTRPCRouter({
           name: input.name,
           slug: input.slug.trim().toLowerCase(),
           description: input.description,
+          voter_domain: input.voter_domain,
           start_date: input.start_date,
           end_date: input.end_date,
           voting_start: input.voting_start,
