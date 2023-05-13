@@ -216,6 +216,7 @@ const DashboardSettings = () => {
         name: election.data.name,
         slug: election.data.slug,
         description: election.data.description,
+        voter_domain: election.data.voter_domain,
         date: [election.data.start_date, election.data.end_date],
         voting_start: election.data.voting_start.toString(),
         voting_end: election.data.voting_end.toString(),
@@ -399,8 +400,6 @@ const DashboardSettings = () => {
                 <TextInput
                   label="Election voter's domain"
                   description={`This will be used to restrict voters to a specific domain. For example, if you set this to "cvsu.edu.ph", only voters with an email address ending with "cvsu.edu.ph" will be able to vote. This is good for school elections (such as CSG Election).`}
-                  withAsterisk
-                  required
                   placeholder="cvsu.edu.ph"
                   {...form.getInputProps("voter_domain")}
                   icon={<IconAt size="1rem" />}

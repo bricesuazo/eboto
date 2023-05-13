@@ -645,18 +645,20 @@ export const electionRouter = createTRPCRouter({
     });
   }),
   getMyElectionsVote: protectedProcedure.query(async ({ ctx }) => {
-    return ctx.prisma.election.findMany({
+    const elections = await ctx.prisma.election.findMany({
       where: {
+        // voter_domain: ctx.session.user.email.split("@")[1],
         publicity: {
           not: "PRIVATE",
         },
-        voters: {
-          some: {
-            userId: ctx.session.user.id,
-          },
-        },
+        // voters: {
+        //   some: {
+        //     userId: ctx.session.user.id,
+        //   },
+        // },
       },
       include: {
+        voters: true,
         vote: {
           where: {
             voterId: ctx.session.user.id,
@@ -664,6 +666,12 @@ export const electionRouter = createTRPCRouter({
         },
       },
     });
+
+    return elections.filter(
+      (election) =>
+        election.voters.some((voter) => voter.userId === ctx.session.user.id) ||
+        election.voter_domain === ctx.session.user.email.split("@")[1]
+    );
   }),
   getElectionData: publicProcedure
     .input(z.string())
