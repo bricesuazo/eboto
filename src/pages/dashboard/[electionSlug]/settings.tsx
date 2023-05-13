@@ -41,7 +41,6 @@ import {
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { uploadImage } from "../../../utils/uploadImage";
-import { IconAt } from "@tabler/icons-react";
 
 const DashboardSettings = () => {
   const [loading, setLoading] = useState(false);
@@ -61,7 +60,7 @@ const DashboardSettings = () => {
     name: string;
     slug: string;
     description: string | null;
-    voter_domain: string | null;
+    // voter_domain: string | null;
     date: [Date, Date];
     voting_start: string;
     voting_end: string;
@@ -73,7 +72,7 @@ const DashboardSettings = () => {
       name: "",
       slug: "",
       description: null,
-      voter_domain: null,
+      // voter_domain: null,
       date: [new Date(), new Date()],
       voting_start: "",
       voting_end: "",
@@ -98,25 +97,24 @@ const DashboardSettings = () => {
           return "Election slug must be between 3 and 24 characters";
         }
       },
-      voter_domain: (value) => {
-        if (
-          value &&
-          !/^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/.test(
-            value
-          )
-        ) {
-          return "Voter domain must be alphanumeric and can contain dashes";
-        }
+      // voter_domain: (value) => {
+      //   if (
+      //     value &&
+      //     !/^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/.test(
+      //       value
+      //     )
+      //   ) {
+      //     return "Voter domain must be alphanumeric and can contain dashes";
+      //   }
 
-        if (value && value.includes(" ")) {
-          return "Voter domain cannot contain spaces";
-        }
+      //   if (value && value.includes(" ")) {
+      //     return "Voter domain cannot contain spaces";
+      //   }
 
-        if (value && value.includes("gmail.com")) {
-          return "Voter domain cannot be gmail.com";
-        }
-      },
-
+      //   if (value && value.includes("gmail.com")) {
+      //     return "Voter domain cannot be gmail.com";
+      //   }
+      // },
       date: (value) => {
         if (!value[0] || !value[1]) {
           return "Please select a date range";
@@ -154,7 +152,7 @@ const DashboardSettings = () => {
         name: data.name,
         slug: data.slug,
         description: data.description,
-        voter_domain: data.voter_domain,
+        // voter_domain: data.voter_domain,
         date: [data.start_date, data.end_date],
         voting_start: data.voting_start.toString(),
         voting_end: data.voting_end.toString(),
@@ -321,7 +319,7 @@ const DashboardSettings = () => {
                     name: value.name,
                     slug: value.slug,
                     description: value.description,
-                    voter_domain: value.voter_domain,
+                    // voter_domain: value.voter_domain,
                     start_date:
                       value.date[0] ||
                       new Date(new Date().setDate(new Date().getDate() + 1)),
@@ -397,25 +395,26 @@ const DashboardSettings = () => {
                   disabled={loading}
                 />
 
-                <TextInput
-                  label="Election voter's domain"
-                  description={`This will be used to restrict voters to a specific domain. For example, if you set this to "cvsu.edu.ph", only voters with an email address ending with "cvsu.edu.ph" will be able to vote. This is good for school elections (such as CSG Election).`}
-                  placeholder="cvsu.edu.ph"
-                  {...form.getInputProps("voter_domain")}
-                  icon={<IconAt size="1rem" />}
-                  error={
-                    form.errors.voter_domain ||
-                    (updateElectionMutation.error?.data?.code === "CONFLICT" &&
-                      updateElectionMutation.error?.message)
-                  }
-                  disabled={
-                    loading ||
-                    isElectionOngoing({
-                      election: election.data,
-                      withTime: false,
-                    })
-                  }
-                />
+                {/* <TextInput
+                    label="Election voter's domain"
+                    description={`This will be used to restrict voters to a specific domain. For example, if you set this to "cvsu.edu.ph", only voters with an email address ending with "cvsu.edu.ph" will be able to vote. This is good for school elections (such as CSG Election).`}
+                    placeholder="cvsu.edu.ph"
+                    {...form.getInputProps("voter_domain")}
+                    icon={<IconAt size="1rem" />}
+                    error={
+                      form.errors.voter_domain ||
+                      (updateElectionMutation.error?.data?.code ===
+                        "CONFLICT" &&
+                        updateElectionMutation.error?.message)
+                    }
+                    disabled={
+                      loading ||
+                      isElectionOngoing({
+                        election: election.data,
+                        withTime: false,
+                      })
+                    }
+                  /> */}
 
                 <DatePickerInput
                   type="range"

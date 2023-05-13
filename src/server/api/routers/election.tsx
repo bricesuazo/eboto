@@ -645,17 +645,43 @@ export const electionRouter = createTRPCRouter({
     });
   }),
   getMyElectionsVote: protectedProcedure.query(async ({ ctx }) => {
-    const elections = await ctx.prisma.election.findMany({
+    // const elections = await ctx.prisma.election.findMany({
+    //   where: {
+    //     // voter_domain: ctx.session.user.email.split("@")[1],
+    //     publicity: {
+    //       not: "PRIVATE",
+    //     },
+    //     // voters: {
+    //     //   some: {
+    //     //     userId: ctx.session.user.id,
+    //     //   },
+    //     // },
+    //   },
+    //   include: {
+    //     voters: true,
+    //     vote: {
+    //       where: {
+    //         voterId: ctx.session.user.id,
+    //       },
+    //     },
+    //   },
+    // });
+    // return elections.filter(
+    //   (election) =>
+    //     election.voters.some((voter) => voter.userId === ctx.session.user.id) ||
+    //     election.voter_domain === ctx.session.user.email.split("@")[1]
+    // );
+
+    return ctx.prisma.election.findMany({
       where: {
-        // voter_domain: ctx.session.user.email.split("@")[1],
         publicity: {
           not: "PRIVATE",
         },
-        // voters: {
-        //   some: {
-        //     userId: ctx.session.user.id,
-        //   },
-        // },
+        voters: {
+          some: {
+            userId: ctx.session.user.id,
+          },
+        },
       },
       include: {
         voters: true,
@@ -666,12 +692,6 @@ export const electionRouter = createTRPCRouter({
         },
       },
     });
-
-    return elections.filter(
-      (election) =>
-        election.voters.some((voter) => voter.userId === ctx.session.user.id) ||
-        election.voter_domain === ctx.session.user.email.split("@")[1]
-    );
   }),
   getElectionData: publicProcedure
     .input(z.string())
@@ -849,7 +869,7 @@ export const electionRouter = createTRPCRouter({
         name: z.string(),
         slug: z.string(),
         description: z.string().nullable(),
-        voter_domain: z.string().nullable(),
+        // voter_domain: z.string().nullable(),
         start_date: z.date(),
         end_date: z.date(),
         voting_start: z.number(),
@@ -908,23 +928,23 @@ export const electionRouter = createTRPCRouter({
         }
       }
 
-      if (
-        input.voter_domain &&
-        input.voter_domain.trim().toLowerCase() === "gmail.com"
-      )
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Gmail is not allowed as voter domain",
-        });
+      // if (
+      //   input.voter_domain &&
+      //   input.voter_domain.trim().toLowerCase() === "gmail.com"
+      // )
+      //   throw new TRPCError({
+      //     code: "BAD_REQUEST",
+      //     message: "Gmail is not allowed as voter domain",
+      //   });
 
-      if (
-        isElectionOngoing({ election, withTime: false }) &&
-        input.voter_domain !== election.voter_domain
-      )
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Voter domain cannot be changed while election is ongoing",
-        });
+      // if (
+      //   isElectionOngoing({ election, withTime: false }) &&
+      //   input.voter_domain !== election.voter_domain
+      // )
+      //   throw new TRPCError({
+      //     code: "BAD_REQUEST",
+      //     message: "Voter domain cannot be changed while election is ongoing",
+      //   });
 
       return await ctx.prisma.election.update({
         where: {
@@ -934,7 +954,7 @@ export const electionRouter = createTRPCRouter({
           name: input.name,
           slug: input.slug.trim().toLowerCase(),
           description: input.description,
-          voter_domain: input.voter_domain,
+          // voter_domain: input.voter_domain,
           start_date: input.start_date,
           end_date: input.end_date,
           voting_start: input.voting_start,
