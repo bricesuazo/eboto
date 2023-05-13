@@ -92,9 +92,9 @@ const DashboardOverview = () => {
           </Head>
           <Stack p="md">
             <Box>
-              <Group position="apart">
+              <Flex justify="space-between" align="center" gap="xs">
                 <Flex align="center" gap="sm">
-                  <Title order={2}>
+                  <Title order={2} lineClamp={1}>
                     {`${electionOverview.data.election.name} (@${electionOverview.data.election.slug})`}
                   </Title>
                   <ActionIcon
@@ -113,14 +113,16 @@ const DashboardOverview = () => {
                 </Flex>
                 <ActionIcon
                   onClick={openQRCode}
-                  variant="filled"
+                  variant="outline"
+                  color="#2f9e44"
+                  size="lg"
                   sx={(theme) => ({
                     [theme.fn.largerThan("md")]: {
                       display: "none",
                     },
                   })}
                 >
-                  <IconQrcode size={rem(18)} />
+                  <IconQrcode />
                 </ActionIcon>
                 <Button
                   onClick={openQRCode}
@@ -133,7 +135,7 @@ const DashboardOverview = () => {
                 >
                   Download/Scan QR Code
                 </Button>
-              </Group>
+              </Flex>
               <Text>
                 <Moment
                   format="MMMM DD, YYYY"

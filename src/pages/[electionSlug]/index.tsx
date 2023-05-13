@@ -9,9 +9,15 @@ import {
   Group,
   Skeleton,
   Spoiler,
+  ActionIcon,
 } from "@mantine/core";
 import type { Election } from "@prisma/client";
-import { IconClock, IconFingerprint, IconUser } from "@tabler/icons-react";
+import {
+  IconClock,
+  IconFingerprint,
+  IconQrcode,
+  IconUser,
+} from "@tabler/icons-react";
 import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -26,6 +32,8 @@ import Head from "next/head";
 import { env } from "../../env.mjs";
 import moment from "moment";
 import ScrollToTopButton from "../../components/ScrollToTopButton";
+import { useDisclosure } from "@mantine/hooks";
+import QRCode from "../../components/modals/QRCode";
 
 const ElectionPage = ({
   election,
@@ -36,6 +44,8 @@ const ElectionPage = ({
   hasVoted: boolean;
   isOngoing: boolean;
 }) => {
+  const [openedQRCode, { open: openQRCode, close: closeQRCode }] =
+    useDisclosure(false);
   const title = `${election.name} | eBoto Mo`;
   const imageContent = `${
     env.NEXT_PUBLIC_NODE_ENV === "production"
@@ -110,185 +120,220 @@ const ElectionPage = ({
         ) : !positions.data ? (
           <Text>Not found</Text>
         ) : (
-          <Stack align="center">
-            <Box>
-              <Group position="center" mb={8}>
-                {election.logo ? (
-                  <Image
-                    src={election.logo}
-                    alt="Logo"
-                    width={92}
-                    height={92}
-                    priority
-                  />
-                ) : (
-                  <IconFingerprint size={92} style={{ padding: 8 }} />
-                )}
-              </Group>
+          <>
+            <QRCode
+              isOpen={openedQRCode}
+              onClose={closeQRCode}
+              election={election}
+            />
+            <Stack align="center">
+              <Box>
+                <Group position="center" mb={8}>
+                  {election.logo ? (
+                    <Image
+                      src={election.logo}
+                      alt="Logo"
+                      width={92}
+                      height={92}
+                      priority
+                    />
+                  ) : (
+                    <IconFingerprint size={92} style={{ padding: 8 }} />
+                  )}
+                </Group>
 
-              <Title order={2} lineClamp={2} align="center">
-                {election.name} (@{election.slug})
-              </Title>
+                <Title order={2} lineClamp={2} align="center">
+                  {election.name} (@{election.slug})
+                </Title>
 
-              <Text align="center">
-                <Moment format="MMMM DD, YYYY" date={election.start_date} />
-                {" - "}
-                <Moment format="MMMM DD, YYYY" date={election.end_date} />
-              </Text>
-              <Text align="center">
-                Open from {convertNumberToHour(election.voting_start)} to{" "}
-                {convertNumberToHour(election.voting_end)}
-              </Text>
-              <Text align="center">
-                Publicity:{" "}
-                {(() => {
-                  switch (election.publicity) {
-                    case "PRIVATE":
-                      return "Private (Only commissioners can see this election)";
-                    case "VOTER":
-                      return "Voter (Only voters and commissioners can see this election)";
-                    case "PUBLIC":
-                      return "Public (Everyone can see this election)";
-                    default:
-                      return null;
-                  }
-                })()}
-              </Text>
+                <Text align="center">
+                  <Moment format="MMMM DD, YYYY" date={election.start_date} />
+                  {" - "}
+                  <Moment format="MMMM DD, YYYY" date={election.end_date} />
+                </Text>
+                <Text align="center">
+                  Open from {convertNumberToHour(election.voting_start)} to{" "}
+                  {convertNumberToHour(election.voting_end)}
+                </Text>
+                <Text align="center">
+                  Publicity:{" "}
+                  {(() => {
+                    switch (election.publicity) {
+                      case "PRIVATE":
+                        return "Private (Only commissioners can see this election)";
+                      case "VOTER":
+                        return "Voter (Only voters and commissioners can see this election)";
+                      case "PUBLIC":
+                        return "Public (Everyone can see this election)";
+                      default:
+                        return null;
+                    }
+                  })()}
+                </Text>
 
-              {election.description && (
-                <Box
-                  maw="40rem"
-                  mt="sm"
-                  sx={{
-                    textAlign: "center",
-                  }}
-                >
-                  <Text>About this election:</Text>
-                  <Spoiler
-                    maxHeight={50}
-                    showLabel="Show more"
-                    hideLabel="Hide"
+                {election.description && (
+                  <Box
+                    maw="40rem"
+                    mt="sm"
+                    sx={{
+                      textAlign: "center",
+                    }}
                   >
-                    {election.description}
-                  </Spoiler>
-                </Box>
-              )}
+                    <Text>About this election:</Text>
+                    <Spoiler
+                      maxHeight={50}
+                      showLabel="Show more"
+                      hideLabel="Hide"
+                    >
+                      {election.description}
+                    </Spoiler>
+                  </Box>
+                )}
 
-              <Group position="center" mt={8}>
-                {hasVoted || election.end_date < new Date() ? (
+                <Group position="center" mt={8}>
+                  {hasVoted || election.end_date < new Date() ? (
+                    <Button
+                      radius="xl"
+                      size="md"
+                      component={Link}
+                      leftIcon={<IconClock />}
+                      href={`/${election.slug}/realtime`}
+                    >
+                      Realtime count
+                    </Button>
+                  ) : !isOngoing ? (
+                    <Text color="red">Voting is not yet open</Text>
+                  ) : (
+                    <Button
+                      radius="xl"
+                      size="md"
+                      leftIcon={<IconFingerprint />}
+                      component={Link}
+                      href={`/${election.slug}/vote`}
+                    >
+                      Vote now!
+                    </Button>
+                  )}
                   <Button
+                    variant="outline"
+                    onClick={openQRCode}
+                    leftIcon={<IconQrcode />}
                     radius="xl"
                     size="md"
-                    component={Link}
-                    leftIcon={<IconClock />}
-                    href={`/${election.slug}/realtime`}
+                    sx={(theme) => ({
+                      [theme.fn.smallerThan("xs")]: {
+                        display: "none",
+                      },
+                    })}
                   >
-                    Realtime count
+                    Download QR Code
                   </Button>
-                ) : !isOngoing ? (
-                  <Text color="red">Voting is not yet open</Text>
-                ) : (
-                  <Button
+                  <ActionIcon
+                    onClick={openQRCode}
+                    variant="outline"
+                    color="#2f9e44"
                     radius="xl"
-                    size="md"
-                    leftIcon={<IconFingerprint />}
-                    component={Link}
-                    href={`/${election.slug}/vote`}
+                    size="xl"
+                    sx={(theme) => ({
+                      [theme.fn.largerThan("xs")]: {
+                        display: "none",
+                      },
+                    })}
                   >
-                    Vote now!
-                  </Button>
-                )}
-              </Group>
-            </Box>
+                    <IconQrcode />
+                  </ActionIcon>
+                </Group>
+              </Box>
 
-            <Stack spacing="lg">
-              {positions.data.map((position) => (
-                <Stack spacing={4} key={position.id}>
-                  <Title order={3} weight={600} align="center" lineClamp={2}>
-                    <Balancer>{position.name}</Balancer>
-                  </Title>
+              <Stack spacing="lg">
+                {positions.data.map((position) => (
+                  <Stack spacing={4} key={position.id}>
+                    <Title order={3} weight={600} align="center" lineClamp={2}>
+                      <Balancer>{position.name}</Balancer>
+                    </Title>
 
-                  <Group position="center" spacing="sm">
-                    {position.candidate.length === 0 ? (
-                      <Text>No candidates</Text>
-                    ) : (
-                      position.candidate.map((candidate) => (
-                        <UnstyledButton
-                          component={Link}
-                          href={`/${election?.slug || ""}/${candidate.slug}`}
-                          sx={(theme) => ({
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            width: 200,
-                            height: 192,
-                            padding: theme.spacing.xs,
-                            borderRadius: theme.radius.md,
-                            backgroundColor:
-                              theme.colorScheme === "dark"
-                                ? theme.colors.dark[6]
-                                : theme.colors.gray[0],
-                            transition: "background-color 0.2s ease",
-                            "&:hover": {
+                    <Group position="center" spacing="sm">
+                      {position.candidate.length === 0 ? (
+                        <Text>No candidates</Text>
+                      ) : (
+                        position.candidate.map((candidate) => (
+                          <UnstyledButton
+                            component={Link}
+                            href={`/${election?.slug || ""}/${candidate.slug}`}
+                            sx={(theme) => ({
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                              width: 200,
+                              height: 192,
+                              padding: theme.spacing.xs,
+                              borderRadius: theme.radius.md,
                               backgroundColor:
                                 theme.colorScheme === "dark"
-                                  ? theme.colors.dark[5]
-                                  : theme.colors.gray[1],
-                            },
+                                  ? theme.colors.dark[6]
+                                  : theme.colors.gray[0],
+                              transition: "background-color 0.2s ease",
+                              "&:hover": {
+                                backgroundColor:
+                                  theme.colorScheme === "dark"
+                                    ? theme.colors.dark[5]
+                                    : theme.colors.gray[1],
+                              },
 
-                            [theme.fn.smallerThan("xs")]: {
-                              width: "100%",
-                              flexDirection: "row",
-                              justifyContent: "flex-start",
-                              columnGap: theme.spacing.xs,
-                              height: 128,
-                            },
-                          })}
-                          key={candidate.id}
-                        >
-                          <Box>
-                            {candidate.image ? (
-                              <Image
-                                src={candidate.image}
-                                alt="Candidate's image"
-                                width={92}
-                                height={92}
-                                style={{
-                                  objectFit: "cover",
-                                }}
-                                priority
-                              />
-                            ) : (
-                              <IconUser
-                                style={{ width: 92, height: 92, padding: 8 }}
-                              />
-                            )}
-                          </Box>
-
-                          <Text
-                            lineClamp={2}
-                            sx={(theme) => ({
-                              textAlign: "center",
                               [theme.fn.smallerThan("xs")]: {
-                                textAlign: "left",
+                                width: "100%",
+                                flexDirection: "row",
+                                justifyContent: "flex-start",
+                                columnGap: theme.spacing.xs,
+                                height: 128,
                               },
                             })}
+                            key={candidate.id}
                           >
-                            {candidate.first_name}{" "}
-                            {candidate.middle_name
-                              ? candidate.middle_name + " "
-                              : ""}
-                            {candidate.last_name} ({candidate.partylist.acronym}
-                            )
-                          </Text>
-                        </UnstyledButton>
-                      ))
-                    )}
-                  </Group>
-                </Stack>
-              ))}
+                            <Box>
+                              {candidate.image ? (
+                                <Image
+                                  src={candidate.image}
+                                  alt="Candidate's image"
+                                  width={92}
+                                  height={92}
+                                  style={{
+                                    objectFit: "cover",
+                                  }}
+                                  priority
+                                />
+                              ) : (
+                                <IconUser
+                                  style={{ width: 92, height: 92, padding: 8 }}
+                                />
+                              )}
+                            </Box>
+
+                            <Text
+                              lineClamp={2}
+                              sx={(theme) => ({
+                                textAlign: "center",
+                                [theme.fn.smallerThan("xs")]: {
+                                  textAlign: "left",
+                                },
+                              })}
+                            >
+                              {candidate.first_name}{" "}
+                              {candidate.middle_name
+                                ? candidate.middle_name + " "
+                                : ""}
+                              {candidate.last_name} (
+                              {candidate.partylist.acronym})
+                            </Text>
+                          </UnstyledButton>
+                        ))
+                      )}
+                    </Group>
+                  </Stack>
+                ))}
+              </Stack>
             </Stack>
-          </Stack>
+          </>
         )}
       </Container>
     </>
