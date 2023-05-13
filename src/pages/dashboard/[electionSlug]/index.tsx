@@ -19,16 +19,24 @@ import { useRouter } from "next/router";
 import Moment from "react-moment";
 import { convertNumberToHour } from "../../../utils/convertNumberToHour";
 import { api } from "../../../utils/api";
-import { IconDownload, IconExternalLink } from "@tabler/icons-react";
+import {
+  IconDownload,
+  IconExternalLink,
+  IconQrcode,
+} from "@tabler/icons-react";
 import Link from "next/link";
 import { IconFlag, IconReplace, IconUserSearch } from "@tabler/icons-react";
 import Head from "next/head";
 import type { GeneratedElectionResult } from "@prisma/client";
 import { supabase } from "../../../lib/supabase";
 import { useState } from "react";
+import { useDisclosure } from "@mantine/hooks";
+import QRCode from "../../../components/modals/QRCode";
 
 const DashboardOverview = () => {
   const router = useRouter();
+  const [openedQRCode, { open: openQRCode, close: closeQRCode }] =
+    useDisclosure(false);
 
   const generateResults = api.election.getAllGeneratedResults.useQuery(
     {
@@ -72,6 +80,11 @@ const DashboardOverview = () => {
         </Text>
       ) : (
         <>
+          <QRCode
+            isOpen={openedQRCode}
+            onClose={closeQRCode}
+            election={electionOverview.data.election}
+          />
           <Head>
             <title>
               {electionOverview.data.election.name} &ndash; Overview | eBoto Mo
@@ -79,24 +92,48 @@ const DashboardOverview = () => {
           </Head>
           <Stack p="md">
             <Box>
-              <Flex align="center" gap="sm">
-                <Title order={2}>
-                  {`${electionOverview.data.election.name} (@${electionOverview.data.election.slug})`}
-                </Title>
+              <Group position="apart">
+                <Flex align="center" gap="sm">
+                  <Title order={2}>
+                    {`${electionOverview.data.election.name} (@${electionOverview.data.election.slug})`}
+                  </Title>
+                  <ActionIcon
+                    component={Link}
+                    href={`/${electionOverview.data.election.slug}`}
+                    target="_blank"
+                    sx={(theme) => ({
+                      borderRadius: "50%",
+                      width: 34,
+                      height: 34,
+                      padding: theme.radius.xs,
+                    })}
+                  >
+                    <IconExternalLink size={rem(18)} />
+                  </ActionIcon>
+                </Flex>
                 <ActionIcon
-                  component={Link}
-                  href={`/${electionOverview.data.election.slug}`}
-                  target="_blank"
+                  onClick={openQRCode}
+                  variant="filled"
                   sx={(theme) => ({
-                    borderRadius: "50%",
-                    width: 34,
-                    height: 34,
-                    padding: theme.radius.xs,
+                    [theme.fn.largerThan("md")]: {
+                      display: "none",
+                    },
                   })}
                 >
-                  <IconExternalLink size={rem(18)} />
+                  <IconQrcode size={rem(18)} />
                 </ActionIcon>
-              </Flex>
+                <Button
+                  onClick={openQRCode}
+                  sx={(theme) => ({
+                    [theme.fn.smallerThan("md")]: {
+                      display: "none",
+                    },
+                  })}
+                  leftIcon={<IconQrcode size={rem(18)} />}
+                >
+                  Download/Scan QR Code
+                </Button>
+              </Group>
               <Text>
                 <Moment
                   format="MMMM DD, YYYY"
