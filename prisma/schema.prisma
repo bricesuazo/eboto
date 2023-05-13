@@ -139,6 +139,8 @@ model Election {
     createdAt    DateTime          @default(now())
     updatedAt    DateTime          @updatedAt
 
+    voter_domain String?
+
     commissioners           Commissioner[]
     voters                  Voter[]
     candidates              Candidate[]
