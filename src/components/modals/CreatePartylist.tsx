@@ -38,9 +38,9 @@ const CreatePartylistModal = ({
       name: hasLength(
         {
           min: 3,
-          max: 50,
+          max: 100,
         },
-        "Name must be between 3 and 50 characters"
+        "Name must be between 3 and 100 characters"
       ),
       acronym: hasLength(
         {
