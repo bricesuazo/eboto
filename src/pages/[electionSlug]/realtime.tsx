@@ -34,21 +34,24 @@ const RealtimePage = ({
   isOngoing: boolean;
 }) => {
   const now = new Date();
+  const nowPHT = new Date(
+    now.toLocaleString("en-US", { timeZone: "Asia/Manila" })
+  );
+  const isEnded =
+    election.end_date.getTime() > now.getTime() &&
+    election.voting_end > nowPHT.getHours();
+
   const title = `${election.name} – Realtime | eBoto Mo`;
   const positions = api.election.getElectionRealtime.useQuery(election.id, {
     refetchInterval:
-      env.NEXT_PUBLIC_NODE_ENV === "production" && election.end_date > now
-        ? 1000
-        : undefined,
+      env.NEXT_PUBLIC_NODE_ENV === "production" && isEnded ? 1000 : undefined,
   });
 
   const voterFieldsStats = api.voter.getFieldsStats.useQuery(
     { electionSlug: election.slug },
     {
       refetchInterval:
-        env.NEXT_PUBLIC_NODE_ENV === "production" && election.end_date > now
-          ? 1000
-          : undefined,
+        env.NEXT_PUBLIC_NODE_ENV === "production" && isEnded ? 1000 : undefined,
     }
   );
 
