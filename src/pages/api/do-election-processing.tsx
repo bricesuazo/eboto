@@ -55,14 +55,20 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
-    const expiresAt = new Date(election.end_date);
+    const expiresAtPHT = new Date(
+      election.end_date.toLocaleString("en-US", { timeZone: "Asia/Manila" })
+    );
+    console.log(
+      "🚀 ~ file: do-election-processing.tsx:61 ~ handler ~ expiresAtPHT:",
+      expiresAtPHT
+    );
 
-    expiresAt.setHours(election.voting_end);
+    expiresAtPHT.setHours(election.voting_end);
 
     for (const voter of invitedVoters) {
       const token = await prisma.verificationToken.create({
         data: {
-          expiresAt,
+          expiresAt: expiresAtPHT,
           type: "ELECTION_INVITATION",
           invitedVoter: {
             connect: {
@@ -80,7 +86,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             type="VOTER"
             token={token.id}
             electionName={election.name}
-            electionEndDate={expiresAt}
+            electionEndDate={expiresAtPHT}
           />
         ),
       });
