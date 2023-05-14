@@ -33,10 +33,7 @@ const RealtimePage = ({
   election: Election;
   isOngoing: boolean;
 }) => {
-  const isEnded = isElectionEnded({
-    election,
-    withTime: true,
-  });
+  const isEnded = isElectionEnded({ election });
 
   const now = new Date();
 
@@ -100,12 +97,22 @@ const RealtimePage = ({
                 <Text align="center" size="xs" color="dimmed">
                   <Balancer>
                     Realtime result as of{" "}
-                    <Moment date={now} format="MMMM Do YYYY, h:mm:ss a" />
+                    <Moment date={now} format="MMMM Do YYYY, h:mm:ss A" />
                   </Balancer>
                 </Text>
               ) : (
                 <Text align="center" weight="bold">
-                  Official result
+                  Official result as of{" "}
+                  <Moment
+                    date={
+                      new Date(
+                        new Date(election.end_date).setHours(
+                          election.voting_end
+                        )
+                      )
+                    }
+                    format="MMMM Do YYYY, h A"
+                  />
                 </Text>
               )}
             </Box>
