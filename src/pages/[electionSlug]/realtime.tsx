@@ -25,6 +25,9 @@ import Head from "next/head";
 import { env } from "../../env.mjs";
 import { isElectionOngoing } from "../../utils/isElectionOngoing";
 import ScrollToTopButton from "../../components/ScrollToTopButton";
+import { isElectionEnded } from "../../utils/isElectionEnded";
+
+const now = new Date();
 
 const RealtimePage = ({
   election,
@@ -33,13 +36,7 @@ const RealtimePage = ({
   election: Election;
   isOngoing: boolean;
 }) => {
-  const now = new Date();
-  const nowPHT = new Date(
-    now.toLocaleString("en-US", { timeZone: "Asia/Manila" })
-  );
-  const isEnded =
-    election.end_date.getTime() > now.getTime() &&
-    election.voting_end > nowPHT.getHours();
+  const isEnded = isElectionEnded({ election, withTime: true });
 
   const title = `${election.name} – Realtime | eBoto Mo`;
   const positions = api.election.getElectionRealtime.useQuery(election.id, {
