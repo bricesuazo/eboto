@@ -111,11 +111,6 @@ export const voterRouter = createTRPCRouter({
       const election = await ctx.prisma.election.findFirst({
         where: {
           slug: input.electionSlug,
-          commissioners: {
-            some: {
-              userId: ctx.session?.user.id,
-            },
-          },
         },
         include: {
           voterField: true,
