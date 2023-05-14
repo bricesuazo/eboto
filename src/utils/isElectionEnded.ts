@@ -7,15 +7,8 @@ export const isElectionEnded = ({
   election: Election;
   withTime: boolean;
 }) => {
-  const end = new Date(election.end_date);
-  end.setDate(end.getDate() + 1);
+  const end_date = new Date(election.end_date);
+  const end = new Date(end_date.setHours(election.voting_end));
 
-  const now = new Date();
-  const nowPHT = new Date(
-    now.toLocaleString("en-US", { timeZone: "Asia/Manila" })
-  );
-
-  return withTime
-    ? end.getTime() <= now.getTime() && election.voting_end > nowPHT.getHours()
-    : end.getTime() <= now.getTime();
+  return withTime ? new Date() > end : new Date().getDate() > end.getDate();
 };

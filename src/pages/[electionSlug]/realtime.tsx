@@ -22,12 +22,9 @@ import { api } from "../../utils/api";
 import { convertNumberToHour } from "../../utils/convertNumberToHour";
 import Balancer from "react-wrap-balancer";
 import Head from "next/head";
-import { env } from "../../env.mjs";
-import { isElectionOngoing } from "../../utils/isElectionOngoing";
 import ScrollToTopButton from "../../components/ScrollToTopButton";
+import { isElectionOngoing } from "../../utils/isElectionOngoing";
 import { isElectionEnded } from "../../utils/isElectionEnded";
-
-const now = new Date();
 
 const RealtimePage = ({
   election,
@@ -36,21 +33,22 @@ const RealtimePage = ({
   election: Election;
   isOngoing: boolean;
 }) => {
-  const isEnded = isElectionEnded({ election, withTime: true });
+  const isEnded = isElectionEnded({
+    election,
+    withTime: true,
+  });
+
+  const now = new Date();
 
   const title = `${election.name} – Realtime | eBoto Mo`;
   const positions = api.election.getElectionRealtime.useQuery(election.id, {
-    refetchInterval:
-      env.NEXT_PUBLIC_NODE_ENV !== "development" && !isEnded ? 1000 : undefined,
+    refetchInterval: !isEnded ? 1000 : undefined,
   });
 
   const voterFieldsStats = api.voter.getFieldsStats.useQuery(
     { electionSlug: election.slug },
     {
-      refetchInterval:
-        env.NEXT_PUBLIC_NODE_ENV !== "development" && !isEnded
-          ? 1000
-          : undefined,
+      refetchInterval: !isEnded ? 1000 : undefined,
     }
   );
 
