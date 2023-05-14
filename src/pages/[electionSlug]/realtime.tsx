@@ -322,6 +322,8 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     });
 
+    if (!isVoter) return { notFound: true };
+
     if (
       (!vote && isVoter) ||
       (!isElectionOngoing({ election, withTime: true }) && isVoter && !vote)
