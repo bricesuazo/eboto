@@ -424,6 +424,8 @@ export const getServerSideProps: GetServerSideProps = async (
       },
     });
 
+    if (!isVoter) return { notFound: true };
+
     const isCommissioner = await prisma.commissioner.findFirst({
       where: {
         electionId: election.id,
