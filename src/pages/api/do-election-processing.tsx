@@ -80,7 +80,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
             type="VOTER"
             token={token.id}
             electionName={election.name}
-            electionEndDate={election.end_date}
+            electionEndDate={expiresAt}
           />
         ),
       });

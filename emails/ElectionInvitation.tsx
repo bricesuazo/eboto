@@ -67,10 +67,12 @@ export default function ElectionInvitation({
           </Section>
           <Text style={paragraph}>
             This invitation will expire on{" "}
-            {electionEndDate.toLocaleDateString("en-US", {
+            {electionEndDate.toLocaleString("en-US", {
+              timeZone: "Asia/Manila",
               year: "numeric",
               month: "long",
               day: "numeric",
+              hour: "numeric",
             })}
           </Text>
           <Hr style={hr} />
