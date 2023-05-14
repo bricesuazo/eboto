@@ -4,6 +4,7 @@ import { z } from "zod";
 import { sendEmail } from "../../../utils/sendEmail";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import type { Prisma } from "@prisma/client";
 
 export const userRouter = createTRPCRouter({
   updateProfile: protectedProcedure
@@ -173,7 +174,7 @@ export const userRouter = createTRPCRouter({
             data: {
               userId: ctx.session.user.id,
               electionId: token.invitedVoter.electionId,
-              field: token.invitedVoter.field?.toString(),
+              field: token.invitedVoter.field as Prisma.JsonObject,
             },
           });
 

@@ -214,31 +214,12 @@ const ElectionPage = ({
                       Vote now!
                     </Button>
                   )}
-                  <Button
-                    variant="outline"
-                    onClick={openQRCode}
-                    leftIcon={<IconQrcode />}
-                    radius="xl"
-                    size="md"
-                    sx={(theme) => ({
-                      [theme.fn.smallerThan("xs")]: {
-                        display: "none",
-                      },
-                    })}
-                  >
-                    Download QR Code
-                  </Button>
                   <ActionIcon
                     onClick={openQRCode}
                     variant="outline"
                     color="#2f9e44"
                     radius="xl"
                     size="xl"
-                    sx={(theme) => ({
-                      [theme.fn.largerThan("xs")]: {
-                        display: "none",
-                      },
-                    })}
                   >
                     <IconQrcode />
                   </ActionIcon>
