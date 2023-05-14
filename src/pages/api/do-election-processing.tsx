@@ -55,10 +55,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       },
     });
 
+    const expiresAt = new Date(election.end_date);
+
+    expiresAt.setHours(election.voting_end);
+
     for (const voter of invitedVoters) {
       const token = await prisma.verificationToken.create({
         data: {
-          expiresAt: election.end_date,
+          expiresAt,
           type: "ELECTION_INVITATION",
           invitedVoter: {
             connect: {
