@@ -1,4 +1,4 @@
-import { protectedProcedure } from "../trpc";
+import { publicProcedure, protectedProcedure } from "../trpc";
 import { z } from "zod";
 import { createTRPCRouter } from "../trpc";
 import { TRPCError } from "@trpc/server";
@@ -101,7 +101,7 @@ export const voterRouter = createTRPCRouter({
       }
     }),
 
-  getFieldsStats: protectedProcedure
+  getFieldsStats: publicProcedure
     .input(
       z.object({
         electionSlug: z.string(),
@@ -113,7 +113,7 @@ export const voterRouter = createTRPCRouter({
           slug: input.electionSlug,
           commissioners: {
             some: {
-              userId: ctx.session.user.id,
+              userId: ctx.session?.user.id,
             },
           },
         },

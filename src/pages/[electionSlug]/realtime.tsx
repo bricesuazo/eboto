@@ -44,14 +44,14 @@ const RealtimePage = ({
   const title = `${election.name} – Realtime | eBoto Mo`;
   const positions = api.election.getElectionRealtime.useQuery(election.id, {
     refetchInterval:
-      env.NEXT_PUBLIC_NODE_ENV === "production" && !isEnded ? 1000 : undefined,
+      env.NEXT_PUBLIC_NODE_ENV !== "development" && !isEnded ? 1000 : undefined,
   });
 
   const voterFieldsStats = api.voter.getFieldsStats.useQuery(
     { electionSlug: election.slug },
     {
       refetchInterval:
-        env.NEXT_PUBLIC_NODE_ENV === "production" && !isEnded
+        env.NEXT_PUBLIC_NODE_ENV !== "development" && !isEnded
           ? 1000
           : undefined,
     }
