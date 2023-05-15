@@ -148,14 +148,14 @@ const Signup: NextPage = () => {
                       required
                       {...form.getInputProps("firstName")}
                       icon={<IconLetterCase size="1rem" />}
-                      disabled={signUpMutation.isLoading}
+                      disabled={signUpMutation.isLoading || true}
                     />
                     <TextInput
                       placeholder="Enter your last name"
                       withAsterisk
                       label="Last name"
                       {...form.getInputProps("lastName")}
-                      disabled={signUpMutation.isLoading}
+                      disabled={signUpMutation.isLoading || true}
                       icon={<IconLetterCase size="1rem" />}
                     />
                   </Group>
@@ -167,7 +167,7 @@ const Signup: NextPage = () => {
                     label="Email"
                     required
                     icon={<IconAt size="1rem" />}
-                    disabled={signUpMutation.isLoading}
+                    disabled={signUpMutation.isLoading || true}
                     {...form.getInputProps("email")}
                   />
 
@@ -179,7 +179,7 @@ const Signup: NextPage = () => {
                     visible={visible}
                     onVisibilityChange={toggle}
                     {...form.getInputProps("password")}
-                    disabled={signUpMutation.isLoading}
+                    disabled={signUpMutation.isLoading || true}
                     icon={<IconLock size="1rem" />}
                   />
                   <PasswordInput
@@ -190,7 +190,7 @@ const Signup: NextPage = () => {
                     visible={visible}
                     onVisibilityChange={toggle}
                     {...form.getInputProps("confirmPassword")}
-                    disabled={signUpMutation.isLoading}
+                    disabled={signUpMutation.isLoading || true}
                     icon={<IconLock size="1rem" />}
                   />
 
@@ -207,10 +207,14 @@ const Signup: NextPage = () => {
                   <Button
                     type="submit"
                     loading={signUpMutation.isLoading}
-                    disabled={isGoogleLoading}
+                    disabled={isGoogleLoading || true}
                   >
                     Sign up
                   </Button>
+                  <Text>
+                    Signing up with credentials is currently unavailable. Please
+                    use the Sign in with Google instead.
+                  </Text>
                 </Stack>
               </form>
             </Stack>

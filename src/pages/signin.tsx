@@ -144,7 +144,7 @@ const Signin: NextPage = () => {
                   required
                   {...form.getInputProps("email")}
                   icon={<IconAt size="1rem" />}
-                  disabled={loadings.credentials || loadings.google}
+                  disabled={loadings.credentials || loadings.google ||true}
                 />
 
                 <PasswordInput
@@ -154,15 +154,15 @@ const Signin: NextPage = () => {
                   required
                   {...form.getInputProps("password")}
                   icon={<IconLock size="1rem" />}
-                  disabled={loadings.credentials || loadings.google}
+                  disabled={loadings.credentials || loadings.google ||true}
                 />
                 <Group position="apart">
                   <Checkbox
                     label="Remember me"
                     size="sm"
-                    disabled={loadings.credentials || loadings.google}
+                    disabled={loadings.credentials || loadings.google ||true}
                   />
-                  <MediaQuery smallerThan="xs" styles={{ display: "none" }}>
+                  {/* <MediaQuery smallerThan="xs" styles={{ display: "none" }}>
                     <Anchor
                       size="sm"
                       variant=""
@@ -173,7 +173,7 @@ const Signin: NextPage = () => {
                     >
                       Forgot password?
                     </Anchor>
-                  </MediaQuery>
+                  </MediaQuery> */}
                 </Group>
 
                 {error && (
@@ -189,10 +189,12 @@ const Signin: NextPage = () => {
                 <Button
                   type="submit"
                   loading={loadings.credentials}
-                  disabled={loadings.google}
+                  disabled={loadings.google ||true}
                 >
                   Sign in
                 </Button>
+
+                <Text>Signing in with credentials is currently unavailable. Please use the Sign in with Google instead.</Text>
 
                 <MediaQuery largerThan="xs" styles={{ display: "none" }}>
                   <Center>

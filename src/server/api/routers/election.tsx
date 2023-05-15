@@ -300,11 +300,11 @@ export const electionRouter = createTRPCRouter({
         };
       });
 
-      await sendEmailTransport({
-        email: ctx.session.user.email,
-        subject: `Resibo: You have successfully casted your vote in ${election.name}`,
-        html: render(<VoteCasted election={election} votes={votes} />),
-      });
+      // await sendEmailTransport({
+      //   email: ctx.session.user.email,
+      //   subject: `Resibo: You have successfully casted your vote in ${election.name}`,
+      //   html: render(<VoteCasted election={election} votes={votes} />),
+      // });
     }),
   getElectionVoting: publicProcedure
     .input(z.string())
