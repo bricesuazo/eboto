@@ -97,6 +97,19 @@ export const authOptions: NextAuthOptions = {
               emailVerified: new Date(),
             },
           });
+        } else {
+          if (!user.emailVerified) {
+            await prisma.user.update({
+              where: { email: profile.email },
+              data: { emailVerified: new Date() },
+            });
+          }
+          if (user.image !== profile.image) {
+            await prisma.user.update({
+              where: { email: profile.email },
+              data: { image: profile.image },
+            });
+          }
         }
 
         return true;
