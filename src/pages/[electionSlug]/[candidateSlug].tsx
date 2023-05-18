@@ -84,16 +84,14 @@ const CandidatePage = ({
       <Container py="xl">
         <Stack>
           <Breadcrumbs w="100%">
-            <Box>
-              <Anchor
-                component={Link}
-                href={`/${election.slug}`}
-                truncate
-                maw={300}
-              >
-                {election.name}
-              </Anchor>
-            </Box>
+            <Anchor
+              component={Link}
+              href={`/${election.slug}`}
+              truncate
+              maw={300}
+            >
+              {election.name}
+            </Anchor>
 
             <Text truncate maw={300}>
               {`${candidate.last_name}, ${candidate.first_name}${
@@ -231,7 +229,8 @@ const CandidatePage = ({
                         {candidate.credential.affiliations.map(
                           (affiliation) => (
                             <List.Item key={affiliation.id}>
-                              {affiliation.org_name} - {affiliation.org_position} (
+                              {affiliation.org_name} -{" "}
+                              {affiliation.org_position} (
                               <Moment
                                 format="YYYY"
                                 date={affiliation.start_year}
