@@ -142,7 +142,7 @@ const ElectionPage = ({
                   )}
                 </Group>
 
-                <Title order={2} lineClamp={2} align="center">
+                <Title order={2} align="center" maw={600}>
                   {election.name} (@{election.slug})
                 </Title>
 
