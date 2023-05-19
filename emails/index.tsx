@@ -1,4 +1,4 @@
-import sendgrid from "@sendgrid/mail";
+import AWS from "aws-sdk";
 import { env } from "../src/env.mjs";
 
 export const sendEmailTransport = async ({
@@ -10,12 +10,26 @@ export const sendEmailTransport = async ({
   subject: string;
   html: string;
 }) => {
-  sendgrid.setApiKey(env.SENDGRID_API_KEY);
+  AWS.config.update({ region: env.AWS_SES_REGION });
 
-  await sendgrid.send({
-    from: env.EMAIL_FROM,
-    to: email,
-    subject,
-    html,
-  });
+  const options = {
+    Source: env.EMAIL_FROM,
+    Destination: {
+      ToAddresses: [email],
+    },
+    Message: {
+      Body: {
+        Html: {
+          Charset: "UTF-8",
+          Data: html,
+        },
+      },
+      Subject: {
+        Charset: "UTF-8",
+        Data: subject,
+      },
+    },
+  };
+
+  await new AWS.SES().sendEmail(options).promise();
 };

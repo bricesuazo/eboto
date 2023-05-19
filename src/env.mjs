@@ -23,6 +23,7 @@ const server = z.object({
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
   EMAIL_FROM: z.string().email(),
+  AWS_SES_REGION: z.string(),
 
   // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
 });
@@ -58,6 +59,7 @@ const processEnv = {
   NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
   NEXT_PUBLIC_SUPABASE_KEY: process.env.NEXT_PUBLIC_SUPABASE_KEY,
   NEXT_PUBLIC_NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV,
+  AWS_SES_REGION: process.env.AWS_SES_REGION,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 
