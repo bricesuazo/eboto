@@ -23,7 +23,7 @@ model GeneratedElectionResult {
     election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
     electionId String
 
-    @@index([electionId])
+    @@index([electionId, id])
 }
 
 model User {
@@ -42,7 +42,7 @@ model User {
     tokens        VerificationToken[]
     commissioners Commissioner[]
     voters        Voter[]
-    ReportProblem ReportProblem[]
+    reportProblem ReportProblem[]
 
     @@index([id, email])
 }
@@ -60,7 +60,7 @@ model InvitedCommissioner {
 
     createdAt DateTime @default(now())
 
-    @@index([electionId])
+    @@index([electionId, id])
 }
 
 model InvitedVoter {
@@ -78,7 +78,7 @@ model InvitedVoter {
 
     createdAt DateTime @default(now())
 
-    @@index([electionId])
+    @@index([electionId, id])
 }
 
 enum AccountStatusType {
@@ -164,7 +164,7 @@ model VoterField {
     election   Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
     electionId String
 
-    @@index([electionId])
+    @@index([electionId, id])
 }
 
 enum TokenType {
@@ -187,6 +187,7 @@ model VerificationToken {
     invitedCommissioner   InvitedCommissioner? @relation(fields: [invitedCommissionerId], references: [id], onDelete: Cascade)
     invitedCommissionerId String?
 
+    @@index([id])
     @@index([userId])
     @@index([invitedVoterId])
     @@index([invitedCommissionerId])
@@ -203,6 +204,8 @@ model Credential {
 
     candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
     candidateId String    @unique
+
+    @@index([candidateId, id])
 }
 
 model Platform {
@@ -214,7 +217,7 @@ model Platform {
     candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
     candidateId String
 
-    @@index([candidateId])
+    @@index([candidateId, id])
 }
 
 model EventAttended {
@@ -227,7 +230,7 @@ model EventAttended {
     credential   Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
     credentialId String
 
-    @@index([credentialId])
+    @@index([credentialId, id])
 }
 
 model Affiliation {
@@ -242,7 +245,7 @@ model Affiliation {
     credential   Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
     credentialId String
 
-    @@index([credentialId])
+    @@index([credentialId, id])
 }
 
 model Achievement {
@@ -255,7 +258,7 @@ model Achievement {
     credential   Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
     credentialId String
 
-    @@index([credentialId])
+    @@index([credentialId, id])
 }
 
 model Candidate {
@@ -282,6 +285,7 @@ model Candidate {
     platform   Platform[]
     vote       Vote[]
 
+    @@index([id])
     @@index([electionId])
     @@index([positionId])
     @@index([partylistId])
@@ -302,6 +306,7 @@ model Vote {
     position   Position? @relation(fields: [positionId], references: [id], onDelete: Cascade)
     positionId String?
 
+    @@index([id])
     @@index([electionId])
     @@index([voterId])
     @@index([candidateId])
@@ -341,7 +346,7 @@ model Partylist {
 
     candidate Candidate[]
 
-    @@index([electionId])
+    @@index([electionId, id])
 }
 
 model ReportProblem {
@@ -354,5 +359,5 @@ model ReportProblem {
     subject     String
     description String
 
-    @@index([userId])
+    @@index([userId, id])
 }
