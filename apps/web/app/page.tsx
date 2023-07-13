@@ -1,9 +1,7 @@
-
-
 export default function Page() {
   return (
-    <h1>
+    <main>
       Web
-    </h1>
+    </main>
   );
 }
