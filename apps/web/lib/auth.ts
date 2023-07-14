@@ -1,6 +1,5 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { getServerSession } from "next-auth/next";
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -8,15 +7,15 @@ export const authOptions: NextAuthOptions = {
   },
   providers: [
     CredentialsProvider({
-      name: "Sign in",
       credentials: {
-        email: {
+        username: {
           label: "Username",
           placeholder: "username",
+          value: "admin",
         },
       },
       async authorize(credentials) {
-        const user = { id: "1", name: "Admin", email: "admin@admin.com" };
+        const user = { id: "1", name: "User", username: credentials.username };
         return user;
       },
     }),

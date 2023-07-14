@@ -95,6 +95,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+      react-wrap-balancer:
+        specifier: ^1.0.0
+        version: registry.npmjs.org/react-wrap-balancer@1.0.0(react@18.2.0)
     devDependencies:
       '@types/node':
         specifier: ^20.4.1
@@ -5423,6 +5426,17 @@ packages:
       prop-types: registry.npmjs.org/prop-types@15.8.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  registry.npmjs.org/react-wrap-balancer@1.0.0(react@18.2.0):
+    resolution: {integrity: sha512-yjDH+I8WGyDfh95gKhX/6ckfSBAltwQkxiYxtLPlyIRQNUVSjvz1uHR6Hpy+zHyOkJQw6GEC5RPglA41QXvzyw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/react-wrap-balancer/-/react-wrap-balancer-1.0.0.tgz}
+    id: registry.npmjs.org/react-wrap-balancer/1.0.0
+    name: react-wrap-balancer
+    version: 1.0.0
+    peerDependencies:
+      react: '>=16.8.0 || ^17.0.0 || ^18'
+    dependencies:
+      react: 18.2.0
     dev: false
 
   registry.npmjs.org/readable-stream@3.6.2:

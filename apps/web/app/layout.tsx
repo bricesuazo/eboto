@@ -12,7 +12,10 @@ const font = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: siteConfig.name,
+  title: {
+    default: siteConfig.name,
+    template: "%s | " + siteConfig.name,
+  },
   description: siteConfig.description,
   keywords: ["eBoto Mo", "Vote", "Election", "Voting System"],
   authors: [

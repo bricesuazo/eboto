@@ -1,7 +1,7 @@
-import { Button, Container, Group } from "@mantine/core";
+import { Anchor, Button, Container, Group } from "@mantine/core";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
-import SignoutButton from "@/components/signout-button";
+import { SignoutButton, SigninButton } from "@/components/auth-button";
 
 export default async function Header() {
   const session = await getServerSession();
@@ -9,17 +9,20 @@ export default async function Header() {
 
   return (
     <main>
-      <Container size="sm">
+      <Container size="sm" p="md">
         <Group justify="space-between">
-          <Button type="submit" component={Link} href="/">
-            Home
-          </Button>
+          <Anchor type="submit" variant="link" component={Link} href="/">
+            eBoto Mo
+          </Anchor>
           {session ? (
-            <SignoutButton />
+            <Group>
+              <SignoutButton />
+              <Button type="submit" component={Link} href="/dashboard">
+                Dashboard
+              </Button>
+            </Group>
           ) : (
-            <Button type="submit" component={Link} href="/dashboard">
-              Dashboard
-            </Button>
+            <SigninButton />
           )}
         </Group>
       </Container>
