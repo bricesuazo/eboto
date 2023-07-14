@@ -1,0 +1,20 @@
+{
+  "name": "db",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "mysql2": "^2.3.3"
+  },
+  "scripts": {
+    "db:push": "drizzle-kit push:mysql"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.5",
+    "dotenv": "^16.0.3",
+    "drizzle-kit": "0.17.6-76e73f3",
+    "drizzle-orm": "0.25.4",
+    "typescript": "^5.0.2"
+  }
+}

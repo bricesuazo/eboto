@@ -21,22 +21,26 @@
     "@mantine/nprogress": "^6.0.16",
     "@mantine/spotlight": "^7.0.0-alpha.17",
     "@mantine/tiptap": "^6.0.16",
+    "@planetscale/database": "^1.8.0",
     "@tabler/icons-react": "^2.25.0",
     "@tiptap/extension-link": "^2.0.3",
     "@tiptap/react": "^2.0.3",
     "@tiptap/starter-kit": "^2.0.3",
     "dayjs": "^1.11.9",
+    "drizzle-orm": "^0.27.2",
     "embla-carousel-react": "8.0.0-rc11",
     "next": "^v13.4.10-canary.6",
     "next-auth": "^4.22.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-wrap-balancer": "^1.0.0"
+    "react-wrap-balancer": "^1.0.0",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@types/node": "^20.4.1",
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
+    "drizzle-kit": "^0.19.5",
     "eslint-config-custom": "workspace:*",
     "tsconfig": "workspace:*",
     "typescript": "^5.1.6"
