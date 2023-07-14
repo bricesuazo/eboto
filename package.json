@@ -2,11 +2,13 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "dev": "dotenv turbo run dev",
     "lint": "turbo run lint",
+    "start": "pnpm run start",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
+    "dotenv-cli": "latest",
     "@turbo/gen": "^1.10.7",
     "eslint": "^8.44.0",
     "eslint-config-custom": "workspace:*",

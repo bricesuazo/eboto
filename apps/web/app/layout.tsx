@@ -3,6 +3,13 @@ import "@mantine/core/styles.css";
 import { MantineProvider, ColorSchemeScript } from "@mantine/core";
 import { type Metadata } from "next";
 import { siteConfig } from "@/config/site";
+import { Poppins } from "next/font/google";
+import Header from "@/components/header";
+
+const font = Poppins({
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: siteConfig.name,
@@ -56,8 +63,15 @@ export default function RootLayout({
       <head>
         <ColorSchemeScript />
       </head>
-      <body>
-        <MantineProvider>{children}</MantineProvider>
+      <body className={font.className}>
+        <MantineProvider
+          theme={{
+            primaryColor: "green",
+          }}
+        >
+          <Header />
+          {children}
+        </MantineProvider>
       </body>
     </html>
   );
