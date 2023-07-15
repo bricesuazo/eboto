@@ -7,7 +7,7 @@ import { Poppins } from "next/font/google";
 import Header from "@/components/header";
 import { Analytics } from "@vercel/analytics/react";
 
-export const revalidate = process.env.NODE_ENV === "production" ? false : 0;
+export const revalidate = 0;
 
 const font = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
