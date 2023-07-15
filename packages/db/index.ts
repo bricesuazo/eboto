@@ -1,16 +1,6 @@
-import { config } from "dotenv";
-import { drizzle } from "drizzle-orm/mysql2";
-import mysql, { type Pool } from "mysql2/promise";
+import { drizzle } from "drizzle-orm/planetscale-serverless";
+import { connect } from "@planetscale/database";
 
-const globalForMySQL = globalThis as unknown as { poolConnection: Pool };
+const connection = connect({ url: process.env.DATABASE_URL });
 
-const poolConnection =
-  globalForMySQL.poolConnection ||
-  mysql.createPool({
-    uri: process.env.DATABASE_URL,
-  });
-
-if (process.env.NODE_ENV !== "production")
-  globalForMySQL.poolConnection = poolConnection;
-
-export const db = drizzle(poolConnection);
+export const db = drizzle(connection);

@@ -1,20 +1,21 @@
 {
+  "name": "eboto-mo",
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "dotenv turbo run dev",
+    "dev": "with-env turbo run dev",
     "lint": "turbo run lint",
-    "start": "pnpm run start",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "db:push": "pnpm with-env turbo --filter @eboto-mo/db db:push",
+    "with-env": "dotenv -e ../../.env --"
   },
   "devDependencies": {
-    "dotenv-cli": "latest",
+    "dotenv-cli": "^7.2.1",
     "@turbo/gen": "^1.10.7",
-    "eslint": "^8.44.0",
+    "eslint": "^8.45.0",
     "eslint-config-custom": "workspace:*",
     "prettier": "^3.0.0",
-    "turbo": "latest"
+    "turbo": "^1.10.7"
   },
-  "packageManager": "pnpm@7.15.0",
-  "name": "eboto-mo"
+  "packageManager": "pnpm@7.15.0"
 }

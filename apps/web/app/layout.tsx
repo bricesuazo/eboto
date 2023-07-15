@@ -5,6 +5,7 @@ import { type Metadata } from "next";
 import { siteConfig } from "@/config/site";
 import { Poppins } from "next/font/google";
 import Header from "@/components/header";
+import { Analytics } from "@vercel/analytics/react";
 
 const font = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -49,9 +50,9 @@ export const metadata: Metadata = {
     creator: "@brice_suazo",
   },
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
+    icon: "/images/favicon/favicon.ico",
+    shortcut: "/images/favicon/favicon-16x16.png",
+    apple: "/images/favicon/apple-touch-icon.png",
   },
   manifest: `${siteConfig.url}/site.webmanifest`,
 };
@@ -74,6 +75,7 @@ export default function RootLayout({
         >
           <Header />
           {children}
+          <Analytics />
         </MantineProvider>
       </body>
     </html>

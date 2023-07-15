@@ -7,10 +7,3 @@ export const example = mysqlTable("example", {
   created_at: timestamp("created_at").notNull().defaultNow().onUpdateNow(),
   updated_at: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
 });
-
-export const usersExample = mysqlTable("users", {
-  id: int("id").autoincrement().primaryKey(),
-  name: text("name").notNull(),
-  age: int("age"),
-  occupation: text("occupation"),
-});

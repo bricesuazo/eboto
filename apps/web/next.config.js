@@ -1,6 +1,6 @@
 module.exports = {
   reactStrictMode: true,
-  transpilePackages: [],
+  transpilePackages: ["@eboto-mo/db"],
   experimental: {
     serverActions: true,
   },

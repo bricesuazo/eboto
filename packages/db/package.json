@@ -1,20 +1,21 @@
 {
-  "name": "db",
+  "name": "@eboto-mo/db",
   "main": "./index.ts",
   "types": "./index.ts",
   "version": "0.0.0",
-  "private": true,
-  "dependencies": {
-    "mysql2": "^2.3.3"
-  },
   "scripts": {
-    "db:push": "drizzle-kit push:mysql"
+    "db:push": "pnpm with-env drizzle-kit push:mysql",
+    "with-env": "dotenv -e ../../.env --"
+  },
+  "dependencies": {
+    "@planetscale/database": "^1.8.0",
+    "drizzle-orm": "0.27.2"
   },
   "devDependencies": {
-    "@types/node": "^18.15.5",
-    "dotenv": "^16.0.3",
-    "drizzle-kit": "0.17.6-76e73f3",
-    "drizzle-orm": "0.25.4",
+    "tsconfig": "workspace:*",
+    "@types/node": "^20.4.2",
+    "dotenv-cli": "^7.2.1",
+    "drizzle-kit": "0.19.5",
     "typescript": "^5.0.2"
   }
 }
