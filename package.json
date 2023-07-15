@@ -3,11 +3,11 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "with-env turbo run dev",
+    "dev": "pnpm with-env turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "db:push": "pnpm with-env turbo --filter @eboto-mo/db db:push",
-    "with-env": "dotenv -e ../../.env --"
+    "with-env": "dotenv -e .env --"
   },
   "devDependencies": {
     "dotenv-cli": "^7.2.1",
