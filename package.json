@@ -13,7 +13,7 @@
     "dotenv-cli": "^7.2.1",
     "@turbo/gen": "^1.10.7",
     "eslint": "^8.45.0",
-    "eslint-config-custom": "workspace:*",
+    "@eboto-mo/eslint-config": "workspace:*",
     "prettier": "^3.0.0",
     "turbo": "^1.10.7"
   },

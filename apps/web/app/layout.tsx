@@ -55,6 +55,7 @@ export const metadata: Metadata = {
     apple: "/images/favicon/apple-touch-icon.png",
   },
   manifest: `${siteConfig.url}/site.webmanifest`,
+  metadataBase: new URL(siteConfig.url),
 };
 
 export default function RootLayout({

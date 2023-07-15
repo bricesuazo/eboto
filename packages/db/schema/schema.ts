@@ -1,6 +1,4 @@
 import { mysqlTable, timestamp, varchar } from "drizzle-orm/mysql-core";
-import { text } from "drizzle-orm/mysql-core";
-import { int } from "drizzle-orm/mysql-core";
 
 export const example = mysqlTable("example", {
   id: varchar("id", { length: 191 }).primaryKey().notNull(),

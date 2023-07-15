@@ -4,5 +4,5 @@ import { example } from "@eboto-mo/db/schema";
 export default async function Page() {
   const test = await db.select().from(example);
   console.log("🚀 ~ file: page.tsx:6 ~ Page ~ test:", test);
-  return <div></div>;
+  return <div>dasd</div>;
 }

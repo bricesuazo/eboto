@@ -40,11 +40,11 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@eboto-mo/eslint-config": "workspace:*",
+    "@eboto-mo/tsconfig": "workspace:*",
     "@types/node": "^20.4.2",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
-    "eslint-config-custom": "workspace:*",
-    "tsconfig": "workspace:*",
     "typescript": "^5.1.6"
   }
 }
