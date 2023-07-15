@@ -5,11 +5,13 @@
   "version": "0.0.0",
   "scripts": {
     "db:push": "pnpm with-env drizzle-kit push:mysql",
+    "clean": "rm -rf .turbo node_modules",
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
     "@planetscale/database": "^1.8.0",
-    "drizzle-orm": "0.27.2"
+    "drizzle-orm": "0.27.2",
+    "mysql2": "^3.3.0"
   },
   "devDependencies": {
     "@eboto-mo/tsconfig": "workspace:*",

@@ -6,10 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "clean": "git clean -xdf .next .turbo node_modules"
   },
   "dependencies": {
-    "@eboto-mo/db": "workspace:*",
     "@mantine/carousel": "^6.0.16",
     "@mantine/code-highlight": "7.0.0-alpha.17",
     "@mantine/core": "^7.0.0-alpha.17",
@@ -22,7 +22,6 @@
     "@mantine/nprogress": "^6.0.16",
     "@mantine/spotlight": "^7.0.0-alpha.17",
     "@mantine/tiptap": "^6.0.16",
-    "@planetscale/database": "^1.8.0",
     "@t3-oss/env-nextjs": "^0.6.0",
     "@tabler/icons-react": "^2.25.0",
     "@tiptap/extension-link": "^2.0.3",
@@ -30,7 +29,6 @@
     "@tiptap/starter-kit": "^2.0.3",
     "@vercel/analytics": "^1.0.1",
     "dayjs": "^1.11.9",
-    "drizzle-orm": "^0.27.2",
     "embla-carousel-react": "8.0.0-rc11",
     "next": "^13.4.10",
     "next-auth": "^4.22.1",
@@ -40,6 +38,7 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@eboto-mo/db": "workspace:*",
     "@eboto-mo/eslint-config": "workspace:*",
     "@eboto-mo/tsconfig": "workspace:*",
     "@types/node": "^20.4.2",

@@ -5,17 +5,19 @@
     "build": "turbo run build",
     "dev": "pnpm with-env turbo run dev",
     "lint": "turbo run lint",
+    "clean": "git clean -xdf node_modules",
+    "clean:workspaces": "turbo clean",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "db:push": "pnpm with-env turbo --filter @eboto-mo/db db:push",
     "with-env": "dotenv -e .env --"
   },
   "devDependencies": {
+    "@eboto-mo/eslint-config": "workspace:*",
     "dotenv-cli": "^7.2.1",
     "@turbo/gen": "^1.10.7",
     "eslint": "^8.45.0",
-    "@eboto-mo/eslint-config": "workspace:*",
     "prettier": "^3.0.0",
     "turbo": "^1.10.7"
   },
-  "packageManager": "pnpm@7.15.0"
+  "packageManager": "pnpm@8.6.7"
 }
