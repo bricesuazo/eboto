@@ -1,4 +1,3 @@
-import { relations } from "drizzle-orm";
 import {
   mysqlTable,
   timestamp,
@@ -7,12 +6,40 @@ import {
   mysqlEnum,
   varchar,
   int,
+  json,
+  date,
 } from "drizzle-orm/mysql-core";
 
+const id = varchar("id", { length: 256 }).primaryKey().notNull().unique();
+const created_at = timestamp("created_at").notNull().defaultNow();
+const updated_at = timestamp("updated_at").notNull().defaultNow().onUpdateNow();
+const election_id = varchar("election_id", { length: 256 }).notNull();
+const user_id = varchar("user_id", { length: 256 }).notNull();
+const voter_id = varchar("voter_id", { length: 256 }).notNull();
+
 const publicity = ["PRIVATE", "VOTER", "PUBLIC"] as const;
+const token_type = [
+  "EMAIL_VERIFICATION",
+  "PASSWORD_RESET",
+  "ELECTION_INVITATION",
+] as const;
+const acount_status_type = ["ADDED", "INVITED", "DECLINED"] as const;
+
+export const users = mysqlTable("users", {
+  id,
+  email: varchar("email", { length: 256 }).notNull().unique(),
+  email_verified: timestamp("email_verified"),
+  first_name: text("first_name").notNull(),
+  middle_name: text("middle_name"),
+  last_name: text("last_name").notNull(),
+  image_link: longtext("image_link"),
+  password: longtext("password"),
+  created_at,
+  updated_at,
+});
 
 export const elections = mysqlTable("elections", {
-  id: varchar("id", { length: 256 }).primaryKey().notNull().unique(),
+  id,
   slug: varchar("slug", { length: 256 }).notNull().unique(),
   name: text("name").notNull(),
   description: longtext("description"),
@@ -22,110 +49,194 @@ export const elections = mysqlTable("elections", {
   logo: longtext("logo"),
   voter_domain: text("voter_domain"),
 
-  // commissioners           Commissioner[]
-  // voters                  Voter[]
-  // vote                    Vote[]
-  // invitedVoter            InvitedVoter[]
-  // invitedCommissioner     InvitedCommissioner[]
-  // generatedElectionResult GeneratedElectionResult[]
-  // voterField              VoterField[]
+  created_at,
+  updated_at,
+});
 
-  created_at: timestamp("created_at").notNull().defaultNow(),
-  updated_at: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
+export const votes = mysqlTable("votes", {
+  id,
+  created_at,
+
+  voter_id,
+  candidate_id: varchar("candidate_id", { length: 256 }),
+  position_id: varchar("position_id", { length: 256 }),
+  election_id,
+});
+
+export const commissioners = mysqlTable("commissioners", {
+  id,
+  created_at,
+
+  user_id,
+  election_id,
+});
+
+export const invited_commissioners = mysqlTable("invited_commissioners", {
+  id,
+  email: text("email").notNull(),
+  status: mysqlEnum("status", acount_status_type).default("INVITED"),
+
+  created_at,
+
+  election_id,
+});
+export const invited_voters = mysqlTable("invited_voters", {
+  id,
+  email: text("email").notNull(),
+  status: mysqlEnum("status", acount_status_type).default("ADDED"),
+  field: json("field"),
+
+  created_at,
+
+  election_id,
+});
+
+export const voters = mysqlTable("voters", {
+  id,
+  created_at,
+
+  user_id,
+  election_id,
 });
 
 export const partylists = mysqlTable("partylists", {
-  id: varchar("id", { length: 256 }).primaryKey().notNull().unique(),
+  id,
   name: text("name").notNull(),
   acronym: text("acronym").notNull(),
   description: longtext("description"),
   logo_link: longtext("logo_link"),
 
-  created_at: timestamp("created_at").notNull().defaultNow(),
-  updated_at: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
+  created_at,
+  updated_at,
 
-  election_id: varchar("election_id", { length: 256 }).notNull(),
+  election_id,
 });
 
 export const positions = mysqlTable("positions", {
-  id: varchar("id", { length: 256 }).primaryKey().notNull().unique(),
+  id,
   name: text("name").notNull(),
   description: longtext("description"),
   order: int("order").notNull(),
   min: int("min").default(0).notNull(),
   max: int("max").default(1).notNull(),
 
-  created_at: timestamp("created_at").notNull().defaultNow(),
-  updated_at: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
+  created_at,
+  updated_at,
 
-  election_id: varchar("election_id", { length: 256 }).notNull(),
+  election_id,
 });
 
 export const candidates = mysqlTable("candidates", {
-  id: varchar("id", { length: 256 }).primaryKey().notNull().unique(),
+  id,
   slug: varchar("slug", { length: 256 }).notNull().unique(),
   first_name: text("first_name").notNull(),
   middle_name: text("middle_name"),
   last_name: text("last_name").notNull(),
   image_link: longtext("image_link"),
 
-  created_at: timestamp("created_at").notNull().defaultNow(),
-  updated_at: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
+  created_at,
+  updated_at,
 
-  election_id: varchar("election_id", { length: 256 }).notNull(),
+  election_id,
   position_id: varchar("position_id", { length: 256 }).notNull(),
   partylist_id: varchar("partylist_id", { length: 256 }).notNull(),
-
-  // credential Credential?
-  // platform   Platform[]
-  // vote       Vote[]
 });
 
-export const users = mysqlTable("users", {
-  id: varchar("id", { length: 256 }).primaryKey().notNull().unique(),
-  email: varchar("email", { length: 256 }).notNull().unique(),
-  email_verified: timestamp("email_verified"),
-  first_name: text("first_name").notNull(),
-  middle_name: text("middle_name"),
-  last_name: text("last_name").notNull(),
-  image_link: longtext("image_link"),
-  password: longtext("password"),
-  created_at: timestamp("created_at").notNull().defaultNow(),
-  updated_at: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
+export const credentials = mysqlTable("credentials", {
+  id,
 
-  // votes         Vote[]
-  // tokens        VerificationToken[]
-  // commissioners Commissioner[]
-  // voters        Voter[]
-  // reportProblem ReportProblem[]
+  created_at,
+  updated_at,
+
+  candidate_id: varchar("candidate_id", { length: 256 }).notNull(),
 });
 
-export const electionsRelations = relations(elections, ({ many }) => ({
-  positions: many(positions),
-  partylists: many(partylists),
-  candidates: many(candidates),
-}));
+export const platforms = mysqlTable("platforms", {
+  id,
+  title: text("title").notNull(),
+  description: longtext("description"),
 
-export const partylistsRelations = relations(partylists, ({ one, many }) => ({
-  election: one(elections, {
-    fields: [partylists.election_id],
-    references: [elections.id],
-  }),
-  candidates: many(candidates),
-}));
+  created_at,
+  updated_at,
 
-export const positionsRelations = relations(positions, ({ one, many }) => ({
-  election: one(elections, {
-    fields: [positions.election_id],
-    references: [elections.id],
-  }),
-  candidates: many(candidates),
-}));
+  candidate_id: varchar("candidate_id", { length: 256 }).notNull(),
+});
 
-export const candidatesRelations = relations(candidates, ({ one, many }) => ({
-  position: one(positions, {
-    fields: [candidates.position_id],
-    references: [positions.id],
-  }),
-  candidates: many(candidates),
-}));
+export const affiliations = mysqlTable("affiliations", {
+  id,
+  org_name: text("org_name").notNull(),
+  org_position: text("org_position").notNull(),
+  start_year: date("start_year").notNull(),
+  end_year: date("end_year").notNull(),
+
+  created_at,
+  updated_at,
+
+  credential_id: varchar("candidate_id", { length: 256 }).notNull(),
+});
+
+export const achievements = mysqlTable("achievements", {
+  id,
+  name: text("name").notNull(),
+  year: date("year").notNull(),
+
+  created_at,
+  updated_at,
+
+  credential_id: varchar("candidate_id", { length: 256 }).notNull(),
+});
+
+export const events_attended = mysqlTable("events_attended", {
+  id,
+  name: text("name").notNull(),
+  year: date("year").notNull(),
+
+  created_at,
+  updated_at,
+
+  credential_id: varchar("candidate_id", { length: 256 }).notNull(),
+});
+
+export const verification_tokens = mysqlTable("verification_tokens", {
+  id,
+  type: mysqlEnum("type", token_type).notNull(),
+  expires_at: timestamp("expires_at").notNull(),
+
+  created_at,
+  updated_at,
+
+  user_id: varchar("user_id", { length: 256 }),
+  invited_voter_id: varchar("invited_voter_id", { length: 256 }),
+  invited_commissioner_id: varchar("invited_commissioner_id", { length: 256 }),
+});
+
+export const generated_election_results = mysqlTable(
+  "generated_election_results",
+  {
+    id,
+    name: text("name").notNull(),
+    link: longtext("link"),
+
+    created_at,
+
+    election_id: varchar("election_id", { length: 256 }),
+  }
+);
+export const voter_fields = mysqlTable("voter_fields", {
+  id,
+  name: text("name").notNull(),
+
+  created_at,
+
+  election_id: varchar("election_id", { length: 256 }),
+});
+
+export const reported_problems = mysqlTable("reported_problems", {
+  id,
+  subject: longtext("subject").notNull(),
+  description: longtext("description").notNull(),
+
+  created_at,
+
+  user_id,
+});
