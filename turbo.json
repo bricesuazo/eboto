@@ -12,5 +12,14 @@
       "persistent": true
     },
     "db:push": {}
-  }
+  },
+  "globalEnv": [
+    "CI",
+    "EXPO_ROUTER_APP_ROOT",
+    "NODE_ENV",
+    "SKIP_ENV_VALIDATION",
+    "VERCEL",
+    "VERCEL_URL",
+    "VERCEL_ENV"
+  ]
 }
