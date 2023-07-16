@@ -1,17 +1,27 @@
 "use client";
 
+import { toggleTheme } from "@/actions";
 import { CacheProvider } from "@emotion/react";
-import { useEmotionCache, MantineProvider } from "@mantine/core";
+import {
+  useEmotionCache,
+  MantineProvider,
+  ColorSchemeProvider,
+  type ColorScheme,
+} from "@mantine/core";
 import { useServerInsertedHTML } from "next/navigation";
+import { useState } from "react";
 
 export default function RootLayoutClient({
   children,
+  theme,
 }: {
   children: React.ReactNode;
+  theme: ColorScheme;
 }) {
+  const [colorScheme, setColorScheme] = useState<ColorScheme>(theme);
+
   const cache = useEmotionCache();
   cache.compat = true;
-
   useServerInsertedHTML(() => (
     <style
       data-emotion={`${cache.key} ${Object.keys(cache.inserted).join(" ")}`}
@@ -20,18 +30,26 @@ export default function RootLayoutClient({
       }}
     />
   ));
-
   return (
     <CacheProvider value={cache}>
-      <MantineProvider
-        withGlobalStyles
-        withNormalizeCSS
-        theme={{
-          primaryColor: "green",
+      <ColorSchemeProvider
+        colorScheme={colorScheme}
+        toggleColorScheme={() => {
+          toggleTheme();
+          setColorScheme((c) => (c === "dark" ? "light" : "dark"));
         }}
       >
-        {children}
-      </MantineProvider>
+        <MantineProvider
+          withGlobalStyles
+          withNormalizeCSS
+          theme={{
+            colorScheme,
+            primaryColor: "green",
+          }}
+        >
+          {children}
+        </MantineProvider>
+      </ColorSchemeProvider>
     </CacheProvider>
   );
 }

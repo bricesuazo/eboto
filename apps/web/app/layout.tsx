@@ -4,6 +4,8 @@ import { Poppins } from "next/font/google";
 import Header from "@/components/server/header";
 import { Analytics } from "@vercel/analytics/react";
 import RootLayoutClient from "../components/client/layouts/root-layout";
+import { type ColorScheme } from "@mantine/core";
+import { cookies } from "next/headers";
 
 export const revalidate = 0;
 
@@ -65,9 +67,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>{/* <ColorSchemeScript /> */}</head>
       <body className={font.className}>
-        <RootLayoutClient>
+        <RootLayoutClient
+          theme={
+            (cookies().get("theme")?.value as ColorScheme | null) ?? "light"
+          }
+        >
           <Header />
           {children}
           <Analytics />

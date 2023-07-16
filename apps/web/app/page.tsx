@@ -106,7 +106,7 @@ export default async function Page() {
   // const { classes } = useStyles();
 
   return (
-    <>page</>
+    <div>page</div>
     // <Container className={classes.wrapper}>
     //   <Dots className={classes.dots} style={{ left: 0, top: 0 }} />
     //   <Dots className={classes.dots} style={{ left: 60, top: 0 }} />

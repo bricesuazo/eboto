@@ -11,6 +11,7 @@
       "cache": false,
       "persistent": true
     },
+    "start": {},
     "db:push": {},
     "db:studio": {}
   },
