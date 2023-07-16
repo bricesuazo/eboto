@@ -1,11 +1,9 @@
-import "@mantine/core/styles.css";
-
-import { MantineProvider, ColorSchemeScript } from "@mantine/core";
 import { type Metadata } from "next";
 import { siteConfig } from "@/config/site";
 import { Poppins } from "next/font/google";
-import Header from "@/components/header";
+import Header from "@/components/server/header";
 import { Analytics } from "@vercel/analytics/react";
+import RootLayoutClient from "../components/client/layouts/root-layout";
 
 export const revalidate = 0;
 
@@ -67,19 +65,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <ColorSchemeScript />
-      </head>
+      <head>{/* <ColorSchemeScript /> */}</head>
       <body className={font.className}>
-        <MantineProvider
-          theme={{
-            primaryColor: "green",
-          }}
-        >
+        <RootLayoutClient>
           <Header />
           {children}
           <Analytics />
-        </MantineProvider>
+        </RootLayoutClient>
       </body>
     </html>
   );

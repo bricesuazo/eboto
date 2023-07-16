@@ -1,4 +1,4 @@
-import { Container } from "@mantine/core";
+import DashboardLayoutClient from "@/components/client/layouts/dashboard-layout";
 import { type Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <Container size="md">{children}</Container>;
+  return <DashboardLayoutClient>{children}</DashboardLayoutClient>;
 }
