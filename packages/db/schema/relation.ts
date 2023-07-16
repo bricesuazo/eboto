@@ -33,7 +33,6 @@ export const electionsRelations = relations(elections, ({ many }) => ({
   generated_election_results: many(generated_election_results),
   voter_fields: many(voter_fields),
   reported_problems: many(reported_problems),
-  verification_tokens: many(verification_tokens),
 }));
 
 export const votesRelations = relations(votes, ({ one }) => ({
@@ -116,11 +115,18 @@ export const positionsRelations = relations(positions, ({ one, many }) => ({
 }));
 
 export const candidatesRelations = relations(candidates, ({ one, many }) => ({
+  election: one(elections, {
+    fields: [candidates.election_id],
+    references: [elections.id],
+  }),
+  partylist: one(partylists, {
+    fields: [candidates.partylist_id],
+    references: [partylists.id],
+  }),
   position: one(positions, {
     fields: [candidates.position_id],
     references: [positions.id],
   }),
-  candidates: many(candidates),
   credentials: many(credentials),
   platforms: many(platforms),
   votes: many(votes),
@@ -164,6 +170,10 @@ export const voter_fieldsRelations = relations(voter_fields, ({ one }) => ({
 export const reported_problemsRelations = relations(
   reported_problems,
   ({ one }) => ({
+    election: one(elections, {
+      fields: [reported_problems.election_id],
+      references: [elections.id],
+    }),
     user: one(users, {
       fields: [reported_problems.user_id],
       references: [users.id],

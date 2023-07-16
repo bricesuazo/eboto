@@ -11,7 +11,8 @@
       "cache": false,
       "persistent": true
     },
-    "db:push": {}
+    "db:push": {},
+    "db:studio": {}
   },
   "globalEnv": [
     "CI",

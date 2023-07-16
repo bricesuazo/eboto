@@ -5,6 +5,7 @@
   "version": "0.0.0",
   "scripts": {
     "db:push": "pnpm with-env drizzle-kit push:mysql",
+    "db:studio": "pnpm with-env drizzle-kit studio --port 3001 --verbose",
     "clean": "rm -rf .turbo node_modules",
     "with-env": "dotenv -e ../../.env --"
   },

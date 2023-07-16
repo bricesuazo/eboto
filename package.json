@@ -9,6 +9,7 @@
     "clean:workspaces": "turbo clean",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "db:push": "pnpm with-env turbo --filter @eboto-mo/db db:push",
+    "db:studio": "pnpm with-env turbo --filter @eboto-mo/db db:studio",
     "with-env": "dotenv -e .env --"
   },
   "devDependencies": {

@@ -6,5 +6,5 @@ export default {
   dbCredentials: {
     connectionString: process.env.DATABASE_URL!,
   },
-  schema: ["./schema"],
+  schema: "./schema",
 } satisfies Config;

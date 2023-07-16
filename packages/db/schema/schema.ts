@@ -238,5 +238,6 @@ export const reported_problems = mysqlTable("reported_problems", {
 
   created_at,
 
+  election_id,
   user_id,
 });

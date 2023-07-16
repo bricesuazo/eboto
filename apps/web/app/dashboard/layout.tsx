@@ -1,3 +1,4 @@
+import { Container } from "@mantine/core";
 import { type Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -6,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return <Container size="md">{children}</Container>;
 }
