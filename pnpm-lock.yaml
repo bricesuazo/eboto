@@ -83,9 +83,15 @@ importers:
       '@vercel/analytics':
         specifier: ^1.0.1
         version: registry.npmjs.org/@vercel/analytics@1.0.1
+      bcryptjs:
+        specifier: ^2.4.3
+        version: registry.npmjs.org/bcryptjs@2.4.3
       dayjs:
         specifier: ^1.11.9
         version: registry.npmjs.org/dayjs@1.11.9
+      drizzle-orm:
+        specifier: 0.27.2
+        version: registry.npmjs.org/drizzle-orm@0.27.2(@planetscale/database@1.8.0)(mysql2@3.3.0)
       embla-carousel-react:
         specifier: 8.0.0-rc11
         version: registry.npmjs.org/embla-carousel-react@8.0.0-rc11(react@18.2.0)
@@ -117,6 +123,9 @@ importers:
       '@eboto-mo/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
+      '@types/bcryptjs':
+        specifier: ^2.4.2
+        version: registry.npmjs.org/@types/bcryptjs@2.4.2
       '@types/node':
         specifier: ^20.4.2
         version: registry.npmjs.org/@types/node@20.4.2
@@ -126,6 +135,9 @@ importers:
       '@types/react-dom':
         specifier: ^18.2.7
         version: registry.npmjs.org/@types/react-dom@18.2.7
+      drizzle-kit:
+        specifier: 0.19.5
+        version: registry.npmjs.org/drizzle-kit@0.19.5
       typescript:
         specifier: ^5.1.6
         version: registry.npmjs.org/typescript@5.1.6
@@ -2154,6 +2166,12 @@ packages:
       - typescript
     dev: true
 
+  registry.npmjs.org/@types/bcryptjs@2.4.2:
+    resolution: {integrity: sha512-LiMQ6EOPob/4yUL66SZzu6Yh77cbzJFYll+ZfaPiPPFswtIlA/Fs1MzdKYA7JApHU49zQTbJGX3PDmCpIdDBRQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@types/bcryptjs/-/bcryptjs-2.4.2.tgz}
+    name: '@types/bcryptjs'
+    version: 2.4.2
+    dev: true
+
   registry.npmjs.org/@types/glob@7.2.0:
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@types/glob/-/glob-7.2.0.tgz}
     name: '@types/glob'
@@ -2548,6 +2566,12 @@ packages:
     name: base64-js
     version: 1.5.1
     dev: true
+
+  registry.npmjs.org/bcryptjs@2.4.3:
+    resolution: {integrity: sha512-V/Hy/X9Vt7f3BbPJEi8BdVFMByHi+jNXrYkW3huaybV/kQ0KJg0Y6PkEMbn+zeT+i+SiKZ/HMqJGIIt4LZDqNQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/bcryptjs/-/bcryptjs-2.4.3.tgz}
+    name: bcryptjs
+    version: 2.4.3
+    dev: false
 
   registry.npmjs.org/big-integer@1.6.51:
     resolution: {integrity: sha512-GPEid2Y9QU1Exl1rpO9B2IPJGHPSupF5GnVIP0blYvNOMer2bTvSWs1jGOUg04hTmu67nmLsQ9TBo1puaotBHg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/big-integer/-/big-integer-1.6.51.tgz}

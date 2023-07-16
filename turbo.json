@@ -21,6 +21,8 @@
     "SKIP_ENV_VALIDATION",
     "VERCEL",
     "VERCEL_URL",
-    "VERCEL_ENV"
+    "VERCEL_ENV",
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET"
   ]
 }

@@ -11,11 +11,5 @@ export function SignoutButton() {
   );
 }
 export function SigninButton() {
-  return (
-    <Button
-      onClick={() => signIn("credentials", { callbackUrl: "/dashboard" })}
-    >
-      Sign in
-    </Button>
-  );
+  return <Button onClick={() => signIn()}>Sign in</Button>;
 }

@@ -28,7 +28,9 @@
     "@tiptap/react": "^2.0.3",
     "@tiptap/starter-kit": "^2.0.3",
     "@vercel/analytics": "^1.0.1",
+    "bcryptjs": "^2.4.3",
     "dayjs": "^1.11.9",
+    "drizzle-orm": "0.27.2",
     "embla-carousel-react": "8.0.0-rc11",
     "next": "^13.4.10",
     "next-auth": "^4.22.1",
@@ -41,9 +43,11 @@
     "@eboto-mo/db": "workspace:*",
     "@eboto-mo/eslint-config": "workspace:*",
     "@eboto-mo/tsconfig": "workspace:*",
+    "@types/bcryptjs": "^2.4.2",
     "@types/node": "^20.4.2",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
+    "drizzle-kit": "0.19.5",
     "typescript": "^5.1.6"
   }
 }
