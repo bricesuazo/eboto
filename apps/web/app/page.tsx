@@ -1,208 +1,207 @@
+"use client";
+
 import {
-  // createStyles,
+  createStyles,
   Title,
   Text,
   Button,
   Container,
   rem,
   Box,
-  // Grid,
-  // Col,
+  Grid,
+  Col,
   Accordion,
 } from "@mantine/core";
 import Link from "next/link";
 import Balancer from "react-wrap-balancer";
 import Image from "next/image";
 import { FAQs } from "@/constants";
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
 
-// const useStyles = createStyles((theme) => ({
-//   wrapper: {
-//     position: "relative",
-//     paddingTop: rem(120),
-//     paddingBottom: rem(80),
+const useStyles = createStyles((theme) => ({
+  wrapper: {
+    position: "relative",
+    paddingTop: rem(120),
+    paddingBottom: rem(80),
 
-//     [theme.fn.smallerThan("sm")]: {
-//       paddingTop: rem(80),
-//       paddingBottom: rem(60),
-//     },
-//   },
+    [theme.fn.smallerThan("sm")]: {
+      paddingTop: rem(80),
+      paddingBottom: rem(60),
+    },
+  },
 
-//   dots: {
-//     position: "absolute",
-//     color:
-//       theme.colorScheme === "dark"
-//         ? theme.colors.dark[5]
-//         : theme.colors.gray[1],
+  dots: {
+    position: "absolute",
+    color:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[5]
+        : theme.colors.gray[1],
 
-//     [theme.fn.smallerThan("sm")]: {
-//       display: "none",
-//     },
-//   },
+    [theme.fn.smallerThan("sm")]: {
+      display: "none",
+    },
+  },
 
-//   dotsLeft: {
-//     left: 0,
-//     top: 0,
-//   },
+  dotsLeft: {
+    left: 0,
+    top: 0,
+  },
 
-//   title: {
-//     textAlign: "center",
-//     fontSize: rem(40),
-//     letterSpacing: -1,
-//     color: theme.colorScheme === "dark" ? theme.white : theme.black,
-//     marginBottom: theme.spacing.xs,
+  title: {
+    textAlign: "center",
+    fontSize: rem(40),
+    letterSpacing: -1,
+    color: theme.colorScheme === "dark" ? theme.white : theme.black,
+    marginBottom: theme.spacing.xs,
 
-//     [theme.fn.smallerThan("xs")]: {
-//       fontSize: rem(28),
-//       textAlign: "left",
-//     },
-//   },
+    [theme.fn.smallerThan("xs")]: {
+      fontSize: rem(28),
+      textAlign: "left",
+    },
+  },
 
-//   highlight: {
-//     color:
-//       theme.colorScheme === "dark"
-//         ? theme.colors.green[5]
-//         : theme.colors.green[7],
-//   },
+  highlight: {
+    color:
+      theme.colorScheme === "dark"
+        ? theme.colors.green[5]
+        : theme.colors.green[7],
+  },
 
-//   description: {
-//     textAlign: "center",
+  description: {
+    textAlign: "center",
 
-//     [theme.fn.smallerThan("xs")]: {
-//       textAlign: "left",
-//       fontSize: theme.fontSizes.md,
-//     },
-//   },
+    [theme.fn.smallerThan("xs")]: {
+      textAlign: "left",
+      fontSize: theme.fontSizes.md,
+    },
+  },
 
-//   controls: {
-//     marginTop: theme.spacing.lg,
-//     display: "flex",
-//     justifyContent: "center",
+  controls: {
+    marginTop: theme.spacing.lg,
+    display: "flex",
+    justifyContent: "center",
 
-//     [theme.fn.smallerThan("xs")]: {
-//       flexDirection: "column",
-//     },
-//   },
+    [theme.fn.smallerThan("xs")]: {
+      flexDirection: "column",
+    },
+  },
 
-//   control: {
-//     "&:not(:first-of-type)": {
-//       marginLeft: theme.spacing.md,
-//     },
+  control: {
+    "&:not(:first-of-type)": {
+      marginLeft: theme.spacing.md,
+    },
 
-//     [theme.fn.smallerThan("xs")]: {
-//       height: rem(42),
-//       fontSize: theme.fontSizes.md,
+    [theme.fn.smallerThan("xs")]: {
+      height: rem(42),
+      fontSize: theme.fontSizes.md,
 
-//       "&:not(:first-of-type)": {
-//         marginTop: theme.spacing.md,
-//         marginLeft: 0,
-//       },
-//     },
-//   },
-// }));
+      "&:not(:first-of-type)": {
+        marginTop: theme.spacing.md,
+        marginLeft: 0,
+      },
+    },
+  },
+}));
 
-export default async function Page() {
-  // const { classes } = useStyles();
+export default function HomePage() {
+  const { classes } = useStyles();
 
   return (
-    <div>page</div>
-    // <Container className={classes.wrapper}>
-    //   <Dots className={classes.dots} style={{ left: 0, top: 0 }} />
-    //   <Dots className={classes.dots} style={{ left: 60, top: 0 }} />
-    //   <Dots className={classes.dots} style={{ left: 0, top: 140 }} />
-    //   <Dots className={classes.dots} style={{ right: 0, top: 60 }} />
+    <Container className={classes.wrapper}>
+      <Dots className={classes.dots} style={{ left: 0, top: 0 }} />
+      <Dots className={classes.dots} style={{ left: 60, top: 0 }} />
+      <Dots className={classes.dots} style={{ left: 0, top: 140 }} />
+      <Dots className={classes.dots} style={{ right: 0, top: 60 }} />
 
-    //   <Box pos="relative" mih="52vh">
-    //     <Title className={classes.title}>
-    //       <Balancer>
-    //         Your{" "}
-    //         <Text component="span" className={classes.highlight} inherit>
-    //           One-Stop
-    //         </Text>{" "}
-    //         Online Voting Solution
-    //       </Balancer>
-    //     </Title>
+      <Box pos="relative" mih="52vh">
+        <Title className={classes.title}>
+          <Balancer>
+            Your{" "}
+            <Text component="span" className={classes.highlight} inherit>
+              One-Stop
+            </Text>{" "}
+            Online Voting Solution
+          </Balancer>
+        </Title>
 
-    //     <Container p={0}>
-    //       <Text size="lg" color="dimmed" className={classes.description}>
-    //         <Balancer>
-    //           Empower your elections with eBoto Mo, the versatile and web-based
-    //           voting platform that offers secure online elections for any type
-    //           of organization.
-    //         </Balancer>
-    //       </Text>
-    //     </Container>
+        <Container p={0}>
+          <Text size="lg" color="dimmed" className={classes.description}>
+            <Balancer>
+              Empower your elections with eBoto Mo, the versatile and web-based
+              voting platform that offers secure online elections for any type
+              of organization.
+            </Balancer>
+          </Text>
+        </Container>
 
-    //     <Box className={classes.controls}>
-    //       <Button
-    //         component={Link}
-    //         href="/signin"
-    //         className={classes.control}
-    //         size="md"
-    //         variant="outline"
-    //       >
-    //         Sign in
-    //       </Button>
-    //       <Button
-    //         component={Link}
-    //         href="/signup"
-    //         className={classes.control}
-    //         size="md"
-    //       >
-    //         Get started
-    //       </Button>
-    //     </Box>
-    //   </Box>
+        <Box className={classes.controls}>
+          <Button
+            component={Link}
+            href="/signin"
+            className={classes.control}
+            size="md"
+            variant="outline"
+          >
+            Sign in
+          </Button>
+          <Button
+            component={Link}
+            href="/signup"
+            className={classes.control}
+            size="md"
+          >
+            Get started
+          </Button>
+        </Box>
+      </Box>
 
-    //   {/* <Grid>
-    //     <Col span={12} sm={6}>
-    //       <Box
-    //         pos="relative"
-    //         sx={{
-    //           aspectRatio: "3/2",
-    //         }}
-    //       >
-    //         <Image
-    //           src="/images/faq.svg"
-    //           fill
-    //           alt="Frequently Asked Questions"
-    //           style={{
-    //             userSelect: "none",
-    //             pointerEvents: "none",
-    //           }}
-    //         />
-    //       </Box>
-    //     </Col>
-    //     <Col span={12} sm={6}>
-    //       <Title
-    //         order={2}
-    //         ta="left"
-    //         p="md"
-    //         sx={(theme) => ({
-    //           [theme.fn.smallerThan("sm")]: {
-    //             textAlign: "center",
-    //           },
-    //         })}
-    //       >
-    //         Frequently Asked Questions
-    //       </Title>
+      <Grid>
+        <Col span={12} sm={6}>
+          <Box
+            pos="relative"
+            sx={{
+              aspectRatio: "3/2",
+            }}
+          >
+            <Image
+              src="/images/faq.svg"
+              fill
+              alt="Frequently Asked Questions"
+              style={{
+                userSelect: "none",
+                pointerEvents: "none",
+              }}
+            />
+          </Box>
+        </Col>
+        <Col span={12} sm={6}>
+          <Title
+            order={2}
+            ta="left"
+            p="md"
+            sx={(theme) => ({
+              [theme.fn.smallerThan("sm")]: {
+                textAlign: "center",
+              },
+            })}
+          >
+            Frequently Asked Questions
+          </Title>
 
-    //       <Accordion
-    //         chevronPosition="right"
-    //         defaultValue={FAQs[0]?.id ?? ""}
-    //         variant="separated"
-    //       >
-    //         {FAQs.map((item) => (
-    //           <Accordion.Item key={item.id} value={item.id}>
-    //             <Accordion.Control>{item.question}</Accordion.Control>
-    //             <Accordion.Panel>{item.answer}</Accordion.Panel>
-    //           </Accordion.Item>
-    //         ))}
-    //       </Accordion>
-    //     </Col>
-    //   </Grid> */}
-    // </Container>
+          <Accordion
+            chevronPosition="right"
+            defaultValue={FAQs[0]?.id ?? ""}
+            variant="separated"
+          >
+            {FAQs.map((item) => (
+              <Accordion.Item key={item.id} value={item.id}>
+                <Accordion.Control>{item.question}</Accordion.Control>
+                <Accordion.Panel>{item.answer}</Accordion.Panel>
+              </Accordion.Item>
+            ))}
+          </Accordion>
+        </Col>
+      </Grid>
+    </Container>
   );
 }
 

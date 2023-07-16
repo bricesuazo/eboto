@@ -43,6 +43,7 @@ export default function RootLayoutClient({
           withGlobalStyles
           withNormalizeCSS
           theme={{
+            fontFamily: "Poppins, sans-serif",
             colorScheme,
             primaryColor: "green",
           }}

@@ -1,3 +1,4 @@
+import { InferModel } from "drizzle-orm";
 import {
   mysqlTable,
   timestamp,
@@ -241,3 +242,25 @@ export const reported_problems = mysqlTable("reported_problems", {
   election_id,
   user_id,
 });
+
+export type Election = InferModel<typeof elections>;
+export type User = InferModel<typeof users>;
+export type Votes = InferModel<typeof votes>;
+export type Commissioners = InferModel<typeof commissioners>;
+export type InvitedCommissioners = InferModel<typeof invited_commissioners>;
+export type InvitedVoters = InferModel<typeof invited_voters>;
+export type Voters = InferModel<typeof voters>;
+export type Partylists = InferModel<typeof partylists>;
+export type Positions = InferModel<typeof positions>;
+export type Candidates = InferModel<typeof candidates>;
+export type Credentials = InferModel<typeof credentials>;
+export type Platforms = InferModel<typeof platforms>;
+export type Affiliations = InferModel<typeof affiliations>;
+export type Achievements = InferModel<typeof achievements>;
+export type EventsAttended = InferModel<typeof events_attended>;
+export type VerificationTokens = InferModel<typeof verification_tokens>;
+export type GeneratedElectionResults = InferModel<
+  typeof generated_election_results
+>;
+export type VoterFields = InferModel<typeof voter_fields>;
+export type ReportedProblems = InferModel<typeof reported_problems>;

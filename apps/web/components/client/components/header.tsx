@@ -91,7 +91,9 @@ export default function HeaderContent({
                 </Text>
               </Group>
             </UnstyledButton>
-
+            <Button component={Link} href="/about">
+              About page
+            </Button>
             {session ? (
               <Menu
                 position="bottom-end"
