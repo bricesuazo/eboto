@@ -63,7 +63,7 @@ export default function CreateElection() {
       <Modal
         opened={opened}
         onClose={close}
-        title={<Text>Create election</Text>}
+        title="Create election"
         closeOnClickOutside={false}
       >
         <form

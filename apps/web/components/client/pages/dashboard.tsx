@@ -11,13 +11,22 @@ import {
   Text,
 } from "@mantine/core";
 import CreateElection from "@/components/client/modals/create-election";
+import {
+  type Vote,
+  type Commissioner,
+  type Election,
+  type Voter,
+} from "@eboto-mo/db/schema";
+import DashboardCard from "@/components/client/components/dashboard-card";
 
 export default function DashboardPageClient({
   commissioners,
   voters,
 }: {
-  commissioners: any;
-  voters: any;
+  commissioners: (Commissioner & { election: Election })[];
+  voters: (Voter & {
+    election: Election & { votes: Vote[] };
+  })[];
 }) {
   return (
     <Container p="md">
@@ -47,7 +56,7 @@ export default function DashboardPageClient({
             You can manage the elections below.
           </Text>
           <Group>
-            {/* {!myElections.data || myElections.isLoading ? (
+            {false ? (
               [...Array(3)].map((i) => (
                 <Skeleton
                   key={i}
@@ -59,19 +68,19 @@ export default function DashboardPageClient({
                   })}
                 />
               ))
-            ) : myElections.data.length === 0 ? (
+            ) : commissioners.length === 0 ? (
               <Box h={72}>
                 <Text>No elections found</Text>
               </Box>
             ) : (
-              myElections.data.map((election) => (
+              commissioners.map((commissioner) => (
                 <DashboardCard
-                  election={election}
-                  key={election.id}
+                  election={commissioner.election}
+                  key={commissioner.id}
                   type="manage"
                 />
               ))
-            )} */}
+            )}
           </Group>
         </Box>
 
@@ -98,8 +107,8 @@ export default function DashboardPageClient({
           </Text>
 
           <Group>
-            {/* {!myElectionVote.data || myElectionVote.isLoading ? (
-              [...Array(3).keys()].map((i) => (
+            {false ? (
+              [...Array(3)].map((i) => (
                 <Skeleton
                   key={i}
                   width={250}
@@ -110,20 +119,20 @@ export default function DashboardPageClient({
                   })}
                 />
               ))
-            ) : myElectionVote.data.length === 0 ? (
+            ) : voters.length === 0 ? (
               <Box h={72}>
                 <Text>No vote elections found</Text>
               </Box>
             ) : (
-              myElectionVote.data.map((election) => (
+              voters.map((voter) => (
                 <DashboardCard
-                  election={election}
-                  key={election.id}
+                  election={voter.election}
+                  key={voter.id}
                   type="vote"
-                  vote={election.vote}
+                  // vote={election.vote}
                 />
               ))
-            )} */}
+            )}
           </Group>
         </Box>
       </Stack>

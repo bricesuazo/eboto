@@ -8,6 +8,7 @@ import {
   ColorSchemeProvider,
   type ColorScheme,
 } from "@mantine/core";
+import { SessionProvider } from "next-auth/react";
 import { useServerInsertedHTML } from "next/navigation";
 import { useState } from "react";
 
@@ -31,26 +32,28 @@ export default function RootLayoutClient({
     />
   ));
   return (
-    <CacheProvider value={cache}>
-      <ColorSchemeProvider
-        colorScheme={colorScheme}
-        toggleColorScheme={() => {
-          toggleTheme();
-          setColorScheme((c) => (c === "dark" ? "light" : "dark"));
-        }}
-      >
-        <MantineProvider
-          withGlobalStyles
-          withNormalizeCSS
-          theme={{
-            fontFamily: "Poppins, sans-serif",
-            colorScheme,
-            primaryColor: "green",
+    <SessionProvider>
+      <CacheProvider value={cache}>
+        <ColorSchemeProvider
+          colorScheme={colorScheme}
+          toggleColorScheme={() => {
+            toggleTheme();
+            setColorScheme((c) => (c === "dark" ? "light" : "dark"));
           }}
         >
-          {children}
-        </MantineProvider>
-      </ColorSchemeProvider>
-    </CacheProvider>
+          <MantineProvider
+            withGlobalStyles
+            withNormalizeCSS
+            theme={{
+              fontFamily: "Poppins, sans-serif",
+              colorScheme,
+              primaryColor: "green",
+            }}
+          >
+            {children}
+          </MantineProvider>
+        </ColorSchemeProvider>
+      </CacheProvider>
+    </SessionProvider>
   );
 }

@@ -26,7 +26,7 @@ import {
 import { IconMoon } from "@tabler/icons-react";
 import { IconSun } from "@tabler/icons-react";
 import { type Session } from "next-auth";
-import { signIn, signOut } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -37,6 +37,8 @@ export default function HeaderContent({
 }: {
   session: Session | null;
 }) {
+  const sessionClient = useSession();
+  console.log("🚀 ~ file: header.tsx:41 ~ session:", sessionClient);
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const pathname = usePathname();
 
@@ -140,7 +142,7 @@ export default function HeaderContent({
                         }}
                       >
                         <Text size="xs" truncate weight="bold">
-                          {session.user.firstName} {session.user.lastName}
+                          {/* {session.user.firstName} {session.user.lastName} */}
                         </Text>
                         <Text size="xs" truncate>
                           {session.user.email}
@@ -197,7 +199,7 @@ export default function HeaderContent({
                     onClick={() =>
                       void (async () =>
                         await signOut({
-                          callbackUrl: "/signin",
+                          // callbackUrl: "/signin",
                         }))()
                     }
                     icon={
