@@ -10,6 +10,7 @@ import {
   Flex,
   Alert,
   Group,
+  type Sx,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { hasLength, useForm } from "@mantine/form";
@@ -17,20 +18,28 @@ import {
   IconCalendar,
   IconClock,
   IconLetterCase,
+  IconPlus,
   IconTemplate,
 } from "@tabler/icons-react";
-import { DatePickerInput } from "@mantine/dates";
+import { DatePickerInput, DateTimePicker } from "@mantine/dates";
+import { positionTemplate } from "@/constants";
+import { useEffect } from "react";
 
-export default function CreateElection() {
+export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
   const [opened, { open, close }] = useDisclosure(false);
 
-  const form = useForm({
+  const form = useForm<{
+    name: string;
+    slug: string;
+    start_date: Date | null;
+    end_date: Date | null;
+    template: string;
+  }>({
     initialValues: {
       name: "",
       slug: "",
-      date: [null, null] as [Date | null, Date | null],
-      voting_start: "7",
-      voting_end: "19",
+      start_date: null,
+      end_date: null,
       template: "0",
     },
     validateInputOnBlur: true,
@@ -51,15 +60,39 @@ export default function CreateElection() {
         }
       },
 
-      date: (value) => {
-        if (!value[0] || !value[1]) {
+      start_date: (value) => {
+        if (!value) {
           return "Please select a date range";
+        }
+      },
+      end_date: (value, values) => {
+        if (!value) {
+          return "Please select a date range";
+        }
+        if (values.start_date && value < values.start_date) {
+          return "End date must be after start date";
         }
       },
     },
   });
+
+  useEffect(() => {
+    if (opened) {
+      form.setValues({
+        name: "",
+        slug: "",
+        start_date: null,
+        end_date: null,
+        template: "0",
+      });
+    }
+  }, [opened]);
+
   return (
     <>
+      <Button onClick={open} sx={sx} leftIcon={<IconPlus size="1.25rem" />}>
+        Create Election
+      </Button>
       <Modal
         opened={opened}
         onClose={close}
@@ -117,10 +150,9 @@ export default function CreateElection() {
               // }
             />
 
-            <DatePickerInput
-              type="range"
-              label="Election start and end date"
-              placeholder="Enter election date"
+            <DateTimePicker
+              label="Election start date"
+              placeholder="Enter election start date"
               description="You can't change the election date once the election has started."
               required
               withAsterisk
@@ -130,59 +162,30 @@ export default function CreateElection() {
               }}
               minDate={new Date(new Date().setDate(new Date().getDate() + 1))}
               firstDayOfWeek={0}
-              {...form.getInputProps("date")}
+              {...form.getInputProps("start_date")}
               icon={<IconCalendar size="1rem" />}
               // disabled={createElectionMutation.isLoading}
             />
-            <Stack spacing={8}>
-              <Flex columnGap="sm">
-                <Select
-                  label="Voting hour start"
-                  description="You can't change voting hour start once the election is ongoing."
-                  withAsterisk
-                  withinPortal
-                  required
-                  // {...form.getInputProps("voting_start")}
-                  data={[...Array(24)].map((_, i) => ({
-                    // label: convertNumberToHour(i),
-                    label: i.toString(),
-                    value: i.toString(),
-                  }))}
-                  icon={<IconClock size="1rem" />}
-                  // disabled={createElectionMutation.isLoading}
-                />
-                <Select
-                  description="You can't change voting hour end once the election is ongoing."
-                  label="Voting hour start"
-                  withAsterisk
-                  withinPortal
-                  required
-                  {...form.getInputProps("voting_end")}
-                  data={[...Array(24)].map((_, i) => ({
-                    // label: convertNumberToHour(i),
-                    label: i.toString(),
-                    value: i.toString(),
-                    disabled: i <= parseInt(form.values.voting_start),
-                  }))}
-                  icon={<IconClock size="1rem" />}
-                  // disabled={createElectionMutation.isLoading}
-                />
-              </Flex>
-              <Text
-                align="center"
-                size="sm"
-                // opacity={createElectionMutation.isLoading ? 0.5 : 1}
-              >
-                {parseInt(form.values.voting_end) -
-                  parseInt(form.values.voting_start)}{" "}
-                hour
-                {parseInt(form.values.voting_end) -
-                  parseInt(form.values.voting_start) >
-                1
-                  ? "s"
-                  : ""}
-              </Text>
-            </Stack>
+            <DateTimePicker
+              label="Election end date"
+              placeholder="Enter election end date"
+              description="You can't change the election date once the election has started."
+              required
+              withAsterisk
+              popoverProps={{
+                withinPortal: true,
+                position: "bottom",
+              }}
+              minDate={
+                form.values.start_date ||
+                new Date(new Date().setDate(new Date().getDate() + 1))
+              }
+              firstDayOfWeek={0}
+              {...form.getInputProps("end_date")}
+              icon={<IconCalendar size="1rem" />}
+              // disabled={createElectionMutation.isLoading}
+            />
+
             <Select
               label="Election template"
               description="Select a template for your election"
@@ -190,14 +193,13 @@ export default function CreateElection() {
               required
               withinPortal
               {...form.getInputProps("template")}
-              // data={positionTemplate
-              //   .sort((a, b) => a.id - b.id)
-              //   .map((position) => ({
-              //     label: position.org,
-              //     value: position.id.toString(),
-              //     group: position.college,
-              //   }))}
-              data={[{ label: "test", value: "0" }]}
+              data={positionTemplate
+                .sort((a, b) => a.id - b.id)
+                .map((position) => ({
+                  label: position.org,
+                  value: position.id.toString(),
+                  group: position.college,
+                }))}
               nothingFound="No position template found"
               icon={<IconTemplate size="1rem" />}
               searchable
@@ -235,7 +237,6 @@ export default function CreateElection() {
           </Stack>
         </form>
       </Modal>
-      <Button onClick={open}>Create Election</Button>
     </>
   );
 }

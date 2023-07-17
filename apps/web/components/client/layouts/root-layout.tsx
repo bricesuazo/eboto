@@ -8,13 +8,13 @@ import {
   ColorSchemeProvider,
   type ColorScheme,
   AppShell,
-  Navbar,
 } from "@mantine/core";
 import { SessionProvider } from "next-auth/react";
 import { useParams, useServerInsertedHTML } from "next/navigation";
 import { useState } from "react";
 import HeaderContent from "@/components/client/components/header";
 import { User } from "@eboto-mo/db/schema";
+import Navbar from "@/components/client/components/navbar";
 
 export default function RootLayoutClient({
   children,
@@ -60,13 +60,7 @@ export default function RootLayoutClient({
             <AppShell
               padding={0}
               header={<HeaderContent user={user} />}
-              navbar={
-                params.slug ? (
-                  <Navbar width={{ base: 300 }} p="md">
-                    sifgb
-                  </Navbar>
-                ) : null
-              }
+              navbar={params.slug ? <Navbar /> : null}
               styles={(theme) => ({
                 main: {
                   backgroundColor:
