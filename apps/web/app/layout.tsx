@@ -1,11 +1,11 @@
 import { type Metadata } from "next";
 import { siteConfig } from "@/config/site";
 import { Poppins } from "next/font/google";
-import Header from "@/components/server/header";
 import { Analytics } from "@vercel/analytics/react";
 import RootLayoutClient from "../components/client/layouts/root-layout";
 import { type ColorScheme } from "@mantine/core";
 import { cookies } from "next/headers";
+import { getUser } from "@/utils/auth";
 
 export const revalidate = 0;
 
@@ -60,11 +60,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const user = await getUser();
   return (
     <html lang="en">
       <body className={font.className}>
@@ -72,8 +73,8 @@ export default function RootLayout({
           theme={
             (cookies().get("theme")?.value as ColorScheme | null) ?? "light"
           }
+          user={user}
         >
-          <Header />
           {children}
           <Analytics />
         </RootLayoutClient>

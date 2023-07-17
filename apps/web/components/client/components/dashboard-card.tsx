@@ -111,9 +111,16 @@ const DashboardCard = ({
             <Moment format="MMM D, YYYY">{election.end_date}</Moment>
           </Text>
           <Text size="sm" lineClamp={1} color="dimmed" align="center">
-            Open from {election.start_date.getHours()} to{" "}
-            {election.end_date.getHours()}
+            Open from <Moment format="H A">{election.start_date}</Moment> to{" "}
+            <Moment format="H A">{election.end_date}</Moment>
           </Text>
+
+          <Text size="sm" lineClamp={1} color="dimmed" align="center">
+            Publicity:{" "}
+            {election.publicity.charAt(0) +
+              election.publicity.slice(1).toLowerCase()}
+          </Text>
+
           {type === "vote" && (
             <Text size="sm" color="dimmed" lineClamp={1} align="center">
               {vote?.length ? "You have voted" : "You have not voted"}

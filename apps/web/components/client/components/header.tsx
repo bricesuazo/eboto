@@ -29,24 +29,20 @@ import { IconSun } from "@tabler/icons-react";
 import { signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { useState } from "react";
 
 export default function HeaderContent({ user }: { user: User | null }) {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const pathname = usePathname();
+  const params = useParams();
 
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
 
   return (
     <Header height={60}>
-      <Container
-        h="100%"
-        size={
-          !pathname.includes("/dashboard/[electionSlug]") ? undefined : "full"
-        }
-      >
+      <Container h="100%" size={!params.slug ? undefined : "full"}>
         <Flex h="100%" align="center" gap="xs">
           {pathname.includes("/dashboard/[electionSlug]") && (
             <MediaQuery largerThan="sm" styles={{ display: "none" }}>
@@ -84,9 +80,6 @@ export default function HeaderContent({ user }: { user: User | null }) {
                 </Text>
               </Group>
             </UnstyledButton>
-            <Button component={Link} href="/about">
-              About page
-            </Button>
             {user ? (
               <Menu
                 position="bottom-end"

@@ -1,7 +1,6 @@
 import { authOptions } from "@/lib/auth";
 import { db } from "@eboto-mo/db";
 import { users, type User } from "@eboto-mo/db/schema";
-import { eq } from "drizzle-orm";
 import { Session, getServerSession } from "next-auth";
 
 export type UserAuth = Session["user"];

@@ -10,6 +10,7 @@ import {
   voters,
   Vote,
 } from "@eboto-mo/db/schema";
+import { and, eq, not } from "drizzle-orm";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -34,7 +35,6 @@ export default async function Page() {
     where: (voters, { eq }) => eq(voters.user_id, session.id),
     with: {
       election: {
-        // where: (election, { eq }) => not(eq(election.publicity, "PRIVATE")),
         with: {
           votes: {
             where: (votes, { eq }) => eq(votes.voter_id, session.id),
