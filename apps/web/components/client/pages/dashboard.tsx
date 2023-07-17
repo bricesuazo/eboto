@@ -17,7 +17,7 @@ import {
   type Election,
   type Voter,
 } from "@eboto-mo/db/schema";
-import DashboardCard from "@/components/client/components/dashboard-card";
+import DashboardCard from "@/components/server/components/dashboard-card";
 
 export default function DashboardPageClient({
   commissioners,

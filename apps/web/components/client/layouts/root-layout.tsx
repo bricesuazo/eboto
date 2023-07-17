@@ -13,8 +13,8 @@ import { SessionProvider } from "next-auth/react";
 import { useParams, useServerInsertedHTML } from "next/navigation";
 import { useState } from "react";
 import HeaderContent from "@/components/client/components/header";
-import { User } from "@eboto-mo/db/schema";
-import Navbar from "@/components/client/components/navbar";
+import { Election, User } from "@eboto-mo/db/schema";
+import DashboardNavbar from "@/components/client/components/dashboard-navbar-client";
 
 export default function RootLayoutClient({
   children,
@@ -60,7 +60,7 @@ export default function RootLayoutClient({
             <AppShell
               padding={0}
               header={<HeaderContent user={user} />}
-              navbar={params.slug ? <Navbar /> : null}
+              navbar={params.slug ? <DashboardNavbar /> : null}
               styles={(theme) => ({
                 main: {
                   backgroundColor:

@@ -1,4 +1,4 @@
-import DashboardElectionLayout from "@/components/client/layouts/dashboard-election-layout";
+import DashboardLayout from "@/components/client/layouts/dashboard-layout";
 import { getElectionBySlug } from "@/utils/election";
 import { type ResolvingMetadata, type Metadata } from "next";
 
@@ -25,5 +25,5 @@ export default async function ElectionDashboardLayout({
   params: { slug: string };
 }) {
   const election = await getElectionBySlug(slug);
-  return <DashboardElectionLayout>{children}</DashboardElectionLayout>;
+  return <DashboardLayout>{children}</DashboardLayout>;
 }

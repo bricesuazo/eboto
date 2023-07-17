@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, type Dispatch, type SetStateAction } from "react";
 import {
   Navbar,
   UnstyledButton,
@@ -93,7 +92,8 @@ export default function NavbarComponent() {
   const router = useRouter();
   const params = useParams();
   const pathname = usePathname();
-  const [election, setElection] = useState<Election | undefined>();
+
+  //   const [election, setElection] = useState<Election | undefined>();
 
   const { classes, cx } = useStyles();
 
@@ -115,22 +115,22 @@ export default function NavbarComponent() {
       <Navbar.Section grow p="md">
         <Stack>
           <Select
-            defaultValue={election?.slug || (params.slug as string)}
+            defaultValue={params.slug.toString()}
             placeholder="Select election"
             iconWidth={48}
-            icon={
-              election?.logo ? (
-                <Image
-                  src={election.logo}
-                  alt={election.name}
-                  width={28}
-                  height={28}
-                  priority
-                />
-              ) : (
-                <IconFingerprint size={28} />
-              )
-            }
+            // icon={
+            //   election?.logo ? (
+            //     <Image
+            //       src={election.logo}
+            //       alt={election.name}
+            //       width={28}
+            //       height={28}
+            //       priority
+            //     />
+            //   ) : (
+            //     <IconFingerprint size={28} />
+            //   )
+            // }
             size="md"
             data={[]}
             //   data={
@@ -204,7 +204,7 @@ export default function NavbarComponent() {
             //       </UnstyledButton>
             //     );
             //   }}
-            value={election?.slug || params.slug.toString()}
+            value={params.slug.toString()}
             // onChange={(value) =>
             //   void (async () => {
             //     await router.push(`/dashboard/${value || ""}`);
@@ -215,13 +215,12 @@ export default function NavbarComponent() {
           <Button
             variant="outline"
             w="100%"
-            loading={!election}
             rightIcon={<IconExternalLink size="1rem" />}
             component={Link}
-            href={`/${election?.slug || ""}`}
+            href={`/${params.slug.toString()}`}
             target="_blank"
           >
-            Visit {election?.name || "election"}
+            Visit election
           </Button>
           <Box>
             {electionDashboardNavbar.map((item) => (
@@ -233,8 +232,7 @@ export default function NavbarComponent() {
                 //   opened && setOpened(false);
                 // }}
                 className={cx(classes.link, {
-                  [classes.linkActive]:
-                    item.path === pathname.split("/dashboard/[slug]/")[1],
+                  [classes.linkActive]: item.path === pathname.split("/")[3],
                 })}
               >
                 <item.icon className={classes.linkIcon} />
