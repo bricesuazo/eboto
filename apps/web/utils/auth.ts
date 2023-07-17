@@ -1,17 +1,27 @@
+import { authOptions } from "@/lib/auth";
 import { db } from "@eboto-mo/db";
-import { type User } from "@eboto-mo/db/schema";
+import { users, type User } from "@eboto-mo/db/schema";
+import { eq } from "drizzle-orm";
 import { Session, getServerSession } from "next-auth";
 
 export type UserAuth = Session["user"];
 
-export async function getUser(): Promise<User | null> {
-  const session = await getServerSession();
+export async function getSession(): Promise<UserAuth | null> {
+  const session = await getServerSession(authOptions);
 
-  return await db.query.users.findFirst({
-    where: (users, { eq }) => eq(users.id, session.user.id),
-  });
+  return session ? session.user : null;
 }
-export async function getSession(): Promise<UserAuth> {
-  const session = await getServerSession();
-  return session.user;
+
+export async function getUser(): Promise<User | null> {
+  const session = await getSession();
+
+  if (!session) {
+    return null;
+  }
+
+  return (
+    (await db.query.users.findFirst({
+      where: (users, { eq }) => eq(users.id, session.id),
+    })) ?? null
+  );
 }

@@ -44,15 +44,6 @@ export default async function Page() {
     },
   });
 
-  console.log(
-    "🚀 ~ file: page.tsx:25 ~ Page ~ electionsAsCommissioner:",
-    electionsAsCommissioner
-  );
-  console.log(
-    "🚀 ~ file: page.tsx:34 ~ Page ~ electionsAsVoter:",
-    electionsAsVoter
-  );
-
   return (
     <>
       <DashboardPageClient

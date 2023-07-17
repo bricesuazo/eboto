@@ -76,12 +76,6 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
-    jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-      }
-      return token;
-    },
   },
 
   providers: [

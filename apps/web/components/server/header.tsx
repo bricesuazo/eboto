@@ -1,9 +1,8 @@
 import HeaderContent from "@/components/client/components/header";
-import { getSession } from "@/utils/auth";
+import { getUser } from "@/utils/auth";
 
 export default async function Header() {
-  const session = await getSession();
-  console.log("🚀 ~ file: header.tsx:6 ~ Header ~ session:", session);
+  const user = await getUser();
 
-  return <HeaderContent session={session} />;
+  return <HeaderContent user={user} />;
 }

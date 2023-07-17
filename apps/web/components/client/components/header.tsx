@@ -1,6 +1,6 @@
 "use client";
 
-import { type UserAuth } from "@/utils/auth";
+import { type User } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
   Box,
@@ -32,11 +32,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-export default function HeaderContent({
-  session,
-}: {
-  session: UserAuth | null;
-}) {
+export default function HeaderContent({ user }: { user: User | null }) {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const pathname = usePathname();
 
@@ -64,10 +60,7 @@ export default function HeaderContent({
             </MediaQuery>
           )}
           <Group position="apart" w="100%" spacing={0}>
-            <UnstyledButton
-              component={Link}
-              href={session ? "/dashboard" : "/"}
-            >
+            <UnstyledButton component={Link} href={user ? "/dashboard" : "/"}>
               <Group spacing={4}>
                 <Image
                   src="/images/logo.png"
@@ -94,7 +87,7 @@ export default function HeaderContent({
             <Button component={Link} href="/about">
               About page
             </Button>
-            {session ? (
+            {user ? (
               <Menu
                 position="bottom-end"
                 opened={opened}
@@ -120,7 +113,7 @@ export default function HeaderContent({
                         }}
                       >
                         <Image
-                          src={session.image || "/images/default-avatar.png"}
+                          src={user.image_link || "/images/default-avatar.png"}
                           alt="Profile picture"
                           fill
                           sizes="100%"
@@ -138,10 +131,10 @@ export default function HeaderContent({
                         }}
                       >
                         <Text size="xs" truncate weight="bold">
-                          {/* {session.user.firstName} {session.user.lastName} */}
+                          {user.first_name} {user.last_name}
                         </Text>
                         <Text size="xs" truncate>
-                          {session.email}
+                          {user.email}
                         </Text>
                       </Box>
 
