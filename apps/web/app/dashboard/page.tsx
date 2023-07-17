@@ -1,5 +1,6 @@
 import CreateElection from "@/components/client/modals/create-election";
 import DashboardPageClient from "@/components/client/pages/dashboard";
+import { getSession } from "@/utils/auth";
 import { db } from "@eboto-mo/db";
 import {
   type Election,
@@ -10,7 +11,6 @@ import {
   Vote,
 } from "@eboto-mo/db/schema";
 import { Metadata } from "next";
-import { getServerSession } from "next-auth";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -18,12 +18,11 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const session = await getServerSession();
+  const session = await getSession();
 
   const electionsAsCommissioner: (Commissioner & { election: Election })[] =
     await db.query.commissioners.findMany({
-      where: (commissioners, { eq }) =>
-        eq(commissioners.user_id, session.user.id),
+      where: (commissioners, { eq }) => eq(commissioners.user_id, session.id),
       with: {
         election: true,
       },
@@ -32,13 +31,13 @@ export default async function Page() {
   const electionsAsVoter: (Voter & {
     election: Election & { votes: Vote[] };
   })[] = await db.query.voters.findMany({
-    where: (voters, { eq }) => eq(voters.user_id, session.user.id),
+    where: (voters, { eq }) => eq(voters.user_id, session.id),
     with: {
       election: {
         // where: (election, { eq }) => not(eq(election.publicity, "PRIVATE")),
         with: {
           votes: {
-            where: (votes, { eq }) => eq(votes.voter_id, session.user.id),
+            where: (votes, { eq }) => eq(votes.voter_id, session.id),
           },
         },
       },

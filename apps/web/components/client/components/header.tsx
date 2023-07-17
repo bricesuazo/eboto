@@ -1,5 +1,6 @@
 "use client";
 
+import { type UserAuth } from "@/utils/auth";
 import {
   ActionIcon,
   Box,
@@ -25,8 +26,7 @@ import {
 } from "@tabler/icons-react";
 import { IconMoon } from "@tabler/icons-react";
 import { IconSun } from "@tabler/icons-react";
-import { type Session } from "next-auth";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -35,10 +35,8 @@ import { useState } from "react";
 export default function HeaderContent({
   session,
 }: {
-  session: Session | null;
+  session: UserAuth | null;
 }) {
-  const sessionClient = useSession();
-  console.log("🚀 ~ file: header.tsx:41 ~ session:", sessionClient);
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const pathname = usePathname();
 
@@ -122,9 +120,7 @@ export default function HeaderContent({
                         }}
                       >
                         <Image
-                          src={
-                            session.user.image || "/images/default-avatar.png"
-                          }
+                          src={session.image || "/images/default-avatar.png"}
                           alt="Profile picture"
                           fill
                           sizes="100%"
@@ -145,7 +141,7 @@ export default function HeaderContent({
                           {/* {session.user.firstName} {session.user.lastName} */}
                         </Text>
                         <Text size="xs" truncate>
-                          {session.user.email}
+                          {session.email}
                         </Text>
                       </Box>
 
