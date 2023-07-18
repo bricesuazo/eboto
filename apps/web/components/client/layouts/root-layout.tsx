@@ -18,6 +18,7 @@ import DashboardNavbar from "@/components/client/components/dashboard-navbar-cli
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ReactQueryStreamedHydration } from "@tanstack/react-query-next-experimental";
+import { Notifications } from "@mantine/notifications";
 
 export default function RootLayoutClient({
   children,
@@ -72,6 +73,7 @@ export default function RootLayoutClient({
                   primaryColor: "green",
                 }}
               >
+                <Notifications />
                 <AppShell
                   padding={0}
                   header={<HeaderContent user={user} />}

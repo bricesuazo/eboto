@@ -69,15 +69,17 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
           return "Election slug must be between 3 and 24 characters";
         }
       },
-
-      start_date: (value) => {
+      start_date: (value, values) => {
         if (!value) {
-          return "Please select a date range";
+          return "Please enter an election start date";
+        }
+        if (values.end_date && value > values.end_date) {
+          return "Start date must be before end date";
         }
       },
       end_date: (value, values) => {
         if (!value) {
-          return "Please select a date range";
+          return "Please enter an election end date";
         }
         if (values.start_date && value < values.start_date) {
           return "End date must be after start date";
@@ -162,11 +164,13 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
             />
 
             <DateTimePicker
+              valueFormat="MMMM DD, YYYY (dddd) hh:mm A"
               label="Election start date"
               placeholder="Enter election start date"
               description="You can't change the election date once the election has started."
               required
               withAsterisk
+              clearable
               popoverProps={{
                 withinPortal: true,
                 position: "bottom",
@@ -178,11 +182,13 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
               disabled={isLoading}
             />
             <DateTimePicker
+              valueFormat="MMMM DD, YYYY (dddd) hh:mm A"
               label="Election end date"
               placeholder="Enter election end date"
               description="You can't change the election date once the election has started."
               required
               withAsterisk
+              clearable
               popoverProps={{
                 withinPortal: true,
                 position: "bottom",

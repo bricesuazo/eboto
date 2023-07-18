@@ -1,4 +1,5 @@
 import DashboardLayout from "@/components/client/layouts/dashboard-layout";
+import { siteConfig } from "@/config/site";
 import { getElectionBySlug } from "@/utils/election";
 import { type ResolvingMetadata, type Metadata } from "next";
 
@@ -13,7 +14,11 @@ export async function generateMetadata(
   const election = await getElectionBySlug(params.electionDashboardSlug);
 
   return {
-    title: election.name + " - Dashboard",
+    title: {
+      default:
+        "Overview - " + election.name + " - Dashboard | " + siteConfig.name,
+      template: "%s - " + election.name + " - Dashboard | " + siteConfig.name,
+    },
   };
 }
 

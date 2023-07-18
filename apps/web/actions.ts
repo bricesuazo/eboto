@@ -15,7 +15,10 @@ import { getSession } from "@/utils/auth";
 import {
   type CreateElectionSchema,
   createElectionSchema,
+  UpdateElectionSchema,
+  updateElectionSchema,
 } from "@/utils/zod-schema";
+import { eq } from "drizzle-orm";
 
 export async function toggleTheme() {
   cookies().get("theme") && cookies().get("theme").value === "dark"
@@ -24,32 +27,32 @@ export async function toggleTheme() {
 }
 
 export async function createElection(input: CreateElectionSchema) {
-  createElectionSchema.parse(input);
+  const parsedInput = createElectionSchema.parse(input);
 
   const session = await getSession();
 
   if (!session) throw new Error("Unauthorized");
 
-  if (takenSlugs.includes(input.slug.trim().toLowerCase())) {
+  if (takenSlugs.includes(parsedInput.slug)) {
     throw new Error("Election slug is already exists");
   }
 
-  const isElectionExists: Election | null = await db.query.elections.findFirst({
-    where: (elections, { eq }) =>
-      eq(elections.slug, input.slug.trim().toLowerCase()),
-  });
+  const isElectionSlugExists: Election | null =
+    await db.query.elections.findFirst({
+      where: (elections, { eq }) => eq(elections.slug, parsedInput.slug),
+    });
 
-  if (isElectionExists) {
+  if (isElectionSlugExists) {
     throw new Error("Election slug is already exists");
   }
 
   const id = crypto.randomUUID();
   await db.insert(elections).values({
     id,
-    name: input.name,
-    slug: input.slug.trim().toLowerCase(),
-    start_date: input.start_date,
-    end_date: input.end_date,
+    name: parsedInput.name,
+    slug: parsedInput.slug,
+    start_date: parsedInput.start_date,
+    end_date: parsedInput.end_date,
   });
   await db.insert(commissioners).values({
     id: crypto.randomUUID(),
@@ -63,10 +66,10 @@ export async function createElection(input: CreateElectionSchema) {
     election_id: id,
   });
 
-  if (input.template !== 0)
+  if (parsedInput.template !== 0)
     await db.insert(positions).values(
       positionTemplate
-        .find((template) => template.id === input.template)
+        .find((template) => template.id === parsedInput.template)
         ?.positions.map((position, index) => ({
           id: crypto.randomUUID(),
           name: position,
@@ -74,4 +77,48 @@ export async function createElection(input: CreateElectionSchema) {
           order: index,
         })) || []
     );
+}
+export async function updateElection(input: UpdateElectionSchema) {
+  const parsedInput = updateElectionSchema.parse(input);
+
+  const session = await getSession();
+
+  if (!session) throw new Error("Unauthorized");
+
+  if (parsedInput.newSlug !== parsedInput.oldSlug) {
+    if (takenSlugs.includes(parsedInput.newSlug)) {
+      throw new Error("Election slug is already exists");
+    }
+
+    const isElectionSlugExists: Election | null =
+      await db.query.elections.findFirst({
+        where: (elections, { eq }) => eq(elections.slug, parsedInput.newSlug),
+      });
+
+    if (isElectionSlugExists)
+      throw new Error("Election slug is already exists");
+  }
+
+  const isElectionCommissionerExists: Election | null =
+    await db.query.elections.findFirst({
+      with: {
+        commissioners: {
+          where: (commissioners, { eq }) =>
+            eq(commissioners.user_id, session.id),
+        },
+      },
+    });
+
+  if (!isElectionCommissionerExists) throw new Error("Unauthorized");
+
+  await db
+    .update(elections)
+    .set({
+      name: parsedInput.name,
+      slug: parsedInput.newSlug,
+      description: parsedInput.description,
+      start_date: parsedInput.start_date,
+      end_date: parsedInput.end_date,
+    })
+    .where(eq(elections.id, parsedInput.id));
 }

@@ -18,13 +18,17 @@ const election_id = varchar("election_id", { length: 256 }).notNull();
 const user_id = varchar("user_id", { length: 256 }).notNull();
 const voter_id = varchar("voter_id", { length: 256 }).notNull();
 
-const publicity = ["PRIVATE", "VOTER", "PUBLIC"] as const;
-const token_type = [
+export const publicity = ["PRIVATE", "VOTER", "PUBLIC"] as const;
+export type Publicity = (typeof publicity)[number];
+
+export const token_type = [
   "EMAIL_VERIFICATION",
   "PASSWORD_RESET",
   "ELECTION_INVITATION",
 ] as const;
-const acount_status_type = ["ADDED", "INVITED", "DECLINED"] as const;
+export type TokenType = (typeof token_type)[number];
+export const acount_status_type = ["ADDED", "INVITED", "DECLINED"] as const;
+export type AccountStatusType = (typeof acount_status_type)[number];
 
 export const users = mysqlTable("users", {
   id,
