@@ -11,10 +11,10 @@ import {
   Title,
   rem,
 } from "@mantine/core";
-import { IconQrcode } from "@tabler/icons-react";
 import { IconExternalLink } from "@tabler/icons-react";
 import Link from "next/link";
 import Moment from "react-moment";
+import QRCode from "@/components/client/modals/show-qr-code";
 
 export default function DashboardOverview({
   election,
@@ -43,30 +43,7 @@ export default function DashboardOverview({
               <IconExternalLink size={rem(18)} />
             </ActionIcon>
           </Flex>
-          <ActionIcon
-            // onClick={openQRCode}
-            variant="outline"
-            color="#2f9e44"
-            size="lg"
-            sx={(theme) => ({
-              [theme.fn.largerThan("md")]: {
-                display: "none",
-              },
-            })}
-          >
-            <IconQrcode />
-          </ActionIcon>
-          <Button
-            // onClick={openQRCode}
-            sx={(theme) => ({
-              [theme.fn.smallerThan("md")]: {
-                display: "none",
-              },
-            })}
-            leftIcon={<IconQrcode size={rem(18)} />}
-          >
-            Download/Scan QR Code
-          </Button>
+          <QRCode election={election} />
         </Flex>
         <Text>
           <Moment format="MMMM DD, YYYY HA" date={election.start_date} />
