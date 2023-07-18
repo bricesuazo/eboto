@@ -19,8 +19,11 @@ import {
   updateElectionSchema,
   CreatePartylistSchema,
   createPartylistSchema,
+  UpdatePartylistSchema,
+  updatePartylistSchema,
 } from "@/utils/zod-schema";
 import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export async function toggleTheme() {
   cookies().get("theme") && cookies().get("theme").value === "dark"
@@ -138,4 +141,24 @@ export async function createPartylist(input: CreatePartylistSchema) {
     acronym: parsedInput.acronym,
     election_id: parsedInput.election_id,
   });
+  revalidatePath("/election/[electionDashboardSlug]/partylist");
+}
+export async function updatePartylist(input: UpdatePartylistSchema) {
+  const parsedInput = updatePartylistSchema.parse(input);
+
+  const session = await getSession();
+
+  if (!session) throw new Error("Unauthorized");
+
+  await db
+    .update(partylists)
+    .set({
+      name: parsedInput.name,
+      acronym: parsedInput.acronym,
+      description: parsedInput.description,
+      logo_link: parsedInput.logo_link,
+    })
+    .where(eq(partylists.id, parsedInput.id));
+
+  revalidatePath("/election/[electionDashboardSlug]/partylist");
 }
