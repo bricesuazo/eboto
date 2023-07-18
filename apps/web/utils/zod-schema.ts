@@ -34,8 +34,16 @@ export const updatePartylistSchema = z.object({
   description: z.string().nullable(),
   logo_link: z.string().nullable(),
 });
+export const createPositionSchema = z.object({
+  name: z.string().min(1),
+  order: z.number().nonnegative(),
+  min: z.number().nonnegative().optional(),
+  max: z.number().nonnegative().optional(),
+  election_id: z.string().min(1),
+});
 
 export type CreateElectionSchema = z.infer<typeof createElectionSchema>;
 export type UpdateElectionSchema = z.infer<typeof updateElectionSchema>;
 export type CreatePartylistSchema = z.infer<typeof createPartylistSchema>;
 export type UpdatePartylistSchema = z.infer<typeof updatePartylistSchema>;
+export type CreatePositionSchema = z.infer<typeof createPositionSchema>;

@@ -16,12 +16,13 @@ import { getSession } from "@/utils/auth";
 import {
   type CreateElectionSchema,
   createElectionSchema,
-  UpdateElectionSchema,
+  type UpdateElectionSchema,
   updateElectionSchema,
-  CreatePartylistSchema,
+  type CreatePartylistSchema,
   createPartylistSchema,
-  UpdatePartylistSchema,
+  type UpdatePartylistSchema,
   updatePartylistSchema,
+  type CreatePositionSchema,
 } from "@/utils/zod-schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -187,6 +188,32 @@ export async function updatePartylist(input: UpdatePartylistSchema) {
       logo_link: parsedInput.logo_link,
     })
     .where(eq(partylists.id, parsedInput.id));
+
+  revalidatePath("/election/[electionDashboardSlug]/partylist");
+}
+export async function deletePartylist(id: string) {
+  const session = await getSession();
+
+  if (!session) throw new Error("Unauthorized");
+
+  await db.delete(partylists).where(eq(partylists.id, id));
+
+  revalidatePath("/election/[electionDashboardSlug]/partylist");
+}
+export async function createPosition(input: CreatePositionSchema) {
+  const session = await getSession();
+
+  if (!session) throw new Error("Unauthorized");
+
+  await db.insert(positions).values({
+    id: crypto.randomUUID(),
+    name: input.name,
+    description: input.description,
+    order: input.order,
+    min: input.min,
+    max: input.max,
+    election_id: input.election_id,
+  });
 
   revalidatePath("/election/[electionDashboardSlug]/partylist");
 }

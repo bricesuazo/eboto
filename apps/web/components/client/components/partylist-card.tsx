@@ -1,17 +1,12 @@
 "use client";
 
 import { type Partylist } from "@eboto-mo/db/schema";
-import { Box, Button, Center, Flex, Group, Title } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { Box, Center, Flex, Group, Title } from "@mantine/core";
 import { IconFlag } from "@tabler/icons-react";
 import UpdatePartylist from "@/components/client/modals/update-partylist";
+import DeletePartylist from "../modals/delete-partylist";
 
 export default function PartylistCard({ partylist }: { partylist: Partylist }) {
-  const [
-    openedConfirmDeletePartylist,
-    { open: openConfirmDeletePartylist, close: closeConfirmDeletePartylist },
-  ] = useDisclosure(false);
-
   return (
     <Flex
       sx={(theme) => ({
@@ -44,21 +39,7 @@ export default function PartylistCard({ partylist }: { partylist: Partylist }) {
 
       <Group spacing="xs">
         <UpdatePartylist partylist={partylist} />
-        {/* <ConfirmDeletePartylist
-          isOpen={openedConfirmDeletePartylist}
-          onClose={closeConfirmDeletePartylist}
-          partylist={partylist}
-        /> */}
-
-        <Button
-          onClick={openConfirmDeletePartylist}
-          variant="light"
-          color="red"
-          size="sm"
-          compact
-        >
-          Delete
-        </Button>
+        <DeletePartylist partylist={partylist} />
       </Group>
     </Flex>
   );

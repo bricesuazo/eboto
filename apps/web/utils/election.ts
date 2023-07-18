@@ -30,3 +30,9 @@ export async function getAllPartylistsByElectionId(id: string) {
     orderBy: (partylists, { desc }) => desc(partylists.updated_at),
   });
 }
+export async function getAllPositionsByElectionId(id: string) {
+  return await db.query.positions.findMany({
+    where: (positions, { eq }) => eq(positions.election_id, id),
+    orderBy: (positions, { desc }) => desc(positions.updated_at),
+  });
+}
