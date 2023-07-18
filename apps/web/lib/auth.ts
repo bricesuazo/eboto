@@ -130,6 +130,9 @@ export const authOptions: NextAuthOptions = {
 
         return {
           id: user.id,
+          email: user.email,
+          image: user.image_link,
+          name: `${user.first_name} ${user.last_name}`,
         };
       },
     }),
