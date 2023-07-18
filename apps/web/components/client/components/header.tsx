@@ -1,5 +1,6 @@
 "use client";
 
+import { useStore } from "@/store";
 import { type User } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
@@ -17,6 +18,7 @@ import {
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { IconLogout } from "@tabler/icons-react";
 import {
   IconAlertCircle,
@@ -30,7 +32,6 @@ import { signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { useState } from "react";
 
 export default function HeaderContent({ user }: { user: User | null }) {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -38,17 +39,23 @@ export default function HeaderContent({ user }: { user: User | null }) {
   const params = useParams();
 
   const theme = useMantineTheme();
-  const [opened, setOpened] = useState(false);
+
+  const store = useStore();
+  const [openedMenu, { open: openMenu, close: closeMenu }] =
+    useDisclosure(false);
 
   return (
     <Header height={60}>
-      <Container h="100%" size={!params.slug ? undefined : "full"}>
+      <Container
+        h="100%"
+        size={!params.electionDashboardSlug ? undefined : "full"}
+      >
         <Flex h="100%" align="center" gap="xs">
-          {pathname.includes("/dashboard/[electionSlug]") && (
+          {params.electionDashboardSlug && (
             <MediaQuery largerThan="sm" styles={{ display: "none" }}>
               <Burger
-                opened={opened}
-                onClick={() => setOpened((o) => !o)}
+                opened={store.dashboardMenu}
+                onClick={() => store.toggleDashboardMenu()}
                 size="sm"
                 color={theme.colors.gray[6]}
                 py="xl"
@@ -83,8 +90,8 @@ export default function HeaderContent({ user }: { user: User | null }) {
             {user ? (
               <Menu
                 position="bottom-end"
-                opened={opened}
-                onChange={setOpened}
+                opened={openedMenu}
+                onChange={() => (openedMenu ? closeMenu() : openMenu())}
                 withinPortal
                 width={200}
               >
@@ -134,7 +141,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
                       <IconChevronDown
                         size={16}
                         style={{
-                          rotate: opened ? "-180deg" : "0deg",
+                          rotate: openedMenu ? "-180deg" : "0deg",
                           transition: "all 0.25s",
                         }}
                       />

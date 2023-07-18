@@ -6,11 +6,11 @@ export async function generateMetadata(
   {
     params,
   }: {
-    params: { slug: string };
+    params: { electionDashboardSlug: string };
   },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const election = await getElectionBySlug(params.slug);
+  const election = await getElectionBySlug(params.electionDashboardSlug);
 
   return {
     title: election.name + " - Dashboard",

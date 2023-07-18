@@ -28,6 +28,7 @@ import CreateElection from "@/components/client/modals/create-election";
 import { electionDashboardNavbar } from "@/constants";
 import { useQuery } from "@tanstack/react-query";
 import { getAllMyElections } from "@/utils/election";
+import { useStore } from "@/store";
 
 const useStyles = createStyles((theme) => ({
   navbar: {
@@ -104,15 +105,18 @@ export default function NavbarComponent() {
     queryFn: async () => await getAllMyElections(),
   });
   const currentElection = elections?.find(
-    (election) => election.election.slug === params.slug.toString()
+    (election) =>
+      election.election.slug === params.electionDashboardSlug.toString()
   ).election;
+
+  const store = useStore();
 
   const { classes, cx } = useStyles();
 
   return (
     <Navbar
       width={{ sm: 240, md: 300, xl: 340 }}
-      //   hidden={!opened}
+      hidden={!store.dashboardMenu}
       hiddenBreakpoint="sm"
       className={classes.navbar}
       sx={{
@@ -127,7 +131,7 @@ export default function NavbarComponent() {
       <Navbar.Section grow p="md">
         <Stack>
           <Select
-            defaultValue={params.slug.toString()}
+            defaultValue={params.electionDashboardSlug.toString()}
             placeholder={isLoading ? "Loading..." : "Select election"}
             iconWidth={48}
             disabled={isLoading}
@@ -177,7 +181,9 @@ export default function NavbarComponent() {
                           : election.end_date < new Date()
                           ? "Completed"
                           : "Ongoing",
-                      selected: election.slug === params.slug.toString(),
+                      selected:
+                        election.slug ===
+                        params.electionDashboardSlug.toString(),
                     }))
                 : []
             }
@@ -215,10 +221,10 @@ export default function NavbarComponent() {
                 </UnstyledButton>
               );
             }}
-            value={params.slug.toString()}
+            value={params.electionDashboardSlug.toString()}
             onChange={(value) => {
               router.push(`/dashboard/${value || ""}`);
-              // setOpened(false);}
+              store.toggleDashboardMenu(false);
             }}
           />
           <Button
@@ -226,7 +232,7 @@ export default function NavbarComponent() {
             w="100%"
             rightIcon={<IconExternalLink size="1rem" />}
             component={Link}
-            href={`/${params.slug.toString()}`}
+            href={`/${params.electionDashboardSlug.toString()}`}
             target="_blank"
           >
             Visit election
@@ -236,10 +242,12 @@ export default function NavbarComponent() {
               <UnstyledButton
                 key={item.id}
                 component={Link}
-                href={`/dashboard/${params.slug.toString()}/${item.path || ""}`}
-                // onClick={() => {
-                //   opened && setOpened(false);
-                // }}
+                href={`/dashboard/${params.electionDashboardSlug.toString()}/${
+                  item.path || ""
+                }`}
+                onClick={() => {
+                  store.dashboardMenu && store.toggleDashboardMenu(false);
+                }}
                 className={cx(classes.link, {
                   [classes.linkActive]: item.path === pathname.split("/")[3],
                 })}

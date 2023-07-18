@@ -2,10 +2,10 @@ import DashboardOverview from "@/components/client/pages/dashboard-overview";
 import { getElectionBySlug } from "@/utils/election";
 
 export default async function Page({
-  params: { slug },
+  params: { electionDashboardSlug },
 }: {
-  params: { slug: string };
+  params: { electionDashboardSlug: string };
 }) {
-  const election = await getElectionBySlug(slug);
+  const election = await getElectionBySlug(electionDashboardSlug);
   return <DashboardOverview election={election} />;
 }

@@ -92,6 +92,9 @@ importers:
       '@vercel/analytics':
         specifier: ^1.0.1
         version: registry.npmjs.org/@vercel/analytics@1.0.1
+      add:
+        specifier: ^2.0.6
+        version: registry.npmjs.org/add@2.0.6
       bcryptjs:
         specifier: ^2.4.3
         version: registry.npmjs.org/bcryptjs@2.4.3
@@ -128,6 +131,9 @@ importers:
       zod:
         specifier: ^3.21.4
         version: registry.npmjs.org/zod@3.21.4
+      zustand:
+        specifier: ^4.3.9
+        version: registry.npmjs.org/zustand@4.3.9(react@18.2.0)
     devDependencies:
       '@eboto-mo/db':
         specifier: workspace:*
@@ -2873,6 +2879,12 @@ packages:
     version: 8.10.0
     engines: {node: '>=0.4.0'}
     hasBin: true
+
+  registry.npmjs.org/add@2.0.6:
+    resolution: {integrity: sha512-j5QzrmsokwWWp6kUcJQySpbG+xfOBqqKnup3OIk1pz+kB/80SLorZ9V8zHFLO92Lcd+hbvq8bT+zOGoPkmBV0Q==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/add/-/add-2.0.6.tgz}
+    name: add
+    version: 2.0.6
+    dev: false
 
   registry.npmjs.org/aggregate-error@3.1.0:
     resolution: {integrity: sha512-4I7Td01quW/RpocfNayFdFVk1qSuoh0E7JrbRJ16nH01HhKFQ88INq9Sd+nd72zqRySlr9BmDA8xlEJ6vJMrYA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/aggregate-error/-/aggregate-error-3.1.0.tgz}
@@ -7957,3 +7969,22 @@ packages:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/zod/-/zod-3.21.4.tgz}
     name: zod
     version: 3.21.4
+
+  registry.npmjs.org/zustand@4.3.9(react@18.2.0):
+    resolution: {integrity: sha512-Tat5r8jOMG1Vcsj8uldMyqYKC5IZvQif8zetmLHs9WoZlntTHmIoNM8TpLRY31ExncuUvUOXehd0kvahkuHjDw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/zustand/-/zustand-4.3.9.tgz}
+    id: registry.npmjs.org/zustand/4.3.9
+    name: zustand
+    version: 4.3.9
+    engines: {node: '>=12.7.0'}
+    peerDependencies:
+      immer: '>=9.0'
+      react: '>=16.8'
+    peerDependenciesMeta:
+      immer:
+        optional: true
+      react:
+        optional: true
+    dependencies:
+      react: registry.npmjs.org/react@18.2.0
+      use-sync-external-store: registry.npmjs.org/use-sync-external-store@1.2.0(react@18.2.0)
+    dev: false

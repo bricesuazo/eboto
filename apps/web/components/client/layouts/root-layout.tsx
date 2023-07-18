@@ -75,7 +75,9 @@ export default function RootLayoutClient({
                 <AppShell
                   padding={0}
                   header={<HeaderContent user={user} />}
-                  navbar={params.slug ? <DashboardNavbar /> : null}
+                  navbar={
+                    params.electionDashboardSlug ? <DashboardNavbar /> : null
+                  }
                   styles={(theme) => ({
                     main: {
                       backgroundColor:
