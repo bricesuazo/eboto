@@ -10,10 +10,8 @@ export const metadata: Metadata = {
 };
 
 export default async function Page({
-  children,
   params: { electionDashboardSlug },
 }: {
-  children: React.ReactNode;
   params: { electionDashboardSlug: string };
 }) {
   const election = await getElectionBySlug(electionDashboardSlug);

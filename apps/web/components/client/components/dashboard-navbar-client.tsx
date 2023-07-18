@@ -94,6 +94,7 @@ const useStyles = createStyles((theme) => ({
 export default function NavbarComponent() {
   const router = useRouter();
   const params = useParams();
+  if (!params.electionDashboardSlug) return null;
   const pathname = usePathname();
 
   const {
@@ -116,7 +117,9 @@ export default function NavbarComponent() {
   return (
     <Navbar
       width={{ sm: 240, md: 300, xl: 340 }}
-      hidden={!store.dashboardMenu}
+      hidden={
+        !store.dashboardMenu || params.electionDashboardSlug === undefined
+      }
       hiddenBreakpoint="sm"
       className={classes.navbar}
       sx={{
@@ -131,7 +134,6 @@ export default function NavbarComponent() {
       <Navbar.Section grow p="md">
         <Stack>
           <Select
-            defaultValue={params.electionDashboardSlug.toString()}
             placeholder={isLoading ? "Loading..." : "Select election"}
             iconWidth={48}
             disabled={isLoading}
