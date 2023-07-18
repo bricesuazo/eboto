@@ -28,7 +28,8 @@ export const createPartylistSchema = z.object({
 export const updatePartylistSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
-  acronym: z.string().min(1),
+  oldAcronym: z.string().optional(),
+  newAcronym: z.string().min(1),
   election_id: z.string().min(1),
   description: z.string().nullable(),
   logo_link: z.string().nullable(),

@@ -2,6 +2,7 @@
 
 import { db } from "@eboto-mo/db";
 import { getSession } from "@/utils/auth";
+import { not } from "drizzle-orm";
 
 export async function getElectionBySlug(slug: string) {
   return await db.query.elections.findFirst({
@@ -24,6 +25,8 @@ export async function getAllMyElections() {
 
 export async function getAllPartylistsByElectionId(id: string) {
   return await db.query.partylists.findMany({
-    where: (partylists, { eq }) => eq(partylists.election_id, id),
+    where: (partylists, { eq, and }) =>
+      and(eq(partylists.election_id, id), not(eq(partylists.acronym, "IND"))),
+    orderBy: (partylists, { desc }) => desc(partylists.updated_at),
   });
 }

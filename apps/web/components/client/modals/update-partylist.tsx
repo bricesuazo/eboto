@@ -32,7 +32,8 @@ export default function UpdatePartylist({
       id: partylist.id,
       election_id: partylist.election_id,
       name: partylist.name,
-      acronym: partylist.acronym,
+      oldAcronym: partylist.acronym,
+      newAcronym: partylist.acronym,
       description: partylist.description,
       logo_link: partylist.logo_link,
     },
@@ -46,7 +47,7 @@ export default function UpdatePartylist({
         },
         "Name must be between 3 and 50 characters"
       ),
-      acronym: hasLength(
+      newAcronym: hasLength(
         {
           min: 1,
           max: 24,
@@ -56,19 +57,20 @@ export default function UpdatePartylist({
     },
   });
 
-  const { mutate, isLoading, isError, error } = useMutation({
+  const { mutate, isLoading, isError, error, reset } = useMutation({
     mutationFn: (updatePartylistInput: UpdatePartylistSchema) =>
       updatePartylist({
         id: partylist.id,
         election_id: partylist.election_id,
         name: updatePartylistInput.name,
-        acronym: updatePartylistInput.acronym,
+        oldAcronym: partylist.acronym,
+        newAcronym: updatePartylistInput.newAcronym,
         description: updatePartylistInput.description,
         logo_link: updatePartylistInput.logo_link,
       }),
     onSuccess: async (_, data) => {
       notifications.show({
-        title: "Election settings updated.",
+        title: `${data.name} (${data.newAcronym}) updated.`,
         icon: <IconCheck size="1.1rem" />,
         message: "Your changes have been saved.",
         autoClose: 3000,
@@ -89,15 +91,8 @@ export default function UpdatePartylist({
 
   useEffect(() => {
     if (opened) {
-      const dataForForm: typeof form.values = {
-        name: partylist.name,
-        acronym: partylist.acronym,
-        description: partylist.description,
-        logo_link: partylist.logo_link,
-        election_id: partylist.election_id,
-        id: partylist.id,
-      };
       form.resetDirty();
+      reset();
     }
   }, [opened]);
 
@@ -120,7 +115,8 @@ export default function UpdatePartylist({
             mutate({
               id: partylist.id,
               name: value.name,
-              acronym: value.acronym,
+              oldAcronym: partylist.acronym,
+              newAcronym: value.newAcronym,
               election_id: partylist.election_id,
               description: value.description,
               logo_link: value.logo_link,
@@ -142,7 +138,7 @@ export default function UpdatePartylist({
               label="Acronym"
               required
               withAsterisk
-              {...form.getInputProps("acronym")}
+              {...form.getInputProps("newAcronym")}
               icon={<IconLetterCase size="1rem" />}
             />
 

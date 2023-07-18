@@ -10,6 +10,7 @@ import {
   commissioners,
   partylists,
   positions,
+  Partylist,
 } from "@eboto-mo/db/schema";
 import { getSession } from "@/utils/auth";
 import {
@@ -135,6 +136,18 @@ export async function createPartylist(input: CreatePartylistSchema) {
 
   if (!session) throw new Error("Unauthorized");
 
+  const isAcronymExists: Partylist | null = await db.query.partylists.findFirst(
+    {
+      where: (partylists, { eq, and }) =>
+        and(
+          eq(partylists.election_id, parsedInput.election_id),
+          eq(partylists.acronym, parsedInput.acronym)
+        ),
+    }
+  );
+
+  if (isAcronymExists) throw new Error("Acronym is already exists");
+
   await db.insert(partylists).values({
     id: crypto.randomUUID(),
     name: parsedInput.name,
@@ -145,16 +158,31 @@ export async function createPartylist(input: CreatePartylistSchema) {
 }
 export async function updatePartylist(input: UpdatePartylistSchema) {
   const parsedInput = updatePartylistSchema.parse(input);
+  if (parsedInput.newAcronym === "IND")
+    throw new Error("Acronym is already exists");
 
   const session = await getSession();
 
   if (!session) throw new Error("Unauthorized");
 
+  if (parsedInput.oldAcronym !== parsedInput.newAcronym) {
+    const isAcronymExists: Partylist | null =
+      await db.query.partylists.findFirst({
+        where: (partylists, { eq, and }) =>
+          and(
+            eq(partylists.election_id, parsedInput.election_id),
+            eq(partylists.acronym, parsedInput.newAcronym)
+          ),
+      });
+
+    if (isAcronymExists) throw new Error("Acronym is already exists");
+  }
+
   await db
     .update(partylists)
     .set({
       name: parsedInput.name,
-      acronym: parsedInput.acronym,
+      acronym: parsedInput.newAcronym,
       description: parsedInput.description,
       logo_link: parsedInput.logo_link,
     })
