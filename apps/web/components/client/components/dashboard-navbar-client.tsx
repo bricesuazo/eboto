@@ -23,9 +23,11 @@ import { useParams, usePathname, useRouter } from "next/navigation";
 import { useDidUpdate, useDisclosure } from "@mantine/hooks";
 import Image from "next/image";
 import Link from "next/link";
-import { type Election } from "@eboto-mo/db/schema";
+import { Commissioner, type Election } from "@eboto-mo/db/schema";
 import CreateElection from "@/components/client/modals/create-election";
 import { electionDashboardNavbar } from "@/constants";
+import { useQuery } from "@tanstack/react-query";
+import { getAllMyElections } from "@/utils/election";
 
 const useStyles = createStyles((theme) => ({
   navbar: {
@@ -93,7 +95,17 @@ export default function NavbarComponent() {
   const params = useParams();
   const pathname = usePathname();
 
-  //   const [election, setElection] = useState<Election | undefined>();
+  const {
+    data: elections,
+    isLoading,
+    error,
+  } = useQuery<(Commissioner & { election: Election })[]>({
+    queryKey: ["getAllMyElections"],
+    queryFn: async () => await getAllMyElections(),
+  });
+  const currentElection = elections?.find(
+    (election) => election.election.slug === params.slug.toString()
+  ).election;
 
   const { classes, cx } = useStyles();
 
@@ -116,101 +128,98 @@ export default function NavbarComponent() {
         <Stack>
           <Select
             defaultValue={params.slug.toString()}
-            placeholder="Select election"
+            placeholder={isLoading ? "Loading..." : "Select election"}
             iconWidth={48}
-            // icon={
-            //   election?.logo ? (
-            //     <Image
-            //       src={election.logo}
-            //       alt={election.name}
-            //       width={28}
-            //       height={28}
-            //       priority
-            //     />
-            //   ) : (
-            //     <IconFingerprint size={28} />
-            //   )
-            // }
+            disabled={isLoading}
+            error={(error as Error)?.message}
+            icon={
+              currentElection && currentElection.logo ? (
+                <Image
+                  src={currentElection.logo}
+                  alt={currentElection.name}
+                  width={28}
+                  height={28}
+                  priority
+                />
+              ) : (
+                <IconFingerprint size={28} />
+              )
+            }
             size="md"
-            data={[]}
-            //   data={
-            //     elections.data
-            //       ? elections.data
-            //           .sort(
-            //             (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()
-            //           )
-            //           .filter(
-            //             (election) =>
-            //               election.start_date < new Date() &&
-            //               election.end_date > new Date()
-            //           )
-            //           .concat(
-            //             elections.data.filter(
-            //               (election) =>
-            //                 !(
-            //                   election.start_date < new Date() &&
-            //                   election.end_date > new Date()
-            //                 )
-            //             )
-            //           )
-            //           .map((selectedElection) => ({
-            //             label: selectedElection.name,
-            //             value: selectedElection.slug,
-            //             group:
-            //               selectedElection.start_date > new Date()
-            //                 ? "Upcoming"
-            //                 : selectedElection.end_date < new Date()
-            //                 ? "Completed"
-            //                 : "Ongoing",
-            //             selected:
-            //               selectedElection.slug === election?.slug ||
-            //               selectedElection.slug ===
-            //                 (router.query.electionSlug as string),
-            //           }))
-            //       : []
-            //   }
-            //   itemComponent={(
-            //     props: React.ComponentPropsWithoutRef<"button">
-            //   ) => {
-            //     const election = elections.data?.find(
-            //       (election) => election.slug === props.value
-            //     );
-            //     if (!election) return null;
-
-            //     return (
-            //       <UnstyledButton
-            //         {...props}
-            //         h={48}
-            //         sx={(theme) => ({
-            //           display: "flex",
-            //           alignItems: "center",
-            //           gap: theme.spacing.xs,
-            //         })}
-            //       >
-            //         {election.logo ? (
-            //           <Image
-            //             src={election.logo}
-            //             alt={election.name}
-            //             width={20}
-            //             height={20}
-            //             priority
-            //           />
-            //         ) : (
-            //           <IconFingerprint size={20} />
-            //         )}
-            //         <Text truncate size="sm">
-            //           {election.name}
-            //         </Text>
-            //       </UnstyledButton>
-            //     );
-            //   }}
+            data={
+              elections
+                ? elections
+                    .sort(
+                      (a, b) =>
+                        b.election.updated_at.getTime() -
+                        a.election.updated_at.getTime()
+                    )
+                    .filter(
+                      ({ election }) =>
+                        election.start_date < new Date() &&
+                        election.end_date > new Date()
+                    )
+                    .concat(
+                      elections.filter(
+                        ({ election }) =>
+                          !(
+                            election.start_date < new Date() &&
+                            election.end_date > new Date()
+                          )
+                      )
+                    )
+                    .map(({ election }) => ({
+                      label: election.name,
+                      value: election.slug,
+                      group:
+                        election.start_date > new Date()
+                          ? "Upcoming"
+                          : election.end_date < new Date()
+                          ? "Completed"
+                          : "Ongoing",
+                      selected: election.slug === params.slug.toString(),
+                    }))
+                : []
+            }
+            itemComponent={(
+              props: React.ComponentPropsWithoutRef<"button">
+            ) => {
+              const { election } = elections.find(
+                ({ election }) => election.slug === props.value
+              );
+              if (!election) return null;
+              return (
+                <UnstyledButton
+                  {...props}
+                  h={48}
+                  sx={(theme) => ({
+                    display: "flex",
+                    alignItems: "center",
+                    gap: theme.spacing.xs,
+                  })}
+                >
+                  {election.logo ? (
+                    <Image
+                      src={election.logo}
+                      alt={election.name}
+                      width={20}
+                      height={20}
+                      priority
+                    />
+                  ) : (
+                    <IconFingerprint size={20} />
+                  )}
+                  <Text truncate size="sm">
+                    {election.name}
+                  </Text>
+                </UnstyledButton>
+              );
+            }}
             value={params.slug.toString()}
-            // onChange={(value) =>
-            //   void (async () => {
-            //     await router.push(`/dashboard/${value || ""}`);
-            //     setOpened(false);
-            //   })()
-            // }
+            onChange={(value) => {
+              router.push(`/dashboard/${value || ""}`);
+              // setOpened(false);}
+            }}
           />
           <Button
             variant="outline"

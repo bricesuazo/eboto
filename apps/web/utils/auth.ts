@@ -1,3 +1,5 @@
+"use server";
+
 import { authOptions } from "@/lib/auth";
 import { db } from "@eboto-mo/db";
 import { users, type User } from "@eboto-mo/db/schema";
