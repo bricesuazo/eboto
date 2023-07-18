@@ -17,6 +17,8 @@ import {
   createElectionSchema,
   UpdateElectionSchema,
   updateElectionSchema,
+  CreatePartylistSchema,
+  createPartylistSchema,
 } from "@/utils/zod-schema";
 import { eq } from "drizzle-orm";
 
@@ -121,4 +123,19 @@ export async function updateElection(input: UpdateElectionSchema) {
       end_date: parsedInput.end_date,
     })
     .where(eq(elections.id, parsedInput.id));
+}
+
+export async function createPartylist(input: CreatePartylistSchema) {
+  const parsedInput = createPartylistSchema.parse(input);
+
+  const session = await getSession();
+
+  if (!session) throw new Error("Unauthorized");
+
+  await db.insert(partylists).values({
+    id: crypto.randomUUID(),
+    name: parsedInput.name,
+    acronym: parsedInput.acronym,
+    election_id: parsedInput.election_id,
+  });
 }

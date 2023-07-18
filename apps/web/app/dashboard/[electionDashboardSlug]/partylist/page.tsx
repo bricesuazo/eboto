@@ -1,9 +1,22 @@
+import DashboardPartylist from "@/components/client/pages/dashboard-partylist";
+import {
+  getAllPartylistsByElectionId,
+  getElectionBySlug,
+} from "@/utils/election";
 import { type Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Partylists",
 };
 
-export default function Page() {
-  return <div>Partylist</div>;
+export default async function Page({
+  children,
+  params: { electionDashboardSlug },
+}: {
+  children: React.ReactNode;
+  params: { electionDashboardSlug: string };
+}) {
+  const election = await getElectionBySlug(electionDashboardSlug);
+  const partylists = await getAllPartylistsByElectionId(election.id);
+  return <DashboardPartylist election={election} partylists={partylists} />;
 }

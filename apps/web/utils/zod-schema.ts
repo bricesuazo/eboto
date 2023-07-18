@@ -19,6 +19,12 @@ export const updateElectionSchema = z.object({
   publicity: z.enum(publicity),
   logo: z.string().nullable(),
 });
+export const createPartylistSchema = z.object({
+  name: z.string(),
+  acronym: z.string(),
+  election_id: z.string(),
+});
 
 export type CreateElectionSchema = z.infer<typeof createElectionSchema>;
 export type UpdateElectionSchema = z.infer<typeof updateElectionSchema>;
+export type CreatePartylistSchema = z.infer<typeof createPartylistSchema>;

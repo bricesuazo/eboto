@@ -21,3 +21,9 @@ export async function getAllMyElections() {
     },
   });
 }
+
+export async function getAllPartylistsByElectionId(id: string) {
+  return await db.query.partylists.findMany({
+    where: (partylists, { eq }) => eq(partylists.election_id, id),
+  });
+}
