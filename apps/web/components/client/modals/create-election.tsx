@@ -15,17 +15,26 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { hasLength, useForm } from "@mantine/form";
 import {
+  IconAlertCircle,
   IconCalendar,
   IconClock,
   IconLetterCase,
   IconPlus,
   IconTemplate,
 } from "@tabler/icons-react";
-import { DatePickerInput, DateTimePicker } from "@mantine/dates";
+import { DateTimePicker } from "@mantine/dates";
 import { positionTemplate } from "@/constants";
 import { useEffect } from "react";
+import { createElection } from "@/actions";
+import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import {
+  type CreateElectionSchema,
+  createElectionSchema,
+} from "@/utils/zod-schema";
 
 export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
+  const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
 
   const form = useForm<{
@@ -43,6 +52,7 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
       template: "0",
     },
     validateInputOnBlur: true,
+
     validate: {
       name: hasLength(
         { min: 3 },
@@ -78,15 +88,24 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
 
   useEffect(() => {
     if (opened) {
-      form.setValues({
-        name: "",
-        slug: "",
-        start_date: null,
-        end_date: null,
-        template: "0",
-      });
+      form.reset();
     }
   }, [opened]);
+
+  const { mutate, isLoading, isError, error } = useMutation({
+    mutationFn: (newElection: CreateElectionSchema) =>
+      createElection({
+        name: newElection.name,
+        slug: newElection.slug,
+        start_date: newElection.start_date,
+        end_date: newElection.end_date,
+        template: newElection.template,
+      }),
+    onSuccess: (_, { slug }) => {
+      router.push(`/dashboard/${slug}`);
+      close();
+    },
+  });
 
   return (
     <>
@@ -100,21 +119,13 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
         closeOnClickOutside={false}
       >
         <form
-        // onSubmit={form.onSubmit((value) =>
-        //   createElectionMutation.mutate({
-        //     name: value.name,
-        //     slug: value.slug,
-        //     start_date:
-        //       value.date[0] ||
-        //       new Date(new Date().setDate(new Date().getDate() + 1)),
-        //     end_date:
-        //       value.date[1] ||
-        //       new Date(new Date().setDate(new Date().getDate() + 8)),
-        //     voting_start: parseInt(value.voting_start),
-        //     voting_end: parseInt(value.voting_end),
-        //     template: parseInt(value.template),
-        //   })
-        // )}
+          onSubmit={form.onSubmit((value) => {
+            const parsed = createElectionSchema.parse({
+              ...value,
+              template: parseInt(value.template),
+            });
+            mutate(parsed);
+          })}
         >
           <Stack spacing="sm">
             <TextInput
@@ -125,7 +136,7 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
               placeholder="Enter election name"
               {...form.getInputProps("name")}
               icon={<IconLetterCase size="1rem" />}
-              // disabled={createElectionMutation.isLoading}
+              disabled={isLoading}
             />
 
             <TextInput
@@ -137,7 +148,7 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
                   eboto-mo.com/{form.values.slug || "election-slug"}
                 </>
               }
-              // disabled={createElectionMutation.isLoading}
+              disabled={isLoading}
               withAsterisk
               required
               placeholder="Enter election slug"
@@ -164,7 +175,7 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
               firstDayOfWeek={0}
               {...form.getInputProps("start_date")}
               icon={<IconCalendar size="1rem" />}
-              // disabled={createElectionMutation.isLoading}
+              disabled={isLoading}
             />
             <DateTimePicker
               label="Election end date"
@@ -183,7 +194,7 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
               firstDayOfWeek={0}
               {...form.getInputProps("end_date")}
               icon={<IconCalendar size="1rem" />}
-              // disabled={createElectionMutation.isLoading}
+              disabled={isLoading}
             />
 
             <Select
@@ -203,33 +214,32 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
               nothingFound="No position template found"
               icon={<IconTemplate size="1rem" />}
               searchable
-              // disabled={createElectionMutation.isLoading}
+              disabled={isLoading}
             />
 
-            {/* {createElectionMutation.isError &&
-              createElectionMutation.error?.data?.code !== "CONFLICT" && (
-                <Alert
-                  icon={<IconAlertCircle size="1rem" />}
-                  title="Error"
-                  color="red"
-                >
-                  {createElectionMutation.error?.message}
-                </Alert>
-              )} */}
+            {isError && (
+              <Alert
+                icon={<IconAlertCircle size="1rem" />}
+                title="Error"
+                color="red"
+              >
+                {(error as Error).message}
+              </Alert>
+            )}
 
             <Group position="right" spacing="xs">
               <Button
                 variant="default"
                 mr={2}
                 onClick={close}
-                // disabled={createElectionMutation.isLoading}
+                disabled={isLoading}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isValid()}
-                // loading={createElectionMutation.isLoading}
+                loading={isLoading}
               >
                 Create
               </Button>
