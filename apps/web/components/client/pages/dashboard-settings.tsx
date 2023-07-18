@@ -32,7 +32,7 @@ import Image from "next/image";
 import { type Publicity, type Election, publicity } from "@eboto-mo/db/schema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateElection } from "@/actions";
-import { type UpdateElectionSchema } from "@/utils/zod-schema";
+import { type EditElectionSchema } from "@/utils/zod-schema";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { notifications } from "@mantine/notifications";
@@ -45,7 +45,7 @@ export default function DashboardSettings({
   const router = useRouter();
   const queryClient = useQueryClient();
   const { mutate, isLoading, isError, error } = useMutation({
-    mutationFn: (updateElectionInput: UpdateElectionSchema) =>
+    mutationFn: (updateElectionInput: EditElectionSchema) =>
       updateElection({
         id: updateElectionInput.id,
         description: updateElectionInput.description,

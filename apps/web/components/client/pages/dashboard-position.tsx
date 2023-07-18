@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex, Group, Stack, Title } from "@mantine/core";
+import { Flex, Group, Stack, Text, Title } from "@mantine/core";
 import { useRouter } from "next/navigation";
 import CreatePosition from "../modals/create-position";
 import { Election, Position } from "@eboto-mo/db/schema";
@@ -20,15 +20,29 @@ export default function DashboardPosition({
       <CreatePosition election_id={election.id} order={positions.length} />
 
       <Group spacing="xs">
-        {positions.map((position) => (
-          <Position key={position.id} position={position} />
-        ))}
+        {!positions.length ? (
+          <Text>No positions yet.</Text>
+        ) : (
+          positions.map((position) => (
+            <Position
+              key={position.id}
+              position={position}
+              order={positions.length}
+            />
+          ))
+        )}
       </Group>
     </Stack>
   );
 }
 
-const Position = ({ position }: { position: Position }) => {
+const Position = ({
+  position,
+  order,
+}: {
+  position: Position;
+  order: number;
+}) => {
   return (
     <>
       <Flex
@@ -60,8 +74,8 @@ const Position = ({ position }: { position: Position }) => {
         </Title>
 
         <Group spacing="xs">
+          <EditPosition position={position} order={order} />
           <DeletePosition position={position} />
-          <EditPosition position={position} />
         </Group>
       </Flex>
     </>

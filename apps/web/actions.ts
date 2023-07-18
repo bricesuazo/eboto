@@ -16,13 +16,15 @@ import { getSession } from "@/utils/auth";
 import {
   type CreateElectionSchema,
   createElectionSchema,
-  type UpdateElectionSchema,
-  updateElectionSchema,
+  type EditElectionSchema,
+  editElectionSchema,
   type CreatePartylistSchema,
   createPartylistSchema,
-  type UpdatePartylistSchema,
-  updatePartylistSchema,
   type CreatePositionSchema,
+  type EditPartylistSchema,
+  editPartylistSchema,
+  EditPositionSchema,
+  editPositionSchema,
 } from "@/utils/zod-schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -85,8 +87,8 @@ export async function createElection(input: CreateElectionSchema) {
         })) || []
     );
 }
-export async function updateElection(input: UpdateElectionSchema) {
-  const parsedInput = updateElectionSchema.parse(input);
+export async function updateElection(input: EditElectionSchema) {
+  const parsedInput = editElectionSchema.parse(input);
 
   const session = await getSession();
 
@@ -157,8 +159,8 @@ export async function createPartylist(input: CreatePartylistSchema) {
   });
   revalidatePath("/election/[electionDashboardSlug]/partylist");
 }
-export async function updatePartylist(input: UpdatePartylistSchema) {
-  const parsedInput = updatePartylistSchema.parse(input);
+export async function editPartylist(input: EditPartylistSchema) {
+  const parsedInput = editPartylistSchema.parse(input);
   if (parsedInput.newAcronym === "IND")
     throw new Error("Acronym is already exists");
 
@@ -200,6 +202,7 @@ export async function deletePartylist(id: string) {
 
   revalidatePath("/election/[electionDashboardSlug]/partylist");
 }
+
 export async function createPosition(input: CreatePositionSchema) {
   const session = await getSession();
 
@@ -208,7 +211,6 @@ export async function createPosition(input: CreatePositionSchema) {
   await db.insert(positions).values({
     id: crypto.randomUUID(),
     name: input.name,
-    description: input.description,
     order: input.order,
     min: input.min,
     max: input.max,
@@ -216,4 +218,35 @@ export async function createPosition(input: CreatePositionSchema) {
   });
 
   revalidatePath("/election/[electionDashboardSlug]/partylist");
+}
+
+export async function deletePosition(id: string) {
+  const session = await getSession();
+
+  if (!session) throw new Error("Unauthorized");
+
+  await db.delete(positions).where(eq(positions.id, id));
+
+  revalidatePath("/election/[electionDashboardSlug]/position");
+}
+
+export async function editPosition(input: EditPositionSchema) {
+  const parsedInput = editPositionSchema.parse(input);
+
+  const session = await getSession();
+
+  if (!session) throw new Error("Unauthorized");
+
+  await db
+    .update(positions)
+    .set({
+      name: parsedInput.name,
+      description: parsedInput.description,
+      order: parsedInput.order,
+      min: parsedInput.min,
+      max: parsedInput.max,
+    })
+    .where(eq(positions.id, parsedInput.id));
+
+  revalidatePath("/election/[electionDashboardSlug]/position");
 }

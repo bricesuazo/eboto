@@ -1,9 +1,11 @@
 "use client";
 
-import { Group, Stack, Text } from "@mantine/core";
+import { Box, Center, Flex, Group, Stack, Text, Title } from "@mantine/core";
 import { Election, type Partylist } from "@eboto-mo/db/schema";
-import PartylistCard from "../components/partylist-card";
-import CreatePartylist from "../modals/create-partylist";
+import { IconFlag } from "@tabler/icons-react";
+import CreatePartylist from "@/components/client/modals/create-partylist";
+import DeletePartylist from "@/components/client/modals/delete-partylist";
+import EditPartylist from "@/components/client/modals/edit-partylist";
 
 export default function DashboardPartylist({
   election,
@@ -21,7 +23,40 @@ export default function DashboardPartylist({
           <Text>No partylists yet.</Text>
         ) : (
           partylists.map((partylist) => (
-            <PartylistCard key={partylist.id} partylist={partylist} />
+            <Flex
+              sx={(theme) => ({
+                flexDirection: "column",
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: 180,
+                height: 172,
+                padding: theme.spacing.md,
+                border: "1px solid",
+                borderColor:
+                  theme.colorScheme === "dark"
+                    ? theme.colors.dark[5]
+                    : theme.colors.gray[3],
+                borderRadius: theme.radius.md,
+
+                [theme.fn.smallerThan("xs")]: {
+                  width: "100%",
+                },
+              })}
+            >
+              <Center sx={{ flexDirection: "column" }}>
+                <Box>
+                  <IconFlag size={40} />
+                </Box>
+                <Title order={4} lineClamp={2} align="center">
+                  {partylist.name} ({partylist.acronym})
+                </Title>
+              </Center>
+
+              <Group spacing="xs">
+                <EditPartylist partylist={partylist} />
+                <DeletePartylist partylist={partylist} />
+              </Group>
+            </Flex>
           ))
         )}
       </Group>

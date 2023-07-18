@@ -17,17 +17,16 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { Partylist } from "@eboto-mo/db/schema";
 import { useMutation } from "@tanstack/react-query";
-import { UpdatePartylistSchema } from "@/utils/zod-schema";
 import { useEffect } from "react";
-import { updatePartylist } from "@/actions";
+import {
+  editPartylistSchema,
+  type EditPartylistSchema,
+} from "@/utils/zod-schema";
+import { editPartylist } from "@/actions";
 
-export default function UpdatePartylist({
-  partylist,
-}: {
-  partylist: Partylist;
-}) {
+export default function EditPartylist({ partylist }: { partylist: Partylist }) {
   const [opened, { open, close }] = useDisclosure(false);
-  const form = useForm<UpdatePartylistSchema>({
+  const form = useForm<EditPartylistSchema>({
     initialValues: {
       id: partylist.id,
       election_id: partylist.election_id,
@@ -58,15 +57,15 @@ export default function UpdatePartylist({
   });
 
   const { mutate, isLoading, isError, error, reset } = useMutation({
-    mutationFn: (updatePartylistInput: UpdatePartylistSchema) =>
-      updatePartylist({
+    mutationFn: (editPartylistInput: EditPartylistSchema) =>
+      editPartylist({
         id: partylist.id,
         election_id: partylist.election_id,
-        name: updatePartylistInput.name,
+        name: editPartylistInput.name,
         oldAcronym: partylist.acronym,
-        newAcronym: updatePartylistInput.newAcronym,
-        description: updatePartylistInput.description,
-        logo_link: updatePartylistInput.logo_link,
+        newAcronym: editPartylistInput.newAcronym,
+        description: editPartylistInput.description,
+        logo_link: editPartylistInput.logo_link,
       }),
     onSuccess: async (_, data) => {
       notifications.show({

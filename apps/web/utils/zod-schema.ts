@@ -8,7 +8,7 @@ export const createElectionSchema = z.object({
   end_date: z.date(),
   template: z.number().nonnegative().default(0),
 });
-export const updateElectionSchema = z.object({
+export const editElectionSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   description: z.string().nullable(),
@@ -25,7 +25,7 @@ export const createPartylistSchema = z.object({
   election_id: z.string().min(1),
 });
 
-export const updatePartylistSchema = z.object({
+export const editPartylistSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
   oldAcronym: z.string().optional(),
@@ -42,8 +42,19 @@ export const createPositionSchema = z.object({
   election_id: z.string().min(1),
 });
 
+export const editPositionSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  description: z.string().optional(),
+  order: z.number().nonnegative(),
+  min: z.number().nonnegative().optional(),
+  max: z.number().nonnegative().optional(),
+  election_id: z.string().min(1),
+});
+
 export type CreateElectionSchema = z.infer<typeof createElectionSchema>;
-export type UpdateElectionSchema = z.infer<typeof updateElectionSchema>;
+export type EditElectionSchema = z.infer<typeof editElectionSchema>;
 export type CreatePartylistSchema = z.infer<typeof createPartylistSchema>;
-export type UpdatePartylistSchema = z.infer<typeof updatePartylistSchema>;
+export type EditPartylistSchema = z.infer<typeof editPartylistSchema>;
 export type CreatePositionSchema = z.infer<typeof createPositionSchema>;
+export type EditPositionSchema = z.infer<typeof editPositionSchema>;
