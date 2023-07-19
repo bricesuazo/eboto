@@ -36,3 +36,19 @@ export async function getAllPositionsByElectionId(id: string) {
     orderBy: (positions, { asc }) => asc(positions.order),
   });
 }
+
+export async function getAllCandidatesByElectionId(id: string) {
+  return await db.query.positions.findMany({
+    where: (positions, { eq }) => eq(positions.election_id, id),
+    orderBy: (positions, { asc }) => asc(positions.order),
+    with: {
+      candidates: {
+        with: {
+          partylist: true,
+          credentials: true,
+          platforms: true,
+        },
+      },
+    },
+  });
+}
