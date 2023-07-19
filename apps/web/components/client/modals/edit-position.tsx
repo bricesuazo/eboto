@@ -77,7 +77,7 @@ export default function EditPosition({
         election_id: position.election_id,
         name: editPositionInput.name,
         description: editPositionInput.description,
-        order,
+        order: position.order,
       }),
     onSuccess: async (_, { name }) => {
       notifications.show({
