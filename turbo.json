@@ -13,7 +13,8 @@
     },
     "start": {},
     "db:push": {},
-    "db:studio": {}
+    "db:studio": {},
+    "db:generate": {}
   },
   "globalEnv": [
     "CI",

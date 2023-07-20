@@ -7,4 +7,5 @@ export default {
     connectionString: process.env.DATABASE_URL!,
   },
   schema: "./schema",
+  out: "./generated",
 } satisfies Config;

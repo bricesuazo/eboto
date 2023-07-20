@@ -11,15 +11,16 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "db:push": "pnpm with-env turbo --filter @eboto-mo/db db:push",
     "db:studio": "pnpm with-env turbo --filter @eboto-mo/db db:studio",
+    "db:generate": "pnpm with-env turbo --filter @eboto-mo/db db:generate",
     "with-env": "dotenv -e .env --"
   },
   "devDependencies": {
     "@eboto-mo/eslint-config": "workspace:*",
-    "dotenv-cli": "^7.2.1",
     "@turbo/gen": "^1.10.8",
+    "dotenv-cli": "^7.2.1",
     "eslint": "^8.45.0",
     "prettier": "^3.0.0",
-    "turbo": "^1.10.8"
+    "turbo": "^1.10.9"
   },
   "packageManager": "pnpm@8.6.7"
 }

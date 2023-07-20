@@ -133,7 +133,7 @@ export const positions = mysqlTable("positions", {
 
 export const candidates = mysqlTable("candidates", {
   id,
-  slug: varchar("slug", { length: 256 }).notNull().unique(),
+  slug: varchar("slug", { length: 256 }).notNull(),
   first_name: text("first_name").notNull(),
   middle_name: text("middle_name"),
   last_name: text("last_name").notNull(),

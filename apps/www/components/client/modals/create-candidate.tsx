@@ -33,6 +33,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import {
   IconAlertCircle,
+  IconCheck,
   IconFlag,
   IconInfoCircle,
   IconLetterCase,
@@ -102,7 +103,17 @@ export default function CreateCandidate({
   const { mutate, isLoading, isError, error, reset } = useMutation({
     mutationFn: (newCandidate: CreateCandidateSchema) =>
       createCandidate(newCandidate),
-    onSuccess: (_, { slug }) => {
+    onSuccess: (_, { first_name, middle_name, last_name }) => {
+      notifications.show({
+        title: `${first_name}${
+          middle_name && ` ${middle_name}`
+        } ${last_name} created!`,
+        message: `Successfully created candidate: ${first_name}${
+          middle_name && ` ${middle_name}`
+        } ${last_name}`,
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
+      });
       close();
     },
   });
