@@ -205,6 +205,15 @@ export async function deletePartylist(id: string) {
 
   revalidatePath("/election/[electionDashboardSlug]/partylist");
 }
+export async function deleteCandidate(id: string) {
+  const session = await getSession();
+
+  if (!session) throw new Error("Unauthorized");
+
+  await db.delete(candidates).where(eq(candidates.id, id));
+
+  revalidatePath("/election/[electionDashboardSlug]/candidate");
+}
 
 export async function createPosition(input: CreatePositionSchema) {
   const session = await getSession();
