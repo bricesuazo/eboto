@@ -27,7 +27,7 @@ importers:
         specifier: ^1.10.8
         version: registry.npmjs.org/turbo@1.10.8
 
-  apps/web:
+  apps/www:
     dependencies:
       '@emotion/react':
         specifier: ^11.11.1
@@ -82,10 +82,10 @@ importers:
         version: registry.npmjs.org/@tanstack/react-query-next-experimental@5.0.0-alpha.80(@tanstack/react-query@4.29.25)(next@13.4.10)(react-dom@18.2.0)(react@18.2.0)
       '@tiptap/extension-link':
         specifier: ^2.0.4
-        version: registry.npmjs.org/@tiptap/extension-link@2.0.4(@tiptap/core@2.0.3)(@tiptap/pm@2.0.3)
+        version: registry.npmjs.org/@tiptap/extension-link@2.0.4(@tiptap/core@2.0.4)(@tiptap/pm@2.0.3)
       '@tiptap/react':
         specifier: ^2.0.4
-        version: registry.npmjs.org/@tiptap/react@2.0.4(@tiptap/core@2.0.3)(@tiptap/pm@2.0.3)(react-dom@18.2.0)(react@18.2.0)
+        version: registry.npmjs.org/@tiptap/react@2.0.4(@tiptap/core@2.0.4)(@tiptap/pm@2.0.3)(react-dom@18.2.0)(react@18.2.0)
       '@tiptap/starter-kit':
         specifier: ^2.0.4
         version: registry.npmjs.org/@tiptap/starter-kit@2.0.4(@tiptap/pm@2.0.3)
@@ -1625,8 +1625,8 @@ packages:
       '@mantine/hooks': registry.npmjs.org/@mantine/hooks@6.0.17(react@18.2.0)
       '@mantine/utils': registry.npmjs.org/@mantine/utils@6.0.17(react@18.2.0)
       '@tabler/icons-react': registry.npmjs.org/@tabler/icons-react@2.26.0(react@18.2.0)
-      '@tiptap/extension-link': registry.npmjs.org/@tiptap/extension-link@2.0.4(@tiptap/core@2.0.3)(@tiptap/pm@2.0.3)
-      '@tiptap/react': registry.npmjs.org/@tiptap/react@2.0.4(@tiptap/core@2.0.3)(@tiptap/pm@2.0.3)(react-dom@18.2.0)(react@18.2.0)
+      '@tiptap/extension-link': registry.npmjs.org/@tiptap/extension-link@2.0.4(@tiptap/core@2.0.4)(@tiptap/pm@2.0.3)
+      '@tiptap/react': registry.npmjs.org/@tiptap/react@2.0.4(@tiptap/core@2.0.4)(@tiptap/pm@2.0.3)(react-dom@18.2.0)(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
@@ -2131,17 +2131,6 @@ packages:
       use-sync-external-store: registry.npmjs.org/use-sync-external-store@1.2.0(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/@tiptap/core@2.0.3(@tiptap/pm@2.0.3):
-    resolution: {integrity: sha512-jLyVIWAdjjlNzrsRhSE2lVL/7N8228/1R1QtaVU85UlMIwHFAcdzhD8FeiKkqxpTnGpaDVaTy7VNEtEgaYdCyA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tiptap/core/-/core-2.0.3.tgz}
-    id: registry.npmjs.org/@tiptap/core/2.0.3
-    name: '@tiptap/core'
-    version: 2.0.3
-    peerDependencies:
-      '@tiptap/pm': ^2.0.0
-    dependencies:
-      '@tiptap/pm': registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.3)
-    dev: false
-
   registry.npmjs.org/@tiptap/core@2.0.4(@tiptap/pm@2.0.3):
     resolution: {integrity: sha512-2YOMjRqoBGEP4YGgYpuPuBBJHMeqKOhLnS0WVwjVP84zOmMgZ7A8M6ILC9Xr7Q/qHZCvyBGWOSsI7+3HsEzzYQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tiptap/core/-/core-2.0.4.tgz}
     id: registry.npmjs.org/@tiptap/core/2.0.4
@@ -2150,7 +2139,7 @@ packages:
     peerDependencies:
       '@tiptap/pm': ^2.0.0
     dependencies:
-      '@tiptap/pm': registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.3)
+      '@tiptap/pm': registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.4)
     dev: false
 
   registry.npmjs.org/@tiptap/extension-blockquote@2.0.4(@tiptap/core@2.0.4):
@@ -2175,7 +2164,7 @@ packages:
       '@tiptap/core': registry.npmjs.org/@tiptap/core@2.0.4(@tiptap/pm@2.0.3)
     dev: false
 
-  registry.npmjs.org/@tiptap/extension-bubble-menu@2.0.4(@tiptap/core@2.0.3)(@tiptap/pm@2.0.3):
+  registry.npmjs.org/@tiptap/extension-bubble-menu@2.0.4(@tiptap/core@2.0.4)(@tiptap/pm@2.0.3):
     resolution: {integrity: sha512-+cRZwj0YINNNDElSAiX1pvY2K98S2j9MQW2dXV5oLqsJhqGPZsKxVo8I1u7ZtqUla3QE1V18RYPAzVgTiMRkBg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tiptap/extension-bubble-menu/-/extension-bubble-menu-2.0.4.tgz}
     id: registry.npmjs.org/@tiptap/extension-bubble-menu/2.0.4
     name: '@tiptap/extension-bubble-menu'
@@ -2184,8 +2173,8 @@ packages:
       '@tiptap/core': ^2.0.0
       '@tiptap/pm': ^2.0.0
     dependencies:
-      '@tiptap/core': registry.npmjs.org/@tiptap/core@2.0.3(@tiptap/pm@2.0.3)
-      '@tiptap/pm': registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.3)
+      '@tiptap/core': registry.npmjs.org/@tiptap/core@2.0.4(@tiptap/pm@2.0.3)
+      '@tiptap/pm': registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.4)
       tippy.js: registry.npmjs.org/tippy.js@6.3.7
     dev: false
 
@@ -2210,7 +2199,7 @@ packages:
       '@tiptap/pm': ^2.0.0
     dependencies:
       '@tiptap/core': registry.npmjs.org/@tiptap/core@2.0.4(@tiptap/pm@2.0.3)
-      '@tiptap/pm': registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.3)
+      '@tiptap/pm': registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.4)
     dev: false
 
   registry.npmjs.org/@tiptap/extension-code@2.0.4(@tiptap/core@2.0.4):
@@ -2245,10 +2234,10 @@ packages:
       '@tiptap/pm': ^2.0.0
     dependencies:
       '@tiptap/core': registry.npmjs.org/@tiptap/core@2.0.4(@tiptap/pm@2.0.3)
-      '@tiptap/pm': registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.3)
+      '@tiptap/pm': registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.4)
     dev: false
 
-  registry.npmjs.org/@tiptap/extension-floating-menu@2.0.4(@tiptap/core@2.0.3)(@tiptap/pm@2.0.3):
+  registry.npmjs.org/@tiptap/extension-floating-menu@2.0.4(@tiptap/core@2.0.4)(@tiptap/pm@2.0.3):
     resolution: {integrity: sha512-0YRE738k+kNKuSHhAb3jj9ZQ7Kda78RYRr+cX2jrQVueIMKebPIY07eBt6JcKmob9V9vcNn9qLtBfmygfcPUQg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tiptap/extension-floating-menu/-/extension-floating-menu-2.0.4.tgz}
     id: registry.npmjs.org/@tiptap/extension-floating-menu/2.0.4
     name: '@tiptap/extension-floating-menu'
@@ -2257,8 +2246,8 @@ packages:
       '@tiptap/core': ^2.0.0
       '@tiptap/pm': ^2.0.0
     dependencies:
-      '@tiptap/core': registry.npmjs.org/@tiptap/core@2.0.3(@tiptap/pm@2.0.3)
-      '@tiptap/pm': registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.3)
+      '@tiptap/core': registry.npmjs.org/@tiptap/core@2.0.4(@tiptap/pm@2.0.3)
+      '@tiptap/pm': registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.4)
       tippy.js: registry.npmjs.org/tippy.js@6.3.7
     dev: false
 
@@ -2272,7 +2261,7 @@ packages:
       '@tiptap/pm': ^2.0.0
     dependencies:
       '@tiptap/core': registry.npmjs.org/@tiptap/core@2.0.4(@tiptap/pm@2.0.3)
-      '@tiptap/pm': registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.3)
+      '@tiptap/pm': registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.4)
     dev: false
 
   registry.npmjs.org/@tiptap/extension-hard-break@2.0.4(@tiptap/core@2.0.4):
@@ -2307,7 +2296,7 @@ packages:
       '@tiptap/pm': ^2.0.0
     dependencies:
       '@tiptap/core': registry.npmjs.org/@tiptap/core@2.0.4(@tiptap/pm@2.0.3)
-      '@tiptap/pm': registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.3)
+      '@tiptap/pm': registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.4)
     dev: false
 
   registry.npmjs.org/@tiptap/extension-horizontal-rule@2.0.4(@tiptap/core@2.0.4)(@tiptap/pm@2.0.3):
@@ -2320,7 +2309,7 @@ packages:
       '@tiptap/pm': ^2.0.0
     dependencies:
       '@tiptap/core': registry.npmjs.org/@tiptap/core@2.0.4(@tiptap/pm@2.0.3)
-      '@tiptap/pm': registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.3)
+      '@tiptap/pm': registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.4)
     dev: false
 
   registry.npmjs.org/@tiptap/extension-italic@2.0.4(@tiptap/core@2.0.4):
@@ -2334,7 +2323,7 @@ packages:
       '@tiptap/core': registry.npmjs.org/@tiptap/core@2.0.4(@tiptap/pm@2.0.3)
     dev: false
 
-  registry.npmjs.org/@tiptap/extension-link@2.0.4(@tiptap/core@2.0.3)(@tiptap/pm@2.0.3):
+  registry.npmjs.org/@tiptap/extension-link@2.0.4(@tiptap/core@2.0.4)(@tiptap/pm@2.0.3):
     resolution: {integrity: sha512-CliImI1hmC+J6wHxqgz9P4wMjoNSSgm3fnNHsx5z0Bn6JRA4Evh2E3KZAdMaE8xCTx89rKxMYNbamZf4VLSoqQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tiptap/extension-link/-/extension-link-2.0.4.tgz}
     id: registry.npmjs.org/@tiptap/extension-link/2.0.4
     name: '@tiptap/extension-link'
@@ -2343,8 +2332,8 @@ packages:
       '@tiptap/core': ^2.0.0
       '@tiptap/pm': ^2.0.0
     dependencies:
-      '@tiptap/core': registry.npmjs.org/@tiptap/core@2.0.3(@tiptap/pm@2.0.3)
-      '@tiptap/pm': registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.3)
+      '@tiptap/core': registry.npmjs.org/@tiptap/core@2.0.4(@tiptap/pm@2.0.3)
+      '@tiptap/pm': registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.4)
       linkifyjs: registry.npmjs.org/linkifyjs@4.1.1
     dev: false
 
@@ -2403,7 +2392,7 @@ packages:
       '@tiptap/core': registry.npmjs.org/@tiptap/core@2.0.4(@tiptap/pm@2.0.3)
     dev: false
 
-  registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.3):
+  registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.4):
     resolution: {integrity: sha512-I9dsInD89Agdm1QjFRO9dmJtU1ldVSILNPW0pEhv9wYqYVvl4HUj/JMtYNqu2jWrCHNXQcaX/WkdSdvGJtmg5g==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tiptap/pm/-/pm-2.0.3.tgz}
     id: registry.npmjs.org/@tiptap/pm/2.0.3
     name: '@tiptap/pm'
@@ -2411,7 +2400,7 @@ packages:
     peerDependencies:
       '@tiptap/core': ^2.0.0
     dependencies:
-      '@tiptap/core': registry.npmjs.org/@tiptap/core@2.0.3(@tiptap/pm@2.0.3)
+      '@tiptap/core': registry.npmjs.org/@tiptap/core@2.0.4(@tiptap/pm@2.0.3)
       prosemirror-changeset: registry.npmjs.org/prosemirror-changeset@2.2.1
       prosemirror-collab: registry.npmjs.org/prosemirror-collab@1.3.1
       prosemirror-commands: registry.npmjs.org/prosemirror-commands@1.5.2
@@ -2434,7 +2423,7 @@ packages:
       - supports-color
     dev: false
 
-  registry.npmjs.org/@tiptap/react@2.0.4(@tiptap/core@2.0.3)(@tiptap/pm@2.0.3)(react-dom@18.2.0)(react@18.2.0):
+  registry.npmjs.org/@tiptap/react@2.0.4(@tiptap/core@2.0.4)(@tiptap/pm@2.0.3)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-NcrZL4Tu3+1Xfj/us5AOD7+kJhwYo2XViOB2iRRnfwS80PUtiLWDis6o3ngMGot/jBWzaMn4gofXnMWHtFdIAw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tiptap/react/-/react-2.0.4.tgz}
     id: registry.npmjs.org/@tiptap/react/2.0.4
     name: '@tiptap/react'
@@ -2445,10 +2434,10 @@ packages:
       react: ^17.0.0 || ^18.0.0
       react-dom: ^17.0.0 || ^18.0.0
     dependencies:
-      '@tiptap/core': registry.npmjs.org/@tiptap/core@2.0.3(@tiptap/pm@2.0.3)
-      '@tiptap/extension-bubble-menu': registry.npmjs.org/@tiptap/extension-bubble-menu@2.0.4(@tiptap/core@2.0.3)(@tiptap/pm@2.0.3)
-      '@tiptap/extension-floating-menu': registry.npmjs.org/@tiptap/extension-floating-menu@2.0.4(@tiptap/core@2.0.3)(@tiptap/pm@2.0.3)
-      '@tiptap/pm': registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.3)
+      '@tiptap/core': registry.npmjs.org/@tiptap/core@2.0.4(@tiptap/pm@2.0.3)
+      '@tiptap/extension-bubble-menu': registry.npmjs.org/@tiptap/extension-bubble-menu@2.0.4(@tiptap/core@2.0.4)(@tiptap/pm@2.0.3)
+      '@tiptap/extension-floating-menu': registry.npmjs.org/@tiptap/extension-floating-menu@2.0.4(@tiptap/core@2.0.4)(@tiptap/pm@2.0.3)
+      '@tiptap/pm': registry.npmjs.org/@tiptap/pm@2.0.3(@tiptap/core@2.0.4)
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
     dev: false
