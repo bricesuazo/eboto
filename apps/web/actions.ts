@@ -261,7 +261,11 @@ export async function createCandidate(input: CreateCandidateSchema) {
 
   const isCandidateSlugExists: Candidate | null =
     await db.query.candidates.findFirst({
-      where: (candidates, { eq }) => eq(candidates.slug, input.slug),
+      where: (candidates, { eq, and }) =>
+        and(
+          eq(candidates.slug, input.slug),
+          eq(candidates.election_id, input.election_id)
+        ),
     });
 
   if (isCandidateSlugExists)
