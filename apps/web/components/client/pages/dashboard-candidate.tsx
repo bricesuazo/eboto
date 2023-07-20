@@ -26,10 +26,13 @@ import Image from "next/image";
 import { IconUserPlus, IconUser } from "@tabler/icons-react";
 import Balancer from "react-wrap-balancer";
 import Link from "next/link";
+import CreateCandidate from "@/components/client/modals/create-candidate";
 
 export default function DashboardCandidate({
   positionsWithCandidates,
   election,
+  partylists,
+  positions,
 }: {
   positionsWithCandidates: (Position & {
     candidates: (Candidate & {
@@ -39,6 +42,8 @@ export default function DashboardCandidate({
     })[];
   })[];
   election: Election;
+  partylists: Partylist[];
+  positions: Position[];
 }) {
   return (
     <Stack spacing="lg">
@@ -57,7 +62,14 @@ export default function DashboardCandidate({
         </Box>
       ) : (
         positionsWithCandidates.map((position) => {
-          return <Candidates key={position.id} position={position} />;
+          return (
+            <Candidates
+              key={position.id}
+              position={position}
+              partylists={partylists}
+              positions={positions}
+            />
+          );
         })
       )}
     </Stack>
@@ -66,6 +78,8 @@ export default function DashboardCandidate({
 
 function Candidates({
   position,
+  partylists,
+  positions,
 }: {
   position: Position & {
     candidates: (Candidate & {
@@ -74,18 +88,11 @@ function Candidates({
       platforms: Platform[];
     })[];
   };
+  partylists: Partylist[];
+  positions: Position[];
 }) {
-  const [opened, { open, close }] = useDisclosure(false);
   return (
     <Box>
-      {/* <CreateCandidateModal
-        isOpen={opened}
-        onClose={close}
-        position={position}
-        positions={positions}
-        partylists={partylists}
-      /> */}
-
       <Text
         weight="bold"
         size="xl"
@@ -101,53 +108,11 @@ function Candidates({
 
       <Flex gap={12}>
         <Box>
-          <UnstyledButton
-            onClick={open}
-            sx={(theme) => ({
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "column",
-              rowGap: theme.spacing.xs,
-              width: 100,
-              height: 140,
-              textAlign: "center",
-              backgroundColor:
-                theme.colorScheme === "dark"
-                  ? theme.colors.dark[6]
-                  : theme.colors.gray[0],
-              borderRadius: theme.radius.sm,
-              fontSize: theme.fontSizes.sm,
-              transition: "all 100ms ease-in-out",
-
-              "&:hover": {
-                backgroundColor:
-                  theme.colorScheme === "dark"
-                    ? theme.colors.dark[5]
-                    : theme.colors.gray[1],
-              },
-
-              [theme.fn.smallerThan("xs")]: {
-                width: 60,
-              },
-            })}
-          >
-            <IconUserPlus />
-
-            <Text>
-              Add
-              <Text
-                sx={(theme) => ({
-                  [theme.fn.smallerThan("xs")]: {
-                    display: "none",
-                  },
-                })}
-              >
-                {" "}
-                candidate
-              </Text>
-            </Text>
-          </UnstyledButton>
+          <CreateCandidate
+            position={position}
+            partylists={partylists}
+            positions={positions}
+          />
         </Box>
 
         <Flex
@@ -158,7 +123,9 @@ function Candidates({
           align="center"
         >
           {!position.candidates.length ? (
-            <Text lineClamp={4}>No candidate in {position.name} yet...</Text>
+            <Text lineClamp={4}>
+              <Balancer>No candidate in {position.name} yet...</Balancer>
+            </Text>
           ) : (
             position.candidates.map((candidate) => (
               <CandidateCard key={candidate.id} candidate={candidate} />

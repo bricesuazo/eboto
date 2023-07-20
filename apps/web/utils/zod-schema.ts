@@ -52,9 +52,21 @@ export const editPositionSchema = z.object({
   election_id: z.string().min(1),
 });
 
+export const createCandidateSchema = z.object({
+  slug: z.string().min(1).trim().toLowerCase(),
+  first_name: z.string().min(1),
+  middle_name: z.string().nullable(),
+  last_name: z.string().min(1),
+  election_id: z.string().min(1),
+  position_id: z.string().min(1),
+  partylist_id: z.string().min(1),
+  image_link: z.string().nullable(),
+});
+
 export type CreateElectionSchema = z.infer<typeof createElectionSchema>;
 export type EditElectionSchema = z.infer<typeof editElectionSchema>;
 export type CreatePartylistSchema = z.infer<typeof createPartylistSchema>;
 export type EditPartylistSchema = z.infer<typeof editPartylistSchema>;
 export type CreatePositionSchema = z.infer<typeof createPositionSchema>;
 export type EditPositionSchema = z.infer<typeof editPositionSchema>;
+export type CreateCandidateSchema = z.infer<typeof createCandidateSchema>;

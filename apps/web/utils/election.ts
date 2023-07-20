@@ -23,11 +23,17 @@ export async function getAllMyElections() {
   });
 }
 
-export async function getAllPartylistsByElectionId(id: string) {
+export async function getAllPartylistsWithoutINDByElectionId(id: string) {
   return await db.query.partylists.findMany({
     where: (partylists, { eq, and }) =>
       and(eq(partylists.election_id, id), not(eq(partylists.acronym, "IND"))),
     orderBy: (partylists, { desc }) => desc(partylists.updated_at),
+  });
+}
+export async function getAllPartylistsByElectionId(id: string) {
+  return await db.query.partylists.findMany({
+    where: (partylists, { eq }) => eq(partylists.election_id, id),
+    orderBy: (partylists, { asc }) => asc(partylists.created_at),
   });
 }
 export async function getAllPositionsByElectionId(id: string) {
