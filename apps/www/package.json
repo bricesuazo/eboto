@@ -55,7 +55,7 @@
     "@types/node": "^20.4.2",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
-    "drizzle-kit": "0.19.8",
+    "drizzle-kit": "0.19.9",
     "typescript": "^5.1.6"
   }
 }
