@@ -28,6 +28,7 @@ import {
   EditPositionSchema,
   editPositionSchema,
   CreateCandidateSchema,
+  EditCandidateSchema,
 } from "@/utils/zod-schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -264,6 +265,38 @@ export async function editPosition(input: EditPositionSchema) {
 }
 
 export async function createCandidate(input: CreateCandidateSchema) {
+  const session = await getSession();
+
+  if (!session) throw new Error("Unauthorized");
+
+  const isCandidateSlugExists: Candidate | null =
+    await db.query.candidates.findFirst({
+      where: (candidates, { eq, and }) =>
+        and(
+          eq(candidates.slug, input.slug),
+          eq(candidates.election_id, input.election_id)
+        ),
+    });
+
+  if (isCandidateSlugExists)
+    throw new Error("Candidate slug is already exists");
+
+  await db.insert(candidates).values({
+    id: crypto.randomUUID(),
+    slug: input.slug,
+    first_name: input.first_name,
+    middle_name: input.middle_name,
+    last_name: input.last_name,
+    election_id: input.election_id,
+    position_id: input.position_id,
+    partylist_id: input.partylist_id,
+    image_link: input.image_link,
+  });
+
+  revalidatePath("/election/[electionDashboardSlug]/candidate");
+}
+
+export async function editCandidate(input: EditCandidateSchema) {
   const session = await getSession();
 
   if (!session) throw new Error("Unauthorized");

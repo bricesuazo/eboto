@@ -127,7 +127,10 @@ export const candidatesRelations = relations(candidates, ({ one, many }) => ({
     fields: [candidates.position_id],
     references: [positions.id],
   }),
-  credentials: many(credentials),
+  credential: one(credentials, {
+    fields: [candidates.credential_id],
+    references: [credentials.id],
+  }),
   platforms: many(platforms),
   votes: many(votes),
 }));
@@ -188,7 +191,7 @@ export const credentialsRelations = relations(credentials, ({ one, many }) => ({
   }),
   affiliations: many(affiliations),
   achievements: many(achievements),
-  eventsAttended: many(events_attended),
+  events_attended: many(events_attended),
 }));
 
 export const platformsRelations = relations(platforms, ({ one }) => ({

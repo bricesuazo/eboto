@@ -143,6 +143,7 @@ export const candidates = mysqlTable("candidates", {
   updated_at,
 
   election_id,
+  credential_id: varchar("credential_id", { length: 256 }),
   position_id: varchar("position_id", { length: 256 }).notNull(),
   partylist_id: varchar("partylist_id", { length: 256 }).notNull(),
 });

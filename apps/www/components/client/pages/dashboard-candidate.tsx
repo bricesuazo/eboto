@@ -1,33 +1,19 @@
 "use client";
 
 import {
-  type Platform,
   type Candidate,
-  type Achievement,
-  type Affiliation,
-  type EventAttended,
   type Election,
   type Position,
   type Partylist,
-  type Credential,
 } from "@eboto-mo/db/schema";
-import {
-  Anchor,
-  Box,
-  Button,
-  Flex,
-  Group,
-  Stack,
-  Text,
-  UnstyledButton,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { Anchor, Box, Flex, Group, Stack, Text } from "@mantine/core";
 import Image from "next/image";
-import { IconUserPlus, IconUser } from "@tabler/icons-react";
+import { IconUser } from "@tabler/icons-react";
 import Balancer from "react-wrap-balancer";
 import Link from "next/link";
 import CreateCandidate from "@/components/client/modals/create-candidate";
 import DeleteCandidate from "@/components/client/modals/delete-candidate";
+import EditCandidate from "@/components/client/modals/edit-candidate";
 
 export default function DashboardCandidate({
   positionsWithCandidates,
@@ -37,9 +23,31 @@ export default function DashboardCandidate({
 }: {
   positionsWithCandidates: (Position & {
     candidates: (Candidate & {
-      partylist: Partylist;
-      credentials: Credential[];
-      platforms: Platform[];
+      credential: {
+        id: string;
+        affiliations: {
+          id: string;
+          org_name: string;
+          org_position: string;
+          start_year: Date;
+          end_year: Date;
+        }[];
+        achievements: {
+          id: string;
+          name: string;
+          year: Date;
+        }[];
+        events_attended: {
+          id: string;
+          name: string;
+          year: Date;
+        }[];
+      } | null;
+      platforms: {
+        id: string;
+        title: string;
+        description: string;
+      }[];
     })[];
   })[];
   election: Election;
@@ -84,9 +92,31 @@ function Candidates({
 }: {
   position: Position & {
     candidates: (Candidate & {
-      partylist: Partylist;
-      credentials: Credential[];
-      platforms: Platform[];
+      credential: {
+        id: string;
+        affiliations: {
+          id: string;
+          org_name: string;
+          org_position: string;
+          start_year: Date;
+          end_year: Date;
+        }[];
+        achievements: {
+          id: string;
+          name: string;
+          year: Date;
+        }[];
+        events_attended: {
+          id: string;
+          name: string;
+          year: Date;
+        }[];
+      } | null;
+      platforms: {
+        id: string;
+        title: string;
+        description: string;
+      }[];
     })[];
   };
   partylists: Partylist[];
@@ -129,7 +159,12 @@ function Candidates({
             </Text>
           ) : (
             position.candidates.map((candidate) => (
-              <CandidateCard key={candidate.id} candidate={candidate} />
+              <CandidateCard
+                key={candidate.id}
+                candidate={candidate}
+                partylists={partylists}
+                positions={positions}
+              />
             ))
           )}
         </Flex>
@@ -140,18 +175,39 @@ function Candidates({
 
 const CandidateCard = ({
   candidate,
+  positions,
+  partylists,
 }: {
   candidate: Candidate & {
-    partylist: Partylist;
-    credentials: Credential[];
-    platforms: Platform[];
+    credential: {
+      id: string;
+      affiliations: {
+        id: string;
+        org_name: string;
+        org_position: string;
+        start_year: Date;
+        end_year: Date;
+      }[];
+      achievements: {
+        id: string;
+        name: string;
+        year: Date;
+      }[];
+      events_attended: {
+        id: string;
+        name: string;
+        year: Date;
+      }[];
+    } | null;
+    platforms: {
+      id: string;
+      title: string;
+      description: string;
+    }[];
   };
+  positions: Position[];
+  partylists: Partylist[];
 }) => {
-  // const [
-  //   openedEditCandidate,
-  //   { open: openEditCandidate, close: closeEditCandidate },
-  // ] = useDisclosure(false);
-
   return (
     <Box>
       <Flex
@@ -200,15 +256,11 @@ const CandidateCard = ({
         </Flex>
 
         <Group spacing="xs">
-          <Button
-            // onClick={openEditCandidate}
-            variant="light"
-            compact
-            size="sm"
-            w="fit-content"
-          >
-            Edit
-          </Button>
+          <EditCandidate
+            positions={positions}
+            candidate={candidate}
+            partylists={partylists}
+          />
           <DeleteCandidate candidate={candidate} />
         </Group>
       </Flex>

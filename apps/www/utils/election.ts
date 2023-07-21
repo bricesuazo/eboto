@@ -51,8 +51,43 @@ export async function getAllCandidatesByElectionId(id: string) {
       candidates: {
         with: {
           partylist: true,
-          credentials: true,
-          platforms: true,
+          credential: {
+            columns: {
+              id: true,
+            },
+            with: {
+              affiliations: {
+                columns: {
+                  id: true,
+                  org_name: true,
+                  org_position: true,
+                  start_year: true,
+                  end_year: true,
+                },
+              },
+              achievements: {
+                columns: {
+                  id: true,
+                  name: true,
+                  year: true,
+                },
+              },
+              events_attended: {
+                columns: {
+                  id: true,
+                  name: true,
+                  year: true,
+                },
+              },
+            },
+          },
+          platforms: {
+            columns: {
+              id: true,
+              title: true,
+              description: true,
+            },
+          },
         },
       },
     },

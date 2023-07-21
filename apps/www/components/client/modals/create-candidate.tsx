@@ -46,7 +46,7 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 export default function CreateCandidate({
   position,

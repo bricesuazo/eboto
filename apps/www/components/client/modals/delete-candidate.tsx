@@ -1,3 +1,5 @@
+"use client";
+
 import { deleteCandidate } from "@/actions";
 import { type Candidate } from "@eboto-mo/db/schema";
 import { Alert, Button, Group, Modal, Stack, Text } from "@mantine/core";
