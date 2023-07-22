@@ -108,6 +108,11 @@ export const editVoterSchema = z.object({
   election_id: z.string().min(1),
   account_status: z.enum(account_status_type_with_accepted),
 });
+export const deleteVoterSchema = z.object({
+  id: z.string().min(1),
+  election_id: z.string().min(1),
+  is_invited_voter: z.boolean(),
+});
 
 export type CreateElectionSchema = z.infer<typeof createElectionSchema>;
 export type EditElectionSchema = z.infer<typeof editElectionSchema>;
@@ -123,3 +128,4 @@ export type DeleteSingleVoterFieldSchema = z.infer<
   typeof deleteSingleVoterFieldSchema
 >;
 export type EditVoterSchema = z.infer<typeof editVoterSchema>;
+export type DeleteVoterSchema = z.infer<typeof deleteVoterSchema>;

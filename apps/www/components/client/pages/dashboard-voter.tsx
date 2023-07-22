@@ -29,6 +29,7 @@ import InviteAllInvitedVoters from "@/components/client/modals/invite-all-invite
 import UpdateVoterField from "@/components/client/modals/update-voter-field";
 import CreateVoter from "@/components/client/modals/create-voter";
 import EditVoter from "@/components/client/modals/edit-voter";
+import DeleteVoter from "../modals/delete-voter";
 
 export default function DashboardVoter({
   election,
@@ -87,13 +88,6 @@ export default function DashboardVoter({
         electionId={voters.data.election.id}
         voterFields={voters.data.election.voter_fields}
         onClose={closeBulkVoter}
-      />
-
-      <ConfirmDeleteVoterModal
-        voter={voterToDelete}
-        isOpen={openedConfirmDeleteVoter}
-        electionId={voters.data.election.id}
-        onClose={closeConfirmDeleteVoter}
       />
 
       <ConfirmDeleteBulkVoterModal
@@ -286,21 +280,16 @@ export default function DashboardVoter({
               </Tooltip>
 
               <Tooltip withArrow label="Delete">
-                <ActionIcon
-                  color="red"
-                  onClick={() => {
-                    setVoterToDelete({
-                      id: row.id,
-                      email: row.getValue<string>("email"),
-                      accountStatus: row.getValue<
-                        "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED"
-                      >("accountStatus"),
-                    });
-                    openConfirmDeleteVoter();
+                <DeleteVoter
+                  voter={{
+                    id: row.id,
+                    email: row.getValue<string>("email"),
+                    accountStatus: row.getValue<
+                      "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED"
+                    >("accountStatus"),
                   }}
-                >
-                  <IconTrash size="1.25rem" />
-                </ActionIcon>
+                  election_id={election.id}
+                />
               </Tooltip>
             </Box>
           )}

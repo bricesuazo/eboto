@@ -37,6 +37,7 @@ import {
   UpdateVoterFieldSchema,
   DeleteSingleVoterFieldSchema,
   EditVoterSchema,
+  DeleteVoterSchema,
 } from "@/utils/zod-schema";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -399,7 +400,7 @@ export async function updateVoterField(input: UpdateVoterFieldSchema) {
     .set(input)
     .where(eq(voter_fields.election_id, input.election_id));
 
-  revalidatePath("/election/[electionDashboardSlug]/candidate");
+  revalidatePath("/election/[electionDashboardSlug]/voter");
 }
 
 export async function deleteSingleVoterField(
@@ -418,7 +419,7 @@ export async function deleteSingleVoterField(
       )
     );
 
-  revalidatePath("/election/[electionDashboardSlug]/candidate");
+  revalidatePath("/election/[electionDashboardSlug]/voter");
 }
 
 export async function editVoter(input: EditVoterSchema) {
@@ -470,5 +471,48 @@ export async function editVoter(input: EditVoterSchema) {
     };
   }
 
-  revalidatePath("/election/[electionDashboardSlug]/candidate");
+  revalidatePath("/election/[electionDashboardSlug]/voter");
+}
+
+export async function deleteVoter(input: DeleteVoterSchema) {
+  const session = await getSession();
+
+  if (!session) throw new Error("Unauthorized");
+
+  if (!input.is_invited_voter) {
+    const voter: Voter | null = await db.query.voters.findFirst({
+      where: (voters, { eq, and }) =>
+        and(eq(voters.id, input.id), eq(voters.election_id, input.election_id)),
+    });
+
+    if (!voter) throw new Error("Voter not found");
+
+    await db
+      .delete(voters)
+      .where(
+        and(eq(voters.id, input.id), eq(voters.election_id, input.election_id))
+      );
+  } else {
+    const invited_voter: InvitedVoter | null =
+      await db.query.invited_voters.findFirst({
+        where: (invited_voters, { eq, and }) =>
+          and(
+            eq(invited_voters.id, input.id),
+            eq(invited_voters.election_id, input.election_id)
+          ),
+      });
+
+    if (!invited_voter) throw new Error("Voter not found");
+
+    await db
+      .delete(invited_voters)
+      .where(
+        and(
+          eq(invited_voters.id, input.id),
+          eq(invited_voters.election_id, input.election_id)
+        )
+      );
+  }
+
+  revalidatePath("/election/[electionDashboardSlug]/voter");
 }
