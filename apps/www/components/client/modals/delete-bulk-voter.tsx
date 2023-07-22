@@ -13,25 +13,23 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import {
-  IconAlertCircle,
-  IconCheck,
-  IconUpload,
-  IconUserMinus,
-} from '@tabler/icons-react';
+import { IconAlertCircle, IconCheck, IconUserMinus } from '@tabler/icons-react';
 import { useMutation } from '@tanstack/react-query';
 
 export default function DeleteBulkVoter({
   voters,
   election_id,
   isDisabled,
+  onSuccess,
 }: {
   voters: {
     id: string;
     email: string;
+    isVoter: boolean;
   }[];
   election_id: string;
   isDisabled: boolean;
+  onSuccess?: () => void;
 }) {
   const [opened, { open, close }] = useDisclosure();
 
@@ -45,6 +43,7 @@ export default function DeleteBulkVoter({
         autoClose: 5000,
       });
       close();
+      onSuccess();
     },
   });
 

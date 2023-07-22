@@ -119,6 +119,7 @@ export const deleteBulkVoterSchema = z.object({
     z.object({
       id: z.string().min(1),
       email: z.string().min(1),
+      isVoter: z.boolean(),
     }),
   ),
 });

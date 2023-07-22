@@ -381,48 +381,64 @@ export async function createVoter(input: CreateVoterSchema) {
 
   if (!session) throw new Error('Unauthorized');
 
-  const isVoterExists = await db.query.elections.findFirst({
-    where: (elections, { eq }) => eq(elections.id, input.election_id),
-    with: {
-      commissioners: {
-        where: (commissioners, { eq }) => eq(commissioners.user_id, session.id),
+  const user = await db.query.users.findFirst({
+    where: (users, { eq }) => eq(users.id, session.id),
+  });
+
+  if (!user) throw new Error('Unauthorized');
+
+  if (input.email === user.email) {
+    await db.insert(voters).values({
+      id: crypto.randomUUID(),
+      user_id: session.id,
+      election_id: input.election_id,
+    });
+  } else {
+    const isVoterExists = await db.query.elections.findFirst({
+      where: (elections, { eq }) => eq(elections.id, input.election_id),
+      with: {
+        commissioners: {
+          where: (commissioners, { eq }) =>
+            eq(commissioners.user_id, session.id),
+        },
       },
-    },
-  });
+    });
 
-  if (!isVoterExists) throw new Error('Election does not exists');
+    if (!isVoterExists) throw new Error('Election does not exists');
 
-  if (isVoterExists.commissioners.length === 0) throw new Error('Unauthorized');
+    if (isVoterExists.commissioners.length === 0)
+      throw new Error('Unauthorized');
 
-  const voters = await db.query.voters.findMany({
-    where: (voters, { eq }) => eq(voters.election_id, input.election_id),
-    with: {
-      user: true,
-    },
-  });
+    const voters = await db.query.voters.findMany({
+      where: (voters, { eq }) => eq(voters.election_id, input.election_id),
+      with: {
+        user: true,
+      },
+    });
 
-  const isVoterEmailExists = voters.find(
-    (voter) => voter.user.email === input.email,
-  );
+    const isVoterEmailExists = voters.find(
+      (voter) => voter.user.email === input.email,
+    );
 
-  if (isVoterEmailExists) throw new Error('Email is already a voter');
+    if (isVoterEmailExists) throw new Error('Email is already a voter');
 
-  const isInvitedVoterEmailExists = await db.query.invited_voters.findFirst({
-    where: (invited_voters, { eq, and }) =>
-      and(
-        eq(invited_voters.election_id, input.election_id),
-        eq(invited_voters.email, input.email),
-      ),
-  });
+    const isInvitedVoterEmailExists = await db.query.invited_voters.findFirst({
+      where: (invited_voters, { eq, and }) =>
+        and(
+          eq(invited_voters.election_id, input.election_id),
+          eq(invited_voters.email, input.email),
+        ),
+    });
 
-  if (isInvitedVoterEmailExists) throw new Error('Email is already exists');
+    if (isInvitedVoterEmailExists) throw new Error('Email is already exists');
 
-  await db.insert(invited_voters).values({
-    id: crypto.randomUUID(),
-    email: input.email,
-    field: input.field,
-    election_id: input.election_id,
-  });
+    await db.insert(invited_voters).values({
+      id: crypto.randomUUID(),
+      email: input.email,
+      field: input.field,
+      election_id: input.election_id,
+    });
+  }
 
   revalidatePath('/election/[electionDashboardSlug]/voter');
 }
@@ -559,15 +575,32 @@ export async function deleteBulkVoter(input: DeleteBulkVoterSchema) {
 
   if (!session) throw new Error('Unauthorized');
 
-  await db.delete(voters).where(
-    and(
-      eq(voters.election_id, input.election_id),
-      inArray(
-        voters.id,
-        input.voters.map((voter) => voter.id),
-      ),
-    ),
-  );
+  const votersIds = input.voters
+    .filter((voter) => voter.isVoter)
+    .map((voter) => voter.id);
+  const invitedVotersIds = input.voters
+    .filter((voter) => !voter.isVoter)
+    .map((voter) => voter.id);
+
+  if (votersIds.length)
+    await db
+      .delete(voters)
+      .where(
+        and(
+          eq(voters.election_id, input.election_id),
+          inArray(voters.id, votersIds),
+        ),
+      );
+
+  if (invitedVotersIds.length)
+    await db
+      .delete(invited_voters)
+      .where(
+        and(
+          eq(invited_voters.election_id, input.election_id),
+          inArray(invited_voters.id, invitedVotersIds),
+        ),
+      );
   revalidatePath('/election/[electionDashboardSlug]/voter');
   return { count: input.voters.length };
 }

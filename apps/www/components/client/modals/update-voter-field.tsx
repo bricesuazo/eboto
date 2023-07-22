@@ -35,12 +35,14 @@ type FormType = { field: Field[] };
 export default function UpdateVoterField({
   election,
   voters,
+  isDisabled,
 }: {
   election: Election & { voter_fields: VoterField[] };
   voters: {
     id: string;
     email: string;
   }[];
+  isDisabled: boolean;
 }) {
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -105,14 +107,7 @@ export default function UpdateVoterField({
         variant="light"
         leftIcon={<IconUsersGroup size="1rem" />}
         onClick={open}
-        disabled={
-          !!voters.length
-          // ||
-          //   isElectionOngoing({
-          //     election: election,
-          //     withTime: true,
-          //   })
-        }
+        disabled={isDisabled}
         sx={(theme) => ({
           [theme.fn.smallerThan('xs')]: {
             width: '100%',

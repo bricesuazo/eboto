@@ -5,9 +5,10 @@ import CreateVoter from '@/components/client/modals/create-voter';
 import DeleteBulkVoter from '@/components/client/modals/delete-bulk-voter';
 import DeleteVoter from '@/components/client/modals/delete-voter';
 import EditVoter from '@/components/client/modals/edit-voter';
-import InviteAllInvitedVoters from '@/components/client/modals/invite-all-invited-voters';
+import InviteAllAddedVoters from '@/components/client/modals/invite-all-added-voters';
 import UpdateVoterField from '@/components/client/modals/update-voter-field';
 import UploadBulkVoter from '@/components/client/modals/upload-bulk-voter';
+import { isElectionOngoing } from '@/utils';
 import type { Election, VoterField } from '@eboto-mo/db/schema';
 import {
   ActionIcon,
@@ -127,16 +128,21 @@ export default function DashboardVoter({
                   id: voter.id,
                   email: voter.email,
                 }))}
+                isDisabled={
+                  isElectionOngoing({ election }) || voters.length !== 0
+                }
               />
             </Tooltip>
 
-            {
-              // isElectionOngoing({
-              // election: election,
-              // withTime: true,
-              // }) &&
-              <InviteAllInvitedVoters election_id={election.id} />
-            }
+            {!isElectionOngoing({ election }) && (
+              <InviteAllAddedVoters
+                election_id={election.id}
+                isDisabled={
+                  voters.filter((voter) => voter.account_status === 'ADDED')
+                    .length === 0
+                }
+              />
+            )}
           </Flex>
         </Flex>
 
@@ -216,9 +222,13 @@ export default function DashboardVoter({
                     .map((voter) => ({
                       id: voter.id,
                       email: voter.email,
+                      isVoter: voter.account_status === 'ACCEPTED',
                     }))}
                   election_id={election.id}
                   isDisabled={Object.keys(rowSelection).length === 0}
+                  onSuccess={() => {
+                    setRowSelection({});
+                  }}
                 />
               </Tooltip>
             </Group>

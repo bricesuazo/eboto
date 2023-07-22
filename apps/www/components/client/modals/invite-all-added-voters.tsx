@@ -7,10 +7,12 @@ import { notifications } from '@mantine/notifications';
 import { IconCheck, IconMailForward } from '@tabler/icons-react';
 import { useMutation } from '@tanstack/react-query';
 
-export default function InviteAllInvitedVoters({
+export default function InviteAllAddedVoters({
   election_id,
+  isDisabled,
 }: {
   election_id: string;
+  isDisabled: boolean;
 }) {
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -33,6 +35,7 @@ export default function InviteAllInvitedVoters({
         variant="light"
         leftIcon={<IconMailForward size="1rem" />}
         onClick={open}
+        disabled={isDisabled}
         sx={(theme) => ({
           [theme.fn.smallerThan('xs')]: {
             width: '100%',
