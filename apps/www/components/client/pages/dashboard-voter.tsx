@@ -32,6 +32,8 @@ import EditVoter from "@/components/client/modals/edit-voter";
 import DeleteVoter from "@/components/client/modals/delete-voter";
 import DeleteBulkVoter from "@/components/client/modals/delete-bulk-voter";
 import UploadBulkVoter from "@/components/client/modals/upload-bulk-voter";
+import { useMutation } from "@tanstack/react-query";
+import { refreshVoterPage } from "@/actions";
 
 export default function DashboardVoter({
   election,
@@ -84,8 +86,12 @@ export default function DashboardVoter({
     [election.voter_fields]
   );
 
+  const { mutate, isLoading } = useMutation({
+    mutationFn: refreshVoterPage,
+  });
+
   return (
-    <Box p="md">
+    <Box>
       <Stack>
         <Flex
           gap="xs"
@@ -100,14 +106,9 @@ export default function DashboardVoter({
               voter_fields={election.voter_fields}
               election_id={election.id}
             />
-            <DeleteBulkVoter
-              voters={voters
-                .filter((voter) => rowSelection[voter.id])
-                .map((voter) => ({
-                  id: voter.id,
-                  email: voter.email,
-                }))}
+            <UploadBulkVoter
               election_id={election.id}
+              voter_fields={election.voter_fields}
             />
           </Flex>
           <Flex gap="xs">
@@ -170,57 +171,55 @@ export default function DashboardVoter({
           positionToolbarAlertBanner="bottom"
           renderTopToolbarCustomActions={() => (
             <Group spacing="xs">
-              {/* <Tooltip withArrow label="Refresh">
-                <ActionIcon
-                  variant="light"
-                  onClick={() => voters.refetch()}
-                  loading={voters.isRefetching}
-                  size="lg"
-                  sx={(theme) => ({
-                    [theme.fn.largerThan("xs")]: {
-                      display: "none",
-                    },
-                  })}
-                  loaderProps={{
-                    width: 18,
-                  }}
-                >
-                  <IconRefresh size="1.25rem" />
-                </ActionIcon>
-              </Tooltip> */}
+              <Tooltip withArrow label="Refresh">
+                <div>
+                  <ActionIcon
+                    variant="light"
+                    onClick={() => mutate()}
+                    loading={isLoading}
+                    size="lg"
+                    sx={(theme) => ({
+                      [theme.fn.largerThan("xs")]: {
+                        display: "none",
+                      },
+                    })}
+                    loaderProps={{
+                      width: 18,
+                    }}
+                  >
+                    <IconRefresh size="1.25rem" />
+                  </ActionIcon>
+                  <Button
+                    variant="light"
+                    onClick={() => mutate()}
+                    loading={isLoading}
+                    leftIcon={<IconRefresh size="1.25rem" />}
+                    sx={(theme) => ({
+                      [theme.fn.smallerThan("xs")]: {
+                        display: "none",
+                      },
+                    })}
+                    loaderProps={{
+                      width: 20,
+                    }}
+                  >
+                    Refresh
+                  </Button>
+                </div>
+              </Tooltip>
 
               <Tooltip withArrow label="Delete selected">
-                <UploadBulkVoter
+                <DeleteBulkVoter
+                  voters={voters
+                    .filter((voter) => rowSelection[voter.id])
+                    .map((voter) => ({
+                      id: voter.id,
+                      email: voter.email,
+                    }))}
                   election_id={election.id}
-                  voter_fields={election.voter_fields}
+                  isDisabled={Object.keys(rowSelection).length === 0}
                 />
               </Tooltip>
-              {/* <Button
-                variant="light"
-                onClick={() => voters.refetch()}
-                loading={voters.isRefetching}
-                leftIcon={<IconRefresh size="1.25rem" />}
-                sx={(theme) => ({
-                  [theme.fn.smallerThan("xs")]: {
-                    display: "none",
-                  },
-                })}
-                loaderProps={{
-                  width: 20,
-                }}
-              >
-                Refresh
-              </Button> */}
-
-              <DeleteBulkVoter
-                voters={voters
-                  .filter((voter) => rowSelection[voter.id])
-                  .map((voter) => ({
-                    id: voter.id,
-                    email: voter.email,
-                  }))}
-                election_id={election.id}
-              />
             </Group>
           )}
           enableRowActions

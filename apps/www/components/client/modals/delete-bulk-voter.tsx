@@ -1,7 +1,16 @@
 "use client";
 
 import { deleteBulkVoter } from "@/actions";
-import { Alert, Button, Group, List, Modal, Stack, Text } from "@mantine/core";
+import {
+  ActionIcon,
+  Alert,
+  Button,
+  Group,
+  List,
+  Modal,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import {
@@ -15,12 +24,14 @@ import { useMutation } from "@tanstack/react-query";
 export default function DeleteBulkVoter({
   voters,
   election_id,
+  isDisabled,
 }: {
   voters: {
     id: string;
     email: string;
   }[];
   election_id: string;
+  isDisabled: boolean;
 }) {
   const [opened, { open, close }] = useDisclosure();
 
@@ -39,6 +50,20 @@ export default function DeleteBulkVoter({
 
   return (
     <>
+      <ActionIcon
+        color="red"
+        onClick={open}
+        size="lg"
+        variant="outline"
+        sx={(theme) => ({
+          [theme.fn.largerThan("xs")]: {
+            display: "none",
+          },
+        })}
+        // disabled={Object.keys(rowSelection).length === 0}
+      >
+        <IconUserMinus size="1.25rem" />
+      </ActionIcon>
       <Button
         color="red"
         variant="outline"

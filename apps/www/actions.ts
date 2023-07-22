@@ -17,6 +17,7 @@ import {
   Voter,
   InvitedVoter,
   invited_voters,
+  users,
 } from "@eboto-mo/db/schema";
 import { getSession } from "@/utils/auth";
 import {
@@ -389,6 +390,40 @@ export async function createVoter(input: CreateVoterSchema) {
     },
   });
 
+  if (!isVoterExists) throw new Error("Election does not exists");
+
+  if (isVoterExists.commissioners.length === 0) throw new Error("Unauthorized");
+
+  const voters = await db.query.voters.findMany({
+    where: (voters, { eq }) => eq(voters.election_id, input.election_id),
+    with: {
+      user: true,
+    },
+  });
+
+  const isVoterEmailExists = voters.find(
+    (voter) => voter.user.email === input.email
+  );
+
+  if (isVoterEmailExists) throw new Error("Email is already a voter");
+
+  const isInvitedVoterEmailExists = await db.query.invited_voters.findFirst({
+    where: (invited_voters, { eq, and }) =>
+      and(
+        eq(invited_voters.election_id, input.election_id),
+        eq(invited_voters.email, input.email)
+      ),
+  });
+
+  if (isInvitedVoterEmailExists) throw new Error("Email is already exists");
+
+  await db.insert(invited_voters).values({
+    id: crypto.randomUUID(),
+    email: input.email,
+    field: input.field,
+    election_id: input.election_id,
+  });
+
   revalidatePath("/election/[electionDashboardSlug]/voter");
 }
 
@@ -566,4 +601,8 @@ export async function uploadBulkVoter(input: UploadBulkVoterSchema) {
   );
 
   return { count: test.size };
+}
+
+export async function refreshVoterPage() {
+  revalidatePath("/election/[electionDashboardSlug]/voter");
 }

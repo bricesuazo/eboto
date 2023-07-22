@@ -86,20 +86,6 @@ export default function UploadBulkVoter({
 
   return (
     <>
-      <ActionIcon
-        color="red"
-        onClick={open}
-        size="lg"
-        variant="outline"
-        sx={(theme) => ({
-          [theme.fn.largerThan("xs")]: {
-            display: "none",
-          },
-        })}
-        // disabled={Object.keys(rowSelection).length === 0}
-      >
-        <IconUserMinus size="1.25rem" />
-      </ActionIcon>
       <Button
         onClick={open}
         leftIcon={<IconUpload size="1rem" />}
