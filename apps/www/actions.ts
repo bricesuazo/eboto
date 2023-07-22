@@ -38,8 +38,9 @@ import {
   DeleteSingleVoterFieldSchema,
   EditVoterSchema,
   DeleteVoterSchema,
+  DeleteBulkVoterSchema,
 } from "@/utils/zod-schema";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export async function toggleTheme() {
@@ -513,6 +514,25 @@ export async function deleteVoter(input: DeleteVoterSchema) {
         )
       );
   }
+
+  revalidatePath("/election/[electionDashboardSlug]/voter");
+}
+
+export async function deleteBulkVoter(input: DeleteBulkVoterSchema) {
+  const session = await getSession();
+
+  if (!session) throw new Error("Unauthorized");
+
+  await db.delete(voters).where(
+    and(
+      eq(voters.election_id, input.election_id),
+      inArray(
+        voters.id,
+        input.voters.map((voter) => voter.id)
+      )
+    )
+  );
+  return { count: input.voters.length };
 
   revalidatePath("/election/[electionDashboardSlug]/voter");
 }

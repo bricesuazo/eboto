@@ -24,12 +24,13 @@ import {
 } from "mantine-react-table";
 import moment from "moment";
 import type { VoterField, Election } from "@eboto-mo/db/schema";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import InviteAllInvitedVoters from "@/components/client/modals/invite-all-invited-voters";
 import UpdateVoterField from "@/components/client/modals/update-voter-field";
 import CreateVoter from "@/components/client/modals/create-voter";
 import EditVoter from "@/components/client/modals/edit-voter";
 import DeleteVoter from "../modals/delete-voter";
+import DeleteBulkVoter from "../modals/delete-bulk-voter";
 
 export default function DashboardVoter({
   election,
@@ -45,6 +46,7 @@ export default function DashboardVoter({
     field: Record<string, string>;
   }[];
 }) {
+  const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
   const columns = useMemo<MRT_ColumnDef<(typeof voters)[0]>[]>(
     () => [
       {
@@ -90,19 +92,6 @@ export default function DashboardVoter({
         onClose={closeBulkVoter}
       />
 
-      <ConfirmDeleteBulkVoterModal
-        voters={voters
-          .filter((voter) => rowSelection[voter.id])
-          .map((voter) => ({
-            id: voter.id,
-            email: voter.email,
-          }))}
-        setRowSelection={setRowSelection}
-        isOpen={openedConfirmDeleteBulkVoters}
-        electionId={voters.data.election.id}
-        onClose={closeConfirmDeleteBulkVoters}
-      />
-
       <Stack>
         <Flex
           gap="xs"
@@ -117,19 +106,15 @@ export default function DashboardVoter({
               voter_fields={election.voter_fields}
               election_id={election.id}
             />
-
-            <Button
-              onClick={openBulkVoter}
-              leftIcon={<IconUpload size="1rem" />}
-              variant="light"
-              sx={(theme) => ({
-                [theme.fn.smallerThan("xs")]: {
-                  width: "100%",
-                },
-              })}
-            >
-              Import
-            </Button>
+            <DeleteBulkVoter
+              voters={voters
+                .filter((voter) => rowSelection[voter.id])
+                .map((voter) => ({
+                  id: voter.id,
+                  email: voter.email,
+                }))}
+              election_id={election.id}
+            />
           </Flex>
           <Flex gap="xs">
             <Tooltip

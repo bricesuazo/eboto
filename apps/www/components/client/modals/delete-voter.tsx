@@ -35,13 +35,14 @@ export default function DeleteVoter({
         id: voter.id,
         is_invited_voter: voter.accountStatus !== "ACCEPTED" ? true : false,
       }),
-    onSuccess: async () => {
+    onSuccess: () => {
       notifications.show({
         title: "Success!",
         message: `Successfully deleted ${voter.email}`,
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
+      close();
     },
     onError: (error) => {
       notifications.show({
@@ -51,7 +52,6 @@ export default function DeleteVoter({
         autoClose: 3000,
       });
     },
-    onMutate: () => close(),
   });
   return (
     <>
