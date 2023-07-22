@@ -1,14 +1,14 @@
 module.exports = {
   extends: [
-    "next",
-    "turbo",
-    "prettier",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    'next',
+    'turbo',
+    'prettier',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
   ],
   rules: {
-    "@next/next/no-html-link-for-pages": "off",
-    "@typescript-eslint/consistent-type-imports": "warn",
-    "@typescript-eslint/no-misused-promises": [
+    '@next/next/no-html-link-for-pages': 'off',
+    '@typescript-eslint/consistent-type-imports': 'warn',
+    '@typescript-eslint/no-misused-promises': [
       2,
       {
         checksVoidReturn: {
@@ -19,7 +19,7 @@ module.exports = {
   },
   parserOptions: {
     babelOptions: {
-      presets: [require.resolve("next/babel")],
+      presets: [require.resolve('next/babel')],
     },
   },
 };

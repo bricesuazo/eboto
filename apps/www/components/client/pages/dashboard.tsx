@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
+import CreateElection from '@/components/client/modals/create-election';
+import DashboardCard from '@/components/server/components/dashboard-card';
 import {
-  Container,
-  Stack,
-  Box,
-  Flex,
-  Title,
-  Group,
-  Skeleton,
-  Text,
-} from "@mantine/core";
-import CreateElection from "@/components/client/modals/create-election";
-import {
-  type Vote,
   type Commissioner,
   type Election,
+  type Vote,
   type Voter,
-} from "@eboto-mo/db/schema";
-import DashboardCard from "@/components/server/components/dashboard-card";
+} from '@eboto-mo/db/schema';
+import {
+  Box,
+  Container,
+  Flex,
+  Group,
+  Skeleton,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core';
 
 export default function DashboardPageClient({
   commissioners,
@@ -36,7 +36,7 @@ export default function DashboardPageClient({
             <Title
               order={2}
               sx={(theme) => ({
-                [theme.fn.smallerThan("xs")]: {
+                [theme.fn.smallerThan('xs')]: {
                   fontSize: theme.fontSizes.xl,
                 },
               })}
@@ -64,7 +64,7 @@ export default function DashboardPageClient({
                   height={332}
                   radius="md"
                   sx={(theme) => ({
-                    [theme.fn.smallerThan("xs")]: { width: "100%" },
+                    [theme.fn.smallerThan('xs')]: { width: '100%' },
                   })}
                 />
               ))
@@ -88,7 +88,7 @@ export default function DashboardPageClient({
           <Title
             order={2}
             sx={(theme) => ({
-              [theme.fn.smallerThan("xs")]: {
+              [theme.fn.smallerThan('xs')]: {
                 fontSize: theme.fontSizes.xl,
               },
             })}
@@ -115,7 +115,7 @@ export default function DashboardPageClient({
                   height={352}
                   radius="md"
                   sx={(theme) => ({
-                    [theme.fn.smallerThan("xs")]: { width: "100%" },
+                    [theme.fn.smallerThan('xs')]: { width: '100%' },
                   })}
                 />
               ))

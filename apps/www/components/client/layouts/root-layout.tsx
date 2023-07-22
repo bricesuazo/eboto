@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import { toggleTheme } from "@/actions";
-import { CacheProvider } from "@emotion/react";
+import { toggleTheme } from '@/actions';
+import DashboardNavbar from '@/components/client/components/dashboard-navbar-client';
+import HeaderContent from '@/components/client/components/header';
+import { Election, User } from '@eboto-mo/db/schema';
+import { CacheProvider } from '@emotion/react';
 import {
-  useEmotionCache,
-  MantineProvider,
-  ColorSchemeProvider,
-  type ColorScheme,
   AppShell,
-} from "@mantine/core";
-import { SessionProvider } from "next-auth/react";
-import { useParams, useServerInsertedHTML } from "next/navigation";
-import { useState } from "react";
-import HeaderContent from "@/components/client/components/header";
-import { Election, User } from "@eboto-mo/db/schema";
-import DashboardNavbar from "@/components/client/components/dashboard-navbar-client";
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { ReactQueryStreamedHydration } from "@tanstack/react-query-next-experimental";
-import { Notifications } from "@mantine/notifications";
+  type ColorScheme,
+  ColorSchemeProvider,
+  MantineProvider,
+  useEmotionCache,
+} from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { ReactQueryStreamedHydration } from '@tanstack/react-query-next-experimental';
+import { SessionProvider } from 'next-auth/react';
+import { useParams, useServerInsertedHTML } from 'next/navigation';
+import { useState } from 'react';
 
 export default function RootLayoutClient({
   children,
@@ -37,7 +37,7 @@ export default function RootLayoutClient({
           refetchOnWindowFocus: false,
         },
       },
-    })
+    }),
   );
   const [colorScheme, setColorScheme] = useState<ColorScheme>(theme);
   const params = useParams();
@@ -46,9 +46,9 @@ export default function RootLayoutClient({
   cache.compat = true;
   useServerInsertedHTML(() => (
     <style
-      data-emotion={`${cache.key} ${Object.keys(cache.inserted).join(" ")}`}
+      data-emotion={`${cache.key} ${Object.keys(cache.inserted).join(' ')}`}
       dangerouslySetInnerHTML={{
-        __html: Object.values(cache.inserted).join(" "),
+        __html: Object.values(cache.inserted).join(' '),
       }}
     />
   ));
@@ -61,16 +61,16 @@ export default function RootLayoutClient({
               colorScheme={colorScheme}
               toggleColorScheme={() => {
                 toggleTheme();
-                setColorScheme((c) => (c === "dark" ? "light" : "dark"));
+                setColorScheme((c) => (c === 'dark' ? 'light' : 'dark'));
               }}
             >
               <MantineProvider
                 withGlobalStyles
                 withNormalizeCSS
                 theme={{
-                  fontFamily: "Poppins, sans-serif",
+                  fontFamily: 'Poppins, sans-serif',
                   colorScheme,
-                  primaryColor: "green",
+                  primaryColor: 'green',
                 }}
               >
                 <Notifications />
@@ -81,7 +81,7 @@ export default function RootLayoutClient({
                   styles={(theme) => ({
                     main: {
                       backgroundColor:
-                        theme.colorScheme === "dark"
+                        theme.colorScheme === 'dark'
                           ? theme.colors.dark[8]
                           : theme.colors.gray[0],
                     },

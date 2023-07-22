@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Box } from "@mantine/core";
+import { Box } from '@mantine/core';
 
 export default function DashboardLayout({
   children,

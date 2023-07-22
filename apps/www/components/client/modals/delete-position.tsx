@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { deletePosition } from "@/actions";
-import { type Position } from "@eboto-mo/db/schema";
-import { Alert, Button, Group, Mark, Modal, Stack, Text } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
-import { useMutation } from "@tanstack/react-query";
+import { deletePosition } from '@/actions';
+import { type Position } from '@eboto-mo/db/schema';
+import { Alert, Button, Group, Mark, Modal, Stack, Text } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
+import { useMutation } from '@tanstack/react-query';
 
 export default function DeletePosition({ position }: { position: Position }) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -16,7 +16,7 @@ export default function DeletePosition({ position }: { position: Position }) {
     onSuccess: async () => {
       notifications.show({
         title: `${position.name} deleted!`,
-        message: "Successfully deleted position",
+        message: 'Successfully deleted position',
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
@@ -24,9 +24,9 @@ export default function DeletePosition({ position }: { position: Position }) {
     },
     onError: (error) => {
       notifications.show({
-        title: "Error",
+        title: 'Error',
         message: (error as Error)?.message,
-        color: "red",
+        color: 'red',
         autoClose: 3000,
       });
     },

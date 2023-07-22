@@ -1,19 +1,26 @@
-"use client";
+'use client';
 
+import { createElection } from '@/actions';
+import { positionTemplate } from '@/constants';
 import {
+  type CreateElectionSchema,
+  createElectionSchema,
+} from '@/utils/zod-schema';
+import {
+  Alert,
   Button,
+  Flex,
+  Group,
   Modal,
   Select,
   Stack,
+  type Sx,
   Text,
   TextInput,
-  Flex,
-  Alert,
-  Group,
-  type Sx,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { hasLength, useForm } from "@mantine/form";
+} from '@mantine/core';
+import { DateTimePicker } from '@mantine/dates';
+import { hasLength, useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
 import {
   IconAlertCircle,
   IconCalendar,
@@ -21,17 +28,10 @@ import {
   IconLetterCase,
   IconPlus,
   IconTemplate,
-} from "@tabler/icons-react";
-import { DateTimePicker } from "@mantine/dates";
-import { positionTemplate } from "@/constants";
-import { useEffect } from "react";
-import { createElection } from "@/actions";
-import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
-import {
-  type CreateElectionSchema,
-  createElectionSchema,
-} from "@/utils/zod-schema";
+} from '@tabler/icons-react';
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
   const router = useRouter();
@@ -45,44 +45,44 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
     template: string;
   }>({
     initialValues: {
-      name: "",
-      slug: "",
+      name: '',
+      slug: '',
       start_date: null,
       end_date: null,
-      template: "0",
+      template: '0',
     },
     validateInputOnBlur: true,
 
     validate: {
       name: hasLength(
         { min: 3 },
-        "Election name must be at least 3 characters"
+        'Election name must be at least 3 characters',
       ),
       slug: (value) => {
         if (!value) {
-          return "Please enter an election slug";
+          return 'Please enter an election slug';
         }
         if (!/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/.test(value)) {
-          return "Election slug must be alphanumeric and can contain dashes";
+          return 'Election slug must be alphanumeric and can contain dashes';
         }
         if (value.length < 3 || value.length > 24) {
-          return "Election slug must be between 3 and 24 characters";
+          return 'Election slug must be between 3 and 24 characters';
         }
       },
       start_date: (value, values) => {
         if (!value) {
-          return "Please enter an election start date";
+          return 'Please enter an election start date';
         }
         if (values.end_date && value > values.end_date) {
-          return "Start date must be before end date";
+          return 'Start date must be before end date';
         }
       },
       end_date: (value, values) => {
         if (!value) {
-          return "Please enter an election end date";
+          return 'Please enter an election end date';
         }
         if (values.start_date && value < values.start_date) {
-          return "End date must be after start date";
+          return 'End date must be after start date';
         }
       },
     },
@@ -136,7 +136,7 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
               withAsterisk
               required
               placeholder="Enter election name"
-              {...form.getInputProps("name")}
+              {...form.getInputProps('name')}
               icon={<IconLetterCase size="1rem" />}
               disabled={isLoading}
             />
@@ -147,14 +147,14 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
                 <>
                   This will be used as the URL for your election
                   <br />
-                  eboto-mo.com/{form.values.slug || "election-slug"}
+                  eboto-mo.com/{form.values.slug || 'election-slug'}
                 </>
               }
               disabled={isLoading}
               withAsterisk
               required
               placeholder="Enter election slug"
-              {...form.getInputProps("slug")}
+              {...form.getInputProps('slug')}
               icon={<IconLetterCase size="1rem" />}
               // error={
               //   form.errors.slug ||
@@ -173,11 +173,11 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
               clearable
               popoverProps={{
                 withinPortal: true,
-                position: "bottom",
+                position: 'bottom',
               }}
               minDate={new Date(new Date().setDate(new Date().getDate() + 1))}
               firstDayOfWeek={0}
-              {...form.getInputProps("start_date")}
+              {...form.getInputProps('start_date')}
               icon={<IconCalendar size="1rem" />}
               disabled={isLoading}
             />
@@ -191,14 +191,14 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
               clearable
               popoverProps={{
                 withinPortal: true,
-                position: "bottom",
+                position: 'bottom',
               }}
               minDate={
                 form.values.start_date ||
                 new Date(new Date().setDate(new Date().getDate() + 1))
               }
               firstDayOfWeek={0}
-              {...form.getInputProps("end_date")}
+              {...form.getInputProps('end_date')}
               icon={<IconCalendar size="1rem" />}
               disabled={isLoading}
             />
@@ -209,7 +209,7 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
               withAsterisk
               required
               withinPortal
-              {...form.getInputProps("template")}
+              {...form.getInputProps('template')}
               data={positionTemplate
                 .sort((a, b) => a.id - b.id)
                 .map((position) => ({

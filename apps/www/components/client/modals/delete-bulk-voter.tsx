@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { deleteBulkVoter } from "@/actions";
+import { deleteBulkVoter } from '@/actions';
 import {
   ActionIcon,
   Alert,
@@ -10,16 +10,16 @@ import {
   Modal,
   Stack,
   Text,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconCheck,
   IconUpload,
   IconUserMinus,
-} from "@tabler/icons-react";
-import { useMutation } from "@tanstack/react-query";
+} from '@tabler/icons-react';
+import { useMutation } from '@tanstack/react-query';
 
 export default function DeleteBulkVoter({
   voters,
@@ -56,11 +56,11 @@ export default function DeleteBulkVoter({
         size="lg"
         variant="outline"
         sx={(theme) => ({
-          [theme.fn.largerThan("xs")]: {
-            display: "none",
+          [theme.fn.largerThan('xs')]: {
+            display: 'none',
           },
         })}
-        // disabled={Object.keys(rowSelection).length === 0}
+        disabled={isDisabled}
       >
         <IconUserMinus size="1.25rem" />
       </ActionIcon>
@@ -70,10 +70,11 @@ export default function DeleteBulkVoter({
         onClick={open}
         leftIcon={<IconUserMinus size="1.25rem" />}
         sx={(theme) => ({
-          [theme.fn.smallerThan("xs")]: {
-            display: "none",
+          [theme.fn.smallerThan('xs')]: {
+            display: 'none',
           },
         })}
+        disabled={isDisabled}
       >
         Delete selected
       </Button>

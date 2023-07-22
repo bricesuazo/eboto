@@ -1,11 +1,11 @@
-import { deletePartylist } from "@/actions";
-import { type Partylist } from "@eboto-mo/db/schema";
-import { Alert, Button, Group, Mark, Modal, Stack, Text } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconCheck } from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { useMutation } from "@tanstack/react-query";
+import { deletePartylist } from '@/actions';
+import { type Partylist } from '@eboto-mo/db/schema';
+import { Alert, Button, Group, Mark, Modal, Stack, Text } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import { IconCheck } from '@tabler/icons-react';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { useMutation } from '@tanstack/react-query';
 
 export default function DeletePartylist({
   partylist,
@@ -17,16 +17,16 @@ export default function DeletePartylist({
     onSuccess: async () => {
       notifications.show({
         title: `${partylist.name} (${partylist.acronym}) deleted!`,
-        message: "Successfully deleted partylist",
+        message: 'Successfully deleted partylist',
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
     },
     onError: (error) => {
       notifications.show({
-        title: "Error",
+        title: 'Error',
         message: (error as Error)?.message,
-        color: "red",
+        color: 'red',
         autoClose: 3000,
       });
     },

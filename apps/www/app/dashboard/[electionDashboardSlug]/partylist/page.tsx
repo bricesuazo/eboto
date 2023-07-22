@@ -1,12 +1,12 @@
-import DashboardPartylist from "@/components/client/pages/dashboard-partylist";
+import DashboardPartylist from '@/components/client/pages/dashboard-partylist';
 import {
   getAllPartylistsWithoutINDByElectionId,
   getElectionBySlug,
-} from "@/utils/election";
-import { type Metadata } from "next";
+} from '@/utils/election';
+import { type Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Partylists",
+  title: 'Partylists',
 };
 
 export default async function Page({

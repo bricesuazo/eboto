@@ -1,11 +1,11 @@
-"use server";
+'use server';
 
-import { authOptions } from "@/lib/auth";
-import { db } from "@eboto-mo/db";
-import { users, type User } from "@eboto-mo/db/schema";
-import { Session, getServerSession } from "next-auth";
+import { authOptions } from '@/lib/auth';
+import { db } from '@eboto-mo/db';
+import { type User, users } from '@eboto-mo/db/schema';
+import { Session, getServerSession } from 'next-auth';
 
-export type UserAuth = Session["user"];
+export type UserAuth = Session['user'];
 
 export async function getSession(): Promise<UserAuth | null> {
   const session = await getServerSession(authOptions);

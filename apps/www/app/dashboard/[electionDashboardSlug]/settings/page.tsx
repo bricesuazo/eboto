@@ -1,9 +1,9 @@
-import DashboardSettings from "@/components/client/pages/dashboard-settings";
-import { getElectionBySlug } from "@/utils/election";
-import { type Metadata } from "next";
+import DashboardSettings from '@/components/client/pages/dashboard-settings';
+import { getElectionBySlug } from '@/utils/election';
+import { type Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Settings",
+  title: 'Settings',
 };
 
 export default async function Page({

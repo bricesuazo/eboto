@@ -1,14 +1,14 @@
-import DashboardCandidate from "@/components/client/pages/dashboard-candidate";
+import DashboardCandidate from '@/components/client/pages/dashboard-candidate';
 import {
   getAllCandidatesByElectionId,
   getAllPartylistsByElectionId,
   getAllPositionsByElectionId,
   getElectionBySlug,
-} from "@/utils/election";
-import { type Metadata } from "next";
+} from '@/utils/election';
+import { type Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Candidates",
+  title: 'Candidates',
 };
 
 export default async function Page({
@@ -18,7 +18,7 @@ export default async function Page({
 }) {
   const election = await getElectionBySlug(electionDashboardSlug);
   const positionsWithCandidates = await getAllCandidatesByElectionId(
-    election.id
+    election.id,
   );
   const partylists = await getAllPartylistsByElectionId(election.id);
   const positions = await getAllPositionsByElectionId(election.id);

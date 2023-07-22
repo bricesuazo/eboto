@@ -1,21 +1,21 @@
-import CreateElection from "@/components/client/modals/create-election";
-import DashboardPageClient from "@/components/client/pages/dashboard";
-import { getSession } from "@/utils/auth";
-import { db } from "@eboto-mo/db";
+import CreateElection from '@/components/client/modals/create-election';
+import DashboardPageClient from '@/components/client/pages/dashboard';
+import { getSession } from '@/utils/auth';
+import { db } from '@eboto-mo/db';
 import {
-  type Election,
   type Commissioner,
+  type Election,
+  Vote,
   type Voter,
   elections,
   voters,
-  Vote,
-} from "@eboto-mo/db/schema";
-import { and, eq, not } from "drizzle-orm";
-import { Metadata } from "next";
+} from '@eboto-mo/db/schema';
+import { and, eq, not } from 'drizzle-orm';
+import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Dashboard",
-  description: "eBoto Mo | Dashboard",
+  title: 'Dashboard',
+  description: 'eBoto Mo | Dashboard',
 };
 
 export default async function Page() {

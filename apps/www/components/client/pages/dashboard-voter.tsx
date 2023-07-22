@@ -1,5 +1,14 @@
-"use client";
+'use client';
 
+import { refreshVoterPage } from '@/actions';
+import CreateVoter from '@/components/client/modals/create-voter';
+import DeleteBulkVoter from '@/components/client/modals/delete-bulk-voter';
+import DeleteVoter from '@/components/client/modals/delete-voter';
+import EditVoter from '@/components/client/modals/edit-voter';
+import InviteAllInvitedVoters from '@/components/client/modals/invite-all-invited-voters';
+import UpdateVoterField from '@/components/client/modals/update-voter-field';
+import UploadBulkVoter from '@/components/client/modals/upload-bulk-voter';
+import type { Election, VoterField } from '@eboto-mo/db/schema';
 import {
   ActionIcon,
   Box,
@@ -9,31 +18,22 @@ import {
   Stack,
   Text,
   Tooltip,
-} from "@mantine/core";
+} from '@mantine/core';
 import {
   IconEdit,
   IconRefresh,
   IconTrash,
   IconUpload,
   IconUserMinus,
-} from "@tabler/icons-react";
+} from '@tabler/icons-react';
+import { useMutation } from '@tanstack/react-query';
 import {
-  MantineReactTable,
-  type MRT_RowSelectionState,
   type MRT_ColumnDef,
-} from "mantine-react-table";
-import moment from "moment";
-import type { VoterField, Election } from "@eboto-mo/db/schema";
-import { useMemo, useState } from "react";
-import InviteAllInvitedVoters from "@/components/client/modals/invite-all-invited-voters";
-import UpdateVoterField from "@/components/client/modals/update-voter-field";
-import CreateVoter from "@/components/client/modals/create-voter";
-import EditVoter from "@/components/client/modals/edit-voter";
-import DeleteVoter from "@/components/client/modals/delete-voter";
-import DeleteBulkVoter from "@/components/client/modals/delete-bulk-voter";
-import UploadBulkVoter from "@/components/client/modals/upload-bulk-voter";
-import { useMutation } from "@tanstack/react-query";
-import { refreshVoterPage } from "@/actions";
+  type MRT_RowSelectionState,
+  MantineReactTable,
+} from 'mantine-react-table';
+import moment from 'moment';
+import { useMemo, useState } from 'react';
 
 export default function DashboardVoter({
   election,
@@ -50,19 +50,20 @@ export default function DashboardVoter({
   }[];
 }) {
   const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
+
   const columns = useMemo<MRT_ColumnDef<(typeof voters)[0]>[]>(
     () => [
       {
-        accessorKey: "email",
-        header: "Email",
+        accessorKey: 'email',
+        header: 'Email',
       },
       ...((election.voter_fields.map((voter_field) => ({
-        accessorKey: "field." + voter_field.name,
+        accessorKey: 'field.' + voter_field.name,
         header: voter_field.name,
       })) ?? []) as MRT_ColumnDef<(typeof voters)[0]>[]),
       {
-        accessorKey: "account_status",
-        header: "Status",
+        accessorKey: 'account_status',
+        header: 'Status',
         size: 75,
         enableClickToCopy: false,
         Cell: ({ cell }) =>
@@ -70,20 +71,20 @@ export default function DashboardVoter({
           cell.getValue<string>().slice(1).toLowerCase(),
       },
       {
-        accessorKey: "has_voted",
-        header: "Voted?",
+        accessorKey: 'has_voted',
+        header: 'Voted?',
         size: 75,
-        Cell: ({ cell }) => (cell.getValue<boolean>() ? "Yes" : "No"),
+        Cell: ({ cell }) => (cell.getValue<boolean>() ? 'Yes' : 'No'),
         enableClickToCopy: false,
       },
       {
-        accessorKey: "created_at",
-        header: "Created",
+        accessorKey: 'created_at',
+        header: 'Created',
         size: 100,
         Cell: ({ cell }) => moment(cell.getValue<Date>()).fromNow(),
       },
     ],
-    [election.voter_fields]
+    [election.voter_fields],
   );
 
   const { mutate, isLoading } = useMutation({
@@ -96,8 +97,8 @@ export default function DashboardVoter({
         <Flex
           gap="xs"
           sx={(theme) => ({
-            [theme.fn.smallerThan("xs")]: {
-              flexDirection: "column",
+            [theme.fn.smallerThan('xs')]: {
+              flexDirection: 'column',
             },
           })}
         >
@@ -150,7 +151,7 @@ export default function DashboardVoter({
           getRowId={(row) => row.id}
           enableStickyHeader
           initialState={{
-            density: "xs",
+            density: 'xs',
             pagination: { pageSize: 15, pageIndex: 0 },
           }}
           state={{
@@ -160,12 +161,12 @@ export default function DashboardVoter({
           }}
           enableClickToCopy={true}
           mantineTableContainerProps={{
-            sx: { maxHeight: "70vh" },
-            width: "100%",
+            sx: { maxHeight: '70vh' },
+            width: '100%',
           }}
           mantineProgressProps={({ isTopToolbar }) => ({
             sx: {
-              display: isTopToolbar ? "block" : "none",
+              display: isTopToolbar ? 'block' : 'none',
             },
           })}
           positionToolbarAlertBanner="bottom"
@@ -179,8 +180,8 @@ export default function DashboardVoter({
                     loading={isLoading}
                     size="lg"
                     sx={(theme) => ({
-                      [theme.fn.largerThan("xs")]: {
-                        display: "none",
+                      [theme.fn.largerThan('xs')]: {
+                        display: 'none',
                       },
                     })}
                     loaderProps={{
@@ -195,8 +196,8 @@ export default function DashboardVoter({
                     loading={isLoading}
                     leftIcon={<IconRefresh size="1.25rem" />}
                     sx={(theme) => ({
-                      [theme.fn.smallerThan("xs")]: {
-                        display: "none",
+                      [theme.fn.smallerThan('xs')]: {
+                        display: 'none',
                       },
                     })}
                     loaderProps={{
@@ -225,18 +226,18 @@ export default function DashboardVoter({
           enableRowActions
           positionActionsColumn="last"
           renderRowActions={({ row }) => (
-            <Box sx={{ display: "flex", gap: "16px" }}>
+            <Box sx={{ display: 'flex', gap: '16px' }}>
               <Tooltip withArrow label="Edit">
                 <EditVoter
                   voter_fields={election.voter_fields}
                   election_id={election.id}
                   voter={{
                     id: row.id,
-                    email: row.getValue<string>("email"),
+                    email: row.getValue<string>('email'),
                     field: voters.find((v) => v.id === row.id)?.field ?? {},
                     account_status: row.getValue<
-                      "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED"
-                    >("account_status"),
+                      'ACCEPTED' | 'INVITED' | 'DECLINED' | 'ADDED'
+                    >('account_status'),
                   }}
                 />
               </Tooltip>
@@ -245,10 +246,10 @@ export default function DashboardVoter({
                 <DeleteVoter
                   voter={{
                     id: row.id,
-                    email: row.getValue<string>("email"),
-                    accountStatus: row.getValue<
-                      "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED"
-                    >("accountStatus"),
+                    email: row.getValue<string>('email'),
+                    account_status: row.getValue<
+                      'ACCEPTED' | 'INVITED' | 'DECLINED' | 'ADDED'
+                    >('account_status'),
                   }}
                   election_id={election.id}
                 />

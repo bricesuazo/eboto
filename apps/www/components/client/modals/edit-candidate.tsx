@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { editCandidate } from "@/actions";
-import { EditCandidateSchema } from "@/utils/zod-schema";
-import type { Position, Partylist, Candidate } from "@eboto-mo/db/schema";
+import { editCandidate } from '@/actions';
+import { EditCandidateSchema } from '@/utils/zod-schema';
+import type { Candidate, Partylist, Position } from '@eboto-mo/db/schema';
 import {
   ActionIcon,
   Alert,
@@ -18,33 +18,33 @@ import {
   TextInput,
   Textarea,
   rem,
-} from "@mantine/core";
-import { YearPickerInput } from "@mantine/dates";
+} from '@mantine/core';
+import { YearPickerInput } from '@mantine/dates';
 import {
   Dropzone,
   type FileWithPath,
   IMAGE_MIME_TYPE,
-} from "@mantine/dropzone";
-import { hasLength, useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconCheck } from "@tabler/icons-react";
+} from '@mantine/dropzone';
+import { hasLength, useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import { IconCheck } from '@tabler/icons-react';
 import {
-  IconUserSearch,
-  IconPhoto,
-  IconInfoCircle,
-  IconLetterCase,
-  IconFlag,
-  IconX,
-  IconPlus,
   IconAlertCircle,
   IconExternalLink,
-} from "@tabler/icons-react";
-import { useMutation } from "@tanstack/react-query";
-import Image from "next/image";
-import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useRef } from "react";
+  IconFlag,
+  IconInfoCircle,
+  IconLetterCase,
+  IconPhoto,
+  IconPlus,
+  IconUserSearch,
+  IconX,
+} from '@tabler/icons-react';
+import { useMutation } from '@tanstack/react-query';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useRef } from 'react';
 
 export default function EditCandidate({
   candidate,
@@ -155,21 +155,21 @@ export default function EditCandidate({
     validate: {
       first_name: hasLength(
         { min: 1 },
-        "First name must be at least 1 characters"
+        'First name must be at least 1 characters',
       ),
       last_name: hasLength(
         { min: 1 },
-        "Last name must be at least 1 characters"
+        'Last name must be at least 1 characters',
       ),
       slug: (value) => {
         if (!value) {
-          return "Please enter an election slug";
+          return 'Please enter an election slug';
         }
         if (!/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/.test(value)) {
-          return "Election slug must be alphanumeric and can contain dashes";
+          return 'Election slug must be alphanumeric and can contain dashes';
         }
         if (value.length < 3 || value.length > 24) {
-          return "Election slug must be between 3 and 24 characters";
+          return 'Election slug must be between 3 and 24 characters';
         }
       },
     },
@@ -179,7 +179,7 @@ export default function EditCandidate({
     type,
     id,
   }: {
-    type: "PLATFORM" | "ACHIEVEMENT" | "AFFILIATION" | "EVENTATTENDED";
+    type: 'PLATFORM' | 'ACHIEVEMENT' | 'AFFILIATION' | 'EVENTATTENDED';
     id: string;
   }) => {
     // const deleteCredentialMutation =
@@ -194,7 +194,7 @@ export default function EditCandidate({
         w="100%"
         color="red"
         onClick={async () => {
-          if (type === "PLATFORM") {
+          if (type === 'PLATFORM') {
             if (candidate.platforms.find((a) => a.id === id)) {
               // await deletePlatformMutation.mutateAsync({ id });
               // await context.candidate.getAll.invalidate();
@@ -205,7 +205,7 @@ export default function EditCandidate({
                 platforms: form.values.platforms.filter((a) => a.id !== id),
               });
             }
-          } else if (type === "ACHIEVEMENT") {
+          } else if (type === 'ACHIEVEMENT') {
             if (candidate.credential?.achievements.find((a) => a.id === id)) {
               // await deleteCredentialMutation.mutateAsync({ id, type });
               // await context.candidate.getAll.invalidate();
@@ -214,11 +214,11 @@ export default function EditCandidate({
               form.setValues({
                 ...form.values,
                 achievements: form.values.achievements.filter(
-                  (a) => a.id !== id
+                  (a) => a.id !== id,
                 ),
               });
             }
-          } else if (type === "AFFILIATION") {
+          } else if (type === 'AFFILIATION') {
             if (candidate.credential?.affiliations.find((a) => a.id === id)) {
               // await deleteCredentialMutation.mutateAsync({ id, type });
               // await context.candidate.getAll.invalidate();
@@ -227,7 +227,7 @@ export default function EditCandidate({
               form.setValues({
                 ...form.values,
                 affiliations: form.values.affiliations.filter(
-                  (a) => a.id !== id
+                  (a) => a.id !== id,
                 ),
               });
             }
@@ -242,7 +242,7 @@ export default function EditCandidate({
               form.setValues({
                 ...form.values,
                 events_attended: form.values.events_attended.filter(
-                  (a) => a.id !== id
+                  (a) => a.id !== id,
                 ),
               });
             }
@@ -252,14 +252,14 @@ export default function EditCandidate({
         //   deleteCredentialMutation.isLoading || deletePlatformMutation.isLoading
         // }
       >
-        Delete{" "}
-        {type === "PLATFORM"
-          ? "Platform"
-          : type === "ACHIEVEMENT"
-          ? "Achievement"
-          : type === "AFFILIATION"
-          ? "Affiliation"
-          : "Event Attended"}
+        Delete{' '}
+        {type === 'PLATFORM'
+          ? 'Platform'
+          : type === 'ACHIEVEMENT'
+          ? 'Achievement'
+          : type === 'AFFILIATION'
+          ? 'Affiliation'
+          : 'Event Attended'}
       </Button>
     );
   };
@@ -290,7 +290,7 @@ export default function EditCandidate({
               partylist_id: value.partylist_id,
               election_id: candidate.election_id,
               position_id: value.position,
-              image_link: "",
+              image_link: '',
               //   image: !value.image
               //     ? null
               //     : typeof value.image === "string"
@@ -365,14 +365,14 @@ export default function EditCandidate({
                     placeholder="Enter first name"
                     required
                     withAsterisk
-                    {...form.getInputProps("first_name")}
+                    {...form.getInputProps('first_name')}
                     icon={<IconLetterCase size="1rem" />}
                   />
 
                   <TextInput
                     label="Middle name"
                     placeholder="Enter middle name"
-                    {...form.getInputProps("middle_name")}
+                    {...form.getInputProps('middle_name')}
                     icon={<IconLetterCase size="1rem" />}
                   />
                   <TextInput
@@ -380,7 +380,7 @@ export default function EditCandidate({
                     placeholder="Enter last name"
                     required
                     withAsterisk
-                    {...form.getInputProps("last_name")}
+                    {...form.getInputProps('last_name')}
                     icon={<IconLetterCase size="1rem" />}
                   />
 
@@ -392,12 +392,12 @@ export default function EditCandidate({
                         This will be used as the candidate&apos;s URL.
                         <br />
                         eboto-mo.com/{params.electionSlug?.toString()}/
-                        {form.values.slug || "candidate-slug"}
+                        {form.values.slug || 'candidate-slug'}
                       </Text>
                     }
                     required
                     withAsterisk
-                    {...form.getInputProps("slug")}
+                    {...form.getInputProps('slug')}
                     icon={<IconLetterCase size="1rem" />}
                   />
 
@@ -406,7 +406,7 @@ export default function EditCandidate({
                     placeholder="Select partylist"
                     label="Partylist"
                     icon={<IconFlag size="1rem" />}
-                    {...form.getInputProps("partylist_id")}
+                    {...form.getInputProps('partylist_id')}
                     data={partylists.map((partylist) => {
                       return {
                         label: partylist.name,
@@ -420,7 +420,7 @@ export default function EditCandidate({
                     placeholder="Select position"
                     label="Position"
                     icon={<IconUserSearch size="1rem" />}
-                    {...form.getInputProps("position")}
+                    {...form.getInputProps('position')}
                     data={positions.map((position) => {
                       return {
                         label: position.name,
@@ -437,7 +437,7 @@ export default function EditCandidate({
                     id="image"
                     onDrop={(files) => {
                       if (!files[0]) return;
-                      form.setFieldValue("image", files[0]);
+                      form.setFieldValue('image', files[0]);
                     }}
                     openRef={openRef}
                     maxSize={5 * 1024 ** 2}
@@ -449,10 +449,10 @@ export default function EditCandidate({
                     <Group
                       position="center"
                       spacing="xl"
-                      style={{ minHeight: rem(140), pointerEvents: "none" }}
+                      style={{ minHeight: rem(140), pointerEvents: 'none' }}
                     >
                       {form.values.image ? (
-                        typeof form.values.image !== "string" &&
+                        typeof form.values.image !== 'string' &&
                         form.values.image ? (
                           <Group position="center">
                             <Box
@@ -461,7 +461,7 @@ export default function EditCandidate({
                                 width: rem(120),
                                 height: rem(120),
 
-                                [theme.fn.smallerThan("sm")]: {
+                                [theme.fn.smallerThan('sm')]: {
                                   width: rem(180),
                                   height: rem(180),
                                 },
@@ -469,7 +469,7 @@ export default function EditCandidate({
                             >
                               <Image
                                 src={
-                                  typeof form.values.image === "string"
+                                  typeof form.values.image === 'string'
                                     ? form.values.image
                                     : URL.createObjectURL(form.values.image)
                                 }
@@ -477,7 +477,7 @@ export default function EditCandidate({
                                 fill
                                 sizes="100%"
                                 priority
-                                style={{ objectFit: "cover" }}
+                                style={{ objectFit: 'cover' }}
                               />
                             </Box>
                             <Text>{form.values.image.name}</Text>
@@ -491,7 +491,7 @@ export default function EditCandidate({
                                   width: rem(120),
                                   height: rem(120),
 
-                                  [theme.fn.smallerThan("sm")]: {
+                                  [theme.fn.smallerThan('sm')]: {
                                     width: rem(180),
                                     height: rem(180),
                                   },
@@ -503,7 +503,7 @@ export default function EditCandidate({
                                   fill
                                   sizes="100%"
                                   priority
-                                  style={{ objectFit: "cover" }}
+                                  style={{ objectFit: 'cover' }}
                                 />
                               </Box>
                               <Text>Current image</Text>
@@ -542,7 +542,7 @@ export default function EditCandidate({
                       }}
                       disabled={
                         !candidate.image_link ||
-                        typeof form.values.image === "string" ||
+                        typeof form.values.image === 'string' ||
                         isLoading
                       }
                       sx={{ flex: 1 }}
@@ -551,7 +551,7 @@ export default function EditCandidate({
                     </Button>
                     <Button
                       onClick={() => {
-                        form.setFieldValue("image", null);
+                        form.setFieldValue('image', null);
                       }}
                       disabled={!form.values.image || isLoading}
                       sx={{ flex: 1 }}
@@ -625,8 +625,8 @@ export default function EditCandidate({
                           ...form.values.platforms,
                           {
                             id: (form.values.platforms.length + 1).toString(),
-                            title: "",
-                            description: "",
+                            title: '',
+                            description: '',
                           },
                         ],
                       });
@@ -679,7 +679,7 @@ export default function EditCandidate({
                                               ...achievement,
                                               name: e.target.value,
                                             }
-                                          : achievement
+                                          : achievement,
                                     ),
                                   });
                                 }}
@@ -701,7 +701,7 @@ export default function EditCandidate({
                                               ...achievement,
                                               year: date,
                                             }
-                                          : achievement
+                                          : achievement,
                                     ),
                                   });
                                 }}
@@ -728,7 +728,7 @@ export default function EditCandidate({
                                 id: (
                                   form.values.achievements.length + 1
                                 ).toString(),
-                                name: "",
+                                name: '',
                                 year: new Date(new Date().getFullYear(), 0),
                               },
                             ],
@@ -760,7 +760,7 @@ export default function EditCandidate({
                                             ...affiliation,
                                             org_name: e.target.value,
                                           }
-                                        : affiliation
+                                        : affiliation,
                                   ),
                                 });
                               }}
@@ -781,7 +781,7 @@ export default function EditCandidate({
                                             ...affiliation,
                                             org_position: e.target.value,
                                           }
-                                        : affiliation
+                                        : affiliation,
                                   ),
                                 });
                               }}
@@ -809,7 +809,7 @@ export default function EditCandidate({
                                               ...affiliation,
                                               start_year: date,
                                             }
-                                          : affiliation
+                                          : affiliation,
                                     ),
                                   });
                                 }}
@@ -836,7 +836,7 @@ export default function EditCandidate({
                                               ...affiliation,
                                               end_year: date,
                                             }
-                                          : affiliation
+                                          : affiliation,
                                     ),
                                   });
                                 }}
@@ -863,11 +863,11 @@ export default function EditCandidate({
                                 id: (
                                   form.values.affiliations.length + 1
                                 ).toString(),
-                                org_name: "",
-                                org_position: "",
+                                org_name: '',
+                                org_position: '',
                                 start_year: new Date(
                                   new Date().getFullYear(),
-                                  -1
+                                  -1,
                                 ),
                                 end_year: new Date(new Date().getFullYear(), 0),
                               },
@@ -893,7 +893,7 @@ export default function EditCandidate({
                                   required
                                   value={
                                     form.values.events_attended[index]?.name ??
-                                    ""
+                                    ''
                                   }
                                   onChange={(e) => {
                                     form.setValues({
@@ -906,7 +906,7 @@ export default function EditCandidate({
                                                   ...achievement,
                                                   name: e.target.value,
                                                 }
-                                              : achievement
+                                              : achievement,
                                         ),
                                     });
                                   }}
@@ -932,7 +932,7 @@ export default function EditCandidate({
                                                   ...achievement,
                                                   year: date,
                                                 }
-                                              : achievement
+                                              : achievement,
                                         ),
                                     });
                                   }}
@@ -945,7 +945,7 @@ export default function EditCandidate({
                               />
                             </Box>
                           );
-                        }
+                        },
                       )}
 
                       <Button
@@ -960,7 +960,7 @@ export default function EditCandidate({
                                 id: (
                                   form.values.events_attended.length + 1
                                 ).toString(),
-                                name: "",
+                                name: '',
                                 year: new Date(new Date().getFullYear(), 0),
                               },
                             ],
@@ -990,8 +990,8 @@ export default function EditCandidate({
                   variant="outline"
                   color="green"
                   sx={(theme) => ({
-                    [theme.fn.largerThan("xs")]: {
-                      display: "none",
+                    [theme.fn.largerThan('xs')]: {
+                      display: 'none',
                     },
                   })}
                 >
@@ -999,8 +999,8 @@ export default function EditCandidate({
                 </ActionIcon>
                 <Button
                   sx={(theme) => ({
-                    [theme.fn.smallerThan("xs")]: {
-                      display: "none",
+                    [theme.fn.smallerThan('xs')]: {
+                      display: 'none',
                     },
                   })}
                   leftIcon={<IconExternalLink size="1.25rem" />}

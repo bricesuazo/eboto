@@ -1,6 +1,7 @@
-"use client";
+'use client';
 
-import { type Election } from "@eboto-mo/db/schema";
+import QRCode from '@/components/client/modals/show-qr-code';
+import { type Election } from '@eboto-mo/db/schema';
 import {
   ActionIcon,
   Box,
@@ -10,11 +11,10 @@ import {
   Text,
   Title,
   rem,
-} from "@mantine/core";
-import { IconExternalLink } from "@tabler/icons-react";
-import Link from "next/link";
-import Moment from "react-moment";
-import QRCode from "@/components/client/modals/show-qr-code";
+} from '@mantine/core';
+import { IconExternalLink } from '@tabler/icons-react';
+import Link from 'next/link';
+import Moment from 'react-moment';
 
 export default function DashboardOverview({
   election,
@@ -34,7 +34,7 @@ export default function DashboardOverview({
               href={`/${election.slug}`}
               target="_blank"
               sx={(theme) => ({
-                borderRadius: "50%",
+                borderRadius: '50%',
                 width: 34,
                 height: 34,
                 padding: theme.radius.xs,
@@ -47,16 +47,16 @@ export default function DashboardOverview({
         </Flex>
         <Text>
           <Moment format="MMMM DD, YYYY HA" date={election.start_date} />
-          {" - "}
+          {' - '}
           <Moment format="MMMM DD, YYYY HA" date={election.end_date} />
         </Text>
         <Text>
-          Created:{" "}
+          Created:{' '}
           <Moment format="MMMM DD, YYYY hh:mmA" date={election.created_at} /> (
           <Moment fromNow interval={1000} date={election.created_at} />)
         </Text>
         <Text>
-          Publicity:{" "}
+          Publicity:{' '}
           {election.publicity.charAt(0) +
             election.publicity.slice(1).toLowerCase()}
         </Text>
@@ -64,17 +64,17 @@ export default function DashboardOverview({
 
       <Box
         sx={(theme) => ({
-          display: "flex",
+          display: 'flex',
 
           borderRadius: theme.radius.md,
           backgroundColor:
-            theme.colorScheme === "dark"
+            theme.colorScheme === 'dark'
               ? theme.colors.dark[6]
               : theme.colors.gray[1],
           // overflow: "hidden",
 
-          [theme.fn.smallerThan("sm")]: {
-            flexDirection: "column",
+          [theme.fn.smallerThan('sm')]: {
+            flexDirection: 'column',
           },
         })}
       >
@@ -321,8 +321,8 @@ export default function DashboardOverview({
         <Title
           order={3}
           sx={(theme) => ({
-            [theme.fn.smallerThan("xs")]: {
-              textAlign: "center",
+            [theme.fn.smallerThan('xs')]: {
+              textAlign: 'center',
             },
           })}
         >

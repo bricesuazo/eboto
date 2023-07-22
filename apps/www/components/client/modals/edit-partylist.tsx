@@ -1,28 +1,28 @@
+import { editPartylist } from '@/actions';
 import {
-  Modal,
-  Button,
-  TextInput,
-  Group,
-  Stack,
+  type EditPartylistSchema,
+  editPartylistSchema,
+} from '@/utils/zod-schema';
+import { Partylist } from '@eboto-mo/db/schema';
+import {
   Alert,
+  Button,
+  Group,
+  Modal,
+  Stack,
   Text,
-} from "@mantine/core";
-import { hasLength, useForm } from "@mantine/form";
-import { notifications } from "@mantine/notifications";
+  TextInput,
+} from '@mantine/core';
+import { hasLength, useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconCheck,
   IconLetterCase,
-} from "@tabler/icons-react";
-import { useDisclosure } from "@mantine/hooks";
-import { Partylist } from "@eboto-mo/db/schema";
-import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
-import {
-  editPartylistSchema,
-  type EditPartylistSchema,
-} from "@/utils/zod-schema";
-import { editPartylist } from "@/actions";
+} from '@tabler/icons-react';
+import { useMutation } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
 export default function EditPartylist({ partylist }: { partylist: Partylist }) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -44,14 +44,14 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
           min: 3,
           max: 50,
         },
-        "Name must be between 3 and 50 characters"
+        'Name must be between 3 and 50 characters',
       ),
       newAcronym: hasLength(
         {
           min: 1,
           max: 24,
         },
-        "Acronym must be between 1 and 24 characters"
+        'Acronym must be between 1 and 24 characters',
       ),
     },
   });
@@ -71,7 +71,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
       notifications.show({
         title: `${data.name} (${data.newAcronym}) updated.`,
         icon: <IconCheck size="1.1rem" />,
-        message: "Your changes have been saved.",
+        message: 'Your changes have been saved.',
         autoClose: 3000,
       });
       close();
@@ -80,9 +80,9 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
     },
     onError: (error) => {
       notifications.show({
-        title: "Error",
+        title: 'Error',
         message: (error as Error)?.message,
-        color: "red",
+        color: 'red',
         autoClose: 3000,
       });
     },
@@ -128,7 +128,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
               label="Name"
               required
               withAsterisk
-              {...form.getInputProps("name")}
+              {...form.getInputProps('name')}
               icon={<IconLetterCase size="1rem" />}
             />
 
@@ -137,7 +137,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
               label="Acronym"
               required
               withAsterisk
-              {...form.getInputProps("newAcronym")}
+              {...form.getInputProps('newAcronym')}
               icon={<IconLetterCase size="1rem" />}
             />
 

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { createPosition } from "@/actions";
-import { CreatePositionSchema } from "@/utils/zod-schema";
+import { createPosition } from '@/actions';
+import { CreatePositionSchema } from '@/utils/zod-schema';
 import {
   Alert,
   Button,
@@ -13,18 +13,18 @@ import {
   Stack,
   Text,
   TextInput,
-} from "@mantine/core";
-import { hasLength, useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
+} from '@mantine/core';
+import { hasLength, useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconCheck,
   IconLetterCase,
   IconReplace,
-} from "@tabler/icons-react";
-import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
+} from '@tabler/icons-react';
+import { useMutation } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
 export default function CreatePosition({
   election_id,
@@ -45,7 +45,7 @@ export default function CreatePosition({
     onSuccess: async (_, { name }) => {
       notifications.show({
         title: `${name} created!`,
-        message: "Successfully created position",
+        message: 'Successfully created position',
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
@@ -56,7 +56,7 @@ export default function CreatePosition({
   const [opened, { open, close }] = useDisclosure(false);
   const form = useForm({
     initialValues: {
-      name: "",
+      name: '',
       isSingle: false,
       min: 0,
       max: 1,
@@ -70,24 +70,24 @@ export default function CreatePosition({
           min: 3,
           max: 50,
         },
-        "Name must be between 3 and 50 characters"
+        'Name must be between 3 and 50 characters',
       ),
       min: (value, values) => {
         if (value >= values.max) {
-          return "Minimum must be less than maximum";
+          return 'Minimum must be less than maximum';
         }
       },
       max: (value, values) => {
         if (value < form.values.min) {
-          return "Maximum must be greater than minimum";
+          return 'Maximum must be greater than minimum';
         }
 
         if (values.isSingle && value === 1) {
-          return "Maximum must be greater than 1";
+          return 'Maximum must be greater than 1';
         }
 
         if (value < values.min) {
-          return "Maximum must be greater than minimum";
+          return 'Maximum must be greater than minimum';
         }
       },
     },
@@ -112,8 +112,8 @@ export default function CreatePosition({
     <>
       <Button
         sx={(theme) => ({
-          width: "fit-content",
-          [theme.fn.smallerThan("xs")]: { width: "100%" },
+          width: 'fit-content',
+          [theme.fn.smallerThan('xs')]: { width: '100%' },
         })}
         onClick={open}
         leftIcon={<IconReplace size="1rem" />}
@@ -142,19 +142,19 @@ export default function CreatePosition({
               label="Name"
               required
               withAsterisk
-              {...form.getInputProps("name")}
+              {...form.getInputProps('name')}
               icon={<IconLetterCase size="1rem" />}
             />
             <Checkbox
               label="Select multiple candidates?"
               description="If checked, you can select multiple candidates for this position when voting"
-              {...form.getInputProps("isSingle", { type: "checkbox" })}
+              {...form.getInputProps('isSingle', { type: 'checkbox' })}
             />
 
             {form.values.isSingle && (
               <Flex gap="sm">
                 <NumberInput
-                  {...form.getInputProps("min")}
+                  {...form.getInputProps('min')}
                   placeholder="Enter minimum"
                   label="Minimum"
                   withAsterisk
@@ -162,7 +162,7 @@ export default function CreatePosition({
                   required={form.values.isSingle}
                 />
                 <NumberInput
-                  {...form.getInputProps("max")}
+                  {...form.getInputProps('max')}
                   placeholder="Enter maximum"
                   label="Maximum"
                   withAsterisk

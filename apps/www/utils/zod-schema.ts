@@ -1,5 +1,5 @@
-import { account_status_type, publicity } from "@eboto-mo/db/schema";
-import { z } from "zod";
+import { account_status_type, publicity } from '@eboto-mo/db/schema';
+import { z } from 'zod';
 
 export const createElectionSchema = z.object({
   name: z.string().min(1),
@@ -86,8 +86,8 @@ export const updateVoterFieldSchema = z.object({
     z.object({
       id: z.string().min(1),
       name: z.string().min(1),
-      type: z.enum(["fromDb", "fromInput"]),
-    })
+      type: z.enum(['fromDb', 'fromInput']),
+    }),
   ),
   election_id: z.string().min(1),
 });
@@ -98,7 +98,7 @@ export const deleteSingleVoterFieldSchema = z.object({
 
 const account_status_type_with_accepted = [
   ...account_status_type,
-  "ACCEPTED",
+  'ACCEPTED',
 ] as const;
 
 export const editVoterSchema = z.object({
@@ -119,7 +119,7 @@ export const deleteBulkVoterSchema = z.object({
     z.object({
       id: z.string().min(1),
       email: z.string().min(1),
-    })
+    }),
   ),
 });
 
@@ -129,7 +129,7 @@ export const uploadBulkVoterSchema = z.object({
     z.object({
       email: z.string().min(1),
       field: z.record(z.string().min(1)),
-    })
+    }),
   ),
 });
 

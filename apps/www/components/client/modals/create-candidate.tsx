@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { createCandidate } from "@/actions";
-import { CreateCandidateSchema } from "@/utils/zod-schema";
+import { createCandidate } from '@/actions';
+import { CreateCandidateSchema } from '@/utils/zod-schema';
 import {
-  partylists,
-  positions,
   type Candidate,
   type Partylist,
   type Platform,
   type Position,
-} from "@eboto-mo/db/schema";
+  partylists,
+  positions,
+} from '@eboto-mo/db/schema';
 import {
   Alert,
   Box,
@@ -25,12 +25,12 @@ import {
   Textarea,
   UnstyledButton,
   rem,
-} from "@mantine/core";
-import { DateValue, YearPickerInput } from "@mantine/dates";
-import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from "@mantine/dropzone";
-import { hasLength, useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
+} from '@mantine/core';
+import { DateValue, YearPickerInput } from '@mantine/dates';
+import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import { hasLength, useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconCheck,
@@ -42,11 +42,11 @@ import {
   IconUserPlus,
   IconUserSearch,
   IconX,
-} from "@tabler/icons-react";
-import { useMutation } from "@tanstack/react-query";
-import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+} from '@tabler/icons-react';
+import { useMutation } from '@tanstack/react-query';
+import Image from 'next/image';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useRef } from 'react';
 
 export default function CreateCandidate({
   position,
@@ -148,11 +148,11 @@ export default function CreateCandidate({
     }[];
   }>({
     initialValues: {
-      first_name: "",
-      last_name: "",
-      slug: "",
-      partylist_id: partylists[0]?.id || "",
-      middle_name: "",
+      first_name: '',
+      last_name: '',
+      slug: '',
+      partylist_id: partylists[0]?.id || '',
+      middle_name: '',
       position_id: position.id,
       image: null,
 
@@ -166,21 +166,21 @@ export default function CreateCandidate({
     validate: {
       first_name: hasLength(
         { min: 1 },
-        "First name must be at least 1 characters"
+        'First name must be at least 1 characters',
       ),
       last_name: hasLength(
         { min: 1 },
-        "Last name must be at least 1 characters"
+        'Last name must be at least 1 characters',
       ),
       slug: (value) => {
         if (!value) {
-          return "Please enter an election slug";
+          return 'Please enter an election slug';
         }
         if (!/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/.test(value)) {
-          return "Election slug must be alphanumeric and can contain dashes";
+          return 'Election slug must be alphanumeric and can contain dashes';
         }
         if (value.length < 3 || value.length > 24) {
-          return "Election slug must be between 3 and 24 characters";
+          return 'Election slug must be between 3 and 24 characters';
         }
       },
     },
@@ -197,30 +197,30 @@ export default function CreateCandidate({
       <UnstyledButton
         onClick={open}
         sx={(theme) => ({
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column",
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
           rowGap: theme.spacing.xs,
           width: 100,
           height: 140,
-          textAlign: "center",
+          textAlign: 'center',
           backgroundColor:
-            theme.colorScheme === "dark"
+            theme.colorScheme === 'dark'
               ? theme.colors.dark[6]
               : theme.colors.gray[0],
           borderRadius: theme.radius.sm,
           fontSize: theme.fontSizes.sm,
-          transition: "all 100ms ease-in-out",
+          transition: 'all 100ms ease-in-out',
 
-          "&:hover": {
+          '&:hover': {
             backgroundColor:
-              theme.colorScheme === "dark"
+              theme.colorScheme === 'dark'
                 ? theme.colors.dark[5]
                 : theme.colors.gray[1],
           },
 
-          [theme.fn.smallerThan("xs")]: {
+          [theme.fn.smallerThan('xs')]: {
             width: 60,
           },
         })}
@@ -231,12 +231,12 @@ export default function CreateCandidate({
           Add
           <Text
             sx={(theme) => ({
-              [theme.fn.smallerThan("xs")]: {
-                display: "none",
+              [theme.fn.smallerThan('xs')]: {
+                display: 'none',
               },
             })}
           >
-            {" "}
+            {' '}
             candidate
           </Text>
         </Text>
@@ -258,7 +258,7 @@ export default function CreateCandidate({
               position_id: value.position_id,
               middle_name: value.middle_name,
               election_id: position.election_id,
-              image_link: "",
+              image_link: '',
 
               // platforms: value.platforms.map((p) => ({
               //   title: p.title,
@@ -321,14 +321,14 @@ export default function CreateCandidate({
                     placeholder="Enter first name"
                     required
                     withAsterisk
-                    {...form.getInputProps("first_name")}
+                    {...form.getInputProps('first_name')}
                     icon={<IconLetterCase size="1rem" />}
                   />
 
                   <TextInput
                     label="Middle name"
                     placeholder="Enter middle name"
-                    {...form.getInputProps("middle_name")}
+                    {...form.getInputProps('middle_name')}
                     icon={<IconLetterCase size="1rem" />}
                   />
                   <TextInput
@@ -336,7 +336,7 @@ export default function CreateCandidate({
                     placeholder="Enter last name"
                     required
                     withAsterisk
-                    {...form.getInputProps("last_name")}
+                    {...form.getInputProps('last_name')}
                     icon={<IconLetterCase size="1rem" />}
                   />
 
@@ -348,12 +348,12 @@ export default function CreateCandidate({
                         This will be used as the candidate&apos;s URL.
                         <br />
                         eboto-mo.com/{params.electionDashboardSlug?.toString()}/
-                        {form.values.slug || "candidate-slug"}
+                        {form.values.slug || 'candidate-slug'}
                       </Text>
                     }
                     required
                     withAsterisk
-                    {...form.getInputProps("slug")}
+                    {...form.getInputProps('slug')}
                     icon={<IconLetterCase size="1rem" />}
                   />
 
@@ -362,7 +362,7 @@ export default function CreateCandidate({
                     placeholder="Select partylist"
                     label="Partylist"
                     icon={<IconFlag size="1rem" />}
-                    {...form.getInputProps("partylist_id")}
+                    {...form.getInputProps('partylist_id')}
                     data={partylists.map((partylist) => {
                       return {
                         label: partylist.name,
@@ -376,7 +376,7 @@ export default function CreateCandidate({
                     placeholder="Select position"
                     label="Position"
                     icon={<IconUserSearch size="1rem" />}
-                    {...form.getInputProps("position_id")}
+                    {...form.getInputProps('position_id')}
                     data={positions.map((position) => {
                       return {
                         label: position.name,
@@ -392,7 +392,7 @@ export default function CreateCandidate({
                     id="image"
                     onDrop={(files) => {
                       if (!files[0]) return;
-                      form.setFieldValue("image", files[0]);
+                      form.setFieldValue('image', files[0]);
                     }}
                     openRef={openRef}
                     maxSize={5 * 1024 ** 2}
@@ -403,7 +403,7 @@ export default function CreateCandidate({
                     <Group
                       position="center"
                       spacing="xl"
-                      style={{ minHeight: rem(140), pointerEvents: "none" }}
+                      style={{ minHeight: rem(140), pointerEvents: 'none' }}
                     >
                       {form.values.image ? (
                         <Group position="center">
@@ -413,7 +413,7 @@ export default function CreateCandidate({
                               width: rem(120),
                               height: rem(120),
 
-                              [theme.fn.smallerThan("sm")]: {
+                              [theme.fn.smallerThan('sm')]: {
                                 width: rem(180),
                                 height: rem(180),
                               },
@@ -421,7 +421,7 @@ export default function CreateCandidate({
                           >
                             <Image
                               src={
-                                typeof form.values.image === "string"
+                                typeof form.values.image === 'string'
                                   ? form.values.image
                                   : URL.createObjectURL(form.values.image)
                               }
@@ -429,7 +429,7 @@ export default function CreateCandidate({
                               fill
                               sizes="100%"
                               priority
-                              style={{ objectFit: "cover" }}
+                              style={{ objectFit: 'cover' }}
                             />
                           </Box>
                           <Text>{form.values.image.name}</Text>
@@ -458,7 +458,7 @@ export default function CreateCandidate({
                   </Dropzone>
                   <Button
                     onClick={() => {
-                      form.setFieldValue("image", null);
+                      form.setFieldValue('image', null);
                     }}
                     disabled={!form.values.image || isLoading}
                   >
@@ -524,7 +524,7 @@ export default function CreateCandidate({
                             ...form.values,
 
                             platforms: form.values.platforms.filter(
-                              (_, i) => i !== index
+                              (_, i) => i !== index,
                             ),
                           });
                         }}
@@ -542,8 +542,8 @@ export default function CreateCandidate({
                         platforms: [
                           ...form.values.platforms,
                           {
-                            title: "",
-                            description: "",
+                            title: '',
+                            description: '',
                           },
                         ],
                       });
@@ -593,7 +593,7 @@ export default function CreateCandidate({
                                             ...achievement,
                                             name: e.target.value,
                                           }
-                                        : achievement
+                                        : achievement,
                                   ),
                                 });
                               }}
@@ -615,7 +615,7 @@ export default function CreateCandidate({
                                             ...achievement,
                                             year: date,
                                           }
-                                        : achievement
+                                        : achievement,
                                   ),
                                 });
                               }}
@@ -633,7 +633,7 @@ export default function CreateCandidate({
                                 ...form.values,
 
                                 achievements: form.values.achievements.filter(
-                                  (_, i) => i !== index
+                                  (_, i) => i !== index,
                                 ),
                               });
                             }}
@@ -652,7 +652,7 @@ export default function CreateCandidate({
                             achievements: [
                               ...form.values.achievements,
                               {
-                                name: "",
+                                name: '',
                                 year: new Date(new Date().getFullYear(), 0),
                               },
                             ],
@@ -683,7 +683,7 @@ export default function CreateCandidate({
                                           ...affiliation,
                                           org_name: e.target.value,
                                         }
-                                      : affiliation
+                                      : affiliation,
                                 ),
                               });
                             }}
@@ -704,7 +704,7 @@ export default function CreateCandidate({
                                           ...affiliation,
                                           org_position: e.target.value,
                                         }
-                                      : affiliation
+                                      : affiliation,
                                 ),
                               });
                             }}
@@ -729,7 +729,7 @@ export default function CreateCandidate({
                                             ...affiliation,
                                             start_year: date,
                                           }
-                                        : affiliation
+                                        : affiliation,
                                   ),
                                 });
                               }}
@@ -753,7 +753,7 @@ export default function CreateCandidate({
                                             ...affiliation,
                                             end_year: date,
                                           }
-                                        : affiliation
+                                        : affiliation,
                                   ),
                                 });
                               }}
@@ -771,7 +771,7 @@ export default function CreateCandidate({
                                 ...form.values,
 
                                 affiliations: form.values.affiliations.filter(
-                                  (_, i) => i !== index
+                                  (_, i) => i !== index,
                                 ),
                               });
                             }}
@@ -790,11 +790,11 @@ export default function CreateCandidate({
                             affiliations: [
                               ...form.values.affiliations,
                               {
-                                org_name: "",
-                                org_position: "",
+                                org_name: '',
+                                org_position: '',
                                 start_year: new Date(
                                   new Date().getFullYear(),
-                                  -1
+                                  -1,
                                 ),
                                 end_year: new Date(new Date().getFullYear(), 0),
                               },
@@ -829,7 +829,7 @@ export default function CreateCandidate({
                                                 ...achievement,
                                                 name: e.target.value,
                                               }
-                                            : achievement
+                                            : achievement,
                                       ),
                                   });
                                 }}
@@ -852,7 +852,7 @@ export default function CreateCandidate({
                                                 ...achievement,
                                                 year: date,
                                               }
-                                            : achievement
+                                            : achievement,
                                       ),
                                   });
                                 }}
@@ -871,7 +871,7 @@ export default function CreateCandidate({
 
                                   eventsAttended:
                                     form.values.eventsAttended.filter(
-                                      (_, i) => i !== index
+                                      (_, i) => i !== index,
                                     ),
                                 });
                               }}
@@ -879,7 +879,7 @@ export default function CreateCandidate({
                               Delete seminar attended
                             </Button>
                           </Box>
-                        )
+                        ),
                       )}
 
                       <Button
@@ -891,7 +891,7 @@ export default function CreateCandidate({
                             eventsAttended: [
                               ...form.values.eventsAttended,
                               {
-                                name: "",
+                                name: '',
                                 year: new Date(new Date().getFullYear(), 0),
                               },
                             ],

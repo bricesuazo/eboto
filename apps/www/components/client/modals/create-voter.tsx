@@ -1,6 +1,6 @@
-import { createVoter } from "@/actions";
-import { CreateVoterSchema } from "@/utils/zod-schema";
-import { voters, type VoterField } from "@eboto-mo/db/schema";
+import { createVoter } from '@/actions';
+import { CreateVoterSchema } from '@/utils/zod-schema';
+import { type VoterField, voters } from '@eboto-mo/db/schema';
 import {
   Alert,
   Button,
@@ -10,19 +10,19 @@ import {
   Stack,
   Text,
   TextInput,
-} from "@mantine/core";
-import { useForm, isEmail } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconCheck } from "@tabler/icons-react";
+} from '@mantine/core';
+import { isEmail, useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import { IconCheck } from '@tabler/icons-react';
 import {
   IconAlertCircle,
   IconAt,
   IconLetterCase,
   IconUserPlus,
-} from "@tabler/icons-react";
-import { useMutation } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+} from '@tabler/icons-react';
+import { useMutation } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 
 export default function CreateVoter({
   election_id,
@@ -38,7 +38,7 @@ export default function CreateVoter({
     onSuccess: async (_, { email }) => {
       notifications.show({
         title: `${email} added!`,
-        message: "Successfully deleted partylist",
+        message: 'Successfully deleted partylist',
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
@@ -46,9 +46,9 @@ export default function CreateVoter({
     },
     onError: (error) => {
       notifications.show({
-        title: "Error",
+        title: 'Error',
         message: (error as Error)?.message,
-        color: "red",
+        color: 'red',
         autoClose: 3000,
       });
     },
@@ -68,25 +68,25 @@ export default function CreateVoter({
     [key: string]: string;
   }>({
     initialValues: {
-      email: "",
+      email: '',
       ...voter_fields.reduce(
         (acc, field) => {
-          acc[field.name] = "";
+          acc[field.name] = '';
           return acc;
         },
-        {} as Record<string, string>
+        {} as Record<string, string>,
       ),
     },
     validateInputOnBlur: true,
     validate: {
-      email: isEmail("Please enter a valid email address"),
+      email: isEmail('Please enter a valid email address'),
       ...voter_fields.reduce(
         (acc, field) => {
           acc[field.name] = (value) =>
-            value?.trim() === "" ? `${field.name} is required` : undefined;
+            value?.trim() === '' ? `${field.name} is required` : undefined;
           return acc;
         },
-        {} as Record<string, (value: string) => string | undefined>
+        {} as Record<string, (value: string) => string | undefined>,
       ),
     },
   });
@@ -105,8 +105,8 @@ export default function CreateVoter({
         onClick={open}
         disabled={isLoading}
         sx={(theme) => ({
-          [theme.fn.smallerThan("xs")]: {
-            width: "100%",
+          [theme.fn.smallerThan('xs')]: {
+            width: '100%',
           },
         })}
       >
@@ -129,7 +129,7 @@ export default function CreateVoter({
                   acc[field.name] = value[field.name];
                   return acc;
                 },
-                {} as Record<string, string>
+                {} as Record<string, string>,
               ),
             });
           })}
@@ -140,7 +140,7 @@ export default function CreateVoter({
               label="Email address"
               required
               withAsterisk
-              {...form.getInputProps("email")}
+              {...form.getInputProps('email')}
               icon={<IconAt size="1rem" />}
             />
             {voter_fields.map((field) => (
@@ -161,7 +161,7 @@ export default function CreateVoter({
                         item.values.push({ value: query });
                       }
                       return item;
-                    })
+                    }),
                   );
                   return query;
                 }}

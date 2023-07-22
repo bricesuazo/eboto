@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { type Election } from "@eboto-mo/db/schema";
+import { type Election } from '@eboto-mo/db/schema';
 import {
   ActionIcon,
   Button,
@@ -9,10 +9,10 @@ import {
   Stack,
   Text,
   rem,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { IconDownload, IconQrcode } from "@tabler/icons-react";
-import { QRCodeCanvas } from "qrcode.react";
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { IconDownload, IconQrcode } from '@tabler/icons-react';
+import { QRCodeCanvas } from 'qrcode.react';
 
 export default function QRCode({ election }: { election: Election }) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -24,8 +24,8 @@ export default function QRCode({ election }: { election: Election }) {
         color="#2f9e44"
         size="lg"
         sx={(theme) => ({
-          [theme.fn.largerThan("md")]: {
-            display: "none",
+          [theme.fn.largerThan('md')]: {
+            display: 'none',
           },
         })}
       >
@@ -34,8 +34,8 @@ export default function QRCode({ election }: { election: Election }) {
       <Button
         onClick={open}
         sx={(theme) => ({
-          [theme.fn.smallerThan("md")]: {
-            display: "none",
+          [theme.fn.smallerThan('md')]: {
+            display: 'none',
           },
         })}
         leftIcon={<IconQrcode size={rem(18)} />}
@@ -54,8 +54,8 @@ export default function QRCode({ election }: { election: Election }) {
         <Stack>
           <Center
             sx={(theme) => ({
-              [theme.fn.largerThan("xs")]: {
-                display: "none",
+              [theme.fn.largerThan('xs')]: {
+                display: 'none',
               },
             })}
           >
@@ -65,7 +65,7 @@ export default function QRCode({ election }: { election: Election }) {
               includeMargin
               size={256}
               imageSettings={{
-                src: "/images/eboto-mo-pfp.png",
+                src: '/images/eboto-mo-pfp.png',
                 x: undefined,
                 y: undefined,
                 height: 54,
@@ -76,8 +76,8 @@ export default function QRCode({ election }: { election: Election }) {
           </Center>
           <Center
             sx={(theme) => ({
-              [theme.fn.smallerThan("xs")]: {
-                display: "none",
+              [theme.fn.smallerThan('xs')]: {
+                display: 'none',
               },
             })}
           >
@@ -87,7 +87,7 @@ export default function QRCode({ election }: { election: Election }) {
               includeMargin
               size={408}
               imageSettings={{
-                src: "/images/eboto-mo-pfp.png",
+                src: '/images/eboto-mo-pfp.png',
                 x: undefined,
                 y: undefined,
                 height: 86,
@@ -100,15 +100,15 @@ export default function QRCode({ election }: { election: Election }) {
           <Button
             onClick={() => {
               const canvas = document.getElementById(
-                "qr-gen"
+                'qr-gen',
               ) as HTMLCanvasElement | null;
 
               if (canvas) {
                 const pngUrl = canvas
-                  .toDataURL("image/png")
-                  .replace("image/png", "image/octet-stream");
+                  .toDataURL('image/png')
+                  .replace('image/png', 'image/octet-stream');
 
-                const downloadLink = document.createElement("a");
+                const downloadLink = document.createElement('a');
                 downloadLink.href = pngUrl;
                 downloadLink.download = `${election.name} (@${election.slug}) - QR Code.png`;
 
@@ -118,7 +118,7 @@ export default function QRCode({ election }: { election: Election }) {
 
                 document.body.removeChild(downloadLink);
               } else {
-                console.log("Could not find QR code element");
+                console.log('Could not find QR code element');
               }
             }}
             leftIcon={<IconDownload size="1rem" />}

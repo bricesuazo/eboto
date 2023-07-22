@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { deleteVoter } from "@/actions";
+import { deleteVoter } from '@/actions';
 import {
   ActionIcon,
   Alert,
@@ -9,11 +9,11 @@ import {
   Modal,
   Stack,
   Text,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconAlertCircle, IconCheck, IconTrash } from "@tabler/icons-react";
-import { useMutation } from "@tanstack/react-query";
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import { IconAlertCircle, IconCheck, IconTrash } from '@tabler/icons-react';
+import { useMutation } from '@tanstack/react-query';
 
 export default function DeleteVoter({
   voter,
@@ -22,7 +22,7 @@ export default function DeleteVoter({
   voter: {
     id: string;
     email: string;
-    accountStatus: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
+    account_status: 'ACCEPTED' | 'INVITED' | 'DECLINED' | 'ADDED';
   };
   election_id: string;
 }) {
@@ -33,11 +33,11 @@ export default function DeleteVoter({
       deleteVoter({
         election_id,
         id: voter.id,
-        is_invited_voter: voter.accountStatus !== "ACCEPTED" ? true : false,
+        is_invited_voter: voter.account_status !== 'ACCEPTED' ? true : false,
       }),
     onSuccess: () => {
       notifications.show({
-        title: "Success!",
+        title: 'Success!',
         message: `Successfully deleted ${voter.email}`,
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
@@ -46,9 +46,9 @@ export default function DeleteVoter({
     },
     onError: (error) => {
       notifications.show({
-        title: "Error",
+        title: 'Error',
         message: (error as Error)?.message,
-        color: "red",
+        color: 'red',
         autoClose: 3000,
       });
     },

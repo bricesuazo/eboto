@@ -1,54 +1,54 @@
-"use server";
+'use server';
 
-import { cookies } from "next/headers";
-import { positionTemplate, takenSlugs } from "@/constants";
-import { db } from "@eboto-mo/db";
+import { positionTemplate, takenSlugs } from '@/constants';
+import { getSession } from '@/utils/auth';
 import {
-  elections,
+  CreateCandidateSchema,
+  type CreateElectionSchema,
+  type CreatePartylistSchema,
+  type CreatePositionSchema,
+  CreateVoterSchema,
+  DeleteBulkVoterSchema,
+  DeleteSingleVoterFieldSchema,
+  DeleteVoterSchema,
+  EditCandidateSchema,
+  type EditElectionSchema,
+  type EditPartylistSchema,
+  EditPositionSchema,
+  EditVoterSchema,
+  UpdateVoterFieldSchema,
+  UploadBulkVoterSchema,
+  createElectionSchema,
+  createPartylistSchema,
+  editElectionSchema,
+  editPartylistSchema,
+  editPositionSchema,
+} from '@/utils/zod-schema';
+import { db } from '@eboto-mo/db';
+import {
+  Candidate,
   type Election,
+  InvitedVoter,
+  Partylist,
+  Voter,
+  candidates,
   commissioners,
+  elections,
+  invited_voters,
   partylists,
   positions,
-  Partylist,
-  candidates,
-  Candidate,
+  users,
   voter_fields,
   voters,
-  Voter,
-  InvitedVoter,
-  invited_voters,
-  users,
-} from "@eboto-mo/db/schema";
-import { getSession } from "@/utils/auth";
-import {
-  type CreateElectionSchema,
-  createElectionSchema,
-  type EditElectionSchema,
-  editElectionSchema,
-  type CreatePartylistSchema,
-  createPartylistSchema,
-  type CreatePositionSchema,
-  type EditPartylistSchema,
-  editPartylistSchema,
-  EditPositionSchema,
-  editPositionSchema,
-  CreateCandidateSchema,
-  EditCandidateSchema,
-  CreateVoterSchema,
-  UpdateVoterFieldSchema,
-  DeleteSingleVoterFieldSchema,
-  EditVoterSchema,
-  DeleteVoterSchema,
-  DeleteBulkVoterSchema,
-  UploadBulkVoterSchema,
-} from "@/utils/zod-schema";
-import { and, eq, inArray } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+} from '@eboto-mo/db/schema';
+import { and, eq, inArray } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
 
 export async function toggleTheme() {
-  cookies().get("theme") && cookies().get("theme").value === "dark"
-    ? cookies().set("theme", "light")
-    : cookies().set("theme", "dark");
+  cookies().get('theme') && cookies().get('theme').value === 'dark'
+    ? cookies().set('theme', 'light')
+    : cookies().set('theme', 'dark');
 }
 
 export async function createElection(input: CreateElectionSchema) {
@@ -56,10 +56,10 @@ export async function createElection(input: CreateElectionSchema) {
 
   const session = await getSession();
 
-  if (!session) throw new Error("Unauthorized");
+  if (!session) throw new Error('Unauthorized');
 
   if (takenSlugs.includes(parsedInput.slug)) {
-    throw new Error("Election slug is already exists");
+    throw new Error('Election slug is already exists');
   }
 
   const isElectionSlugExists: Election | null =
@@ -68,7 +68,7 @@ export async function createElection(input: CreateElectionSchema) {
     });
 
   if (isElectionSlugExists) {
-    throw new Error("Election slug is already exists");
+    throw new Error('Election slug is already exists');
   }
 
   const id = crypto.randomUUID();
@@ -86,8 +86,8 @@ export async function createElection(input: CreateElectionSchema) {
   });
   await db.insert(partylists).values({
     id: crypto.randomUUID(),
-    name: "Independent",
-    acronym: "IND",
+    name: 'Independent',
+    acronym: 'IND',
     election_id: id,
   });
 
@@ -100,7 +100,7 @@ export async function createElection(input: CreateElectionSchema) {
           name: position,
           election_id: id,
           order: index,
-        })) || []
+        })) || [],
     );
 }
 export async function updateElection(input: EditElectionSchema) {
@@ -108,11 +108,11 @@ export async function updateElection(input: EditElectionSchema) {
 
   const session = await getSession();
 
-  if (!session) throw new Error("Unauthorized");
+  if (!session) throw new Error('Unauthorized');
 
   if (parsedInput.newSlug !== parsedInput.oldSlug) {
     if (takenSlugs.includes(parsedInput.newSlug)) {
-      throw new Error("Election slug is already exists");
+      throw new Error('Election slug is already exists');
     }
 
     const isElectionSlugExists: Election | null =
@@ -121,7 +121,7 @@ export async function updateElection(input: EditElectionSchema) {
       });
 
     if (isElectionSlugExists)
-      throw new Error("Election slug is already exists");
+      throw new Error('Election slug is already exists');
   }
 
   const isElectionCommissionerExists: Election | null =
@@ -134,7 +134,7 @@ export async function updateElection(input: EditElectionSchema) {
       },
     });
 
-  if (!isElectionCommissionerExists) throw new Error("Unauthorized");
+  if (!isElectionCommissionerExists) throw new Error('Unauthorized');
 
   await db
     .update(elections)
@@ -153,19 +153,19 @@ export async function createPartylist(input: CreatePartylistSchema) {
 
   const session = await getSession();
 
-  if (!session) throw new Error("Unauthorized");
+  if (!session) throw new Error('Unauthorized');
 
   const isAcronymExists: Partylist | null = await db.query.partylists.findFirst(
     {
       where: (partylists, { eq, and }) =>
         and(
           eq(partylists.election_id, parsedInput.election_id),
-          eq(partylists.acronym, parsedInput.acronym)
+          eq(partylists.acronym, parsedInput.acronym),
         ),
-    }
+    },
   );
 
-  if (isAcronymExists) throw new Error("Acronym is already exists");
+  if (isAcronymExists) throw new Error('Acronym is already exists');
 
   await db.insert(partylists).values({
     id: crypto.randomUUID(),
@@ -173,16 +173,16 @@ export async function createPartylist(input: CreatePartylistSchema) {
     acronym: parsedInput.acronym,
     election_id: parsedInput.election_id,
   });
-  revalidatePath("/election/[electionDashboardSlug]/partylist");
+  revalidatePath('/election/[electionDashboardSlug]/partylist');
 }
 export async function editPartylist(input: EditPartylistSchema) {
   const parsedInput = editPartylistSchema.parse(input);
-  if (parsedInput.newAcronym === "IND")
-    throw new Error("Acronym is already exists");
+  if (parsedInput.newAcronym === 'IND')
+    throw new Error('Acronym is already exists');
 
   const session = await getSession();
 
-  if (!session) throw new Error("Unauthorized");
+  if (!session) throw new Error('Unauthorized');
 
   if (parsedInput.oldAcronym !== parsedInput.newAcronym) {
     const isAcronymExists: Partylist | null =
@@ -190,11 +190,11 @@ export async function editPartylist(input: EditPartylistSchema) {
         where: (partylists, { eq, and }) =>
           and(
             eq(partylists.election_id, parsedInput.election_id),
-            eq(partylists.acronym, parsedInput.newAcronym)
+            eq(partylists.acronym, parsedInput.newAcronym),
           ),
       });
 
-    if (isAcronymExists) throw new Error("Acronym is already exists");
+    if (isAcronymExists) throw new Error('Acronym is already exists');
   }
 
   await db
@@ -207,31 +207,31 @@ export async function editPartylist(input: EditPartylistSchema) {
     })
     .where(eq(partylists.id, parsedInput.id));
 
-  revalidatePath("/election/[electionDashboardSlug]/partylist");
+  revalidatePath('/election/[electionDashboardSlug]/partylist');
 }
 export async function deletePartylist(id: string) {
   const session = await getSession();
 
-  if (!session) throw new Error("Unauthorized");
+  if (!session) throw new Error('Unauthorized');
 
   await db.delete(partylists).where(eq(partylists.id, id));
 
-  revalidatePath("/election/[electionDashboardSlug]/partylist");
+  revalidatePath('/election/[electionDashboardSlug]/partylist');
 }
 export async function deleteCandidate(id: string) {
   const session = await getSession();
 
-  if (!session) throw new Error("Unauthorized");
+  if (!session) throw new Error('Unauthorized');
 
   await db.delete(candidates).where(eq(candidates.id, id));
 
-  revalidatePath("/election/[electionDashboardSlug]/candidate");
+  revalidatePath('/election/[electionDashboardSlug]/candidate');
 }
 
 export async function createPosition(input: CreatePositionSchema) {
   const session = await getSession();
 
-  if (!session) throw new Error("Unauthorized");
+  if (!session) throw new Error('Unauthorized');
 
   await db.insert(positions).values({
     id: crypto.randomUUID(),
@@ -242,17 +242,17 @@ export async function createPosition(input: CreatePositionSchema) {
     election_id: input.election_id,
   });
 
-  revalidatePath("/election/[electionDashboardSlug]/partylist");
+  revalidatePath('/election/[electionDashboardSlug]/partylist');
 }
 
 export async function deletePosition(id: string) {
   const session = await getSession();
 
-  if (!session) throw new Error("Unauthorized");
+  if (!session) throw new Error('Unauthorized');
 
   await db.delete(positions).where(eq(positions.id, id));
 
-  revalidatePath("/election/[electionDashboardSlug]/position");
+  revalidatePath('/election/[electionDashboardSlug]/position');
 }
 
 export async function editPosition(input: EditPositionSchema) {
@@ -260,7 +260,7 @@ export async function editPosition(input: EditPositionSchema) {
 
   const session = await getSession();
 
-  if (!session) throw new Error("Unauthorized");
+  if (!session) throw new Error('Unauthorized');
 
   await db
     .update(positions)
@@ -273,25 +273,25 @@ export async function editPosition(input: EditPositionSchema) {
     })
     .where(eq(positions.id, parsedInput.id));
 
-  revalidatePath("/election/[electionDashboardSlug]/position");
+  revalidatePath('/election/[electionDashboardSlug]/position');
 }
 
 export async function createCandidate(input: CreateCandidateSchema) {
   const session = await getSession();
 
-  if (!session) throw new Error("Unauthorized");
+  if (!session) throw new Error('Unauthorized');
 
   const isCandidateSlugExists: Candidate | null =
     await db.query.candidates.findFirst({
       where: (candidates, { eq, and }) =>
         and(
           eq(candidates.slug, input.slug),
-          eq(candidates.election_id, input.election_id)
+          eq(candidates.election_id, input.election_id),
         ),
     });
 
   if (isCandidateSlugExists)
-    throw new Error("Candidate slug is already exists");
+    throw new Error('Candidate slug is already exists');
 
   await db.insert(candidates).values({
     id: crypto.randomUUID(),
@@ -305,25 +305,25 @@ export async function createCandidate(input: CreateCandidateSchema) {
     image_link: input.image_link,
   });
 
-  revalidatePath("/election/[electionDashboardSlug]/candidate");
+  revalidatePath('/election/[electionDashboardSlug]/candidate');
 }
 
 export async function editCandidate(input: EditCandidateSchema) {
   const session = await getSession();
 
-  if (!session) throw new Error("Unauthorized");
+  if (!session) throw new Error('Unauthorized');
 
   const isCandidateSlugExists: Candidate | null =
     await db.query.candidates.findFirst({
       where: (candidates, { eq, and }) =>
         and(
           eq(candidates.slug, input.slug),
-          eq(candidates.election_id, input.election_id)
+          eq(candidates.election_id, input.election_id),
         ),
     });
 
   if (isCandidateSlugExists)
-    throw new Error("Candidate slug is already exists");
+    throw new Error('Candidate slug is already exists');
 
   await db.insert(candidates).values({
     id: crypto.randomUUID(),
@@ -337,7 +337,7 @@ export async function editCandidate(input: EditCandidateSchema) {
     image_link: input.image_link,
   });
 
-  revalidatePath("/election/[electionDashboardSlug]/candidate");
+  revalidatePath('/election/[electionDashboardSlug]/candidate');
 }
 export async function inviteAllInvitedVoters({
   election_id,
@@ -346,7 +346,7 @@ export async function inviteAllInvitedVoters({
 }) {
   const session = await getSession();
 
-  if (!session) throw new Error("Unauthorized");
+  if (!session) throw new Error('Unauthorized');
 
   const isElectionExists = await db.query.elections.findFirst({
     where: (elections, { eq }) => eq(elections.id, election_id),
@@ -357,10 +357,10 @@ export async function inviteAllInvitedVoters({
     },
   });
 
-  if (!isElectionExists) throw new Error("Election does not exists");
+  if (!isElectionExists) throw new Error('Election does not exists');
 
   if (isElectionExists.commissioners.length === 0)
-    throw new Error("Unauthorized");
+    throw new Error('Unauthorized');
 
   const invitedVoters = await db.query.invited_voters.findMany({
     where: (invited_voters, { eq }) =>
@@ -369,17 +369,17 @@ export async function inviteAllInvitedVoters({
 
   const invitedVotersIds = invitedVoters.map((invitedVoter) => invitedVoter.id);
   console.log(
-    "🚀 ~ file: actions.ts:359 ~ invitedVotersIds:",
-    invitedVotersIds
+    '🚀 ~ file: actions.ts:359 ~ invitedVotersIds:',
+    invitedVotersIds,
   );
 
-  revalidatePath("/election/[electionDashboardSlug]/voter");
+  revalidatePath('/election/[electionDashboardSlug]/voter');
 }
 
 export async function createVoter(input: CreateVoterSchema) {
   const session = await getSession();
 
-  if (!session) throw new Error("Unauthorized");
+  if (!session) throw new Error('Unauthorized');
 
   const isVoterExists = await db.query.elections.findFirst({
     where: (elections, { eq }) => eq(elections.id, input.election_id),
@@ -390,9 +390,9 @@ export async function createVoter(input: CreateVoterSchema) {
     },
   });
 
-  if (!isVoterExists) throw new Error("Election does not exists");
+  if (!isVoterExists) throw new Error('Election does not exists');
 
-  if (isVoterExists.commissioners.length === 0) throw new Error("Unauthorized");
+  if (isVoterExists.commissioners.length === 0) throw new Error('Unauthorized');
 
   const voters = await db.query.voters.findMany({
     where: (voters, { eq }) => eq(voters.election_id, input.election_id),
@@ -402,20 +402,20 @@ export async function createVoter(input: CreateVoterSchema) {
   });
 
   const isVoterEmailExists = voters.find(
-    (voter) => voter.user.email === input.email
+    (voter) => voter.user.email === input.email,
   );
 
-  if (isVoterEmailExists) throw new Error("Email is already a voter");
+  if (isVoterEmailExists) throw new Error('Email is already a voter');
 
   const isInvitedVoterEmailExists = await db.query.invited_voters.findFirst({
     where: (invited_voters, { eq, and }) =>
       and(
         eq(invited_voters.election_id, input.election_id),
-        eq(invited_voters.email, input.email)
+        eq(invited_voters.email, input.email),
       ),
   });
 
-  if (isInvitedVoterEmailExists) throw new Error("Email is already exists");
+  if (isInvitedVoterEmailExists) throw new Error('Email is already exists');
 
   await db.insert(invited_voters).values({
     id: crypto.randomUUID(),
@@ -424,55 +424,55 @@ export async function createVoter(input: CreateVoterSchema) {
     election_id: input.election_id,
   });
 
-  revalidatePath("/election/[electionDashboardSlug]/voter");
+  revalidatePath('/election/[electionDashboardSlug]/voter');
 }
 
 export async function updateVoterField(input: UpdateVoterFieldSchema) {
   const session = await getSession();
 
-  if (!session) throw new Error("Unauthorized");
+  if (!session) throw new Error('Unauthorized');
 
   await db
     .update(voter_fields)
     .set(input)
     .where(eq(voter_fields.election_id, input.election_id));
 
-  revalidatePath("/election/[electionDashboardSlug]/voter");
+  revalidatePath('/election/[electionDashboardSlug]/voter');
 }
 
 export async function deleteSingleVoterField(
-  input: DeleteSingleVoterFieldSchema
+  input: DeleteSingleVoterFieldSchema,
 ) {
   const session = await getSession();
 
-  if (!session) throw new Error("Unauthorized");
+  if (!session) throw new Error('Unauthorized');
 
   await db
     .delete(voter_fields)
     .where(
       and(
         eq(voter_fields.election_id, input.election_id),
-        eq(voter_fields.id, input.field_id)
-      )
+        eq(voter_fields.id, input.field_id),
+      ),
     );
 
-  revalidatePath("/election/[electionDashboardSlug]/voter");
+  revalidatePath('/election/[electionDashboardSlug]/voter');
 }
 
 export async function editVoter(input: EditVoterSchema) {
   const session = await getSession();
 
-  if (!session) throw new Error("Unauthorized");
+  if (!session) throw new Error('Unauthorized');
 
-  if (input.account_status === "ACCEPTED") {
+  if (input.account_status === 'ACCEPTED') {
     const voter: Voter | null = await db.query.voters.findFirst({
       where: (voters, { eq, and }) =>
         and(eq(voters.id, input.id), eq(voters.election_id, input.election_id)),
     });
 
-    if (!voter) throw new Error("Voter not found");
+    if (!voter) throw new Error('Voter not found');
     return {
-      type: "voter",
+      type: 'voter',
       voter: await db
         .update(voters)
         .set({
@@ -486,13 +486,13 @@ export async function editVoter(input: EditVoterSchema) {
         where: (invited_voters, { eq, and }) =>
           and(
             eq(invited_voters.id, input.id),
-            eq(invited_voters.election_id, input.election_id)
+            eq(invited_voters.election_id, input.election_id),
           ),
       });
-    if (!invited_voter) throw new Error("Voter not found");
+    if (!invited_voter) throw new Error('Voter not found');
 
     return {
-      type: "invited_voter",
+      type: 'invited_voter',
       invitedVoter: await db
         .update(invited_voters)
         .set({
@@ -502,19 +502,19 @@ export async function editVoter(input: EditVoterSchema) {
         .where(
           and(
             eq(invited_voters.id, input.id),
-            eq(invited_voters.election_id, input.election_id)
-          )
+            eq(invited_voters.election_id, input.election_id),
+          ),
         ),
     };
   }
 
-  revalidatePath("/election/[electionDashboardSlug]/voter");
+  revalidatePath('/election/[electionDashboardSlug]/voter');
 }
 
 export async function deleteVoter(input: DeleteVoterSchema) {
   const session = await getSession();
 
-  if (!session) throw new Error("Unauthorized");
+  if (!session) throw new Error('Unauthorized');
 
   if (!input.is_invited_voter) {
     const voter: Voter | null = await db.query.voters.findFirst({
@@ -522,12 +522,12 @@ export async function deleteVoter(input: DeleteVoterSchema) {
         and(eq(voters.id, input.id), eq(voters.election_id, input.election_id)),
     });
 
-    if (!voter) throw new Error("Voter not found");
+    if (!voter) throw new Error('Voter not found');
 
     await db
       .delete(voters)
       .where(
-        and(eq(voters.id, input.id), eq(voters.election_id, input.election_id))
+        and(eq(voters.id, input.id), eq(voters.election_id, input.election_id)),
       );
   } else {
     const invited_voter: InvitedVoter | null =
@@ -535,47 +535,47 @@ export async function deleteVoter(input: DeleteVoterSchema) {
         where: (invited_voters, { eq, and }) =>
           and(
             eq(invited_voters.id, input.id),
-            eq(invited_voters.election_id, input.election_id)
+            eq(invited_voters.election_id, input.election_id),
           ),
       });
 
-    if (!invited_voter) throw new Error("Voter not found");
+    if (!invited_voter) throw new Error('Voter not found');
 
     await db
       .delete(invited_voters)
       .where(
         and(
           eq(invited_voters.id, input.id),
-          eq(invited_voters.election_id, input.election_id)
-        )
+          eq(invited_voters.election_id, input.election_id),
+        ),
       );
   }
 
-  revalidatePath("/election/[electionDashboardSlug]/voter");
+  revalidatePath('/election/[electionDashboardSlug]/voter');
 }
 
 export async function deleteBulkVoter(input: DeleteBulkVoterSchema) {
   const session = await getSession();
 
-  if (!session) throw new Error("Unauthorized");
+  if (!session) throw new Error('Unauthorized');
 
   await db.delete(voters).where(
     and(
       eq(voters.election_id, input.election_id),
       inArray(
         voters.id,
-        input.voters.map((voter) => voter.id)
-      )
-    )
+        input.voters.map((voter) => voter.id),
+      ),
+    ),
   );
-  revalidatePath("/election/[electionDashboardSlug]/voter");
+  revalidatePath('/election/[electionDashboardSlug]/voter');
   return { count: input.voters.length };
 }
 
 export async function uploadBulkVoter(input: UploadBulkVoterSchema) {
   const session = await getSession();
 
-  if (!session) throw new Error("Unauthorized");
+  if (!session) throw new Error('Unauthorized');
 
   const isElectionExists = await db.query.elections.findFirst({
     where: (elections, { eq }) => eq(elections.id, input.election_id),
@@ -586,10 +586,10 @@ export async function uploadBulkVoter(input: UploadBulkVoterSchema) {
     },
   });
 
-  if (!isElectionExists) throw new Error("Election does not exists");
+  if (!isElectionExists) throw new Error('Election does not exists');
 
   if (isElectionExists.commissioners.length === 0)
-    throw new Error("Unauthorized");
+    throw new Error('Unauthorized');
 
   const test = await db.insert(invited_voters).values(
     input.voters.map((voter) => ({
@@ -597,12 +597,12 @@ export async function uploadBulkVoter(input: UploadBulkVoterSchema) {
       email: voter.email,
       field: voter.field,
       election_id: input.election_id,
-    }))
+    })),
   );
 
   return { count: test.size };
 }
 
 export async function refreshVoterPage() {
-  revalidatePath("/election/[electionDashboardSlug]/voter");
+  revalidatePath('/election/[electionDashboardSlug]/voter');
 }

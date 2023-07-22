@@ -1,8 +1,8 @@
-"use server";
+'use server';
 
-import { db } from "@eboto-mo/db";
-import { getSession } from "@/utils/auth";
-import { not } from "drizzle-orm";
+import { getSession } from '@/utils/auth';
+import { db } from '@eboto-mo/db';
+import { not } from 'drizzle-orm';
 
 export async function getElectionBySlug(slug: string) {
   return await db.query.elections.findFirst({
@@ -13,7 +13,7 @@ export async function getElectionBySlug(slug: string) {
 export async function getAllMyElections() {
   const session = await getSession();
 
-  if (!session) throw new Error("Unauthorized");
+  if (!session) throw new Error('Unauthorized');
 
   return await db.query.commissioners.findMany({
     where: (commissioners, { eq }) => eq(commissioners.user_id, session.id),
@@ -26,7 +26,7 @@ export async function getAllMyElections() {
 export async function getAllPartylistsWithoutINDByElectionId(id: string) {
   return await db.query.partylists.findMany({
     where: (partylists, { eq, and }) =>
-      and(eq(partylists.election_id, id), not(eq(partylists.acronym, "IND"))),
+      and(eq(partylists.election_id, id), not(eq(partylists.acronym, 'IND'))),
     orderBy: (partylists, { desc }) => desc(partylists.updated_at),
   });
 }

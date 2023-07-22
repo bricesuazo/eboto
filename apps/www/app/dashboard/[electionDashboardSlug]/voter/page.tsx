@@ -1,10 +1,9 @@
-import DashboardVoter from "@/components/client/pages/dashboard-voter";
-import { getElectionBySlug } from "@/utils/election";
-import { db } from "@eboto-mo/db";
-import { type Metadata } from "next";
+import DashboardVoter from '@/components/client/pages/dashboard-voter';
+import { db } from '@eboto-mo/db';
+import { type Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Voters",
+  title: 'Voters',
 };
 
 export default async function Page({
@@ -37,7 +36,7 @@ export default async function Page({
     .map((voter) => ({
       id: voter.id,
       email: voter.user.email,
-      account_status: "ACCEPTED",
+      account_status: 'ACCEPTED',
       created_at: voter.created_at,
       has_voted: voter.votes.length > 0,
       field: voter.field,
@@ -50,7 +49,7 @@ export default async function Page({
         created_at: voter.created_at,
         has_voted: false,
         field: voter.field,
-      }))
+      })),
     );
   return <DashboardVoter election={election} voters={parsedVoters} />;
 }

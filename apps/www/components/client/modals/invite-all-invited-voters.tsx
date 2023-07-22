@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { inviteAllInvitedVoters } from "@/actions";
-import { Button, Group, Modal, Stack, Text } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconCheck, IconMailForward } from "@tabler/icons-react";
-import { useMutation } from "@tanstack/react-query";
+import { inviteAllInvitedVoters } from '@/actions';
+import { Button, Group, Modal, Stack, Text } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import { IconCheck, IconMailForward } from '@tabler/icons-react';
+import { useMutation } from '@tanstack/react-query';
 
 export default function InviteAllInvitedVoters({
   election_id,
@@ -19,7 +19,7 @@ export default function InviteAllInvitedVoters({
     onSuccess: () => {
       notifications.show({
         title: `All voters invited!`,
-        message: "Successfully invited all voters",
+        message: 'Successfully invited all voters',
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
@@ -34,8 +34,8 @@ export default function InviteAllInvitedVoters({
         leftIcon={<IconMailForward size="1rem" />}
         onClick={open}
         sx={(theme) => ({
-          [theme.fn.smallerThan("xs")]: {
-            width: "100%",
+          [theme.fn.smallerThan('xs')]: {
+            width: '100%',
           },
         })}
       >

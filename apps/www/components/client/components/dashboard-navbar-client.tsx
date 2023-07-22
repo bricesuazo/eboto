@@ -1,90 +1,90 @@
-"use client";
+'use client';
 
+import CreateElection from '@/components/client/modals/create-election';
+import { electionDashboardNavbar } from '@/constants';
+import { useStore } from '@/store';
+import { getAllMyElections } from '@/utils/election';
+import { Commissioner, type Election } from '@eboto-mo/db/schema';
 import {
-  Navbar,
-  UnstyledButton,
-  getStylesRef,
-  createStyles,
-  Select,
-  Button,
-  Text,
-  Divider,
-  Stack,
   Box,
-} from "@mantine/core";
+  Button,
+  Divider,
+  Navbar,
+  Select,
+  Stack,
+  Text,
+  UnstyledButton,
+  createStyles,
+  getStylesRef,
+} from '@mantine/core';
+import { useDidUpdate, useDisclosure } from '@mantine/hooks';
 import {
   IconExternalLink,
   IconFingerprint,
   IconLogout,
   IconPlus,
-} from "@tabler/icons-react";
-import { signOut } from "next-auth/react";
-import { useParams, usePathname, useRouter } from "next/navigation";
-import { useDidUpdate, useDisclosure } from "@mantine/hooks";
-import Image from "next/image";
-import Link from "next/link";
-import { Commissioner, type Election } from "@eboto-mo/db/schema";
-import CreateElection from "@/components/client/modals/create-election";
-import { electionDashboardNavbar } from "@/constants";
-import { useQuery } from "@tanstack/react-query";
-import { getAllMyElections } from "@/utils/election";
-import { useStore } from "@/store";
+} from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
+import { signOut } from 'next-auth/react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 
 const useStyles = createStyles((theme) => ({
   navbar: {
     backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
+      theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   link: {
     ...theme.fn.focusStyles(),
-    width: "100%",
-    display: "flex",
-    alignItems: "center",
-    textDecoration: "none",
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    textDecoration: 'none',
     fontSize: theme.fontSizes.sm,
     color:
-      theme.colorScheme === "dark"
+      theme.colorScheme === 'dark'
         ? theme.colors.dark[1]
         : theme.colors.gray[7],
     padding: `${theme.spacing.xs} ${theme.spacing.sm}`,
     borderRadius: theme.radius.sm,
     fontWeight: 500,
 
-    "&:hover": {
+    '&:hover': {
       backgroundColor:
-        theme.colorScheme === "dark"
+        theme.colorScheme === 'dark'
           ? theme.colors.dark[6]
           : theme.colors.gray[0],
-      color: theme.colorScheme === "dark" ? theme.white : theme.black,
+      color: theme.colorScheme === 'dark' ? theme.white : theme.black,
 
-      [`& .${getStylesRef("icon")}`]: {
-        color: theme.colorScheme === "dark" ? theme.white : theme.black,
+      [`& .${getStylesRef('icon')}`]: {
+        color: theme.colorScheme === 'dark' ? theme.white : theme.black,
       },
     },
   },
 
   linkIcon: {
-    ref: getStylesRef("icon"),
-    width: "1.25rem",
+    ref: getStylesRef('icon'),
+    width: '1.25rem',
     color:
-      theme.colorScheme === "dark"
+      theme.colorScheme === 'dark'
         ? theme.colors.dark[2]
         : theme.colors.gray[6],
     marginRight: theme.spacing.sm,
   },
 
   linkActive: {
-    "&, &:hover": {
+    '&, &:hover': {
       backgroundColor: theme.fn.variant({
-        variant: "light",
+        variant: 'light',
         color: theme.primaryColor,
       }).background,
-      color: theme.fn.variant({ variant: "light", color: theme.primaryColor })
+      color: theme.fn.variant({ variant: 'light', color: theme.primaryColor })
         .color,
-      [`& .${getStylesRef("icon")}`]: {
-        color: theme.fn.variant({ variant: "light", color: theme.primaryColor })
+      [`& .${getStylesRef('icon')}`]: {
+        color: theme.fn.variant({ variant: 'light', color: theme.primaryColor })
           .color,
       },
     },
@@ -102,12 +102,12 @@ export default function NavbarComponent() {
     isLoading,
     error,
   } = useQuery<(Commissioner & { election: Election })[]>({
-    queryKey: ["getAllMyElections"],
+    queryKey: ['getAllMyElections'],
     queryFn: async () => await getAllMyElections(),
   });
   const currentElection = elections?.find(
     (election) =>
-      election.election.slug === params.electionDashboardSlug.toString()
+      election.election.slug === params.electionDashboardSlug.toString(),
   ).election;
 
   const store = useStore();
@@ -123,18 +123,18 @@ export default function NavbarComponent() {
       hiddenBreakpoint="sm"
       className={classes.navbar}
       sx={{
-        overflow: "auto",
+        overflow: 'auto',
       }}
     >
       <Navbar.Section p="md">
-        <CreateElection sx={{ width: "100%" }} />
+        <CreateElection sx={{ width: '100%' }} />
       </Navbar.Section>
       <Divider />
 
       <Navbar.Section grow p="md">
         <Stack>
           <Select
-            placeholder={isLoading ? "Loading..." : "Select election"}
+            placeholder={isLoading ? 'Loading...' : 'Select election'}
             iconWidth={48}
             disabled={isLoading}
             error={(error as Error)?.message}
@@ -158,12 +158,12 @@ export default function NavbarComponent() {
                     .sort(
                       (a, b) =>
                         b.election.updated_at.getTime() -
-                        a.election.updated_at.getTime()
+                        a.election.updated_at.getTime(),
                     )
                     .filter(
                       ({ election }) =>
                         election.start_date < new Date() &&
-                        election.end_date > new Date()
+                        election.end_date > new Date(),
                     )
                     .concat(
                       elections.filter(
@@ -171,18 +171,18 @@ export default function NavbarComponent() {
                           !(
                             election.start_date < new Date() &&
                             election.end_date > new Date()
-                          )
-                      )
+                          ),
+                      ),
                     )
                     .map(({ election }) => ({
                       label: election.name,
                       value: election.slug,
                       group:
                         election.start_date > new Date()
-                          ? "Upcoming"
+                          ? 'Upcoming'
                           : election.end_date < new Date()
-                          ? "Completed"
-                          : "Ongoing",
+                          ? 'Completed'
+                          : 'Ongoing',
                       selected:
                         election.slug ===
                         params.electionDashboardSlug.toString(),
@@ -190,10 +190,10 @@ export default function NavbarComponent() {
                 : []
             }
             itemComponent={(
-              props: React.ComponentPropsWithoutRef<"button">
+              props: React.ComponentPropsWithoutRef<'button'>,
             ) => {
               const { election } = elections.find(
-                ({ election }) => election.slug === props.value
+                ({ election }) => election.slug === props.value,
               );
               if (!election) return null;
               return (
@@ -201,8 +201,8 @@ export default function NavbarComponent() {
                   {...props}
                   h={48}
                   sx={(theme) => ({
-                    display: "flex",
-                    alignItems: "center",
+                    display: 'flex',
+                    alignItems: 'center',
                     gap: theme.spacing.xs,
                   })}
                 >
@@ -225,7 +225,7 @@ export default function NavbarComponent() {
             }}
             value={params.electionDashboardSlug.toString()}
             onChange={(value) => {
-              router.push(`/dashboard/${value || ""}`);
+              router.push(`/dashboard/${value || ''}`);
               store.toggleDashboardMenu(false);
             }}
           />
@@ -245,13 +245,13 @@ export default function NavbarComponent() {
                 key={item.id}
                 component={Link}
                 href={`/dashboard/${params.electionDashboardSlug.toString()}/${
-                  item.path || ""
+                  item.path || ''
                 }`}
                 onClick={() => {
                   store.dashboardMenu && store.toggleDashboardMenu(false);
                 }}
                 className={cx(classes.link, {
-                  [classes.linkActive]: item.path === pathname.split("/")[3],
+                  [classes.linkActive]: item.path === pathname.split('/')[3],
                 })}
               >
                 <item.icon className={classes.linkIcon} />
@@ -266,7 +266,7 @@ export default function NavbarComponent() {
         <UnstyledButton
           className={classes.link}
           onClick={() =>
-            void (async () => await signOut({ callbackUrl: "/signin" }))()
+            void (async () => await signOut({ callbackUrl: '/signin' }))()
           }
         >
           <IconLogout className={classes.linkIcon} />

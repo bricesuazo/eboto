@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { deleteSingleVoterField, updateVoterField } from "@/actions";
+import { deleteSingleVoterField, updateVoterField } from '@/actions';
 import {
   DeleteSingleVoterFieldSchema,
   UpdateVoterFieldSchema,
-} from "@/utils/zod-schema";
-import type { Election, Voter, VoterField } from "@eboto-mo/db/schema";
+} from '@/utils/zod-schema';
+import type { Election, VoterField } from '@eboto-mo/db/schema';
 import {
   ActionIcon,
   Alert,
@@ -16,20 +16,20 @@ import {
   Stack,
   Text,
   TextInput,
-} from "@mantine/core";
-import { UseFormReturnType, useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
+} from '@mantine/core';
+import { UseFormReturnType, useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconCheck,
   IconTrash,
   IconUsersGroup,
-} from "@tabler/icons-react";
-import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
+} from '@tabler/icons-react';
+import { useMutation } from '@tanstack/react-query';
+import { useEffect } from 'react';
 
-type Field = { id: string; name: string; type: "fromDb" | "fromInput" };
+type Field = { id: string; name: string; type: 'fromDb' | 'fromInput' };
 type FormType = { field: Field[] };
 
 export default function UpdateVoterField({
@@ -49,7 +49,7 @@ export default function UpdateVoterField({
     onSuccess: async () => {
       notifications.show({
         title: ``,
-        message: "Successfully deleted partylist",
+        message: 'Successfully deleted partylist',
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
@@ -57,9 +57,9 @@ export default function UpdateVoterField({
     },
     onError: (error) => {
       notifications.show({
-        title: "Error",
+        title: 'Error',
         message: (error as Error)?.message,
-        color: "red",
+        color: 'red',
         autoClose: 3000,
       });
     },
@@ -68,17 +68,17 @@ export default function UpdateVoterField({
   const form = useForm<FormType>({
     initialValues: {
       field: election.voter_fields.map((field) => ({
-        type: "fromDb",
+        type: 'fromDb',
         id: field.id,
         name: field.name,
       })),
     },
     validate: {
       field: (value) => {
-        if (value.length === 0) return "At least one field is required";
+        if (value.length === 0) return 'At least one field is required';
 
-        if (value.some((field) => field.name.trim() === ""))
-          return "Field name is required";
+        if (value.some((field) => field.name.trim() === ''))
+          return 'Field name is required';
       },
     },
   });
@@ -90,8 +90,8 @@ export default function UpdateVoterField({
         (field) => ({
           id: field.id,
           name: field.name,
-          type: "fromDb",
-        })
+          type: 'fromDb',
+        }),
       );
       form.setValues({ field: data });
 
@@ -114,8 +114,8 @@ export default function UpdateVoterField({
           //   })
         }
         sx={(theme) => ({
-          [theme.fn.smallerThan("xs")]: {
-            width: "100%",
+          [theme.fn.smallerThan('xs')]: {
+            width: '100%',
           },
         })}
       >
@@ -158,15 +158,15 @@ export default function UpdateVoterField({
             <Button
               disabled={
                 form.values.field[form.values.field.length - 1]?.name.trim() ===
-                ""
+                ''
               }
               onClick={() => {
-                form.setFieldValue("field", [
+                form.setFieldValue('field', [
                   ...form.values.field,
                   {
                     id: Math.random().toString(),
-                    name: "",
-                    type: "fromInput",
+                    name: '',
+                    type: 'fromInput',
                   },
                 ]);
               }}
@@ -218,15 +218,15 @@ function VoterFieldInput({
       deleteSingleVoterField(input),
     onSuccess: async () => {
       form.setFieldValue(
-        "field",
-        form.values.field.filter((f) => f.id !== field.id)
+        'field',
+        form.values.field.filter((f) => f.id !== field.id),
       );
     },
     onError: (error) => {
       notifications.show({
-        title: "Error",
+        title: 'Error',
         message: (error as Error)?.message,
-        color: "red",
+        color: 'red',
         autoClose: 3000,
       });
     },
@@ -241,7 +241,7 @@ function VoterFieldInput({
         withAsterisk
         onChange={(e) => {
           form.setFieldValue(
-            "field",
+            'field',
             form.values.field.map((f) => {
               if (f.id === field.id) {
                 return {
@@ -250,7 +250,7 @@ function VoterFieldInput({
                 };
               }
               return f;
-            })
+            }),
           );
         }}
       />
@@ -263,7 +263,7 @@ function VoterFieldInput({
           w: 18,
         }}
         onClick={() => {
-          if (field.type === "fromDb") {
+          if (field.type === 'fromDb') {
             mutate({
               election_id,
               field_id: field.id,

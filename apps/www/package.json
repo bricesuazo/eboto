@@ -55,6 +55,7 @@
     "@eboto-mo/eslint-config": "workspace:*",
     "@eboto-mo/tsconfig": "workspace:*",
     "@tanstack/eslint-plugin-query": "^4.29.25",
+    "@trivago/prettier-plugin-sort-imports": "^4.2.0",
     "@types/bcryptjs": "^2.4.2",
     "@types/node": "^20.4.3",
     "@types/react": "^18.2.15",

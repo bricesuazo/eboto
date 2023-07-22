@@ -1,25 +1,26 @@
-import { relations } from "drizzle-orm";
+import { relations } from 'drizzle-orm';
+
 import {
-  users,
-  elections,
-  votes,
-  commissioners,
-  voters,
-  invited_voters,
-  invited_commissioners,
-  partylists,
-  positions,
-  candidates,
-  verification_tokens,
-  generated_election_results,
-  voter_fields,
-  reported_problems,
-  credentials,
-  platforms,
-  affiliations,
   achievements,
+  affiliations,
+  candidates,
+  commissioners,
+  credentials,
+  elections,
   events_attended,
-} from "./schema";
+  generated_election_results,
+  invited_commissioners,
+  invited_voters,
+  partylists,
+  platforms,
+  positions,
+  reported_problems,
+  users,
+  verification_tokens,
+  voter_fields,
+  voters,
+  votes,
+} from './schema';
 
 export const electionsRelations = relations(elections, ({ many }) => ({
   votes: many(votes),
@@ -73,7 +74,7 @@ export const invited_commissionersRelations = relations(
       references: [elections.id],
     }),
     verification_tokens: many(verification_tokens),
-  })
+  }),
 );
 
 export const votersRelations = relations(voters, ({ one, many }) => ({
@@ -97,7 +98,7 @@ export const invited_votersRelations = relations(
       references: [elections.id],
     }),
     verification_tokens: many(verification_tokens),
-  })
+  }),
 );
 
 export const partylistsRelations = relations(partylists, ({ one, many }) => ({
@@ -152,7 +153,7 @@ export const verification_tokensRelations = relations(
       fields: [verification_tokens.invited_commissioner_id],
       references: [invited_commissioners.id],
     }),
-  })
+  }),
 );
 
 export const generated_election_resultsRelations = relations(
@@ -162,7 +163,7 @@ export const generated_election_resultsRelations = relations(
       fields: [generated_election_results.election_id],
       references: [elections.id],
     }),
-  })
+  }),
 );
 
 export const voter_fieldsRelations = relations(voter_fields, ({ one }) => ({
@@ -183,7 +184,7 @@ export const reported_problemsRelations = relations(
       fields: [reported_problems.user_id],
       references: [users.id],
     }),
-  })
+  }),
 );
 
 export const credentialsRelations = relations(credentials, ({ one, many }) => ({
@@ -224,5 +225,5 @@ export const events_attendedRelations = relations(
       fields: [events_attended.credential_id],
       references: [credentials.id],
     }),
-  })
+  }),
 );

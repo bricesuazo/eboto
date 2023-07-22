@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useStore } from "@/store";
-import { type User } from "@eboto-mo/db/schema";
+import { useStore } from '@/store';
+import { type User } from '@eboto-mo/db/schema';
 import {
   ActionIcon,
   Box,
@@ -17,21 +17,21 @@ import {
   UnstyledButton,
   useMantineColorScheme,
   useMantineTheme,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { IconLogout } from "@tabler/icons-react";
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { IconLogout } from '@tabler/icons-react';
 import {
   IconAlertCircle,
   IconChartBar,
   IconChevronDown,
   IconUserCircle,
-} from "@tabler/icons-react";
-import { IconMoon } from "@tabler/icons-react";
-import { IconSun } from "@tabler/icons-react";
-import { signIn, signOut } from "next-auth/react";
-import Image from "next/image";
-import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+} from '@tabler/icons-react';
+import { IconMoon } from '@tabler/icons-react';
+import { IconSun } from '@tabler/icons-react';
+import { signIn, signOut } from 'next-auth/react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useParams, usePathname } from 'next/navigation';
 
 export default function HeaderContent({ user }: { user: User | null }) {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -48,11 +48,11 @@ export default function HeaderContent({ user }: { user: User | null }) {
     <Header height={60}>
       <Container
         h="100%"
-        size={!params.electionDashboardSlug ? undefined : "full"}
+        size={!params.electionDashboardSlug ? undefined : 'full'}
       >
         <Flex h="100%" align="center" gap="xs">
           {params.electionDashboardSlug && (
-            <MediaQuery largerThan="sm" styles={{ display: "none" }}>
+            <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
               <Burger
                 opened={store.dashboardMenu}
                 onClick={() => store.toggleDashboardMenu()}
@@ -63,7 +63,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
             </MediaQuery>
           )}
           <Group position="apart" w="100%" spacing={0}>
-            <UnstyledButton component={Link} href={user ? "/dashboard" : "/"}>
+            <UnstyledButton component={Link} href={user ? '/dashboard' : '/'}>
               <Group spacing={4}>
                 <Image
                   src="/images/logo.png"
@@ -75,12 +75,12 @@ export default function HeaderContent({ user }: { user: User | null }) {
                 <Text
                   weight={600}
                   color={
-                    colorScheme === "dark"
+                    colorScheme === 'dark'
                       ? theme.colors.gray[0]
                       : theme.colors.gray[9]
                   }
                   sx={(theme) => ({
-                    [theme.fn.smallerThan("xs")]: { display: "none" },
+                    [theme.fn.smallerThan('xs')]: { display: 'none' },
                   })}
                 >
                   eBoto Mo
@@ -100,32 +100,32 @@ export default function HeaderContent({ user }: { user: User | null }) {
                     <Group spacing="xs">
                       <Box
                         sx={{
-                          position: "relative",
-                          borderRadius: "50%",
-                          overflow: "hidden",
+                          position: 'relative',
+                          borderRadius: '50%',
+                          overflow: 'hidden',
                           width: 24,
                           height: 24,
 
-                          [theme.fn.largerThan("sm")]: {
+                          [theme.fn.largerThan('sm')]: {
                             width: 32,
                             height: 32,
                           },
                         }}
                       >
                         <Image
-                          src={user.image_link || "/images/default-avatar.png"}
+                          src={user.image_link || '/images/default-avatar.png'}
                           alt="Profile picture"
                           fill
                           sizes="100%"
                           priority
-                          style={{ objectFit: "cover" }}
+                          style={{ objectFit: 'cover' }}
                         />
                       </Box>
 
                       <Box
                         sx={{
                           width: 80,
-                          [theme.fn.largerThan("sm")]: {
+                          [theme.fn.largerThan('sm')]: {
                             width: 140,
                           },
                         }}
@@ -141,8 +141,8 @@ export default function HeaderContent({ user }: { user: User | null }) {
                       <IconChevronDown
                         size={16}
                         style={{
-                          rotate: openedMenu ? "-180deg" : "0deg",
-                          transition: "all 0.25s",
+                          rotate: openedMenu ? '-180deg' : '0deg',
+                          transition: 'all 0.25s',
                         }}
                       />
                     </Group>
@@ -167,7 +167,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
 
                   <Menu.Item
                     icon={
-                      colorScheme === "light" ? (
+                      colorScheme === 'light' ? (
                         <IconMoon size={16} />
                       ) : (
                         <IconSun size={16} />
@@ -176,7 +176,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
                     onClick={() => toggleColorScheme()}
                     closeMenuOnClick={false}
                   >
-                    {colorScheme === "light" ? "Dark mode" : "Light mode"}
+                    {colorScheme === 'light' ? 'Dark mode' : 'Light mode'}
                   </Menu.Item>
                   <Menu.Item
                     icon={<IconAlertCircle size={16} />}
@@ -194,7 +194,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
                     icon={
                       <IconLogout
                         style={{
-                          transform: "translateX(2px)",
+                          transform: 'translateX(2px)',
                         }}
                         size={16}
                       />
@@ -211,13 +211,13 @@ export default function HeaderContent({ user }: { user: User | null }) {
                   size={36}
                   onClick={() => toggleColorScheme()}
                 >
-                  {colorScheme === "dark" ? (
+                  {colorScheme === 'dark' ? (
                     <IconSun size="1rem" />
                   ) : (
                     <IconMoon size="1rem" />
                   )}
                 </ActionIcon>
-                <MediaQuery largerThan="xs" styles={{ display: "none" }}>
+                <MediaQuery largerThan="xs" styles={{ display: 'none' }}>
                   <Button
                     // component={Link} href="/signin"
                     onClick={() => signIn()}
@@ -225,7 +225,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
                     Sign in
                   </Button>
                 </MediaQuery>
-                <MediaQuery smallerThan="xs" styles={{ display: "none" }}>
+                <MediaQuery smallerThan="xs" styles={{ display: 'none' }}>
                   <Button
                     variant="outline"
                     // component={Link} href="/signin"
@@ -234,7 +234,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
                     Sign in
                   </Button>
                 </MediaQuery>
-                <MediaQuery smallerThan="xs" styles={{ display: "none" }}>
+                <MediaQuery smallerThan="xs" styles={{ display: 'none' }}>
                   <Button
                     // component={Link} href="/signup"
                     onClick={() => signIn()}

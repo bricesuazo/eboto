@@ -1,12 +1,12 @@
-import DashboardPosition from "@/components/client/pages/dashboard-position";
+import DashboardPosition from '@/components/client/pages/dashboard-position';
 import {
   getAllPositionsByElectionId,
   getElectionBySlug,
-} from "@/utils/election";
-import { type Metadata } from "next";
+} from '@/utils/election';
+import { type Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Positions",
+  title: 'Positions',
 };
 
 export default async function Page({

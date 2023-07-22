@@ -1,43 +1,43 @@
-"use client";
+'use client';
 
+import { FAQs } from '@/constants';
 import {
-  createStyles,
-  Title,
-  Text,
-  Button,
-  Container,
-  rem,
-  Box,
-  Grid,
-  Col,
   Accordion,
-} from "@mantine/core";
-import Link from "next/link";
-import Balancer from "react-wrap-balancer";
-import Image from "next/image";
-import { FAQs } from "@/constants";
+  Box,
+  Button,
+  Col,
+  Container,
+  Grid,
+  Text,
+  Title,
+  createStyles,
+  rem,
+} from '@mantine/core';
+import Image from 'next/image';
+import Link from 'next/link';
+import Balancer from 'react-wrap-balancer';
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
-    position: "relative",
+    position: 'relative',
     paddingTop: rem(120),
     paddingBottom: rem(80),
 
-    [theme.fn.smallerThan("sm")]: {
+    [theme.fn.smallerThan('sm')]: {
       paddingTop: rem(80),
       paddingBottom: rem(60),
     },
   },
 
   dots: {
-    position: "absolute",
+    position: 'absolute',
     color:
-      theme.colorScheme === "dark"
+      theme.colorScheme === 'dark'
         ? theme.colors.dark[5]
         : theme.colors.gray[1],
 
-    [theme.fn.smallerThan("sm")]: {
-      display: "none",
+    [theme.fn.smallerThan('sm')]: {
+      display: 'none',
     },
   },
 
@@ -47,54 +47,54 @@ const useStyles = createStyles((theme) => ({
   },
 
   title: {
-    textAlign: "center",
+    textAlign: 'center',
     fontSize: rem(40),
     letterSpacing: -1,
-    color: theme.colorScheme === "dark" ? theme.white : theme.black,
+    color: theme.colorScheme === 'dark' ? theme.white : theme.black,
     marginBottom: theme.spacing.xs,
 
-    [theme.fn.smallerThan("xs")]: {
+    [theme.fn.smallerThan('xs')]: {
       fontSize: rem(28),
-      textAlign: "left",
+      textAlign: 'left',
     },
   },
 
   highlight: {
     color:
-      theme.colorScheme === "dark"
+      theme.colorScheme === 'dark'
         ? theme.colors.green[5]
         : theme.colors.green[7],
   },
 
   description: {
-    textAlign: "center",
+    textAlign: 'center',
 
-    [theme.fn.smallerThan("xs")]: {
-      textAlign: "left",
+    [theme.fn.smallerThan('xs')]: {
+      textAlign: 'left',
       fontSize: theme.fontSizes.md,
     },
   },
 
   controls: {
     marginTop: theme.spacing.lg,
-    display: "flex",
-    justifyContent: "center",
+    display: 'flex',
+    justifyContent: 'center',
 
-    [theme.fn.smallerThan("xs")]: {
-      flexDirection: "column",
+    [theme.fn.smallerThan('xs')]: {
+      flexDirection: 'column',
     },
   },
 
   control: {
-    "&:not(:first-of-type)": {
+    '&:not(:first-of-type)': {
       marginLeft: theme.spacing.md,
     },
 
-    [theme.fn.smallerThan("xs")]: {
+    [theme.fn.smallerThan('xs')]: {
       height: rem(42),
       fontSize: theme.fontSizes.md,
 
-      "&:not(:first-of-type)": {
+      '&:not(:first-of-type)': {
         marginTop: theme.spacing.md,
         marginLeft: 0,
       },
@@ -115,10 +115,10 @@ export default function HomePage() {
       <Box pos="relative" mih="52vh">
         <Title className={classes.title}>
           <Balancer>
-            Your{" "}
+            Your{' '}
             <Text component="span" className={classes.highlight} inherit>
               One-Stop
-            </Text>{" "}
+            </Text>{' '}
             Online Voting Solution
           </Balancer>
         </Title>
@@ -159,7 +159,7 @@ export default function HomePage() {
           <Box
             pos="relative"
             sx={{
-              aspectRatio: "3/2",
+              aspectRatio: '3/2',
             }}
           >
             <Image
@@ -167,8 +167,8 @@ export default function HomePage() {
               fill
               alt="Frequently Asked Questions"
               style={{
-                userSelect: "none",
-                pointerEvents: "none",
+                userSelect: 'none',
+                pointerEvents: 'none',
               }}
             />
           </Box>
@@ -179,8 +179,8 @@ export default function HomePage() {
             ta="left"
             p="md"
             sx={(theme) => ({
-              [theme.fn.smallerThan("sm")]: {
-                textAlign: "center",
+              [theme.fn.smallerThan('sm')]: {
+                textAlign: 'center',
               },
             })}
           >
@@ -189,7 +189,7 @@ export default function HomePage() {
 
           <Accordion
             chevronPosition="right"
-            defaultValue={FAQs[0]?.id ?? ""}
+            defaultValue={FAQs[0]?.id ?? ''}
             variant="separated"
           >
             {FAQs.map((item) => (
@@ -205,7 +205,7 @@ export default function HomePage() {
   );
 }
 
-interface DotsProps extends React.ComponentPropsWithoutRef<"svg"> {
+interface DotsProps extends React.ComponentPropsWithoutRef<'svg'> {
   size?: number;
   radius?: number;
 }

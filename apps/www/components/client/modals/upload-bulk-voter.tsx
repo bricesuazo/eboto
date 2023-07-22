@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { uploadBulkVoter } from "@/actions";
-import { VoterField, voters } from "@eboto-mo/db/schema";
+import { uploadBulkVoter } from '@/actions';
+import { VoterField, voters } from '@eboto-mo/db/schema';
 import {
   ActionIcon,
   Alert,
@@ -14,10 +14,10 @@ import {
   Text,
   rem,
   useMantineTheme,
-} from "@mantine/core";
-import { Dropzone, MS_EXCEL_MIME_TYPE } from "@mantine/dropzone";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
+} from '@mantine/core';
+import { Dropzone, MS_EXCEL_MIME_TYPE } from '@mantine/dropzone';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconCheck,
@@ -27,12 +27,12 @@ import {
   IconUpload,
   IconUserMinus,
   IconX,
-} from "@tabler/icons-react";
-import { useMutation } from "@tanstack/react-query";
-import { useState, useRef, useEffect } from "react";
-import Balancer from "react-wrap-balancer";
-import readXlsxFile from "read-excel-file";
-import * as XLSX from "xlsx";
+} from '@tabler/icons-react';
+import { useMutation } from '@tanstack/react-query';
+import { useEffect, useRef, useState } from 'react';
+import Balancer from 'react-wrap-balancer';
+import readXlsxFile from 'read-excel-file';
+import * as XLSX from 'xlsx';
 
 export default function UploadBulkVoter({
   election_id,
@@ -52,7 +52,7 @@ export default function UploadBulkVoter({
     onSuccess: ({ count }) => {
       notifications.show({
         title: `${count} voter(s) added!`,
-        message: "Successfully added voters",
+        message: 'Successfully added voters',
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
@@ -91,8 +91,8 @@ export default function UploadBulkVoter({
         leftIcon={<IconUpload size="1rem" />}
         variant="light"
         sx={(theme) => ({
-          [theme.fn.smallerThan("xs")]: {
-            width: "100%",
+          [theme.fn.smallerThan('xs')]: {
+            width: '100%',
           },
         })}
       >
@@ -124,7 +124,7 @@ export default function UploadBulkVoter({
                           setSelectedFiles((prev) => {
                             if (prev) {
                               return prev.filter(
-                                (f) => f.fileName !== file.fileName
+                                (f) => f.fileName !== file.fileName,
                               );
                             } else {
                               return [];
@@ -157,7 +157,7 @@ export default function UploadBulkVoter({
                             {voter_fields.map((field) => (
                               <td key={field.name}>
                                 <Text truncate>
-                                  {voter.field[field.name] ?? ""}
+                                  {voter.field[field.name] ?? ''}
                                 </Text>
                               </td>
                             ))}
@@ -174,7 +174,7 @@ export default function UploadBulkVoter({
                                             ...f,
 
                                             voters: f.voters.filter(
-                                              (v) => v.email !== voter.email
+                                              (v) => v.email !== voter.email,
                                             ),
                                           };
                                         } else {
@@ -205,7 +205,7 @@ export default function UploadBulkVoter({
             onDrop={(files) => {
               if (
                 selectedFiles.find((sf) =>
-                  files.find((f) => f.name === sf.fileName)
+                  files.find((f) => f.name === sf.fileName),
                 )
               ) {
                 return;
@@ -220,9 +220,9 @@ export default function UploadBulkVoter({
 
                     if (
                       rows[0] &&
-                      rows[0][0] !== "Email" &&
+                      rows[0][0] !== 'Email' &&
                       !voter_fields.some(
-                        (val, i) => rows[0] && val.name === rows[0][i + 1]
+                        (val, i) => rows[0] && val.name === rows[0][i + 1],
                       )
                     ) {
                       return;
@@ -238,14 +238,14 @@ export default function UploadBulkVoter({
                         fileName: file.name,
                         voters: rows.slice(1).map((row) => {
                           return {
-                            email: row[0]?.toString() ?? "",
+                            email: row[0]?.toString() ?? '',
                             field: voter_fields.reduce(
                               (acc, val, i) => {
-                                acc[val.name] = row[i + 1]?.toString() ?? "";
+                                acc[val.name] = row[i + 1]?.toString() ?? '';
 
                                 return acc;
                               },
-                              {} as Record<string, string>
+                              {} as Record<string, string>,
                             ),
                           };
                         }),
@@ -261,14 +261,14 @@ export default function UploadBulkVoter({
               align="center"
               justify="center"
               gap="md"
-              style={{ minHeight: rem(140), pointerEvents: "none" }}
+              style={{ minHeight: rem(140), pointerEvents: 'none' }}
             >
               <Dropzone.Accept>
                 <IconUpload
                   size="3.2rem"
                   stroke={1.5}
                   color={
-                    theme.colors.green[theme.colorScheme === "dark" ? 4 : 6]
+                    theme.colors.green[theme.colorScheme === 'dark' ? 4 : 6]
                   }
                 />
               </Dropzone.Accept>
@@ -276,7 +276,7 @@ export default function UploadBulkVoter({
                 <IconX
                   size="3.2rem"
                   stroke={1.5}
-                  color={theme.colors.red[theme.colorScheme === "dark" ? 4 : 6]}
+                  color={theme.colors.red[theme.colorScheme === 'dark' ? 4 : 6]}
                 />
               </Dropzone.Reject>
               <Dropzone.Idle>
@@ -309,27 +309,27 @@ export default function UploadBulkVoter({
             onClick={() => {
               const worksheet = XLSX.utils.json_to_sheet([
                 {
-                  Email: "juan.delacruz@cvsu.edu.ph",
+                  Email: 'juan.delacruz@cvsu.edu.ph',
                   ...voter_fields.reduce((prev, curr) => {
                     return {
                       ...prev,
-                      [curr.name]: "",
+                      [curr.name]: '',
                     };
                   }, {}),
                 },
                 {
-                  Email: "pedro.penduko@cvsu.edu.ph",
+                  Email: 'pedro.penduko@cvsu.edu.ph',
                   ...voter_fields.reduce((prev, curr) => {
                     return {
                       ...prev,
-                      [curr.name]: "",
+                      [curr.name]: '',
                     };
                   }, {}),
                 },
               ]);
               const workbook = XLSX.utils.book_new();
-              XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-              XLSX.writeFile(workbook, "voters.xlsx");
+              XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+              XLSX.writeFile(workbook, 'voters.xlsx');
             }}
           >
             Download sample excel file
