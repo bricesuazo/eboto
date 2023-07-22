@@ -1,7 +1,6 @@
 "use server";
 
 import { cookies } from "next/headers";
-import z from "zod";
 import { positionTemplate, takenSlugs } from "@/constants";
 import { db } from "@eboto-mo/db";
 import {
@@ -14,6 +13,10 @@ import {
   candidates,
   Candidate,
   voter_fields,
+  voters,
+  Voter,
+  InvitedVoter,
+  invited_voters,
 } from "@eboto-mo/db/schema";
 import { getSession } from "@/utils/auth";
 import {
@@ -33,6 +36,7 @@ import {
   CreateVoterSchema,
   UpdateVoterFieldSchema,
   DeleteSingleVoterFieldSchema,
+  EditVoterSchema,
 } from "@/utils/zod-schema";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -413,6 +417,58 @@ export async function deleteSingleVoterField(
         eq(voter_fields.id, input.field_id)
       )
     );
+
+  revalidatePath("/election/[electionDashboardSlug]/candidate");
+}
+
+export async function editVoter(input: EditVoterSchema) {
+  const session = await getSession();
+
+  if (!session) throw new Error("Unauthorized");
+
+  if (input.account_status === "ACCEPTED") {
+    const voter: Voter | null = await db.query.voters.findFirst({
+      where: (voters, { eq, and }) =>
+        and(eq(voters.id, input.id), eq(voters.election_id, input.election_id)),
+    });
+
+    if (!voter) throw new Error("Voter not found");
+    return {
+      type: "voter",
+      voter: await db
+        .update(voters)
+        .set({
+          field: input.field,
+        })
+        .where(eq(voters.id, input.id)),
+    };
+  } else {
+    const invited_voter: InvitedVoter | null =
+      await db.query.invited_voters.findFirst({
+        where: (invited_voters, { eq, and }) =>
+          and(
+            eq(invited_voters.id, input.id),
+            eq(invited_voters.election_id, input.election_id)
+          ),
+      });
+    if (!invited_voter) throw new Error("Voter not found");
+
+    return {
+      type: "invited_voter",
+      invitedVoter: await db
+        .update(invited_voters)
+        .set({
+          email: input.email,
+          field: input.field,
+        })
+        .where(
+          and(
+            eq(invited_voters.id, input.id),
+            eq(invited_voters.election_id, input.election_id)
+          )
+        ),
+    };
+  }
 
   revalidatePath("/election/[electionDashboardSlug]/candidate");
 }

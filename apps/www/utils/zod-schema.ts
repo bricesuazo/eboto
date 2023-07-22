@@ -1,4 +1,4 @@
-import { publicity } from "@eboto-mo/db/schema";
+import { account_status_type, publicity } from "@eboto-mo/db/schema";
 import { z } from "zod";
 
 export const createElectionSchema = z.object({
@@ -96,6 +96,19 @@ export const deleteSingleVoterFieldSchema = z.object({
   field_id: z.string().min(1),
 });
 
+const account_status_type_with_accepted = [
+  ...account_status_type,
+  "ACCEPTED",
+] as const;
+
+export const editVoterSchema = z.object({
+  id: z.string().min(1),
+  email: z.string().min(1),
+  field: z.record(z.string().min(1)),
+  election_id: z.string().min(1),
+  account_status: z.enum(account_status_type_with_accepted),
+});
+
 export type CreateElectionSchema = z.infer<typeof createElectionSchema>;
 export type EditElectionSchema = z.infer<typeof editElectionSchema>;
 export type CreatePartylistSchema = z.infer<typeof createPartylistSchema>;
@@ -109,3 +122,4 @@ export type UpdateVoterFieldSchema = z.infer<typeof updateVoterFieldSchema>;
 export type DeleteSingleVoterFieldSchema = z.infer<
   typeof deleteSingleVoterFieldSchema
 >;
+export type EditVoterSchema = z.infer<typeof editVoterSchema>;

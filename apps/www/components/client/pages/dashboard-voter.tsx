@@ -28,6 +28,7 @@ import { useMemo } from "react";
 import InviteAllInvitedVoters from "@/components/client/modals/invite-all-invited-voters";
 import UpdateVoterField from "@/components/client/modals/update-voter-field";
 import CreateVoter from "@/components/client/modals/create-voter";
+import EditVoter from "@/components/client/modals/edit-voter";
 
 export default function DashboardVoter({
   election,
@@ -40,7 +41,7 @@ export default function DashboardVoter({
     account_status: string;
     created_at: Date;
     has_voted: boolean;
-    field: unknown;
+    field: Record<string, string>;
   }[];
 }) {
   const columns = useMemo<MRT_ColumnDef<(typeof voters)[0]>[]>(
@@ -81,14 +82,6 @@ export default function DashboardVoter({
 
   return (
     <Box p="md">
-      {/* <EditVoterModal
-        isOpen={openedEditVoter}
-        voterFields={voters.data.election.voter_fields}
-        electionId={voters.data.election.id}
-        onClose={closeEditVoter}
-        voter={voterToEdit}
-      />
-
       <UploadBulkVoter
         isOpen={openedBulkImport}
         electionId={voters.data.election.id}
@@ -162,7 +155,7 @@ export default function DashboardVoter({
             {isElectionOngoing({
               election: election,
               withTime: true,
-            }) && <InviteAllInvitedVoters eleciton_id={election.id} />}
+            }) && <InviteAllInvitedVoters election_id={election.id} />}
           </Flex>
         </Flex>
 
@@ -278,21 +271,18 @@ export default function DashboardVoter({
           renderRowActions={({ row }) => (
             <Box sx={{ display: "flex", gap: "16px" }}>
               <Tooltip withArrow label="Edit">
-                <ActionIcon
-                  onClick={() => {
-                    setVoterToEdit({
-                      id: row.id,
-                      email: row.getValue<string>("email"),
-                      field: voters.find((v) => v.id === row.id)?.field ?? {},
-                      accountStatus: row.getValue<
-                        "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED"
-                      >("accountStatus"),
-                    });
-                    openEditVoter();
+                <EditVoter
+                  voter_fields={election.voter_fields}
+                  election_id={election.id}
+                  voter={{
+                    id: row.id,
+                    email: row.getValue<string>("email"),
+                    field: voters.find((v) => v.id === row.id)?.field ?? {},
+                    account_status: row.getValue<
+                      "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED"
+                    >("account_status"),
                   }}
-                >
-                  <IconEdit size="1.25rem" />
-                </ActionIcon>
+                />
               </Tooltip>
 
               <Tooltip withArrow label="Delete">
@@ -315,7 +305,7 @@ export default function DashboardVoter({
             </Box>
           )}
         />
-      </Stack> */}
+      </Stack>
     </Box>
   );
 }

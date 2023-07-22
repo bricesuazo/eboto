@@ -27,8 +27,8 @@ export const token_type = [
   "ELECTION_INVITATION",
 ] as const;
 export type TokenType = (typeof token_type)[number];
-export const acount_status_type = ["ADDED", "INVITED", "DECLINED"] as const;
-export type AccountStatusType = (typeof acount_status_type)[number];
+export const account_status_type = ["ADDED", "INVITED", "DECLINED"] as const;
+export type AccountStatusType = (typeof account_status_type)[number];
 
 export const users = mysqlTable("users", {
   id,
@@ -79,7 +79,7 @@ export const commissioners = mysqlTable("commissioners", {
 export const invited_commissioners = mysqlTable("invited_commissioners", {
   id,
   email: text("email").notNull(),
-  status: mysqlEnum("status", acount_status_type).default("INVITED"),
+  status: mysqlEnum("status", account_status_type).default("INVITED"),
 
   created_at,
 
@@ -88,7 +88,7 @@ export const invited_commissioners = mysqlTable("invited_commissioners", {
 export const invited_voters = mysqlTable("invited_voters", {
   id,
   email: text("email").notNull(),
-  status: mysqlEnum("status", acount_status_type).default("ADDED"),
+  status: mysqlEnum("status", account_status_type).default("ADDED"),
   field: json("field"),
 
   created_at,

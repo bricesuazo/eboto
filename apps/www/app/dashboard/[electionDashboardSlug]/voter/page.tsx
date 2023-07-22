@@ -52,7 +52,5 @@ export default async function Page({
         field: voter.field,
       }))
     );
-  return (
-    <>{/* <DashboardVoter election={election} voters={parsedVoters} /> */}</>
-  );
+  return <DashboardVoter election={election} voters={parsedVoters} />;
 }
