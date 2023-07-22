@@ -4,7 +4,12 @@ import { deleteBulkVoter } from "@/actions";
 import { Alert, Button, Group, List, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { IconAlertCircle, IconCheck, IconUpload } from "@tabler/icons-react";
+import {
+  IconAlertCircle,
+  IconCheck,
+  IconUpload,
+  IconUserMinus,
+} from "@tabler/icons-react";
 import { useMutation } from "@tanstack/react-query";
 
 export default function DeleteBulkVoter({
@@ -35,16 +40,17 @@ export default function DeleteBulkVoter({
   return (
     <>
       <Button
+        color="red"
+        variant="outline"
         onClick={open}
-        leftIcon={<IconUpload size="1rem" />}
-        variant="light"
+        leftIcon={<IconUserMinus size="1.25rem" />}
         sx={(theme) => ({
           [theme.fn.smallerThan("xs")]: {
-            width: "100%",
+            display: "none",
           },
         })}
       >
-        Import
+        Delete selected
       </Button>
 
       <Modal

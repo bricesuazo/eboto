@@ -170,7 +170,7 @@ export default function DashboardVoter({
           positionToolbarAlertBanner="bottom"
           renderTopToolbarCustomActions={() => (
             <Group spacing="xs">
-              <Tooltip withArrow label="Refresh">
+              {/* <Tooltip withArrow label="Refresh">
                 <ActionIcon
                   variant="light"
                   onClick={() => voters.refetch()}
@@ -187,15 +187,15 @@ export default function DashboardVoter({
                 >
                   <IconRefresh size="1.25rem" />
                 </ActionIcon>
-              </Tooltip>
+              </Tooltip> */}
 
               <Tooltip withArrow label="Delete selected">
                 <UploadBulkVoter
-                  election_id={voters.data.election.id}
-                  voter_fields={voters.data.election.voter_fields}
+                  election_id={election.id}
+                  voter_fields={election.voter_fields}
                 />
               </Tooltip>
-              <Button
+              {/* <Button
                 variant="light"
                 onClick={() => voters.refetch()}
                 loading={voters.isRefetching}
@@ -210,25 +210,17 @@ export default function DashboardVoter({
                 }}
               >
                 Refresh
-              </Button>
-              <Button
-                color="red"
-                variant="outline"
-                onClick={openConfirmDeleteBulkVoters}
-                disabled={
-                  voters.isLoading ||
-                  !voters.data ||
-                  Object.keys(rowSelection).length === 0
-                }
-                leftIcon={<IconUserMinus size="1.25rem" />}
-                sx={(theme) => ({
-                  [theme.fn.smallerThan("xs")]: {
-                    display: "none",
-                  },
-                })}
-              >
-                Delete selected
-              </Button>
+              </Button> */}
+
+              <DeleteBulkVoter
+                voters={voters
+                  .filter((voter) => rowSelection[voter.id])
+                  .map((voter) => ({
+                    id: voter.id,
+                    email: voter.email,
+                  }))}
+                election_id={election.id}
+              />
             </Group>
           )}
           enableRowActions

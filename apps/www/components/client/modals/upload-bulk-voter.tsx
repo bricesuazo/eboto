@@ -100,6 +100,18 @@ export default function UploadBulkVoter({
       >
         <IconUserMinus size="1.25rem" />
       </ActionIcon>
+      <Button
+        onClick={open}
+        leftIcon={<IconUpload size="1rem" />}
+        variant="light"
+        sx={(theme) => ({
+          [theme.fn.smallerThan("xs")]: {
+            width: "100%",
+          },
+        })}
+      >
+        Import
+      </Button>
       <Modal
         onClose={close}
         opened={opened}

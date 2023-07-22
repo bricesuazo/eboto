@@ -89,7 +89,7 @@ export const invited_voters = mysqlTable("invited_voters", {
   id,
   email: text("email").notNull(),
   status: mysqlEnum("status", account_status_type).default("ADDED"),
-  field: json("field"),
+  field: json("field").$type<Record<string, string>>(),
 
   created_at,
 
@@ -100,7 +100,7 @@ export const voters = mysqlTable("voters", {
   id,
   created_at,
 
-  field: json("field"),
+  field: json("field").$type<Record<string, string>>(),
 
   user_id,
   election_id,
