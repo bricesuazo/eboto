@@ -123,6 +123,16 @@ export const deleteBulkVoterSchema = z.object({
   ),
 });
 
+export const uploadBulkVoterSchema = z.object({
+  election_id: z.string().min(1),
+  voters: z.array(
+    z.object({
+      email: z.string().min(1),
+      field: z.record(z.string().min(1)),
+    })
+  ),
+});
+
 export type CreateElectionSchema = z.infer<typeof createElectionSchema>;
 export type EditElectionSchema = z.infer<typeof editElectionSchema>;
 export type CreatePartylistSchema = z.infer<typeof createPartylistSchema>;
@@ -139,3 +149,4 @@ export type DeleteSingleVoterFieldSchema = z.infer<
 export type EditVoterSchema = z.infer<typeof editVoterSchema>;
 export type DeleteVoterSchema = z.infer<typeof deleteVoterSchema>;
 export type DeleteBulkVoterSchema = z.infer<typeof deleteBulkVoterSchema>;
+export type UploadBulkVoterSchema = z.infer<typeof uploadBulkVoterSchema>;

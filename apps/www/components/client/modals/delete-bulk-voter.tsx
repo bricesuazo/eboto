@@ -1,7 +1,6 @@
 "use client";
 
 import { deleteBulkVoter } from "@/actions";
-import { DeleteBulkVoterSchema } from "@/utils/zod-schema";
 import { Alert, Button, Group, List, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";

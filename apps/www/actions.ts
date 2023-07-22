@@ -39,6 +39,7 @@ import {
   EditVoterSchema,
   DeleteVoterSchema,
   DeleteBulkVoterSchema,
+  UploadBulkVoterSchema,
 } from "@/utils/zod-schema";
 import { and, eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -532,7 +533,37 @@ export async function deleteBulkVoter(input: DeleteBulkVoterSchema) {
       )
     )
   );
-  return { count: input.voters.length };
-
   revalidatePath("/election/[electionDashboardSlug]/voter");
+  return { count: input.voters.length };
+}
+
+export async function uploadBulkVoter(input: UploadBulkVoterSchema) {
+  const session = await getSession();
+
+  if (!session) throw new Error("Unauthorized");
+
+  const isElectionExists = await db.query.elections.findFirst({
+    where: (elections, { eq }) => eq(elections.id, input.election_id),
+    with: {
+      commissioners: {
+        where: (commissioners, { eq }) => eq(commissioners.user_id, session.id),
+      },
+    },
+  });
+
+  if (!isElectionExists) throw new Error("Election does not exists");
+
+  if (isElectionExists.commissioners.length === 0)
+    throw new Error("Unauthorized");
+
+  const test = await db.insert(invited_voters).values(
+    input.voters.map((voter) => ({
+      id: crypto.randomUUID(),
+      email: voter.email,
+      field: voter.field,
+      election_id: input.election_id,
+    }))
+  );
+
+  return { count: test.size };
 }

@@ -29,8 +29,9 @@ import InviteAllInvitedVoters from "@/components/client/modals/invite-all-invite
 import UpdateVoterField from "@/components/client/modals/update-voter-field";
 import CreateVoter from "@/components/client/modals/create-voter";
 import EditVoter from "@/components/client/modals/edit-voter";
-import DeleteVoter from "../modals/delete-voter";
-import DeleteBulkVoter from "../modals/delete-bulk-voter";
+import DeleteVoter from "@/components/client/modals/delete-voter";
+import DeleteBulkVoter from "@/components/client/modals/delete-bulk-voter";
+import UploadBulkVoter from "@/components/client/modals/upload-bulk-voter";
 
 export default function DashboardVoter({
   election,
@@ -85,13 +86,6 @@ export default function DashboardVoter({
 
   return (
     <Box p="md">
-      <UploadBulkVoter
-        isOpen={openedBulkImport}
-        electionId={voters.data.election.id}
-        voterFields={voters.data.election.voter_fields}
-        onClose={closeBulkVoter}
-      />
-
       <Stack>
         <Flex
           gap="xs"
@@ -127,14 +121,20 @@ export default function DashboardVoter({
             >
               <UpdateVoterField
                 election={election}
-                voter_fields={election.voter_fields}
+                voters={voters.map((voter) => ({
+                  id: voter.id,
+                  email: voter.email,
+                }))}
               />
             </Tooltip>
 
-            {isElectionOngoing({
-              election: election,
-              withTime: true,
-            }) && <InviteAllInvitedVoters election_id={election.id} />}
+            {
+              // isElectionOngoing({
+              // election: election,
+              // withTime: true,
+              // }) &&
+              <InviteAllInvitedVoters election_id={election.id} />
+            }
           </Flex>
         </Flex>
 
@@ -153,8 +153,8 @@ export default function DashboardVoter({
             pagination: { pageSize: 15, pageIndex: 0 },
           }}
           state={{
-            isLoading: voters.isLoading,
-            showAlertBanner: voters.isError,
+            // isLoading: voters.isLoading,
+            // showAlertBanner: voters.isError,
             rowSelection,
           }}
           enableClickToCopy={true}
@@ -190,24 +190,10 @@ export default function DashboardVoter({
               </Tooltip>
 
               <Tooltip withArrow label="Delete selected">
-                <ActionIcon
-                  color="red"
-                  onClick={openConfirmDeleteBulkVoters}
-                  size="lg"
-                  variant="outline"
-                  sx={(theme) => ({
-                    [theme.fn.largerThan("xs")]: {
-                      display: "none",
-                    },
-                  })}
-                  disabled={
-                    voters.isLoading ||
-                    !voters.data ||
-                    Object.keys(rowSelection).length === 0
-                  }
-                >
-                  <IconUserMinus size="1.25rem" />
-                </ActionIcon>
+                <UploadBulkVoter
+                  election_id={voters.data.election.id}
+                  voter_fields={voters.data.election.voter_fields}
+                />
               </Tooltip>
               <Button
                 variant="light"

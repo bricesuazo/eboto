@@ -37,7 +37,10 @@ export default function UpdateVoterField({
   voters,
 }: {
   election: Election & { voter_fields: VoterField[] };
-  voters: Voter[];
+  voters: {
+    id: string;
+    email: string;
+  }[];
 }) {
   const [opened, { open, close }] = useDisclosure(false);
 
