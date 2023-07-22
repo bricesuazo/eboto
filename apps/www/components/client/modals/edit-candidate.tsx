@@ -2,15 +2,7 @@
 
 import { editCandidate } from "@/actions";
 import { EditCandidateSchema } from "@/utils/zod-schema";
-import type {
-  Position,
-  Partylist,
-  Candidate,
-  Affiliation,
-  Achievement,
-  EventAttended,
-  Platform,
-} from "@eboto-mo/db/schema";
+import type { Position, Partylist, Candidate } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
   Alert,

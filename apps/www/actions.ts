@@ -13,6 +13,7 @@ import {
   Partylist,
   candidates,
   Candidate,
+  voter_fields,
 } from "@eboto-mo/db/schema";
 import { getSession } from "@/utils/auth";
 import {
@@ -29,8 +30,11 @@ import {
   editPositionSchema,
   CreateCandidateSchema,
   EditCandidateSchema,
+  CreateVoterSchema,
+  UpdateVoterFieldSchema,
+  DeleteSingleVoterFieldSchema,
 } from "@/utils/zod-schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export async function toggleTheme() {
@@ -324,6 +328,91 @@ export async function editCandidate(input: EditCandidateSchema) {
     partylist_id: input.partylist_id,
     image_link: input.image_link,
   });
+
+  revalidatePath("/election/[electionDashboardSlug]/candidate");
+}
+export async function inviteAllInvitedVoters({
+  election_id,
+}: {
+  election_id: string;
+}) {
+  const session = await getSession();
+
+  if (!session) throw new Error("Unauthorized");
+
+  const isElectionExists = await db.query.elections.findFirst({
+    where: (elections, { eq }) => eq(elections.id, election_id),
+    with: {
+      commissioners: {
+        where: (commissioners, { eq }) => eq(commissioners.user_id, session.id),
+      },
+    },
+  });
+
+  if (!isElectionExists) throw new Error("Election does not exists");
+
+  if (isElectionExists.commissioners.length === 0)
+    throw new Error("Unauthorized");
+
+  const invitedVoters = await db.query.invited_voters.findMany({
+    where: (invited_voters, { eq }) =>
+      eq(invited_voters.election_id, election_id),
+  });
+
+  const invitedVotersIds = invitedVoters.map((invitedVoter) => invitedVoter.id);
+  console.log(
+    "🚀 ~ file: actions.ts:359 ~ invitedVotersIds:",
+    invitedVotersIds
+  );
+
+  revalidatePath("/election/[electionDashboardSlug]/voter");
+}
+
+export async function createVoter(input: CreateVoterSchema) {
+  const session = await getSession();
+
+  if (!session) throw new Error("Unauthorized");
+
+  const isVoterExists = await db.query.elections.findFirst({
+    where: (elections, { eq }) => eq(elections.id, input.election_id),
+    with: {
+      commissioners: {
+        where: (commissioners, { eq }) => eq(commissioners.user_id, session.id),
+      },
+    },
+  });
+
+  revalidatePath("/election/[electionDashboardSlug]/voter");
+}
+
+export async function updateVoterField(input: UpdateVoterFieldSchema) {
+  const session = await getSession();
+
+  if (!session) throw new Error("Unauthorized");
+
+  await db
+    .update(voter_fields)
+    .set(input)
+    .where(eq(voter_fields.election_id, input.election_id));
+
+  revalidatePath("/election/[electionDashboardSlug]/candidate");
+}
+
+export async function deleteSingleVoterField(
+  input: DeleteSingleVoterFieldSchema
+) {
+  const session = await getSession();
+
+  if (!session) throw new Error("Unauthorized");
+
+  await db
+    .delete(voter_fields)
+    .where(
+      and(
+        eq(voter_fields.election_id, input.election_id),
+        eq(voter_fields.id, input.field_id)
+      )
+    );
 
   revalidatePath("/election/[electionDashboardSlug]/candidate");
 }

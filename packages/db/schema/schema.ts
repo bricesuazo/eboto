@@ -100,6 +100,8 @@ export const voters = mysqlTable("voters", {
   id,
   created_at,
 
+  field: json("field"),
+
   user_id,
   election_id,
 });

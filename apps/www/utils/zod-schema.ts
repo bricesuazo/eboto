@@ -75,6 +75,27 @@ export const editCandidateSchema = z.object({
   image_link: z.string().nullable(),
 });
 
+export const createVoterSchema = z.object({
+  email: z.string().min(1),
+  field: z.record(z.string().min(1)),
+  election_id: z.string().min(1),
+});
+
+export const updateVoterFieldSchema = z.object({
+  fields: z.array(
+    z.object({
+      id: z.string().min(1),
+      name: z.string().min(1),
+      type: z.enum(["fromDb", "fromInput"]),
+    })
+  ),
+  election_id: z.string().min(1),
+});
+export const deleteSingleVoterFieldSchema = z.object({
+  election_id: z.string().min(1),
+  field_id: z.string().min(1),
+});
+
 export type CreateElectionSchema = z.infer<typeof createElectionSchema>;
 export type EditElectionSchema = z.infer<typeof editElectionSchema>;
 export type CreatePartylistSchema = z.infer<typeof createPartylistSchema>;
@@ -83,3 +104,8 @@ export type CreatePositionSchema = z.infer<typeof createPositionSchema>;
 export type EditPositionSchema = z.infer<typeof editPositionSchema>;
 export type CreateCandidateSchema = z.infer<typeof createCandidateSchema>;
 export type EditCandidateSchema = z.infer<typeof editCandidateSchema>;
+export type CreateVoterSchema = z.infer<typeof createVoterSchema>;
+export type UpdateVoterFieldSchema = z.infer<typeof updateVoterFieldSchema>;
+export type DeleteSingleVoterFieldSchema = z.infer<
+  typeof deleteSingleVoterFieldSchema
+>;
