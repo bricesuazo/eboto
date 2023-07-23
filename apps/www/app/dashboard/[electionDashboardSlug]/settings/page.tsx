@@ -1,5 +1,5 @@
 import DashboardSettings from '@/components/client/pages/dashboard-settings';
-import { getElectionBySlug } from '@/utils/election';
+import { api_server } from '@/shared/server/trpc';
 import { type Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -11,6 +11,8 @@ export default async function Page({
 }: {
   params: { electionDashboardSlug: string };
 }) {
-  const election = await getElectionBySlug(electionDashboardSlug);
+  const election = await api_server.election.getElectionBySlug.fetch({
+    slug: electionDashboardSlug,
+  });
   return <DashboardSettings election={election} />;
 }

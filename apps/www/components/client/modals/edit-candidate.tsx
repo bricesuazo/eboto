@@ -1,7 +1,6 @@
 'use client';
 
-import { editCandidate } from '@/actions';
-import { EditCandidateSchema } from '@/utils/zod-schema';
+import { api_client } from '@/shared/client/trpc';
 import type { Candidate, Partylist, Position } from '@eboto-mo/db/schema';
 import {
   ActionIcon,
@@ -40,7 +39,6 @@ import {
   IconUserSearch,
   IconX,
 } from '@tabler/icons-react';
-import { useMutation } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -85,23 +83,22 @@ export default function EditCandidate({
   const openRef = useRef<() => void>(null);
   const params = useParams();
 
-  const { mutate, isLoading, isError, error, reset } = useMutation({
-    mutationFn: (editCandidateInput: EditCandidateSchema) =>
-      editCandidate(editCandidateInput),
-    onSuccess: (_, { first_name, middle_name, last_name }) => {
-      notifications.show({
-        title: `${first_name}${
-          middle_name && ` ${middle_name}`
-        } ${last_name} created!`,
-        message: `Successfully updated candidate: ${first_name}${
-          middle_name && ` ${middle_name}`
-        } ${last_name}`,
-        icon: <IconCheck size="1.1rem" />,
-        autoClose: 5000,
-      });
-      close();
-    },
-  });
+  const { mutate, isLoading, isError, error, reset } =
+    api_client.election.editCandidate.useMutation({
+      onSuccess: () => {
+        notifications.show({
+          title: `${form.values.first_name}${
+            form.values.middle_name && ` ${form.values.middle_name}`
+          } ${form.values.last_name} created!`,
+          message: `Successfully updated candidate: ${form.values.first_name}${
+            form.values.middle_name && ` ${form.values.middle_name}`
+          } ${form.values.last_name}`,
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+      },
+    });
 
   const form = useForm<{
     first_name: string;
@@ -980,7 +977,7 @@ export default function EditCandidate({
                   title="Error"
                   color="red"
                 >
-                  {(error as Error)?.message}
+                  {error.message}
                 </Alert>
               )}
 

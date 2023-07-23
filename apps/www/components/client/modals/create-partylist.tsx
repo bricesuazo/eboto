@@ -1,7 +1,6 @@
 'use client';
 
-import { createPartylist } from '@/actions';
-import { CreatePartylistSchema } from '@/utils/zod-schema';
+import { api_client } from '@/shared/client/trpc';
 import {
   Alert,
   Button,
@@ -16,7 +15,6 @@ import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { IconCheck, IconFlag, IconLetterCase } from '@tabler/icons-react';
-import { useMutation } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 export default function CreatePartylist({
@@ -50,23 +48,18 @@ export default function CreatePartylist({
     },
   });
 
-  const { mutate, isLoading, isError, error } = useMutation({
-    mutationFn: (newPartylist: CreatePartylistSchema) =>
-      createPartylist({
-        name: newPartylist.name,
-        acronym: newPartylist.acronym,
-        election_id,
-      }),
-    onSuccess: (_, { name, acronym }) => {
-      notifications.show({
-        title: `${name} (${acronym}) created!`,
-        message: 'Successfully created partylist',
-        icon: <IconCheck size="1.1rem" />,
-        autoClose: 5000,
-      });
-      close();
-    },
-  });
+  const { mutate, isLoading, isError, error } =
+    api_client.election.createPartylist.useMutation({
+      onSuccess: () => {
+        notifications.show({
+          title: `${form.values.name} (${form.values.acronym}) created!`,
+          message: 'Successfully created partylist',
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+      },
+    });
 
   useEffect(() => {
     if (opened) form.reset();
@@ -124,7 +117,7 @@ export default function CreatePartylist({
                 title="Error"
                 variant="filled"
               >
-                {(error as Error)?.message}
+                {error.message}
               </Alert>
             )}
 

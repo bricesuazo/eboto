@@ -1,8 +1,5 @@
 import DashboardPosition from '@/components/client/pages/dashboard-position';
-import {
-  getAllPositionsByElectionId,
-  getElectionBySlug,
-} from '@/utils/election';
+import { api_server } from '@/shared/server/trpc';
 import { type Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -14,7 +11,13 @@ export default async function Page({
 }: {
   params: { electionDashboardSlug: string };
 }) {
-  const election = await getElectionBySlug(electionDashboardSlug);
-  const positions = await getAllPositionsByElectionId(election.id);
+  const election = await api_server.election.getElectionBySlug.fetch({
+    slug: electionDashboardSlug,
+  });
+  const positions = await api_server.election.getAllPositionsByElectionId.fetch(
+    {
+      election_id: election.id,
+    },
+  );
   return <DashboardPosition election={election} positions={positions} />;
 }

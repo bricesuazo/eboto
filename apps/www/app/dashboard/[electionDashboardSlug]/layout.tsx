@@ -1,6 +1,6 @@
 import DashboardLayout from '@/components/client/layouts/dashboard-layout';
 import { siteConfig } from '@/config/site';
-import { getElectionBySlug } from '@/utils/election';
+import { api_server } from '@/shared/server/trpc';
 import { type Metadata, type ResolvingMetadata } from 'next';
 
 export async function generateMetadata(
@@ -11,7 +11,9 @@ export async function generateMetadata(
   },
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
-  const election = await getElectionBySlug(params.electionDashboardSlug);
+  const election = await api_server.election.getElectionBySlug.fetch({
+    slug: params.electionDashboardSlug,
+  });
 
   return {
     title: {
@@ -24,11 +26,8 @@ export async function generateMetadata(
 
 export default async function ElectionDashboardLayout({
   children,
-  params: { slug },
 }: {
   children: React.ReactNode;
-  params: { slug: string };
 }) {
-  const election = await getElectionBySlug(slug);
   return <DashboardLayout>{children}</DashboardLayout>;
 }

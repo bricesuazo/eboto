@@ -1,6 +1,6 @@
 'use client';
 
-import { deleteVoter } from '@/actions';
+import { api_client } from '@/shared/client/trpc';
 import {
   ActionIcon,
   Alert,
@@ -13,7 +13,6 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconAlertCircle, IconCheck, IconTrash } from '@tabler/icons-react';
-import { useMutation } from '@tanstack/react-query';
 
 export default function DeleteVoter({
   voter,
@@ -28,31 +27,26 @@ export default function DeleteVoter({
 }) {
   const [opened, { open, close }] = useDisclosure(false);
 
-  const { mutate, isLoading, isError, error, reset } = useMutation({
-    mutationFn: () =>
-      deleteVoter({
-        election_id,
-        id: voter.id,
-        is_invited_voter: voter.account_status !== 'ACCEPTED' ? true : false,
-      }),
-    onSuccess: () => {
-      notifications.show({
-        title: 'Success!',
-        message: `Successfully deleted ${voter.email}`,
-        icon: <IconCheck size="1.1rem" />,
-        autoClose: 5000,
-      });
-      close();
-    },
-    onError: (error) => {
-      notifications.show({
-        title: 'Error',
-        message: (error as Error)?.message,
-        color: 'red',
-        autoClose: 3000,
-      });
-    },
-  });
+  const { mutate, isLoading, isError, error, reset } =
+    api_client.election.deleteVoter.useMutation({
+      onSuccess: () => {
+        notifications.show({
+          title: 'Success!',
+          message: `Successfully deleted ${voter.email}`,
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+      },
+      onError: (error) => {
+        notifications.show({
+          title: 'Error',
+          message: error.message,
+          color: 'red',
+          autoClose: 3000,
+        });
+      },
+    });
   return (
     <>
       <ActionIcon
@@ -80,14 +74,25 @@ export default function DeleteVoter({
               title="Error"
               variant="filled"
             >
-              {(error as Error)?.message}
+              {error.message}
             </Alert>
           )}
           <Group position="right" spacing="xs">
             <Button variant="default" onClick={close} disabled={isLoading}>
               Cancel
             </Button>
-            <Button color="red" loading={isLoading} onClick={() => mutate()}>
+            <Button
+              color="red"
+              loading={isLoading}
+              onClick={() =>
+                mutate({
+                  election_id,
+                  id: voter.id,
+                  is_invited_voter:
+                    voter.account_status !== 'ACCEPTED' ? true : false,
+                })
+              }
+            >
               Confirm Delete
             </Button>
           </Group>

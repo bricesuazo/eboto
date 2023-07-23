@@ -1,5 +1,4 @@
-import { createVoter } from '@/actions';
-import { CreateVoterSchema } from '@/utils/zod-schema';
+import { api_client } from '@/shared/client/trpc';
 import { type VoterField, voters } from '@eboto-mo/db/schema';
 import {
   Alert,
@@ -21,7 +20,6 @@ import {
   IconLetterCase,
   IconUserPlus,
 } from '@tabler/icons-react';
-import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
 export default function CreateVoter({
@@ -33,26 +31,26 @@ export default function CreateVoter({
 }) {
   const [opened, { open, close }] = useDisclosure(false);
 
-  const { mutate, isLoading, isError, error, reset } = useMutation({
-    mutationFn: (input: CreateVoterSchema) => createVoter(input),
-    onSuccess: async (_, { email }) => {
-      notifications.show({
-        title: `${email} added!`,
-        message: 'Successfully deleted partylist',
-        icon: <IconCheck size="1.1rem" />,
-        autoClose: 5000,
-      });
-      close();
-    },
-    onError: (error) => {
-      notifications.show({
-        title: 'Error',
-        message: (error as Error)?.message,
-        color: 'red',
-        autoClose: 3000,
-      });
-    },
-  });
+  const { mutate, isLoading, isError, error, reset } =
+    api_client.election.createVoter.useMutation({
+      onSuccess: async () => {
+        notifications.show({
+          title: `${form.values.email} added!`,
+          message: 'Successfully deleted partylist',
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+      },
+      onError: (error) => {
+        notifications.show({
+          title: 'Error',
+          message: error.message,
+          color: 'red',
+          autoClose: 3000,
+        });
+      },
+    });
 
   const [data, setData] = useState<
     {
@@ -184,7 +182,7 @@ export default function CreateVoter({
                 title="Error"
                 color="red"
               >
-                {(error as Error)?.message}
+                {error.message}
               </Alert>
             )}
             <Group position="right" spacing="xs">

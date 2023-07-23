@@ -1,5 +1,5 @@
 import { siteConfig } from '@/config/site';
-import { getUser } from '@/utils/auth';
+import { api_server } from '@/shared/server/trpc';
 import { type ColorScheme } from '@mantine/core';
 import { Analytics } from '@vercel/analytics/react';
 import { type Metadata } from 'next';
@@ -66,20 +66,19 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getUser();
+  const user = await api_server.auth.getUser.fetch();
+
   return (
     <html lang="en">
-      <body className={font.className}>
-        <RootLayoutClient
-          theme={
-            (cookies().get('theme')?.value as ColorScheme | null) ?? 'light'
-          }
-          user={user}
-        >
+      <RootLayoutClient
+        theme={(cookies().get('theme')?.value as ColorScheme | null) ?? 'light'}
+        user={user}
+      >
+        <body className={font.className}>
           {children}
           <Analytics />
-        </RootLayoutClient>
-      </body>
+        </body>
+      </RootLayoutClient>
     </html>
   );
 }

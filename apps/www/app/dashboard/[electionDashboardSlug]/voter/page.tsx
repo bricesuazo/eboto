@@ -1,4 +1,5 @@
 import DashboardVoter from '@/components/client/pages/dashboard-voter';
+import { api_server } from '@/shared/server/trpc';
 import { db } from '@eboto-mo/db';
 import { type Metadata } from 'next';
 
@@ -17,39 +18,9 @@ export default async function Page({
       voter_fields: true,
     },
   });
-  const voters = await db.query.voters.findMany({
-    where: (voters, { eq }) => eq(voters.election_id, election.id),
 
-    with: {
-      user: true,
-      votes: {
-        limit: 1,
-      },
-    },
+  const voters = await api_server.election.getVotersByElectionId.fetch({
+    election_id: election.id,
   });
-  const invitedVoters = await db.query.invited_voters.findMany({
-    where: (invited_voters, { eq }) =>
-      eq(invited_voters.election_id, election.id),
-  });
-
-  const parsedVoters = voters
-    .map((voter) => ({
-      id: voter.id,
-      email: voter.user.email,
-      account_status: 'ACCEPTED',
-      created_at: voter.created_at,
-      has_voted: voter.votes.length > 0,
-      field: voter.field,
-    }))
-    .concat(
-      invitedVoters.map((voter) => ({
-        id: voter.id,
-        email: voter.email,
-        account_status: voter.status,
-        created_at: voter.created_at,
-        has_voted: false,
-        field: voter.field,
-      })),
-    );
-  return <DashboardVoter election={election} voters={parsedVoters} />;
+  return <DashboardVoter election={election} voters={voters} />;
 }

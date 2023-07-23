@@ -1,10 +1,6 @@
 'use client';
 
-import { deleteSingleVoterField, updateVoterField } from '@/actions';
-import {
-  DeleteSingleVoterFieldSchema,
-  UpdateVoterFieldSchema,
-} from '@/utils/zod-schema';
+import { api_client } from '@/shared/client/trpc';
 import type { Election, VoterField } from '@eboto-mo/db/schema';
 import {
   ActionIcon,
@@ -26,7 +22,6 @@ import {
   IconTrash,
   IconUsersGroup,
 } from '@tabler/icons-react';
-import { useMutation } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 type Field = { id: string; name: string; type: 'fromDb' | 'fromInput' };
@@ -46,26 +41,26 @@ export default function UpdateVoterField({
 }) {
   const [opened, { open, close }] = useDisclosure(false);
 
-  const { mutate, isLoading, isError, error, reset } = useMutation({
-    mutationFn: (input: UpdateVoterFieldSchema) => updateVoterField(input),
-    onSuccess: async () => {
-      notifications.show({
-        title: ``,
-        message: 'Successfully deleted partylist',
-        icon: <IconCheck size="1.1rem" />,
-        autoClose: 5000,
-      });
-      close();
-    },
-    onError: (error) => {
-      notifications.show({
-        title: 'Error',
-        message: (error as Error)?.message,
-        color: 'red',
-        autoClose: 3000,
-      });
-    },
-  });
+  const { mutate, isLoading, isError, error, reset } =
+    api_client.election.updateVoterField.useMutation({
+      onSuccess: async () => {
+        notifications.show({
+          title: ``,
+          message: 'Successfully deleted partylist',
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+      },
+      onError: (error) => {
+        notifications.show({
+          title: 'Error',
+          message: error.message,
+          color: 'red',
+          autoClose: 3000,
+        });
+      },
+    });
 
   const form = useForm<FormType>({
     initialValues: {
@@ -176,7 +171,7 @@ export default function UpdateVoterField({
                 title="Error"
                 variant="filled"
               >
-                {(error as Error)?.message}
+                {error.message}
               </Alert>
             )}
 
@@ -208,24 +203,23 @@ function VoterFieldInput({
   field: Field;
   election_id: string;
 }) {
-  const { mutate, isLoading, isError, error, reset } = useMutation({
-    mutationFn: (input: DeleteSingleVoterFieldSchema) =>
-      deleteSingleVoterField(input),
-    onSuccess: async () => {
-      form.setFieldValue(
-        'field',
-        form.values.field.filter((f) => f.id !== field.id),
-      );
-    },
-    onError: (error) => {
-      notifications.show({
-        title: 'Error',
-        message: (error as Error)?.message,
-        color: 'red',
-        autoClose: 3000,
-      });
-    },
-  });
+  const { mutate, isLoading, isError, error, reset } =
+    api_client.election.updateVoterField.useMutation({
+      onSuccess: async () => {
+        form.setFieldValue(
+          'field',
+          form.values.field.filter((f) => f.id !== field.id),
+        );
+      },
+      onError: (error) => {
+        notifications.show({
+          title: 'Error',
+          message: error.message,
+          color: 'red',
+          autoClose: 3000,
+        });
+      },
+    });
   return (
     <Flex gap="xs" align="end">
       <TextInput
@@ -261,7 +255,7 @@ function VoterFieldInput({
           if (field.type === 'fromDb') {
             mutate({
               election_id,
-              field_id: field.id,
+              fields: form.values.field,
             });
           }
         }}

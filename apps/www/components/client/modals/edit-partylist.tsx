@@ -1,8 +1,6 @@
-import { editPartylist } from '@/actions';
-import {
-  type EditPartylistSchema,
-  editPartylistSchema,
-} from '@/utils/zod-schema';
+'use client';
+
+import { api_client } from '@/shared/client/trpc';
 import { Partylist } from '@eboto-mo/db/schema';
 import {
   Alert,
@@ -21,12 +19,11 @@ import {
   IconCheck,
   IconLetterCase,
 } from '@tabler/icons-react';
-import { useMutation } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 export default function EditPartylist({ partylist }: { partylist: Partylist }) {
   const [opened, { open, close }] = useDisclosure(false);
-  const form = useForm<EditPartylistSchema>({
+  const form = useForm({
     initialValues: {
       id: partylist.id,
       election_id: partylist.election_id,
@@ -56,37 +53,28 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
     },
   });
 
-  const { mutate, isLoading, isError, error, reset } = useMutation({
-    mutationFn: (editPartylistInput: EditPartylistSchema) =>
-      editPartylist({
-        id: partylist.id,
-        election_id: partylist.election_id,
-        name: editPartylistInput.name,
-        oldAcronym: partylist.acronym,
-        newAcronym: editPartylistInput.newAcronym,
-        description: editPartylistInput.description,
-        logo_link: editPartylistInput.logo_link,
-      }),
-    onSuccess: async (_, data) => {
-      notifications.show({
-        title: `${data.name} (${data.newAcronym}) updated.`,
-        icon: <IconCheck size="1.1rem" />,
-        message: 'Your changes have been saved.',
-        autoClose: 3000,
-      });
-      close();
+  const { mutate, isLoading, isError, error, reset } =
+    api_client.election.editPartylist.useMutation({
+      onSuccess: async (_, data) => {
+        notifications.show({
+          title: `${form.values.name} (${form.values.newAcronym}) updated.`,
+          icon: <IconCheck size="1.1rem" />,
+          message: 'Your changes have been saved.',
+          autoClose: 3000,
+        });
+        close();
 
-      form.resetDirty(form.values);
-    },
-    onError: (error) => {
-      notifications.show({
-        title: 'Error',
-        message: (error as Error)?.message,
-        color: 'red',
-        autoClose: 3000,
-      });
-    },
-  });
+        form.resetDirty(form.values);
+      },
+      onError: (error) => {
+        notifications.show({
+          title: 'Error',
+          message: error.message,
+          color: 'red',
+          autoClose: 3000,
+        });
+      },
+    });
 
   useEffect(() => {
     if (opened) {
@@ -148,7 +136,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
                 title="Error"
                 variant="filled"
               >
-                {(error as Error)?.message}
+                {error.message}
               </Alert>
             )}
 

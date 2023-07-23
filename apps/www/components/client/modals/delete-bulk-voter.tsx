@@ -1,6 +1,6 @@
 'use client';
 
-import { deleteBulkVoter } from '@/actions';
+import { api_client } from '@/shared/client/trpc';
 import {
   ActionIcon,
   Alert,
@@ -33,19 +33,19 @@ export default function DeleteBulkVoter({
 }) {
   const [opened, { open, close }] = useDisclosure();
 
-  const { mutate, isLoading, isError, error } = useMutation({
-    mutationFn: () => deleteBulkVoter({ election_id, voters }),
-    onSuccess: ({ count }) => {
-      notifications.show({
-        title: `${count} voter(s) successfully deleted!`,
-        message: `Successfully deleted voters`,
-        icon: <IconCheck size="1.1rem" />,
-        autoClose: 5000,
-      });
-      close();
-      onSuccess();
-    },
-  });
+  const { mutate, isLoading, isError, error } =
+    api_client.election.deleteBulkVoter.useMutation({
+      onSuccess: ({ count }) => {
+        notifications.show({
+          title: `${count} voter(s) successfully deleted!`,
+          message: `Successfully deleted voters`,
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+        onSuccess();
+      },
+    });
 
   return (
     <>
@@ -101,14 +101,23 @@ export default function DeleteBulkVoter({
               title="Error"
               variant="filled"
             >
-              {(error as Error)?.message}
+              {error.message}
             </Alert>
           )}
           <Group position="right" spacing="xs">
             <Button variant="default" onClick={close} disabled={isLoading}>
               Cancel
             </Button>
-            <Button color="red" loading={isLoading} onClick={() => mutate()}>
+            <Button
+              color="red"
+              loading={isLoading}
+              onClick={() =>
+                mutate({
+                  election_id,
+                  voters,
+                })
+              }
+            >
               Confirm Delete
             </Button>
           </Group>

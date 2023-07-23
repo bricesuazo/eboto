@@ -1,6 +1,6 @@
 'use client';
 
-import { uploadBulkVoter } from '@/actions';
+import { api_client } from '@/shared/client/trpc';
 import { VoterField, voters } from '@eboto-mo/db/schema';
 import {
   ActionIcon,
@@ -25,10 +25,8 @@ import {
   IconFileSpreadsheet,
   IconTrash,
   IconUpload,
-  IconUserMinus,
   IconX,
 } from '@tabler/icons-react';
-import { useMutation } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import Balancer from 'react-wrap-balancer';
 import readXlsxFile from 'read-excel-file';
@@ -43,22 +41,18 @@ export default function UploadBulkVoter({
 }) {
   const [opened, { open, close }] = useDisclosure();
 
-  const { mutate, isLoading, isError, error, reset } = useMutation({
-    mutationFn: () =>
-      uploadBulkVoter({
-        election_id,
-        voters: selectedFiles.map((f) => f.voters).flat(),
-      }),
-    onSuccess: ({ count }) => {
-      notifications.show({
-        title: `${count} voter(s) added!`,
-        message: 'Successfully added voters',
-        icon: <IconCheck size="1.1rem" />,
-        autoClose: 5000,
-      });
-      close();
-    },
-  });
+  const { mutate, isLoading, isError, error, reset } =
+    api_client.election.uploadBulkVoter.useMutation({
+      onSuccess: ({ count }) => {
+        notifications.show({
+          title: `${count} voter(s) added!`,
+          message: 'Successfully added voters',
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+      },
+    });
 
   const theme = useMantineTheme();
   const [selectedFiles, setSelectedFiles] = useState<
@@ -298,7 +292,7 @@ export default function UploadBulkVoter({
               color="red"
               title="Error"
             >
-              {(error as Error)?.message}
+              {error.message}
             </Alert>
           )}
 
@@ -360,7 +354,12 @@ export default function UploadBulkVoter({
                 type="submit"
                 disabled={selectedFiles.length === 0}
                 loading={isLoading}
-                onClick={() => mutate()}
+                onClick={() =>
+                  mutate({
+                    election_id,
+                    voters: selectedFiles.map((f) => f.voters).flat(),
+                  })
+                }
               >
                 Upload
               </Button>

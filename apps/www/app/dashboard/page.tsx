@@ -1,6 +1,5 @@
-import CreateElection from '@/components/client/modals/create-election';
 import DashboardPageClient from '@/components/client/pages/dashboard';
-import { getSession } from '@/utils/auth';
+import { api_server } from '@/shared/server/trpc';
 import { db } from '@eboto-mo/db';
 import {
   type Commissioner,
@@ -10,7 +9,6 @@ import {
   elections,
   voters,
 } from '@eboto-mo/db/schema';
-import { and, eq, not } from 'drizzle-orm';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -19,11 +17,12 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const session = await getSession();
+  const session = await api_server.auth.getSession.fetch();
 
   const electionsAsCommissioner: (Commissioner & { election: Election })[] =
     await db.query.commissioners.findMany({
-      where: (commissioners, { eq }) => eq(commissioners.user_id, session.id),
+      where: (commissioners, { eq }) =>
+        eq(commissioners.user_id, session.user.id),
       with: {
         election: true,
       },
@@ -32,12 +31,12 @@ export default async function Page() {
   const electionsAsVoter: (Voter & {
     election: Election & { votes: Vote[] };
   })[] = await db.query.voters.findMany({
-    where: (voters, { eq }) => eq(voters.user_id, session.id),
+    where: (voters, { eq }) => eq(voters.user_id, session.user.id),
     with: {
       election: {
         with: {
           votes: {
-            where: (votes, { eq }) => eq(votes.voter_id, session.id),
+            where: (votes, { eq }) => eq(votes.voter_id, session.user.id),
           },
         },
       },

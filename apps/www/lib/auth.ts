@@ -66,7 +66,7 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session }) {
       const user = await db.query.users.findFirst({
-        where: (users, { eq }) => eq(users.email, session.user.email),
+        where: (users, { eq }) => eq(users.id, session.user.id),
         columns: {
           id: true,
         },

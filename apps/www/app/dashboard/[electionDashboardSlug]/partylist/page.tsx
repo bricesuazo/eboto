@@ -1,8 +1,5 @@
 import DashboardPartylist from '@/components/client/pages/dashboard-partylist';
-import {
-  getAllPartylistsWithoutINDByElectionId,
-  getElectionBySlug,
-} from '@/utils/election';
+import { api_server } from '@/shared/server/trpc';
 import { type Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -14,7 +11,12 @@ export default async function Page({
 }: {
   params: { electionDashboardSlug: string };
 }) {
-  const election = await getElectionBySlug(electionDashboardSlug);
-  const partylists = await getAllPartylistsWithoutINDByElectionId(election.id);
+  const election = await api_server.election.getElectionBySlug.fetch({
+    slug: electionDashboardSlug,
+  });
+  const partylists =
+    await api_server.election.getAllPartylistsWithoutINDByElectionId.fetch({
+      election_id: election.id,
+    });
   return <DashboardPartylist election={election} partylists={partylists} />;
 }

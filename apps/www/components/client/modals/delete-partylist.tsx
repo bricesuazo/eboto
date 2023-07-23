@@ -1,37 +1,38 @@
-import { deletePartylist } from '@/actions';
+'use client';
+
+import { api_client } from '@/shared/client/trpc';
 import { type Partylist } from '@eboto-mo/db/schema';
 import { Alert, Button, Group, Mark, Modal, Stack, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
 import { IconAlertCircle } from '@tabler/icons-react';
-import { useMutation } from '@tanstack/react-query';
 
 export default function DeletePartylist({
   partylist,
 }: {
   partylist: Partylist;
 }) {
-  const { mutate, isLoading, isError, error, reset } = useMutation({
-    mutationFn: (id: string) => deletePartylist(id),
-    onSuccess: async () => {
-      notifications.show({
-        title: `${partylist.name} (${partylist.acronym}) deleted!`,
-        message: 'Successfully deleted partylist',
-        icon: <IconCheck size="1.1rem" />,
-        autoClose: 5000,
-      });
-    },
-    onError: (error) => {
-      notifications.show({
-        title: 'Error',
-        message: (error as Error)?.message,
-        color: 'red',
-        autoClose: 3000,
-      });
-    },
-    onMutate: () => close(),
-  });
+  const { mutate, isLoading, isError, error, reset } =
+    api_client.election.deletePartylist.useMutation({
+      onSuccess: async () => {
+        notifications.show({
+          title: `${partylist.name} (${partylist.acronym}) deleted!`,
+          message: 'Successfully deleted partylist',
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+      },
+      onError: (error) => {
+        notifications.show({
+          title: 'Error',
+          message: error.message,
+          color: 'red',
+          autoClose: 3000,
+        });
+      },
+      onMutate: () => close(),
+    });
 
   const [opened, { open, close }] = useDisclosure(false);
   return (
@@ -65,7 +66,7 @@ export default function DeletePartylist({
               title="Error"
               variant="filled"
             >
-              {(error as Error)?.message}
+              {error.message}
             </Alert>
           )}
           <Group position="right" spacing="xs">
@@ -75,7 +76,12 @@ export default function DeletePartylist({
             <Button
               color="red"
               loading={isLoading}
-              onClick={() => mutate(partylist.id)}
+              onClick={() =>
+                mutate({
+                  partylist_id: partylist.id,
+                  election_id: partylist.election_id,
+                })
+              }
               type="submit"
             >
               Confirm Delete

@@ -1,6 +1,6 @@
 'use client';
 
-import { editVoter } from '@/actions';
+import { api_client } from '@/shared/client/trpc';
 import type { VoterField } from '@eboto-mo/db/schema';
 import {
   ActionIcon,
@@ -23,7 +23,6 @@ import {
   IconEdit,
   IconLetterCase,
 } from '@tabler/icons-react';
-import { useMutation } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
 export default function EditVoter({
@@ -75,25 +74,18 @@ export default function EditVoter({
     },
   });
 
-  const { mutate, isLoading, isError, error, reset } = useMutation({
-    mutationFn: () =>
-      editVoter({
-        id: voter.id,
-        election_id,
-        field: form.values.field,
-        email: form.values.email,
-        account_status: voter.account_status,
-      }),
-    onSuccess: () => {
-      notifications.show({
-        title: 'Success',
-        message: 'Successfully updated voter!',
-        icon: <IconCheck size="1.1rem" />,
-        autoClose: 5000,
-      });
-      close();
-    },
-  });
+  const { mutate, isLoading, isError, error, reset } =
+    api_client.election.editVoter.useMutation({
+      onSuccess: () => {
+        notifications.show({
+          title: 'Success',
+          message: 'Successfully updated voter!',
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+      },
+    });
 
   useEffect(() => {
     if (opened) {
@@ -132,8 +124,14 @@ export default function EditVoter({
         title={<Text weight={600}>Edit voter - {voter.email}</Text>}
       >
         <form
-          onSubmit={form.onSubmit(() => {
-            mutate();
+          onSubmit={form.onSubmit((values) => {
+            mutate({
+              id: voter.id,
+              election_id,
+              field: values.field,
+              email: values.email,
+              account_status: voter.account_status,
+            });
           })}
         >
           <Stack spacing="sm">
@@ -193,7 +191,7 @@ export default function EditVoter({
                 title="Error"
                 color="red"
               >
-                {(error as Error)?.message}
+                {error.message}
               </Alert>
             )}
             <Group position="right" spacing="xs">

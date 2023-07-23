@@ -2,9 +2,8 @@
 
 import CreateElection from '@/components/client/modals/create-election';
 import { electionDashboardNavbar } from '@/constants';
+import { api_client } from '@/shared/client/trpc';
 import { useStore } from '@/store';
-import { getAllMyElections } from '@/utils/election';
-import { Commissioner, type Election } from '@eboto-mo/db/schema';
 import {
   Box,
   Button,
@@ -17,14 +16,11 @@ import {
   createStyles,
   getStylesRef,
 } from '@mantine/core';
-import { useDidUpdate, useDisclosure } from '@mantine/hooks';
 import {
   IconExternalLink,
   IconFingerprint,
   IconLogout,
-  IconPlus,
 } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
 import { signOut } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -101,10 +97,8 @@ export default function NavbarComponent() {
     data: elections,
     isLoading,
     error,
-  } = useQuery<(Commissioner & { election: Election })[]>({
-    queryKey: ['getAllMyElections'],
-    queryFn: async () => await getAllMyElections(),
-  });
+  } = api_client.election.getAllMyElections.useQuery();
+
   const currentElection = elections?.find(
     (election) =>
       election.election.slug === params.electionDashboardSlug.toString(),
@@ -137,7 +131,7 @@ export default function NavbarComponent() {
             placeholder={isLoading ? 'Loading...' : 'Select election'}
             iconWidth={48}
             disabled={isLoading}
-            error={(error as Error)?.message}
+            error={error.message}
             icon={
               currentElection && currentElection.logo ? (
                 <Image

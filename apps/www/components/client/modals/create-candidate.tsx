@@ -1,15 +1,7 @@
 'use client';
 
-import { createCandidate } from '@/actions';
-import { CreateCandidateSchema } from '@/utils/zod-schema';
-import {
-  type Candidate,
-  type Partylist,
-  type Platform,
-  type Position,
-  partylists,
-  positions,
-} from '@eboto-mo/db/schema';
+import { api_client } from '@/shared/client/trpc';
+import { type Partylist, type Position } from '@eboto-mo/db/schema';
 import {
   Alert,
   Box,
@@ -43,7 +35,6 @@ import {
   IconUserSearch,
   IconX,
 } from '@tabler/icons-react';
-import { useMutation } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
@@ -62,6 +53,8 @@ export default function CreateCandidate({
   const router = useRouter();
   const params = useParams();
   const openRef = useRef<() => void>(null);
+
+  // TODO: Implement this
 
   //   const uploadImageMutation = api.candidate.uploadImage.useMutation();
 
@@ -100,23 +93,22 @@ export default function CreateCandidate({
   //     },
   //   });
 
-  const { mutate, isLoading, isError, error, reset } = useMutation({
-    mutationFn: (newCandidate: CreateCandidateSchema) =>
-      createCandidate(newCandidate),
-    onSuccess: (_, { first_name, middle_name, last_name }) => {
-      notifications.show({
-        title: `${first_name}${
-          middle_name && ` ${middle_name}`
-        } ${last_name} created!`,
-        message: `Successfully created candidate: ${first_name}${
-          middle_name && ` ${middle_name}`
-        } ${last_name}`,
-        icon: <IconCheck size="1.1rem" />,
-        autoClose: 5000,
-      });
-      close();
-    },
-  });
+  const { mutate, isLoading, isError, error, reset } =
+    api_client.election.createCandidate.useMutation({
+      onSuccess: () => {
+        notifications.show({
+          title: `${form.values.first_name}${
+            form.values.middle_name && ` ${form.values.middle_name}`
+          } ${form.values.last_name} created!`,
+          message: `Successfully created candidate: ${form.values.first_name}${
+            form.values.middle_name && ` ${form.values.middle_name}`
+          } ${form.values.last_name}`,
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+      },
+    });
 
   const form = useForm<{
     first_name: string;
@@ -911,7 +903,7 @@ export default function CreateCandidate({
                   title="Error"
                   color="red"
                 >
-                  {(error as Error)?.message}
+                  {error.message}
                 </Alert>
               )}
 

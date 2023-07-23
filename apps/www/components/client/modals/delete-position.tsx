@@ -1,36 +1,35 @@
 'use client';
 
-import { deletePosition } from '@/actions';
+import { api_client } from '@/shared/client/trpc';
 import { type Position } from '@eboto-mo/db/schema';
 import { Alert, Button, Group, Mark, Modal, Stack, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
-import { useMutation } from '@tanstack/react-query';
 
 export default function DeletePosition({ position }: { position: Position }) {
   const [opened, { open, close }] = useDisclosure(false);
 
-  const { mutate, isLoading, isError, error, reset } = useMutation({
-    mutationFn: (id: string) => deletePosition(id),
-    onSuccess: async () => {
-      notifications.show({
-        title: `${position.name} deleted!`,
-        message: 'Successfully deleted position',
-        icon: <IconCheck size="1.1rem" />,
-        autoClose: 5000,
-      });
-      close();
-    },
-    onError: (error) => {
-      notifications.show({
-        title: 'Error',
-        message: (error as Error)?.message,
-        color: 'red',
-        autoClose: 3000,
-      });
-    },
-  });
+  const { mutate, isLoading, isError, error, reset } =
+    api_client.election.deletePosition.useMutation({
+      onSuccess: async () => {
+        notifications.show({
+          title: `${position.name} deleted!`,
+          message: 'Successfully deleted position',
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+      },
+      onError: (error) => {
+        notifications.show({
+          title: 'Error',
+          message: error.message,
+          color: 'red',
+          autoClose: 3000,
+        });
+      },
+    });
   return (
     <>
       <Button onClick={open} variant="light" color="red" size="sm" compact>
@@ -59,7 +58,7 @@ export default function DeletePosition({ position }: { position: Position }) {
               title="Error"
               variant="filled"
             >
-              {(error as Error)?.message}
+              {error.message}
             </Alert>
           )}
           <Group position="right" spacing="xs">
@@ -69,7 +68,12 @@ export default function DeletePosition({ position }: { position: Position }) {
             <Button
               color="red"
               loading={isLoading}
-              onClick={() => mutate(position.id)}
+              onClick={() =>
+                mutate({
+                  position_id: position.id,
+                  election_id: position.election_id,
+                })
+              }
               type="submit"
             >
               Confirm Delete

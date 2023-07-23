@@ -1,6 +1,5 @@
 'use client';
 
-import { refreshVoterPage } from '@/actions';
 import CreateVoter from '@/components/client/modals/create-voter';
 import DeleteBulkVoter from '@/components/client/modals/delete-bulk-voter';
 import DeleteVoter from '@/components/client/modals/delete-voter';
@@ -8,6 +7,7 @@ import EditVoter from '@/components/client/modals/edit-voter';
 import InviteAllAddedVoters from '@/components/client/modals/invite-all-added-voters';
 import UpdateVoterField from '@/components/client/modals/update-voter-field';
 import UploadBulkVoter from '@/components/client/modals/upload-bulk-voter';
+import { api_client } from '@/shared/client/trpc';
 import { isElectionOngoing } from '@/utils';
 import type { Election, VoterField } from '@eboto-mo/db/schema';
 import {
@@ -20,14 +20,7 @@ import {
   Text,
   Tooltip,
 } from '@mantine/core';
-import {
-  IconEdit,
-  IconRefresh,
-  IconTrash,
-  IconUpload,
-  IconUserMinus,
-} from '@tabler/icons-react';
-import { useMutation } from '@tanstack/react-query';
+import { IconRefresh } from '@tabler/icons-react';
 import {
   type MRT_ColumnDef,
   type MRT_RowSelectionState,
@@ -88,9 +81,8 @@ export default function DashboardVoter({
     [election.voter_fields],
   );
 
-  const { mutate, isLoading } = useMutation({
-    mutationFn: refreshVoterPage,
-  });
+  const context = api_client.useContext();
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   return (
     <Box>
@@ -185,9 +177,13 @@ export default function DashboardVoter({
                 <div>
                   <ActionIcon
                     variant="light"
-                    onClick={() => mutate()}
-                    loading={isLoading}
+                    onClick={async () => {
+                      setIsRefreshing(true);
+                      await context.election.getVotersByElectionId.invalidate();
+                      setIsRefreshing(false);
+                    }}
                     size="lg"
+                    loading={isRefreshing}
                     sx={(theme) => ({
                       [theme.fn.largerThan('xs')]: {
                         display: 'none',
@@ -201,8 +197,12 @@ export default function DashboardVoter({
                   </ActionIcon>
                   <Button
                     variant="light"
-                    onClick={() => mutate()}
-                    loading={isLoading}
+                    onClick={async () => {
+                      setIsRefreshing(true);
+                      await context.election.getVotersByElectionId.invalidate();
+                      setIsRefreshing(false);
+                    }}
+                    loading={isRefreshing}
                     leftIcon={<IconRefresh size="1.25rem" />}
                     sx={(theme) => ({
                       [theme.fn.smallerThan('xs')]: {

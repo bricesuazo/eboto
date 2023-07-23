@@ -1,7 +1,6 @@
 'use client';
 
-import { editPartylist, editPosition } from '@/actions';
-import { EditPartylistSchema, EditPositionSchema } from '@/utils/zod-schema';
+import { api_client } from '@/shared/client/trpc';
 import { type Position } from '@eboto-mo/db/schema';
 import {
   Alert,
@@ -19,7 +18,6 @@ import { hasLength, useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconCheck, IconLetterCase } from '@tabler/icons-react';
-import { useMutation } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 export default function EditPosition({
@@ -70,33 +68,26 @@ export default function EditPosition({
     },
   });
 
-  const { mutate, isLoading, isError, error, reset } = useMutation({
-    mutationFn: (editPositionInput: EditPositionSchema) =>
-      editPosition({
-        id: position.id,
-        election_id: position.election_id,
-        name: editPositionInput.name,
-        description: editPositionInput.description,
-        order: position.order,
-      }),
-    onSuccess: async (_, { name }) => {
-      notifications.show({
-        title: `${name} updated!`,
-        message: 'Successfully updated position',
-        icon: <IconCheck size="1.1rem" />,
-        autoClose: 5000,
-      });
-      close();
-    },
-    onError: (error) => {
-      notifications.show({
-        title: 'Error',
-        message: (error as Error)?.message,
-        color: 'red',
-        autoClose: 3000,
-      });
-    },
-  });
+  const { mutate, isLoading, isError, error, reset } =
+    api_client.election.editPosition.useMutation({
+      onSuccess: async () => {
+        notifications.show({
+          title: `${form.values.name} updated!`,
+          message: 'Successfully updated position',
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+      },
+      onError: (error) => {
+        notifications.show({
+          title: 'Error',
+          message: error.message,
+          color: 'red',
+          autoClose: 3000,
+        });
+      },
+    });
 
   useEffect(() => {
     if (opened) {
@@ -163,7 +154,7 @@ export default function EditPosition({
 
             {isError && (
               <Alert color="red" title="Error">
-                {(error as Error)?.message}
+                {error.message}
               </Alert>
             )}
 

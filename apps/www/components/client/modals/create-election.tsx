@@ -1,11 +1,7 @@
 'use client';
 
-import { createElection } from '@/actions';
 import { positionTemplate } from '@/constants';
-import {
-  type CreateElectionSchema,
-  createElectionSchema,
-} from '@/utils/zod-schema';
+import { api_client } from '@/shared/client/trpc';
 import {
   Alert,
   Button,
@@ -24,12 +20,10 @@ import { useDisclosure } from '@mantine/hooks';
 import {
   IconAlertCircle,
   IconCalendar,
-  IconClock,
   IconLetterCase,
   IconPlus,
   IconTemplate,
 } from '@tabler/icons-react';
-import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
@@ -94,20 +88,13 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
     }
   }, [opened]);
 
-  const { mutate, isLoading, isError, error } = useMutation({
-    mutationFn: (newElection: CreateElectionSchema) =>
-      createElection({
-        name: newElection.name,
-        slug: newElection.slug,
-        start_date: newElection.start_date,
-        end_date: newElection.end_date,
-        template: newElection.template,
-      }),
-    onSuccess: (_, { slug }) => {
-      router.push(`/dashboard/${slug}`);
-      close();
-    },
-  });
+  const { mutate, isLoading, isError, error } =
+    api_client.election.createElection.useMutation({
+      onSuccess: () => {
+        router.push(`/dashboard/${form.values.slug}`);
+        close();
+      },
+    });
 
   return (
     <>
@@ -122,11 +109,10 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
       >
         <form
           onSubmit={form.onSubmit((value) => {
-            const parsed = createElectionSchema.parse({
+            mutate({
               ...value,
               template: parseInt(value.template),
             });
-            mutate(parsed);
           })}
         >
           <Stack spacing="sm">
@@ -229,7 +215,7 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
                 title="Error"
                 color="red"
               >
-                {(error as Error).message}
+                {error.message}
               </Alert>
             )}
 

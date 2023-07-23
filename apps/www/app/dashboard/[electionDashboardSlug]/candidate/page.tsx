@@ -1,10 +1,5 @@
 import DashboardCandidate from '@/components/client/pages/dashboard-candidate';
-import {
-  getAllCandidatesByElectionId,
-  getAllPartylistsByElectionId,
-  getAllPositionsByElectionId,
-  getElectionBySlug,
-} from '@/utils/election';
+import { api_server } from '@/shared/server/trpc';
 import { type Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -16,12 +11,20 @@ export default async function Page({
 }: {
   params: { electionDashboardSlug: string };
 }) {
-  const election = await getElectionBySlug(electionDashboardSlug);
-  const positionsWithCandidates = await getAllCandidatesByElectionId(
-    election.id,
+  const election = await api_server.election.getElectionBySlug.fetch({
+    slug: electionDashboardSlug,
+  });
+  const positionsWithCandidates =
+    await api_server.election.getAllCandidatesByElectionId.fetch({
+      election_id: election.id,
+    });
+  const partylists =
+    await api_server.election.getAllPartylistsByElectionId.fetch({
+      election_id: election.id,
+    });
+  const positions = await api_server.election.getAllPositionsByElectionId.fetch(
+    { election_id: election.id },
   );
-  const partylists = await getAllPartylistsByElectionId(election.id);
-  const positions = await getAllPositionsByElectionId(election.id);
 
   return (
     <DashboardCandidate

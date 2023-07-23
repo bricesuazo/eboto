@@ -1,7 +1,6 @@
 'use client';
 
-import { createPosition } from '@/actions';
-import { CreatePositionSchema } from '@/utils/zod-schema';
+import { api_client } from '@/shared/client/trpc';
 import {
   Alert,
   Button,
@@ -23,7 +22,6 @@ import {
   IconLetterCase,
   IconReplace,
 } from '@tabler/icons-react';
-import { useMutation } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 export default function CreatePosition({
@@ -33,25 +31,18 @@ export default function CreatePosition({
   election_id: string;
   order: number;
 }) {
-  const { mutate, isLoading, isError, error, reset } = useMutation({
-    mutationFn: (newPosition: CreatePositionSchema) =>
-      createPosition({
-        name: newPosition.name,
-        election_id,
-        order,
-        min: form.values.isSingle ? newPosition.min : undefined,
-        max: form.values.isSingle ? newPosition.max : undefined,
-      }),
-    onSuccess: async (_, { name }) => {
-      notifications.show({
-        title: `${name} created!`,
-        message: 'Successfully created position',
-        icon: <IconCheck size="1.1rem" />,
-        autoClose: 5000,
-      });
-      close();
-    },
-  });
+  const { mutate, isLoading, isError, error, reset } =
+    api_client.election.createPosition.useMutation({
+      onSuccess: async () => {
+        notifications.show({
+          title: `${form.values.name} created!`,
+          message: 'Successfully created position',
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+      },
+    });
 
   const [opened, { open, close }] = useDisclosure(false);
   const form = useForm({
@@ -178,7 +169,7 @@ export default function CreatePosition({
                 title="Error"
                 color="red"
               >
-                {(error as Error)?.message}
+                {error.message}
               </Alert>
             )}
             <Group position="right" spacing="xs">

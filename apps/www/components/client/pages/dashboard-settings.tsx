@@ -1,7 +1,6 @@
 'use client';
 
-import { updateElection } from '@/actions';
-import { type EditElectionSchema } from '@/utils/zod-schema';
+import { api_client } from '@/shared/client/trpc';
 import { type Election, type Publicity, publicity } from '@eboto-mo/db/schema';
 import {
   Alert,
@@ -44,44 +43,33 @@ export default function DashboardSettings({
 }) {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { mutate, isLoading, isError, error } = useMutation({
-    mutationFn: (updateElectionInput: EditElectionSchema) =>
-      updateElection({
-        id: updateElectionInput.id,
-        description: updateElectionInput.description,
-        name: updateElectionInput.name,
-        oldSlug: election.slug,
-        newSlug: updateElectionInput.newSlug,
-        start_date: updateElectionInput.start_date,
-        end_date: updateElectionInput.end_date,
-        logo: updateElectionInput.logo,
-        publicity: updateElectionInput.publicity,
-      }),
-    onSuccess: async () => {
-      if (form.values.newSlug !== election.slug) {
-        router.push(`/dashboard/${form.values.newSlug}/settings`);
-      }
+  const { mutate, isLoading, isError, error } =
+    api_client.election.editElection.useMutation({
+      onSuccess: async () => {
+        if (form.values.newSlug !== election.slug) {
+          router.push(`/dashboard/${form.values.newSlug}/settings`);
+        }
 
-      queryClient.invalidateQueries({ queryKey: ['getAllMyElections'] });
+        queryClient.invalidateQueries({ queryKey: ['getAllMyElections'] });
 
-      notifications.show({
-        title: 'Election settings updated.',
-        icon: <IconCheck size="1.1rem" />,
-        message: 'Your changes have been saved.',
-        autoClose: 3000,
-      });
+        notifications.show({
+          title: 'Election settings updated.',
+          icon: <IconCheck size="1.1rem" />,
+          message: 'Your changes have been saved.',
+          autoClose: 3000,
+        });
 
-      form.resetDirty();
-    },
-    onError: (error) => {
-      notifications.show({
-        title: 'Error',
-        message: (error as Error)?.message,
-        color: 'red',
-        autoClose: 3000,
-      });
-    },
-  });
+        form.resetDirty();
+      },
+      onError: (error) => {
+        notifications.show({
+          title: 'Error',
+          message: error.message,
+          color: 'red',
+          autoClose: 3000,
+        });
+      },
+    });
   const openRef = useRef<() => void>(null);
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -254,20 +242,19 @@ export default function DashboardSettings({
       </Modal>
 
       <form
-        onSubmit={form.onSubmit((value) => {
-          void (async () => {
-            mutate({
-              id: election.id,
-              name: value.name,
-              newSlug: value.newSlug,
-              description: value.description,
-              // voter_domain: value.voter_domain,
-              start_date: value.start_date,
-              end_date: value.end_date,
-              publicity: value.publicity,
-              logo: typeof value.logo === 'string' ? value.logo : '',
-            });
-          })();
+        onSubmit={form.onSubmit((values) => {
+          mutate({
+            id: election.id,
+            name: values.name,
+            newSlug: values.newSlug,
+            description: values.description,
+            // voter_domain: values.voter_domain,
+            start_date: values.start_date,
+            end_date: values.end_date,
+            publicity: values.publicity,
+            logo: typeof values.logo === 'string' ? values.logo : '',
+          });
+
           // await updateElectionMutation.mutateAsync({
           //   id: value.id,
           //   name: value.name,
@@ -577,7 +564,7 @@ export default function DashboardSettings({
               title="Error"
               color="red"
             >
-              {(error as Error)?.message}
+              {error.message}
             </Alert>
           )}
 
