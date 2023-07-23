@@ -1,8 +1,8 @@
-import DashboardLayout from '@/components/client/layouts/dashboard-layout';
-import { siteConfig } from '@/config/site';
-import { api_server } from '@/shared/server/trpc';
-import { type Metadata, type ResolvingMetadata } from 'next';
-import { notFound } from 'next/navigation';
+import DashboardLayout from "@/components/client/layouts/dashboard-layout";
+import { siteConfig } from "@/config/site";
+import { api_server } from "@/shared/server/trpc";
+import { type Metadata, type ResolvingMetadata } from "next";
+import { notFound } from "next/navigation";
 
 export async function generateMetadata(
   {
@@ -21,8 +21,8 @@ export async function generateMetadata(
   return {
     title: {
       default:
-        'Overview - ' + election.name + ' - Dashboard | ' + siteConfig.name,
-      template: '%s - ' + election.name + ' - Dashboard | ' + siteConfig.name,
+        "Overview - " + election.name + " - Dashboard | " + siteConfig.name,
+      template: "%s - " + election.name + " - Dashboard | " + siteConfig.name,
     },
   };
 }

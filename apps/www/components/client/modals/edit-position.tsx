@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { api_client } from '@/shared/client/trpc';
-import { type Position } from '@eboto-mo/db/schema';
+import { api_client } from "@/shared/client/trpc";
+import { type Position } from "@eboto-mo/db/schema";
 import {
   Alert,
   Button,
@@ -13,12 +13,12 @@ import {
   Stack,
   Text,
   TextInput,
-} from '@mantine/core';
-import { hasLength, useForm } from '@mantine/form';
-import { useDisclosure } from '@mantine/hooks';
-import { notifications } from '@mantine/notifications';
-import { IconCheck, IconLetterCase } from '@tabler/icons-react';
-import { useEffect } from 'react';
+} from "@mantine/core";
+import { hasLength, useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
+import { IconCheck, IconLetterCase } from "@tabler/icons-react";
+import { useEffect } from "react";
 
 export default function EditPosition({
   position,
@@ -45,24 +45,24 @@ export default function EditPosition({
           min: 3,
           max: 50,
         },
-        'Name must be between 3 and 50 characters',
+        "Name must be between 3 and 50 characters",
       ),
       min: (value, values) => {
         if (value >= values.max) {
-          return 'Minimum must be less than maximum';
+          return "Minimum must be less than maximum";
         }
       },
       max: (value, values) => {
         if (value < form.values.min) {
-          return 'Maximum must be greater than minimum';
+          return "Maximum must be greater than minimum";
         }
 
         if (values.isSingle && value === 1) {
-          return 'Maximum must be greater than 1';
+          return "Maximum must be greater than 1";
         }
 
         if (value < values.min) {
-          return 'Maximum must be greater than minimum';
+          return "Maximum must be greater than minimum";
         }
       },
     },
@@ -73,7 +73,7 @@ export default function EditPosition({
       onSuccess: async () => {
         notifications.show({
           title: `${form.values.name} updated!`,
-          message: 'Successfully updated position',
+          message: "Successfully updated position",
           icon: <IconCheck size="1.1rem" />,
           autoClose: 5000,
         });
@@ -81,9 +81,9 @@ export default function EditPosition({
       },
       onError: (error) => {
         notifications.show({
-          title: 'Error',
+          title: "Error",
           message: error.message,
-          color: 'red',
+          color: "red",
           autoClose: 3000,
         });
       },
@@ -123,20 +123,20 @@ export default function EditPosition({
               label="Name"
               required
               withAsterisk
-              {...form.getInputProps('name')}
+              {...form.getInputProps("name")}
               icon={<IconLetterCase size="1rem" />}
             />
 
             <Checkbox
               label="Select multiple candidates?"
               description="If checked, you can select multiple candidates for this position when voting"
-              {...form.getInputProps('isSingle', { type: 'checkbox' })}
+              {...form.getInputProps("isSingle", { type: "checkbox" })}
             />
 
             {form.values.isSingle && (
               <Flex gap="sm">
                 <NumberInput
-                  {...form.getInputProps('min')}
+                  {...form.getInputProps("min")}
                   placeholder="Enter minimum"
                   label="Minimum"
                   withAsterisk
@@ -144,7 +144,7 @@ export default function EditPosition({
                   required={form.values.isSingle}
                 />
                 <NumberInput
-                  {...form.getInputProps('max')}
+                  {...form.getInputProps("max")}
                   placeholder="Enter maximum"
                   label="Maximum"
                   withAsterisk

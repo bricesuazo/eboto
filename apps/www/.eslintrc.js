@@ -1,4 +1,4 @@
 module.exports = {
   root: true,
-  extends: ['@eboto-mo/eslint-config'],
+  extends: ["@eboto-mo/eslint-config"],
 };

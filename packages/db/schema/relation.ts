@@ -1,4 +1,4 @@
-import { relations } from 'drizzle-orm';
+import { relations } from "drizzle-orm";
 
 import {
   achievements,
@@ -20,7 +20,7 @@ import {
   voter_fields,
   voters,
   votes,
-} from './schema';
+} from "./schema";
 
 export const electionsRelations = relations(elections, ({ many }) => ({
   votes: many(votes),

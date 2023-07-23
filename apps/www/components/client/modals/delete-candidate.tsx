@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { api_client } from '@/shared/client/trpc';
-import { type Candidate } from '@eboto-mo/db/schema';
-import { Alert, Button, Group, Modal, Stack, Text } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { notifications } from '@mantine/notifications';
-import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
+import { api_client } from "@/shared/client/trpc";
+import { type Candidate } from "@eboto-mo/db/schema";
+import { Alert, Button, Group, Modal, Stack, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
+import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
 
 export default function DeleteCandidate({
   candidate,
@@ -20,16 +20,16 @@ export default function DeleteCandidate({
           title: `${candidate.first_name}${
             candidate.middle_name && ` ${candidate.middle_name}`
           } ${candidate.last_name} deleted!`,
-          message: 'Successfully deleted partylist',
+          message: "Successfully deleted partylist",
           icon: <IconCheck size="1.1rem" />,
           autoClose: 5000,
         });
       },
       onError: (error) => {
         notifications.show({
-          title: 'Error',
+          title: "Error",
           message: error.message,
-          color: 'red',
+          color: "red",
           autoClose: 3000,
         });
       },
@@ -51,9 +51,9 @@ export default function DeleteCandidate({
         onClose={close}
         title={
           <Text weight={600}>
-            Confirm Delete Candidate - {candidate.first_name}{' '}
+            Confirm Delete Candidate - {candidate.first_name}{" "}
             {candidate.last_name}
-            {candidate.middle_name ? ` ${candidate.middle_name}` : ''}
+            {candidate.middle_name ? ` ${candidate.middle_name}` : ""}
           </Text>
         }
       >

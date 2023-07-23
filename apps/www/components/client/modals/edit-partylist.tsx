@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { api_client } from '@/shared/client/trpc';
-import { Partylist } from '@eboto-mo/db/schema';
+import { api_client } from "@/shared/client/trpc";
+import { Partylist } from "@eboto-mo/db/schema";
 import {
   Alert,
   Button,
@@ -10,16 +10,16 @@ import {
   Stack,
   Text,
   TextInput,
-} from '@mantine/core';
-import { hasLength, useForm } from '@mantine/form';
-import { useDisclosure } from '@mantine/hooks';
-import { notifications } from '@mantine/notifications';
+} from "@mantine/core";
+import { hasLength, useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import {
   IconAlertCircle,
   IconCheck,
   IconLetterCase,
-} from '@tabler/icons-react';
-import { useEffect } from 'react';
+} from "@tabler/icons-react";
+import { useEffect } from "react";
 
 export default function EditPartylist({ partylist }: { partylist: Partylist }) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -41,14 +41,14 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
           min: 3,
           max: 50,
         },
-        'Name must be between 3 and 50 characters',
+        "Name must be between 3 and 50 characters",
       ),
       newAcronym: hasLength(
         {
           min: 1,
           max: 24,
         },
-        'Acronym must be between 1 and 24 characters',
+        "Acronym must be between 1 and 24 characters",
       ),
     },
   });
@@ -59,7 +59,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
         notifications.show({
           title: `${form.values.name} (${form.values.newAcronym}) updated.`,
           icon: <IconCheck size="1.1rem" />,
-          message: 'Your changes have been saved.',
+          message: "Your changes have been saved.",
           autoClose: 3000,
         });
         close();
@@ -68,9 +68,9 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
       },
       onError: (error) => {
         notifications.show({
-          title: 'Error',
+          title: "Error",
           message: error.message,
-          color: 'red',
+          color: "red",
           autoClose: 3000,
         });
       },
@@ -116,7 +116,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
               label="Name"
               required
               withAsterisk
-              {...form.getInputProps('name')}
+              {...form.getInputProps("name")}
               icon={<IconLetterCase size="1rem" />}
             />
 
@@ -125,7 +125,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
               label="Acronym"
               required
               withAsterisk
-              {...form.getInputProps('newAcronym')}
+              {...form.getInputProps("newAcronym")}
               icon={<IconLetterCase size="1rem" />}
             />
 

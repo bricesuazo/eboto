@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { api_client } from '@/shared/client/trpc';
-import { Alert, Button, Group, Modal, Stack, Text } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { notifications } from '@mantine/notifications';
+import { api_client } from "@/shared/client/trpc";
+import { Alert, Button, Group, Modal, Stack, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import {
   IconAlertCircle,
   IconCheck,
   IconMailForward,
-} from '@tabler/icons-react';
+} from "@tabler/icons-react";
 
 export default function InviteAllAddedVoters({
   election_id,
@@ -24,7 +24,7 @@ export default function InviteAllAddedVoters({
       onSuccess: () => {
         notifications.show({
           title: `All voters invited!`,
-          message: 'Successfully invited all voters',
+          message: "Successfully invited all voters",
           icon: <IconCheck size="1.1rem" />,
           autoClose: 5000,
         });
@@ -40,8 +40,8 @@ export default function InviteAllAddedVoters({
         onClick={open}
         disabled={isDisabled}
         sx={(theme) => ({
-          [theme.fn.smallerThan('xs')]: {
-            width: '100%',
+          [theme.fn.smallerThan("xs")]: {
+            width: "100%",
           },
         })}
       >

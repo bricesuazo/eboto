@@ -1,16 +1,16 @@
-import { authOptions } from '@/lib/auth';
-import { db } from '@eboto-mo/db';
-import { TRPCError } from '@trpc/server';
-import { getServerSession } from 'next-auth';
-import { z } from 'zod';
+import { authOptions } from "@/lib/auth";
+import { db } from "@eboto-mo/db";
+import { TRPCError } from "@trpc/server";
+import { getServerSession } from "next-auth";
+import { z } from "zod";
 
-import { privateProcedure, publicProcedure, router } from '../trpc';
+import { privateProcedure, publicProcedure, router } from "../trpc";
 
 export const authRouter = router({
   getUser: publicProcedure.query(async ({ ctx }) => {
     return (
       (await db.query.users.findFirst({
-        where: (users, { eq }) => eq(users.id, ctx.session?.user.id ?? ''),
+        where: (users, { eq }) => eq(users.id, ctx.session?.user.id ?? ""),
       })) ?? null
     );
   }),

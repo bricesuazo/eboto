@@ -1,18 +1,18 @@
-import DashboardPageClient from '@/components/client/pages/dashboard';
-import { api_server } from '@/shared/server/trpc';
-import { db } from '@eboto-mo/db';
+import DashboardPageClient from "@/components/client/pages/dashboard";
+import { api_server } from "@/shared/server/trpc";
+import { db } from "@eboto-mo/db";
 import {
   type Commissioner,
   type Election,
   type Vote,
   type Voter,
-} from '@eboto-mo/db/schema';
-import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+} from "@eboto-mo/db/schema";
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: 'Dashboard',
-  description: 'eBoto Mo | Dashboard',
+  title: "Dashboard",
+  description: "eBoto Mo | Dashboard",
 };
 
 export default async function Page() {

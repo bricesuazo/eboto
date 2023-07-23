@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { api_client } from '@/shared/client/trpc';
-import { type Election, type Publicity, publicity } from '@eboto-mo/db/schema';
+import { api_client } from "@/shared/client/trpc";
+import { type Election, type Publicity, publicity } from "@eboto-mo/db/schema";
 import {
   Alert,
   Box,
@@ -14,27 +14,27 @@ import {
   TextInput,
   Textarea,
   rem,
-} from '@mantine/core';
-import { DateTimePicker } from '@mantine/dates';
+} from "@mantine/core";
+import { DateTimePicker } from "@mantine/dates";
 import {
   Dropzone,
   type FileWithPath,
   IMAGE_MIME_TYPE,
-} from '@mantine/dropzone';
-import { hasLength, useForm } from '@mantine/form';
-import { useDisclosure } from '@mantine/hooks';
-import { notifications } from '@mantine/notifications';
+} from "@mantine/dropzone";
+import { hasLength, useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import {
   IconCalendar,
   IconCheck,
   IconLetterCase,
   IconX,
-} from '@tabler/icons-react';
-import { IconAlertCircle } from '@tabler/icons-react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useRef } from 'react';
+} from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useRef } from "react";
 
 export default function DashboardSettings({
   election,
@@ -50,12 +50,12 @@ export default function DashboardSettings({
           router.push(`/dashboard/${form.values.newSlug}/settings`);
         }
 
-        queryClient.invalidateQueries({ queryKey: ['getAllMyElections'] });
+        queryClient.invalidateQueries({ queryKey: ["getAllMyElections"] });
 
         notifications.show({
-          title: 'Election settings updated.',
+          title: "Election settings updated.",
           icon: <IconCheck size="1.1rem" />,
-          message: 'Your changes have been saved.',
+          message: "Your changes have been saved.",
           autoClose: 3000,
         });
 
@@ -63,9 +63,9 @@ export default function DashboardSettings({
       },
       onError: (error) => {
         notifications.show({
-          title: 'Error',
+          title: "Error",
           message: error.message,
-          color: 'red',
+          color: "red",
           autoClose: 3000,
         });
       },
@@ -86,7 +86,7 @@ export default function DashboardSettings({
     initialValues: {
       name: election.name,
       newSlug: election.slug,
-      description: election.description ?? '',
+      description: election.description ?? "",
       // voter_domain: null,
       start_date: election.start_date,
       end_date: election.end_date,
@@ -98,33 +98,33 @@ export default function DashboardSettings({
     validate: {
       name: hasLength(
         { min: 3 },
-        'Election name must be at least 3 characters',
+        "Election name must be at least 3 characters",
       ),
       newSlug: (value) => {
         if (!value) {
-          return 'Please enter an election slug';
+          return "Please enter an election slug";
         }
         if (!/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/.test(value)) {
-          return 'Election slug must be alphanumeric and can contain dashes';
+          return "Election slug must be alphanumeric and can contain dashes";
         }
         if (value.length < 3 || value.length > 24) {
-          return 'Election slug must be between 3 and 24 characters';
+          return "Election slug must be between 3 and 24 characters";
         }
       },
       start_date: (value, values) => {
         if (!value) {
-          return 'Please enter an election start date';
+          return "Please enter an election start date";
         }
         if (values.end_date && value > values.end_date) {
-          return 'Start date must be before end date';
+          return "Start date must be before end date";
         }
       },
       end_date: (value, values) => {
         if (!value) {
-          return 'Please enter an election end date';
+          return "Please enter an election end date";
         }
         if (values.start_date && value < values.start_date) {
-          return 'End date must be after start date';
+          return "End date must be after start date";
         }
       },
       // voter_domain: (value) => {
@@ -150,14 +150,14 @@ export default function DashboardSettings({
 
   const deleteForm = useForm({
     initialValues: {
-      name: '',
+      name: "",
     },
     validateInputOnBlur: true,
     clearInputErrorOnChange: true,
     validate: {
       name: (value) => {
         if (value !== election.name) {
-          return 'Election name does not match';
+          return "Election name does not match";
         }
       },
     },
@@ -202,19 +202,19 @@ export default function DashboardSettings({
               withAsterisk
               required
               placeholder="Enter election name to confirm deletion"
-              {...deleteForm.getInputProps('name')}
+              {...deleteForm.getInputProps("name")}
               icon={<IconLetterCase size="1rem" />}
               description={
                 <Text
                   sx={{
-                    pointerEvents: 'none',
-                    userSelect: 'none',
+                    pointerEvents: "none",
+                    userSelect: "none",
                   }}
                 >
-                  Please type{' '}
+                  Please type{" "}
                   <Text weight="bold" component="span">
                     {election.name}
-                  </Text>{' '}
+                  </Text>{" "}
                   to confirm deletion. This action cannot be undone.
                 </Text>
               }
@@ -252,7 +252,7 @@ export default function DashboardSettings({
             start_date: values.start_date,
             end_date: values.end_date,
             publicity: values.publicity,
-            logo: typeof values.logo === 'string' ? values.logo : '',
+            logo: typeof values.logo === "string" ? values.logo : "",
           });
 
           // await updateElectionMutation.mutateAsync({
@@ -290,7 +290,7 @@ export default function DashboardSettings({
             withAsterisk
             required
             placeholder="Enter election name"
-            {...form.getInputProps('name')}
+            {...form.getInputProps("name")}
             icon={<IconLetterCase size="1rem" />}
             disabled={isLoading}
           />
@@ -301,13 +301,13 @@ export default function DashboardSettings({
               <>
                 This will be used as the URL for your election
                 <br />
-                eboto-mo.com/{form.values.newSlug || 'election-slug'}
+                eboto-mo.com/{form.values.newSlug || "election-slug"}
               </>
             }
             withAsterisk
             required
             placeholder="Enter election slug"
-            {...form.getInputProps('newSlug')}
+            {...form.getInputProps("newSlug")}
             icon={<IconLetterCase size="1rem" />}
             // error={
             //   form.errors.slug ||
@@ -321,7 +321,7 @@ export default function DashboardSettings({
             label="Election description"
             description="This will be shown on the election page."
             placeholder="Enter election description"
-            {...form.getInputProps('description')}
+            {...form.getInputProps("description")}
             icon={<IconLetterCase size="1rem" />}
             minRows={3}
             maxRows={8}
@@ -365,11 +365,11 @@ export default function DashboardSettings({
             withAsterisk
             popoverProps={{
               withinPortal: true,
-              position: 'bottom',
+              position: "bottom",
             }}
             minDate={new Date(new Date().setDate(new Date().getDate() + 1))}
             firstDayOfWeek={0}
-            {...form.getInputProps('start_date')}
+            {...form.getInputProps("start_date")}
             icon={<IconCalendar size="1rem" />}
             // disabled={
             //   loading ||
@@ -389,14 +389,14 @@ export default function DashboardSettings({
             clearable
             popoverProps={{
               withinPortal: true,
-              position: 'bottom',
+              position: "bottom",
             }}
             minDate={
               form.values.start_date ||
               new Date(new Date().setDate(new Date().getDate() + 1))
             }
             firstDayOfWeek={0}
-            {...form.getInputProps('end_date')}
+            {...form.getInputProps("end_date")}
             icon={<IconCalendar size="1rem" />}
             // disabled={
             //   loading ||
@@ -413,7 +413,7 @@ export default function DashboardSettings({
             withAsterisk
             withinPortal
             required
-            {...form.getInputProps('publicity')}
+            {...form.getInputProps("publicity")}
             data={publicity.map((p) => ({
               value: p,
               label: p.charAt(0) + p.slice(1).toLowerCase(),
@@ -436,7 +436,7 @@ export default function DashboardSettings({
                 id="logo"
                 onDrop={(files) => {
                   if (!files[0]) return;
-                  form.setFieldValue('logo', files[0]);
+                  form.setFieldValue("logo", files[0]);
                 }}
                 openRef={openRef}
                 maxSize={5 * 1024 ** 2}
@@ -447,10 +447,10 @@ export default function DashboardSettings({
                 <Group
                   position="center"
                   spacing="xl"
-                  style={{ minHeight: rem(140), pointerEvents: 'none' }}
+                  style={{ minHeight: rem(140), pointerEvents: "none" }}
                 >
                   {form.values.logo ? (
-                    typeof form.values.logo !== 'string' && form.values.logo ? (
+                    typeof form.values.logo !== "string" && form.values.logo ? (
                       <Group>
                         <Box
                           pos="relative"
@@ -458,7 +458,7 @@ export default function DashboardSettings({
                             width: rem(120),
                             height: rem(120),
 
-                            [theme.fn.smallerThan('sm')]: {
+                            [theme.fn.smallerThan("sm")]: {
                               width: rem(180),
                               height: rem(180),
                             },
@@ -466,7 +466,7 @@ export default function DashboardSettings({
                         >
                           <Image
                             src={
-                              typeof form.values.logo === 'string'
+                              typeof form.values.logo === "string"
                                 ? form.values.logo
                                 : URL.createObjectURL(form.values.logo)
                             }
@@ -474,7 +474,7 @@ export default function DashboardSettings({
                             fill
                             sizes="100%"
                             priority
-                            style={{ objectFit: 'cover' }}
+                            style={{ objectFit: "cover" }}
                           />
                         </Box>
                         <Text>{form.values.logo.name}</Text>
@@ -488,7 +488,7 @@ export default function DashboardSettings({
                               width: rem(120),
                               height: rem(120),
 
-                              [theme.fn.smallerThan('sm')]: {
+                              [theme.fn.smallerThan("sm")]: {
                                 width: rem(180),
                                 height: rem(180),
                               },
@@ -499,7 +499,7 @@ export default function DashboardSettings({
                               alt="Logo"
                               fill
                               priority
-                              style={{ objectFit: 'cover' }}
+                              style={{ objectFit: "cover" }}
                             />
                           </Box>
                           <Text>Current logo</Text>
@@ -537,7 +537,7 @@ export default function DashboardSettings({
                     });
                   }}
                   disabled={
-                    typeof form.values.logo === 'string' ||
+                    typeof form.values.logo === "string" ||
                     !election.logo ||
                     isLoading
                   }
@@ -548,7 +548,7 @@ export default function DashboardSettings({
                   color="red"
                   variant="light"
                   onClick={() => {
-                    form.setFieldValue('logo', null);
+                    form.setFieldValue("logo", null);
                   }}
                   disabled={!form.values.logo || isLoading}
                 >
@@ -574,8 +574,8 @@ export default function DashboardSettings({
               loading={isLoading}
               disabled={!form.isDirty() || !form.isValid()}
               sx={(theme) => ({
-                [theme.fn.largerThan('xs')]: {
-                  display: 'none',
+                [theme.fn.largerThan("xs")]: {
+                  display: "none",
                 },
               })}
             >
@@ -586,8 +586,8 @@ export default function DashboardSettings({
               loading={isLoading}
               disabled={!form.isDirty() || !form.isValid()}
               sx={(theme) => ({
-                [theme.fn.smallerThan('xs')]: {
-                  display: 'none',
+                [theme.fn.smallerThan("xs")]: {
+                  display: "none",
                 },
               })}
             >
@@ -600,8 +600,8 @@ export default function DashboardSettings({
               //   loading={deleteElectionMutation.isLoading}
               disabled={isLoading}
               sx={(theme) => ({
-                [theme.fn.largerThan('xs')]: {
-                  display: 'none',
+                [theme.fn.largerThan("xs")]: {
+                  display: "none",
                 },
               })}
             >
@@ -614,8 +614,8 @@ export default function DashboardSettings({
               //   loading={deleteElectionMutation.isLoading}
               disabled={isLoading}
               sx={(theme) => ({
-                [theme.fn.smallerThan('xs')]: {
-                  display: 'none',
+                [theme.fn.smallerThan("xs")]: {
+                  display: "none",
                 },
               })}
             >

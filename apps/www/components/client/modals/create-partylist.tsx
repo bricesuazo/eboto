@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { api_client } from '@/shared/client/trpc';
+import { api_client } from "@/shared/client/trpc";
 import {
   Alert,
   Button,
@@ -9,13 +9,13 @@ import {
   Stack,
   Text,
   TextInput,
-} from '@mantine/core';
-import { hasLength, useForm } from '@mantine/form';
-import { useDisclosure } from '@mantine/hooks';
-import { notifications } from '@mantine/notifications';
-import { IconAlertCircle } from '@tabler/icons-react';
-import { IconCheck, IconFlag, IconLetterCase } from '@tabler/icons-react';
-import { useEffect } from 'react';
+} from "@mantine/core";
+import { hasLength, useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { IconCheck, IconFlag, IconLetterCase } from "@tabler/icons-react";
+import { useEffect } from "react";
 
 export default function CreatePartylist({
   election_id,
@@ -26,8 +26,8 @@ export default function CreatePartylist({
 
   const form = useForm({
     initialValues: {
-      name: '',
-      acronym: '',
+      name: "",
+      acronym: "",
     },
     validateInputOnBlur: true,
     validate: {
@@ -36,14 +36,14 @@ export default function CreatePartylist({
           min: 3,
           max: 100,
         },
-        'Name must be between 3 and 100 characters',
+        "Name must be between 3 and 100 characters",
       ),
       acronym: hasLength(
         {
           min: 1,
           max: 24,
         },
-        'Acronym must be between 1 and 24 characters',
+        "Acronym must be between 1 and 24 characters",
       ),
     },
   });
@@ -53,7 +53,7 @@ export default function CreatePartylist({
       onSuccess: () => {
         notifications.show({
           title: `${form.values.name} (${form.values.acronym}) created!`,
-          message: 'Successfully created partylist',
+          message: "Successfully created partylist",
           icon: <IconCheck size="1.1rem" />,
           autoClose: 5000,
         });
@@ -70,8 +70,8 @@ export default function CreatePartylist({
       <Button
         onClick={open}
         sx={(theme) => ({
-          width: 'fit-content',
-          [theme.fn.smallerThan('xs')]: { width: '100%' },
+          width: "fit-content",
+          [theme.fn.smallerThan("xs")]: { width: "100%" },
         })}
         leftIcon={<IconFlag size="1rem" />}
       >
@@ -97,7 +97,7 @@ export default function CreatePartylist({
               label="Name"
               required
               withAsterisk
-              {...form.getInputProps('name')}
+              {...form.getInputProps("name")}
               icon={<IconLetterCase size="1rem" />}
             />
 
@@ -106,7 +106,7 @@ export default function CreatePartylist({
               label="Acronym"
               required
               withAsterisk
-              {...form.getInputProps('acronym')}
+              {...form.getInputProps("acronym")}
               icon={<IconLetterCase size="1rem" />}
             />
 

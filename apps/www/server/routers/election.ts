@@ -1,6 +1,6 @@
-import { positionTemplate, takenSlugs } from '@/constants';
-import { account_status_type_with_accepted } from '@/utils/zod-schema';
-import { db } from '@eboto-mo/db';
+import { positionTemplate, takenSlugs } from "@/constants";
+import { account_status_type_with_accepted } from "@/utils/zod-schema";
+import { db } from "@eboto-mo/db";
 import {
   Candidate,
   Election,
@@ -16,12 +16,12 @@ import {
   publicity,
   voter_fields,
   voters,
-} from '@eboto-mo/db/schema';
-import { TRPCError } from '@trpc/server';
-import { and, eq, inArray, not } from 'drizzle-orm';
-import { z } from 'zod';
+} from "@eboto-mo/db/schema";
+import { TRPCError } from "@trpc/server";
+import { and, eq, inArray, not } from "drizzle-orm";
+import { z } from "zod";
 
-import { privateProcedure, publicProcedure, router } from '../trpc';
+import { privateProcedure, publicProcedure, router } from "../trpc";
 
 export const electionRouter = router({
   getElectionBySlug: publicProcedure
@@ -57,7 +57,7 @@ export const electionRouter = router({
         where: (partylists, { eq, and }) =>
           and(
             eq(partylists.election_id, input.election_id),
-            not(eq(partylists.acronym, 'IND')),
+            not(eq(partylists.acronym, "IND")),
           ),
         orderBy: (partylists, { desc }) => desc(partylists.updated_at),
       });
@@ -161,7 +161,7 @@ export const electionRouter = router({
     .mutation(async ({ ctx, input }) => {
       // TODO: Validate commissioner
       if (takenSlugs.includes(input.slug)) {
-        throw new Error('Election slug is already exists');
+        throw new Error("Election slug is already exists");
       }
 
       const isElectionSlugExists: Election | undefined =
@@ -170,7 +170,7 @@ export const electionRouter = router({
         });
 
       if (isElectionSlugExists) {
-        throw new Error('Election slug is already exists');
+        throw new Error("Election slug is already exists");
       }
 
       const id = crypto.randomUUID();
@@ -188,8 +188,8 @@ export const electionRouter = router({
       });
       await db.insert(partylists).values({
         id: crypto.randomUUID(),
-        name: 'Independent',
-        acronym: 'IND',
+        name: "Independent",
+        acronym: "IND",
         election_id: id,
       });
 
@@ -223,7 +223,7 @@ export const electionRouter = router({
       // TODO: Validate commissioner
       if (input.newSlug !== input.oldSlug) {
         if (takenSlugs.includes(input.newSlug)) {
-          throw new Error('Election slug is already exists');
+          throw new Error("Election slug is already exists");
         }
 
         const isElectionSlugExists: Election | undefined =
@@ -232,7 +232,7 @@ export const electionRouter = router({
           });
 
         if (isElectionSlugExists)
-          throw new Error('Election slug is already exists');
+          throw new Error("Election slug is already exists");
       }
 
       const isElectionCommissionerExists: Election | undefined =
@@ -245,7 +245,7 @@ export const electionRouter = router({
           },
         });
 
-      if (!isElectionCommissionerExists) throw new Error('Unauthorized');
+      if (!isElectionCommissionerExists) throw new Error("Unauthorized");
 
       await db
         .update(elections)
@@ -277,7 +277,7 @@ export const electionRouter = router({
             ),
         });
 
-      if (isAcronymExists) throw new Error('Acronym is already exists');
+      if (isAcronymExists) throw new Error("Acronym is already exists");
 
       await db.insert(partylists).values({
         id: crypto.randomUUID(),
@@ -300,10 +300,10 @@ export const electionRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       // TODO: Validate commissioner
-      if (input.newAcronym === 'IND')
+      if (input.newAcronym === "IND")
         throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'IND is a reserved acronym',
+          code: "BAD_REQUEST",
+          message: "IND is a reserved acronym",
         });
 
       if (input.oldAcronym !== input.newAcronym) {
@@ -318,8 +318,8 @@ export const electionRouter = router({
 
         if (isAcronymExists)
           throw new TRPCError({
-            code: 'BAD_REQUEST',
-            message: 'Acronym is already exists',
+            code: "BAD_REQUEST",
+            message: "Acronym is already exists",
           });
       }
 
@@ -464,7 +464,7 @@ export const electionRouter = router({
         });
 
       if (isCandidateSlugExists)
-        throw new Error('Candidate slug is already exists');
+        throw new Error("Candidate slug is already exists");
 
       const id = crypto.randomUUID();
 
@@ -506,7 +506,7 @@ export const electionRouter = router({
         });
 
       if (isCandidateSlugExists)
-        throw new Error('Candidate slug is already exists');
+        throw new Error("Candidate slug is already exists");
 
       await db.insert(candidates).values({
         id: crypto.randomUUID(),
@@ -537,9 +537,9 @@ export const electionRouter = router({
           },
         },
       });
-      if (!isElectionExists) throw new Error('Election does not exists');
+      if (!isElectionExists) throw new Error("Election does not exists");
       if (isElectionExists.commissioners.length === 0)
-        throw new Error('Unauthorized');
+        throw new Error("Unauthorized");
       const invitedVoters = await db.query.invited_voters.findMany({
         where: (invited_voters, { eq }) =>
           eq(invited_voters.election_id, input.election_id),
@@ -562,7 +562,7 @@ export const electionRouter = router({
       const user = await db.query.users.findFirst({
         where: (users, { eq }) => eq(users.id, ctx.session.user.id),
       });
-      if (!user) throw new Error('Unauthorized');
+      if (!user) throw new Error("Unauthorized");
       if (input.email === user.email) {
         await db.insert(voters).values({
           id: crypto.randomUUID(),
@@ -580,9 +580,9 @@ export const electionRouter = router({
             },
           },
         });
-        if (!isVoterExists) throw new Error('Election does not exists');
+        if (!isVoterExists) throw new Error("Election does not exists");
         if (isVoterExists.commissioners.length === 0)
-          throw new Error('Unauthorized');
+          throw new Error("Unauthorized");
         const voters = await db.query.voters.findMany({
           where: (voters, { eq }) => eq(voters.election_id, input.election_id),
           with: {
@@ -592,7 +592,7 @@ export const electionRouter = router({
         const isVoterEmailExists = voters.find(
           (voter) => voter.user.email === input.email,
         );
-        if (isVoterEmailExists) throw new Error('Email is already a voter');
+        if (isVoterEmailExists) throw new Error("Email is already a voter");
         const isInvitedVoterEmailExists =
           await db.query.invited_voters.findFirst({
             where: (invited_voters, { eq, and }) =>
@@ -602,7 +602,7 @@ export const electionRouter = router({
               ),
           });
         if (isInvitedVoterEmailExists)
-          throw new Error('Email is already exists');
+          throw new Error("Email is already exists");
         await db.insert(invited_voters).values({
           id: crypto.randomUUID(),
           email: input.email,
@@ -618,7 +618,7 @@ export const electionRouter = router({
           z.object({
             id: z.string().min(1),
             name: z.string().min(1),
-            type: z.enum(['fromDb', 'fromInput']),
+            type: z.enum(["fromDb", "fromInput"]),
           }),
         ),
         election_id: z.string().min(1),
@@ -660,7 +660,7 @@ export const electionRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       // TODO: Validate commissioner
-      if (input.account_status === 'ACCEPTED') {
+      if (input.account_status === "ACCEPTED") {
         const voter: Voter | undefined = await db.query.voters.findFirst({
           where: (voters, { eq, and }) =>
             and(
@@ -669,7 +669,7 @@ export const electionRouter = router({
             ),
         });
 
-        if (!voter) throw new Error('Voter not found');
+        if (!voter) throw new Error("Voter not found");
         await db
           .update(voters)
           .set({
@@ -677,7 +677,7 @@ export const electionRouter = router({
           })
           .where(eq(voters.id, input.id));
 
-        return { type: 'voter' };
+        return { type: "voter" };
       } else {
         const invited_voter: InvitedVoter | undefined =
           await db.query.invited_voters.findFirst({
@@ -687,7 +687,7 @@ export const electionRouter = router({
                 eq(invited_voters.election_id, input.election_id),
               ),
           });
-        if (!invited_voter) throw new Error('Voter not found');
+        if (!invited_voter) throw new Error("Voter not found");
 
         await db
           .update(invited_voters)
@@ -702,7 +702,7 @@ export const electionRouter = router({
             ),
           );
 
-        return { type: 'invited_voter' };
+        return { type: "invited_voter" };
       }
     }),
   deleteVoter: privateProcedure
@@ -724,7 +724,7 @@ export const electionRouter = router({
             ),
         });
 
-        if (!voter) throw new Error('Voter not found');
+        if (!voter) throw new Error("Voter not found");
 
         await db
           .delete(voters)
@@ -744,7 +744,7 @@ export const electionRouter = router({
               ),
           });
 
-        if (!invited_voter) throw new Error('Voter not found');
+        if (!invited_voter) throw new Error("Voter not found");
 
         await db
           .delete(invited_voters)
@@ -821,10 +821,10 @@ export const electionRouter = router({
         },
       });
 
-      if (!isElectionExists) throw new Error('Election does not exists');
+      if (!isElectionExists) throw new Error("Election does not exists");
 
       if (isElectionExists.commissioners.length === 0)
-        throw new Error('Unauthorized');
+        throw new Error("Unauthorized");
 
       // await Promise.all(
       //   input.voters.map(async (voter) => {
@@ -872,7 +872,7 @@ export const electionRouter = router({
         .map((voter) => ({
           id: voter.id,
           email: voter.user.email,
-          account_status: 'ACCEPTED',
+          account_status: "ACCEPTED",
           created_at: voter.created_at,
           has_voted: voter.votes.length > 0,
           field: voter.field,

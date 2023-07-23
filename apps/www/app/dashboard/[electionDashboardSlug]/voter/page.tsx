@@ -1,11 +1,11 @@
-import DashboardVoter from '@/components/client/pages/dashboard-voter';
-import { api_server } from '@/shared/server/trpc';
-import { db } from '@eboto-mo/db';
-import { type Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import DashboardVoter from "@/components/client/pages/dashboard-voter";
+import { api_server } from "@/shared/server/trpc";
+import { db } from "@eboto-mo/db";
+import { type Metadata } from "next";
+import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: 'Voters',
+  title: "Voters",
 };
 
 export default async function Page({

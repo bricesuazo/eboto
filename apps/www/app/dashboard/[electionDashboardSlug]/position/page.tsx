@@ -1,10 +1,10 @@
-import DashboardPosition from '@/components/client/pages/dashboard-position';
-import { api_server } from '@/shared/server/trpc';
-import { type Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import DashboardPosition from "@/components/client/pages/dashboard-position";
+import { api_server } from "@/shared/server/trpc";
+import { type Metadata } from "next";
+import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: 'Positions',
+  title: "Positions",
 };
 
 export default async function Page({

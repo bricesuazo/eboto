@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { api_client } from '@/shared/client/trpc';
-import { type Position } from '@eboto-mo/db/schema';
-import { Alert, Button, Group, Mark, Modal, Stack, Text } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { notifications } from '@mantine/notifications';
-import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
+import { api_client } from "@/shared/client/trpc";
+import { type Position } from "@eboto-mo/db/schema";
+import { Alert, Button, Group, Mark, Modal, Stack, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
+import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
 
 export default function DeletePosition({ position }: { position: Position }) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -15,7 +15,7 @@ export default function DeletePosition({ position }: { position: Position }) {
       onSuccess: async () => {
         notifications.show({
           title: `${position.name} deleted!`,
-          message: 'Successfully deleted position',
+          message: "Successfully deleted position",
           icon: <IconCheck size="1.1rem" />,
           autoClose: 5000,
         });
@@ -23,9 +23,9 @@ export default function DeletePosition({ position }: { position: Position }) {
       },
       onError: (error) => {
         notifications.show({
-          title: 'Error',
+          title: "Error",
           message: error.message,
-          color: 'red',
+          color: "red",
           autoClose: 3000,
         });
       },

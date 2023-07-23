@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { api_client } from '@/shared/client/trpc';
+import { api_client } from "@/shared/client/trpc";
 import {
   ActionIcon,
   Alert,
@@ -9,10 +9,10 @@ import {
   Modal,
   Stack,
   Text,
-} from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { notifications } from '@mantine/notifications';
-import { IconAlertCircle, IconCheck, IconTrash } from '@tabler/icons-react';
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
+import { IconAlertCircle, IconCheck, IconTrash } from "@tabler/icons-react";
 
 export default function DeleteVoter({
   voter,
@@ -21,7 +21,7 @@ export default function DeleteVoter({
   voter: {
     id: string;
     email: string;
-    account_status: 'ACCEPTED' | 'INVITED' | 'DECLINED' | 'ADDED';
+    account_status: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
   };
   election_id: string;
 }) {
@@ -31,7 +31,7 @@ export default function DeleteVoter({
     api_client.election.deleteVoter.useMutation({
       onSuccess: () => {
         notifications.show({
-          title: 'Success!',
+          title: "Success!",
           message: `Successfully deleted ${voter.email}`,
           icon: <IconCheck size="1.1rem" />,
           autoClose: 5000,
@@ -40,9 +40,9 @@ export default function DeleteVoter({
       },
       onError: (error) => {
         notifications.show({
-          title: 'Error',
+          title: "Error",
           message: error.message,
-          color: 'red',
+          color: "red",
           autoClose: 3000,
         });
       },
@@ -89,7 +89,7 @@ export default function DeleteVoter({
                   election_id,
                   id: voter.id,
                   is_invited_voter:
-                    voter.account_status !== 'ACCEPTED' ? true : false,
+                    voter.account_status !== "ACCEPTED" ? true : false,
                 })
               }
             >

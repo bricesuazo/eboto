@@ -1,10 +1,10 @@
-import DashboardCandidate from '@/components/client/pages/dashboard-candidate';
-import { api_server } from '@/shared/server/trpc';
-import { type Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import DashboardCandidate from "@/components/client/pages/dashboard-candidate";
+import { api_server } from "@/shared/server/trpc";
+import { type Metadata } from "next";
+import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: 'Candidates',
+  title: "Candidates",
 };
 
 export default async function Page({

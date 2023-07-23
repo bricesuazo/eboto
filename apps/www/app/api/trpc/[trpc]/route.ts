@@ -1,7 +1,7 @@
-import { createContext } from '@/server/context';
-import { appRouter } from '@/server/routers/_app';
-import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
-import type { NextRequest } from 'next/server';
+import { createContext } from "@/server/context";
+import { appRouter } from "@/server/routers/_app";
+import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
+import type { NextRequest } from "next/server";
 
 // export const runtime = "edge";
 
@@ -22,18 +22,18 @@ const handler = (request: NextRequest) => {
   });
 
   return fetchRequestHandler({
-    endpoint: '/api/trpc',
+    endpoint: "/api/trpc",
     req,
     router: appRouter,
     createContext(opts) {
       return createContext({
-        type: 'api',
+        type: "api",
         ...opts,
       });
     },
     onError({ error }) {
-      if (error.code === 'INTERNAL_SERVER_ERROR') {
-        console.error('Caught TRPC error:', error);
+      if (error.code === "INTERNAL_SERVER_ERROR") {
+        console.error("Caught TRPC error:", error);
       }
     },
   });

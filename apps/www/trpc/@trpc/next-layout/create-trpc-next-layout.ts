@@ -1,5 +1,5 @@
-import { QueryClient, dehydrate } from '@tanstack/query-core';
-import type { DehydratedState } from '@tanstack/react-query';
+import { QueryClient, dehydrate } from "@tanstack/query-core";
+import type { DehydratedState } from "@tanstack/react-query";
 import {
   type AnyProcedure,
   type AnyQueryProcedure,
@@ -10,10 +10,10 @@ import {
   type inferProcedureInput,
   type inferProcedureOutput,
   type inferRouterContext,
-} from '@trpc/server';
-import { createRecursiveProxy } from '@trpc/server/shared';
+} from "@trpc/server";
+import { createRecursiveProxy } from "@trpc/server/shared";
 
-import { getRequestStorage } from './local-storage';
+import { getRequestStorage } from "./local-storage";
 
 interface CreateTRPCNextLayoutOptions<TRouter extends AnyRouter> {
   router: TRouter;
@@ -47,11 +47,11 @@ type OmitNever<TType> = Pick<
  */
 export type DecoratedProcedureRecord<
   TProcedures extends ProcedureRouterRecord,
-  TPath extends string = '',
+  TPath extends string = "",
 > = OmitNever<{
   [TKey in keyof TProcedures]: TProcedures[TKey] extends AnyRouter
     ? DecoratedProcedureRecord<
-        TProcedures[TKey]['_def']['record'],
+        TProcedures[TKey]["_def"]["record"],
         `${TPath}${TKey & string}.`
       >
     : TProcedures[TKey] extends AnyQueryProcedure
@@ -60,7 +60,7 @@ export type DecoratedProcedureRecord<
 }>;
 
 type CreateTRPCNextLayout<TRouter extends AnyRouter> = DecoratedProcedureRecord<
-  TRouter['_def']['record']
+  TRouter["_def"]["record"]
 > & {
   dehydrate(): Promise<DehydratedState>;
 };
@@ -71,12 +71,12 @@ function getQueryKey(
   isFetchInfinite?: boolean,
 ) {
   return input === undefined
-    ? [path, { type: isFetchInfinite ? 'infinite' : 'query' }]
+    ? [path, { type: isFetchInfinite ? "infinite" : "query" }]
     : [
         path,
         {
           input,
-          type: isFetchInfinite ? 'infinite' : 'query',
+          type: isFetchInfinite ? "infinite" : "query",
         },
       ];
 }
@@ -117,7 +117,7 @@ export function createTRPCNextLayout<TRouter extends AnyRouter>(
     const ctx = await state.context;
     const { queryClient } = state;
 
-    if (lastPart === 'dehydrate' && path.length === 0) {
+    if (lastPart === "dehydrate" && path.length === 0) {
       if (queryClient.isFetching()) {
         await new Promise<void>((resolve) => {
           const unsub = queryClient.getQueryCache().subscribe((event) => {
@@ -135,11 +135,11 @@ export function createTRPCNextLayout<TRouter extends AnyRouter>(
 
     const caller = opts.router.createCaller(ctx);
 
-    const pathStr = path.join('.');
+    const pathStr = path.join(".");
     const input = callOpts.args[0];
-    const queryKey = getQueryKey(path, input, lastPart === 'fetchInfinite');
+    const queryKey = getQueryKey(path, input, lastPart === "fetchInfinite");
 
-    if (lastPart === 'fetchInfinite') {
+    if (lastPart === "fetchInfinite") {
       return queryClient.fetchInfiniteQuery(queryKey, () =>
         caller.query(pathStr, input),
       );

@@ -1,10 +1,10 @@
-import DashboardSettings from '@/components/client/pages/dashboard-settings';
-import { api_server } from '@/shared/server/trpc';
-import { type Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import DashboardSettings from "@/components/client/pages/dashboard-settings";
+import { api_server } from "@/shared/server/trpc";
+import { type Metadata } from "next";
+import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: 'Settings',
+  title: "Settings",
 };
 
 export default async function Page({

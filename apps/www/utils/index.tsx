@@ -1,6 +1,6 @@
-import { db } from '@eboto-mo/db';
-import { Election, TokenType, verification_tokens } from '@eboto-mo/db/schema';
-import { FileWithPath } from '@mantine/dropzone';
+import { db } from "@eboto-mo/db";
+import { Election, TokenType, verification_tokens } from "@eboto-mo/db/schema";
+import { FileWithPath } from "@mantine/dropzone";
 
 export const isElectionOngoing = ({ election }: { election: Election }) => {
   const end = new Date(election.end_date);
@@ -78,5 +78,5 @@ export const uploadImage = async ({
   //   data: { publicUrl },
   // } = supabase.storage.from("eboto-mo").getPublicUrl(path);
 
-  return 'publicUrl';
+  return "publicUrl";
 };

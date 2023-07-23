@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { api_client } from '@/shared/client/trpc';
-import { type Partylist } from '@eboto-mo/db/schema';
-import { Alert, Button, Group, Mark, Modal, Stack, Text } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { notifications } from '@mantine/notifications';
-import { IconCheck } from '@tabler/icons-react';
-import { IconAlertCircle } from '@tabler/icons-react';
+import { api_client } from "@/shared/client/trpc";
+import { type Partylist } from "@eboto-mo/db/schema";
+import { Alert, Button, Group, Mark, Modal, Stack, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
+import { IconCheck } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
 
 export default function DeletePartylist({
   partylist,
@@ -18,16 +18,16 @@ export default function DeletePartylist({
       onSuccess: async () => {
         notifications.show({
           title: `${partylist.name} (${partylist.acronym}) deleted!`,
-          message: 'Successfully deleted partylist',
+          message: "Successfully deleted partylist",
           icon: <IconCheck size="1.1rem" />,
           autoClose: 5000,
         });
       },
       onError: (error) => {
         notifications.show({
-          title: 'Error',
+          title: "Error",
           message: error.message,
-          color: 'red',
+          color: "red",
           autoClose: 3000,
         });
       },

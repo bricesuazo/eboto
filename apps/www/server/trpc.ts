@@ -7,11 +7,11 @@
  * @see https://trpc.io/docs/v10/router
  * @see https://trpc.io/docs/v10/procedures
  */
-import { TRPCError, initTRPC } from '@trpc/server';
-import superjson from 'superjson';
-import { ZodError } from 'zod';
+import { TRPCError, initTRPC } from "@trpc/server";
+import superjson from "superjson";
+import { ZodError } from "zod";
 
-import { type Context } from './context';
+import { type Context } from "./context";
 
 const t = initTRPC.context<Context>().create({
   /**
@@ -64,8 +64,8 @@ export const mergeRouters = t.mergeRouters;
 export const privateProcedure = t.procedure.use((opts) => {
   if (!opts.ctx.session) {
     throw new TRPCError({
-      code: 'UNAUTHORIZED',
-      message: 'You have to be logged in to do this',
+      code: "UNAUTHORIZED",
+      message: "You have to be logged in to do this",
     });
   }
   return opts.next({

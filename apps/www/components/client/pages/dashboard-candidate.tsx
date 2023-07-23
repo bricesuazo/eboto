@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import CreateCandidate from '@/components/client/modals/create-candidate';
-import DeleteCandidate from '@/components/client/modals/delete-candidate';
-import EditCandidate from '@/components/client/modals/edit-candidate';
+import CreateCandidate from "@/components/client/modals/create-candidate";
+import DeleteCandidate from "@/components/client/modals/delete-candidate";
+import EditCandidate from "@/components/client/modals/edit-candidate";
 import {
   type Candidate,
   type Election,
   type Partylist,
   type Position,
-} from '@eboto-mo/db/schema';
-import { Anchor, Box, Flex, Group, Stack, Text } from '@mantine/core';
-import { IconUser } from '@tabler/icons-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import Balancer from 'react-wrap-balancer';
+} from "@eboto-mo/db/schema";
+import { Anchor, Box, Flex, Group, Stack, Text } from "@mantine/core";
+import { IconUser } from "@tabler/icons-react";
+import Image from "next/image";
+import Link from "next/link";
+import Balancer from "react-wrap-balancer";
 
 export default function DashboardCandidate({
   positionsWithCandidates,
@@ -59,13 +59,13 @@ export default function DashboardCandidate({
       {positionsWithCandidates.length === 0 ? (
         <Box>
           <Text>
-            No positions yet. Please add{' '}
+            No positions yet. Please add{" "}
             <Anchor
               component={Link}
               href={`/dashboard/${election.slug}/position`}
             >
               positions
-            </Anchor>{' '}
+            </Anchor>{" "}
             first.
           </Text>
         </Box>
@@ -129,8 +129,8 @@ function Candidates({
         size="xl"
         w="100%"
         sx={(theme) => ({
-          [theme.fn.smallerThan('xs')]: {
-            textAlign: 'center',
+          [theme.fn.smallerThan("xs")]: {
+            textAlign: "center",
           },
         })}
       >
@@ -149,7 +149,7 @@ function Candidates({
         <Flex
           gap="xs"
           sx={{
-            overflow: 'auto',
+            overflow: "auto",
           }}
           align="center"
         >
@@ -218,14 +218,14 @@ const CandidateCard = ({
         justify="space-between"
         sx={(theme) => ({
           width: 200,
-          border: '1px solid',
+          border: "1px solid",
           borderColor:
-            theme.colorScheme === 'dark'
+            theme.colorScheme === "dark"
               ? theme.colors.dark[5]
               : theme.colors.gray[3],
           borderRadius: 8,
 
-          [theme.fn.smallerThan('xs')]: {
+          [theme.fn.smallerThan("xs")]: {
             width: 140,
           },
         })}
@@ -236,9 +236,9 @@ const CandidateCard = ({
               src={candidate.image_link}
               width={52}
               height={52}
-              alt={candidate.first_name + ' ' + candidate.last_name + ' image'}
+              alt={candidate.first_name + " " + candidate.last_name + " image"}
               priority
-              style={{ objectFit: 'cover' }}
+              style={{ objectFit: "cover" }}
             />
           ) : (
             <IconUser
@@ -250,7 +250,7 @@ const CandidateCard = ({
           )}
           <Text align="center" w="full" lineClamp={1}>
             {candidate.first_name}
-            {candidate.middle_name && ` ${candidate.middle_name}`}{' '}
+            {candidate.middle_name && ` ${candidate.middle_name}`}{" "}
             {candidate.last_name}
           </Text>
         </Flex>

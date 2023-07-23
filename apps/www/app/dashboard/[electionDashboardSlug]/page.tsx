@@ -1,6 +1,6 @@
-import DashboardOverview from '@/components/client/pages/dashboard-overview';
-import { api_server } from '@/shared/server/trpc';
-import { notFound } from 'next/navigation';
+import DashboardOverview from "@/components/client/pages/dashboard-overview";
+import { api_server } from "@/shared/server/trpc";
+import { notFound } from "next/navigation";
 
 export default async function Page({
   params: { electionDashboardSlug },

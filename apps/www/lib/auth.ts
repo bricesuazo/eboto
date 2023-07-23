@@ -1,34 +1,34 @@
-import { db } from '@eboto-mo/db';
-import { type User, users } from '@eboto-mo/db/schema';
-import bcrypt from 'bcryptjs';
-import { eq } from 'drizzle-orm';
-import { type NextAuthOptions } from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import GoogleProvider from 'next-auth/providers/google';
+import { db } from "@eboto-mo/db";
+import { type User, users } from "@eboto-mo/db/schema";
+import bcrypt from "bcryptjs";
+import { eq } from "drizzle-orm";
+import { type NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ account, profile, credentials }) {
-      if (account?.provider === 'google') {
+      if (account?.provider === "google") {
         if (!profile?.name || !profile.email) return false;
         const user: User | undefined = await db.query.users.findFirst({
-          where: (users, { eq }) => eq(users.email, profile.email ?? ''),
+          where: (users, { eq }) => eq(users.email, profile.email ?? ""),
         });
 
         if (!user) {
-          let first_name = '';
-          let last_name = '';
+          let first_name = "";
+          let last_name = "";
 
-          const name_parts: string[] = profile.name.split(' ');
+          const name_parts: string[] = profile.name.split(" ");
 
           if (name_parts.length === 1) {
-            first_name = name_parts[0] || '';
+            first_name = name_parts[0] || "";
           } else if (name_parts.length === 2) {
-            first_name = name_parts[0] || '';
-            last_name = name_parts[1] || '';
+            first_name = name_parts[0] || "";
+            last_name = name_parts[1] || "";
           } else if (name_parts.length > 2) {
-            first_name = name_parts.slice(0, -1).join(' ') || '';
-            last_name = name_parts[name_parts.length - 1] || '';
+            first_name = name_parts.slice(0, -1).join(" ") || "";
+            last_name = name_parts[name_parts.length - 1] || "";
           }
 
           await db.insert(users).values({
@@ -66,7 +66,7 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session }) {
       const user = await db.query.users.findFirst({
-        where: (users, { eq }) => eq(users.email, session.user.email ?? ''),
+        where: (users, { eq }) => eq(users.email, session.user.email ?? ""),
         columns: {
           id: true,
         },
@@ -85,13 +85,13 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
     CredentialsProvider({
-      name: 'Credentials',
+      name: "Credentials",
       credentials: {
-        email: { label: 'Email', type: 'email', placeholder: 'Email address' },
+        email: { label: "Email", type: "email", placeholder: "Email address" },
         password: {
-          label: 'Password',
-          type: 'password',
-          placeholder: 'Password',
+          label: "Password",
+          type: "password",
+          placeholder: "Password",
         },
       },
       async authorize(credentials) {
@@ -100,7 +100,7 @@ export const authOptions: NextAuthOptions = {
           !credentials.email.trim() ||
           !credentials.password.trim()
         ) {
-          throw new Error('Missing username or password');
+          throw new Error("Missing username or password");
         }
 
         const user = await db.query.users.findFirst({
@@ -108,7 +108,7 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user || !user.password) {
-          throw new Error('Invalid email or password');
+          throw new Error("Invalid email or password");
         }
 
         const isValid = await bcrypt.compare(
@@ -117,7 +117,7 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (!isValid) {
-          throw new Error('Invalid email or password');
+          throw new Error("Invalid email or password");
         }
 
         if (!user.email_verified || !user.password) {
@@ -126,7 +126,7 @@ export const authOptions: NextAuthOptions = {
           //   email: user.email,
           //   userId: user.id,
           // });
-          throw new Error('Email not verified. Email verification sent.');
+          throw new Error("Email not verified. Email verification sent.");
         }
 
         return {
@@ -139,7 +139,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
   },
   // pages: {
   //   signIn: "/signin",
