@@ -1,6 +1,3 @@
-/**
- * This file contains the root router of your tRPC-backend
- */
 import { cookies } from 'next/headers';
 
 import { publicProcedure, router } from '../trpc';

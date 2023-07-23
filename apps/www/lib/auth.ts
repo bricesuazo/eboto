@@ -10,7 +10,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ account, profile, credentials }) {
       if (account?.provider === 'google') {
-        const user: User = await db.query.users.findFirst({
+        const user: User | null = await db.query.users.findFirst({
           where: (users, { eq }) => eq(users.email, profile.email),
         });
 
@@ -66,7 +66,7 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session }) {
       const user = await db.query.users.findFirst({
-        where: (users, { eq }) => eq(users.id, session.user.id),
+        where: (users, { eq }) => eq(users.email, session.user.email),
         columns: {
           id: true,
         },
@@ -137,6 +137,9 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  session: {
+    strategy: 'jwt',
+  },
   // pages: {
   //   signIn: "/signin",
   //   verifyRequest: "/verify",

@@ -6308,8 +6308,8 @@ packages:
       next: registry.npmjs.org/next@13.4.12(@babel/core@7.22.9)(react-dom@18.2.0)(react@18.2.0)
       oauth: registry.npmjs.org/oauth@0.9.15
       openid-client: registry.npmjs.org/openid-client@5.4.3
-      preact: registry.npmjs.org/preact@10.16.0
-      preact-render-to-string: registry.npmjs.org/preact-render-to-string@5.2.6(preact@10.16.0)
+      preact: registry.npmjs.org/preact@10.11.3
+      preact-render-to-string: registry.npmjs.org/preact-render-to-string@5.2.3(preact@10.11.3)
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
       uuid: registry.npmjs.org/uuid@8.3.2
@@ -6749,22 +6749,22 @@ packages:
       source-map-js: registry.npmjs.org/source-map-js@1.0.2
     dev: false
 
-  registry.npmjs.org/preact-render-to-string@5.2.6(preact@10.16.0):
-    resolution: {integrity: sha512-JyhErpYOvBV1hEPwIxc/fHWXPfnEGdRKxc8gFdAZ7XV4tlzyzG847XAyEZqoDnynP88akM4eaHcSOzNcLWFguw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/preact-render-to-string/-/preact-render-to-string-5.2.6.tgz}
-    id: registry.npmjs.org/preact-render-to-string/5.2.6
+  registry.npmjs.org/preact-render-to-string@5.2.3(preact@10.11.3):
+    resolution: {integrity: sha512-aPDxUn5o3GhWdtJtW0svRC2SS/l8D9MAgo2+AWml+BhDImb27ALf04Q2d+AHqUUOc6RdSXFIBVa2gxzgMKgtZA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/preact-render-to-string/-/preact-render-to-string-5.2.3.tgz}
+    id: registry.npmjs.org/preact-render-to-string/5.2.3
     name: preact-render-to-string
-    version: 5.2.6
+    version: 5.2.3
     peerDependencies:
       preact: '>=10'
     dependencies:
-      preact: registry.npmjs.org/preact@10.16.0
+      preact: registry.npmjs.org/preact@10.11.3
       pretty-format: registry.npmjs.org/pretty-format@3.8.0
     dev: false
 
-  registry.npmjs.org/preact@10.16.0:
-    resolution: {integrity: sha512-XTSj3dJ4roKIC93pald6rWuB2qQJO9gO2iLLyTe87MrjQN+HklueLsmskbywEWqCHlclgz3/M4YLL2iBr9UmMA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/preact/-/preact-10.16.0.tgz}
+  registry.npmjs.org/preact@10.11.3:
+    resolution: {integrity: sha512-eY93IVpod/zG3uMF22Unl8h9KkrcKIRs2EGar8hwLZZDU1lkjph303V9HZBwufh2s736U6VXuhD109LYqPoffg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/preact/-/preact-10.11.3.tgz}
     name: preact
-    version: 10.16.0
+    version: 10.11.3
     dev: false
 
   registry.npmjs.org/prelude-ls@1.2.1:

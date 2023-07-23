@@ -69,15 +69,17 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <RootLayoutClient
-        theme={(cookies().get('theme')?.value as ColorScheme | null) ?? 'light'}
-        user={user}
-      >
-        <body className={font.className}>
+      <body className={font.className}>
+        <RootLayoutClient
+          theme={
+            (cookies().get('theme')?.value as ColorScheme | null) ?? 'light'
+          }
+          user={user}
+        >
           {children}
           <Analytics />
-        </body>
-      </RootLayoutClient>
+        </RootLayoutClient>
+      </body>
     </html>
   );
 }

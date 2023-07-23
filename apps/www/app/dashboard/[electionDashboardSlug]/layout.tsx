@@ -3,8 +3,6 @@ import { siteConfig } from '@/config/site';
 import { api_server } from '@/shared/server/trpc';
 import { type Metadata, type ResolvingMetadata } from 'next';
 
-export const runtime = 'edge';
-
 export async function generateMetadata(
   {
     params,

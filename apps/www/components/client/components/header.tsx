@@ -28,7 +28,7 @@ import {
 } from '@tabler/icons-react';
 import { IconMoon } from '@tabler/icons-react';
 import { IconSun } from '@tabler/icons-react';
-import { signIn, signOut } from 'next-auth/react';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';

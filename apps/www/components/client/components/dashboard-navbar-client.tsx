@@ -131,7 +131,7 @@ export default function NavbarComponent() {
             placeholder={isLoading ? 'Loading...' : 'Select election'}
             iconWidth={48}
             disabled={isLoading}
-            error={error.message}
+            error={error?.message}
             icon={
               currentElection && currentElection.logo ? (
                 <Image

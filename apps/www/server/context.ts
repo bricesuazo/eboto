@@ -1,6 +1,7 @@
+import { authOptions } from '@/lib/auth';
 import type { inferAsyncReturnType } from '@trpc/server';
 import type { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
-import { getSession } from 'next-auth/react';
+import { getServerSession } from 'next-auth';
 
 /**
  * Creates context for an incoming request
@@ -9,7 +10,7 @@ import { getSession } from 'next-auth/react';
 export async function createContext(
   opts:
     | {
-        type: 'api_server';
+        type: 'rsc';
       }
     | (FetchCreateContextFnOptions & {
         type: 'api';
@@ -17,7 +18,7 @@ export async function createContext(
 ) {
   return {
     type: opts.type,
-    session: await getSession(),
+    session: await getServerSession(authOptions),
   };
 }
 

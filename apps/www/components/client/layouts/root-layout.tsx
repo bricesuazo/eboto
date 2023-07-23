@@ -111,7 +111,7 @@ export default function RootLayoutClient({
               </ColorSchemeProvider>
             </CacheProvider>
           </ReactQueryStreamedHydration>
-          <ReactQueryDevtools initialIsOpen={false} />
+          {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         </QueryClientProvider>
       </api_client.Provider>
     </SessionProvider>
