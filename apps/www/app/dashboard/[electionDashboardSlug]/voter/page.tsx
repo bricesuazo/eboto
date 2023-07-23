@@ -2,6 +2,7 @@ import DashboardVoter from '@/components/client/pages/dashboard-voter';
 import { api_server } from '@/shared/server/trpc';
 import { db } from '@eboto-mo/db';
 import { type Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Voters',
@@ -18,6 +19,8 @@ export default async function Page({
       voter_fields: true,
     },
   });
+
+  if (!election) notFound();
 
   const voters = await api_server.election.getVotersByElectionId.fetch({
     election_id: election.id,

@@ -62,7 +62,7 @@ export const mergeRouters = t.mergeRouters;
  * @see https://trpc.io/docs/v10/procedures
  **/
 export const privateProcedure = t.procedure.use((opts) => {
-  if (!opts.ctx.session.user) {
+  if (!opts.ctx.session) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
       message: 'You have to be logged in to do this',

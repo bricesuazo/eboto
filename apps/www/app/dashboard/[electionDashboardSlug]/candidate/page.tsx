@@ -1,6 +1,7 @@
 import DashboardCandidate from '@/components/client/pages/dashboard-candidate';
 import { api_server } from '@/shared/server/trpc';
 import { type Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Candidates',
@@ -14,6 +15,9 @@ export default async function Page({
   const election = await api_server.election.getElectionBySlug.fetch({
     slug: electionDashboardSlug,
   });
+
+  if (!election) notFound();
+
   const positionsWithCandidates =
     await api_server.election.getAllCandidatesByElectionId.fetch({
       election_id: election.id,

@@ -4,12 +4,11 @@ import { db } from '@eboto-mo/db';
 import {
   type Commissioner,
   type Election,
-  Vote,
+  type Vote,
   type Voter,
-  elections,
-  voters,
 } from '@eboto-mo/db/schema';
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -18,6 +17,8 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const session = await api_server.auth.getSession.fetch();
+
+  if (!session) notFound();
 
   const electionsAsCommissioner: (Commissioner & { election: Election })[] =
     await db.query.commissioners.findMany({

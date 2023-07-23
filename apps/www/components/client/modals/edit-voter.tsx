@@ -33,7 +33,7 @@ export default function EditVoter({
   election_id: string;
   voter: {
     id: string;
-    field: { [key: string]: string | undefined };
+    field: { [key: string]: string };
     email: string;
     account_status: 'ACCEPTED' | 'INVITED' | 'DECLINED' | 'ADDED';
   };
@@ -51,12 +51,12 @@ export default function EditVoter({
   const form = useForm<{
     email: string;
     field: {
-      [key: string]: string | undefined;
+      [key: string]: string;
     };
   }>({
     initialValues: {
       email: voter.email,
-      field: voter.field,
+      field: voter.field ?? {},
     },
     validateInputOnBlur: true,
     validate: {

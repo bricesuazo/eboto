@@ -43,7 +43,7 @@ export default function DeleteBulkVoter({
           autoClose: 5000,
         });
         close();
-        onSuccess();
+        onSuccess && onSuccess();
       },
     });
 

@@ -7,7 +7,7 @@ import { type Metadata } from 'next';
 import { Poppins } from 'next/font/google';
 import { cookies } from 'next/headers';
 
-export const revalidate = 0;
+// export const revalidate = 0;
 
 const font = Poppins({
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],

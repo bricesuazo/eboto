@@ -2,6 +2,7 @@ import DashboardLayout from '@/components/client/layouts/dashboard-layout';
 import { siteConfig } from '@/config/site';
 import { api_server } from '@/shared/server/trpc';
 import { type Metadata, type ResolvingMetadata } from 'next';
+import { notFound } from 'next/navigation';
 
 export async function generateMetadata(
   {
@@ -14,6 +15,8 @@ export async function generateMetadata(
   const election = await api_server.election.getElectionBySlug.fetch({
     slug: params.electionDashboardSlug,
   });
+
+  if (!election) notFound();
 
   return {
     title: {

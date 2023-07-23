@@ -277,17 +277,18 @@ export default function EditCandidate({
         closeOnClickOutside={false}
       >
         <form
-          onSubmit={form.onSubmit((value) => {
+          onSubmit={form.onSubmit((values) => {
             mutate({
               id: candidate.id,
-              first_name: value.first_name,
-              middle_name: value.middle_name,
-              last_name: value.last_name,
-              slug: value.slug,
-              partylist_id: value.partylist_id,
+              first_name: values.first_name,
+              middle_name: values.middle_name,
+              last_name: values.last_name,
+              slug: values.slug,
+              partylist_id: values.partylist_id,
               election_id: candidate.election_id,
-              position_id: value.position,
+              position_id: values.position,
               image_link: '',
+
               //   image: !value.image
               //     ? null
               //     : typeof value.image === "string"
@@ -696,7 +697,9 @@ export default function EditCandidate({
                                         i === index
                                           ? {
                                               ...achievement,
-                                              year: date,
+                                              year: new Date(
+                                                date?.toString() ?? '',
+                                              ),
                                             }
                                           : achievement,
                                     ),
@@ -804,7 +807,9 @@ export default function EditCandidate({
                                         i === index
                                           ? {
                                               ...affiliation,
-                                              start_year: date,
+                                              start_year: new Date(
+                                                date?.toString() ?? '',
+                                              ),
                                             }
                                           : affiliation,
                                     ),
@@ -831,7 +836,9 @@ export default function EditCandidate({
                                         i === index
                                           ? {
                                               ...affiliation,
-                                              end_year: date,
+                                              end_year: new Date(
+                                                date?.toString() ?? '',
+                                              ),
                                             }
                                           : affiliation,
                                     ),
@@ -927,7 +934,9 @@ export default function EditCandidate({
                                             i === index
                                               ? {
                                                   ...achievement,
-                                                  year: date,
+                                                  year: new Date(
+                                                    date?.toString() ?? '',
+                                                  ),
                                                 }
                                               : achievement,
                                         ),

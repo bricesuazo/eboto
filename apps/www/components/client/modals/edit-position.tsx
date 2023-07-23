@@ -112,6 +112,8 @@ export default function EditPosition({
               name: value.name,
               min: value.isSingle ? value.min : undefined,
               max: value.isSingle ? value.max : undefined,
+              order,
+              election_id: position.election_id,
             });
           })}
         >

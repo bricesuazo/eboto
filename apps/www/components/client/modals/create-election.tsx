@@ -109,8 +109,15 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
       >
         <form
           onSubmit={form.onSubmit((value) => {
+            const now = new Date();
             mutate({
               ...value,
+              name: value.name.trim(),
+              slug: value.slug.trim(),
+              start_date:
+                value.start_date ?? new Date(now.setDate(now.getDate() + 1)),
+              end_date:
+                value.end_date ?? new Date(now.setDate(now.getDate() + 5)),
               template: parseInt(value.template),
             });
           })}

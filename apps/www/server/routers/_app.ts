@@ -8,7 +8,7 @@ export const appRouter = router({
   election: electionRouter,
   auth: authRouter,
   toggleTheme: publicProcedure.mutation(async () => {
-    cookies().get('theme') && cookies().get('theme').value === 'dark'
+    cookies().get('theme')?.value === 'dark'
       ? cookies().set('theme', 'light')
       : cookies().set('theme', 'dark');
   }),

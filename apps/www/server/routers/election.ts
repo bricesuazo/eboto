@@ -164,7 +164,7 @@ export const electionRouter = router({
         throw new Error('Election slug is already exists');
       }
 
-      const isElectionSlugExists: Election | null =
+      const isElectionSlugExists: Election | undefined =
         await db.query.elections.findFirst({
           where: (elections, { eq }) => eq(elections.slug, input.slug),
         });
@@ -226,7 +226,7 @@ export const electionRouter = router({
           throw new Error('Election slug is already exists');
         }
 
-        const isElectionSlugExists: Election | null =
+        const isElectionSlugExists: Election | undefined =
           await db.query.elections.findFirst({
             where: (elections, { eq }) => eq(elections.slug, input.newSlug),
           });
@@ -235,7 +235,7 @@ export const electionRouter = router({
           throw new Error('Election slug is already exists');
       }
 
-      const isElectionCommissionerExists: Election | null =
+      const isElectionCommissionerExists: Election | undefined =
         await db.query.elections.findFirst({
           with: {
             commissioners: {
@@ -268,7 +268,7 @@ export const electionRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       // TODO: Validate commissioner
-      const isAcronymExists: Partylist | null =
+      const isAcronymExists: Partylist | undefined =
         await db.query.partylists.findFirst({
           where: (partylists, { eq, and }) =>
             and(
@@ -307,7 +307,7 @@ export const electionRouter = router({
         });
 
       if (input.oldAcronym !== input.newAcronym) {
-        const isAcronymExists: Partylist | null =
+        const isAcronymExists: Partylist | undefined =
           await db.query.partylists.findFirst({
             where: (partylists, { eq, and }) =>
               and(
@@ -454,7 +454,7 @@ export const electionRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       // TODO: Validate commissioner
-      const isCandidateSlugExists: Candidate | null =
+      const isCandidateSlugExists: Candidate | undefined =
         await db.query.candidates.findFirst({
           where: (candidates, { eq, and }) =>
             and(
@@ -496,7 +496,7 @@ export const electionRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       // TODO: Validate commissioner
-      const isCandidateSlugExists: Candidate | null =
+      const isCandidateSlugExists: Candidate | undefined =
         await db.query.candidates.findFirst({
           where: (candidates, { eq, and }) =>
             and(
@@ -568,6 +568,7 @@ export const electionRouter = router({
           id: crypto.randomUUID(),
           user_id: ctx.session.user.id,
           election_id: input.election_id,
+          field: input.field,
         });
       } else {
         const isVoterExists = await db.query.elections.findFirst({
@@ -660,7 +661,7 @@ export const electionRouter = router({
     .mutation(async ({ ctx, input }) => {
       // TODO: Validate commissioner
       if (input.account_status === 'ACCEPTED') {
-        const voter: Voter | null = await db.query.voters.findFirst({
+        const voter: Voter | undefined = await db.query.voters.findFirst({
           where: (voters, { eq, and }) =>
             and(
               eq(voters.id, input.id),
@@ -678,7 +679,7 @@ export const electionRouter = router({
 
         return { type: 'voter' };
       } else {
-        const invited_voter: InvitedVoter | null =
+        const invited_voter: InvitedVoter | undefined =
           await db.query.invited_voters.findFirst({
             where: (invited_voters, { eq, and }) =>
               and(
@@ -715,7 +716,7 @@ export const electionRouter = router({
     .mutation(async ({ ctx, input }) => {
       // TODO: Validate commissioner
       if (!input.is_invited_voter) {
-        const voter: Voter | null = await db.query.voters.findFirst({
+        const voter: Voter | undefined = await db.query.voters.findFirst({
           where: (voters, { eq, and }) =>
             and(
               eq(voters.id, input.id),
@@ -734,7 +735,7 @@ export const electionRouter = router({
             ),
           );
       } else {
-        const invited_voter: InvitedVoter | null =
+        const invited_voter: InvitedVoter | undefined =
           await db.query.invited_voters.findFirst({
             where: (invited_voters, { eq, and }) =>
               and(

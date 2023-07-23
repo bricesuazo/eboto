@@ -50,7 +50,7 @@ export const elections = mysqlTable('elections', {
   description: longtext('description'),
   start_date: timestamp('start_date').notNull(),
   end_date: timestamp('end_date').notNull(),
-  publicity: mysqlEnum('publicity', publicity).default('PRIVATE'),
+  publicity: mysqlEnum('publicity', publicity).default('PRIVATE').notNull(),
   logo: longtext('logo'),
   voter_domain: text('voter_domain'),
 
@@ -88,8 +88,8 @@ export const invited_commissioners = mysqlTable('invited_commissioners', {
 export const invited_voters = mysqlTable('invited_voters', {
   id,
   email: text('email').notNull(),
-  status: mysqlEnum('status', account_status_type).default('ADDED'),
-  field: json('field').$type<Record<string, string>>(),
+  status: mysqlEnum('status', account_status_type).default('ADDED').notNull(),
+  field: json('field').$type<Record<string, string>>().notNull(),
 
   created_at,
 
@@ -100,7 +100,7 @@ export const voters = mysqlTable('voters', {
   id,
   created_at,
 
-  field: json('field').$type<Record<string, string>>(),
+  field: json('field').$type<Record<string, string>>().notNull(),
 
   user_id,
   election_id,
@@ -162,7 +162,7 @@ export const credentials = mysqlTable('credentials', {
 export const platforms = mysqlTable('platforms', {
   id,
   title: text('title').notNull(),
-  description: longtext('description'),
+  description: longtext('description').notNull().default(''),
 
   created_at,
   updated_at,

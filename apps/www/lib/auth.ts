@@ -10,15 +10,15 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ account, profile, credentials }) {
       if (account?.provider === 'google') {
-        const user: User | null = await db.query.users.findFirst({
-          where: (users, { eq }) => eq(users.email, profile.email),
+        if (!profile?.name || !profile.email) return false;
+        const user: User | undefined = await db.query.users.findFirst({
+          where: (users, { eq }) => eq(users.email, profile.email ?? ''),
         });
 
         if (!user) {
           let first_name = '';
           let last_name = '';
 
-          if (!profile.name) return false;
           const name_parts: string[] = profile.name.split(' ');
 
           if (name_parts.length === 1) {
@@ -66,12 +66,13 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session }) {
       const user = await db.query.users.findFirst({
-        where: (users, { eq }) => eq(users.email, session.user.email),
+        where: (users, { eq }) => eq(users.email, session.user.email ?? ''),
         columns: {
           id: true,
         },
       });
-      if (session.user) {
+
+      if (session.user && user) {
         session.user.id = user.id;
       }
       return session;
@@ -80,8 +81,8 @@ export const authOptions: NextAuthOptions = {
 
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
     CredentialsProvider({
       name: 'Credentials',

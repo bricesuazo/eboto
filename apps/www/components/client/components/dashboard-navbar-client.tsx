@@ -32,7 +32,6 @@ const useStyles = createStyles((theme) => ({
       theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
   },
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   link: {
     ...theme.fn.focusStyles(),
     width: '100%',
@@ -99,10 +98,12 @@ export default function NavbarComponent() {
     error,
   } = api_client.election.getAllMyElections.useQuery();
 
-  const currentElection = elections?.find(
-    (election) =>
-      election.election.slug === params.electionDashboardSlug.toString(),
-  ).election;
+  const currentElection = elections
+    ? elections.find(
+        (election) =>
+          election.election.slug === params.electionDashboardSlug.toString(),
+      )?.election
+    : null;
 
   const store = useStore();
 
@@ -130,13 +131,13 @@ export default function NavbarComponent() {
           <Select
             placeholder={isLoading ? 'Loading...' : 'Select election'}
             iconWidth={48}
-            disabled={isLoading}
+            disabled={isLoading || !elections}
             error={error?.message}
             icon={
-              currentElection && currentElection.logo ? (
+              currentElection?.logo ? (
                 <Image
-                  src={currentElection.logo}
-                  alt={currentElection.name}
+                  src={currentElection?.logo}
+                  alt={currentElection?.name}
                   width={28}
                   height={28}
                   priority
@@ -186,9 +187,11 @@ export default function NavbarComponent() {
             itemComponent={(
               props: React.ComponentPropsWithoutRef<'button'>,
             ) => {
-              const { election } = elections.find(
-                ({ election }) => election.slug === props.value,
-              );
+              const election = elections
+                ? elections.find(
+                    ({ election }) => election.slug === props.value,
+                  )?.election ?? null
+                : null;
               if (!election) return null;
               return (
                 <UnstyledButton

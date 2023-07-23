@@ -15,4 +15,7 @@ export const authRouter = router({
     );
   }),
   getSession: publicProcedure.query(() => getServerSession(authOptions)),
+  test: privateProcedure.mutation(async ({ ctx }) => {
+    return crypto.randomUUID();
+  }),
 });

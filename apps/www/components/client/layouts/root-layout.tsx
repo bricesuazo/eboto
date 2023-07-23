@@ -73,44 +73,44 @@ export default function RootLayoutClient({
     <SessionProvider>
       <api_client.Provider client={trpcClient} queryClient={queryClient}>
         <QueryClientProvider client={queryClient}>
-          <ReactQueryStreamedHydration>
-            <CacheProvider value={cache}>
-              <ColorSchemeProvider
-                colorScheme={colorScheme}
-                toggleColorScheme={() => {
-                  // toggleTheme();
-                  setColorScheme((c) => (c === 'dark' ? 'light' : 'dark'));
+          {/* <ReactQueryStreamedHydration> */}
+          <CacheProvider value={cache}>
+            <ColorSchemeProvider
+              colorScheme={colorScheme}
+              toggleColorScheme={() => {
+                // toggleTheme();
+                setColorScheme((c) => (c === 'dark' ? 'light' : 'dark'));
+              }}
+            >
+              <MantineProvider
+                withGlobalStyles
+                withNormalizeCSS
+                theme={{
+                  fontFamily: 'Poppins, sans-serif',
+                  colorScheme,
+                  primaryColor: 'green',
                 }}
               >
-                <MantineProvider
-                  withGlobalStyles
-                  withNormalizeCSS
-                  theme={{
-                    fontFamily: 'Poppins, sans-serif',
-                    colorScheme,
-                    primaryColor: 'green',
-                  }}
+                <Notifications />
+                <AppShell
+                  padding={0}
+                  header={<HeaderContent user={user} />}
+                  navbar={<DashboardNavbar />}
+                  styles={(theme) => ({
+                    main: {
+                      backgroundColor:
+                        theme.colorScheme === 'dark'
+                          ? theme.colors.dark[8]
+                          : theme.colors.gray[0],
+                    },
+                  })}
                 >
-                  <Notifications />
-                  <AppShell
-                    padding={0}
-                    header={<HeaderContent user={user} />}
-                    navbar={<DashboardNavbar />}
-                    styles={(theme) => ({
-                      main: {
-                        backgroundColor:
-                          theme.colorScheme === 'dark'
-                            ? theme.colors.dark[8]
-                            : theme.colors.gray[0],
-                      },
-                    })}
-                  >
-                    {children}
-                  </AppShell>
-                </MantineProvider>
-              </ColorSchemeProvider>
-            </CacheProvider>
-          </ReactQueryStreamedHydration>
+                  {children}
+                </AppShell>
+              </MantineProvider>
+            </ColorSchemeProvider>
+          </CacheProvider>
+          {/* </ReactQueryStreamedHydration> */}
           {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         </QueryClientProvider>
       </api_client.Provider>

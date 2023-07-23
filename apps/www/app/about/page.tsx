@@ -1,8 +1,17 @@
+'use client';
+
+import { api_client } from '@/shared/client/trpc';
 import { getServerSession } from 'next-auth';
 import { getSession } from 'next-auth/react';
 
-export default async function page() {
-  const session = await getServerSession();
-  console.log('🚀 ~ file: page.tsx:4 ~ page ~ session:', session);
-  return <div>page</div>;
+export default function page() {
+  const session = api_client.auth.test.useMutation();
+  console.log('🚀 ~ file: page.tsx:9 ~ page ~ session:', session.data);
+
+  return (
+    <div>
+      <button onClick={() => session.mutate()}>asdasdasd</button>
+      <p>{session.data}</p>
+    </div>
+  );
 }
