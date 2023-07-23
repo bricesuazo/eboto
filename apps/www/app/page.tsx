@@ -17,6 +17,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Balancer from 'react-wrap-balancer';
 
+export const runtime = 'edge';
+
 const useStyles = createStyles((theme) => ({
   wrapper: {
     position: 'relative',

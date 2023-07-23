@@ -1,3 +1,4 @@
+import RootLayoutClient from '@/components/client/layouts/root-layout';
 import { siteConfig } from '@/config/site';
 import { api_server } from '@/shared/server/trpc';
 import { type ColorScheme } from '@mantine/core';
@@ -5,8 +6,6 @@ import { Analytics } from '@vercel/analytics/react';
 import { type Metadata } from 'next';
 import { Poppins } from 'next/font/google';
 import { cookies } from 'next/headers';
-
-import RootLayoutClient from '../components/client/layouts/root-layout';
 
 export const revalidate = 0;
 

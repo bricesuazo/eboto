@@ -13,7 +13,7 @@ importers:
         version: link:packages/eslint-config
       '@turbo/gen':
         specifier: ^1.10.9
-        version: registry.npmjs.org/@turbo/gen@1.10.9(@types/node@20.4.3)(typescript@5.1.6)
+        version: registry.npmjs.org/@turbo/gen@1.10.9(@types/node@20.4.4)(typescript@5.1.6)
       dotenv-cli:
         specifier: ^7.2.1
         version: registry.npmjs.org/dotenv-cli@7.2.1
@@ -184,8 +184,8 @@ importers:
         specifier: ^2.4.2
         version: registry.npmjs.org/@types/bcryptjs@2.4.2
       '@types/node':
-        specifier: ^20.4.3
-        version: registry.npmjs.org/@types/node@20.4.3
+        specifier: ^20.4.4
+        version: registry.npmjs.org/@types/node@20.4.4
       '@types/react':
         specifier: ^18.2.15
         version: registry.npmjs.org/@types/react@18.2.15
@@ -2675,7 +2675,7 @@ packages:
     version: 1.0.4
     dev: true
 
-  registry.npmjs.org/@turbo/gen@1.10.9(@types/node@20.4.3)(typescript@5.1.6):
+  registry.npmjs.org/@turbo/gen@1.10.9(@types/node@20.4.4)(typescript@5.1.6):
     resolution: {integrity: sha512-EQdg4NqN032+o2Wgj9lg49puijGc4tbgKjGjDOi8+rN/RqE9CUKxKtrfaTGdDjfdC1Uy8FaaKk7y1zYK3zIojg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@turbo/gen/-/gen-1.10.9.tgz}
     id: registry.npmjs.org/@turbo/gen/1.10.9
     name: '@turbo/gen'
@@ -2689,7 +2689,7 @@ packages:
       minimatch: registry.npmjs.org/minimatch@9.0.3
       node-plop: registry.npmjs.org/node-plop@0.26.3
       semver: registry.npmjs.org/semver@7.5.4
-      ts-node: registry.npmjs.org/ts-node@10.9.1(@types/node@20.4.3)(typescript@5.1.6)
+      ts-node: registry.npmjs.org/ts-node@10.9.1(@types/node@20.4.4)(typescript@5.1.6)
       update-check: registry.npmjs.org/update-check@1.5.4
       validate-npm-package-name: registry.npmjs.org/validate-npm-package-name@5.0.0
     transitivePeerDependencies:
@@ -2711,7 +2711,7 @@ packages:
     version: 7.2.0
     dependencies:
       '@types/minimatch': registry.npmjs.org/@types/minimatch@5.1.2
-      '@types/node': registry.npmjs.org/@types/node@20.4.3
+      '@types/node': registry.npmjs.org/@types/node@20.4.4
     dev: true
 
   registry.npmjs.org/@types/inquirer@6.5.0:
@@ -2747,10 +2747,10 @@ packages:
     version: 20.4.2
     dev: true
 
-  registry.npmjs.org/@types/node@20.4.3:
-    resolution: {integrity: sha512-Yu3+r4Mn/iY6Mf0aihncZQ1qOjOUrCiodbHHY1hds5O+7BbKp9t+Li7zLO13zO8j9L2C6euz8xsYQP0rjGvVXw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@types/node/-/node-20.4.3.tgz}
+  registry.npmjs.org/@types/node@20.4.4:
+    resolution: {integrity: sha512-CukZhumInROvLq3+b5gLev+vgpsIqC2D0deQr/yS1WnxvmYLlJXZpaQrQiseMY+6xusl79E04UjWoqyr+t1/Ew==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@types/node/-/node-20.4.4.tgz}
     name: '@types/node'
-    version: 20.4.3
+    version: 20.4.4
     dev: true
 
   registry.npmjs.org/@types/object.omit@3.0.0:
@@ -2815,7 +2815,7 @@ packages:
     name: '@types/through'
     version: 0.0.30
     dependencies:
-      '@types/node': registry.npmjs.org/@types/node@20.4.3
+      '@types/node': registry.npmjs.org/@types/node@20.4.4
     dev: true
 
   registry.npmjs.org/@typescript-eslint/eslint-plugin@6.1.0(@typescript-eslint/parser@6.1.0)(eslint@8.45.0)(typescript@5.1.6):
@@ -7857,7 +7857,7 @@ packages:
     dependencies:
       typescript: registry.npmjs.org/typescript@5.1.6
 
-  registry.npmjs.org/ts-node@10.9.1(@types/node@20.4.3)(typescript@5.1.6):
+  registry.npmjs.org/ts-node@10.9.1(@types/node@20.4.4)(typescript@5.1.6):
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/ts-node/-/ts-node-10.9.1.tgz}
     id: registry.npmjs.org/ts-node/10.9.1
     name: ts-node
@@ -7879,7 +7879,7 @@ packages:
       '@tsconfig/node12': registry.npmjs.org/@tsconfig/node12@1.0.11
       '@tsconfig/node14': registry.npmjs.org/@tsconfig/node14@1.0.3
       '@tsconfig/node16': registry.npmjs.org/@tsconfig/node16@1.0.4
-      '@types/node': registry.npmjs.org/@types/node@20.4.3
+      '@types/node': registry.npmjs.org/@types/node@20.4.4
       acorn: registry.npmjs.org/acorn@8.10.0
       acorn-walk: registry.npmjs.org/acorn-walk@8.2.0
       arg: registry.npmjs.org/arg@4.1.3
