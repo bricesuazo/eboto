@@ -54,9 +54,7 @@ export async function toggleTheme() {
 export async function createElection(input: CreateElectionSchema) {
   const parsedInput = createElectionSchema.parse(input);
 
-  const session = await getSession();
-
-  if (!session) throw new Error('Unauthorized');
+  const session = await authMiddleware();
 
   if (takenSlugs.includes(parsedInput.slug)) {
     throw new Error('Election slug is already exists');
@@ -106,9 +104,7 @@ export async function createElection(input: CreateElectionSchema) {
 export async function updateElection(input: EditElectionSchema) {
   const parsedInput = editElectionSchema.parse(input);
 
-  const session = await getSession();
-
-  if (!session) throw new Error('Unauthorized');
+  const session = await authMiddleware();
 
   if (parsedInput.newSlug !== parsedInput.oldSlug) {
     if (takenSlugs.includes(parsedInput.newSlug)) {
@@ -151,9 +147,7 @@ export async function updateElection(input: EditElectionSchema) {
 export async function createPartylist(input: CreatePartylistSchema) {
   const parsedInput = createPartylistSchema.parse(input);
 
-  const session = await getSession();
-
-  if (!session) throw new Error('Unauthorized');
+  const session = await authMiddleware();
 
   const isAcronymExists: Partylist | null = await db.query.partylists.findFirst(
     {
@@ -180,9 +174,7 @@ export async function editPartylist(input: EditPartylistSchema) {
   if (parsedInput.newAcronym === 'IND')
     throw new Error('Acronym is already exists');
 
-  const session = await getSession();
-
-  if (!session) throw new Error('Unauthorized');
+  const session = await authMiddleware();
 
   if (parsedInput.oldAcronym !== parsedInput.newAcronym) {
     const isAcronymExists: Partylist | null =
@@ -210,9 +202,7 @@ export async function editPartylist(input: EditPartylistSchema) {
   revalidatePath('/election/[electionDashboardSlug]/partylist');
 }
 export async function deletePartylist(id: string) {
-  const session = await getSession();
-
-  if (!session) throw new Error('Unauthorized');
+  const session = await authMiddleware();
 
   await db.delete(partylists).where(eq(partylists.id, id));
 
@@ -229,9 +219,7 @@ export async function deleteCandidate(id: string) {
 }
 
 export async function createPosition(input: CreatePositionSchema) {
-  const session = await getSession();
-
-  if (!session) throw new Error('Unauthorized');
+  const session = await authMiddleware();
 
   await db.insert(positions).values({
     id: crypto.randomUUID(),
@@ -258,9 +246,7 @@ export async function deletePosition(id: string) {
 export async function editPosition(input: EditPositionSchema) {
   const parsedInput = editPositionSchema.parse(input);
 
-  const session = await getSession();
-
-  if (!session) throw new Error('Unauthorized');
+  const session = await authMiddleware();
 
   await db
     .update(positions)
@@ -277,9 +263,7 @@ export async function editPosition(input: EditPositionSchema) {
 }
 
 export async function createCandidate(input: CreateCandidateSchema) {
-  const session = await getSession();
-
-  if (!session) throw new Error('Unauthorized');
+  const session = await authMiddleware();
 
   const isCandidateSlugExists: Candidate | null =
     await db.query.candidates.findFirst({
@@ -309,9 +293,7 @@ export async function createCandidate(input: CreateCandidateSchema) {
 }
 
 export async function editCandidate(input: EditCandidateSchema) {
-  const session = await getSession();
-
-  if (!session) throw new Error('Unauthorized');
+  const session = await authMiddleware();
 
   const isCandidateSlugExists: Candidate | null =
     await db.query.candidates.findFirst({
@@ -344,9 +326,7 @@ export async function inviteAllInvitedVoters({
 }: {
   election_id: string;
 }) {
-  const session = await getSession();
-
-  if (!session) throw new Error('Unauthorized');
+  const session = await authMiddleware();
 
   const isElectionExists = await db.query.elections.findFirst({
     where: (elections, { eq }) => eq(elections.id, election_id),
@@ -377,9 +357,7 @@ export async function inviteAllInvitedVoters({
 }
 
 export async function createVoter(input: CreateVoterSchema) {
-  const session = await getSession();
-
-  if (!session) throw new Error('Unauthorized');
+  const session = await authMiddleware();
 
   const user = await db.query.users.findFirst({
     where: (users, { eq }) => eq(users.id, session.id),
@@ -444,9 +422,7 @@ export async function createVoter(input: CreateVoterSchema) {
 }
 
 export async function updateVoterField(input: UpdateVoterFieldSchema) {
-  const session = await getSession();
-
-  if (!session) throw new Error('Unauthorized');
+  const session = await authMiddleware();
 
   await db
     .update(voter_fields)
@@ -459,9 +435,7 @@ export async function updateVoterField(input: UpdateVoterFieldSchema) {
 export async function deleteSingleVoterField(
   input: DeleteSingleVoterFieldSchema,
 ) {
-  const session = await getSession();
-
-  if (!session) throw new Error('Unauthorized');
+  const session = await authMiddleware();
 
   await db
     .delete(voter_fields)
@@ -476,9 +450,7 @@ export async function deleteSingleVoterField(
 }
 
 export async function editVoter(input: EditVoterSchema) {
-  const session = await getSession();
-
-  if (!session) throw new Error('Unauthorized');
+  const session = await authMiddleware();
 
   if (input.account_status === 'ACCEPTED') {
     const voter: Voter | null = await db.query.voters.findFirst({
@@ -487,15 +459,15 @@ export async function editVoter(input: EditVoterSchema) {
     });
 
     if (!voter) throw new Error('Voter not found');
-    return {
-      type: 'voter',
-      voter: await db
-        .update(voters)
-        .set({
-          field: input.field,
-        })
-        .where(eq(voters.id, input.id)),
-    };
+    await db
+      .update(voters)
+      .set({
+        field: input.field,
+      })
+      .where(eq(voters.id, input.id));
+
+    revalidatePath('/election/[electionDashboardSlug]/voter');
+    return { type: 'voter' };
   } else {
     const invited_voter: InvitedVoter | null =
       await db.query.invited_voters.findFirst({
@@ -507,24 +479,22 @@ export async function editVoter(input: EditVoterSchema) {
       });
     if (!invited_voter) throw new Error('Voter not found');
 
-    return {
-      type: 'invited_voter',
-      invitedVoter: await db
-        .update(invited_voters)
-        .set({
-          email: input.email,
-          field: input.field,
-        })
-        .where(
-          and(
-            eq(invited_voters.id, input.id),
-            eq(invited_voters.election_id, input.election_id),
-          ),
+    await db
+      .update(invited_voters)
+      .set({
+        email: input.email,
+        field: input.field,
+      })
+      .where(
+        and(
+          eq(invited_voters.id, input.id),
+          eq(invited_voters.election_id, input.election_id),
         ),
-    };
-  }
+      );
 
-  revalidatePath('/election/[electionDashboardSlug]/voter');
+    revalidatePath('/election/[electionDashboardSlug]/voter');
+    return { type: 'invited_voter' };
+  }
 }
 
 export async function deleteVoter(input: DeleteVoterSchema) {
@@ -571,9 +541,7 @@ export async function deleteVoter(input: DeleteVoterSchema) {
 }
 
 export async function deleteBulkVoter(input: DeleteBulkVoterSchema) {
-  const session = await getSession();
-
-  if (!session) throw new Error('Unauthorized');
+  await authMiddleware();
 
   const votersIds = input.voters
     .filter((voter) => voter.isVoter)
@@ -624,7 +592,16 @@ export async function uploadBulkVoter(input: UploadBulkVoterSchema) {
   if (isElectionExists.commissioners.length === 0)
     throw new Error('Unauthorized');
 
-  const test = await db.insert(invited_voters).values(
+  // await Promise.all(
+  //   input.voters.map(async (voter) => {
+  //     await isVoterOrInvitedVoterExists({
+  //       election_id: input.election_id,
+  //       email: voter.email,
+  //     });
+  //   }),
+  // );
+
+  const voters = await db.insert(invited_voters).values(
     input.voters.map((voter) => ({
       id: crypto.randomUUID(),
       email: voter.email,
@@ -633,9 +610,20 @@ export async function uploadBulkVoter(input: UploadBulkVoterSchema) {
     })),
   );
 
-  return { count: test.size };
+  revalidatePath('/election/[electionDashboardSlug]/voter');
+  return { count: voters.size };
 }
 
 export async function refreshVoterPage() {
   revalidatePath('/election/[electionDashboardSlug]/voter');
+}
+
+// middleware -----------------------------
+
+async function authMiddleware() {
+  const session = await getSession();
+
+  if (!session) throw new Error('Unauthorized');
+
+  return session;
 }

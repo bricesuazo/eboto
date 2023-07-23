@@ -156,6 +156,9 @@ export default function DashboardVoter({
           onRowSelectionChange={setRowSelection}
           getRowId={(row) => row.id}
           enableStickyHeader
+          mantinePaperProps={{
+            shadow: 'none',
+          }}
           initialState={{
             density: 'xs',
             pagination: { pageSize: 15, pageIndex: 0 },
