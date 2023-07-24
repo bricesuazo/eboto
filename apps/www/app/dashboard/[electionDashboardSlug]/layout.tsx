@@ -1,5 +1,6 @@
 import DashboardLayout from "@/components/client/layouts/dashboard-layout";
 import { siteConfig } from "@/config/site";
+import { getSession } from "@/lib/session";
 import { db } from "@eboto-mo/db";
 import { type Metadata, type ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
@@ -12,6 +13,9 @@ export async function generateMetadata(
   },
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
+  const session = await getSession();
+
+  if (!session) notFound();
   // const election = await electionCaller.getElectionBySlug({
   //   slug: params.electionDashboardSlug,
   // });

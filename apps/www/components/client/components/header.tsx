@@ -1,7 +1,8 @@
 "use client";
 
 import { useStore } from "@/store";
-import { type User } from "@eboto-mo/db/schema";
+import { SignInButton, SignUpButton, useClerk } from "@clerk/nextjs";
+import { User } from "@clerk/nextjs/api";
 import {
   ActionIcon,
   Box,
@@ -28,12 +29,13 @@ import {
 } from "@tabler/icons-react";
 import { IconMoon } from "@tabler/icons-react";
 import { IconSun } from "@tabler/icons-react";
-import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 
 export default function HeaderContent({ user }: { user: User | null }) {
+  const { signOut } = useClerk();
+
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const pathname = usePathname();
   const params = useParams();
@@ -113,7 +115,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
                         }}
                       >
                         <Image
-                          src={user.image_link || "/images/default-avatar.png"}
+                          src={user.imageUrl}
                           alt="Profile picture"
                           fill
                           sizes="100%"
@@ -131,10 +133,10 @@ export default function HeaderContent({ user }: { user: User | null }) {
                         }}
                       >
                         <Text size="xs" truncate weight="bold">
-                          {user.first_name} {user.last_name}
+                          {user.firstName} {user.lastName}
                         </Text>
                         <Text size="xs" truncate>
-                          {user.email}
+                          {user.emailAddresses[0].emailAddress}
                         </Text>
                       </Box>
 
@@ -217,31 +219,27 @@ export default function HeaderContent({ user }: { user: User | null }) {
                     <IconMoon size="1rem" />
                   )}
                 </ActionIcon>
-                <MediaQuery largerThan="xs" styles={{ display: "none" }}>
+                <SignInButton mode="redirect">
                   <Button
-                    // component={Link} href="/signin"
-                    onClick={() => signIn()}
+                    sx={(theme) => ({
+                      [theme.fn.smallerThan("xs")]: { display: "none" },
+                    })}
                   >
                     Sign in
                   </Button>
-                </MediaQuery>
-                <MediaQuery smallerThan="xs" styles={{ display: "none" }}>
                   <Button
                     variant="outline"
-                    // component={Link} href="/signin"
-                    onClick={() => signIn()}
+                    sx={(theme) => ({
+                      [theme.fn.largerThan("xs")]: { display: "none" },
+                    })}
                   >
                     Sign in
                   </Button>
-                </MediaQuery>
-                <MediaQuery smallerThan="xs" styles={{ display: "none" }}>
-                  <Button
-                    // component={Link} href="/signup"
-                    onClick={() => signIn()}
-                  >
-                    Get Started
-                  </Button>
-                </MediaQuery>
+                </SignInButton>
+
+                <SignUpButton mode="redirect">
+                  <Button>Get Started</Button>
+                </SignUpButton>
               </Group>
             )}
           </Group>

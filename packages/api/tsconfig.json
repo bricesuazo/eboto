@@ -1,0 +1,4 @@
+{
+  "extends": "@eboto-mo/eslint-config",
+  "include": ["src", "*.ts"]
+}

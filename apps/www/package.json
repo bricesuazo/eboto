@@ -10,6 +10,9 @@
     "clean": "git clean -xdf .next .turbo node_modules"
   },
   "dependencies": {
+    "@eboto-mo/api": "workspace:*",
+    "@eboto-mo/db": "workspace:*",
+    "@clerk/nextjs": "^4.21.13",
     "@emotion/react": "^11.11.1",
     "@mantine/carousel": "^6.0.17",
     "@mantine/core": "^6.0.17",
@@ -41,7 +44,6 @@
     "mantine-react-table": "^1.0.0",
     "moment": "^2.29.4",
     "next": "^13.4.12",
-    "next-auth": "^4.22.3",
     "qrcode.react": "^3.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -54,7 +56,6 @@
     "zustand": "^4.3.9"
   },
   "devDependencies": {
-    "@eboto-mo/db": "workspace:*",
     "@eboto-mo/eslint-config": "workspace:*",
     "@eboto-mo/tsconfig": "workspace:*",
     "@tanstack/eslint-plugin-query": "^4.29.25",

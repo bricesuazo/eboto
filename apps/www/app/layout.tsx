@@ -1,6 +1,6 @@
 import RootLayoutClient from "@/components/client/layouts/root-layout";
 import { siteConfig } from "@/config/site";
-import { getCurrentUser } from "@/lib/session";
+import { ClerkProvider, currentUser } from "@clerk/nextjs";
 import { type ColorScheme } from "@mantine/core";
 import { Analytics } from "@vercel/analytics/react";
 import { type Metadata } from "next";
@@ -65,21 +65,22 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getCurrentUser();
-
+  const user = await currentUser();
   return (
-    <html lang="en">
-      <body className={font.className}>
-        <RootLayoutClient
-          theme={
-            (cookies().get("theme")?.value as ColorScheme | null) ?? "light"
-          }
-          user={user}
-        >
-          {children}
-          <Analytics />
-        </RootLayoutClient>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body className={font.className}>
+          <RootLayoutClient
+            theme={
+              (cookies().get("theme")?.value as ColorScheme | null) ?? "light"
+            }
+            user={user}
+          >
+            {children}
+            <Analytics />
+          </RootLayoutClient>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

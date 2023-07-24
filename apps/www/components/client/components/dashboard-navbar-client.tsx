@@ -2,8 +2,9 @@
 
 import CreateElection from "@/components/client/modals/create-election";
 import { electionDashboardNavbar } from "@/constants";
-import { api } from "@/lib/api/api";
 import { useStore } from "@/store";
+import { api } from "@/trpc/client";
+import { useClerk } from "@clerk/nextjs";
 import {
   Box,
   Button,
@@ -21,7 +22,6 @@ import {
   IconFingerprint,
   IconLogout,
 } from "@tabler/icons-react";
-import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
@@ -87,6 +87,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function NavbarComponent() {
+  const { signOut } = useClerk();
   const router = useRouter();
   const params = useParams();
   if (
@@ -101,7 +102,7 @@ export default function NavbarComponent() {
     data: elections,
     isLoading,
     error,
-  } = api.election.getAllMyElections.useQuery();
+  } = api.election.getAllMyElections.query();
 
   const currentElection = elections
     ? elections.find(
@@ -265,12 +266,7 @@ export default function NavbarComponent() {
       </Navbar.Section>
       <Divider />
       <Navbar.Section p="md">
-        <UnstyledButton
-          className={classes.link}
-          onClick={() =>
-            void (async () => await signOut({ callbackUrl: "/signin" }))()
-          }
-        >
+        <UnstyledButton className={classes.link} onClick={() => signOut()}>
           <IconLogout className={classes.linkIcon} />
           <span>Logout</span>
         </UnstyledButton>

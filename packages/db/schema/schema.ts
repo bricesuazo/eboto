@@ -30,18 +30,18 @@ export type TokenType = (typeof token_type)[number];
 export const account_status_type = ["ADDED", "INVITED", "DECLINED"] as const;
 export type AccountStatusType = (typeof account_status_type)[number];
 
-export const users = mysqlTable("users", {
-  id,
-  email: varchar("email", { length: 256 }).notNull().unique(),
-  email_verified: timestamp("email_verified"),
-  first_name: text("first_name").notNull(),
-  middle_name: text("middle_name"),
-  last_name: text("last_name").notNull(),
-  image_link: longtext("image_link"),
-  password: longtext("password"),
-  created_at,
-  updated_at,
-});
+// export const users = mysqlTable("users", {
+//   id,
+//   email: varchar("email", { length: 256 }).notNull().unique(),
+//   email_verified: timestamp("email_verified"),
+//   first_name: text("first_name").notNull(),
+//   middle_name: text("middle_name"),
+//   last_name: text("last_name").notNull(),
+//   image_link: longtext("image_link"),
+//   password: longtext("password"),
+//   created_at,
+//   updated_at,
+// });
 
 export const elections = mysqlTable("elections", {
   id,
@@ -251,7 +251,7 @@ export const reported_problems = mysqlTable("reported_problems", {
 });
 
 export type Election = InferModel<typeof elections>;
-export type User = InferModel<typeof users>;
+// export type User = InferModel<typeof users>;
 export type Vote = InferModel<typeof votes>;
 export type Commissioner = InferModel<typeof commissioners>;
 export type InvitedCommissioner = InferModel<typeof invited_commissioners>;
