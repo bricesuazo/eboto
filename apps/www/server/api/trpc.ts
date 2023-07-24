@@ -14,7 +14,7 @@
  *
  * These allow you to access things when processing a request, like the database, the session, etc.
  */
-import { authOptions } from "@/lib/auth";
+import { getServerAuthSession } from "@/lib/auth";
 import { db } from "@eboto-mo/db";
 
 /**
@@ -27,7 +27,6 @@ import { db } from "@eboto-mo/db";
 import { TRPCError, initTRPC } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { type Session } from "next-auth";
-import { getSession } from "next-auth/react";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
@@ -60,7 +59,7 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  */
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   // Get the session from the server using the getServerSession wrapper function
-  const session = await getSession();
+  const session = await getServerAuthSession({ req: opts.req, res: opts.res });
 
   return createInnerTRPCContext({
     session,

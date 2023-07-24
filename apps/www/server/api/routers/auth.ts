@@ -13,13 +13,13 @@ export const authRouter = createTRPCRouter({
       })) ?? null
     );
   }),
-  getSession: publicProcedure.query(() => getSession()),
+  getSession: publicProcedure.query(({ ctx }) => ctx.session),
   test: publicProcedure.mutation(async ({ ctx }) => {
     return crypto.randomUUID();
   }),
 });
 
-export const authCaller = authRouter.createCaller({
-  db,
-  session: await getSession(),
-});
+// export const authCaller = authRouter.createCaller({
+//   db,
+//   session: await getSession(),
+// });

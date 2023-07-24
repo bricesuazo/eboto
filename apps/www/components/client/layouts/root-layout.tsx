@@ -2,6 +2,7 @@
 
 import DashboardNavbar from "@/components/client/components/dashboard-navbar-client";
 import HeaderContent from "@/components/client/components/header";
+import TRPCProvider from "@/context/trpc-provider";
 import { User } from "@eboto-mo/db/schema";
 import { CacheProvider } from "@emotion/react";
 import {
@@ -38,42 +39,44 @@ export default function RootLayoutClient({
   const [colorScheme, setColorScheme] = useState<ColorScheme>(theme);
   return (
     <SessionProvider>
-      <CacheProvider value={cache}>
-        <ColorSchemeProvider
-          colorScheme={colorScheme}
-          toggleColorScheme={() => {
-            // toggleTheme();
-            setColorScheme((c) => (c === "dark" ? "light" : "dark"));
-          }}
-        >
-          <MantineProvider
-            withGlobalStyles
-            withNormalizeCSS
-            theme={{
-              fontFamily: "Poppins, sans-serif",
-              colorScheme,
-              primaryColor: "green",
+      <TRPCProvider>
+        <CacheProvider value={cache}>
+          <ColorSchemeProvider
+            colorScheme={colorScheme}
+            toggleColorScheme={() => {
+              // toggleTheme();
+              setColorScheme((c) => (c === "dark" ? "light" : "dark"));
             }}
           >
-            <Notifications />
-            <AppShell
-              padding={0}
-              header={<HeaderContent user={user} />}
-              navbar={<DashboardNavbar />}
-              styles={(theme) => ({
-                main: {
-                  backgroundColor:
-                    theme.colorScheme === "dark"
-                      ? theme.colors.dark[8]
-                      : theme.colors.gray[0],
-                },
-              })}
+            <MantineProvider
+              withGlobalStyles
+              withNormalizeCSS
+              theme={{
+                fontFamily: "Poppins, sans-serif",
+                colorScheme,
+                primaryColor: "green",
+              }}
             >
-              {children}
-            </AppShell>
-          </MantineProvider>
-        </ColorSchemeProvider>
-      </CacheProvider>
+              <Notifications />
+              <AppShell
+                padding={0}
+                header={<HeaderContent user={user} />}
+                navbar={<DashboardNavbar />}
+                styles={(theme) => ({
+                  main: {
+                    backgroundColor:
+                      theme.colorScheme === "dark"
+                        ? theme.colors.dark[8]
+                        : theme.colors.gray[0],
+                  },
+                })}
+              >
+                {children}
+              </AppShell>
+            </MantineProvider>
+          </ColorSchemeProvider>
+        </CacheProvider>
+      </TRPCProvider>
     </SessionProvider>
   );
 }

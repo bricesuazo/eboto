@@ -11,9 +11,9 @@ declare module "next-auth" {
     picture: string?;
   }
 }
-declare module "next-auth/jwt" {
-  /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
-  interface JWT {
-    id: string;
-  }
-}
+// declare module "next-auth/jwt" {
+//   /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
+//   interface JWT {
+//     id: string;
+//   }
+// }

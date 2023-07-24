@@ -1,6 +1,6 @@
 import DashboardLayout from "@/components/client/layouts/dashboard-layout";
 import { siteConfig } from "@/config/site";
-import { electionCaller } from "@/server/api/routers/election";
+import { electionCallerFunc } from "@/server/api/routers/election";
 import { type Metadata, type ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -12,6 +12,7 @@ export async function generateMetadata(
   },
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
+  const electionCaller = await electionCallerFunc();
   const election = await electionCaller.getElectionBySlug({
     slug: params.electionDashboardSlug,
   });

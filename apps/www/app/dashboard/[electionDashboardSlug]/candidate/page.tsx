@@ -1,5 +1,5 @@
 import DashboardCandidate from "@/components/client/pages/dashboard-candidate";
-import { electionCaller } from "@/server/api/routers/election";
+import { electionCallerFunc } from "@/server/api/routers/election";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -12,6 +12,7 @@ export default async function Page({
 }: {
   params: { electionDashboardSlug: string };
 }) {
+  const electionCaller = await electionCallerFunc();
   const election = await electionCaller.getElectionBySlug({
     slug: electionDashboardSlug,
   });

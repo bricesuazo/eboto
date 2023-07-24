@@ -2,6 +2,8 @@ import { db } from "@eboto-mo/db";
 import { type User, users } from "@eboto-mo/db/schema";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
+import { GetServerSidePropsContext } from "next";
+import { getServerSession } from "next-auth";
 import { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
@@ -145,4 +147,11 @@ export const authOptions: NextAuthOptions = {
   //   signIn: "/signin",
   //   verifyRequest: "/verify",
   // },
+};
+
+export const getServerAuthSession = (ctx: {
+  req: GetServerSidePropsContext["req"];
+  res: GetServerSidePropsContext["res"];
+}) => {
+  return getServerSession(ctx.req, ctx.res, authOptions);
 };

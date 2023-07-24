@@ -1,5 +1,4 @@
 import { positionTemplate, takenSlugs } from "@/constants";
-import { authOptions } from "@/lib/auth";
 import { account_status_type_with_accepted } from "@/utils/zod-schema";
 import { db } from "@eboto-mo/db";
 import {
@@ -896,3 +895,11 @@ export const electionCaller = electionRouter.createCaller({
   db,
   session: await getSession(),
 });
+
+export const electionCallerFunc = async () => {
+  const session = await getSession();
+  return electionRouter.createCaller({
+    db,
+    session,
+  });
+};

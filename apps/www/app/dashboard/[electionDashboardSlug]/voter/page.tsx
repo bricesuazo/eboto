@@ -1,5 +1,5 @@
 import DashboardVoter from "@/components/client/pages/dashboard-voter";
-import { electionCaller } from "@/server/api/routers/election";
+import { electionCallerFunc } from "@/server/api/routers/election";
 import { db } from "@eboto-mo/db";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -21,6 +21,8 @@ export default async function Page({
   });
 
   if (!election) notFound();
+
+  const electionCaller = await electionCallerFunc();
 
   const voters = await electionCaller.getVotersByElectionId({
     election_id: election.id,

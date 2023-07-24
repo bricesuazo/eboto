@@ -1,5 +1,5 @@
 import DashboardPageClient from "@/components/client/pages/dashboard";
-import { authCaller } from "@/server/api/routers/auth";
+import { getSession } from "@/lib/session";
 import { db } from "@eboto-mo/db";
 import {
   type Commissioner,
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const session = await authCaller.getSession();
+  const session = await getSession();
 
   if (!session) notFound();
 
