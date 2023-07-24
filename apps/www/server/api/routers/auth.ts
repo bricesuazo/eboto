@@ -4,9 +4,9 @@ import { TRPCError } from "@trpc/server";
 import { getServerSession } from "next-auth";
 import { z } from "zod";
 
-import { privateProcedure, publicProcedure, router } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
-export const authRouter = router({
+export const authRouter = createTRPCRouter({
   getUser: publicProcedure.query(async ({ ctx }) => {
     return (
       (await db.query.users.findFirst({
@@ -15,7 +15,7 @@ export const authRouter = router({
     );
   }),
   getSession: publicProcedure.query(() => getServerSession(authOptions)),
-  test: privateProcedure.mutation(async ({ ctx }) => {
+  test: protectedProcedure.mutation(async ({ ctx }) => {
     return crypto.randomUUID();
   }),
 });

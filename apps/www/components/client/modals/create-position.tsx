@@ -1,6 +1,6 @@
 "use client";
 
-import { api_client } from "@/shared/client/trpc";
+import { api } from "@/lib/api/api";
 import {
   Alert,
   Button,
@@ -32,7 +32,7 @@ export default function CreatePosition({
   order: number;
 }) {
   const { mutate, isLoading, isError, error, reset } =
-    api_client.election.createPosition.useMutation({
+    api.election.createPosition.useMutation({
       onSuccess: async () => {
         notifications.show({
           title: `${form.values.name} created!`,

@@ -1,6 +1,6 @@
 "use client";
 
-import { api_client } from "@/shared/client/trpc";
+import { api } from "@/lib/api/api";
 import { type Partylist, type Position } from "@eboto-mo/db/schema";
 import {
   Alert,
@@ -94,7 +94,7 @@ export default function CreateCandidate({
   //   });
 
   const { mutate, isLoading, isError, error, reset } =
-    api_client.election.createCandidate.useMutation({
+    api.election.createCandidate.useMutation({
       onSuccess: () => {
         notifications.show({
           title: `${form.values.first_name}${
@@ -339,8 +339,8 @@ export default function CreateCandidate({
                       <Text>
                         This will be used as the candidate&apos;s URL.
                         <br />
-                        eboto-mo.com/{params.electionDashboardSlug?.toString()}/
-                        {form.values.slug || "candidate-slug"}
+                        eboto-mo.com/{params?.electionDashboardSlug?.toString()}
+                        /{form.values.slug || "candidate-slug"}
                       </Text>
                     }
                     required

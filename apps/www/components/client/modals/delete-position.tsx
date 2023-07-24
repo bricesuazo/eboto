@@ -1,6 +1,6 @@
 "use client";
 
-import { api_client } from "@/shared/client/trpc";
+import { api } from "@/lib/api/api";
 import { type Position } from "@eboto-mo/db/schema";
 import { Alert, Button, Group, Mark, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -11,7 +11,7 @@ export default function DeletePosition({ position }: { position: Position }) {
   const [opened, { open, close }] = useDisclosure(false);
 
   const { mutate, isLoading, isError, error, reset } =
-    api_client.election.deletePosition.useMutation({
+    api.election.deletePosition.useMutation({
       onSuccess: async () => {
         notifications.show({
           title: `${position.name} deleted!`,

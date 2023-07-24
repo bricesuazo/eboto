@@ -1,6 +1,6 @@
 "use client";
 
-import { api_client } from "@/shared/client/trpc";
+import { api } from "@/lib/api/api";
 import {
   Alert,
   Button,
@@ -49,7 +49,7 @@ export default function CreatePartylist({
   });
 
   const { mutate, isLoading, isError, error } =
-    api_client.election.createPartylist.useMutation({
+    api.election.createPartylist.useMutation({
       onSuccess: () => {
         notifications.show({
           title: `${form.values.name} (${form.values.acronym}) created!`,

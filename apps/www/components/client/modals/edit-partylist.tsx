@@ -1,6 +1,6 @@
 "use client";
 
-import { api_client } from "@/shared/client/trpc";
+import { api } from "@/lib/api/api";
 import { Partylist } from "@eboto-mo/db/schema";
 import {
   Alert,
@@ -54,7 +54,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
   });
 
   const { mutate, isLoading, isError, error, reset } =
-    api_client.election.editPartylist.useMutation({
+    api.election.editPartylist.useMutation({
       onSuccess: async (_, data) => {
         notifications.show({
           title: `${form.values.name} (${form.values.newAcronym}) updated.`,

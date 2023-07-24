@@ -1,6 +1,6 @@
 "use client";
 
-import { api_client } from "@/shared/client/trpc";
+import { api } from "@/lib/api/api";
 import type { VoterField } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
@@ -75,7 +75,7 @@ export default function EditVoter({
   });
 
   const { mutate, isLoading, isError, error, reset } =
-    api_client.election.editVoter.useMutation({
+    api.election.editVoter.useMutation({
       onSuccess: () => {
         notifications.show({
           title: "Success",

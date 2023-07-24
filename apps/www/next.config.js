@@ -2,7 +2,7 @@ module.exports = {
   reactStrictMode: true,
   transpilePackages: ["@eboto-mo/db"],
   experimental: {
-    serverActions: true,
+    appDir: true,
   },
   images: {
     domains: ["lh3.googleusercontent.com"],

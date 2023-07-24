@@ -2,7 +2,7 @@
 
 import CreateElection from "@/components/client/modals/create-election";
 import { electionDashboardNavbar } from "@/constants";
-import { api_client } from "@/shared/client/trpc";
+import { api } from "@/lib/api/api";
 import { useStore } from "@/store";
 import {
   Box,
@@ -89,14 +89,19 @@ const useStyles = createStyles((theme) => ({
 export default function NavbarComponent() {
   const router = useRouter();
   const params = useParams();
-  if (!params.electionDashboardSlug) return null;
+  if (
+    !params ||
+    !params.electionDashboardSlug ||
+    typeof params.electionDashboardSlug !== "string"
+  )
+    return null;
   const pathname = usePathname();
 
   const {
     data: elections,
     isLoading,
     error,
-  } = api_client.election.getAllMyElections.useQuery();
+  } = api.election.getAllMyElections.useQuery();
 
   const currentElection = elections
     ? elections.find(
@@ -248,7 +253,7 @@ export default function NavbarComponent() {
                   store.dashboardMenu && store.toggleDashboardMenu(false);
                 }}
                 className={cx(classes.link, {
-                  [classes.linkActive]: item.path === pathname.split("/")[3],
+                  [classes.linkActive]: item.path === pathname?.split("/")[3],
                 })}
               >
                 <item.icon className={classes.linkIcon} />

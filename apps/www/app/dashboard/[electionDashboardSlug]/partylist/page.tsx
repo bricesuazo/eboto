@@ -1,6 +1,9 @@
 import DashboardPartylist from "@/components/client/pages/dashboard-partylist";
-import { api_server } from "@/shared/server/trpc";
+import { authOptions } from "@/lib/auth";
+import { electionRouter } from "@/server/api/routers/election";
+import { db } from "@eboto-mo/db";
 import { type Metadata } from "next";
+import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
@@ -12,15 +15,18 @@ export default async function Page({
 }: {
   params: { electionDashboardSlug: string };
 }) {
-  const election = await api_server.election.getElectionBySlug.fetch({
+  const caller = electionRouter.createCaller({
+    db,
+    session: await getServerSession(authOptions),
+  });
+  const election = await caller.getElectionBySlug({
     slug: electionDashboardSlug,
   });
 
   if (!election) notFound();
 
-  const partylists =
-    await api_server.election.getAllPartylistsWithoutINDByElectionId.fetch({
-      election_id: election.id,
-    });
+  const partylists = await caller.getAllPartylistsWithoutINDByElectionId({
+    election_id: election.id,
+  });
   return <DashboardPartylist election={election} partylists={partylists} />;
 }

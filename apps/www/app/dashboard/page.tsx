@@ -1,5 +1,6 @@
 import DashboardPageClient from "@/components/client/pages/dashboard";
-import { api_server } from "@/shared/server/trpc";
+import { authOptions } from "@/lib/auth";
+import { authRouter } from "@/server/api/routers/auth";
 import { db } from "@eboto-mo/db";
 import {
   type Commissioner,
@@ -8,6 +9,7 @@ import {
   type Voter,
 } from "@eboto-mo/db/schema";
 import { Metadata } from "next";
+import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
@@ -16,7 +18,11 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const session = await api_server.auth.getSession.fetch();
+  const caller = authRouter.createCaller({
+    db,
+    session: await getServerSession(authOptions),
+  });
+  const session = await caller.getSession();
 
   if (!session) notFound();
 

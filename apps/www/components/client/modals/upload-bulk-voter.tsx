@@ -1,6 +1,6 @@
 "use client";
 
-import { api_client } from "@/shared/client/trpc";
+import { api } from "@/lib/api/api";
 import { VoterField, voters } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
@@ -42,7 +42,7 @@ export default function UploadBulkVoter({
   const [opened, { open, close }] = useDisclosure();
 
   const { mutate, isLoading, isError, error, reset } =
-    api_client.election.uploadBulkVoter.useMutation({
+    api.election.uploadBulkVoter.useMutation({
       onSuccess: ({ count }) => {
         notifications.show({
           title: `${count} voter(s) added!`,

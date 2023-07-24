@@ -1,5 +1,9 @@
 import DashboardOverview from "@/components/client/pages/dashboard-overview";
-import { api_server } from "@/shared/server/trpc";
+import { api } from "@/lib/api/api";
+import { authOptions } from "@/lib/auth";
+import { electionRouter } from "@/server/api/routers/election";
+import { db } from "@eboto-mo/db";
+import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 
 export default async function Page({
@@ -7,7 +11,11 @@ export default async function Page({
 }: {
   params: { electionDashboardSlug: string };
 }) {
-  const election = await api_server.election.getElectionBySlug.fetch({
+  const caller = electionRouter.createCaller({
+    db,
+    session: await getServerSession(authOptions),
+  });
+  const election = await caller.getElectionBySlug({
     slug: electionDashboardSlug,
   });
 

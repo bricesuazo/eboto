@@ -1,6 +1,6 @@
 "use client";
 
-import { api_client } from "@/shared/client/trpc";
+import { api } from "@/lib/api/api";
 import type { Candidate, Partylist, Position } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
@@ -84,7 +84,7 @@ export default function EditCandidate({
   const params = useParams();
 
   const { mutate, isLoading, isError, error, reset } =
-    api_client.election.editCandidate.useMutation({
+    api.election.editCandidate.useMutation({
       onSuccess: () => {
         notifications.show({
           title: `${form.values.first_name}${
@@ -389,7 +389,7 @@ export default function EditCandidate({
                       <Text>
                         This will be used as the candidate&apos;s URL.
                         <br />
-                        eboto-mo.com/{params.electionSlug?.toString()}/
+                        eboto-mo.com/{params?.electionSlug?.toString()}/
                         {form.values.slug || "candidate-slug"}
                       </Text>
                     }
@@ -1012,7 +1012,7 @@ export default function EditCandidate({
                   leftIcon={<IconExternalLink size="1.25rem" />}
                   variant="outline"
                   component={Link}
-                  href={`/${params.electionSlug as string}/${candidate.slug}`}
+                  href={`/${params?.electionSlug as string}/${candidate.slug}`}
                   target="_blank"
                 >
                   Visit

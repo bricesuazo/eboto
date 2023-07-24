@@ -1,6 +1,6 @@
 "use client";
 
-import { api_client } from "@/shared/client/trpc";
+import { api } from "@/lib/api/api";
 import { type Position } from "@eboto-mo/db/schema";
 import {
   Alert,
@@ -69,7 +69,7 @@ export default function EditPosition({
   });
 
   const { mutate, isLoading, isError, error, reset } =
-    api_client.election.editPosition.useMutation({
+    api.election.editPosition.useMutation({
       onSuccess: async () => {
         notifications.show({
           title: `${form.values.name} updated!`,

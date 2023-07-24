@@ -1,7 +1,7 @@
 "use client";
 
 import { positionTemplate } from "@/constants";
-import { api_client } from "@/shared/client/trpc";
+import { api } from "@/lib/api/api";
 import {
   Alert,
   Button,
@@ -89,7 +89,7 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
   }, [opened]);
 
   const { mutate, isLoading, isError, error } =
-    api_client.election.createElection.useMutation({
+    api.election.createElection.useMutation({
       onSuccess: () => {
         router.push(`/dashboard/${form.values.slug}`);
         close();

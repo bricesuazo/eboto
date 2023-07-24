@@ -1,14 +1,17 @@
 import RootLayoutClient from "@/components/client/layouts/root-layout";
 import { siteConfig } from "@/config/site";
-import { api_server } from "@/shared/server/trpc";
-import TRPCProvider from "@/shared/trpcProvider";
+import TRPCProvider from "@/context/trpc-provider";
+import { authOptions } from "@/lib/auth";
+import { authRouter } from "@/server/api/routers/auth";
+import { db } from "@eboto-mo/db";
 import { type ColorScheme } from "@mantine/core";
 import { Analytics } from "@vercel/analytics/react";
 import { type Metadata } from "next";
+import { getServerSession } from "next-auth";
 import { Poppins } from "next/font/google";
 import { cookies } from "next/headers";
 
-// export const revalidate = 0;
+export const revalidate = 0;
 
 const font = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -66,21 +69,27 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await api_server.auth.getUser.fetch();
+  const caller = authRouter.createCaller({
+    db,
+    session: await getServerSession(authOptions),
+  });
+  const user = await caller.getUser();
 
   return (
-    <RootLayoutClient
-      theme={(cookies().get("theme")?.value as ColorScheme | null) ?? "light"}
-      user={user}
-    >
-      <TRPCProvider>
-        <html lang="en">
-          <body className={font.className}>
+    <TRPCProvider>
+      <html lang="en">
+        <body className={font.className}>
+          <RootLayoutClient
+            theme={
+              (cookies().get("theme")?.value as ColorScheme | null) ?? "light"
+            }
+            user={user}
+          >
             {children}
             <Analytics />
-          </body>
-        </html>
-      </TRPCProvider>
-    </RootLayoutClient>
+          </RootLayoutClient>
+        </body>
+      </html>
+    </TRPCProvider>
   );
 }

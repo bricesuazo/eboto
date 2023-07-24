@@ -1,6 +1,6 @@
 "use client";
 
-import { api_client } from "@/shared/client/trpc";
+import { api } from "@/lib/api/api";
 import { type Candidate } from "@eboto-mo/db/schema";
 import { Alert, Button, Group, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -14,7 +14,7 @@ export default function DeleteCandidate({
 }) {
   const [opened, { open, close }] = useDisclosure(false);
   const { mutate, isLoading, isError, error, reset } =
-    api_client.election.deleteCandidate.useMutation({
+    api.election.deleteCandidate.useMutation({
       onSuccess: async () => {
         notifications.show({
           title: `${candidate.first_name}${

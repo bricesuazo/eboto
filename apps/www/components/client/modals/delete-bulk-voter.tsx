@@ -1,6 +1,6 @@
 "use client";
 
-import { api_client } from "@/shared/client/trpc";
+import { api } from "@/lib/api/api";
 import {
   ActionIcon,
   Alert,
@@ -34,7 +34,7 @@ export default function DeleteBulkVoter({
   const [opened, { open, close }] = useDisclosure();
 
   const { mutate, isLoading, isError, error } =
-    api_client.election.deleteBulkVoter.useMutation({
+    api.election.deleteBulkVoter.useMutation({
       onSuccess: ({ count }) => {
         notifications.show({
           title: `${count} voter(s) successfully deleted!`,

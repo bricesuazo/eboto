@@ -1,6 +1,6 @@
 "use client";
 
-import { api_client } from "@/shared/client/trpc";
+import { api } from "@/lib/api/api";
 import { Alert, Button, Group, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -20,7 +20,7 @@ export default function InviteAllAddedVoters({
   const [opened, { open, close }] = useDisclosure(false);
 
   const { mutate, isLoading, isError, error } =
-    api_client.election.inviteAllInvitedVoters.useMutation({
+    api.election.inviteAllInvitedVoters.useMutation({
       onSuccess: () => {
         notifications.show({
           title: `All voters invited!`,

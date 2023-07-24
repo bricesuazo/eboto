@@ -1,7 +1,10 @@
 import DashboardVoter from "@/components/client/pages/dashboard-voter";
-import { api_server } from "@/shared/server/trpc";
+import { api } from "@/lib/api/api";
+import { authOptions } from "@/lib/auth";
+import { electionRouter } from "@/server/api/routers/election";
 import { db } from "@eboto-mo/db";
 import { type Metadata } from "next";
+import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
@@ -13,6 +16,10 @@ export default async function Page({
 }: {
   params: { electionDashboardSlug: string };
 }) {
+  const caller = electionRouter.createCaller({
+    db,
+    session: await getServerSession(authOptions),
+  });
   const election = await db.query.elections.findFirst({
     where: (elections, { eq }) => eq(elections.slug, electionDashboardSlug),
     with: {
@@ -22,7 +29,7 @@ export default async function Page({
 
   if (!election) notFound();
 
-  const voters = await api_server.election.getVotersByElectionId.fetch({
+  const voters = await caller.getVotersByElectionId({
     election_id: election.id,
   });
   return <DashboardVoter election={election} voters={voters} />;

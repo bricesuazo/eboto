@@ -1,6 +1,6 @@
 "use client";
 
-import { api_client } from "@/shared/client/trpc";
+import { api } from "@/lib/api/api";
 import { type Election, type Publicity, publicity } from "@eboto-mo/db/schema";
 import {
   Alert,
@@ -44,7 +44,7 @@ export default function DashboardSettings({
   const router = useRouter();
   const queryClient = useQueryClient();
   const { mutate, isLoading, isError, error } =
-    api_client.election.editElection.useMutation({
+    api.election.editElection.useMutation({
       onSuccess: async () => {
         if (form.values.newSlug !== election.slug) {
           router.push(`/dashboard/${form.values.newSlug}/settings`);

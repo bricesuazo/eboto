@@ -1,6 +1,6 @@
 "use client";
 
-import { api_client } from "@/shared/client/trpc";
+import { api } from "@/lib/api/api";
 import type { Election, VoterField } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
@@ -42,7 +42,7 @@ export default function UpdateVoterField({
   const [opened, { open, close }] = useDisclosure(false);
 
   const { mutate, isLoading, isError, error, reset } =
-    api_client.election.updateVoterField.useMutation({
+    api.election.updateVoterField.useMutation({
       onSuccess: async () => {
         notifications.show({
           title: ``,
@@ -204,7 +204,7 @@ function VoterFieldInput({
   election_id: string;
 }) {
   const { mutate, isLoading, isError, error, reset } =
-    api_client.election.updateVoterField.useMutation({
+    api.election.updateVoterField.useMutation({
       onSuccess: async () => {
         form.setFieldValue(
           "field",

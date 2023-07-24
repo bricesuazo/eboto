@@ -1,19 +1,24 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { QueryClient, dehydrate } from "@tanstack/query-core";
 import type { DehydratedState } from "@tanstack/react-query";
-import {
-  type AnyProcedure,
-  type AnyQueryProcedure,
-  type AnyRouter,
-  type DataTransformer,
-  type MaybePromise,
-  type ProcedureRouterRecord,
-  type inferProcedureInput,
-  type inferProcedureOutput,
-  type inferRouterContext,
+import type {
+  AnyProcedure,
+  AnyQueryProcedure,
+  AnyRouter,
+  DataTransformer,
+  MaybePromise,
+  ProcedureRouterRecord,
+  ProcedureType,
+  inferProcedureInput,
+  inferProcedureOutput,
+  inferRouterContext,
 } from "@trpc/server";
 import { createRecursiveProxy } from "@trpc/server/shared";
 
 import { getRequestStorage } from "./local-storage";
+import "server-only";
 
 interface CreateTRPCNextLayoutOptions<TRouter extends AnyRouter> {
   router: TRouter;
@@ -28,10 +33,10 @@ export type DecorateProcedure<TProcedure extends AnyProcedure> =
   TProcedure extends AnyQueryProcedure
     ? {
         fetch(
-          input: inferProcedureInput<TProcedure>,
+          input: inferProcedureInput<TProcedure>
         ): Promise<inferProcedureOutput<TProcedure>>;
         fetchInfinite(
-          input: inferProcedureInput<TProcedure>,
+          input: inferProcedureInput<TProcedure>
         ): Promise<inferProcedureOutput<TProcedure>>;
       }
     : never;
@@ -47,7 +52,7 @@ type OmitNever<TType> = Pick<
  */
 export type DecoratedProcedureRecord<
   TProcedures extends ProcedureRouterRecord,
-  TPath extends string = "",
+  TPath extends string = ""
 > = OmitNever<{
   [TKey in keyof TProcedures]: TProcedures[TKey] extends AnyRouter
     ? DecoratedProcedureRecord<
@@ -68,21 +73,21 @@ type CreateTRPCNextLayout<TRouter extends AnyRouter> = DecoratedProcedureRecord<
 function getQueryKey(
   path: string[],
   input: unknown,
-  isFetchInfinite?: boolean,
+  isFetchInfinite?: boolean
 ) {
   return input === undefined
-    ? [path, { type: isFetchInfinite ? "infinite" : "query" }]
+    ? [path, { type: isFetchInfinite ? "infinite" : "query" }] // We added { type: "infinite" | "query"  }, because it is how trpc v10.0 format the new queryKeys
     : [
         path,
         {
-          input,
+          input: { ...input },
           type: isFetchInfinite ? "infinite" : "query",
         },
       ];
 }
 
 export function createTRPCNextLayout<TRouter extends AnyRouter>(
-  opts: CreateTRPCNextLayoutOptions<TRouter>,
+  opts: CreateTRPCNextLayoutOptions<TRouter>
 ): CreateTRPCNextLayout<TRouter> {
   function getState() {
     const requestStorage = getRequestStorage<{
@@ -92,6 +97,7 @@ export function createTRPCNextLayout<TRouter extends AnyRouter>(
       };
     }>();
     requestStorage._trpc = requestStorage._trpc ?? {
+      cache: Object.create(null),
       context: opts.createContext(),
       queryClient: new QueryClient({
         defaultOptions: {
@@ -104,17 +110,15 @@ export function createTRPCNextLayout<TRouter extends AnyRouter>(
     return requestStorage._trpc;
   }
   const transformer = opts.transformer ?? {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     serialize: (v) => v,
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     deserialize: (v) => v,
   };
+
   return createRecursiveProxy(async (callOpts) => {
     const path = [...callOpts.path];
     const lastPart = path.pop();
     const state = getState();
-    // eslint-disable-next-line @typescript-eslint/await-thenable
-    const ctx = await state.context;
+    const ctx = state.context;
     const { queryClient } = state;
 
     if (lastPart === "dehydrate" && path.length === 0) {
@@ -133,18 +137,32 @@ export function createTRPCNextLayout<TRouter extends AnyRouter>(
       return transformer.serialize(dehydratedState);
     }
 
-    const caller = opts.router.createCaller(ctx);
+    const fullPath = path.join(".");
+    const procedure = opts.router._def.procedures[fullPath] as AnyProcedure;
 
-    const pathStr = path.join(".");
+    const type: ProcedureType = "query";
+
     const input = callOpts.args[0];
     const queryKey = getQueryKey(path, input, lastPart === "fetchInfinite");
 
     if (lastPart === "fetchInfinite") {
       return queryClient.fetchInfiniteQuery(queryKey, () =>
-        caller.query(pathStr, input),
+        procedure({
+          rawInput: input,
+          path: fullPath,
+          ctx,
+          type,
+        })
       );
     }
 
-    return queryClient.fetchQuery(queryKey, () => caller.query(pathStr, input));
+    return queryClient.fetchQuery(queryKey, () =>
+      procedure({
+        rawInput: input,
+        path: fullPath,
+        ctx,
+        type,
+      })
+    );
   }) as CreateTRPCNextLayout<TRouter>;
 }

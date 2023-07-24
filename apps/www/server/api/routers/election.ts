@@ -21,9 +21,9 @@ import { TRPCError } from "@trpc/server";
 import { and, eq, inArray, not } from "drizzle-orm";
 import { z } from "zod";
 
-import { privateProcedure, publicProcedure, router } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
-export const electionRouter = router({
+export const electionRouter = createTRPCRouter({
   getElectionBySlug: publicProcedure
     .input(
       z.object({
@@ -35,7 +35,7 @@ export const electionRouter = router({
         where: (elections, { eq }) => eq(elections.slug, input.slug),
       });
     }),
-  getAllMyElections: privateProcedure.query(async ({ ctx }) => {
+  getAllMyElections: protectedProcedure.query(async ({ ctx }) => {
     // TODO: Validate commissioner
     return await db.query.commissioners.findMany({
       where: (commissioners, { eq }) =>
@@ -45,7 +45,7 @@ export const electionRouter = router({
       },
     });
   }),
-  getAllPartylistsWithoutINDByElectionId: privateProcedure
+  getAllPartylistsWithoutINDByElectionId: protectedProcedure
     .input(
       z.object({
         election_id: z.string().min(1),
@@ -62,7 +62,7 @@ export const electionRouter = router({
         orderBy: (partylists, { desc }) => desc(partylists.updated_at),
       });
     }),
-  getAllPartylistsByElectionId: privateProcedure
+  getAllPartylistsByElectionId: protectedProcedure
     .input(
       z.object({
         election_id: z.string().min(1),
@@ -76,7 +76,7 @@ export const electionRouter = router({
         orderBy: (partylists, { asc }) => asc(partylists.created_at),
       });
     }),
-  getAllPositionsByElectionId: privateProcedure
+  getAllPositionsByElectionId: protectedProcedure
     .input(
       z.object({
         election_id: z.string().min(1),
@@ -90,7 +90,7 @@ export const electionRouter = router({
         orderBy: (positions, { asc }) => asc(positions.order),
       });
     }),
-  getAllCandidatesByElectionId: privateProcedure
+  getAllCandidatesByElectionId: protectedProcedure
     .input(
       z.object({
         election_id: z.string().min(1),
@@ -148,7 +148,7 @@ export const electionRouter = router({
         },
       });
     }),
-  createElection: privateProcedure
+  createElection: protectedProcedure
     .input(
       z.object({
         name: z.string().min(1),
@@ -205,7 +205,7 @@ export const electionRouter = router({
             })) || [],
         );
     }),
-  editElection: privateProcedure
+  editElection: protectedProcedure
     .input(
       z.object({
         id: z.string().min(1),
@@ -258,7 +258,7 @@ export const electionRouter = router({
         })
         .where(eq(elections.id, input.id));
     }),
-  createPartylist: privateProcedure
+  createPartylist: protectedProcedure
     .input(
       z.object({
         name: z.string().min(1),
@@ -286,7 +286,7 @@ export const electionRouter = router({
         election_id: input.election_id,
       });
     }),
-  editPartylist: privateProcedure
+  editPartylist: protectedProcedure
     .input(
       z.object({
         id: z.string().min(1),
@@ -333,7 +333,7 @@ export const electionRouter = router({
         })
         .where(eq(partylists.id, input.id));
     }),
-  deletePartylist: privateProcedure
+  deletePartylist: protectedProcedure
     .input(
       z.object({
         partylist_id: z.string().min(1),
@@ -351,7 +351,7 @@ export const electionRouter = router({
           ),
         );
     }),
-  deleteCandidate: privateProcedure
+  deleteCandidate: protectedProcedure
     .input(
       z.object({
         candidate_id: z.string().min(1),
@@ -370,7 +370,7 @@ export const electionRouter = router({
           ),
         );
     }),
-  createPosition: privateProcedure
+  createPosition: protectedProcedure
     .input(
       z.object({
         name: z.string().min(1),
@@ -392,7 +392,7 @@ export const electionRouter = router({
         election_id: input.election_id,
       });
     }),
-  deletePosition: privateProcedure
+  deletePosition: protectedProcedure
     .input(
       z.object({
         position_id: z.string().min(1),
@@ -410,7 +410,7 @@ export const electionRouter = router({
           ),
         );
     }),
-  editPosition: privateProcedure
+  editPosition: protectedProcedure
     .input(
       z.object({
         id: z.string().min(1),
@@ -439,7 +439,7 @@ export const electionRouter = router({
           ),
         );
     }),
-  createCandidate: privateProcedure
+  createCandidate: protectedProcedure
     .input(
       z.object({
         slug: z.string().min(1).trim().toLowerCase(),
@@ -480,7 +480,7 @@ export const electionRouter = router({
         image_link: input.image_link,
       });
     }),
-  editCandidate: privateProcedure
+  editCandidate: protectedProcedure
     .input(
       z.object({
         id: z.string().min(1),
@@ -520,7 +520,7 @@ export const electionRouter = router({
         image_link: input.image_link,
       });
     }),
-  inviteAllInvitedVoters: privateProcedure
+  inviteAllInvitedVoters: protectedProcedure
     .input(
       z.object({
         election_id: z.string().min(1),
@@ -548,7 +548,7 @@ export const electionRouter = router({
         (invitedVoter) => invitedVoter.id,
       );
     }),
-  createVoter: privateProcedure
+  createVoter: protectedProcedure
     .input(
       z.object({
         email: z.string().min(1),
@@ -611,7 +611,7 @@ export const electionRouter = router({
         });
       }
     }),
-  updateVoterField: privateProcedure
+  updateVoterField: protectedProcedure
     .input(
       z.object({
         fields: z.array(
@@ -631,7 +631,7 @@ export const electionRouter = router({
         .set(input)
         .where(eq(voter_fields.election_id, input.election_id));
     }),
-  deleteSingleVoterField: privateProcedure
+  deleteSingleVoterField: protectedProcedure
     .input(
       z.object({
         election_id: z.string().min(1),
@@ -648,7 +648,7 @@ export const electionRouter = router({
           ),
         );
     }),
-  editVoter: privateProcedure
+  editVoter: protectedProcedure
     .input(
       z.object({
         id: z.string().min(1),
@@ -705,7 +705,7 @@ export const electionRouter = router({
         return { type: "invited_voter" };
       }
     }),
-  deleteVoter: privateProcedure
+  deleteVoter: protectedProcedure
     .input(
       z.object({
         id: z.string().min(1),
@@ -756,7 +756,7 @@ export const electionRouter = router({
           );
       }
     }),
-  deleteBulkVoter: privateProcedure
+  deleteBulkVoter: protectedProcedure
     .input(
       z.object({
         election_id: z.string().min(1),
@@ -797,7 +797,7 @@ export const electionRouter = router({
           );
       return { count: input.voters.length };
     }),
-  uploadBulkVoter: privateProcedure
+  uploadBulkVoter: protectedProcedure
     .input(
       z.object({
         election_id: z.string().min(1),
@@ -846,7 +846,7 @@ export const electionRouter = router({
 
       return { count: voters.size };
     }),
-  getVotersByElectionId: privateProcedure
+  getVotersByElectionId: protectedProcedure
     .input(
       z.object({
         election_id: z.string().min(1),

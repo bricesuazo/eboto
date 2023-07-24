@@ -1,6 +1,6 @@
 "use client";
 
-import { api_client } from "@/shared/client/trpc";
+import { api } from "@/lib/api/api";
 import { type Partylist } from "@eboto-mo/db/schema";
 import { Alert, Button, Group, Mark, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
@@ -14,7 +14,7 @@ export default function DeletePartylist({
   partylist: Partylist;
 }) {
   const { mutate, isLoading, isError, error, reset } =
-    api_client.election.deletePartylist.useMutation({
+    api.election.deletePartylist.useMutation({
       onSuccess: async () => {
         notifications.show({
           title: `${partylist.name} (${partylist.acronym}) deleted!`,

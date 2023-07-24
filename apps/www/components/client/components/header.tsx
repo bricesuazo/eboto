@@ -48,10 +48,10 @@ export default function HeaderContent({ user }: { user: User | null }) {
     <Header height={60}>
       <Container
         h="100%"
-        size={!params.electionDashboardSlug ? undefined : "full"}
+        size={!params?.electionDashboardSlug ? undefined : "full"}
       >
         <Flex h="100%" align="center" gap="xs">
-          {params.electionDashboardSlug && (
+          {params?.electionDashboardSlug && (
             <MediaQuery largerThan="sm" styles={{ display: "none" }}>
               <Burger
                 opened={store.dashboardMenu}
