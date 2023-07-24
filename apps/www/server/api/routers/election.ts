@@ -1,4 +1,5 @@
 import { positionTemplate, takenSlugs } from "@/constants";
+import { authOptions } from "@/lib/auth";
 import { account_status_type_with_accepted } from "@/utils/zod-schema";
 import { db } from "@eboto-mo/db";
 import {
@@ -19,6 +20,7 @@ import {
 } from "@eboto-mo/db/schema";
 import { TRPCError } from "@trpc/server";
 import { and, eq, inArray, not } from "drizzle-orm";
+import { getSession } from "next-auth/react";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
@@ -888,4 +890,9 @@ export const electionRouter = createTRPCRouter({
           })),
         );
     }),
+});
+
+export const electionCaller = electionRouter.createCaller({
+  db,
+  session: await getSession(),
 });

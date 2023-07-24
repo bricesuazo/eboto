@@ -1,17 +1,15 @@
 "use client";
 
 import { api } from "@/lib/api/api";
-import { getServerSession } from "next-auth";
-import { getSession } from "next-auth/react";
 
 export default function page() {
-  const session = api.auth.test.useMutation();
-  console.log("🚀 ~ file: page.tsx:9 ~ page ~ session:", session.data);
+  const test = api.auth.test.useMutation();
+  console.log("🚀 ~ file: page.tsx:9 ~ page ~ session:", test.data);
 
   return (
     <div>
-      <button onClick={() => session.mutate()}>asdasdasd</button>
-      <p>{session.data}</p>
+      <button onClick={() => test.mutate()}>asdasdasd</button>
+      <p>{test.data}</p>
     </div>
   );
 }

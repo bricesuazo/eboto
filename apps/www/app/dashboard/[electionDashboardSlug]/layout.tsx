@@ -1,10 +1,7 @@
 import DashboardLayout from "@/components/client/layouts/dashboard-layout";
 import { siteConfig } from "@/config/site";
-import { authOptions } from "@/lib/auth";
-import { electionRouter } from "@/server/api/routers/election";
-import { db } from "@eboto-mo/db";
+import { electionCaller } from "@/server/api/routers/election";
 import { type Metadata, type ResolvingMetadata } from "next";
-import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata(
@@ -15,11 +12,7 @@ export async function generateMetadata(
   },
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
-  const caller = electionRouter.createCaller({
-    db,
-    session: await getServerSession(authOptions),
-  });
-  const election = await caller.getElectionBySlug({
+  const election = await electionCaller.getElectionBySlug({
     slug: params.electionDashboardSlug,
   });
 

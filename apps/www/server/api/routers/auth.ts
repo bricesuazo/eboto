@@ -1,7 +1,6 @@
-import { authOptions } from "@/lib/auth";
 import { db } from "@eboto-mo/db";
 import { TRPCError } from "@trpc/server";
-import { getServerSession } from "next-auth";
+import { getSession } from "next-auth/react";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
@@ -14,8 +13,13 @@ export const authRouter = createTRPCRouter({
       })) ?? null
     );
   }),
-  getSession: publicProcedure.query(() => getServerSession(authOptions)),
-  test: protectedProcedure.mutation(async ({ ctx }) => {
+  getSession: publicProcedure.query(() => getSession()),
+  test: publicProcedure.mutation(async ({ ctx }) => {
     return crypto.randomUUID();
   }),
+});
+
+export const authCaller = authRouter.createCaller({
+  db,
+  session: await getSession(),
 });

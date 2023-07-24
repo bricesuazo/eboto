@@ -1,13 +1,10 @@
 import RootLayoutClient from "@/components/client/layouts/root-layout";
 import { siteConfig } from "@/config/site";
 import TRPCProvider from "@/context/trpc-provider";
-import { authOptions } from "@/lib/auth";
-import { authRouter } from "@/server/api/routers/auth";
-import { db } from "@eboto-mo/db";
+import { authCaller } from "@/server/api/routers/auth";
 import { type ColorScheme } from "@mantine/core";
 import { Analytics } from "@vercel/analytics/react";
 import { type Metadata } from "next";
-import { getServerSession } from "next-auth";
 import { Poppins } from "next/font/google";
 import { cookies } from "next/headers";
 
@@ -69,11 +66,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const caller = authRouter.createCaller({
-    db,
-    session: await getServerSession(authOptions),
-  });
-  const user = await caller.getUser();
+  const user = await authCaller.getUser();
 
   return (
     <TRPCProvider>

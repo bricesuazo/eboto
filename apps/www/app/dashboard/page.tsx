@@ -1,6 +1,5 @@
 import DashboardPageClient from "@/components/client/pages/dashboard";
-import { authOptions } from "@/lib/auth";
-import { authRouter } from "@/server/api/routers/auth";
+import { authCaller } from "@/server/api/routers/auth";
 import { db } from "@eboto-mo/db";
 import {
   type Commissioner,
@@ -9,7 +8,6 @@ import {
   type Voter,
 } from "@eboto-mo/db/schema";
 import { Metadata } from "next";
-import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
@@ -18,11 +16,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const caller = authRouter.createCaller({
-    db,
-    session: await getServerSession(authOptions),
-  });
-  const session = await caller.getSession();
+  const session = await authCaller.getSession();
 
   if (!session) notFound();
 

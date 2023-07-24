@@ -26,7 +26,8 @@ import { db } from "@eboto-mo/db";
  */
 import { TRPCError, initTRPC } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { type Session, getServerSession } from "next-auth";
+import { type Session } from "next-auth";
+import { getSession } from "next-auth/react";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
@@ -59,7 +60,7 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  */
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   // Get the session from the server using the getServerSession wrapper function
-  const session = await getServerSession(authOptions);
+  const session = await getSession();
 
   return createInnerTRPCContext({
     session,
