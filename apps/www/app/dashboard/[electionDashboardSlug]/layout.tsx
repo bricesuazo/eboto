@@ -1,6 +1,6 @@
 import DashboardLayout from "@/components/client/layouts/dashboard-layout";
 import { siteConfig } from "@/config/site";
-import { electionCallerFunc } from "@/server/api/routers/election";
+import { db } from "@eboto-mo/db";
 import { type Metadata, type ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -12,9 +12,13 @@ export async function generateMetadata(
   },
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
-  const electionCaller = await electionCallerFunc();
-  const election = await electionCaller.getElectionBySlug({
-    slug: params.electionDashboardSlug,
+  // const election = await electionCaller.getElectionBySlug({
+  //   slug: params.electionDashboardSlug,
+  // });
+
+  const election = await db.query.elections.findFirst({
+    where: (elections, { eq }) =>
+      eq(elections.slug, params.electionDashboardSlug),
   });
 
   if (!election) notFound();

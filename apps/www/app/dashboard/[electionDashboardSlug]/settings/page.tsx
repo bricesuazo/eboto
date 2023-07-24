@@ -1,5 +1,5 @@
 import DashboardSettings from "@/components/client/pages/dashboard-settings";
-import { electionCallerFunc } from "@/server/api/routers/election";
+import { db } from "@eboto-mo/db";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -12,9 +12,11 @@ export default async function Page({
 }: {
   params: { electionDashboardSlug: string };
 }) {
-  const electionCaller = await electionCallerFunc();
-  const election = await electionCaller.getElectionBySlug({
-    slug: electionDashboardSlug,
+  // const election = await electionCaller.getElectionBySlug({
+  //   slug: electionDashboardSlug,
+  // });
+  const election = await db.query.elections.findFirst({
+    where: (elections, { eq }) => eq(elections.slug, electionDashboardSlug),
   });
 
   if (!election) notFound();

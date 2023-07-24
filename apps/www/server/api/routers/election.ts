@@ -25,17 +25,17 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const electionRouter = createTRPCRouter({
-  getElectionBySlug: publicProcedure
-    .input(
-      z.object({
-        slug: z.string().min(1),
-      }),
-    )
-    .query(async ({ input }) => {
-      return await db.query.elections.findFirst({
-        where: (elections, { eq }) => eq(elections.slug, input.slug),
-      });
-    }),
+  // getElectionBySlug: publicProcedure
+  //   .input(
+  //     z.object({
+  //       slug: z.string().min(1),
+  //     }),
+  //   )
+  //   .query(async ({ input }) => {
+  //     return await db.query.elections.findFirst({
+  //       where: (elections, { eq }) => eq(elections.slug, input.slug),
+  //     });
+  //   }),
   getAllMyElections: protectedProcedure.query(async ({ ctx }) => {
     // TODO: Validate commissioner
     return await db.query.commissioners.findMany({
@@ -46,108 +46,150 @@ export const electionRouter = createTRPCRouter({
       },
     });
   }),
-  getAllPartylistsWithoutINDByElectionId: protectedProcedure
+  // getAllPartylistsWithoutINDByElectionId: protectedProcedure
+  //   .input(
+  //     z.object({
+  //       election_id: z.string().min(1),
+  //     }),
+  //   )
+  //   .query(async ({ ctx, input }) => {
+  //     // TODO: Validate commissioner
+  //     return await db.query.partylists.findMany({
+  //       where: (partylists, { eq, and }) =>
+  //         and(
+  //           eq(partylists.election_id, input.election_id),
+  //           not(eq(partylists.acronym, "IND")),
+  //         ),
+  //       orderBy: (partylists, { desc }) => desc(partylists.updated_at),
+  //     });
+  //   }),
+  // getAllPartylistsByElectionId: protectedProcedure
+  //   .input(
+  //     z.object({
+  //       election_id: z.string().min(1),
+  //     }),
+  //   )
+  //   .query(async ({ ctx, input }) => {
+  //     // TODO: Validate commissioner
+  //     return await db.query.partylists.findMany({
+  //       where: (partylists, { eq }) =>
+  //         eq(partylists.election_id, input.election_id),
+  //       orderBy: (partylists, { asc }) => asc(partylists.created_at),
+  //     });
+  //   }),
+  // getAllPositionsByElectionId: protectedProcedure
+  //   .input(
+  //     z.object({
+  //       election_id: z.string().min(1),
+  //     }),
+  //   )
+  //   .query(async ({ ctx, input }) => {
+  //     // TODO: Validate commissioner
+  //     return await db.query.positions.findMany({
+  //       where: (positions, { eq }) =>
+  //         eq(positions.election_id, input.election_id),
+  //       orderBy: (positions, { asc }) => asc(positions.order),
+  //     });
+  //   }),
+  // getAllCandidatesByElectionId: protectedProcedure
+  //   .input(
+  //     z.object({
+  //       election_id: z.string().min(1),
+  //     }),
+  //   )
+  //   .query(async ({ ctx, input }) => {
+  //     // TODO: Validate commissioner
+  //     return await db.query.positions.findMany({
+  //       where: (positions, { eq }) =>
+  //         eq(positions.election_id, input.election_id),
+  //       orderBy: (positions, { asc }) => asc(positions.order),
+  //       with: {
+  //         candidates: {
+  //           with: {
+  //             partylist: true,
+  //             credential: {
+  //               columns: {
+  //                 id: true,
+  //               },
+  //               with: {
+  //                 affiliations: {
+  //                   columns: {
+  //                     id: true,
+  //                     org_name: true,
+  //                     org_position: true,
+  //                     start_year: true,
+  //                     end_year: true,
+  //                   },
+  //                 },
+  //                 achievements: {
+  //                   columns: {
+  //                     id: true,
+  //                     name: true,
+  //                     year: true,
+  //                   },
+  //                 },
+  //                 events_attended: {
+  //                   columns: {
+  //                     id: true,
+  //                     name: true,
+  //                     year: true,
+  //                   },
+  //                 },
+  //               },
+  //             },
+  //             platforms: {
+  //               columns: {
+  //                 id: true,
+  //                 title: true,
+  //                 description: true,
+  //               },
+  //             },
+  //           },
+  //         },
+  //       },
+  //     });
+  //   }),
+  getVotersByElectionId: protectedProcedure
     .input(
       z.object({
         election_id: z.string().min(1),
       }),
     )
     .query(async ({ ctx, input }) => {
-      // TODO: Validate commissioner
-      return await db.query.partylists.findMany({
-        where: (partylists, { eq, and }) =>
-          and(
-            eq(partylists.election_id, input.election_id),
-            not(eq(partylists.acronym, "IND")),
-          ),
-        orderBy: (partylists, { desc }) => desc(partylists.updated_at),
-      });
-    }),
-  getAllPartylistsByElectionId: protectedProcedure
-    .input(
-      z.object({
-        election_id: z.string().min(1),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      // TODO: Validate commissioner
-      return await db.query.partylists.findMany({
-        where: (partylists, { eq }) =>
-          eq(partylists.election_id, input.election_id),
-        orderBy: (partylists, { asc }) => asc(partylists.created_at),
-      });
-    }),
-  getAllPositionsByElectionId: protectedProcedure
-    .input(
-      z.object({
-        election_id: z.string().min(1),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      // TODO: Validate commissioner
-      return await db.query.positions.findMany({
-        where: (positions, { eq }) =>
-          eq(positions.election_id, input.election_id),
-        orderBy: (positions, { asc }) => asc(positions.order),
-      });
-    }),
-  getAllCandidatesByElectionId: protectedProcedure
-    .input(
-      z.object({
-        election_id: z.string().min(1),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      // TODO: Validate commissioner
-      return await db.query.positions.findMany({
-        where: (positions, { eq }) =>
-          eq(positions.election_id, input.election_id),
-        orderBy: (positions, { asc }) => asc(positions.order),
+      const voters = await db.query.voters.findMany({
+        where: (voters, { eq }) => eq(voters.election_id, input.election_id),
+
         with: {
-          candidates: {
-            with: {
-              partylist: true,
-              credential: {
-                columns: {
-                  id: true,
-                },
-                with: {
-                  affiliations: {
-                    columns: {
-                      id: true,
-                      org_name: true,
-                      org_position: true,
-                      start_year: true,
-                      end_year: true,
-                    },
-                  },
-                  achievements: {
-                    columns: {
-                      id: true,
-                      name: true,
-                      year: true,
-                    },
-                  },
-                  events_attended: {
-                    columns: {
-                      id: true,
-                      name: true,
-                      year: true,
-                    },
-                  },
-                },
-              },
-              platforms: {
-                columns: {
-                  id: true,
-                  title: true,
-                  description: true,
-                },
-              },
-            },
+          user: true,
+          votes: {
+            limit: 1,
           },
         },
       });
+      const invitedVoters = await db.query.invited_voters.findMany({
+        where: (invited_voters, { eq }) =>
+          eq(invited_voters.election_id, input.election_id),
+      });
+
+      return voters
+        .map((voter) => ({
+          id: voter.id,
+          email: voter.user.email,
+          account_status: "ACCEPTED",
+          created_at: voter.created_at,
+          has_voted: voter.votes.length > 0,
+          field: voter.field,
+        }))
+        .concat(
+          invitedVoters.map((voter) => ({
+            id: voter.id,
+            email: voter.email,
+            account_status: voter.status,
+            created_at: voter.created_at,
+            has_voted: false,
+            field: voter.field,
+          })),
+        );
     }),
   createElection: protectedProcedure
     .input(
@@ -847,59 +889,4 @@ export const electionRouter = createTRPCRouter({
 
       return { count: voters.size };
     }),
-  getVotersByElectionId: protectedProcedure
-    .input(
-      z.object({
-        election_id: z.string().min(1),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      const voters = await db.query.voters.findMany({
-        where: (voters, { eq }) => eq(voters.election_id, input.election_id),
-
-        with: {
-          user: true,
-          votes: {
-            limit: 1,
-          },
-        },
-      });
-      const invitedVoters = await db.query.invited_voters.findMany({
-        where: (invited_voters, { eq }) =>
-          eq(invited_voters.election_id, input.election_id),
-      });
-
-      return voters
-        .map((voter) => ({
-          id: voter.id,
-          email: voter.user.email,
-          account_status: "ACCEPTED",
-          created_at: voter.created_at,
-          has_voted: voter.votes.length > 0,
-          field: voter.field,
-        }))
-        .concat(
-          invitedVoters.map((voter) => ({
-            id: voter.id,
-            email: voter.email,
-            account_status: voter.status,
-            created_at: voter.created_at,
-            has_voted: false,
-            field: voter.field,
-          })),
-        );
-    }),
 });
-
-export const electionCaller = electionRouter.createCaller({
-  db,
-  session: await getSession(),
-});
-
-export const electionCallerFunc = async () => {
-  const session = await getSession();
-  return electionRouter.createCaller({
-    db,
-    session,
-  });
-};
