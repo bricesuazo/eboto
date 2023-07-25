@@ -1,6 +1,6 @@
 "use client";
 
-import { api } from "@/lib/api/api";
+import { api } from "@/trpc/client";
 import {
   Alert,
   Button,
@@ -48,18 +48,18 @@ export default function CreatePartylist({
     },
   });
 
-  const { mutate, isLoading, isError, error } =
-    api.election.createPartylist.useMutation({
-      onSuccess: () => {
-        notifications.show({
-          title: `${form.values.name} (${form.values.acronym}) created!`,
-          message: "Successfully created partylist",
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-        close();
-      },
-    });
+  // const { mutate, isLoading, isError, error } =
+  //   api.election.createPartylist.useMutation({
+  //     onSuccess: () => {
+  //       notifications.show({
+  //         title: `${form.values.name} (${form.values.acronym}) created!`,
+  //         message: "Successfully created partylist",
+  //         icon: <IconCheck size="1.1rem" />,
+  //         autoClose: 5000,
+  //       });
+  //       close();
+  //     },
+  //   });
 
   useEffect(() => {
     if (opened) form.reset();
@@ -69,36 +69,39 @@ export default function CreatePartylist({
     <>
       <Button
         onClick={open}
-        sx={(theme) => ({
+        style={(theme) => ({
           width: "fit-content",
-          [theme.fn.smallerThan("xs")]: { width: "100%" },
+          // [theme.fn.smallerThan("xs")]: { width: "100%" },
         })}
-        leftIcon={<IconFlag size="1rem" />}
+        leftSection={<IconFlag size="1rem" />}
       >
         Add partylist
       </Button>
       <Modal
-        opened={opened || isLoading}
+        opened={
+          opened
+          // || isLoading
+        }
         onClose={close}
-        title={<Text weight={600}>Create partylist</Text>}
+        title={<Text fw={600}>Create partylist</Text>}
       >
         <form
           onSubmit={form.onSubmit((value) => {
-            mutate({
+            api.election.createPartylist.mutate({
               name: value.name,
               acronym: value.acronym,
               election_id,
             });
           })}
         >
-          <Stack spacing="sm">
+          <Stack gap="sm">
             <TextInput
               placeholder="Enter partylist name"
               label="Name"
               required
               withAsterisk
               {...form.getInputProps("name")}
-              icon={<IconLetterCase size="1rem" />}
+              leftSection={<IconLetterCase size="1rem" />}
             />
 
             <TextInput
@@ -107,10 +110,10 @@ export default function CreatePartylist({
               required
               withAsterisk
               {...form.getInputProps("acronym")}
-              icon={<IconLetterCase size="1rem" />}
+              leftSection={<IconLetterCase size="1rem" />}
             />
 
-            {isError && (
+            {/* {isError && (
               <Alert
                 icon={<IconAlertCircle size="1rem" />}
                 color="red"
@@ -119,16 +122,20 @@ export default function CreatePartylist({
               >
                 {error.message}
               </Alert>
-            )}
+            )} */}
 
-            <Group position="right" spacing="xs">
-              <Button variant="default" onClick={close} disabled={isLoading}>
+            <Group justify="right" gap="xs">
+              <Button
+                variant="default"
+                onClick={close}
+                // disabled={isLoading}
+              >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isValid()}
-                loading={isLoading}
+                // loading={isLoading}
               >
                 Create
               </Button>

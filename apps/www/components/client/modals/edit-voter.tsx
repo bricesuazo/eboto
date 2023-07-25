@@ -1,6 +1,6 @@
 "use client";
 
-import { api } from "@/lib/api/api";
+import { api } from "@/trpc/client";
 import type { VoterField } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
@@ -74,22 +74,22 @@ export default function EditVoter({
     },
   });
 
-  const { mutate, isLoading, isError, error, reset } =
-    api.election.editVoter.useMutation({
-      onSuccess: () => {
-        notifications.show({
-          title: "Success",
-          message: "Successfully updated voter!",
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-        close();
-      },
-    });
+  // const { mutate, isLoading, isError, error, reset } =
+  //   api.election.editVoter.useMutation({
+  //     onSuccess: () => {
+  //       notifications.show({
+  //         title: "Success",
+  //         message: "Successfully updated voter!",
+  //         leftSection: <IconCheck size="1.1rem" />,
+  //         autoClose: 5000,
+  //       });
+  //       close();
+  //     },
+  //   });
 
   useEffect(() => {
     if (opened) {
-      reset();
+      // reset();
 
       const dataForForm: typeof form.values = {
         email: voter.email,
@@ -119,13 +119,16 @@ export default function EditVoter({
         <IconEdit size="1.25rem" />
       </ActionIcon>
       <Modal
-        opened={opened || isLoading}
+        opened={
+          opened
+          // || isLoading
+        }
         onClose={close}
-        title={<Text weight={600}>Edit voter - {voter.email}</Text>}
+        title={<Text fw={600}>Edit voter - {voter.email}</Text>}
       >
         <form
           onSubmit={form.onSubmit((values) => {
-            mutate({
+            api.election.editVoter.mutate({
               id: voter.id,
               election_id,
               field: values.field,
@@ -134,14 +137,14 @@ export default function EditVoter({
             });
           })}
         >
-          <Stack spacing="sm">
+          <Stack gap="sm">
             <TextInput
               placeholder="Enter voter's email"
               label="Email address"
               required
               withAsterisk
               {...form.getInputProps("email")}
-              icon={<IconAt size="1rem" />}
+              leftSection={<IconAt size="1rem" />}
               disabled={voter.account_status !== "ADDED"}
               description={
                 voter.account_status !== "ADDED" &&
@@ -160,48 +163,52 @@ export default function EditVoter({
                       label: item.value,
                     })) || []
                 }
-                onCreate={(query) => {
-                  setData((prev) =>
-                    prev.map((item) => {
-                      if (item.fieldName === field.name) {
-                        item.values.push({ value: query });
-                      }
-                      return item;
-                    }),
-                  );
-                  return query;
-                }}
+                // onCreate={(query) => {
+                //   setData((prev) =>
+                //     prev.map((item) => {
+                //       if (item.fieldName === field.name) {
+                //         item.values.push({ value: query });
+                //       }
+                //       return item;
+                //     }),
+                //   );
+                //   return query;
+                // }}
                 label={field.name}
                 placeholder={`Enter ${field.name}`}
-                nothingFound="Nothing found"
+                // nothingFound="Nothing found"
                 searchable
-                creatable
-                withinPortal
-                getCreateLabel={(query) => `+ Create ${query}`}
+                // creatable
+                // withinPortal
+                // getCreateLabel={(query) => `+ Create ${query}`}
                 {...form.getInputProps(["field", field.name].join("."))}
                 required
                 withAsterisk
-                icon={<IconLetterCase size="1rem" />}
+                leftSection={<IconLetterCase size="1rem" />}
               />
             ))}
 
-            {isError && (
+            {/* {isError && (
               <Alert
-                icon={<IconAlertCircle size="1rem" />}
+                leftSection={<IconAlertCircle size="1rem" />}
                 title="Error"
                 color="red"
               >
                 {error.message}
               </Alert>
-            )}
-            <Group position="right" spacing="xs">
-              <Button variant="default" onClick={close} disabled={isLoading}>
+            )} */}
+            <Group justify="right" gap="xs">
+              <Button
+                variant="default"
+                onClick={close}
+                // disabled={isLoading}
+              >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isValid() || !form.isDirty()}
-                loading={isLoading}
+                // loading={isLoading}
               >
                 Update
               </Button>

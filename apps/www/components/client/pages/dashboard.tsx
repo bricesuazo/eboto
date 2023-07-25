@@ -10,8 +10,7 @@ import {
 } from "@eboto-mo/db/schema";
 import {
   Box,
-  Container,
-  Flex,
+  Container, // Flex,
   Group,
   Skeleton,
   Stack,
@@ -30,26 +29,26 @@ export default function DashboardPageClient({
 }) {
   return (
     <Container p="md">
-      <Stack spacing="lg">
+      <Stack gap="lg">
         <Box>
-          <Flex align="center" justify="space-between">
+          <Group align="center" justify="space-between">
             <Title
               order={2}
-              sx={(theme) => ({
-                [theme.fn.smallerThan("xs")]: {
-                  fontSize: theme.fontSizes.xl,
-                },
-              })}
+              // style={(theme) => ({
+              //   [theme.fn.smallerThan("xs")]: {
+              //     fontSize: theme.fontSizes.xl,
+              //   },
+              // })}
             >
               My elections
             </Title>
 
             <CreateElection />
-          </Flex>
+          </Group>
           <Text
             size="xs"
             color="grayText"
-            sx={(theme) => ({
+            style={(theme) => ({
               marginBottom: theme.spacing.xs,
             })}
           >
@@ -63,9 +62,9 @@ export default function DashboardPageClient({
                   width={250}
                   height={332}
                   radius="md"
-                  sx={(theme) => ({
-                    [theme.fn.smallerThan("xs")]: { width: "100%" },
-                  })}
+                  // style={(theme) => ({
+                  //   [theme.fn.smallerThan("xs")]: { width: "100%" },
+                  // })}
                 />
               ))
             ) : commissioners.length === 0 ? (
@@ -87,18 +86,18 @@ export default function DashboardPageClient({
         <Box>
           <Title
             order={2}
-            sx={(theme) => ({
-              [theme.fn.smallerThan("xs")]: {
-                fontSize: theme.fontSizes.xl,
-              },
-            })}
+            // style={(theme) => ({
+            //   [theme.fn.smallerThan("xs")]: {
+            //     fontSize: theme.fontSizes.xl,
+            //   },
+            // })}
           >
             My elections I can vote in
           </Title>
           <Text
             size="xs"
             color="grayText"
-            sx={(theme) => ({
+            style={(theme) => ({
               marginBottom: theme.spacing.xs,
             })}
           >
@@ -114,9 +113,9 @@ export default function DashboardPageClient({
                   width={250}
                   height={352}
                   radius="md"
-                  sx={(theme) => ({
-                    [theme.fn.smallerThan("xs")]: { width: "100%" },
-                  })}
+                  // style={(theme) => ({
+                  //   [theme.fn.smallerThan("xs")]: { width: "100%" },
+                  // })}
                 />
               ))
             ) : voters.length === 0 ? (

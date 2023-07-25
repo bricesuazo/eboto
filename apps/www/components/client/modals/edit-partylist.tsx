@@ -1,6 +1,6 @@
 "use client";
 
-import { api } from "@/lib/api/api";
+import { api } from "@/trpc/client";
 import { Partylist } from "@eboto-mo/db/schema";
 import {
   Alert,
@@ -53,53 +53,61 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
     },
   });
 
-  const { mutate, isLoading, isError, error, reset } =
-    api.election.editPartylist.useMutation({
-      onSuccess: async (_, data) => {
-        notifications.show({
-          title: `${form.values.name} (${form.values.newAcronym}) updated.`,
-          icon: <IconCheck size="1.1rem" />,
-          message: "Your changes have been saved.",
-          autoClose: 3000,
-        });
-        close();
+  // const { mutate, isLoading, isError, error, reset } =
+  //   api.election.editPartylist.useMutation({
+  //     onSuccess: async (_, data) => {
+  //       notifications.show({
+  //         title: `${form.values.name} (${form.values.newAcronym}) updated.`,
+  //         leftSection: <IconCheck size="1.1rem" />,
+  //         message: "Your changes have been saved.",
+  //         autoClose: 3000,
+  //       });
+  //       close();
 
-        form.resetDirty(form.values);
-      },
-      onError: (error) => {
-        notifications.show({
-          title: "Error",
-          message: error.message,
-          color: "red",
-          autoClose: 3000,
-        });
-      },
-    });
+  //       form.resetDirty(form.values);
+  //     },
+  //     onError: (error) => {
+  //       notifications.show({
+  //         title: "Error",
+  //         message: error.message,
+  //         color: "red",
+  //         autoClose: 3000,
+  //       });
+  //     },
+  //   });
 
   useEffect(() => {
     if (opened) {
       form.resetDirty();
-      reset();
+      // reset();
     }
   }, [opened]);
 
   return (
     <>
-      <Button onClick={open} variant="light" size="sm" compact>
+      <Button
+        onClick={open}
+        variant="light"
+        size="sm"
+        // compact
+      >
         Edit
       </Button>
       <Modal
-        opened={opened || isLoading}
+        opened={
+          opened
+          // || isLoading
+        }
         onClose={close}
         title={
-          <Text weight={600}>
+          <Text fw={600}>
             Edit Partylist - {partylist.name} ({partylist.acronym})
           </Text>
         }
       >
         <form
           onSubmit={form.onSubmit((value) => {
-            mutate({
+            api.election.editPartylist.mutate({
               id: partylist.id,
               name: value.name,
               oldAcronym: partylist.acronym,
@@ -110,14 +118,14 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
             });
           })}
         >
-          <Stack spacing="sm">
+          <Stack gap="sm">
             <TextInput
               placeholder="Enter partylist name"
               label="Name"
               required
               withAsterisk
               {...form.getInputProps("name")}
-              icon={<IconLetterCase size="1rem" />}
+              leftSection={<IconLetterCase size="1rem" />}
             />
 
             <TextInput
@@ -126,28 +134,32 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
               required
               withAsterisk
               {...form.getInputProps("newAcronym")}
-              icon={<IconLetterCase size="1rem" />}
+              leftSection={<IconLetterCase size="1rem" />}
             />
 
-            {isError && (
+            {/* {isError && (
               <Alert
-                icon={<IconAlertCircle size="1rem" />}
+                leftSection={<IconAlertCircle size="1rem" />}
                 color="red"
                 title="Error"
                 variant="filled"
               >
                 {error.message}
               </Alert>
-            )}
+            )} */}
 
-            <Group position="right" spacing="xs">
-              <Button variant="default" onClick={close} disabled={isLoading}>
+            <Group justify="right" gap="xs">
+              <Button
+                variant="default"
+                onClick={close}
+                // disabled={isLoading}
+              >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isDirty()}
-                loading={isLoading}
+                // loading={isLoading}
               >
                 Update
               </Button>

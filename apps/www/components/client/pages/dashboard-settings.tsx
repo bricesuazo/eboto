@@ -1,6 +1,6 @@
 "use client";
 
-import { api } from "@/lib/api/api";
+import { api } from "@/trpc/client";
 import { type Election, type Publicity, publicity } from "@eboto-mo/db/schema";
 import {
   Alert,
@@ -11,8 +11,7 @@ import {
   Select,
   Stack,
   Text,
-  TextInput,
-  Textarea,
+  TextInput, // Textarea,
   rem,
 } from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
@@ -42,34 +41,33 @@ export default function DashboardSettings({
   election: Election;
 }) {
   const router = useRouter();
-  const queryClient = useQueryClient();
-  const { mutate, isLoading, isError, error } =
-    api.election.editElection.useMutation({
-      onSuccess: async () => {
-        if (form.values.newSlug !== election.slug) {
-          router.push(`/dashboard/${form.values.newSlug}/settings`);
-        }
+  // const { mutate, isLoading, isError, error } =
+  //   api.election.editElection.useMutation({
+  //     onSuccess: async () => {
+  //       if (form.values.newSlug !== election.slug) {
+  //         router.push(`/dashboard/${form.values.newSlug}/settings`);
+  //       }
 
-        queryClient.invalidateQueries({ queryKey: ["getAllMyElections"] });
+  //       queryClient.invalidateQueries({ queryKey: ["getAllMyElections"] });
 
-        notifications.show({
-          title: "Election settings updated.",
-          icon: <IconCheck size="1.1rem" />,
-          message: "Your changes have been saved.",
-          autoClose: 3000,
-        });
+  //       notifications.show({
+  //         title: "Election settings updated.",
+  //         leftSection: <IconCheck size="1.1rem" />,
+  //         message: "Your changes have been saved.",
+  //         autoClose: 3000,
+  //       });
 
-        form.resetDirty();
-      },
-      onError: (error) => {
-        notifications.show({
-          title: "Error",
-          message: error.message,
-          color: "red",
-          autoClose: 3000,
-        });
-      },
-    });
+  //       form.resetDirty();
+  //     },
+  //     onError: (error) => {
+  //       notifications.show({
+  //         title: "Error",
+  //         message: error.message,
+  //         color: "red",
+  //         autoClose: 3000,
+  //       });
+  //     },
+  //   });
   const openRef = useRef<() => void>(null);
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -169,7 +167,7 @@ export default function DashboardSettings({
   //       notifications.show({
   //         title: "Election deleted.",
   //         message: "Your election has been deleted.",
-  //         icon: <IconCheck size="1.1rem" />,
+  //         leftSection: <IconCheck size="1.1rem" />,
   //         autoClose: 3000,
   //       });
   //     },
@@ -188,14 +186,14 @@ export default function DashboardSettings({
       <Modal
         opened={opened}
         onClose={close}
-        title={<Text weight={600}>Delete election</Text>}
+        title={<Text fw={600}>Delete election</Text>}
       >
         <form
         // onSubmit={deleteForm.onSubmit(() =>
 
         // )}
         >
-          <Stack spacing="sm">
+          <Stack gap="sm">
             <TextInput
               data-autofocus
               label="Election name"
@@ -203,16 +201,16 @@ export default function DashboardSettings({
               required
               placeholder="Enter election name to confirm deletion"
               {...deleteForm.getInputProps("name")}
-              icon={<IconLetterCase size="1rem" />}
+              leftSection={<IconLetterCase size="1rem" />}
               description={
                 <Text
-                  sx={{
+                  style={{
                     pointerEvents: "none",
                     userSelect: "none",
                   }}
                 >
                   Please type{" "}
-                  <Text weight="bold" component="span">
+                  <Text fw="bold" component="span">
                     {election.name}
                   </Text>{" "}
                   to confirm deletion. This action cannot be undone.
@@ -220,7 +218,7 @@ export default function DashboardSettings({
               }
             />
 
-            <Group position="right" spacing="xs">
+            <Group justify="right" gap="xs">
               <Button
                 variant="default"
                 mr={2}
@@ -243,7 +241,7 @@ export default function DashboardSettings({
 
       <form
         onSubmit={form.onSubmit((values) => {
-          mutate({
+          api.election.editElection.mutate({
             id: election.id,
             name: values.name,
             newSlug: values.newSlug,
@@ -284,15 +282,15 @@ export default function DashboardSettings({
           // });
         })}
       >
-        <Stack spacing="sm">
+        <Stack gap="sm">
           <TextInput
             label="Election name"
             withAsterisk
             required
             placeholder="Enter election name"
             {...form.getInputProps("name")}
-            icon={<IconLetterCase size="1rem" />}
-            disabled={isLoading}
+            leftSection={<IconLetterCase size="1rem" />}
+            // disabled={isLoading}
           />
 
           <TextInput
@@ -308,21 +306,21 @@ export default function DashboardSettings({
             required
             placeholder="Enter election slug"
             {...form.getInputProps("newSlug")}
-            icon={<IconLetterCase size="1rem" />}
+            leftSection={<IconLetterCase size="1rem" />}
             // error={
             //   form.errors.slug ||
             //   (updateElectionMutation.error?.data?.code === "CONFLICT" &&
             //     updateElectionMutation.error?.message)
             // }
-            disabled={isLoading}
+            // disabled={isLoading}
           />
 
-          <Textarea
+          {/* <Textarea
             label="Election description"
             description="This will be shown on the election page."
             placeholder="Enter election description"
             {...form.getInputProps("description")}
-            icon={<IconLetterCase size="1rem" />}
+            leftSection={<IconLetterCase size="1rem" />}
             minRows={3}
             maxRows={8}
             autosize
@@ -332,14 +330,14 @@ export default function DashboardSettings({
             //     updateElectionMutation.error?.message)
             // }
             disabled={isLoading}
-          />
+          /> */}
 
           {/* <TextInput
                     label="Election voter's domain"
                     description={`This will be used to restrict voters to a specific domain. For example, if you set this to "cvsu.edu.ph", only voters with an email address ending with "cvsu.edu.ph" will be able to vote. This is good for school elections (such as CSG Election).`}
                     placeholder="cvsu.edu.ph"
                     {...form.getInputProps("voter_domain")}
-                    icon={<IconAt size="1rem" />}
+                    leftSection={<IconAt size="1rem" />}
                     error={
                       form.errors.voter_domain ||
                       (updateElectionMutation.error?.data?.code ===
@@ -355,7 +353,7 @@ export default function DashboardSettings({
                     }
                   /> */}
 
-          <DateTimePicker
+          {/* <DateTimePicker
             valueFormat="MMMM DD, YYYY (dddd) hh:mm A"
             label="Election start date"
             placeholder="Enter election start date"
@@ -378,8 +376,8 @@ export default function DashboardSettings({
             //     withTime: false,
             //   })
             // }
-          />
-          <DateTimePicker
+          /> */}
+          {/* <DateTimePicker
             valueFormat="MMMM DD, YYYY (dddd) hh:mm A"
             label="Election end date"
             placeholder="Enter election end date"
@@ -405,33 +403,27 @@ export default function DashboardSettings({
             //     withTime: false,
             //   })
             // }
-          />
+          /> */}
 
           <Select
             label="Election publicity"
             description="Private elections are only visible to you and the other commissioners. Voter elections are visible to voters you invite. Public elections are visible to everyone."
             withAsterisk
-            withinPortal
+            // withinPortal
             required
             {...form.getInputProps("publicity")}
             data={publicity.map((p) => ({
               value: p,
               label: p.charAt(0) + p.slice(1).toLowerCase(),
             }))}
-            disabled={isLoading}
+            // disabled={isLoading}
           />
 
           <Box>
-            <Text
-              size="sm"
-              weight={500}
-              component="label"
-              htmlFor="logo"
-              inline
-            >
+            <Text size="sm" fw={500} component="label" htmlFor="logo" inline>
               Election logo
             </Text>
-            <Stack spacing="xs">
+            <Stack gap="xs">
               <Dropzone
                 id="logo"
                 onDrop={(files) => {
@@ -442,11 +434,11 @@ export default function DashboardSettings({
                 maxSize={5 * 1024 ** 2}
                 accept={IMAGE_MIME_TYPE}
                 multiple={false}
-                loading={isLoading}
+                // loading={isLoading}
               >
                 <Group
-                  position="center"
-                  spacing="xl"
+                  justify="center"
+                  gap="xl"
                   style={{ minHeight: rem(140), pointerEvents: "none" }}
                 >
                   {form.values.logo ? (
@@ -454,14 +446,14 @@ export default function DashboardSettings({
                       <Group>
                         <Box
                           pos="relative"
-                          sx={(theme) => ({
+                          style={(theme) => ({
                             width: rem(120),
                             height: rem(120),
 
-                            [theme.fn.smallerThan("sm")]: {
-                              width: rem(180),
-                              height: rem(180),
-                            },
+                            // [theme.fn.smallerThan("sm")]: {
+                            //   width: rem(180),
+                            //   height: rem(180),
+                            // },
                           })}
                         >
                           <Image
@@ -484,14 +476,14 @@ export default function DashboardSettings({
                         <Group>
                           <Box
                             pos="relative"
-                            sx={(theme) => ({
+                            style={(theme) => ({
                               width: rem(120),
                               height: rem(120),
 
-                              [theme.fn.smallerThan("sm")]: {
-                                width: rem(180),
-                                height: rem(180),
-                              },
+                              // [theme.fn.smallerThan("sm")]: {
+                              //   width: rem(180),
+                              //   height: rem(180),
+                              // },
                             })}
                           >
                             <Image
@@ -508,16 +500,10 @@ export default function DashboardSettings({
                     )
                   ) : (
                     <Box>
-                      <Text size="xl" inline align="center">
+                      <Text size="xl" inline ta="center">
                         Drag image here or click to select image
                       </Text>
-                      <Text
-                        size="sm"
-                        color="dimmed"
-                        inline
-                        mt={7}
-                        align="center"
-                      >
+                      <Text size="sm" color="dimmed" inline mt={7} ta="center">
                         Attach a logo to your election. Max file size is 5MB.
                       </Text>
                     </Box>
@@ -537,9 +523,9 @@ export default function DashboardSettings({
                     });
                   }}
                   disabled={
-                    typeof form.values.logo === "string" ||
-                    !election.logo ||
-                    isLoading
+                    typeof form.values.logo === "string" || !election.logo
+                    // ||
+                    // isLoading
                   }
                 >
                   Reset logo
@@ -550,7 +536,10 @@ export default function DashboardSettings({
                   onClick={() => {
                     form.setFieldValue("logo", null);
                   }}
-                  disabled={!form.values.logo || isLoading}
+                  disabled={
+                    !form.values.logo
+                    // || isLoading
+                  }
                 >
                   Delete logo
                 </Button>
@@ -558,7 +547,7 @@ export default function DashboardSettings({
             </Stack>
           </Box>
 
-          {isError && (
+          {/* {isError && (
             <Alert
               icon={<IconAlertCircle size="1rem" />}
               title="Error"
@@ -566,30 +555,30 @@ export default function DashboardSettings({
             >
               {error.message}
             </Alert>
-          )}
+          )} */}
 
-          <Group position="apart">
+          <Group justify="space-between">
             <Button
               type="submit"
-              loading={isLoading}
+              // loading={isLoading}
               disabled={!form.isDirty() || !form.isValid()}
-              sx={(theme) => ({
-                [theme.fn.largerThan("xs")]: {
-                  display: "none",
-                },
-              })}
+              // style={(theme) => ({
+              //   [theme.fn.largerThan("xs")]: {
+              //     display: "none",
+              //   },
+              // })}
             >
               Update
             </Button>
             <Button
               type="submit"
-              loading={isLoading}
+              // loading={isLoading}
               disabled={!form.isDirty() || !form.isValid()}
-              sx={(theme) => ({
-                [theme.fn.smallerThan("xs")]: {
-                  display: "none",
-                },
-              })}
+              // style={(theme) => ({
+              //   [theme.fn.smallerThan("xs")]: {
+              //     display: "none",
+              //   },
+              // })}
             >
               Update election
             </Button>
@@ -598,12 +587,12 @@ export default function DashboardSettings({
               color="red"
               onClick={open}
               //   loading={deleteElectionMutation.isLoading}
-              disabled={isLoading}
-              sx={(theme) => ({
-                [theme.fn.largerThan("xs")]: {
-                  display: "none",
-                },
-              })}
+              // disabled={isLoading}
+              // style={(theme) => ({
+              //   [theme.fn.largerThan("xs")]: {
+              //     display: "none",
+              //   },
+              // })}
             >
               Delete
             </Button>
@@ -612,12 +601,12 @@ export default function DashboardSettings({
               color="red"
               onClick={open}
               //   loading={deleteElectionMutation.isLoading}
-              disabled={isLoading}
-              sx={(theme) => ({
-                [theme.fn.smallerThan("xs")]: {
-                  display: "none",
-                },
-              })}
+              // disabled={isLoading}
+              // style={(theme) => ({
+              //   [theme.fn.smallerThan("xs")]: {
+              //     display: "none",
+              //   },
+              // })}
             >
               Delete election
             </Button>

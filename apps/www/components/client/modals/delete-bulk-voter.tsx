@@ -1,12 +1,11 @@
 "use client";
 
-import { api } from "@/lib/api/api";
+import { api } from "@/trpc/client";
 import {
   ActionIcon,
   Alert,
   Button,
-  Group,
-  List,
+  Group, // List,
   Modal,
   Stack,
   Text,
@@ -14,7 +13,6 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconAlertCircle, IconCheck, IconUserMinus } from "@tabler/icons-react";
-import { useMutation } from "@tanstack/react-query";
 
 export default function DeleteBulkVoter({
   voters,
@@ -33,19 +31,19 @@ export default function DeleteBulkVoter({
 }) {
   const [opened, { open, close }] = useDisclosure();
 
-  const { mutate, isLoading, isError, error } =
-    api.election.deleteBulkVoter.useMutation({
-      onSuccess: ({ count }) => {
-        notifications.show({
-          title: `${count} voter(s) successfully deleted!`,
-          message: `Successfully deleted voters`,
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-        close();
-        onSuccess && onSuccess();
-      },
-    });
+  // const { mutate, isLoading, isError, error } =
+  //   api.election.deleteBulkVoter.useMutation({
+  //     onSuccess: ({ count }) => {
+  //       notifications.show({
+  //         title: `${count} voter(s) successfully deleted!`,
+  //         message: `Successfully deleted voters`,
+  //         icon: <IconCheck size="1.1rem" />,
+  //         autoClose: 5000,
+  //       });
+  //       close();
+  //       onSuccess && onSuccess();
+  //     },
+  //   });
 
   return (
     <>
@@ -54,11 +52,11 @@ export default function DeleteBulkVoter({
         onClick={open}
         size="lg"
         variant="outline"
-        sx={(theme) => ({
-          [theme.fn.largerThan("xs")]: {
-            display: "none",
-          },
-        })}
+        // style={(theme) => ({
+        //   [theme.fn.largerThan("xs")]: {
+        //     display: "none",
+        //   },
+        // })}
         disabled={isDisabled}
       >
         <IconUserMinus size="1.25rem" />
@@ -67,34 +65,37 @@ export default function DeleteBulkVoter({
         color="red"
         variant="outline"
         onClick={open}
-        leftIcon={<IconUserMinus size="1.25rem" />}
-        sx={(theme) => ({
-          [theme.fn.smallerThan("xs")]: {
-            display: "none",
-          },
-        })}
+        leftSection={<IconUserMinus size="1.25rem" />}
+        // style={(theme) => ({
+        //   [theme.fn.smallerThan("xs")]: {
+        //     display: "none",
+        //   },
+        // })}
         disabled={isDisabled}
       >
         Delete selected
       </Button>
 
       <Modal
-        opened={opened || isLoading}
+        opened={
+          opened
+          // || isLoading
+        }
         onClose={close}
-        title={<Text weight={600}>Confirm Delete Voter(s)</Text>}
+        title={<Text fw={600}>Confirm Delete Voter(s)</Text>}
       >
-        <Stack spacing="sm">
+        <Stack gap="sm">
           <Text>
             Are you sure you want to delete this voter(s)? This action cannot be
             undone.
           </Text>
 
-          <List>
+          {/* <List>
             {voters.map((voter) => (
               <List.Item key={voter.id}>{voter.email}</List.Item>
             ))}
-          </List>
-          {isError && (
+          </List> */}
+          {/* {isError && (
             <Alert
               icon={<IconAlertCircle size="1rem" />}
               color="red"
@@ -103,16 +104,20 @@ export default function DeleteBulkVoter({
             >
               {error.message}
             </Alert>
-          )}
-          <Group position="right" spacing="xs">
-            <Button variant="default" onClick={close} disabled={isLoading}>
+          )} */}
+          <Group justify="right" gap="xs">
+            <Button
+              variant="default"
+              onClick={close}
+              // disabled={isLoading}
+            >
               Cancel
             </Button>
             <Button
               color="red"
-              loading={isLoading}
+              // loading={isLoading}
               onClick={() =>
-                mutate({
+                api.election.deleteBulkVoter.mutate({
                   election_id,
                   voters,
                 })

@@ -10,9 +10,9 @@
     "clean": "git clean -xdf .next .turbo node_modules"
   },
   "dependencies": {
+    "@clerk/nextjs": "^4.23.1",
     "@eboto-mo/api": "workspace:*",
     "@eboto-mo/db": "workspace:*",
-    "@clerk/nextjs": "^4.23.1",
     "@emotion/react": "^11.11.1",
     "@mantine/carousel": "^6.0.17",
     "@mantine/core": "^7.0.0-alpha.19",
@@ -38,6 +38,7 @@
     "@trpc/server": "^10.35.0",
     "@vercel/analytics": "^1.0.1",
     "bcryptjs": "^2.4.3",
+    "clsx": "^2.0.0",
     "dayjs": "^1.11.9",
     "drizzle-orm": "0.27.2",
     "embla-carousel-react": "8.0.0-rc11",

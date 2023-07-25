@@ -1,110 +1,22 @@
 "use client";
 
-import { FAQs } from "@/constants";
+import classes from "@/styles/Home.module.css";
+import { FAQs } from "@eboto-mo/api/src/constants";
 import {
   Accordion,
   Box,
   Button,
-  Col,
   Container,
   Grid,
   Text,
   Title,
-  createStyles,
   rem,
 } from "@mantine/core";
 import Image from "next/image";
 import Link from "next/link";
 import Balancer from "react-wrap-balancer";
 
-const useStyles = createStyles((theme) => ({
-  wrapper: {
-    position: "relative",
-    paddingTop: rem(120),
-    paddingBottom: rem(80),
-
-    [theme.fn.smallerThan("sm")]: {
-      paddingTop: rem(80),
-      paddingBottom: rem(60),
-    },
-  },
-
-  dots: {
-    position: "absolute",
-    color:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[5]
-        : theme.colors.gray[1],
-
-    [theme.fn.smallerThan("sm")]: {
-      display: "none",
-    },
-  },
-
-  dotsLeft: {
-    left: 0,
-    top: 0,
-  },
-
-  title: {
-    textAlign: "center",
-    fontSize: rem(40),
-    letterSpacing: -1,
-    color: theme.colorScheme === "dark" ? theme.white : theme.black,
-    marginBottom: theme.spacing.xs,
-
-    [theme.fn.smallerThan("xs")]: {
-      fontSize: rem(28),
-      textAlign: "left",
-    },
-  },
-
-  highlight: {
-    color:
-      theme.colorScheme === "dark"
-        ? theme.colors.green[5]
-        : theme.colors.green[7],
-  },
-
-  description: {
-    textAlign: "center",
-
-    [theme.fn.smallerThan("xs")]: {
-      textAlign: "left",
-      fontSize: theme.fontSizes.md,
-    },
-  },
-
-  controls: {
-    marginTop: theme.spacing.lg,
-    display: "flex",
-    justifyContent: "center",
-
-    [theme.fn.smallerThan("xs")]: {
-      flexDirection: "column",
-    },
-  },
-
-  control: {
-    "&:not(:first-of-type)": {
-      marginLeft: theme.spacing.md,
-    },
-
-    [theme.fn.smallerThan("xs")]: {
-      height: rem(42),
-      fontSize: theme.fontSizes.md,
-
-      "&:not(:first-of-type)": {
-        marginTop: theme.spacing.md,
-        marginLeft: 0,
-      },
-    },
-  },
-}));
-
 export default function HomePage() {
-  const { classes } = useStyles();
-
   return (
     <Container className={classes.wrapper}>
       <Dots className={classes.dots} style={{ left: 0, top: 0 }} />
@@ -155,10 +67,13 @@ export default function HomePage() {
       </Box>
 
       <Grid>
-        <Col span={12} sm={6}>
+        <Grid.Col
+          span={12}
+          // sm={6}
+        >
           <Box
             pos="relative"
-            sx={{
+            style={{
               aspectRatio: "3/2",
             }}
           >
@@ -172,17 +87,20 @@ export default function HomePage() {
               }}
             />
           </Box>
-        </Col>
-        <Col span={12} sm={6}>
+        </Grid.Col>
+        <Grid.Col
+          span={12}
+          // sm={6}
+        >
           <Title
             order={2}
             ta="left"
             p="md"
-            sx={(theme) => ({
-              [theme.fn.smallerThan("sm")]: {
-                textAlign: "center",
-              },
-            })}
+            // style={(theme) => ({
+            //   [theme.fn.smallerThan("sm")]: {
+            //     textAlign: "center",
+            //   },
+            // })}
           >
             Frequently Asked Questions
           </Title>
@@ -199,7 +117,7 @@ export default function HomePage() {
               </Accordion.Item>
             ))}
           </Accordion>
-        </Col>
+        </Grid.Col>
       </Grid>
     </Container>
   );

@@ -7,14 +7,12 @@ import EditVoter from "@/components/client/modals/edit-voter";
 import InviteAllAddedVoters from "@/components/client/modals/invite-all-added-voters";
 import UpdateVoterField from "@/components/client/modals/update-voter-field";
 import UploadBulkVoter from "@/components/client/modals/upload-bulk-voter";
-import { api } from "@/trpc/client";
-import { isElectionOngoing } from "@/utils";
+import { isElectionOngoing } from "@eboto-mo/api/src/utils";
 import type { Election, VoterField } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
   Box,
-  Button,
-  Flex,
+  Button, // Flex,
   Group,
   Stack,
   Text,
@@ -87,15 +85,15 @@ export default function DashboardVoter({
   return (
     <Box>
       <Stack>
-        <Flex
+        <Group
           gap="xs"
-          sx={(theme) => ({
-            [theme.fn.smallerThan("xs")]: {
-              flexDirection: "column",
-            },
-          })}
+          // style={(theme) => ({
+          //   [theme.fn.smallerThan("xs")]: {
+          //     flexDirection: "column",
+          //   },
+          // })}
         >
-          <Flex gap="xs">
+          <Group gap="xs">
             <CreateVoter
               voter_fields={election.voter_fields}
               election_id={election.id}
@@ -104,8 +102,8 @@ export default function DashboardVoter({
               election_id={election.id}
               voter_fields={election.voter_fields}
             />
-          </Flex>
-          <Flex gap="xs">
+          </Group>
+          <Group gap="xs">
             <Tooltip
               label={
                 <Text>
@@ -135,8 +133,8 @@ export default function DashboardVoter({
                 }
               />
             )}
-          </Flex>
-        </Flex>
+          </Group>
+        </Group>
 
         <MantineReactTable
           columns={columns}
@@ -162,17 +160,17 @@ export default function DashboardVoter({
           }}
           enableClickToCopy={true}
           mantineTableContainerProps={{
-            sx: { maxHeight: "70vh" },
+            style: { maxHeight: "70vh" },
             width: "100%",
           }}
-          mantineProgressProps={({ isTopToolbar }) => ({
-            sx: {
-              display: isTopToolbar ? "block" : "none",
-            },
-          })}
+          // mantineProgressProps={({ isTopToolbar }) => ({
+          //   sx: {
+          //     display: isTopToolbar ? "block" : "none",
+          //   },
+          // })}
           positionToolbarAlertBanner="bottom"
           renderTopToolbarCustomActions={() => (
-            <Group spacing="xs">
+            <Group gap="xs">
               <Tooltip withArrow label="Refresh">
                 <div>
                   <ActionIcon
@@ -184,11 +182,11 @@ export default function DashboardVoter({
                     }}
                     size="lg"
                     loading={isRefreshing}
-                    sx={(theme) => ({
-                      [theme.fn.largerThan("xs")]: {
-                        display: "none",
-                      },
-                    })}
+                    // style={(theme) => ({
+                    //   [theme.fn.largerThan("xs")]: {
+                    //     display: "none",
+                    //   },
+                    // })}
                     loaderProps={{
                       width: 18,
                     }}
@@ -203,12 +201,12 @@ export default function DashboardVoter({
                       setIsRefreshing(false);
                     }}
                     loading={isRefreshing}
-                    leftIcon={<IconRefresh size="1.25rem" />}
-                    sx={(theme) => ({
-                      [theme.fn.smallerThan("xs")]: {
-                        display: "none",
-                      },
-                    })}
+                    leftSection={<IconRefresh size="1.25rem" />}
+                    // style={(theme) => ({
+                    //   [theme.fn.smallerThan("xs")]: {
+                    //     display: "none",
+                    //   },
+                    // })}
                     loaderProps={{
                       width: 20,
                     }}
@@ -239,7 +237,7 @@ export default function DashboardVoter({
           enableRowActions
           positionActionsColumn="last"
           renderRowActions={({ row }) => (
-            <Box sx={{ display: "flex", gap: "16px" }}>
+            <Box style={{ display: "flex", gap: "16px" }}>
               <Tooltip withArrow label="Edit">
                 <EditVoter
                   voter_fields={election.voter_fields}

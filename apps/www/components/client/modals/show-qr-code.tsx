@@ -23,22 +23,22 @@ export default function QRCode({ election }: { election: Election }) {
         variant="outline"
         color="#2f9e44"
         size="lg"
-        sx={(theme) => ({
-          [theme.fn.largerThan("md")]: {
-            display: "none",
-          },
-        })}
+        // style={(theme) => ({
+        //   [theme.fn.largerThan("md")]: {
+        //     display: "none",
+        //   },
+        // })}
       >
         <IconQrcode />
       </ActionIcon>
       <Button
         onClick={open}
-        sx={(theme) => ({
-          [theme.fn.smallerThan("md")]: {
-            display: "none",
-          },
-        })}
-        leftIcon={<IconQrcode size={rem(18)} />}
+        // style={(theme) => ({
+        //   [theme.fn.smallerThan("md")]: {
+        //     display: "none",
+        //   },
+        // })}
+        leftSection={<IconQrcode size={rem(18)} />}
       >
         Download/Scan QR Code
       </Button>
@@ -46,18 +46,18 @@ export default function QRCode({ election }: { election: Election }) {
         opened={opened}
         onClose={close}
         title={
-          <Text weight={600}>
+          <Text fw={600}>
             Download or scan your QR Code for {election.name}
           </Text>
         }
       >
         <Stack>
           <Center
-            sx={(theme) => ({
-              [theme.fn.largerThan("xs")]: {
-                display: "none",
-              },
-            })}
+          // style={(theme) => ({
+          //   [theme.fn.largerThan("xs")]: {
+          //     display: "none",
+          //   },
+          // })}
           >
             <QRCodeCanvas
               id="qr-gen"
@@ -75,11 +75,11 @@ export default function QRCode({ election }: { election: Election }) {
             />
           </Center>
           <Center
-            sx={(theme) => ({
-              [theme.fn.smallerThan("xs")]: {
-                display: "none",
-              },
-            })}
+          // style={(theme) => ({
+          //   [theme.fn.smallerThan("xs")]: {
+          //     display: "none",
+          //   },
+          // })}
           >
             <QRCodeCanvas
               id="qr-gen"
@@ -121,7 +121,7 @@ export default function QRCode({ election }: { election: Election }) {
                 console.log("Could not find QR code element");
               }
             }}
-            leftIcon={<IconDownload size="1rem" />}
+            leftSection={<IconDownload size="1rem" />}
           >
             Download
           </Button>

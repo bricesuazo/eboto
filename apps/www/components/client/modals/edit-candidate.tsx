@@ -1,21 +1,19 @@
 "use client";
 
-import { api } from "@/lib/api/api";
+import { api } from "@/trpc/client";
 import type { Candidate, Partylist, Position } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
   Alert,
   Box,
-  Button,
-  Flex,
+  Button, // Flex,
   Group,
   Modal,
   Select,
   Stack,
   Tabs,
   Text,
-  TextInput,
-  Textarea,
+  TextInput, // Textarea,
   rem,
 } from "@mantine/core";
 import { YearPickerInput } from "@mantine/dates";
@@ -83,22 +81,22 @@ export default function EditCandidate({
   const openRef = useRef<() => void>(null);
   const params = useParams();
 
-  const { mutate, isLoading, isError, error, reset } =
-    api.election.editCandidate.useMutation({
-      onSuccess: () => {
-        notifications.show({
-          title: `${form.values.first_name}${
-            form.values.middle_name && ` ${form.values.middle_name}`
-          } ${form.values.last_name} created!`,
-          message: `Successfully updated candidate: ${form.values.first_name}${
-            form.values.middle_name && ` ${form.values.middle_name}`
-          } ${form.values.last_name}`,
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-        close();
-      },
-    });
+  // const { mutate, isLoading, isError, error, reset } =
+  //   api.election.editCandidate.useMutation({
+  //     onSuccess: () => {
+  //       notifications.show({
+  //         title: `${form.values.first_name}${
+  //           form.values.middle_name && ` ${form.values.middle_name}`
+  //         } ${form.values.last_name} created!`,
+  //         message: `Successfully updated candidate: ${form.values.first_name}${
+  //           form.values.middle_name && ` ${form.values.middle_name}`
+  //         } ${form.values.last_name}`,
+  //         icon: <IconCheck size="1.1rem" />,
+  //         autoClose: 5000,
+  //       });
+  //       close();
+  //     },
+  //   });
 
   const form = useForm<{
     first_name: string;
@@ -263,14 +261,23 @@ export default function EditCandidate({
 
   return (
     <>
-      <Button onClick={open} variant="light" compact size="sm" w="fit-content">
+      <Button
+        onClick={open}
+        variant="light"
+        size="sm"
+        w="fit-content"
+        // compact
+      >
         Edit
       </Button>
       <Modal
-        opened={opened || isLoading}
+        opened={
+          opened
+          // || isLoading
+        }
         onClose={close}
         title={
-          <Text weight={600} lineClamp={1}>
+          <Text fw={600} lineClamp={1}>
             Edit Candidate - {candidate.first_name} {candidate.last_name}
           </Text>
         }
@@ -278,7 +285,7 @@ export default function EditCandidate({
       >
         <form
           onSubmit={form.onSubmit((values) => {
-            mutate({
+            api.election.editCandidate.mutate({
               id: candidate.id,
               first_name: values.first_name,
               middle_name: values.middle_name,
@@ -327,51 +334,51 @@ export default function EditCandidate({
             <Tabs.List grow>
               <Tabs.Tab
                 value="basic-info"
-                icon={<IconUserSearch size="0.8rem" />}
+                leftSection={<IconUserSearch size="0.8rem" />}
                 px="2rem"
               >
                 Basic Info
               </Tabs.Tab>
               <Tabs.Tab
                 value="image"
-                icon={<IconPhoto size="0.8rem" />}
+                leftSection={<IconPhoto size="0.8rem" />}
                 px="2rem"
               >
                 Image
               </Tabs.Tab>
               <Tabs.Tab
                 value="platforms"
-                icon={<IconInfoCircle size="0.8rem" />}
+                leftSection={<IconInfoCircle size="0.8rem" />}
                 px="2rem"
               >
                 Platforms
               </Tabs.Tab>
               <Tabs.Tab
                 value="credentials"
-                icon={<IconInfoCircle size="0.8rem" />}
+                leftSection={<IconInfoCircle size="0.8rem" />}
                 px="2rem"
               >
                 Credentials
               </Tabs.Tab>
             </Tabs.List>
 
-            <Stack spacing="sm">
+            <Stack gap="sm">
               <Tabs.Panel value="basic-info" pt="xs">
-                <Stack spacing="xs">
+                <Stack gap="xs">
                   <TextInput
                     label="First name"
                     placeholder="Enter first name"
                     required
                     withAsterisk
                     {...form.getInputProps("first_name")}
-                    icon={<IconLetterCase size="1rem" />}
+                    leftSection={<IconLetterCase size="1rem" />}
                   />
 
                   <TextInput
                     label="Middle name"
                     placeholder="Enter middle name"
                     {...form.getInputProps("middle_name")}
-                    icon={<IconLetterCase size="1rem" />}
+                    leftSection={<IconLetterCase size="1rem" />}
                   />
                   <TextInput
                     label="Last name"
@@ -379,7 +386,7 @@ export default function EditCandidate({
                     required
                     withAsterisk
                     {...form.getInputProps("last_name")}
-                    icon={<IconLetterCase size="1rem" />}
+                    leftSection={<IconLetterCase size="1rem" />}
                   />
 
                   <TextInput
@@ -396,14 +403,14 @@ export default function EditCandidate({
                     required
                     withAsterisk
                     {...form.getInputProps("slug")}
-                    icon={<IconLetterCase size="1rem" />}
+                    leftSection={<IconLetterCase size="1rem" />}
                   />
 
                   <Select
-                    withinPortal
+                    // withinPortal
                     placeholder="Select partylist"
                     label="Partylist"
-                    icon={<IconFlag size="1rem" />}
+                    leftSection={<IconFlag size="1rem" />}
                     {...form.getInputProps("partylist_id")}
                     data={partylists.map((partylist) => {
                       return {
@@ -414,10 +421,10 @@ export default function EditCandidate({
                   />
 
                   <Select
-                    withinPortal
+                    // withinPortal
                     placeholder="Select position"
                     label="Position"
-                    icon={<IconUserSearch size="1rem" />}
+                    leftSection={<IconUserSearch size="1rem" />}
                     {...form.getInputProps("position")}
                     data={positions.map((position) => {
                       return {
@@ -430,7 +437,7 @@ export default function EditCandidate({
               </Tabs.Panel>
 
               <Tabs.Panel value="image" pt="xs">
-                <Stack spacing="xs">
+                <Stack gap="xs">
                   <Dropzone
                     id="image"
                     onDrop={(files) => {
@@ -441,28 +448,28 @@ export default function EditCandidate({
                     maxSize={5 * 1024 ** 2}
                     accept={IMAGE_MIME_TYPE}
                     multiple={false}
-                    loading={isLoading}
-                    disabled={isLoading}
+                    // loading={isLoading}
+                    // disabled={isLoading}
                   >
                     <Group
-                      position="center"
-                      spacing="xl"
+                      justify="center"
+                      gap="xl"
                       style={{ minHeight: rem(140), pointerEvents: "none" }}
                     >
                       {form.values.image ? (
                         typeof form.values.image !== "string" &&
                         form.values.image ? (
-                          <Group position="center">
+                          <Group justify="center">
                             <Box
                               pos="relative"
-                              sx={(theme) => ({
+                              style={(theme) => ({
                                 width: rem(120),
                                 height: rem(120),
 
-                                [theme.fn.smallerThan("sm")]: {
-                                  width: rem(180),
-                                  height: rem(180),
-                                },
+                                // [theme.fn.smallerThan("sm")]: {
+                                //   width: rem(180),
+                                //   height: rem(180),
+                                // },
                               })}
                             >
                               <Image
@@ -485,14 +492,14 @@ export default function EditCandidate({
                             <Group>
                               <Box
                                 pos="relative"
-                                sx={(theme) => ({
+                                style={(theme) => ({
                                   width: rem(120),
                                   height: rem(120),
 
-                                  [theme.fn.smallerThan("sm")]: {
-                                    width: rem(180),
-                                    height: rem(180),
-                                  },
+                                  // [theme.fn.smallerThan("sm")]: {
+                                  //   width: rem(180),
+                                  //   height: rem(180),
+                                  // },
                                 })}
                               >
                                 <Image
@@ -510,7 +517,7 @@ export default function EditCandidate({
                         )
                       ) : (
                         <Box>
-                          <Text size="xl" inline align="center">
+                          <Text size="xl" inline ta="center">
                             Drag image here or click to select image
                           </Text>
                           <Text
@@ -518,7 +525,7 @@ export default function EditCandidate({
                             color="dimmed"
                             inline
                             mt={7}
-                            align="center"
+                            ta="center"
                           >
                             Attach a image to your account. Max file size is
                             5MB.
@@ -530,7 +537,7 @@ export default function EditCandidate({
                       </Dropzone.Reject>
                     </Group>
                   </Dropzone>
-                  <Flex gap="sm">
+                  <Group gap="sm">
                     <Button
                       onClick={() => {
                         form.setValues({
@@ -540,10 +547,11 @@ export default function EditCandidate({
                       }}
                       disabled={
                         !candidate.image_link ||
-                        typeof form.values.image === "string" ||
-                        isLoading
+                        typeof form.values.image === "string"
+                        // ||
+                        // isLoading
                       }
-                      sx={{ flex: 1 }}
+                      style={{ flex: 1 }}
                     >
                       Reset image
                     </Button>
@@ -551,17 +559,20 @@ export default function EditCandidate({
                       onClick={() => {
                         form.setFieldValue("image", null);
                       }}
-                      disabled={!form.values.image || isLoading}
-                      sx={{ flex: 1 }}
+                      disabled={
+                        !form.values.image
+                        // || isLoading
+                      }
+                      style={{ flex: 1 }}
                     >
                       Delete image
                     </Button>
-                  </Flex>
+                  </Group>
                 </Stack>
               </Tabs.Panel>
 
               <Tabs.Panel value="platforms" pt="xs">
-                <Stack spacing="xs">
+                <Stack gap="xs">
                   {form.values.platforms.map((platform, index) => (
                     <Box key={index}>
                       <TextInput
@@ -585,7 +596,7 @@ export default function EditCandidate({
                           });
                         }}
                       />
-                      <Textarea
+                      {/* <Textarea
                         w="100%"
                         label="Description"
                         placeholder="Enter description"
@@ -605,7 +616,7 @@ export default function EditCandidate({
                             }),
                           });
                         }}
-                      />
+                      /> */}
 
                       <DeleteCredentialButton
                         type="PLATFORM"
@@ -614,7 +625,7 @@ export default function EditCandidate({
                     </Box>
                   ))}
                   <Button
-                    leftIcon={<IconPlus size="1.25rem" />}
+                    leftSection={<IconPlus size="1.25rem" />}
                     onClick={() => {
                       form.setValues({
                         ...form.values,
@@ -656,11 +667,11 @@ export default function EditCandidate({
                   </Tabs.List>
 
                   <Tabs.Panel value="achievements" pt="xs">
-                    <Stack spacing="md">
+                    <Stack gap="md">
                       {form.values.achievements.map((achievement, index) => {
                         return (
                           <Box key={index}>
-                            <Flex gap="xs">
+                            <Group gap="xs">
                               <TextInput
                                 w="100%"
                                 label="Achievement"
@@ -683,7 +694,7 @@ export default function EditCandidate({
                                 }}
                               />
                               <YearPickerInput
-                                label="Year"
+                                // label="Year"
                                 placeholder="Enter year"
                                 popoverProps={{
                                   withinPortal: true,
@@ -705,9 +716,9 @@ export default function EditCandidate({
                                     ),
                                   });
                                 }}
-                                required
+                                // required
                               />
-                            </Flex>
+                            </Group>
                             <DeleteCredentialButton
                               type="ACHIEVEMENT"
                               id={achievement.id}
@@ -717,7 +728,7 @@ export default function EditCandidate({
                       })}
 
                       <Button
-                        leftIcon={<IconPlus size="1.25rem" />}
+                        leftSection={<IconPlus size="1.25rem" />}
                         onClick={() => {
                           form.setValues({
                             ...form.values,
@@ -740,7 +751,7 @@ export default function EditCandidate({
                     </Stack>
                   </Tabs.Panel>
                   <Tabs.Panel value="affiliations" pt="xs">
-                    <Stack spacing="md">
+                    <Stack gap="md">
                       {form.values.affiliations.map((affiliation, index) => {
                         return (
                           <Box key={index}>
@@ -787,11 +798,11 @@ export default function EditCandidate({
                               }}
                             />
 
-                            <Flex gap="xs">
+                            <Group gap="xs">
                               <YearPickerInput
-                                label="Start year"
+                                // label="Start year"
                                 placeholder="Enter start year"
-                                w="100%"
+                                style={{ width: "100%" }}
                                 popoverProps={{
                                   withinPortal: true,
                                 }}
@@ -815,12 +826,12 @@ export default function EditCandidate({
                                     ),
                                   });
                                 }}
-                                required
+                                // required
                               />
                               <YearPickerInput
-                                label="End year"
+                                // label="End year"
                                 placeholder="Enter end year"
-                                w="100%"
+                                style={{ width: "100%" }}
                                 popoverProps={{
                                   withinPortal: true,
                                 }}
@@ -844,9 +855,9 @@ export default function EditCandidate({
                                     ),
                                   });
                                 }}
-                                required
+                                // required
                               />
-                            </Flex>
+                            </Group>
                             <DeleteCredentialButton
                               type="AFFILIATION"
                               id={affiliation.id}
@@ -856,7 +867,7 @@ export default function EditCandidate({
                       })}
 
                       <Button
-                        leftIcon={<IconPlus size="1.25rem" />}
+                        leftSection={<IconPlus size="1.25rem" />}
                         onClick={() => {
                           form.setValues({
                             ...form.values,
@@ -884,12 +895,12 @@ export default function EditCandidate({
                     </Stack>
                   </Tabs.Panel>
                   <Tabs.Panel value="events-attended" pt="xs">
-                    <Stack spacing="md">
+                    <Stack gap="md">
                       {form.values.events_attended.map(
                         (events_attended, index) => {
                           return (
                             <Box key={index}>
-                              <Flex gap="xs">
+                              <Group gap="xs">
                                 <TextInput
                                   w="100%"
                                   label="Seminars attended"
@@ -916,7 +927,7 @@ export default function EditCandidate({
                                   }}
                                 />
                                 <YearPickerInput
-                                  label="Year"
+                                  // label="Year"
                                   placeholder="Enter year"
                                   popoverProps={{
                                     withinPortal: true,
@@ -942,9 +953,9 @@ export default function EditCandidate({
                                         ),
                                     });
                                   }}
-                                  required
+                                  // required
                                 />
-                              </Flex>
+                              </Group>
                               <DeleteCredentialButton
                                 type="EVENTATTENDED"
                                 id={events_attended.id}
@@ -955,7 +966,7 @@ export default function EditCandidate({
                       )}
 
                       <Button
-                        leftIcon={<IconPlus size="1.25rem" />}
+                        leftSection={<IconPlus size="1.25rem" />}
                         onClick={() => {
                           form.setValues({
                             ...form.values,
@@ -980,7 +991,7 @@ export default function EditCandidate({
                 </Tabs>
               </Tabs.Panel>
 
-              {isError && (
+              {/* {isError && (
                 <Alert
                   icon={<IconAlertCircle size="1rem" />}
                   title="Error"
@@ -988,28 +999,28 @@ export default function EditCandidate({
                 >
                   {error.message}
                 </Alert>
-              )}
+              )} */}
 
-              <Group position="apart" spacing={0}>
+              <Group justify="space-around" gap={0}>
                 <ActionIcon
                   size="lg"
                   variant="outline"
                   color="green"
-                  sx={(theme) => ({
-                    [theme.fn.largerThan("xs")]: {
-                      display: "none",
-                    },
-                  })}
+                  // style={(theme) => ({
+                  //   [theme.fn.largerThan("xs")]: {
+                  //     display: "none",
+                  //   },
+                  // })}
                 >
                   <IconExternalLink size="1.25rem" />
                 </ActionIcon>
                 <Button
-                  sx={(theme) => ({
-                    [theme.fn.smallerThan("xs")]: {
-                      display: "none",
-                    },
-                  })}
-                  leftIcon={<IconExternalLink size="1.25rem" />}
+                  // style={(theme) => ({
+                  //   [theme.fn.smallerThan("xs")]: {
+                  //     display: "none",
+                  //   },
+                  // })}
+                  leftSection={<IconExternalLink size="1.25rem" />}
                   variant="outline"
                   component={Link}
                   href={`/${params?.electionSlug as string}/${candidate.slug}`}
@@ -1018,18 +1029,18 @@ export default function EditCandidate({
                   Visit
                 </Button>
 
-                <Group position="right" spacing="xs">
+                <Group justify="right" gap="xs">
                   <Button
                     variant="default"
                     onClick={close}
-                    disabled={isLoading}
+                    // disabled={isLoading}
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
                     disabled={!form.isDirty()}
-                    loading={isLoading}
+                    // loading={isLoading}
                   >
                     Update
                   </Button>

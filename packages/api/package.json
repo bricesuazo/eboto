@@ -11,17 +11,20 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@eboto-mo/db": "workspace:*",
     "@clerk/nextjs": "^4.23.1",
+    "@eboto-mo/db": "workspace:*",
+    "@mantine/dropzone": "^6.0.17",
     "@t3-oss/env-nextjs": "^0.6.0",
+    "@tabler/icons-react": "^2.29.0",
     "@trpc/client": "^10.33.1",
     "@trpc/server": "^10.33.1",
+    "drizzle-orm": "0.27.2",
+    "next": "^13.4.12",
     "superjson": "1.13.1",
     "zod": "^3.21.4",
     "zod-form-data": "^2.0.1"
   },
   "devDependencies": {
-    "@eboto-mo/eslint-config": "workspace:*",
     "eslint": "^8.44.0",
     "typescript": "^5.1.6"
   }

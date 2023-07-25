@@ -14,7 +14,8 @@ import {
   partylists,
   platforms,
   positions,
-  reported_problems, // users,
+  reported_problems,
+  users,
   verification_tokens,
   voter_fields,
   voters,
@@ -55,10 +56,10 @@ export const votesRelations = relations(votes, ({ one }) => ({
 }));
 
 export const commissionersRelations = relations(commissioners, ({ one }) => ({
-  // user: one(users, {
-  //   fields: [commissioners.user_id],
-  //   references: [users.id],
-  // }),
+  user: one(users, {
+    fields: [commissioners.user_id],
+    references: [users.id],
+  }),
   election: one(elections, {
     fields: [commissioners.election_id],
     references: [elections.id],
@@ -77,10 +78,10 @@ export const invited_commissionersRelations = relations(
 );
 
 export const votersRelations = relations(voters, ({ one, many }) => ({
-  // user: one(users, {
-  //   fields: [voters.user_id],
-  //   references: [users.id],
-  // }),
+  user: one(users, {
+    fields: [voters.user_id],
+    references: [users.id],
+  }),
   election: one(elections, {
     fields: [voters.election_id],
     references: [elections.id],
@@ -140,10 +141,10 @@ export const candidatesRelations = relations(candidates, ({ one, many }) => ({
 export const verification_tokensRelations = relations(
   verification_tokens,
   ({ one }) => ({
-    // user: one(users, {
-    //   fields: [verification_tokens.user_id],
-    //   references: [users.id],
-    // }),
+    user: one(users, {
+      fields: [verification_tokens.user_id],
+      references: [users.id],
+    }),
     invited_voter: one(invited_voters, {
       fields: [verification_tokens.invited_voter_id],
       references: [invited_voters.id],
@@ -179,10 +180,10 @@ export const reported_problemsRelations = relations(
       fields: [reported_problems.election_id],
       references: [elections.id],
     }),
-    // user: one(users, {
-    //   fields: [reported_problems.user_id],
-    //   references: [users.id],
-    // }),
+    user: one(users, {
+      fields: [reported_problems.user_id],
+      references: [users.id],
+    }),
   }),
 );
 

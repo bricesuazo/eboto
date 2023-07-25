@@ -1,11 +1,6 @@
-import { positionTemplate, takenSlugs } from "@/constants";
-import { account_status_type_with_accepted } from "@/utils/zod-schema";
+import { clerkClient } from "@clerk/nextjs";
+import { db } from "@eboto-mo/db";
 import {
-  Candidate,
-  Election,
-  InvitedVoter,
-  Partylist,
-  Voter,
   candidates,
   commissioners,
   elections,
@@ -16,11 +11,20 @@ import {
   voter_fields,
   voters,
 } from "@eboto-mo/db/schema";
+import type {
+  Candidate,
+  Election,
+  InvitedVoter,
+  Partylist,
+  Voter,
+} from "@eboto-mo/db/schema";
 import { TRPCError } from "@trpc/server";
-import { and, eq, inArray, not } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { positionTemplate, takenSlugs } from "../constants";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { account_status_type_with_accepted } from "../utils/zod-schema";
 
 export const electionRouter = createTRPCRouter({
   // getElectionBySlug: publicProcedure
@@ -38,7 +42,7 @@ export const electionRouter = createTRPCRouter({
     // TODO: Validate commissioner
     return await db.query.commissioners.findMany({
       where: (commissioners, { eq }) =>
-        eq(commissioners.user_id, ctx.session.user.id),
+        eq(commissioners.user_id, ctx.auth.userId),
       with: {
         election: true,
       },
@@ -153,7 +157,7 @@ export const electionRouter = createTRPCRouter({
         election_id: z.string().min(1),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ input }) => {
       const voters = await db.query.voters.findMany({
         where: (voters, { eq }) => eq(voters.election_id, input.election_id),
 
@@ -169,10 +173,16 @@ export const electionRouter = createTRPCRouter({
           eq(invited_voters.election_id, input.election_id),
       });
 
+      const userFromVoters = await clerkClient.users.getUserList({
+        emailAddress: voters.map((voter) => voter.user.id),
+      });
+
       return voters
         .map((voter) => ({
           id: voter.id,
-          email: voter.user.email,
+          email: userFromVoters.find(
+            (user) => user.emailAddresses[0]?.emailAddress === voter.user.id,
+          )?.emailAddresses[0]?.emailAddress,
           account_status: "ACCEPTED",
           created_at: voter.created_at,
           has_voted: voter.votes.length > 0,
@@ -225,7 +235,7 @@ export const electionRouter = createTRPCRouter({
       await db.insert(commissioners).values({
         id: crypto.randomUUID(),
         election_id: id,
-        user_id: ctx.session.user.id,
+        user_id: ctx.auth.userId,
       });
       await db.insert(partylists).values({
         id: crypto.randomUUID(),
@@ -243,7 +253,7 @@ export const electionRouter = createTRPCRouter({
               name: position,
               election_id: id,
               order: index,
-            })) || [],
+            })) ?? [],
         );
     }),
   editElection: protectedProcedure
@@ -281,7 +291,7 @@ export const electionRouter = createTRPCRouter({
           with: {
             commissioners: {
               where: (commissioners, { eq }) =>
-                eq(commissioners.user_id, ctx.session.user.id),
+                eq(commissioners.user_id, ctx.auth.userId),
             },
           },
         });
@@ -307,7 +317,7 @@ export const electionRouter = createTRPCRouter({
         election_id: z.string().min(1),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       // TODO: Validate commissioner
       const isAcronymExists: Partylist | undefined =
         await db.query.partylists.findFirst({
@@ -339,7 +349,7 @@ export const electionRouter = createTRPCRouter({
         logo_link: z.string().nullable(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       // TODO: Validate commissioner
       if (input.newAcronym === "IND")
         throw new TRPCError({
@@ -381,7 +391,7 @@ export const electionRouter = createTRPCRouter({
         election_id: z.string().min(1),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       // TODO: Validate commissioner
       await db
         .delete(partylists)
@@ -399,7 +409,7 @@ export const electionRouter = createTRPCRouter({
         election_id: z.string().min(1),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       // TODO: Validate commissioner
 
       await db
@@ -421,7 +431,7 @@ export const electionRouter = createTRPCRouter({
         election_id: z.string().min(1),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       // TODO: Validate commissioner
 
       await db.insert(positions).values({
@@ -440,7 +450,7 @@ export const electionRouter = createTRPCRouter({
         election_id: z.string().min(1),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       // TODO: Validate commissioner
       await db
         .delete(positions)
@@ -463,7 +473,7 @@ export const electionRouter = createTRPCRouter({
         election_id: z.string().min(1),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       await db
         .update(positions)
         .set({
@@ -493,7 +503,7 @@ export const electionRouter = createTRPCRouter({
         image_link: z.string().nullable(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       // TODO: Validate commissioner
       const isCandidateSlugExists: Candidate | undefined =
         await db.query.candidates.findFirst({
@@ -535,7 +545,7 @@ export const electionRouter = createTRPCRouter({
         image_link: z.string().nullable(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       // TODO: Validate commissioner
       const isCandidateSlugExists: Candidate | undefined =
         await db.query.candidates.findFirst({
@@ -574,20 +584,20 @@ export const electionRouter = createTRPCRouter({
         with: {
           commissioners: {
             where: (commissioners, { eq }) =>
-              eq(commissioners.user_id, ctx.session.user.id),
+              eq(commissioners.user_id, ctx.auth.userId),
           },
         },
       });
       if (!isElectionExists) throw new Error("Election does not exists");
       if (isElectionExists.commissioners.length === 0)
         throw new Error("Unauthorized");
-      const invitedVoters = await db.query.invited_voters.findMany({
-        where: (invited_voters, { eq }) =>
-          eq(invited_voters.election_id, input.election_id),
-      });
-      const invitedVotersIds = invitedVoters.map(
-        (invitedVoter) => invitedVoter.id,
-      );
+      // const invitedVoters = await db.query.invited_voters.findMany({
+      //   where: (invited_voters, { eq }) =>
+      //     eq(invited_voters.election_id, input.election_id),
+      // });
+      // const invitedVotersIds = invitedVoters.map(
+      //   (invitedVoter) => invitedVoter.id,
+      // );
     }),
   createVoter: protectedProcedure
     .input(
@@ -600,14 +610,18 @@ export const electionRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       // TODO: Validate commissioner
 
-      const user = await db.query.users.findFirst({
-        where: (users, { eq }) => eq(users.id, ctx.session.user.id),
+      const users = await clerkClient.users.getUserList({
+        emailAddress: [input.email],
       });
+      const user = users[0];
+      // const user = await db.query.users.findFirst({
+      //   where: (users, { eq }) => eq(users.id, ctx.auth.userId),
+      // });
       if (!user) throw new Error("Unauthorized");
-      if (input.email === user.email) {
+      if (input.email === user.emailAddresses[0]?.emailAddress) {
         await db.insert(voters).values({
           id: crypto.randomUUID(),
-          user_id: ctx.session.user.id,
+          user_id: ctx.auth.userId,
           election_id: input.election_id,
           field: input.field,
         });
@@ -617,23 +631,32 @@ export const electionRouter = createTRPCRouter({
           with: {
             commissioners: {
               where: (commissioners, { eq }) =>
-                eq(commissioners.user_id, ctx.session.user.id),
+                eq(commissioners.user_id, ctx.auth.userId),
             },
           },
         });
         if (!isVoterExists) throw new Error("Election does not exists");
+
         if (isVoterExists.commissioners.length === 0)
           throw new Error("Unauthorized");
+
         const voters = await db.query.voters.findMany({
           where: (voters, { eq }) => eq(voters.election_id, input.election_id),
           with: {
             user: true,
           },
         });
-        const isVoterEmailExists = voters.find(
-          (voter) => voter.user.email === input.email,
+
+        const userFromVoters = await clerkClient.users.getUserList({
+          emailAddress: voters.map((voter) => voter.user.id),
+        });
+
+        const isVoterEmailExists = userFromVoters.find(
+          (user) => user.emailAddresses[0]?.emailAddress === input.email,
         );
+
         if (isVoterEmailExists) throw new Error("Email is already a voter");
+
         const isInvitedVoterEmailExists =
           await db.query.invited_voters.findFirst({
             where: (invited_voters, { eq, and }) =>
@@ -665,7 +688,7 @@ export const electionRouter = createTRPCRouter({
         election_id: z.string().min(1),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       // TODO: Validate commissioner
       await db
         .update(voter_fields)
@@ -679,7 +702,7 @@ export const electionRouter = createTRPCRouter({
         field_id: z.string().min(1),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       await db
         .delete(voter_fields)
         .where(
@@ -699,7 +722,7 @@ export const electionRouter = createTRPCRouter({
         account_status: z.enum(account_status_type_with_accepted),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       // TODO: Validate commissioner
       if (input.account_status === "ACCEPTED") {
         const voter: Voter | undefined = await db.query.voters.findFirst({
@@ -754,7 +777,7 @@ export const electionRouter = createTRPCRouter({
         is_invited_voter: z.boolean(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       // TODO: Validate commissioner
       if (!input.is_invited_voter) {
         const voter: Voter | undefined = await db.query.voters.findFirst({
@@ -810,7 +833,7 @@ export const electionRouter = createTRPCRouter({
         ),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       // TODO: Validate commissioner
       const votersIds = input.voters
         .filter((voter) => voter.isVoter)
@@ -857,7 +880,7 @@ export const electionRouter = createTRPCRouter({
         with: {
           commissioners: {
             where: (commissioners, { eq }) =>
-              eq(commissioners.user_id, ctx.session.user.id),
+              eq(commissioners.user_id, ctx.auth.userId),
           },
         },
       });

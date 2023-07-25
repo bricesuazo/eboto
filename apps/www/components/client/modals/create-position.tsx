@@ -1,14 +1,12 @@
 "use client";
 
-import { api } from "@/lib/api/api";
+import { api } from "@/trpc/client";
 import {
   Alert,
   Button,
-  Checkbox,
-  Flex,
+  Checkbox, // Flex,
   Group,
-  Modal,
-  NumberInput,
+  Modal, // NumberInput,
   Stack,
   Text,
   TextInput,
@@ -31,18 +29,18 @@ export default function CreatePosition({
   election_id: string;
   order: number;
 }) {
-  const { mutate, isLoading, isError, error, reset } =
-    api.election.createPosition.useMutation({
-      onSuccess: async () => {
-        notifications.show({
-          title: `${form.values.name} created!`,
-          message: "Successfully created position",
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-        close();
-      },
-    });
+  // const { mutate, isLoading, isError, error, reset } =
+  //   api.election.createPosition.useMutation({
+  //     onSuccess: async () => {
+  //       notifications.show({
+  //         title: `${form.values.name} created!`,
+  //         message: "Successfully created position",
+  //         icon: <IconCheck size="1.1rem" />,
+  //         autoClose: 5000,
+  //       });
+  //       close();
+  //     },
+  //   });
 
   const [opened, { open, close }] = useDisclosure(false);
   const form = useForm({
@@ -87,7 +85,7 @@ export default function CreatePosition({
   useEffect(() => {
     if (opened) {
       form.reset();
-      reset();
+      // reset();
     }
   }, [opened]);
 
@@ -102,23 +100,26 @@ export default function CreatePosition({
   return (
     <>
       <Button
-        sx={(theme) => ({
+        style={(theme) => ({
           width: "fit-content",
-          [theme.fn.smallerThan("xs")]: { width: "100%" },
+          // [theme.fn.smallerThan("xs")]: { width: "100%" },
         })}
         onClick={open}
-        leftIcon={<IconReplace size="1rem" />}
+        leftSection={<IconReplace size="1rem" />}
       >
         Add position
       </Button>
       <Modal
-        opened={opened || isLoading}
+        opened={
+          opened
+          // || isLoading
+        }
         onClose={close}
-        title={<Text weight={600}>Create position</Text>}
+        title={<Text fw={600}>Create position</Text>}
       >
         <form
           onSubmit={form.onSubmit((value) => {
-            mutate({
+            api.election.createPosition.mutate({
               name: value.name,
               election_id,
               order,
@@ -127,14 +128,14 @@ export default function CreatePosition({
             });
           })}
         >
-          <Stack spacing="sm">
+          <Stack gap="sm">
             <TextInput
               placeholder="Enter position name"
               label="Name"
               required
               withAsterisk
               {...form.getInputProps("name")}
-              icon={<IconLetterCase size="1rem" />}
+              leftSection={<IconLetterCase size="1rem" />}
             />
             <Checkbox
               label="Select multiple candidates?"
@@ -142,8 +143,8 @@ export default function CreatePosition({
               {...form.getInputProps("isSingle", { type: "checkbox" })}
             />
 
-            {form.values.isSingle && (
-              <Flex gap="sm">
+            {/* {form.values.isSingle && (
+              <Group gap="sm">
                 <NumberInput
                   {...form.getInputProps("min")}
                   placeholder="Enter minimum"
@@ -160,10 +161,10 @@ export default function CreatePosition({
                   min={1}
                   required={form.values.isSingle}
                 />
-              </Flex>
-            )}
+              </Group>
+            )} */}
 
-            {isError && (
+            {/* {isError && (
               <Alert
                 icon={<IconAlertCircle size="1rem" />}
                 title="Error"
@@ -171,15 +172,19 @@ export default function CreatePosition({
               >
                 {error.message}
               </Alert>
-            )}
-            <Group position="right" spacing="xs">
-              <Button variant="default" onClick={close} disabled={isLoading}>
+            )} */}
+            <Group justify="right" gap="xs">
+              <Button
+                variant="default"
+                onClick={close}
+                // disabled={isLoading}
+              >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isValid()}
-                loading={isLoading}
+                // loading={isLoading}
               >
                 Create
               </Button>

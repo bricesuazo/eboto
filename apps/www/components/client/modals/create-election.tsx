@@ -1,16 +1,15 @@
 "use client";
 
-import { positionTemplate } from "@/constants";
 import { api } from "@/trpc/client";
+import { positionTemplate } from "@eboto-mo/api/src/constants";
 import {
   Alert,
   Button,
-  Flex,
   Group,
+  MantineStyleProp,
   Modal,
   Select,
   Stack,
-  type Sx,
   Text,
   TextInput,
 } from "@mantine/core";
@@ -27,7 +26,11 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
+export default function CreateElection({
+  style,
+}: {
+  style?: MantineStyleProp;
+}) {
   const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -98,7 +101,11 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
 
   return (
     <>
-      <Button onClick={open} sx={sx} leftIcon={<IconPlus size="1.25rem" />}>
+      <Button
+        onClick={open}
+        style={style}
+        leftSection={<IconPlus size="1.25rem" />}
+      >
         Create Election
       </Button>
       <Modal
@@ -122,7 +129,7 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
             });
           })}
         >
-          <Stack spacing="sm">
+          <Stack gap="sm">
             <TextInput
               data-autofocus
               label="Election name"
@@ -130,7 +137,7 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
               required
               placeholder="Enter election name"
               {...form.getInputProps("name")}
-              icon={<IconLetterCase size="1rem" />}
+              leftSection={<IconLetterCase size="1rem" />}
               // disabled={isLoading}
             />
 
@@ -148,7 +155,7 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
               required
               placeholder="Enter election slug"
               {...form.getInputProps("slug")}
-              icon={<IconLetterCase size="1rem" />}
+              leftSection={<IconLetterCase size="1rem" />}
               // error={
               //   form.errors.slug ||
               //   (createElectionMutation.error?.data?.code === "CONFLICT" &&
@@ -156,7 +163,7 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
               // }
             />
 
-            <DateTimePicker
+            {/* <DateTimePicker
               valueFormat="MMMM DD, YYYY (dddd) hh:mm A"
               label="Election start date"
               placeholder="Enter election start date"
@@ -171,10 +178,10 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
               minDate={new Date(new Date().setDate(new Date().getDate() + 1))}
               firstDayOfWeek={0}
               {...form.getInputProps("start_date")}
-              icon={<IconCalendar size="1rem" />}
+              leftSection={<IconCalendar size="1rem" />}
               // disabled={isLoading}
-            />
-            <DateTimePicker
+            /> */}
+            {/* <DateTimePicker
               valueFormat="MMMM DD, YYYY (dddd) hh:mm A"
               label="Election end date"
               placeholder="Enter election end date"
@@ -192,16 +199,16 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
               }
               firstDayOfWeek={0}
               {...form.getInputProps("end_date")}
-              icon={<IconCalendar size="1rem" />}
+              leftSection={<IconCalendar size="1rem" />}
               // disabled={isLoading}
-            />
+            /> */}
 
             <Select
               label="Election template"
               description="Select a template for your election"
               withAsterisk
               required
-              withinPortal
+              // withinPortal
               {...form.getInputProps("template")}
               data={positionTemplate
                 .sort((a, b) => a.id - b.id)
@@ -210,15 +217,15 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
                   value: position.id.toString(),
                   group: position.college,
                 }))}
-              nothingFound="No position template found"
-              icon={<IconTemplate size="1rem" />}
+              // nothingFound="No position template found"
+              leftSection={<IconTemplate size="1rem" />}
               searchable
               // disabled={isLoading}
             />
 
             {/* {isError && (
               <Alert
-                icon={<IconAlertCircle size="1rem" />}
+                leftSection={<IconAlertCircle size="1rem" />}
                 title="Error"
                 color="red"
               >
@@ -226,7 +233,7 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
               </Alert>
             )} */}
 
-            <Group position="right" spacing="xs">
+            <Group justify="right" gap="xs">
               <Button
                 variant="default"
                 mr={2}

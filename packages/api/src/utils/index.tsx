@@ -1,6 +1,7 @@
 import { db } from "@eboto-mo/db";
-import { Election, TokenType, verification_tokens } from "@eboto-mo/db/schema";
-import { FileWithPath } from "@mantine/dropzone";
+import { verification_tokens } from "@eboto-mo/db/schema";
+import type { Election, TokenType } from "@eboto-mo/db/schema";
+import type { FileWithPath } from "@mantine/dropzone";
 
 export const isElectionOngoing = ({ election }: { election: Election }) => {
   const end = new Date(election.end_date);
@@ -38,12 +39,14 @@ export const sendEmail = async ({
   user_id: string;
   email: string;
 }) => {
+  console.log("🚀 ~ file: index.tsx:42 ~ email:", email);
   const token = await db.insert(verification_tokens).values({
     id: crypto.randomUUID(),
     user_id,
     type,
     expires_at: new Date(Date.now() + 1000 * 60 * 60 * 3), // 3 hours
   });
+  console.log("🚀 ~ file: index.tsx:48 ~ token ~ token:", token);
 
   // switch (type) {
   //   case 'EMAIL_VERIFICATION':
@@ -70,6 +73,8 @@ export const uploadImage = async ({
   path: string;
   image: FileWithPath;
 }): Promise<string> => {
+  console.log("🚀 ~ file: index.tsx:76 ~ image:", image);
+  console.log("🚀 ~ file: index.tsx:76 ~ path:", path);
   // await supabase.storage.from("eboto-mo").upload(path, image, {
   //   contentType: "image/png",
   // });

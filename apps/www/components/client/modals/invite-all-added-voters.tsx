@@ -1,6 +1,6 @@
 "use client";
 
-import { api } from "@/lib/api/api";
+import { api } from "@/trpc/client";
 import { Alert, Button, Group, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -19,47 +19,50 @@ export default function InviteAllAddedVoters({
 }) {
   const [opened, { open, close }] = useDisclosure(false);
 
-  const { mutate, isLoading, isError, error } =
-    api.election.inviteAllInvitedVoters.useMutation({
-      onSuccess: () => {
-        notifications.show({
-          title: `All voters invited!`,
-          message: "Successfully invited all voters",
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-        close();
-      },
-    });
+  // const { mutate, isLoading, isError, error } =
+  //   api.election.inviteAllInvitedVoters.useMutation({
+  //     onSuccess: () => {
+  //       notifications.show({
+  //         title: `All voters invited!`,
+  //         message: "Successfully invited all voters",
+  //         icon: <IconCheck size="1.1rem" />,
+  //         autoClose: 5000,
+  //       });
+  //       close();
+  //     },
+  //   });
 
   return (
     <>
       <Button
         variant="light"
-        leftIcon={<IconMailForward size="1rem" />}
+        leftSection={<IconMailForward size="1rem" />}
         onClick={open}
         disabled={isDisabled}
-        sx={(theme) => ({
-          [theme.fn.smallerThan("xs")]: {
-            width: "100%",
-          },
-        })}
+        // style={(theme) => ({
+        //   [theme.fn.smallerThan("xs")]: {
+        //     width: "100%",
+        //   },
+        // })}
       >
         Invite
       </Button>
       <Modal
-        opened={opened || isLoading}
+        opened={
+          opened
+          // || isLoading
+        }
         onClose={close}
         title={
-          <Text weight={600}>Are you sure you want to invite all voters?</Text>
+          <Text fw={600}>Are you sure you want to invite all voters?</Text>
         }
       >
-        <Stack spacing="sm">
+        <Stack gap="sm">
           <Text>
             This will send an email to all voters that are not yet invited and
             has status of &quot;ADDED&quot;.
           </Text>
-          {isError && (
+          {/* {isError && (
             <Alert
               icon={<IconAlertCircle size="1rem" />}
               title="Error"
@@ -67,19 +70,23 @@ export default function InviteAllAddedVoters({
             >
               {error.message}
             </Alert>
-          )}
-          <Group position="right" spacing="xs">
-            <Button variant="default" onClick={close} disabled={isLoading}>
+          )} */}
+          <Group justify="right" gap="xs">
+            <Button
+              variant="default"
+              onClick={close}
+              // disabled={isLoading}
+            >
               Cancel
             </Button>
             <Button
-              loading={isLoading}
+              // loading={isLoading}
               onClick={() =>
-                mutate({
+                api.election.inviteAllInvitedVoters.mutate({
                   election_id,
                 })
               }
-              disabled={isLoading}
+              // disabled={isLoading}
             >
               Invite All
             </Button>

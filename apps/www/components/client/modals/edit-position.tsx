@@ -1,15 +1,13 @@
 "use client";
 
-import { api } from "@/lib/api/api";
+import { api } from "@/trpc/client";
 import { type Position } from "@eboto-mo/db/schema";
 import {
   Alert,
   Button,
-  Checkbox,
-  Flex,
+  Checkbox, // Flex,
   Group,
-  Modal,
-  NumberInput,
+  Modal, // NumberInput,
   Stack,
   Text,
   TextInput,
@@ -68,46 +66,54 @@ export default function EditPosition({
     },
   });
 
-  const { mutate, isLoading, isError, error, reset } =
-    api.election.editPosition.useMutation({
-      onSuccess: async () => {
-        notifications.show({
-          title: `${form.values.name} updated!`,
-          message: "Successfully updated position",
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-        close();
-      },
-      onError: (error) => {
-        notifications.show({
-          title: "Error",
-          message: error.message,
-          color: "red",
-          autoClose: 3000,
-        });
-      },
-    });
+  // const { mutate, isLoading, isError, error, reset } =
+  //   api.election.editPosition.useMutation({
+  //     onSuccess: async () => {
+  //       notifications.show({
+  //         title: `${form.values.name} updated!`,
+  //         message: "Successfully updated position",
+  //         leftSection: <IconCheck size="1.1rem" />,
+  //         autoClose: 5000,
+  //       });
+  //       close();
+  //     },
+  //     onError: (error) => {
+  //       notifications.show({
+  //         title: "Error",
+  //         message: error.message,
+  //         color: "red",
+  //         autoClose: 3000,
+  //       });
+  //     },
+  //   });
 
   useEffect(() => {
     if (opened) {
       form.resetDirty();
-      reset();
+      // reset();
     }
   }, [opened]);
   return (
     <>
-      <Button onClick={open} variant="light" size="sm" compact>
+      <Button
+        onClick={open}
+        variant="light"
+        size="sm"
+        // compact
+      >
         Edit
       </Button>
       <Modal
-        opened={opened || isLoading}
+        opened={
+          opened
+          // || isLoading
+        }
         onClose={close}
-        title={<Text weight={600}>Edit Position - {position.name}</Text>}
+        title={<Text fw={600}>Edit Position - {position.name}</Text>}
       >
         <form
           onSubmit={form.onSubmit((value) => {
-            mutate({
+            api.election.editPosition.mutate({
               id: position.id,
               name: value.name,
               min: value.isSingle ? value.min : undefined,
@@ -117,14 +123,14 @@ export default function EditPosition({
             });
           })}
         >
-          <Stack spacing="sm">
+          <Stack gap="sm">
             <TextInput
               placeholder="Enter position name"
               label="Name"
               required
               withAsterisk
               {...form.getInputProps("name")}
-              icon={<IconLetterCase size="1rem" />}
+              leftSection={<IconLetterCase size="1rem" />}
             />
 
             <Checkbox
@@ -133,7 +139,7 @@ export default function EditPosition({
               {...form.getInputProps("isSingle", { type: "checkbox" })}
             />
 
-            {form.values.isSingle && (
+            {/* {form.values.isSingle && (
               <Flex gap="sm">
                 <NumberInput
                   {...form.getInputProps("min")}
@@ -152,22 +158,26 @@ export default function EditPosition({
                   required={form.values.isSingle}
                 />
               </Flex>
-            )}
+            )} */}
 
-            {isError && (
+            {/* {isError && (
               <Alert color="red" title="Error">
                 {error.message}
               </Alert>
-            )}
+            )} */}
 
-            <Group position="right" spacing="xs">
-              <Button variant="default" onClick={close} disabled={isLoading}>
+            <Group justify="right" gap="xs">
+              <Button
+                variant="default"
+                onClick={close}
+                // disabled={isLoading}
+              >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isDirty() || !form.isValid()}
-                loading={isLoading}
+                // loading={isLoading}
               >
                 Update
               </Button>

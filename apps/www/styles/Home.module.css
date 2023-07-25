@@ -1,0 +1,82 @@
+.wrapper {
+  position: "relative";
+  padding-top: rem(120);
+  padding-bottom: rem(80);
+
+  /* [theme.fn.smallerThan("sm")]: {
+      paddingTop: rem(80),
+      paddingBottom: rem(60),
+    }, */
+}
+
+.dots {
+  position: "absolute";
+  /* color:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[5]
+        : theme.colors.gray[1], */
+
+  /* [theme.fn.smallerThan("sm")]: {
+      display: "none",
+    }, */
+}
+
+.dotsLeft {
+  left: 0;
+  top: 0;
+}
+
+.title {
+  text-align: "center";
+  font-size: rem(40);
+  letter-spacing: -1;
+  /* color: theme.colorScheme === "dark" ? theme.white : theme.black; */
+  margin-bottom: var();
+
+  /* [theme.fn.smallerThan("xs")]: {
+      fontSize: rem(28),
+      textAlign: "left",
+    }, */
+}
+
+.highlight {
+  /* color:
+      theme.colorScheme === "dark"
+        ? theme.colors.green[5]
+        : theme.colors.green[7], */
+}
+
+.description {
+  text-align: "center";
+
+  /* [theme.fn.smallerThan("xs")]: {
+      textAlign: "left",
+      fontSize: var(--mantine-font-size-xl),
+    }, */
+}
+
+.controls {
+  margin-top: var(--mantine-spacing-lg);
+  display: "flex";
+  justify-content: "center";
+
+  /* [theme.fn.smallerThan("xs")]: {
+      flex-direction: "column";
+    } */
+}
+
+.control {
+  /* "&:not(:first-of-type)": {
+      marginLeft: var(--mantine-spacing-md),
+    },
+
+    [theme.fn.smallerThan("xs")]: {
+      height: rem(42),
+      fontSize: var(--mantine-font-size-md),
+
+      "&:not(:first-of-type)": {
+        marginTop: var(--mantine-spacing-md),
+        marginLeft: 0,
+      },
+    }, */
+}

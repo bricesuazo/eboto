@@ -1,6 +1,9 @@
 "use client";
 
-import { Flex, Group, Stack, Text, Title } from "@mantine/core";
+import {
+  // Flex,
+  Group, Stack, Text, Title
+} from "@mantine/core";
 import CreatePosition from "../modals/create-position";
 import { Election, Position } from "@eboto-mo/db/schema";
 import DeletePosition from "@/components/client/modals/delete-position";
@@ -17,7 +20,7 @@ export default function DashboardPosition({
     <Stack>
       <CreatePosition election_id={election.id} order={positions.length} />
 
-      <Group spacing="xs">
+      <Group gap="xs">
         {!positions.length ? (
           <Text>No positions yet.</Text>
         ) : (
@@ -43,12 +46,12 @@ const Position = ({
 }) => {
   return (
     <>
-      <Flex
-        direction="column"
+      <Group
+        // direction="column"
         w={172}
         align="center"
         p={8}
-        sx={(theme) => ({
+        style={(theme) => ({
           flexDirection: "column",
           justifyContent: "space-between",
           alignItems: "center",
@@ -56,26 +59,28 @@ const Position = ({
           height: 128,
           padding: theme.spacing.md,
           border: "1px solid",
-          borderColor:
-            theme.colorScheme === "dark"
-              ? theme.colors.dark[5]
-              : theme.colors.gray[3],
+          // borderColor:
+          //   theme.colorScheme === "dark"
+          //     ? theme.colors.dark[5]
+          //     : theme.colors.gray[3],
           borderRadius: theme.radius.md,
 
-          [theme.fn.smallerThan("xs")]: {
-            width: "100%",
-          },
+          // [theme.fn.smallerThan("xs")]: {
+          //   width: "100%",
+          // },
         })}
       >
-        <Title order={4} align="center" w="full" lineClamp={2}>
+        <Title order={4} ta="center" w="full"
+          // lineClamp={2}
+        >
           {position.name}
         </Title>
 
-        <Group spacing="xs">
+        <Group gap="xs">
           <EditPosition position={position} order={order} />
           <DeletePosition position={position} />
         </Group>
-      </Flex>
+      </Group>
     </>
   );
 };

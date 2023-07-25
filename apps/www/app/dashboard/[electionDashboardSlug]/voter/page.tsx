@@ -1,4 +1,5 @@
 import DashboardVoter from "@/components/client/pages/dashboard-voter";
+import { clerkClient } from "@clerk/nextjs";
 import { db } from "@eboto-mo/db";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -40,10 +41,16 @@ export default async function Page({
       eq(invited_voters.election_id, election.id),
   });
 
+  const users = await clerkClient.users.getUserList({
+    userId: votersFromDB.map((voter) => voter.user_id),
+  });
+
   const voters = votersFromDB
     .map((voter) => ({
       id: voter.id,
-      email: voter.user.email,
+      email:
+        users.find((user) => user.id === voter.user_id)?.emailAddresses[0]
+          .emailAddress ?? "",
       account_status: "ACCEPTED",
       created_at: voter.created_at,
       has_voted: voter.votes.length > 0,

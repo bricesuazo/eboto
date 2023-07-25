@@ -42,6 +42,9 @@ export type AccountStatusType = (typeof account_status_type)[number];
 //   created_at,
 //   updated_at,
 // });
+export const users = mysqlTable("users", {
+  id,
+});
 
 export const elections = mysqlTable("elections", {
   id,

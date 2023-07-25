@@ -6,7 +6,7 @@ import {
   ActionIcon,
   Box,
   Button,
-  Flex,
+  Group, // Flex,
   Stack,
   Text,
   Title,
@@ -24,16 +24,19 @@ export default function DashboardOverview({
   return (
     <Stack>
       <Box>
-        <Flex justify="space-between" align="center" gap="xs">
-          <Flex align="center" gap="sm">
-            <Title order={2} lineClamp={1}>
+        <Group justify="space-between" align="center" gap="xs">
+          <Group align="center" gap="sm">
+            <Title
+              order={2}
+              // lineClamp={1}
+            >
               {election.name} (@{election.slug})
             </Title>
             <ActionIcon
               component={Link}
               href={`/${election.slug}`}
               target="_blank"
-              sx={(theme) => ({
+              style={(theme) => ({
                 borderRadius: "50%",
                 width: 34,
                 height: 34,
@@ -42,9 +45,9 @@ export default function DashboardOverview({
             >
               <IconExternalLink size={rem(18)} />
             </ActionIcon>
-          </Flex>
+          </Group>
           <QRCode election={election} />
-        </Flex>
+        </Group>
         <Text>
           <Moment format="MMMM DD, YYYY HA" date={election.start_date} />
           {" - "}
@@ -63,19 +66,19 @@ export default function DashboardOverview({
       </Box>
 
       <Box
-        sx={(theme) => ({
+        style={(theme) => ({
           display: "flex",
 
           borderRadius: theme.radius.md,
-          backgroundColor:
-            theme.colorScheme === "dark"
-              ? theme.colors.dark[6]
-              : theme.colors.gray[1],
+          // backgroundColor:
+          //   theme.colorScheme === "dark"
+          //     ? theme.colors.dark[6]
+          //     : theme.colors.gray[1],
           // overflow: "hidden",
 
-          [theme.fn.smallerThan("sm")]: {
-            flexDirection: "column",
-          },
+          // [theme.fn.smallerThan("sm")]: {
+          //   flexDirection: "column",
+          // },
         })}
       >
         {/* {[
@@ -108,7 +111,7 @@ export default function DashboardOverview({
               key={stat.id}
               component={Link}
               href={`/dashboard/${electionOverview.data.election.slug}/${stat.href}`}
-              sx={(theme) => ({
+              style={(theme) => ({
                 display: "flex",
                 alignItems: "center",
                 columnGap: theme.spacing.md,
@@ -141,7 +144,7 @@ export default function DashboardOverview({
               <Box>
                 <Title>{stat.count}</Title>
                 <Text
-                  sx={(theme) => ({
+                  style={(theme) => ({
                     textTransform: "uppercase",
                     fontWeight: 700,
                     color: theme.primaryColor,
@@ -156,7 +159,7 @@ export default function DashboardOverview({
       </Box>
 
       {/* <Box
-        sx={(theme) => ({
+        style={(theme) => ({
           display: "flex",
           borderRadius: theme.radius.md,
           backgroundColor:
@@ -211,7 +214,7 @@ export default function DashboardOverview({
           return (
             <Box
               key={stat.id}
-              sx={(theme) => ({
+              style={(theme) => ({
                 flex: 1,
                 padding: theme.spacing.md,
 
@@ -225,7 +228,7 @@ export default function DashboardOverview({
             >
               <Title order={2}>{stat.count}</Title>
               <Text
-                sx={(theme) => ({
+                style={(theme) => ({
                   textTransform: "uppercase",
                   fontWeight: 700,
                   color: theme.primaryColor,
@@ -234,7 +237,7 @@ export default function DashboardOverview({
                 {stat.title}
               </Text>
               <Text
-                sx={(theme) => ({
+                style={(theme) => ({
                   color:
                     theme.colorScheme === "dark"
                       ? theme.colors.dark[2]
@@ -251,7 +254,7 @@ export default function DashboardOverview({
       {/* <Box>
         <Title
           order={3}
-          sx={(theme) => ({
+          style={(theme) => ({
             [theme.fn.smallerThan("xs")]: {
               textAlign: "center",
             },
@@ -265,7 +268,7 @@ export default function DashboardOverview({
           </Center>
         ) : !voterFieldsStats.data || voterFieldsStats.data.length === 0 ? (
           <Text
-            sx={(theme) => ({
+            style={(theme) => ({
               [theme.fn.smallerThan("xs")]: {
                 textAlign: "center",
               },
@@ -276,7 +279,7 @@ export default function DashboardOverview({
         ) : (
           <SimpleGrid
             cols={2}
-            sx={{
+            style={{
               alignItems: "start",
             }}
             breakpoints={[
@@ -320,11 +323,11 @@ export default function DashboardOverview({
       <Box>
         <Title
           order={3}
-          sx={(theme) => ({
-            [theme.fn.smallerThan("xs")]: {
-              textAlign: "center",
-            },
-          })}
+          // style={(theme) => ({
+          //   [theme.fn.smallerThan("xs")]: {
+          //     textAlign: "center",
+          //   },
+          // })}
         >
           Generated Results
         </Title>
@@ -332,7 +335,7 @@ export default function DashboardOverview({
         {/* <Box>
           {electionOverview.isLoading ? (
             <Text
-              sx={(theme) => ({
+              style={(theme) => ({
                 [theme.fn.smallerThan("xs")]: {
                   textAlign: "center",
                 },
@@ -342,7 +345,7 @@ export default function DashboardOverview({
             </Text>
           ) : !generateResults.data || generateResults.data.length === 0 ? (
             <Text
-              sx={(theme) => ({
+              style={(theme) => ({
                 [theme.fn.smallerThan("xs")]: {
                   textAlign: "center",
                 },

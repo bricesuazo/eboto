@@ -1,20 +1,18 @@
 "use client";
 
-import { api } from "@/lib/api/api";
+import { api } from "@/trpc/client";
 import { type Partylist, type Position } from "@eboto-mo/db/schema";
 import {
   Alert,
   Box,
-  Button,
-  Flex,
+  Button, // Flex,
   Group,
   Modal,
   Select,
   Stack,
   Tabs,
   Text,
-  TextInput,
-  Textarea,
+  TextInput, // Textarea,
   UnstyledButton,
   rem,
 } from "@mantine/core";
@@ -93,22 +91,22 @@ export default function CreateCandidate({
   //     },
   //   });
 
-  const { mutate, isLoading, isError, error, reset } =
-    api.election.createCandidate.useMutation({
-      onSuccess: () => {
-        notifications.show({
-          title: `${form.values.first_name}${
-            form.values.middle_name && ` ${form.values.middle_name}`
-          } ${form.values.last_name} created!`,
-          message: `Successfully created candidate: ${form.values.first_name}${
-            form.values.middle_name && ` ${form.values.middle_name}`
-          } ${form.values.last_name}`,
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-        close();
-      },
-    });
+  // const { mutate, isLoading, isError, error, reset } =
+  //   api.election.createCandidate.useMutation({
+  //     onSuccess: () => {
+  //       notifications.show({
+  //         title: `${form.values.first_name}${
+  //           form.values.middle_name && ` ${form.values.middle_name}`
+  //         } ${form.values.last_name} created!`,
+  //         message: `Successfully created candidate: ${form.values.first_name}${
+  //           form.values.middle_name && ` ${form.values.middle_name}`
+  //         } ${form.values.last_name}`,
+  //         icon: <IconCheck size="1.1rem" />,
+  //         autoClose: 5000,
+  //       });
+  //       close();
+  //     },
+  //   });
 
   const form = useForm<{
     first_name: string;
@@ -181,14 +179,14 @@ export default function CreateCandidate({
   useEffect(() => {
     if (opened) {
       form.reset();
-      reset();
+      // reset();
     }
   }, [opened]);
   return (
     <>
       <UnstyledButton
         onClick={open}
-        sx={(theme) => ({
+        style={(theme) => ({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -197,24 +195,24 @@ export default function CreateCandidate({
           width: 100,
           height: 140,
           textAlign: "center",
-          backgroundColor:
-            theme.colorScheme === "dark"
-              ? theme.colors.dark[6]
-              : theme.colors.gray[0],
+          // backgroundColor:
+          //   theme.colorScheme === "dark"
+          //     ? theme.colors.dark[6]
+          //     : theme.colors.gray[0],
           borderRadius: theme.radius.sm,
           fontSize: theme.fontSizes.sm,
           transition: "all 100ms ease-in-out",
 
-          "&:hover": {
-            backgroundColor:
-              theme.colorScheme === "dark"
-                ? theme.colors.dark[5]
-                : theme.colors.gray[1],
-          },
+          // "&:hover": {
+          //   backgroundColor:
+          //     theme.colorScheme === "dark"
+          //       ? theme.colors.dark[5]
+          //       : theme.colors.gray[1],
+          // },
 
-          [theme.fn.smallerThan("xs")]: {
-            width: 60,
-          },
+          // [theme.fn.smallerThan("xs")]: {
+          //   width: 60,
+          // },
         })}
       >
         <IconUserPlus />
@@ -222,11 +220,11 @@ export default function CreateCandidate({
         <Text>
           Add
           <Text
-            sx={(theme) => ({
-              [theme.fn.smallerThan("xs")]: {
-                display: "none",
-              },
-            })}
+          // style={(theme) => ({
+          //   [theme.fn.smallerThan("xs")]: {
+          //     display: "none",
+          //   },
+          // })}
           >
             {" "}
             candidate
@@ -235,14 +233,17 @@ export default function CreateCandidate({
       </UnstyledButton>
 
       <Modal
-        opened={opened || isLoading}
+        opened={
+          opened
+          // || isLoading
+        }
         onClose={close}
-        title={<Text weight={600}>Create candidate</Text>}
+        title={<Text fw={600}>Create candidate</Text>}
         closeOnClickOutside={false}
       >
         <form
           onSubmit={form.onSubmit((value) => {
-            mutate({
+            api.election.createCandidate.mutate({
               first_name: value.first_name,
               last_name: value.last_name,
               slug: value.slug,
@@ -278,50 +279,50 @@ export default function CreateCandidate({
             <Tabs.List grow>
               <Tabs.Tab
                 value="basic-info"
-                icon={<IconUserSearch size="0.8rem" />}
+                leftSection={<IconUserSearch size="0.8rem" />}
                 px="2rem"
               >
                 Basic Info
               </Tabs.Tab>
               <Tabs.Tab
                 value="image"
-                icon={<IconPhoto size="0.8rem" />}
+                leftSection={<IconPhoto size="0.8rem" />}
                 px="2rem"
               >
                 Image
               </Tabs.Tab>
               <Tabs.Tab
                 value="platforms"
-                icon={<IconInfoCircle size="0.8rem" />}
+                leftSection={<IconInfoCircle size="0.8rem" />}
                 px="2rem"
               >
                 Platforms
               </Tabs.Tab>
               <Tabs.Tab
                 value="credentials"
-                icon={<IconInfoCircle size="0.8rem" />}
+                leftSection={<IconInfoCircle size="0.8rem" />}
                 px="2rem"
               >
                 Credentials
               </Tabs.Tab>
             </Tabs.List>
-            <Stack spacing="sm">
+            <Stack gap="sm">
               <Tabs.Panel value="basic-info" pt="xs">
-                <Stack spacing="xs">
+                <Stack gap="xs">
                   <TextInput
                     label="First name"
                     placeholder="Enter first name"
                     required
                     withAsterisk
                     {...form.getInputProps("first_name")}
-                    icon={<IconLetterCase size="1rem" />}
+                    leftSection={<IconLetterCase size="1rem" />}
                   />
 
                   <TextInput
                     label="Middle name"
                     placeholder="Enter middle name"
                     {...form.getInputProps("middle_name")}
-                    icon={<IconLetterCase size="1rem" />}
+                    leftSection={<IconLetterCase size="1rem" />}
                   />
                   <TextInput
                     label="Last name"
@@ -329,7 +330,7 @@ export default function CreateCandidate({
                     required
                     withAsterisk
                     {...form.getInputProps("last_name")}
-                    icon={<IconLetterCase size="1rem" />}
+                    leftSection={<IconLetterCase size="1rem" />}
                   />
 
                   <TextInput
@@ -346,14 +347,14 @@ export default function CreateCandidate({
                     required
                     withAsterisk
                     {...form.getInputProps("slug")}
-                    icon={<IconLetterCase size="1rem" />}
+                    leftSection={<IconLetterCase size="1rem" />}
                   />
 
                   <Select
-                    withinPortal
+                    // withinPortal
                     placeholder="Select partylist"
                     label="Partylist"
-                    icon={<IconFlag size="1rem" />}
+                    leftSection={<IconFlag size="1rem" />}
                     {...form.getInputProps("partylist_id")}
                     data={partylists.map((partylist) => {
                       return {
@@ -364,10 +365,10 @@ export default function CreateCandidate({
                   />
 
                   <Select
-                    withinPortal
+                    // withinPortal
                     placeholder="Select position"
                     label="Position"
-                    icon={<IconUserSearch size="1rem" />}
+                    leftSection={<IconUserSearch size="1rem" />}
                     {...form.getInputProps("position_id")}
                     data={positions.map((position) => {
                       return {
@@ -379,7 +380,7 @@ export default function CreateCandidate({
                 </Stack>
               </Tabs.Panel>
               <Tabs.Panel value="image" pt="xs">
-                <Stack spacing="xs">
+                <Stack gap="xs">
                   <Dropzone
                     id="image"
                     onDrop={(files) => {
@@ -390,25 +391,25 @@ export default function CreateCandidate({
                     maxSize={5 * 1024 ** 2}
                     accept={IMAGE_MIME_TYPE}
                     multiple={false}
-                    loading={isLoading}
+                    // loading={isLoading}
                   >
                     <Group
-                      position="center"
-                      spacing="xl"
+                      justify="center"
+                      gap="xl"
                       style={{ minHeight: rem(140), pointerEvents: "none" }}
                     >
                       {form.values.image ? (
-                        <Group position="center">
+                        <Group justify="center">
                           <Box
                             pos="relative"
-                            sx={(theme) => ({
+                            style={(theme) => ({
                               width: rem(120),
                               height: rem(120),
 
-                              [theme.fn.smallerThan("sm")]: {
-                                width: rem(180),
-                                height: rem(180),
-                              },
+                              // [theme.fn.smallerThan("sm")]: {
+                              //   width: rem(180),
+                              //   height: rem(180),
+                              // },
                             })}
                           >
                             <Image
@@ -428,7 +429,7 @@ export default function CreateCandidate({
                         </Group>
                       ) : (
                         <Box>
-                          <Text size="xl" inline align="center">
+                          <Text size="xl" inline ta="center">
                             Drag image here or click to select image
                           </Text>
                           <Text
@@ -436,7 +437,7 @@ export default function CreateCandidate({
                             color="dimmed"
                             inline
                             mt={7}
-                            align="center"
+                            ta="center"
                           >
                             Attach a image to your account. Max file size is
                             5MB.
@@ -452,14 +453,17 @@ export default function CreateCandidate({
                     onClick={() => {
                       form.setFieldValue("image", null);
                     }}
-                    disabled={!form.values.image || isLoading}
+                    disabled={
+                      !form.values.image
+                      // || isLoading
+                    }
                   >
                     Delete image
                   </Button>
                 </Stack>
               </Tabs.Panel>
               <Tabs.Panel value="platforms" pt="xs">
-                <Stack spacing="xs">
+                <Stack gap="xs">
                   {form.values.platforms.map((platform, index) => (
                     <Box key={index}>
                       <TextInput
@@ -483,7 +487,7 @@ export default function CreateCandidate({
                           });
                         }}
                       />
-                      <Textarea
+                      {/* <Textarea
                         w="100%"
                         label="Description"
                         placeholder="Enter description"
@@ -503,7 +507,7 @@ export default function CreateCandidate({
                             }),
                           });
                         }}
-                      />
+                      /> */}
 
                       <Button
                         variant="outline"
@@ -526,7 +530,7 @@ export default function CreateCandidate({
                     </Box>
                   ))}
                   <Button
-                    leftIcon={<IconPlus size="1.25rem" />}
+                    leftSection={<IconPlus size="1.25rem" />}
                     onClick={() => {
                       form.setValues({
                         ...form.values,
@@ -565,10 +569,10 @@ export default function CreateCandidate({
                     </Tabs.Tab>
                   </Tabs.List>
                   <Tabs.Panel value="achievements" pt="xs">
-                    <Stack spacing="md">
+                    <Stack gap="md">
                       {form.values.achievements.map((achievement, index) => (
                         <Box key={index}>
-                          <Flex gap="xs">
+                          <Group gap="xs">
                             <TextInput
                               w="100%"
                               label="Achievement"
@@ -591,7 +595,7 @@ export default function CreateCandidate({
                               }}
                             />
                             <YearPickerInput
-                              label="Year"
+                              // label="Year"
                               placeholder="Enter year"
                               popoverProps={{
                                 withinPortal: true,
@@ -611,9 +615,9 @@ export default function CreateCandidate({
                                   ),
                                 });
                               }}
-                              required
+                              // required
                             />
-                          </Flex>
+                          </Group>
                           <Button
                             variant="outline"
                             mt="xs"
@@ -636,7 +640,7 @@ export default function CreateCandidate({
                       ))}
 
                       <Button
-                        leftIcon={<IconPlus size="1.25rem" />}
+                        leftSection={<IconPlus size="1.25rem" />}
                         onClick={() => {
                           form.setValues({
                             ...form.values,
@@ -656,7 +660,7 @@ export default function CreateCandidate({
                     </Stack>
                   </Tabs.Panel>
                   <Tabs.Panel value="affiliations" pt="xs">
-                    <Stack spacing="md">
+                    <Stack gap="md">
                       {form.values.affiliations.map((affiliation, index) => (
                         <Box key={index}>
                           <TextInput
@@ -702,11 +706,11 @@ export default function CreateCandidate({
                             }}
                           />
 
-                          <Flex gap="xs">
+                          <Group gap="xs">
                             <YearPickerInput
-                              label="Start year"
+                              // label="Start year"
                               placeholder="Enter start year"
-                              w="100%"
+                              style={{ width: "100%" }}
                               popoverProps={{
                                 withinPortal: true,
                               }}
@@ -725,12 +729,12 @@ export default function CreateCandidate({
                                   ),
                                 });
                               }}
-                              required
+                              // required
                             />
                             <YearPickerInput
-                              label="End year"
+                              // label="End year"
                               placeholder="Enter end year"
-                              w="100%"
+                              style={{ width: "100%" }}
                               popoverProps={{
                                 withinPortal: true,
                               }}
@@ -749,9 +753,9 @@ export default function CreateCandidate({
                                   ),
                                 });
                               }}
-                              required
+                              // required
                             />
-                          </Flex>
+                          </Group>
                           <Button
                             variant="outline"
                             mt="xs"
@@ -774,7 +778,7 @@ export default function CreateCandidate({
                       ))}
 
                       <Button
-                        leftIcon={<IconPlus size="1.25rem" />}
+                        leftSection={<IconPlus size="1.25rem" />}
                         onClick={() => {
                           form.setValues({
                             ...form.values,
@@ -799,11 +803,11 @@ export default function CreateCandidate({
                     </Stack>
                   </Tabs.Panel>
                   <Tabs.Panel value="events-attended" pt="xs">
-                    <Stack spacing="md">
+                    <Stack gap="md">
                       {form.values.eventsAttended.map(
                         (eventAttended, index) => (
                           <Box key={index}>
-                            <Flex gap="xs">
+                            <Group gap="xs">
                               <TextInput
                                 w="100%"
                                 label="Seminars attended"
@@ -827,7 +831,7 @@ export default function CreateCandidate({
                                 }}
                               />
                               <YearPickerInput
-                                label="Year"
+                                // label="Year"
                                 placeholder="Enter year"
                                 popoverProps={{
                                   withinPortal: true,
@@ -848,9 +852,9 @@ export default function CreateCandidate({
                                       ),
                                   });
                                 }}
-                                required
+                                // required
                               />
-                            </Flex>
+                            </Group>
                             <Button
                               variant="outline"
                               mt="xs"
@@ -875,7 +879,7 @@ export default function CreateCandidate({
                       )}
 
                       <Button
-                        leftIcon={<IconPlus size="1.25rem" />}
+                        leftSection={<IconPlus size="1.25rem" />}
                         onClick={() => {
                           form.setValues({
                             ...form.values,
@@ -897,7 +901,7 @@ export default function CreateCandidate({
                 </Tabs>
               </Tabs.Panel>
 
-              {isError && (
+              {/* {isError && (
                 <Alert
                   icon={<IconAlertCircle size="1rem" />}
                   title="Error"
@@ -905,16 +909,23 @@ export default function CreateCandidate({
                 >
                   {error.message}
                 </Alert>
-              )}
+              )} */}
 
-              <Group position="right" spacing="xs">
-                <Button variant="default" onClick={close} disabled={isLoading}>
+              <Group justify="right" gap="xs">
+                <Button
+                  variant="default"
+                  onClick={close}
+                  // disabled={isLoading}
+                >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
-                  disabled={!form.isValid() || isLoading}
-                  loading={isLoading}
+                  disabled={
+                    !form.isValid()
+                    // || isLoading
+                  }
+                  // loading={isLoading}
                 >
                   Create
                 </Button>

@@ -1,5 +1,5 @@
 import DashboardPageClient from "@/components/client/pages/dashboard";
-import { getSession } from "@/lib/session";
+import { auth } from "@clerk/nextjs";
 import { db } from "@eboto-mo/db";
 import {
   type Commissioner,
@@ -16,14 +16,13 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const session = await getSession();
+  const { userId } = auth();
 
-  if (!session) notFound();
+  if (!userId) notFound();
 
   const electionsAsCommissioner: (Commissioner & { election: Election })[] =
     await db.query.commissioners.findMany({
-      where: (commissioners, { eq }) =>
-        eq(commissioners.user_id, session.user.id),
+      where: (commissioners, { eq }) => eq(commissioners.user_id, userId),
       with: {
         election: true,
       },
@@ -32,12 +31,12 @@ export default async function Page() {
   const electionsAsVoter: (Voter & {
     election: Election & { votes: Vote[] };
   })[] = await db.query.voters.findMany({
-    where: (voters, { eq }) => eq(voters.user_id, session.user.id),
+    where: (voters, { eq }) => eq(voters.user_id, userId),
     with: {
       election: {
         with: {
           votes: {
-            where: (votes, { eq }) => eq(votes.voter_id, session.user.id),
+            where: (votes, { eq }) => eq(votes.voter_id, userId),
           },
         },
       },

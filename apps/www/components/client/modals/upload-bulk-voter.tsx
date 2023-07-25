@@ -1,12 +1,11 @@
 "use client";
 
-import { api } from "@/lib/api/api";
+import { api } from "@/trpc/client";
 import { VoterField, voters } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
   Alert,
-  Button,
-  Flex,
+  Button, // Flex,
   Group,
   Modal,
   Stack,
@@ -41,18 +40,18 @@ export default function UploadBulkVoter({
 }) {
   const [opened, { open, close }] = useDisclosure();
 
-  const { mutate, isLoading, isError, error, reset } =
-    api.election.uploadBulkVoter.useMutation({
-      onSuccess: ({ count }) => {
-        notifications.show({
-          title: `${count} voter(s) added!`,
-          message: "Successfully added voters",
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-        close();
-      },
-    });
+  // const { mutate, isLoading, isError, error, reset } =
+  //   api.election.uploadBulkVoter.useMutation({
+  //     onSuccess: ({ count }) => {
+  //       notifications.show({
+  //         title: `${count} voter(s) added!`,
+  //         message: "Successfully added voters",
+  //         icon: <IconCheck size="1.1rem" />,
+  //         autoClose: 5000,
+  //       });
+  //       close();
+  //     },
+  //   });
 
   const theme = useMantineTheme();
   const [selectedFiles, setSelectedFiles] = useState<
@@ -70,47 +69,47 @@ export default function UploadBulkVoter({
   useEffect(() => {
     if (opened) {
       setSelectedFiles([]);
-      reset();
+      // reset();
     }
   }, [opened]);
 
   useEffect(() => {
-    reset();
+    // reset();
   }, [selectedFiles]);
 
   return (
     <>
       <Button
         onClick={open}
-        leftIcon={<IconUpload size="1rem" />}
+        leftSection={<IconUpload size="1rem" />}
         variant="light"
-        sx={(theme) => ({
-          [theme.fn.smallerThan("xs")]: {
-            width: "100%",
-          },
-        })}
+        // style={(theme) => ({
+        //   [theme.fn.smallerThan("xs")]: {
+        //     width: "100%",
+        //   },
+        // })}
       >
         Import
       </Button>
       <Modal
         onClose={close}
         opened={opened}
-        title={<Text weight={600}>Upload bulk voters</Text>}
+        title={<Text fw={600}>Upload bulk voters</Text>}
       >
-        <Stack spacing="sm">
+        <Stack gap="sm">
           {!!selectedFiles.length && (
             <>
               <Button
-                leftIcon={<IconUpload size="1rem" />}
+                leftSection={<IconUpload size="1rem" />}
                 onClick={() => openRef.current?.()}
               >
                 Upload
               </Button>
               <Stack>
                 {selectedFiles.map((file) => (
-                  <Stack key={file.fileName} spacing="sm">
-                    <Flex justify="space-between">
-                      <Text weight={600}>{file.fileName}</Text>
+                  <Stack key={file.fileName} gap="sm">
+                    <Group justify="space-between">
+                      <Text fw={600}>{file.fileName}</Text>
                       <ActionIcon
                         title="Remove file"
                         aria-label="Remove file"
@@ -131,7 +130,7 @@ export default function UploadBulkVoter({
                       >
                         <IconTrash size="1.25rem" />
                       </ActionIcon>
-                    </Flex>
+                    </Group>
                     <Table>
                       <thead>
                         <tr>
@@ -250,8 +249,8 @@ export default function UploadBulkVoter({
             }}
             accept={MS_EXCEL_MIME_TYPE}
           >
-            <Flex
-              direction="column"
+            <Group
+              // direction="column"
               align="center"
               justify="center"
               gap="md"
@@ -261,16 +260,16 @@ export default function UploadBulkVoter({
                 <IconUpload
                   size="3.2rem"
                   stroke={1.5}
-                  color={
-                    theme.colors.green[theme.colorScheme === "dark" ? 4 : 6]
-                  }
+                  // color={
+                  //   theme.colors.green[theme.colorScheme === "dark" ? 4 : 6]
+                  // }
                 />
               </Dropzone.Accept>
               <Dropzone.Reject>
                 <IconX
                   size="3.2rem"
                   stroke={1.5}
-                  color={theme.colors.red[theme.colorScheme === "dark" ? 4 : 6]}
+                  // color={theme.colors.red[theme.colorScheme === "dark" ? 4 : 6]}
                 />
               </Dropzone.Reject>
               <Dropzone.Idle>
@@ -278,15 +277,15 @@ export default function UploadBulkVoter({
               </Dropzone.Idle>
               <div>
                 <Balancer>
-                  <Text size="xl" align="center">
+                  <Text size="xl" ta="center">
                     Drag excel file here or click to select files
                   </Text>
                 </Balancer>
               </div>
-            </Flex>
+            </Group>
           </Dropzone>
 
-          {isError && (
+          {/* {isError && (
             <Alert
               icon={<IconAlertCircle size="1rem" />}
               color="red"
@@ -294,12 +293,12 @@ export default function UploadBulkVoter({
             >
               {error.message}
             </Alert>
-          )}
+          )} */}
 
           <Button
             size="xs"
             variant="outline"
-            leftIcon={<IconDownload size="1rem" />}
+            leftSection={<IconDownload size="1rem" />}
             onClick={() => {
               const worksheet = XLSX.utils.json_to_sheet([
                 {
@@ -328,7 +327,7 @@ export default function UploadBulkVoter({
           >
             Download sample excel file
           </Button>
-          <Flex justify="space-between" align="center">
+          <Group justify="space-between" align="center">
             <ActionIcon
               title="Clear all"
               aria-label="Clear all"
@@ -342,7 +341,7 @@ export default function UploadBulkVoter({
             >
               <IconTrash size="1.25rem" />
             </ActionIcon>
-            <Group position="right" spacing="xs">
+            <Group justify="right" gap="xs">
               <Button
                 variant="default"
                 onClick={close}
@@ -353,9 +352,9 @@ export default function UploadBulkVoter({
               <Button
                 type="submit"
                 disabled={selectedFiles.length === 0}
-                loading={isLoading}
+                // loading={isLoading}
                 onClick={() =>
-                  mutate({
+                  api.election.uploadBulkVoter.mutate({
                     election_id,
                     voters: selectedFiles.map((f) => f.voters).flat(),
                   })
@@ -364,7 +363,7 @@ export default function UploadBulkVoter({
                 Upload
               </Button>
             </Group>
-          </Flex>
+          </Group>
         </Stack>
       </Modal>
     </>

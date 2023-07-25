@@ -1,4 +1,4 @@
 {
-  "extends": "@eboto-mo/eslint-config",
+  "extends": "../../tsconfig.json",
   "include": ["src", "*.ts"]
 }

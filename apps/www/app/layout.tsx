@@ -1,5 +1,4 @@
 import HeaderContent from "@/components/client/components/header";
-import RootLayoutClient from "@/components/client/layouts/root-layout";
 import { siteConfig } from "@/config/site";
 import { ClerkProvider, currentUser } from "@clerk/nextjs";
 import { AppShell, ColorSchemeScript, MantineProvider } from "@mantine/core";
@@ -79,17 +78,20 @@ export default async function RootLayout({
               primaryColor: "green",
             }}
           >
-            <RootLayoutClient>
-              <Notifications />
-              <AppShell padding={0} header={{ height: 60 }}>
-                <AppShell.Header>
-                  <HeaderContent user={user} />
-                </AppShell.Header>
+            <Notifications />
+            <AppShell
+              padding={0}
+              header={{ height: 60 }}
+              // navbar={{ sm: 240, md: 300, xl: 340 }}
+              //  navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
+            >
+              <AppShell.Header>
+                <HeaderContent user={user} />
+              </AppShell.Header>
 
-                <AppShell.Main>{children}</AppShell.Main>
-              </AppShell>
-              <Analytics />
-            </RootLayoutClient>
+              <AppShell.Main>{children}</AppShell.Main>
+            </AppShell>
+            <Analytics />
           </MantineProvider>
         </body>
       </html>

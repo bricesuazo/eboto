@@ -9,7 +9,13 @@ import {
   type Partylist,
   type Position,
 } from "@eboto-mo/db/schema";
-import { Anchor, Box, Flex, Group, Stack, Text } from "@mantine/core";
+import {
+  Anchor,
+  Box, // Flex,
+  Group,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { IconUser } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -55,7 +61,7 @@ export default function DashboardCandidate({
   positions: Position[];
 }) {
   return (
-    <Stack spacing="lg">
+    <Stack gap="lg">
       {positionsWithCandidates.length === 0 ? (
         <Box>
           <Text>
@@ -125,19 +131,19 @@ function Candidates({
   return (
     <Box>
       <Text
-        weight="bold"
+        fw="bold"
         size="xl"
         w="100%"
-        sx={(theme) => ({
-          [theme.fn.smallerThan("xs")]: {
-            textAlign: "center",
-          },
-        })}
+        // style={(theme) => ({
+        //   [theme.fn.smallerThan("xs")]: {
+        //     textAlign: "center",
+        //   },
+        // })}
       >
         <Balancer>{position.name}</Balancer>
       </Text>
 
-      <Flex gap={12}>
+      <Group gap={12}>
         <Box>
           <CreateCandidate
             position={position}
@@ -146,9 +152,9 @@ function Candidates({
           />
         </Box>
 
-        <Flex
+        <Group
           gap="xs"
-          sx={{
+          style={{
             overflow: "auto",
           }}
           align="center"
@@ -167,8 +173,8 @@ function Candidates({
               />
             ))
           )}
-        </Flex>
-      </Flex>
+        </Group>
+      </Group>
     </Box>
   );
 }
@@ -210,27 +216,30 @@ const CandidateCard = ({
 }) => {
   return (
     <Box>
-      <Flex
-        direction="column"
+      <Group
+        // direction="column"
         h={140}
         p={8}
         align="center"
         justify="space-between"
-        sx={(theme) => ({
+        style={(theme) => ({
           width: 200,
           border: "1px solid",
-          borderColor:
-            theme.colorScheme === "dark"
-              ? theme.colors.dark[5]
-              : theme.colors.gray[3],
+          // borderColor:
+          //   theme.colorScheme === "dark"
+          //     ? theme.colors.dark[5]
+          //     : theme.colors.gray[3],
           borderRadius: 8,
 
-          [theme.fn.smallerThan("xs")]: {
-            width: 140,
-          },
+          // [theme.fn.smallerThan("xs")]: {
+          //   width: 140,
+          // },
         })}
       >
-        <Flex direction="column" align="center">
+        <Group
+          // direction="column"
+          align="center"
+        >
           {candidate.image_link ? (
             <Image
               src={candidate.image_link}
@@ -248,14 +257,14 @@ const CandidateCard = ({
               }}
             />
           )}
-          <Text align="center" w="full" lineClamp={1}>
+          <Text ta="center" w="full" lineClamp={1}>
             {candidate.first_name}
             {candidate.middle_name && ` ${candidate.middle_name}`}{" "}
             {candidate.last_name}
           </Text>
-        </Flex>
+        </Group>
 
-        <Group spacing="xs">
+        <Group gap="xs">
           <EditCandidate
             positions={positions}
             candidate={candidate}
@@ -263,7 +272,7 @@ const CandidateCard = ({
           />
           <DeleteCandidate candidate={candidate} />
         </Group>
-      </Flex>
+      </Group>
     </Box>
   );
 };

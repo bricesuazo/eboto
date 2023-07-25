@@ -1,6 +1,6 @@
 "use client";
 
-import { api } from "@/lib/api/api";
+import { api } from "@/trpc/client";
 import {
   ActionIcon,
   Alert,
@@ -27,26 +27,26 @@ export default function DeleteVoter({
 }) {
   const [opened, { open, close }] = useDisclosure(false);
 
-  const { mutate, isLoading, isError, error, reset } =
-    api.election.deleteVoter.useMutation({
-      onSuccess: () => {
-        notifications.show({
-          title: "Success!",
-          message: `Successfully deleted ${voter.email}`,
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-        close();
-      },
-      onError: (error) => {
-        notifications.show({
-          title: "Error",
-          message: error.message,
-          color: "red",
-          autoClose: 3000,
-        });
-      },
-    });
+  // const { mutate, isLoading, isError, error, reset } =
+  //   api.election.deleteVoter.useMutation({
+  //     onSuccess: () => {
+  //       notifications.show({
+  //         title: "Success!",
+  //         message: `Successfully deleted ${voter.email}`,
+  //         icon: <IconCheck size="1.1rem" />,
+  //         autoClose: 5000,
+  //       });
+  //       close();
+  //     },
+  //     onError: (error) => {
+  //       notifications.show({
+  //         title: "Error",
+  //         message: error.message,
+  //         color: "red",
+  //         autoClose: 3000,
+  //       });
+  //     },
+  //   });
   return (
     <>
       <ActionIcon
@@ -58,16 +58,19 @@ export default function DeleteVoter({
         <IconTrash size="1.25rem" />
       </ActionIcon>
       <Modal
-        opened={opened || isLoading}
+        opened={
+          opened
+          // || isLoading
+        }
         onClose={close}
-        title={<Text weight={600}>Confirm Delete Voter - {voter.email}</Text>}
+        title={<Text fw={600}>Confirm Delete Voter - {voter.email}</Text>}
       >
-        <Stack spacing="sm">
+        <Stack gap="sm">
           <Stack>
             <Text>Are you sure you want to delete this voter?</Text>
             <Text>This action cannot be undone.</Text>
           </Stack>
-          {isError && (
+          {/* {isError && (
             <Alert
               icon={<IconAlertCircle size="1rem" />}
               color="red"
@@ -76,16 +79,20 @@ export default function DeleteVoter({
             >
               {error.message}
             </Alert>
-          )}
-          <Group position="right" spacing="xs">
-            <Button variant="default" onClick={close} disabled={isLoading}>
+          )} */}
+          <Group justify="right" gap="xs">
+            <Button
+              variant="default"
+              onClick={close}
+              // disabled={isLoading}
+            >
               Cancel
             </Button>
             <Button
               color="red"
-              loading={isLoading}
+              // loading={isLoading}
               onClick={() =>
-                mutate({
+                api.election.deleteVoter.mutate({
                   election_id,
                   id: voter.id,
                   is_invited_voter:

@@ -80,7 +80,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
                       ? theme.colors.gray[0]
                       : theme.colors.gray[9]
                   }
-                  // sx={(theme) => ({
+                  // style={(theme) => ({
                   //   [theme.fn.smallerThan("xs")]: { display: "none" },
                   // })}
                 >
