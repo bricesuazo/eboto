@@ -1,7 +1,7 @@
 "use client";
 
 import { positionTemplate } from "@/constants";
-import { api } from "@/lib/api/api";
+import { api } from "@/trpc/client";
 import {
   Alert,
   Button,
@@ -88,13 +88,13 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
     }
   }, [opened]);
 
-  const { mutate, isLoading, isError, error } =
-    api.election.createElection.useMutation({
-      onSuccess: () => {
-        router.push(`/dashboard/${form.values.slug}`);
-        close();
-      },
-    });
+  // const { mutate, isLoading, isError, error } =
+  //   api.election.createElection.useMutation({
+  //     onSuccess: () => {
+  //       router.push(`/dashboard/${form.values.slug}`);
+  //       close();
+  //     },
+  //   });
 
   return (
     <>
@@ -110,7 +110,7 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
         <form
           onSubmit={form.onSubmit((value) => {
             const now = new Date();
-            mutate({
+            api.election.createElection.mutate({
               ...value,
               name: value.name.trim(),
               slug: value.slug.trim(),
@@ -131,7 +131,7 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
               placeholder="Enter election name"
               {...form.getInputProps("name")}
               icon={<IconLetterCase size="1rem" />}
-              disabled={isLoading}
+              // disabled={isLoading}
             />
 
             <TextInput
@@ -143,7 +143,7 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
                   eboto-mo.com/{form.values.slug || "election-slug"}
                 </>
               }
-              disabled={isLoading}
+              // disabled={isLoading}
               withAsterisk
               required
               placeholder="Enter election slug"
@@ -172,7 +172,7 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
               firstDayOfWeek={0}
               {...form.getInputProps("start_date")}
               icon={<IconCalendar size="1rem" />}
-              disabled={isLoading}
+              // disabled={isLoading}
             />
             <DateTimePicker
               valueFormat="MMMM DD, YYYY (dddd) hh:mm A"
@@ -193,7 +193,7 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
               firstDayOfWeek={0}
               {...form.getInputProps("end_date")}
               icon={<IconCalendar size="1rem" />}
-              disabled={isLoading}
+              // disabled={isLoading}
             />
 
             <Select
@@ -213,10 +213,10 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
               nothingFound="No position template found"
               icon={<IconTemplate size="1rem" />}
               searchable
-              disabled={isLoading}
+              // disabled={isLoading}
             />
 
-            {isError && (
+            {/* {isError && (
               <Alert
                 icon={<IconAlertCircle size="1rem" />}
                 title="Error"
@@ -224,21 +224,21 @@ export default function CreateElection({ sx }: { sx?: Sx | Sx[] }) {
               >
                 {error.message}
               </Alert>
-            )}
+            )} */}
 
             <Group position="right" spacing="xs">
               <Button
                 variant="default"
                 mr={2}
                 onClick={close}
-                disabled={isLoading}
+                // disabled={isLoading}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isValid()}
-                loading={isLoading}
+                // loading={isLoading}
               >
                 Create
               </Button>

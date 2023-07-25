@@ -8,11 +8,8 @@ import {
   Box,
   Burger,
   Button,
-  Container,
-  Flex,
-  Group,
-  Header,
-  MediaQuery,
+  Container, // Flex,
+  Group, // Header,
   Menu,
   Text,
   UnstyledButton,
@@ -36,7 +33,7 @@ import { useParams, usePathname } from "next/navigation";
 export default function HeaderContent({ user }: { user: User | null }) {
   const { signOut } = useClerk();
 
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const { colorScheme, setColorScheme } = useMantineColorScheme();
   const pathname = usePathname();
   const params = useParams();
 
@@ -47,26 +44,28 @@ export default function HeaderContent({ user }: { user: User | null }) {
     useDisclosure(false);
 
   return (
-    <Header height={60}>
+    <>
+      {/* <Header height={60}> */}
       <Container
         h="100%"
         size={!params?.electionDashboardSlug ? undefined : "full"}
       >
-        <Flex h="100%" align="center" gap="xs">
+        <Group h="100%" align="center" gap="xs">
           {params?.electionDashboardSlug && (
-            <MediaQuery largerThan="sm" styles={{ display: "none" }}>
-              <Burger
-                opened={store.dashboardMenu}
-                onClick={() => store.toggleDashboardMenu()}
-                size="sm"
-                color={theme.colors.gray[6]}
-                py="xl"
-              />
-            </MediaQuery>
+            <Burger
+              opened={store.dashboardMenu}
+              onClick={() => store.toggleDashboardMenu()}
+              size="sm"
+              color={theme.colors.gray[6]}
+              py="xl"
+              // style={(theme) => ({
+              //   [theme.fn.largerThan("xs")]: { display: "none" },
+              // })}
+            />
           )}
-          <Group position="apart" w="100%" spacing={0}>
+          <Group justify="space-between">
             <UnstyledButton component={Link} href={user ? "/dashboard" : "/"}>
-              <Group spacing={4}>
+              <Group gap="md">
                 <Image
                   src="/images/logo.png"
                   alt="eBoto Mo Logo"
@@ -75,15 +74,15 @@ export default function HeaderContent({ user }: { user: User | null }) {
                   priority
                 />
                 <Text
-                  weight={600}
+                  fw={600}
                   color={
                     colorScheme === "dark"
                       ? theme.colors.gray[0]
                       : theme.colors.gray[9]
                   }
-                  sx={(theme) => ({
-                    [theme.fn.smallerThan("xs")]: { display: "none" },
-                  })}
+                  // sx={(theme) => ({
+                  //   [theme.fn.smallerThan("xs")]: { display: "none" },
+                  // })}
                 >
                   eBoto Mo
                 </Text>
@@ -99,19 +98,19 @@ export default function HeaderContent({ user }: { user: User | null }) {
               >
                 <Menu.Target>
                   <UnstyledButton py="md">
-                    <Group spacing="xs">
+                    <Group gap="xs">
                       <Box
-                        sx={{
+                        style={{
                           position: "relative",
                           borderRadius: "50%",
                           overflow: "hidden",
                           width: 24,
                           height: 24,
 
-                          [theme.fn.largerThan("sm")]: {
-                            width: 32,
-                            height: 32,
-                          },
+                          // [theme.fn.largerThan("sm")]: {
+                          //   width: 32,
+                          //   height: 32,
+                          // },
                         }}
                       >
                         <Image
@@ -125,14 +124,14 @@ export default function HeaderContent({ user }: { user: User | null }) {
                       </Box>
 
                       <Box
-                        sx={{
+                        style={{
                           width: 80,
-                          [theme.fn.largerThan("sm")]: {
-                            width: 140,
-                          },
+                          // [theme.fn.largerThan("sm")]: {
+                          //   width: 140,
+                          // },
                         }}
                       >
-                        <Text size="xs" truncate weight="bold">
+                        <Text size="xs" truncate fw="bold">
                           {user.firstName} {user.lastName}
                         </Text>
                         <Text size="xs" truncate>
@@ -155,33 +154,35 @@ export default function HeaderContent({ user }: { user: User | null }) {
                   <Menu.Item
                     component={Link}
                     href="/dashboard"
-                    icon={<IconChartBar size={16} />}
+                    leftSection={<IconChartBar size={16} />}
                   >
                     Dashboard
                   </Menu.Item>
                   <Menu.Item
                     component={Link}
                     href="/account"
-                    icon={<IconUserCircle size={16} />}
+                    leftSection={<IconUserCircle size={16} />}
                   >
                     Account settings
                   </Menu.Item>
 
                   <Menu.Item
-                    icon={
+                    leftSection={
                       colorScheme === "light" ? (
                         <IconMoon size={16} />
                       ) : (
                         <IconSun size={16} />
                       )
                     }
-                    onClick={() => toggleColorScheme()}
+                    onClick={() =>
+                      setColorScheme(colorScheme === "dark" ? "light" : "dark")
+                    }
                     closeMenuOnClick={false}
                   >
                     {colorScheme === "light" ? "Dark mode" : "Light mode"}
                   </Menu.Item>
                   <Menu.Item
-                    icon={<IconAlertCircle size={16} />}
+                    leftSection={<IconAlertCircle size={16} />}
                     // onClick={openReportAProblem}
                   >
                     Report a problem
@@ -193,7 +194,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
                           // callbackUrl: "/signin",
                         }))()
                     }
-                    icon={
+                    leftSection={
                       <IconLogout
                         style={{
                           transform: "translateX(2px)",
@@ -207,11 +208,13 @@ export default function HeaderContent({ user }: { user: User | null }) {
                 </Menu.Dropdown>
               </Menu>
             ) : (
-              <Group spacing="xs">
+              <Group gap="xs">
                 <ActionIcon
                   variant="subtle"
                   size={36}
-                  onClick={() => toggleColorScheme()}
+                  onClick={() =>
+                    setColorScheme(colorScheme === "dark" ? "light" : "dark")
+                  }
                 >
                   {colorScheme === "dark" ? (
                     <IconSun size="1rem" />
@@ -221,17 +224,17 @@ export default function HeaderContent({ user }: { user: User | null }) {
                 </ActionIcon>
                 <SignInButton mode="redirect">
                   <Button
-                    sx={(theme) => ({
-                      [theme.fn.smallerThan("xs")]: { display: "none" },
-                    })}
+                  // style={(theme) => ({
+                  //   [theme.fn.smallerThan("xs")]: { display: "none" },
+                  // })}
                   >
                     Sign in
                   </Button>
                   <Button
                     variant="outline"
-                    sx={(theme) => ({
-                      [theme.fn.largerThan("xs")]: { display: "none" },
-                    })}
+                    // style={(theme) => ({
+                    //   [theme.fn.largerThan("xs")]: { display: "none" },
+                    // })}
                   >
                     Sign in
                   </Button>
@@ -243,8 +246,9 @@ export default function HeaderContent({ user }: { user: User | null }) {
               </Group>
             )}
           </Group>
-        </Flex>
+        </Group>
       </Container>
-    </Header>
+      {/* </Header> */}
+    </>
   );
 }

@@ -1,11 +1,12 @@
+import HeaderContent from "@/components/client/components/header";
 import RootLayoutClient from "@/components/client/layouts/root-layout";
 import { siteConfig } from "@/config/site";
 import { ClerkProvider, currentUser } from "@clerk/nextjs";
-import { type ColorScheme } from "@mantine/core";
+import { AppShell, ColorSchemeScript, MantineProvider } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
 import { Analytics } from "@vercel/analytics/react";
 import { type Metadata } from "next";
 import { Poppins } from "next/font/google";
-import { cookies } from "next/headers";
 
 // export const revalidate = 0;
 
@@ -69,16 +70,27 @@ export default async function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
+        <head>
+          <ColorSchemeScript />
+        </head>
         <body className={font.className}>
-          <RootLayoutClient
-            theme={
-              (cookies().get("theme")?.value as ColorScheme | null) ?? "light"
-            }
-            user={user}
+          <MantineProvider
+            theme={{
+              primaryColor: "green",
+            }}
           >
-            {children}
-            <Analytics />
-          </RootLayoutClient>
+            <RootLayoutClient>
+              <Notifications />
+              <AppShell padding={0} header={{ height: 60 }}>
+                <AppShell.Header>
+                  <HeaderContent user={user} />
+                </AppShell.Header>
+
+                <AppShell.Main>{children}</AppShell.Main>
+              </AppShell>
+              <Analytics />
+            </RootLayoutClient>
+          </MantineProvider>
         </body>
       </html>
     </ClerkProvider>

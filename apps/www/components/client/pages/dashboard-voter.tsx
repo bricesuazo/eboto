@@ -7,7 +7,7 @@ import EditVoter from "@/components/client/modals/edit-voter";
 import InviteAllAddedVoters from "@/components/client/modals/invite-all-added-voters";
 import UpdateVoterField from "@/components/client/modals/update-voter-field";
 import UploadBulkVoter from "@/components/client/modals/upload-bulk-voter";
-import { api } from "@/lib/api/api";
+import { api } from "@/trpc/client";
 import { isElectionOngoing } from "@/utils";
 import type { Election, VoterField } from "@eboto-mo/db/schema";
 import {
@@ -81,7 +81,7 @@ export default function DashboardVoter({
     [election.voter_fields],
   );
 
-  const context = api.useContext();
+  // const context = api.useContext();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   return (
@@ -179,7 +179,7 @@ export default function DashboardVoter({
                     variant="light"
                     onClick={async () => {
                       setIsRefreshing(true);
-                      await context.election.getVotersByElectionId.invalidate();
+                      // await context.election.getVotersByElectionId.invalidate();
                       setIsRefreshing(false);
                     }}
                     size="lg"
@@ -199,7 +199,7 @@ export default function DashboardVoter({
                     variant="light"
                     onClick={async () => {
                       setIsRefreshing(true);
-                      await context.election.getVotersByElectionId.invalidate();
+                      // await context.election.getVotersByElectionId.invalidate();
                       setIsRefreshing(false);
                     }}
                     loading={isRefreshing}

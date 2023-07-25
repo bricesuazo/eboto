@@ -1,4 +1,5 @@
-import { api } from "@/lib/api/api";
+"use client";
+
 import { type VoterField, voters } from "@eboto-mo/db/schema";
 import {
   Alert,
@@ -31,26 +32,26 @@ export default function CreateVoter({
 }) {
   const [opened, { open, close }] = useDisclosure(false);
 
-  const { mutate, isLoading, isError, error, reset } =
-    api.election.createVoter.useMutation({
-      onSuccess: async () => {
-        notifications.show({
-          title: `${form.values.email} added!`,
-          message: "Successfully deleted partylist",
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-        close();
-      },
-      onError: (error) => {
-        notifications.show({
-          title: "Error",
-          message: error.message,
-          color: "red",
-          autoClose: 3000,
-        });
-      },
-    });
+  // const { mutate, isLoading, isError, error, reset } =
+  //   api.election.createVoter.useMutation({
+  //     onSuccess: async () => {
+  //       notifications.show({
+  //         title: `${form.values.email} added!`,
+  //         message: "Successfully deleted partylist",
+  //         icon: <IconCheck size="1.1rem" />,
+  //         autoClose: 5000,
+  //       });
+  //       close();
+  //     },
+  //     onError: (error) => {
+  //       notifications.show({
+  //         title: "Error",
+  //         message: error.message,
+  //         color: "red",
+  //         autoClose: 3000,
+  //       });
+  //     },
+  //   });
 
   const [data, setData] = useState<
     {

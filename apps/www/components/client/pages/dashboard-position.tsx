@@ -1,7 +1,6 @@
 "use client";
 
 import { Flex, Group, Stack, Text, Title } from "@mantine/core";
-import { useRouter } from "next/navigation";
 import CreatePosition from "../modals/create-position";
 import { Election, Position } from "@eboto-mo/db/schema";
 import DeletePosition from "@/components/client/modals/delete-position";
@@ -13,7 +12,6 @@ export default function DashboardPosition({
   election: Election;
   positions: Position[];
 }) {
-  const router = useRouter();
 
   return (
     <Stack>

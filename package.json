@@ -16,11 +16,11 @@
   },
   "devDependencies": {
     "@eboto-mo/eslint-config": "workspace:*",
-    "@turbo/gen": "^1.10.9",
+    "@turbo/gen": "^1.10.11",
     "dotenv-cli": "^7.2.1",
     "eslint": "^8.45.0",
     "prettier": "^3.0.0",
-    "turbo": "^1.10.9"
+    "turbo": "^1.10.11"
   },
   "packageManager": "pnpm@8.6.7"
 }
