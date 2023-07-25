@@ -52,13 +52,7 @@ export default function QRCode({ election }: { election: Election }) {
         }
       >
         <Stack>
-          <Center
-          // style={(theme) => ({
-          //   [theme.fn.largerThan("xs")]: {
-          //     display: "none",
-          //   },
-          // })}
-          >
+          <Center visibleFrom="sm">
             <QRCodeCanvas
               id="qr-gen"
               value={`https://eboto-mo.com/${election.slug}`}
@@ -74,13 +68,7 @@ export default function QRCode({ election }: { election: Election }) {
               }}
             />
           </Center>
-          <Center
-          // style={(theme) => ({
-          //   [theme.fn.smallerThan("xs")]: {
-          //     display: "none",
-          //   },
-          // })}
-          >
+          <Center hiddenFrom="sm">
             <QRCodeCanvas
               id="qr-gen"
               value={`https://eboto-mo.com/${election.slug}`}

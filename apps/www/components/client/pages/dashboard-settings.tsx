@@ -562,11 +562,7 @@ export default function DashboardSettings({
               type="submit"
               // loading={isLoading}
               disabled={!form.isDirty() || !form.isValid()}
-              // style={(theme) => ({
-              //   [theme.fn.largerThan("xs")]: {
-              //     display: "none",
-              //   },
-              // })}
+              visibleFrom="sm"
             >
               Update
             </Button>
@@ -574,11 +570,7 @@ export default function DashboardSettings({
               type="submit"
               // loading={isLoading}
               disabled={!form.isDirty() || !form.isValid()}
-              // style={(theme) => ({
-              //   [theme.fn.smallerThan("xs")]: {
-              //     display: "none",
-              //   },
-              // })}
+              hiddenFrom="sm"
             >
               Update election
             </Button>
@@ -588,11 +580,7 @@ export default function DashboardSettings({
               onClick={open}
               //   loading={deleteElectionMutation.isLoading}
               // disabled={isLoading}
-              // style={(theme) => ({
-              //   [theme.fn.largerThan("xs")]: {
-              //     display: "none",
-              //   },
-              // })}
+              visibleFrom="sm"
             >
               Delete
             </Button>

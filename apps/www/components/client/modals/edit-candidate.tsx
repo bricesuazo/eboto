@@ -1006,20 +1006,12 @@ export default function EditCandidate({
                   size="lg"
                   variant="outline"
                   color="green"
-                  // style={(theme) => ({
-                  //   [theme.fn.largerThan("xs")]: {
-                  //     display: "none",
-                  //   },
-                  // })}
+                  visibleFrom="sm"
                 >
                   <IconExternalLink size="1.25rem" />
                 </ActionIcon>
                 <Button
-                  // style={(theme) => ({
-                  //   [theme.fn.smallerThan("xs")]: {
-                  //     display: "none",
-                  //   },
-                  // })}
+                  hiddenFrom="sm"
                   leftSection={<IconExternalLink size="1.25rem" />}
                   variant="outline"
                   component={Link}

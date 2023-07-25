@@ -52,11 +52,7 @@ export default function DeleteBulkVoter({
         onClick={open}
         size="lg"
         variant="outline"
-        // style={(theme) => ({
-        //   [theme.fn.largerThan("xs")]: {
-        //     display: "none",
-        //   },
-        // })}
+        visibleFrom="sm"
         disabled={isDisabled}
       >
         <IconUserMinus size="1.25rem" />
@@ -66,11 +62,7 @@ export default function DeleteBulkVoter({
         variant="outline"
         onClick={open}
         leftSection={<IconUserMinus size="1.25rem" />}
-        // style={(theme) => ({
-        //   [theme.fn.smallerThan("xs")]: {
-        //     display: "none",
-        //   },
-        // })}
+        hiddenFrom="sm"
         disabled={isDisabled}
       >
         Delete selected

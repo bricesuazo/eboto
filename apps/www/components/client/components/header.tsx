@@ -1,7 +1,8 @@
 "use client";
 
+import { env } from "@/env.mjs";
 import { useStore } from "@/store";
-import { SignInButton, SignUpButton, useClerk } from "@clerk/nextjs";
+import { useClerk } from "@clerk/nextjs";
 import { User } from "@clerk/nextjs/api";
 import {
   ActionIcon,
@@ -34,6 +35,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
   const { signOut } = useClerk();
 
   const { colorScheme, setColorScheme } = useMantineColorScheme();
+
   const pathname = usePathname();
   const params = useParams();
 
@@ -58,12 +60,10 @@ export default function HeaderContent({ user }: { user: User | null }) {
               size="sm"
               color={theme.colors.gray[6]}
               py="xl"
-              // style={(theme) => ({
-              //   [theme.fn.largerThan("xs")]: { display: "none" },
-              // })}
+              visibleFrom="sm"
             />
           )}
-          <Group justify="space-between">
+          <Group justify="space-between" w="100%">
             <UnstyledButton component={Link} href={user ? "/dashboard" : "/"}>
               <Group gap="md">
                 <Image
@@ -80,9 +80,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
                       ? theme.colors.gray[0]
                       : theme.colors.gray[9]
                   }
-                  // style={(theme) => ({
-                  //   [theme.fn.smallerThan("xs")]: { display: "none" },
-                  // })}
+                  visibleFrom="sm"
                 >
                   eBoto Mo
                 </Text>
@@ -222,27 +220,30 @@ export default function HeaderContent({ user }: { user: User | null }) {
                     <IconMoon size="1rem" />
                   )}
                 </ActionIcon>
-                <SignInButton mode="redirect">
-                  <Button
-                  // style={(theme) => ({
-                  //   [theme.fn.smallerThan("xs")]: { display: "none" },
-                  // })}
-                  >
-                    Sign in
-                  </Button>
-                  <Button
-                    variant="outline"
-                    // style={(theme) => ({
-                    //   [theme.fn.largerThan("xs")]: { display: "none" },
-                    // })}
-                  >
-                    Sign in
-                  </Button>
-                </SignInButton>
 
-                <SignUpButton mode="redirect">
-                  <Button>Get Started</Button>
-                </SignUpButton>
+                <Button
+                  hiddenFrom="sm"
+                  component={Link}
+                  href={env.NEXT_PUBLIC_CLERK_SIGN_IN_URL}
+                >
+                  Sign in
+                </Button>
+                <Button
+                  variant="outline"
+                  visibleFrom="sm"
+                  component={Link}
+                  href={env.NEXT_PUBLIC_CLERK_SIGN_IN_URL}
+                >
+                  Sign in
+                </Button>
+
+                <Button
+                  visibleFrom="sm"
+                  component={Link}
+                  href={env.NEXT_PUBLIC_CLERK_SIGN_UP_URL}
+                >
+                  Get Started
+                </Button>
               </Group>
             )}
           </Group>

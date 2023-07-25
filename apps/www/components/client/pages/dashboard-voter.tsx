@@ -182,11 +182,7 @@ export default function DashboardVoter({
                     }}
                     size="lg"
                     loading={isRefreshing}
-                    // style={(theme) => ({
-                    //   [theme.fn.largerThan("xs")]: {
-                    //     display: "none",
-                    //   },
-                    // })}
+                    visibleFrom="sm"
                     loaderProps={{
                       width: 18,
                     }}
@@ -202,11 +198,7 @@ export default function DashboardVoter({
                     }}
                     loading={isRefreshing}
                     leftSection={<IconRefresh size="1.25rem" />}
-                    // style={(theme) => ({
-                    //   [theme.fn.smallerThan("xs")]: {
-                    //     display: "none",
-                    //   },
-                    // })}
+                    hiddenFrom="sm"
                     loaderProps={{
                       width: 20,
                     }}

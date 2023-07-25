@@ -219,16 +219,7 @@ export default function CreateCandidate({
 
         <Text>
           Add
-          <Text
-          // style={(theme) => ({
-          //   [theme.fn.smallerThan("xs")]: {
-          //     display: "none",
-          //   },
-          // })}
-          >
-            {" "}
-            candidate
-          </Text>
+          <Text hiddenFrom="sm"> candidate</Text>
         </Text>
       </UnstyledButton>
 

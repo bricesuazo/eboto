@@ -1,7 +1,8 @@
-import HeaderContent from "@/components/client/components/header";
+import RootLayoutServer from "@/components/server/layouts/root-layout";
 import { siteConfig } from "@/config/site";
 import { ClerkProvider, currentUser } from "@clerk/nextjs";
-import { AppShell, ColorSchemeScript, MantineProvider } from "@mantine/core";
+import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+import "@mantine/core/styles.css";
 import { Notifications } from "@mantine/notifications";
 import { Analytics } from "@vercel/analytics/react";
 import { type Metadata } from "next";
@@ -65,7 +66,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await currentUser();
   return (
     <ClerkProvider>
       <html lang="en">
@@ -76,21 +76,11 @@ export default async function RootLayout({
           <MantineProvider
             theme={{
               primaryColor: "green",
+              fontFamily: font.style.fontFamily,
             }}
           >
             <Notifications />
-            <AppShell
-              padding={0}
-              header={{ height: 60 }}
-              // navbar={{ sm: 240, md: 300, xl: 340 }}
-              //  navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
-            >
-              <AppShell.Header>
-                <HeaderContent user={user} />
-              </AppShell.Header>
-
-              <AppShell.Main>{children}</AppShell.Main>
-            </AppShell>
+            <RootLayoutServer>{children}</RootLayoutServer>
             <Analytics />
           </MantineProvider>
         </body>
