@@ -1,8 +1,7 @@
 "use client";
 
-import ReactPlayerPackage from "react-player";
-import { BaseReactPlayerProps } from "react-player/types/base";
+import ReactPlayerPackage, { ReactPlayerProps } from "react-player/lazy";
 
-export default function ReactPlayer(opts: BaseReactPlayerProps) {
+export default function ReactPlayer(opts: ReactPlayerProps) {
   return <ReactPlayerPackage {...opts} />;
 }

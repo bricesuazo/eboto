@@ -1,4 +1,3 @@
-import RootLayoutServer from "@/components/server/layouts/root-layout";
 import { siteConfig } from "@/config/site";
 import { ClerkProvider, currentUser } from "@clerk/nextjs";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
@@ -80,7 +79,7 @@ export default async function RootLayout({
             }}
           >
             <Notifications />
-            <RootLayoutServer>{children}</RootLayoutServer>
+            {children}
             <Analytics />
           </MantineProvider>
         </body>

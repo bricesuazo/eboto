@@ -70,10 +70,11 @@ export default function HomePage() {
         </Box>
       </Box>
 
-      <Stack gap="lg" py="xl">
+      <Stack gap="lg" my="xl">
         <Title order={2} ta="center">
           <Balancer>Ano ang eBoto Mo? (What is eBoto Mo?)</Balancer>
         </Title>
+
         <ReactPlayer
           url="https://www.youtube.com/watch?v=BKud553RTbk"
           width="100%"
@@ -85,9 +86,10 @@ export default function HomePage() {
         />
       </Stack>
 
-      <SimpleGrid cols={{ base: 1, sm: 2 }} py="xl">
+      <SimpleGrid cols={{ base: 1, sm: 2 }} className={classes.grid}>
         <Box
-          pos="relative"
+          className={classes.imageContainer}
+          top={60}
           style={{
             aspectRatio: "3/2",
           }}
@@ -125,6 +127,16 @@ export default function HomePage() {
           </Accordion>
         </Box>
       </SimpleGrid>
+      <Stack gap="xs" className={classes.cta} my={128}>
+        <Title ta="center">
+          <Balancer>Ready to get started?</Balancer>
+        </Title>
+        <Text ta="center" fz="lg">
+          <Balancer>
+            Create your free account today and start voting online in minutes.
+          </Balancer>
+        </Text>
+      </Stack>
     </Container>
   );
 }

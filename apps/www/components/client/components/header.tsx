@@ -48,10 +48,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
   return (
     <>
       {/* <Header height={60}> */}
-      <Container
-        h="100%"
-        size={!params?.electionDashboardSlug ? undefined : "full"}
-      >
+      <Container h="100%" size={!params?.electionDashboardSlug ? "md" : "full"}>
         <Group h="100%" align="center" gap="xs">
           {params?.electionDashboardSlug && (
             <Burger
