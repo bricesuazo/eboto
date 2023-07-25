@@ -1,3 +1,4 @@
+import ReactPlayer from "@/components/client/components/react-player";
 import classes from "@/styles/Home.module.css";
 import { FAQs } from "@eboto-mo/api/src/constants";
 import {
@@ -8,17 +9,16 @@ import {
   Box,
   Button,
   Container,
-  Grid,
-  GridCol,
   SimpleGrid,
   Stack,
   Text,
   Title,
-  rem,
 } from "@mantine/core";
 import Image from "next/image";
 import Link from "next/link";
 import Balancer from "react-wrap-balancer";
+
+// export const runtime = "edge";
 
 export default function HomePage() {
   return (
@@ -28,7 +28,7 @@ export default function HomePage() {
       <Dots className={classes.dots} style={{ left: 0, top: 140 }} />
       <Dots className={classes.dots} style={{ right: 0, top: 60 }} />
 
-      <Box pos="relative" py={128}>
+      <Box pos="relative" py={156}>
         <Title className={classes.title}>
           <Balancer>
             Your{" "}
@@ -69,6 +69,21 @@ export default function HomePage() {
           </Button>
         </Box>
       </Box>
+
+      <Stack gap="lg" py="xl">
+        <Title order={2} ta="center">
+          <Balancer>Ano ang eBoto Mo? (What is eBoto Mo?)</Balancer>
+        </Title>
+        <ReactPlayer
+          url="https://www.youtube.com/watch?v=BKud553RTbk"
+          width="100%"
+          height="100%"
+          style={{
+            aspectRatio: "16/9",
+          }}
+          controls
+        />
+      </Stack>
 
       <SimpleGrid cols={{ base: 1, sm: 2 }} py="xl">
         <Box
