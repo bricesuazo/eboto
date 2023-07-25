@@ -65,7 +65,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
           )}
           <Group justify="space-between" w="100%">
             <UnstyledButton component={Link} href={user ? "/dashboard" : "/"}>
-              <Group gap="md">
+              <Group gap="xs">
                 <Image
                   src="/images/logo.png"
                   alt="eBoto Mo Logo"
@@ -80,7 +80,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
                       ? theme.colors.gray[0]
                       : theme.colors.gray[9]
                   }
-                  visibleFrom="sm"
+                  visibleFrom="xs"
                 >
                   eBoto Mo
                 </Text>

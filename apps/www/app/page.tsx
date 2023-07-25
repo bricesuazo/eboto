@@ -1,13 +1,17 @@
-"use client";
-
 import classes from "@/styles/Home.module.css";
 import { FAQs } from "@eboto-mo/api/src/constants";
 import {
   Accordion,
+  AccordionControl,
+  AccordionItem,
+  AccordionPanel,
   Box,
   Button,
   Container,
   Grid,
+  GridCol,
+  SimpleGrid,
+  Stack,
   Text,
   Title,
   rem,
@@ -18,13 +22,13 @@ import Balancer from "react-wrap-balancer";
 
 export default function HomePage() {
   return (
-    <Container className={classes.wrapper}>
+    <Container size="md" className={classes.wrapper}>
       <Dots className={classes.dots} style={{ left: 0, top: 0 }} />
       <Dots className={classes.dots} style={{ left: 60, top: 0 }} />
       <Dots className={classes.dots} style={{ left: 0, top: 140 }} />
       <Dots className={classes.dots} style={{ right: 0, top: 60 }} />
 
-      <Box pos="relative" mih="52vh">
+      <Box pos="relative" py={128}>
         <Title className={classes.title}>
           <Balancer>
             Your{" "}
@@ -35,7 +39,7 @@ export default function HomePage() {
           </Balancer>
         </Title>
 
-        <Container p={0}>
+        <Container p={0} size="md">
           <Text size="lg" color="dimmed" className={classes.description}>
             <Balancer>
               Empower your elections with eBoto Mo, the versatile and web-based
@@ -66,42 +70,29 @@ export default function HomePage() {
         </Box>
       </Box>
 
-      <Grid>
-        <Grid.Col
-          span={12}
-          // sm={6}
+      <SimpleGrid cols={{ base: 1, sm: 2 }} py="xl">
+        <Box
+          pos="relative"
+          style={{
+            aspectRatio: "3/2",
+          }}
         >
-          <Box
-            pos="relative"
+          <Image
+            src="/images/faq.svg"
+            fill
+            alt="Frequently Asked Questions"
             style={{
-              aspectRatio: "3/2",
+              userSelect: "none",
+              pointerEvents: "none",
             }}
-          >
-            <Image
-              src="/images/faq.svg"
-              fill
-              alt="Frequently Asked Questions"
-              style={{
-                userSelect: "none",
-                pointerEvents: "none",
-              }}
-            />
-          </Box>
-        </Grid.Col>
-        <Grid.Col
-          span={12}
-          // sm={6}
-        >
-          <Title
-            order={2}
-            ta="left"
-            p="md"
-            // style={(theme) => ({
-            //   [theme.fn.smallerThan("sm")]: {
-            //     textAlign: "center",
-            //   },
-            // })}
-          >
+          />
+        </Box>
+
+        <Box>
+          <Title order={2} ta="left" p="md" visibleFrom="sm">
+            Frequently Asked Questions
+          </Title>
+          <Title order={2} ta="center" p="md" hiddenFrom="sm">
             Frequently Asked Questions
           </Title>
 
@@ -111,14 +102,14 @@ export default function HomePage() {
             variant="separated"
           >
             {FAQs.map((item) => (
-              <Accordion.Item key={item.id} value={item.id}>
-                <Accordion.Control>{item.question}</Accordion.Control>
-                <Accordion.Panel>{item.answer}</Accordion.Panel>
-              </Accordion.Item>
+              <AccordionItem key={item.id} value={item.id}>
+                <AccordionControl>{item.question}</AccordionControl>
+                <AccordionPanel>{item.answer}</AccordionPanel>
+              </AccordionItem>
             ))}
           </Accordion>
-        </Grid.Col>
-      </Grid>
+        </Box>
+      </SimpleGrid>
     </Container>
   );
 }

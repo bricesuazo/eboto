@@ -1,24 +1,14 @@
 .wrapper {
-  position: "relative";
-  padding-top: rem(120);
-  padding-bottom: rem(80);
-
-  /* [theme.fn.smallerThan("sm")]: {
-      paddingTop: rem(80),
-      paddingBottom: rem(60),
-    }, */
+  position: relative;
 }
 
 .dots {
-  position: "absolute";
-  /* color:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[5]
-        : theme.colors.gray[1], */
+  position: absolute;
+  color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
 
-  /* [theme.fn.smallerThan("sm")]: {
-      display: "none",
-    }, */
+  @media (max-width: $mantine-breakpoint-sm) {
+    display: none;
+  }
 }
 
 .dotsLeft {
@@ -27,56 +17,47 @@
 }
 
 .title {
-  text-align: "center";
-  font-size: rem(40);
+  text-align: center;
+  font-size: rem(48px);
   letter-spacing: -1;
-  /* color: theme.colorScheme === "dark" ? theme.white : theme.black; */
-  margin-bottom: var();
+  color: light-dark(black, white);
+  margin-bottom: var(--mantine-spacing-md);
 
-  /* [theme.fn.smallerThan("xs")]: {
-      fontSize: rem(28),
-      textAlign: "left",
-    }, */
+  @media (max-width: $mantine-breakpoint-sm) {
+    text-align: left;
+    font-size: rem(40px);
+  }
+  @media (max-width: $mantine-breakpoint-xs) {
+    text-align: left;
+    font-size: rem(32px);
+  }
 }
 
 .highlight {
-  /* color:
-      theme.colorScheme === "dark"
-        ? theme.colors.green[5]
-        : theme.colors.green[7], */
+  color: light-dark(var(--mantine-color-green-7), var(--mantine-color-green-5));
 }
 
 .description {
-  text-align: "center";
+  text-align: center;
+  font-size: var(--mantine-font-size-xl);
 
-  /* [theme.fn.smallerThan("xs")]: {
-      textAlign: "left",
-      fontSize: var(--mantine-font-size-xl),
-    }, */
+  @media (max-width: $mantine-breakpoint-sm) {
+    text-align: left;
+    font-size: var(--mantine-font-size-lg);
+  }
+  @media (max-width: $mantine-breakpoint-xs) {
+    text-align: left;
+    font-size: var(--mantine-font-size-md);
+  }
 }
 
 .controls {
   margin-top: var(--mantine-spacing-lg);
-  display: "flex";
-  justify-content: "center";
+  display: flex;
+  justify-content: center;
+  gap: var(--mantine-spacing-sm);
 
-  /* [theme.fn.smallerThan("xs")]: {
-      flex-direction: "column";
-    } */
-}
-
-.control {
-  /* "&:not(:first-of-type)": {
-      marginLeft: var(--mantine-spacing-md),
-    },
-
-    [theme.fn.smallerThan("xs")]: {
-      height: rem(42),
-      fontSize: var(--mantine-font-size-md),
-
-      "&:not(:first-of-type)": {
-        marginTop: var(--mantine-spacing-md),
-        marginLeft: 0,
-      },
-    }, */
+  @media (max-width: $mantine-breakpoint-sm) {
+    flex-direction: column;
+  }
 }
