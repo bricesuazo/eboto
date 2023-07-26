@@ -7,6 +7,6 @@ module.exports = {
     forceSwcTransforms: true,
   },
   images: {
-    domains: ["lh3.googleusercontent.com"],
+    domains: ["lh3.googleusercontent.com", "img.clerk.com"],
   },
 };

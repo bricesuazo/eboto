@@ -1,3 +1,5 @@
+"use client";
+
 import type { Election, Vote } from "@eboto-mo/db/schema";
 import { ActionIcon, Box, Text, UnstyledButton, rem } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
