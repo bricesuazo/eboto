@@ -1,4 +1,3 @@
-import ReactPlayer from "@/components/client/components/react-player";
 import classes from "@/styles/Home.module.css";
 import { FAQs } from "@eboto-mo/api/src/constants";
 import {
@@ -14,9 +13,15 @@ import {
   Text,
   Title,
 } from "@mantine/core";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import Balancer from "react-wrap-balancer";
+
+const ReactPlayer = dynamic(
+  () => import("@/components/client/components/react-player"),
+  { ssr: false },
+);
 
 export default function HomePage() {
   return (

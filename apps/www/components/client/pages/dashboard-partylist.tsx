@@ -4,14 +4,7 @@ import CreatePartylist from "@/components/client/modals/create-partylist";
 import DeletePartylist from "@/components/client/modals/delete-partylist";
 import EditPartylist from "@/components/client/modals/edit-partylist";
 import type { Election, Partylist } from "@eboto-mo/db/schema";
-import {
-  Box,
-  Center, // Flex,
-  Group,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Box, Center, Group, Stack, Text, Title } from "@mantine/core";
 import { IconFlag } from "@tabler/icons-react";
 
 export default function DashboardPartylist({

@@ -4,7 +4,7 @@ import { api } from "@/trpc/client";
 import type { Position } from "@eboto-mo/db/schema";
 import {
   Button,
-  Checkbox, // Flex,
+  Checkbox,
   Group,
   Modal, // NumberInput,
   Stack,

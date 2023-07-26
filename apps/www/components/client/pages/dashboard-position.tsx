@@ -3,13 +3,7 @@
 import DeletePosition from "@/components/client/modals/delete-position";
 import EditPosition from "@/components/client/modals/edit-position";
 import type { Election, Position } from "@eboto-mo/db/schema";
-import {
-  // Flex,
-  Group,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Group, Stack, Text, Title } from "@mantine/core";
 
 import CreatePosition from "../modals/create-position";
 

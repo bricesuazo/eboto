@@ -5,7 +5,7 @@ import type { Candidate, Partylist, Position } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
   Box,
-  Button, // Flex,
+  Button,
   Group,
   Modal,
   Select,

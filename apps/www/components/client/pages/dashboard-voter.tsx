@@ -12,7 +12,7 @@ import type { Election, VoterField } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
   Box,
-  Button, // Flex,
+  Button,
   Group,
   Stack,
   Text,

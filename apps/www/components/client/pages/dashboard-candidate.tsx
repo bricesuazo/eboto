@@ -9,13 +9,7 @@ import type {
   Partylist,
   Position,
 } from "@eboto-mo/db/schema";
-import {
-  Anchor,
-  Box, // Flex,
-  Group,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { Anchor, Box, Group, Stack, Text } from "@mantine/core";
 import { IconUser } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";

@@ -5,7 +5,7 @@ import type { Election } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
   Box, // Button,
-  Group, // Flex,
+  Group,
   Stack,
   Text,
   Title,
