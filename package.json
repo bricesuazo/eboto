@@ -15,13 +15,13 @@
     "with-env": "dotenv -e .env --"
   },
   "devDependencies": {
-    "@eboto-mo/tsconfig": "workspace:*",
     "@eboto-mo/eslint-config": "workspace:*",
+    "@eboto-mo/tsconfig": "workspace:*",
     "@turbo/gen": "^1.10.11",
     "dotenv-cli": "^7.2.1",
     "eslint": "^8.45.0",
     "prettier": "^3.0.0",
-    "turbo": "^1.10.11"
+    "turbo": "^1.10.12"
   },
   "packageManager": "pnpm@8.6.7"
 }
