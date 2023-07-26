@@ -4,7 +4,6 @@ import { api } from "@/trpc/client";
 import type { Candidate, Partylist, Position } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
-  Alert,
   Box,
   Button, // Flex,
   Group,
@@ -17,17 +16,11 @@ import {
   rem,
 } from "@mantine/core";
 import { YearPickerInput } from "@mantine/dates";
-import {
-  Dropzone,
-  type FileWithPath,
-  IMAGE_MIME_TYPE,
-} from "@mantine/dropzone";
+import type { FileWithPath } from "@mantine/dropzone";
+import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconCheck } from "@tabler/icons-react";
 import {
-  IconAlertCircle,
   IconExternalLink,
   IconFlag,
   IconInfoCircle,
@@ -188,7 +181,7 @@ export default function EditCandidate({
         size="xs"
         w="100%"
         color="red"
-        onClick={async () => {
+        onClick={() => {
           if (type === "PLATFORM") {
             if (candidate.platforms.find((a) => a.id === id)) {
               // await deletePlatformMutation.mutateAsync({ id });
@@ -285,49 +278,51 @@ export default function EditCandidate({
       >
         <form
           onSubmit={form.onSubmit((values) => {
-            api.election.editCandidate.mutate({
-              id: candidate.id,
-              first_name: values.first_name,
-              middle_name: values.middle_name,
-              last_name: values.last_name,
-              slug: values.slug,
-              partylist_id: values.partylist_id,
-              election_id: candidate.election_id,
-              position_id: values.position,
-              image_link: "",
+            void (async () => {
+              await api.election.editCandidate.mutate({
+                id: candidate.id,
+                first_name: values.first_name,
+                middle_name: values.middle_name,
+                last_name: values.last_name,
+                slug: values.slug,
+                partylist_id: values.partylist_id,
+                election_id: candidate.election_id,
+                position_id: values.position,
+                image_link: "",
 
-              //   image: !value.image
-              //     ? null
-              //     : typeof value.image === "string"
-              //     ? value.image
-              //     : await uploadImage({
-              //         path: `elections/${candidate.electionId}/candidates/${
-              //           candidate.id
-              //         }/image/${Date.now().toString()}`,
-              //         image: value.image,
-              //       }),
+                //   image: !value.image
+                //     ? null
+                //     : typeof value.image === "string"
+                //     ? value.image
+                //     : await uploadImage({
+                //         path: `elections/${candidate.electionId}/candidates/${
+                //           candidate.id
+                //         }/image/${Date.now().toString()}`,
+                //         image: value.image,
+                //       }),
 
-              // platforms: value.platforms,
+                // platforms: value.platforms,
 
-              // achievements: value.achievements.map((a) => ({
-              //   id: a.id,
-              //   name: a.name,
-              //   year: new Date(a.year?.toDateString() ?? ""),
-              // })),
+                // achievements: value.achievements.map((a) => ({
+                //   id: a.id,
+                //   name: a.name,
+                //   year: new Date(a.year?.toDateString() ?? ""),
+                // })),
 
-              // affiliations: value.affiliations.map((a) => ({
-              //   id: a.id,
-              //   org_name: a.org_name,
-              //   org_position: a.org_position,
-              //   start_year: new Date(a.start_year?.toDateString() ?? ""),
-              //   end_year: new Date(a.end_year?.toDateString() ?? ""),
-              // })),
-              // eventsAttended: value.events_attended.map((a) => ({
-              //   id: a.id,
-              //   name: a.name,
-              //   year: new Date(a.year?.toDateString() ?? ""),
-              // })),
-            });
+                // affiliations: value.affiliations.map((a) => ({
+                //   id: a.id,
+                //   org_name: a.org_name,
+                //   org_position: a.org_position,
+                //   start_year: new Date(a.start_year?.toDateString() ?? ""),
+                //   end_year: new Date(a.end_year?.toDateString() ?? ""),
+                // })),
+                // eventsAttended: value.events_attended.map((a) => ({
+                //   id: a.id,
+                //   name: a.name,
+                //   year: new Date(a.year?.toDateString() ?? ""),
+                // })),
+              });
+            })();
           })}
         >
           <Tabs radius="xs" defaultValue="basic-info">
@@ -462,7 +457,7 @@ export default function EditCandidate({
                           <Group justify="center">
                             <Box
                               pos="relative"
-                              style={(theme) => ({
+                              style={() => ({
                                 width: rem(120),
                                 height: rem(120),
 
@@ -492,7 +487,7 @@ export default function EditCandidate({
                             <Group>
                               <Box
                                 pos="relative"
-                                style={(theme) => ({
+                                style={() => ({
                                   width: rem(120),
                                   height: rem(120),
 

@@ -1,14 +1,9 @@
 "use client";
 
 import { api } from "@/trpc/client";
-import { Alert, Button, Group, Modal, Stack, Text } from "@mantine/core";
+import { Button, Group, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import {
-  IconAlertCircle,
-  IconCheck,
-  IconMailForward,
-} from "@tabler/icons-react";
+import { IconMailForward } from "@tabler/icons-react";
 
 export default function InviteAllAddedVoters({
   election_id,

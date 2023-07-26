@@ -19,11 +19,8 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { IconRefresh } from "@tabler/icons-react";
-import {
-  type MRT_ColumnDef,
-  type MRT_RowSelectionState,
-  MantineReactTable,
-} from "mantine-react-table";
+import type { MRT_ColumnDef, MRT_RowSelectionState } from "mantine-react-table";
+import { MantineReactTable } from "mantine-react-table";
 import moment from "moment";
 import { useMemo, useState } from "react";
 
@@ -175,7 +172,7 @@ export default function DashboardVoter({
                 <div>
                   <ActionIcon
                     variant="light"
-                    onClick={async () => {
+                    onClick={() => {
                       setIsRefreshing(true);
                       // await context.election.getVotersByElectionId.invalidate();
                       setIsRefreshing(false);
@@ -191,7 +188,7 @@ export default function DashboardVoter({
                   </ActionIcon>
                   <Button
                     variant="light"
-                    onClick={async () => {
+                    onClick={() => {
                       setIsRefreshing(true);
                       // await context.election.getVotersByElectionId.invalidate();
                       setIsRefreshing(false);

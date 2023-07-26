@@ -4,7 +4,6 @@ import { api } from "@/trpc/client";
 import type { VoterField } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
-  Alert,
   Button,
   Group,
   Modal,
@@ -15,14 +14,7 @@ import {
 } from "@mantine/core";
 import { isEmail, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import {
-  IconAlertCircle,
-  IconAt,
-  IconCheck,
-  IconEdit,
-  IconLetterCase,
-} from "@tabler/icons-react";
+import { IconAt, IconEdit, IconLetterCase } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
 export default function EditVoter({
@@ -33,14 +25,14 @@ export default function EditVoter({
   election_id: string;
   voter: {
     id: string;
-    field: { [key: string]: string };
+    field: Record<string, string>;
     email: string;
     account_status: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
   };
   voter_fields: VoterField[];
 }) {
   const [opened, { open, close }] = useDisclosure(false);
-  const [data, setData] = useState<
+  const [data] = useState<
     {
       fieldName: string;
       values: {
@@ -50,9 +42,7 @@ export default function EditVoter({
   >([]);
   const form = useForm<{
     email: string;
-    field: {
-      [key: string]: string;
-    };
+    field: Record<string, string>;
   }>({
     initialValues: {
       email: voter.email,
@@ -128,13 +118,15 @@ export default function EditVoter({
       >
         <form
           onSubmit={form.onSubmit((values) => {
-            api.election.editVoter.mutate({
-              id: voter.id,
-              election_id,
-              field: values.field,
-              email: values.email,
-              account_status: voter.account_status,
-            });
+            void (async () => {
+              await api.election.editVoter.mutate({
+                id: voter.id,
+                election_id,
+                field: values.field,
+                email: values.email,
+                account_status: voter.account_status,
+              });
+            })();
           })}
         >
           <Stack gap="sm">
@@ -161,7 +153,7 @@ export default function EditVoter({
                     ?.values.map((item) => ({
                       value: item.value,
                       label: item.value,
-                    })) || []
+                    })) ?? []
                 }
                 // onCreate={(query) => {
                 //   setData((prev) =>

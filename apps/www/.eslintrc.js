@@ -1,4 +1,7 @@
 module.exports = {
   root: true,
-  extends: ["@eboto-mo/eslint-config"],
+  extends: [
+    // "../../packages/config/eslint/nextjs",
+    "@eboto-mo/eslint-config/base",
+  ],
 };

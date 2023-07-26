@@ -2,7 +2,6 @@
 
 import { api } from "@/trpc/client";
 import {
-  Alert,
   Button,
   Checkbox, // Flex,
   Group,
@@ -13,13 +12,7 @@ import {
 } from "@mantine/core";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import {
-  IconAlertCircle,
-  IconCheck,
-  IconLetterCase,
-  IconReplace,
-} from "@tabler/icons-react";
+import { IconLetterCase, IconReplace } from "@tabler/icons-react";
 import { useEffect } from "react";
 
 export default function CreatePosition({
@@ -100,7 +93,7 @@ export default function CreatePosition({
   return (
     <>
       <Button
-        style={(theme) => ({
+        style={() => ({
           width: "fit-content",
           // [theme.fn.smallerThan("xs")]: { width: "100%" },
         })}
@@ -119,13 +112,15 @@ export default function CreatePosition({
       >
         <form
           onSubmit={form.onSubmit((value) => {
-            api.election.createPosition.mutate({
-              name: value.name,
-              election_id,
-              order,
-              min: form.values.isSingle ? value.min : undefined,
-              max: form.values.isSingle ? value.max : undefined,
-            });
+            void (async () => {
+              await api.election.createPosition.mutate({
+                name: value.name,
+                election_id,
+                order,
+                min: form.values.isSingle ? value.min : undefined,
+                max: form.values.isSingle ? value.max : undefined,
+              });
+            })();
           })}
         >
           <Stack gap="sm">

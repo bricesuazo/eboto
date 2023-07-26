@@ -15,6 +15,7 @@
     "with-env": "dotenv -e .env --"
   },
   "devDependencies": {
+    "@eboto-mo/tsconfig": "workspace:*",
     "@eboto-mo/eslint-config": "workspace:*",
     "@turbo/gen": "^1.10.11",
     "dotenv-cli": "^7.2.1",

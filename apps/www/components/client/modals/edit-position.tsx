@@ -1,9 +1,8 @@
 "use client";
 
 import { api } from "@/trpc/client";
-import { type Position } from "@eboto-mo/db/schema";
+import type { Position } from "@eboto-mo/db/schema";
 import {
-  Alert,
   Button,
   Checkbox, // Flex,
   Group,
@@ -14,8 +13,7 @@ import {
 } from "@mantine/core";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconCheck, IconLetterCase } from "@tabler/icons-react";
+import { IconLetterCase } from "@tabler/icons-react";
 import { useEffect } from "react";
 
 export default function EditPosition({
@@ -113,14 +111,16 @@ export default function EditPosition({
       >
         <form
           onSubmit={form.onSubmit((value) => {
-            api.election.editPosition.mutate({
-              id: position.id,
-              name: value.name,
-              min: value.isSingle ? value.min : undefined,
-              max: value.isSingle ? value.max : undefined,
-              order,
-              election_id: position.election_id,
-            });
+            void (async () => {
+              await api.election.editPosition.mutate({
+                id: position.id,
+                name: value.name,
+                min: value.isSingle ? value.min : undefined,
+                max: value.isSingle ? value.max : undefined,
+                order,
+                election_id: position.election_id,
+              });
+            })();
           })}
         >
           <Stack gap="sm">

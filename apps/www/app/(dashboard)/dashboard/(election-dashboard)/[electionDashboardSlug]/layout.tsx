@@ -2,7 +2,7 @@ import DashboardLayout from "@/components/client/layouts/dashboard-layout";
 import { siteConfig } from "@/config/site";
 import { auth } from "@clerk/nextjs";
 import { db } from "@eboto-mo/db";
-import { type Metadata, type ResolvingMetadata } from "next";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata(
@@ -11,7 +11,7 @@ export async function generateMetadata(
   }: {
     params: { electionDashboardSlug: string };
   },
-  parent: ResolvingMetadata,
+  // parent: ResolvingMetadata,
 ): Promise<Metadata> {
   const { userId } = auth();
 
@@ -36,7 +36,7 @@ export async function generateMetadata(
   };
 }
 
-export default async function ElectionDashboardLayout({
+export default function ElectionDashboardLayout({
   children,
 }: {
   children: React.ReactNode;

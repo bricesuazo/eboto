@@ -2,12 +2,7 @@
 
 import CreateElection from "@/components/client/modals/create-election";
 import DashboardCard from "@/components/server/components/dashboard-card";
-import {
-  type Commissioner,
-  type Election,
-  type Vote,
-  type Voter,
-} from "@eboto-mo/db/schema";
+import type { Commissioner, Election, Vote, Voter } from "@eboto-mo/db/schema";
 import {
   Box,
   Container, // Flex,
@@ -55,8 +50,8 @@ export default function DashboardPageClient({
             You can manage the elections below.
           </Text>
           <Group>
-            {false ? (
-              [...Array(3)].map((i) => (
+            {!commissioners ? (
+              Array(3).map((_, i) => (
                 <Skeleton
                   key={i}
                   width={250}
@@ -106,8 +101,8 @@ export default function DashboardPageClient({
           </Text>
 
           <Group>
-            {false ? (
-              [...Array(3)].map((i) => (
+            {!voters ? (
+              Array(3).map((_, i) => (
                 <Skeleton
                   key={i}
                   width={250}

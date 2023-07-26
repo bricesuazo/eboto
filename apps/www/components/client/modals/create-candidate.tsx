@@ -1,9 +1,8 @@
 "use client";
 
 import { api } from "@/trpc/client";
-import { type Partylist, type Position } from "@eboto-mo/db/schema";
+import type { Partylist, Position } from "@eboto-mo/db/schema";
 import {
-  Alert,
   Box,
   Button, // Flex,
   Group,
@@ -16,14 +15,13 @@ import {
   UnstyledButton,
   rem,
 } from "@mantine/core";
-import { DateValue, YearPickerInput } from "@mantine/dates";
-import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from "@mantine/dropzone";
+import { YearPickerInput } from "@mantine/dates";
+import type { DateValue } from "@mantine/dates";
+import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
+import type { FileWithPath } from "@mantine/dropzone";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
 import {
-  IconAlertCircle,
-  IconCheck,
   IconFlag,
   IconInfoCircle,
   IconLetterCase,
@@ -34,7 +32,7 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 export default function CreateCandidate({
@@ -48,7 +46,6 @@ export default function CreateCandidate({
 }) {
   const [opened, { open, close }] = useDisclosure(false);
 
-  const router = useRouter();
   const params = useParams();
   const openRef = useRef<() => void>(null);
 
@@ -234,36 +231,38 @@ export default function CreateCandidate({
       >
         <form
           onSubmit={form.onSubmit((value) => {
-            api.election.createCandidate.mutate({
-              first_name: value.first_name,
-              last_name: value.last_name,
-              slug: value.slug,
-              partylist_id: value.partylist_id,
-              position_id: value.position_id,
-              middle_name: value.middle_name,
-              election_id: position.election_id,
-              image_link: "",
+            void (async () => {
+              await api.election.createCandidate.mutate({
+                first_name: value.first_name,
+                last_name: value.last_name,
+                slug: value.slug,
+                partylist_id: value.partylist_id,
+                position_id: value.position_id,
+                middle_name: value.middle_name,
+                election_id: position.election_id,
+                image_link: "",
 
-              // platforms: value.platforms.map((p) => ({
-              //   title: p.title,
-              //   description: p.description,
-              // })),
+                // platforms: value.platforms.map((p) => ({
+                //   title: p.title,
+                //   description: p.description,
+                // })),
 
-              // achievements: value.achievements.map((a) => ({
-              //   name: a.name,
-              //   year: new Date(a.year?.toDateString() ?? ""),
-              // })),
-              // affiliations: value.affiliations.map((a) => ({
-              //   org_name: a.org_name,
-              //   org_position: a.org_position,
-              //   start_year: new Date(a.start_year?.toDateString() ?? ""),
-              //   end_year: new Date(a.end_year?.toDateString() ?? ""),
-              // })),
-              // eventsAttended: value.eventsAttended.map((a) => ({
-              //   name: a.name,
-              //   year: new Date(a.year?.toDateString() ?? ""),
-              // })),
-            });
+                // achievements: value.achievements.map((a) => ({
+                //   name: a.name,
+                //   year: new Date(a.year?.toDateString() ?? ""),
+                // })),
+                // affiliations: value.affiliations.map((a) => ({
+                //   org_name: a.org_name,
+                //   org_position: a.org_position,
+                //   start_year: new Date(a.start_year?.toDateString() ?? ""),
+                //   end_year: new Date(a.end_year?.toDateString() ?? ""),
+                // })),
+                // eventsAttended: value.eventsAttended.map((a) => ({
+                //   name: a.name,
+                //   year: new Date(a.year?.toDateString() ?? ""),
+                // })),
+              });
+            })();
           })}
         >
           <Tabs radius="xs" defaultValue="basic-info">
@@ -393,7 +392,7 @@ export default function CreateCandidate({
                         <Group justify="center">
                           <Box
                             pos="relative"
-                            style={(theme) => ({
+                            style={() => ({
                               width: rem(120),
                               height: rem(120),
 

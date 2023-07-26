@@ -1,4 +1,4 @@
-import { type Election, type Vote } from "@eboto-mo/db/schema";
+import type { Election, Vote } from "@eboto-mo/db/schema";
 import { ActionIcon, Box, Text, UnstyledButton, rem } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import { IconExternalLink } from "@tabler/icons-react";
@@ -19,7 +19,7 @@ const DashboardCard = ({
   return (
     <Box
       ref={ref}
-      style={(theme) => ({
+      style={() => ({
         position: "relative",
 
         // [theme.fn.smallerThan("xs")]: { width: "100%" },

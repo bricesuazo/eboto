@@ -11,6 +11,9 @@ importers:
       '@eboto-mo/eslint-config':
         specifier: workspace:*
         version: link:packages/config/eslint
+      '@eboto-mo/tsconfig':
+        specifier: workspace:*
+        version: link:packages/config/tsconfig
       '@turbo/gen':
         specifier: ^1.10.11
         version: registry.npmjs.org/@turbo/gen@1.10.11(@types/node@20.4.4)(typescript@5.1.6)
@@ -38,6 +41,9 @@ importers:
       '@eboto-mo/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@eboto-mo/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/config/eslint
       '@emotion/react':
         specifier: ^11.11.1
         version: registry.npmjs.org/@emotion/react@11.11.1(@types/react@18.2.16)(react@18.2.0)
@@ -168,9 +174,6 @@ importers:
         specifier: ^4.3.9
         version: registry.npmjs.org/zustand@4.3.9(react@18.2.0)
     devDependencies:
-      '@eboto-mo/eslint-config':
-        specifier: workspace:*
-        version: link:../../packages/config/eslint
       '@eboto-mo/tsconfig':
         specifier: workspace:*
         version: link:../../packages/config/tsconfig

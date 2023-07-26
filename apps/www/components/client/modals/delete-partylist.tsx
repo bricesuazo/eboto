@@ -1,12 +1,9 @@
 "use client";
 
 import { api } from "@/trpc/client";
-import { type Partylist } from "@eboto-mo/db/schema";
-import { Alert, Button, Group, Mark, Modal, Stack, Text } from "@mantine/core";
+import type { Partylist } from "@eboto-mo/db/schema";
+import { Button, Group, Mark, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconCheck } from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
 
 export default function DeletePartylist({
   partylist,

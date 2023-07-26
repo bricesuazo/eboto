@@ -1,24 +1,11 @@
 "use client";
 
 import { api } from "@/trpc/client";
-import { Partylist } from "@eboto-mo/db/schema";
-import {
-  Alert,
-  Button,
-  Group,
-  Modal,
-  Stack,
-  Text,
-  TextInput,
-} from "@mantine/core";
+import type { Partylist } from "@eboto-mo/db/schema";
+import { Button, Group, Modal, Stack, Text, TextInput } from "@mantine/core";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import {
-  IconAlertCircle,
-  IconCheck,
-  IconLetterCase,
-} from "@tabler/icons-react";
+import { IconLetterCase } from "@tabler/icons-react";
 import { useEffect } from "react";
 
 export default function EditPartylist({ partylist }: { partylist: Partylist }) {
@@ -107,15 +94,17 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
       >
         <form
           onSubmit={form.onSubmit((value) => {
-            api.election.editPartylist.mutate({
-              id: partylist.id,
-              name: value.name,
-              oldAcronym: partylist.acronym,
-              newAcronym: value.newAcronym,
-              election_id: partylist.election_id,
-              description: value.description,
-              logo_link: value.logo_link,
-            });
+            void (async () => {
+              await api.election.editPartylist.mutate({
+                id: partylist.id,
+                name: value.name,
+                oldAcronym: partylist.acronym,
+                newAcronym: value.newAcronym,
+                election_id: partylist.election_id,
+                description: value.description,
+                logo_link: value.logo_link,
+              });
+            })();
           })}
         >
           <Stack gap="sm">

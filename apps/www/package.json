@@ -55,10 +55,10 @@
     "superjson": "^1.13.1",
     "xlsx": "^0.18.5",
     "zod": "^3.21.4",
-    "zustand": "^4.3.9"
+    "zustand": "^4.3.9",
+    "@eboto-mo/eslint-config": "workspace:*"
   },
   "devDependencies": {
-    "@eboto-mo/eslint-config": "workspace:*",
     "@eboto-mo/tsconfig": "workspace:*",
     "@tanstack/eslint-plugin-query": "^4.29.25",
     "@trivago/prettier-plugin-sort-imports": "^4.2.0",

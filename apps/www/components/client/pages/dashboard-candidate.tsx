@@ -3,11 +3,11 @@
 import CreateCandidate from "@/components/client/modals/create-candidate";
 import DeleteCandidate from "@/components/client/modals/delete-candidate";
 import EditCandidate from "@/components/client/modals/edit-candidate";
-import {
-  type Candidate,
-  type Election,
-  type Partylist,
-  type Position,
+import type {
+  Candidate,
+  Election,
+  Partylist,
+  Position,
 } from "@eboto-mo/db/schema";
 import {
   Anchor,
@@ -222,7 +222,7 @@ const CandidateCard = ({
         p={8}
         align="center"
         justify="space-between"
-        style={(theme) => ({
+        style={() => ({
           width: 200,
           border: "1px solid",
           // borderColor:

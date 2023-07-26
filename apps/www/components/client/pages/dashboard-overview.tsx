@@ -1,11 +1,10 @@
 "use client";
 
 import QRCode from "@/components/client/modals/show-qr-code";
-import { type Election } from "@eboto-mo/db/schema";
+import type { Election } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
-  Box,
-  Button,
+  Box, // Button,
   Group, // Flex,
   Stack,
   Text,

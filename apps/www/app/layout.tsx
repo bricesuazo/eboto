@@ -1,13 +1,11 @@
 import { siteConfig } from "@/config/site";
-import { ClerkProvider, currentUser } from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 import { Notifications } from "@mantine/notifications";
 import { Analytics } from "@vercel/analytics/react";
-import { type Metadata } from "next";
+import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
-
-// export const revalidate = 0;
 
 const font = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -60,7 +58,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;

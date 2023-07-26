@@ -3,5 +3,6 @@ packages:
   - "packages/*"
   - packages/api
   - packages/db
-  - packages/config/*
+  - packages/config/eslint
+  - packages/config/tsconfig
   - packages/ui

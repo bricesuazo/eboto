@@ -1,13 +1,18 @@
 "use client";
 
-import {
-  // Flex,
-  Group, Stack, Text, Title
-} from "@mantine/core";
-import CreatePosition from "../modals/create-position";
-import { Election, Position } from "@eboto-mo/db/schema";
 import DeletePosition from "@/components/client/modals/delete-position";
 import EditPosition from "@/components/client/modals/edit-position";
+import type { Election, Position } from "@eboto-mo/db/schema";
+import {
+  // Flex,
+  Group,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
+
+import CreatePosition from "../modals/create-position";
+
 export default function DashboardPosition({
   election,
   positions,
@@ -15,7 +20,6 @@ export default function DashboardPosition({
   election: Election;
   positions: Position[];
 }) {
-
   return (
     <Stack>
       <CreatePosition election_id={election.id} order={positions.length} />
@@ -25,7 +29,7 @@ export default function DashboardPosition({
           <Text>No positions yet.</Text>
         ) : (
           positions.map((position) => (
-            <Position
+            <PositionComponent
               key={position.id}
               position={position}
               order={positions.length}
@@ -37,13 +41,13 @@ export default function DashboardPosition({
   );
 }
 
-const Position = ({
+function PositionComponent({
   position,
   order,
 }: {
   position: Position;
   order: number;
-}) => {
+}) {
   return (
     <>
       <Group
@@ -70,7 +74,10 @@ const Position = ({
           // },
         })}
       >
-        <Title order={4} ta="center" w="full"
+        <Title
+          order={4}
+          ta="center"
+          w="full"
           // lineClamp={2}
         >
           {position.name}
@@ -83,4 +90,4 @@ const Position = ({
       </Group>
     </>
   );
-};
+}

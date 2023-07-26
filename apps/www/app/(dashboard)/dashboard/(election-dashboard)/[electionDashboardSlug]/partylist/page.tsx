@@ -1,7 +1,7 @@
 import DashboardPartylist from "@/components/client/pages/dashboard-partylist";
 import { db } from "@eboto-mo/db";
 import { not } from "drizzle-orm";
-import { type Metadata } from "next";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {

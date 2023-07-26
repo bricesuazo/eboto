@@ -1,6 +1,6 @@
 "use client";
 
-import { type Election } from "@eboto-mo/db/schema";
+import type { Election } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
   Button,

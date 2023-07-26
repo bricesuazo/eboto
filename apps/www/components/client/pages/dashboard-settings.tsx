@@ -1,9 +1,9 @@
 "use client";
 
 import { api } from "@/trpc/client";
-import { type Election, type Publicity, publicity } from "@eboto-mo/db/schema";
+import type { Election, Publicity } from "@eboto-mo/db/schema";
+import { publicity } from "@eboto-mo/db/schema";
 import {
-  Alert,
   Box,
   Button,
   Group,
@@ -14,25 +14,12 @@ import {
   TextInput, // Textarea,
   rem,
 } from "@mantine/core";
-import { DateTimePicker } from "@mantine/dates";
-import {
-  Dropzone,
-  type FileWithPath,
-  IMAGE_MIME_TYPE,
-} from "@mantine/dropzone";
+import type { FileWithPath } from "@mantine/dropzone";
+import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import {
-  IconCalendar,
-  IconCheck,
-  IconLetterCase,
-  IconX,
-} from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { IconLetterCase, IconX } from "@tabler/icons-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useRef } from "react";
 
 export default function DashboardSettings({
@@ -40,7 +27,6 @@ export default function DashboardSettings({
 }: {
   election: Election;
 }) {
-  const router = useRouter();
   // const { mutate, isLoading, isError, error } =
   //   api.election.editElection.useMutation({
   //     onSuccess: async () => {
@@ -241,17 +227,19 @@ export default function DashboardSettings({
 
       <form
         onSubmit={form.onSubmit((values) => {
-          api.election.editElection.mutate({
-            id: election.id,
-            name: values.name,
-            newSlug: values.newSlug,
-            description: values.description,
-            // voter_domain: values.voter_domain,
-            start_date: values.start_date,
-            end_date: values.end_date,
-            publicity: values.publicity,
-            logo: typeof values.logo === "string" ? values.logo : "",
-          });
+          void (async () => {
+            await api.election.editElection.mutate({
+              id: election.id,
+              name: values.name,
+              newSlug: values.newSlug,
+              description: values.description,
+              // voter_domain: values.voter_domain,
+              start_date: values.start_date,
+              end_date: values.end_date,
+              publicity: values.publicity,
+              logo: typeof values.logo === "string" ? values.logo : "",
+            });
+          })();
 
           // await updateElectionMutation.mutateAsync({
           //   id: value.id,
@@ -446,7 +434,7 @@ export default function DashboardSettings({
                       <Group>
                         <Box
                           pos="relative"
-                          style={(theme) => ({
+                          style={() => ({
                             width: rem(120),
                             height: rem(120),
 
@@ -476,7 +464,7 @@ export default function DashboardSettings({
                         <Group>
                           <Box
                             pos="relative"
-                            style={(theme) => ({
+                            style={() => ({
                               width: rem(120),
                               height: rem(120),
 

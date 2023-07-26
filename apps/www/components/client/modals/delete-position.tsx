@@ -1,11 +1,9 @@
 "use client";
 
 import { api } from "@/trpc/client";
-import { type Position } from "@eboto-mo/db/schema";
-import { Alert, Button, Group, Mark, Modal, Stack, Text } from "@mantine/core";
+import type { Position } from "@eboto-mo/db/schema";
+import { Button, Group, Mark, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
 
 export default function DeletePosition({ position }: { position: Position }) {
   const [opened, { open, close }] = useDisclosure(false);

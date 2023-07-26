@@ -1,7 +1,7 @@
 import DashboardVoter from "@/components/client/pages/dashboard-voter";
 import { clerkClient } from "@clerk/nextjs";
 import { db } from "@eboto-mo/db";
-import { type Metadata } from "next";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {

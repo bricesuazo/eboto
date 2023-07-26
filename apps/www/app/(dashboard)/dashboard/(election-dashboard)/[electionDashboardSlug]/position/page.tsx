@@ -1,6 +1,6 @@
 import DashboardPosition from "@/components/client/pages/dashboard-position";
 import { db } from "@eboto-mo/db";
-import { type Metadata } from "next";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {

@@ -3,7 +3,6 @@
 import { api } from "@/trpc/client";
 import {
   ActionIcon,
-  Alert,
   Button,
   Group, // List,
   Modal,
@@ -11,14 +10,12 @@ import {
   Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconAlertCircle, IconCheck, IconUserMinus } from "@tabler/icons-react";
+import { IconUserMinus } from "@tabler/icons-react";
 
 export default function DeleteBulkVoter({
   voters,
   election_id,
-  isDisabled,
-  onSuccess,
+  isDisabled, // onSuccess,
 }: {
   voters: {
     id: string;

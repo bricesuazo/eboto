@@ -4,7 +4,6 @@ import { api } from "@/trpc/client";
 import type { Election, VoterField } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
-  Alert,
   Button, // Flex,
   Group,
   Modal,
@@ -12,23 +11,24 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
-import { UseFormReturnType, useForm } from "@mantine/form";
+import type { UseFormReturnType } from "@mantine/form";
+import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import {
-  IconAlertCircle,
-  IconCheck,
-  IconTrash,
-  IconUsersGroup,
-} from "@tabler/icons-react";
+import { IconTrash, IconUsersGroup } from "@tabler/icons-react";
 import { useEffect } from "react";
 
-type Field = { id: string; name: string; type: "fromDb" | "fromInput" };
-type FormType = { field: Field[] };
+interface Field {
+  id: string;
+  name: string;
+  type: "fromDb" | "fromInput";
+}
+interface FormType {
+  field: Field[];
+}
 
 export default function UpdateVoterField({
   election,
-  voters,
+  // voters,
   isDisabled,
 }: {
   election: Election & { voter_fields: VoterField[] };
@@ -121,10 +121,12 @@ export default function UpdateVoterField({
       >
         <form
           onSubmit={form.onSubmit((values) => {
-            api.election.updateVoterField.mutate({
-              election_id: election.id,
-              fields: values.field,
-            });
+            void (async () => {
+              await api.election.updateVoterField.mutate({
+                election_id: election.id,
+                fields: values.field,
+              });
+            })();
           })}
         >
           <Stack gap="sm">
@@ -259,10 +261,12 @@ function VoterFieldInput({
         }}
         onClick={() => {
           if (field.type === "fromDb") {
-            api.election.updateVoterField.mutate({
-              election_id,
-              fields: form.values.field,
-            });
+            void (async () => {
+              await api.election.updateVoterField.mutate({
+                election_id,
+                fields: form.values.field,
+              });
+            })();
           }
         }}
       >

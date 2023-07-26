@@ -3,7 +3,7 @@
 import CreatePartylist from "@/components/client/modals/create-partylist";
 import DeletePartylist from "@/components/client/modals/delete-partylist";
 import EditPartylist from "@/components/client/modals/edit-partylist";
-import { Election, type Partylist } from "@eboto-mo/db/schema";
+import type { Election, Partylist } from "@eboto-mo/db/schema";
 import {
   Box,
   Center, // Flex,

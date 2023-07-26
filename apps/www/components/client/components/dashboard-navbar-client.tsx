@@ -3,10 +3,9 @@
 import CreateElection from "@/components/client/modals/create-election";
 import { useStore } from "@/store";
 import classes from "@/styles/DashboardNavbar.module.css";
-import { api } from "@/trpc/client";
 import { useClerk } from "@clerk/nextjs";
 import { electionDashboardNavbar } from "@eboto-mo/api/src/constants";
-import { Commissioner, Election } from "@eboto-mo/db/schema";
+import type { Commissioner, Election } from "@eboto-mo/db/schema";
 import {
   AppShell,
   Box,
@@ -14,7 +13,6 @@ import {
   Divider,
   Select,
   Stack,
-  Text,
   UnstyledButton,
 } from "@mantine/core";
 import {
@@ -32,8 +30,8 @@ export default function NavbarComponent() {
   const router = useRouter();
   const params = useParams();
   if (
-    !params ||
-    !params.electionDashboardSlug ||
+    !params ??
+    !params.electionDashboardSlug ??
     typeof params.electionDashboardSlug !== "string"
   )
     return null;
@@ -169,7 +167,7 @@ export default function NavbarComponent() {
           // }}
           value={params.electionDashboardSlug.toString()}
           onChange={(value) => {
-            router.push(`/dashboard/${value || ""}`);
+            router.push(`/dashboard/${value ?? ""}`);
             store.toggleDashboardMenu(false);
           }}
         />
@@ -189,7 +187,7 @@ export default function NavbarComponent() {
               key={item.id}
               component={Link}
               href={`/dashboard/${params.electionDashboardSlug.toString()}/${
-                item.path || ""
+                item.path ?? ""
               }`}
               onClick={() => {
                 store.dashboardMenu && store.toggleDashboardMenu(false);

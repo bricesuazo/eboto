@@ -3,7 +3,7 @@
 import { env } from "@/env.mjs";
 import { useStore } from "@/store";
 import { useClerk } from "@clerk/nextjs";
-import { User } from "@clerk/nextjs/api";
+import type { User } from "@clerk/nextjs/api";
 import {
   ActionIcon,
   Box,
@@ -29,14 +29,13 @@ import { IconMoon } from "@tabler/icons-react";
 import { IconSun } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 
 export default function HeaderContent({ user }: { user: User | null }) {
   const { signOut } = useClerk();
 
   const { colorScheme, setColorScheme } = useMantineColorScheme();
 
-  const pathname = usePathname();
   const params = useParams();
 
   const theme = useMantineTheme();

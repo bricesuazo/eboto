@@ -1,9 +1,8 @@
 "use client";
 
 import { api } from "@/trpc/client";
-import { type VoterField, voters } from "@eboto-mo/db/schema";
+import type { VoterField } from "@eboto-mo/db/schema";
 import {
-  Alert,
   Button,
   Group,
   Modal,
@@ -14,14 +13,7 @@ import {
 } from "@mantine/core";
 import { isEmail, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconCheck } from "@tabler/icons-react";
-import {
-  IconAlertCircle,
-  IconAt,
-  IconLetterCase,
-  IconUserPlus,
-} from "@tabler/icons-react";
+import { IconAt, IconLetterCase, IconUserPlus } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
 export default function CreateVoter({
@@ -54,7 +46,7 @@ export default function CreateVoter({
   //     },
   //   });
 
-  const [data, setData] = useState<
+  const [data] = useState<
     {
       fieldName: string;
       values: {
@@ -123,18 +115,20 @@ export default function CreateVoter({
       >
         <form
           onSubmit={form.onSubmit((value) => {
-            api.election.createVoter.mutate({
-              election_id,
-              email: value.email,
+            void (async () => {
+              await api.election.createVoter.mutate({
+                election_id,
+                email: value.email,
 
-              field: voter_fields.reduce(
-                (acc, field) => {
-                  acc[field.name] = value[field.name];
-                  return acc;
-                },
-                {} as Record<string, string>,
-              ),
-            });
+                field: voter_fields.reduce(
+                  (acc, field) => {
+                    acc[field.name] = value[field.name];
+                    return acc;
+                  },
+                  {} as Record<string, string>,
+                ),
+              });
+            })();
           })}
         >
           <Stack gap="sm">
@@ -155,7 +149,7 @@ export default function CreateVoter({
                     ?.values.map((item) => ({
                       value: item.value,
                       label: item.value,
-                    })) || []
+                    })) ?? []
                 }
                 // onCreate={(query) => {
                 //   setData((prev) =>

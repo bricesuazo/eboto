@@ -2,28 +2,11 @@
 
 import { api } from "@/trpc/client";
 import { positionTemplate } from "@eboto-mo/api/src/constants";
-import {
-  Alert,
-  Button,
-  Group,
-  MantineStyleProp,
-  Modal,
-  Select,
-  Stack,
-  Text,
-  TextInput,
-} from "@mantine/core";
-import { DateTimePicker } from "@mantine/dates";
+import type { MantineStyleProp } from "@mantine/core";
+import { Button, Group, Modal, Select, Stack, TextInput } from "@mantine/core";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import {
-  IconAlertCircle,
-  IconCalendar,
-  IconLetterCase,
-  IconPlus,
-  IconTemplate,
-} from "@tabler/icons-react";
-import { useRouter } from "next/navigation";
+import { IconLetterCase, IconPlus, IconTemplate } from "@tabler/icons-react";
 import { useEffect } from "react";
 
 export default function CreateElection({
@@ -31,7 +14,6 @@ export default function CreateElection({
 }: {
   style?: MantineStyleProp;
 }) {
-  const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
 
   const form = useForm<{
@@ -117,16 +99,18 @@ export default function CreateElection({
         <form
           onSubmit={form.onSubmit((value) => {
             const now = new Date();
-            api.election.createElection.mutate({
-              ...value,
-              name: value.name.trim(),
-              slug: value.slug.trim(),
-              start_date:
-                value.start_date ?? new Date(now.setDate(now.getDate() + 1)),
-              end_date:
-                value.end_date ?? new Date(now.setDate(now.getDate() + 5)),
-              template: parseInt(value.template),
-            });
+            void (async () => {
+              await api.election.createElection.mutate({
+                ...value,
+                name: value.name.trim(),
+                slug: value.slug.trim(),
+                start_date:
+                  value.start_date ?? new Date(now.setDate(now.getDate() + 1)),
+                end_date:
+                  value.end_date ?? new Date(now.setDate(now.getDate() + 5)),
+                template: parseInt(value.template),
+              });
+            })();
           })}
         >
           <Stack gap="sm">

@@ -1,13 +1,8 @@
 import DashboardPageClient from "@/components/client/pages/dashboard";
 import { auth } from "@clerk/nextjs";
 import { db } from "@eboto-mo/db";
-import {
-  type Commissioner,
-  type Election,
-  type Vote,
-  type Voter,
-} from "@eboto-mo/db/schema";
-import { Metadata } from "next";
+import type { Commissioner, Election, Vote, Voter } from "@eboto-mo/db/schema";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {

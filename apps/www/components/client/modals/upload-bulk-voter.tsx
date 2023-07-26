@@ -1,10 +1,9 @@
 "use client";
 
 import { api } from "@/trpc/client";
-import { VoterField, voters } from "@eboto-mo/db/schema";
+import type { VoterField } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
-  Alert,
   Button, // Flex,
   Group,
   Modal,
@@ -12,14 +11,10 @@ import {
   Table,
   Text,
   rem,
-  useMantineTheme,
 } from "@mantine/core";
 import { Dropzone, MS_EXCEL_MIME_TYPE } from "@mantine/dropzone";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
 import {
-  IconAlertCircle,
-  IconCheck,
   IconDownload,
   IconFileSpreadsheet,
   IconTrash,
@@ -53,7 +48,6 @@ export default function UploadBulkVoter({
   //     },
   //   });
 
-  const theme = useMantineTheme();
   const [selectedFiles, setSelectedFiles] = useState<
     {
       fileName: string;

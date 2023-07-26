@@ -1,20 +1,10 @@
 "use client";
 
 import { api } from "@/trpc/client";
-import {
-  Alert,
-  Button,
-  Group,
-  Modal,
-  Stack,
-  Text,
-  TextInput,
-} from "@mantine/core";
+import { Button, Group, Modal, Stack, Text, TextInput } from "@mantine/core";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { IconCheck, IconFlag, IconLetterCase } from "@tabler/icons-react";
+import { IconFlag, IconLetterCase } from "@tabler/icons-react";
 import { useEffect } from "react";
 
 export default function CreatePartylist({
@@ -69,7 +59,7 @@ export default function CreatePartylist({
     <>
       <Button
         onClick={open}
-        style={(theme) => ({
+        style={() => ({
           width: "fit-content",
           // [theme.fn.smallerThan("xs")]: { width: "100%" },
         })}
@@ -87,11 +77,13 @@ export default function CreatePartylist({
       >
         <form
           onSubmit={form.onSubmit((value) => {
-            api.election.createPartylist.mutate({
-              name: value.name,
-              acronym: value.acronym,
-              election_id,
-            });
+            void (async () => {
+              await api.election.createPartylist.mutate({
+                name: value.name,
+                acronym: value.acronym,
+                election_id,
+              });
+            })();
           })}
         >
           <Stack gap="sm">

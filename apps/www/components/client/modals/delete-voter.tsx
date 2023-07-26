@@ -1,18 +1,9 @@
 "use client";
 
 import { api } from "@/trpc/client";
-import {
-  ActionIcon,
-  Alert,
-  Button,
-  Group,
-  Modal,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { ActionIcon, Button, Group, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconAlertCircle, IconCheck, IconTrash } from "@tabler/icons-react";
+import { IconTrash } from "@tabler/icons-react";
 
 export default function DeleteVoter({
   voter,
