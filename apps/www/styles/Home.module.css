@@ -85,3 +85,13 @@
     position: inherit;
   }
 }
+
+.playerContainer {
+  aspect-ratio: 16/9;
+  background-color: light-dark(
+    var(--mantine-color-gray-1),
+    var(--mantine-color-dark-5)
+  );
+  border-radius: var(--mantine-radius-md);
+  overflow: hidden;
+}

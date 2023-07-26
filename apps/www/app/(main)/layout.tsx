@@ -8,8 +8,7 @@ import {
   AppShellMain,
 } from "@mantine/core";
 
-export const runtime =
-  process.env.NODE_ENV !== "development" ? "edge" : undefined;
+export const runtime = "edge";
 
 export default async function RootLayout({
   children,

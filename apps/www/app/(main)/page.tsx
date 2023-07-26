@@ -78,15 +78,14 @@ export default function HomePage() {
           <Balancer>Ano ang eBoto Mo? (What is eBoto Mo?)</Balancer>
         </Title>
 
-        <ReactPlayer
-          url="https://www.youtube.com/watch?v=BKud553RTbk"
-          width="100%"
-          height="100%"
-          style={{
-            aspectRatio: "16/9",
-          }}
-          controls
-        />
+        <Box className={classes.playerContainer}>
+          <ReactPlayer
+            url="https://www.youtube.com/watch?v=BKud553RTbk"
+            width="100%"
+            height="100%"
+            controls
+          />
+        </Box>
       </Stack>
 
       <SimpleGrid cols={{ base: 1, sm: 2 }} className={classes.grid}>
