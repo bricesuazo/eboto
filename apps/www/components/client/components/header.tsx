@@ -9,7 +9,7 @@ import {
   Box,
   Button,
   Container,
-  Group,
+  Group, // Header,
   Menu,
   Text,
   UnstyledButton,
@@ -80,7 +80,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
               width={200}
             >
               <Menu.Target>
-                <UnstyledButton h="100%">
+                <UnstyledButton py="md">
                   <Group gap="xs">
                     <Box
                       style={{
@@ -108,7 +108,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
 
                     <Box
                       style={{
-                        width: 100,
+                        width: 80,
                         // [theme.fn.largerThan("sm")]: {
                         //   width: 140,
                         // },

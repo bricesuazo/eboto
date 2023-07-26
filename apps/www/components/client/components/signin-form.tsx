@@ -42,11 +42,10 @@ export default function SigninForm() {
           onClick={() => {
             if (!isLoaded) return;
             void (async () => {
-              await signIn.authenticateWithRedirect({
+              await signIn.create({
                 strategy: "oauth_google",
-                redirectUrl: "/sso-callback",
-                redirectUrlComplete:
-                  params.callbackUrl?.toString() ?? "/dashboard",
+                transfer: true,
+                redirectUrl: (params.callbackUrl as string) ?? "/dashboard",
               });
             })();
           }}
@@ -67,8 +66,7 @@ export default function SigninForm() {
                 .create({
                   identifier: values.email,
                   password: values.password,
-
-                  redirectUrl: params.callbackUrl?.toString() ?? "/dashboard",
+                  redirectUrl: (params.callbackUrl as string) ?? "/dashboard",
                 })
                 .then(async (result) => {
                   if (result.status === "complete") {

@@ -3,7 +3,10 @@
 module.exports = {
   reactStrictMode: true,
   transpilePackages: ["@eboto-mo/db"],
+  experimental: {
+    forceSwcTransforms: true,
+  },
   images: {
-    domains: ["lh3.googleusercontent.com", "img.clerk.com"],
+    domains: ["lh3.googleusercontent.com"],
   },
 };

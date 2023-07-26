@@ -15,7 +15,7 @@ export default function SignInPage() {
       </Title>
       <Text size="sm" ta="center" mt={5}>
         Don&apos;t have an account yet?{" "}
-        <Anchor size="sm" component={Link} href="/register" truncate>
+        <Anchor size="sm" component={Link} href="/signup" truncate>
           Create account
         </Anchor>
       </Text>
