@@ -153,7 +153,7 @@ export default function NavbarComponent() {
               //     </UnstyledButton>
               //   );
               // }}
-              value={params.electionDashboardSlug.toString()}
+              value={params.electionDashboardSlug?.toString() ?? undefined}
               onChange={(value) => {
                 router.push(`/dashboard/${value ?? ""}`);
                 store.toggleDashboardMenu(false);
@@ -165,7 +165,7 @@ export default function NavbarComponent() {
               w="100%"
               rightSection={<IconExternalLink size="1rem" />}
               component={Link}
-              href={`/${params.electionDashboardSlug.toString()}`}
+              href={`/${params.electionDashboardSlug?.toString()}`}
               target="_blank"
             >
               Visit election
@@ -181,7 +181,7 @@ export default function NavbarComponent() {
                   }
                   fw="normal"
                   fz="sm"
-                  href={`/dashboard/${params.electionDashboardSlug.toString()}/${
+                  href={`/dashboard/${params.electionDashboardSlug?.toString()}/${
                     item.path ?? ""
                   }`}
                   onClick={() => {

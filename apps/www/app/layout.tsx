@@ -58,6 +58,8 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
 };
 
+export const runtime = "edge";
+
 export default function RootLayout({
   children,
 }: {

@@ -5,6 +5,7 @@ import type { NextRequest } from "next/server";
 
 // Stripe is incompatible with Edge runtimes due to using Node.js events
 // export const runtime = "edge";
+export const runtime = "nodejs";
 
 const handler = (req: NextRequest) =>
   fetchRequestHandler({
