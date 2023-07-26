@@ -1,15 +1,7 @@
 "use client";
 
 import type { Election } from "@eboto-mo/db/schema";
-import {
-  ActionIcon,
-  Button,
-  Center,
-  Modal,
-  Stack,
-  Text,
-  rem,
-} from "@mantine/core";
+import { ActionIcon, Button, Center, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconDownload, IconQrcode } from "@tabler/icons-react";
 import { QRCodeCanvas } from "qrcode.react";
@@ -23,23 +15,11 @@ export default function QRCode({ election }: { election: Election }) {
         variant="outline"
         color="#2f9e44"
         size="lg"
-        // style={(theme) => ({
-        //   [theme.fn.largerThan("md")]: {
-        //     display: "none",
-        //   },
-        // })}
+        hiddenFrom="md"
       >
         <IconQrcode />
       </ActionIcon>
-      <Button
-        onClick={open}
-        // style={(theme) => ({
-        //   [theme.fn.smallerThan("md")]: {
-        //     display: "none",
-        //   },
-        // })}
-        leftSection={<IconQrcode size={rem(18)} />}
-      >
+      <Button onClick={open} visibleFrom="md" leftSection={<IconQrcode />}>
         Download/Scan QR Code
       </Button>
       <Modal

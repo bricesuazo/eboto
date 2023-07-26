@@ -22,34 +22,33 @@ export default async function Page({
   if (!election) notFound();
 
   return (
-    <Stack p="md">
+    <Stack>
       <Box>
         <Group justify="space-between" align="center" gap="xs">
-          <Group align="center" gap="sm">
-            <Title
-              order={2}
-              // lineClamp={1}
-            >
+          <Group align="center" gap="xs">
+            <Title order={2} style={{ lineClamp: 1 }}>
               {election.name} (@{election.slug})
             </Title>
             <ActionIcon
+              variant="subtle"
               component={Link}
               href={`/${election.slug}`}
               target="_blank"
               radius="50%"
-              w={34}
-              h={34}
-              p="xs"
+              w={40}
+              h={40}
             >
-              <IconExternalLink size="18rem" />
+              <IconExternalLink size="1rem" />
             </ActionIcon>
           </Group>
           <QRCode election={election} />
         </Group>
         <Text>
-          {moment(election.start_date).local().format("MMMM DD, YYYY hA")}
+          {moment(election.start_date)
+            .local()
+            .format("MMMM DD, YYYY hA (dddd)")}
           {" - "}
-          {moment(election.end_date).local().format("MMMM DD, YYYY hA")}
+          {moment(election.end_date).local().format("MMMM DD, YYYY hA (dddd)")}
         </Text>
         <Text>
           Created:{" "}

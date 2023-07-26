@@ -6,13 +6,14 @@ import {
   IconUserSearch,
   IconUsers,
 } from "@tabler/icons-react";
+import type { TablerIconsProps } from "@tabler/icons-react";
 import { z } from "zod";
 
 export const electionDashboardNavbar: {
   id: number;
   label: string;
   path?: string;
-  icon: React.FC<{ className?: string }>;
+  icon: React.FC<TablerIconsProps>;
 }[] = [
   {
     id: 0,

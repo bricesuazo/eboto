@@ -1,5 +1,6 @@
 "use client";
 
+import NavbarComponent from "@/components/client/components/dashboard-navbar-client";
 import Footer from "@/components/client/components/footer";
 import HeaderContent from "@/components/client/components/header";
 import { useStore } from "@/store";
@@ -11,7 +12,6 @@ import {
   AppShellMain,
   AppShellNavbar,
 } from "@mantine/core";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 
 export default function ElectionDashboard({
@@ -41,19 +41,7 @@ export default function ElectionDashboard({
       <AppShellMain>{children}</AppShellMain>
 
       <AppShellNavbar>
-        <Link href={`/dashboard/${params.electionDashboardSlug?.toString()}`}>
-          overview
-        </Link>
-        <Link
-          href={`/dashboard/${params.electionDashboardSlug?.toString()}/partylist`}
-        >
-          partylist
-        </Link>
-        <Link
-          href={`/dashboard/${params.electionDashboardSlug?.toString()}/candidate`}
-        >
-          candidate
-        </Link>
+        <NavbarComponent />
       </AppShellNavbar>
 
       <AppShellFooter>
