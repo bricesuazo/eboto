@@ -19,7 +19,13 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 
 export default function SigninForm() {
-  const [loading, setLoading] = useState(false);
+  const [loadings, setLoadings] = useState<{
+    google: boolean;
+    credential: boolean;
+  }>({
+    google: false,
+    credential: false,
+  });
   const { isLoaded, signIn, setActive } = useSignIn();
   const form = useForm({
     initialValues: {
@@ -41,6 +47,7 @@ export default function SigninForm() {
         <Button
           onClick={() => {
             if (!isLoaded) return;
+            setLoadings((loadings) => ({ ...loadings, google: true }));
             void (async () => {
               await signIn.authenticateWithRedirect({
                 strategy: "oauth_google",
@@ -50,17 +57,17 @@ export default function SigninForm() {
               });
             })();
           }}
-          disabled={loading}
           leftSection={<IconBrandGoogle size={18} />}
           variant="outline"
-          // loading={loadings.google}
+          disabled={loadings.credential}
+          loading={loadings.google}
         >
           Sign in with Google
         </Button>
         <Divider label="Or continue with email" labelPosition="center" />
         <form
           onSubmit={form.onSubmit((values) => {
-            setLoading(true);
+            setLoadings((loadings) => ({ ...loadings, credential: true }));
             if (!isLoaded) return;
             void (async () => {
               await signIn
@@ -90,7 +97,7 @@ export default function SigninForm() {
               required
               {...form.getInputProps("email")}
               leftSection={<IconAt size="1rem" />}
-              disabled={loading}
+              disabled={loadings.credential || loadings.google}
             />
 
             <TextInput
@@ -101,13 +108,13 @@ export default function SigninForm() {
               required
               {...form.getInputProps("password")}
               leftSection={<IconLock size="1rem" />}
-              disabled={loading}
+              disabled={loadings.credential || loadings.google}
             />
             <Group justify="space-between">
               <Checkbox
                 label="Remember me"
                 size="sm"
-                //   disabled={loading }
+                disabled={loadings.credential || loadings.google}
               />
 
               <Anchor
@@ -132,7 +139,11 @@ export default function SigninForm() {
                 </Alert>
               )} */}
 
-            <Button type="submit" loading={loading}>
+            <Button
+              type="submit"
+              loading={loadings.credential}
+              disabled={loadings.google}
+            >
               Sign in
             </Button>
 

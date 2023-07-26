@@ -10,8 +10,10 @@ import {
   Box,
   Burger,
   Button,
+  Center,
   Container,
   Group,
+  Loader,
   Menu,
   Text,
   UnstyledButton,
@@ -31,10 +33,12 @@ import { IconSun } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useState } from "react";
 
 export default function HeaderContent({ user }: { user: User | null }) {
   const { signOut } = useClerk();
   const params = useParams();
+  const [logoutLoading, setLogoutLoading] = useState(false);
 
   const { setColorScheme } = useMantineColorScheme();
 
@@ -178,22 +182,33 @@ export default function HeaderContent({ user }: { user: User | null }) {
                   Report a problem
                 </Menu.Item>
                 <Menu.Item
-                  onClick={() =>
+                  onClick={() => {
+                    setLogoutLoading(true);
                     void (async () =>
                       await signOut({
                         // callbackUrl: "/signin",
-                      }))()
-                  }
+                      }))();
+                  }}
+                  closeMenuOnClick={false}
                   leftSection={
-                    <IconLogout
-                      style={{
-                        transform: "translateX(2px)",
-                      }}
-                      size={16}
-                    />
+                    !logoutLoading ? (
+                      <IconLogout
+                        style={{
+                          transform: "translateX(2px)",
+                        }}
+                        size={16}
+                      />
+                    ) : undefined
                   }
+                  disabled={logoutLoading}
                 >
-                  Log out
+                  {logoutLoading ? (
+                    <Center>
+                      <Loader size="xs" />
+                    </Center>
+                  ) : (
+                    "Log out"
+                  )}
                 </Menu.Item>
               </Menu.Dropdown>
             </Menu>

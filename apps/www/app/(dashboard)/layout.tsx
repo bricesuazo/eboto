@@ -6,6 +6,8 @@ import {
   Container,
 } from "@mantine/core";
 
+export const runtime = "edge";
+
 export default function DashboardLayout(props: React.PropsWithChildren) {
   return (
     <AppShell header={{ height: 60 }}>

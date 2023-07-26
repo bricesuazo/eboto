@@ -5,8 +5,6 @@ import type { HandleOAuthCallbackParams } from "@clerk/types";
 import { Center, Loader } from "@mantine/core";
 import { useEffect } from "react";
 
-export const runtime = "edge";
-
 export default function SSOCallback(props: {
   searchParams: HandleOAuthCallbackParams;
 }) {

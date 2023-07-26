@@ -15,7 +15,13 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 
 export default function RegisterForm() {
-  const [loading, setLoading] = useState(false);
+  const [loadings, setLoadings] = useState<{
+    google: boolean;
+    credential: boolean;
+  }>({
+    google: false,
+    credential: false,
+  });
   const params = useParams();
   const { isLoaded: isSignUpLoaded, signUp, setActive } = useSignUp();
 
@@ -49,6 +55,7 @@ export default function RegisterForm() {
       <Stack>
         <Button
           onClick={() => {
+            setLoadings((loadings) => ({ ...loadings, google: true }));
             if (!isSignUpLoaded) return;
             void (async () => {
               await signUp
@@ -61,10 +68,10 @@ export default function RegisterForm() {
                 .catch((err) => console.error("error", err));
             })();
           }}
-          disabled={loading}
+          loading={loadings.google}
+          disabled={loadings.credential}
           leftSection={<IconBrandGoogle size={18} />}
           variant="outline"
-          // loading={isGoogleLoading}
         >
           Sign up with Google
         </Button>
@@ -74,7 +81,7 @@ export default function RegisterForm() {
           onSubmit={form.onSubmit((values) => {
             if (!isSignUpLoaded) return;
 
-            setLoading(true);
+            setLoadings((loadings) => ({ ...loadings, credential: true }));
             void (async () => {
               await signUp
                 .create({
@@ -106,14 +113,14 @@ export default function RegisterForm() {
                 required
                 {...form.getInputProps("firstName")}
                 leftSection={<IconLetterCase size="1rem" />}
-                disabled={loading}
+                disabled={loadings.credential}
               />
               <TextInput
                 placeholder="Enter your last name"
                 withAsterisk
                 label="Last name"
                 {...form.getInputProps("lastName")}
-                disabled={loading}
+                disabled={loadings.credential}
                 leftSection={<IconLetterCase size="1rem" />}
               />
             </Group>
@@ -125,7 +132,7 @@ export default function RegisterForm() {
               label="Email"
               required
               leftSection={<IconAt size="1rem" />}
-              disabled={loading}
+              disabled={loadings.credential}
               {...form.getInputProps("email")}
             />
 
@@ -138,7 +145,7 @@ export default function RegisterForm() {
               // visible={visible}
               // onVisibilityChange={toggle}
               {...form.getInputProps("password")}
-              disabled={loading}
+              disabled={loadings.credential}
               leftSection={<IconLock size="1rem" />}
             />
             <TextInput
@@ -150,7 +157,7 @@ export default function RegisterForm() {
               // visible={visible}
               // onVisibilityChange={toggle}
               {...form.getInputProps("confirmPassword")}
-              disabled={loading}
+              disabled={loadings.credential}
               leftSection={<IconLock size="1rem" />}
             />
 
@@ -164,7 +171,7 @@ export default function RegisterForm() {
                     </Alert>
                   )} */}
 
-            <Button type="submit" loading={loading}>
+            <Button type="submit" loading={loadings.credential}>
               Sign up
             </Button>
           </Stack>
