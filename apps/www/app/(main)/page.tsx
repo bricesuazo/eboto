@@ -18,8 +18,6 @@ import Image from "next/image";
 import Link from "next/link";
 import Balancer from "react-wrap-balancer";
 
-export const runtime = "edge";
-
 export default function HomePage() {
   return (
     <Container size="md" className={classes.wrapper}>
@@ -40,7 +38,7 @@ export default function HomePage() {
         </Title>
 
         <Container p={0} size="md">
-          <Text size="lg" color="dimmed" className={classes.description}>
+          <Text size="lg" className={classes.description}>
             <Balancer>
               Empower your elections with eBoto Mo, the versatile and web-based
               voting platform that offers secure online elections for any type

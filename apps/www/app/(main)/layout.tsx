@@ -1,5 +1,6 @@
 import Footer from "@/components/client/components/footer";
 import HeaderContent from "@/components/client/components/header";
+import { env } from "@/env.mjs";
 import { currentUser } from "@clerk/nextjs";
 import {
   AppShell,
@@ -8,7 +9,7 @@ import {
   AppShellMain,
 } from "@mantine/core";
 
-// export const runtime = "edge";
+export const runtime = env.NODE_ENV !== "development" ? "edge" : undefined;
 
 export default async function RootLayout({
   children,
