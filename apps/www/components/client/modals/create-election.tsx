@@ -28,7 +28,7 @@ export default function CreateElection({
       slug: "",
       start_date: null,
       end_date: null,
-      template: "0",
+      template: "none",
     },
     validateInputOnBlur: true,
 
@@ -108,7 +108,7 @@ export default function CreateElection({
                   value.start_date ?? new Date(now.setDate(now.getDate() + 1)),
                 end_date:
                   value.end_date ?? new Date(now.setDate(now.getDate() + 5)),
-                template: parseInt(value.template),
+                template: value.template,
               });
             })();
           })}
@@ -192,14 +192,16 @@ export default function CreateElection({
               description="Select a template for your election"
               withAsterisk
               required
-              // withinPortal
               {...form.getInputProps("template")}
               data={positionTemplate
-                .sort((a, b) => a.id - b.id)
-                .map((position) => ({
-                  label: position.org,
-                  value: position.id.toString(),
-                  group: position.college,
+                .sort((a, b) => a.order - b.order)
+                .map((template) => ({
+                  group: template.name,
+
+                  items: template.organizations.map((organization) => ({
+                    value: organization.id,
+                    label: organization.name,
+                  })),
                 }))}
               // nothingFound="No position template found"
               leftSection={<IconTemplate size="1rem" />}

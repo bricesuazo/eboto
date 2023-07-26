@@ -174,6 +174,9 @@ importers:
         specifier: ^4.3.9
         version: registry.npmjs.org/zustand@4.3.9(react@18.2.0)
     devDependencies:
+      '@clerk/types':
+        specifier: ^3.48.1
+        version: registry.npmjs.org/@clerk/types@3.48.1
       '@eboto-mo/tsconfig':
         specifier: workspace:*
         version: link:../../packages/config/tsconfig
@@ -234,6 +237,9 @@ importers:
       drizzle-orm:
         specifier: 0.27.2
         version: registry.npmjs.org/drizzle-orm@0.27.2(@planetscale/database@1.9.0)(mysql2@3.5.2)
+      nanoid:
+        specifier: ^4.0.2
+        version: registry.npmjs.org/nanoid@4.0.2
       next:
         specifier: ^13.4.12
         version: registry.npmjs.org/next@13.4.12(@babel/core@7.22.9)(react-dom@18.2.0)(react@18.2.0)
@@ -778,7 +784,6 @@ packages:
     engines: {node: '>=14'}
     dependencies:
       csstype: registry.npmjs.org/csstype@3.1.1
-    dev: false
 
   registry.npmjs.org/@cspotcode/source-map-support@0.8.1:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@cspotcode/source-map-support/-/source-map-support-0.8.1.tgz}
@@ -4123,7 +4128,6 @@ packages:
     resolution: {integrity: sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/csstype/-/csstype-3.1.1.tgz}
     name: csstype
     version: 3.1.1
-    dev: false
 
   registry.npmjs.org/csstype@3.1.2:
     resolution: {integrity: sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/csstype/-/csstype-3.1.2.tgz}
@@ -6540,6 +6544,14 @@ packages:
     version: 3.3.6
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
+
+  registry.npmjs.org/nanoid@4.0.2:
+    resolution: {integrity: sha512-7ZtY5KTCNheRGfEFxnedV5zFiORN1+Y1N6zvPTnHQd8ENUvfaDBeuJDZb2bN/oXwXxu3qkTXDzy57W5vAmDTBw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/nanoid/-/nanoid-4.0.2.tgz}
+    name: nanoid
+    version: 4.0.2
+    engines: {node: ^14 || ^16 || >=18}
+    hasBin: true
+    dev: false
 
   registry.npmjs.org/natural-compare-lite@1.4.0:
     resolution: {integrity: sha512-Tj+HTDSJJKaZnfiuw+iaF9skdPpTo2GtEly5JHnWV/hfv2Qj/9RKsGISQtLh2ox3l5EAGw487hnBee0sIJ6v2g==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/natural-compare-lite/-/natural-compare-lite-1.4.0.tgz}

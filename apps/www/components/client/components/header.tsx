@@ -1,15 +1,17 @@
 "use client";
 
 import { env } from "@/env.mjs";
+import { useStore } from "@/store";
 import classes from "@/styles/Header.module.css";
 import { useClerk } from "@clerk/nextjs";
 import type { User } from "@clerk/nextjs/api";
 import {
   ActionIcon,
   Box,
+  Burger,
   Button,
   Container,
-  Group, // Header,
+  Group,
   Menu,
   Text,
   UnstyledButton,
@@ -28,9 +30,11 @@ import { IconMoon } from "@tabler/icons-react";
 import { IconSun } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
 export default function HeaderContent({ user }: { user: User | null }) {
   const { signOut } = useClerk();
+  const params = useParams();
 
   const { setColorScheme } = useMantineColorScheme();
 
@@ -41,21 +45,22 @@ export default function HeaderContent({ user }: { user: User | null }) {
     getInitialValueInEffect: true,
   });
 
+  const store = useStore();
+
   return (
     <>
-      {/* <Header height={60}> */}
       <Container h="100%" size="md">
         <Group h="100%" align="center" justify="space-between" gap="xs">
-          {/* {params?.electionDashboardSlug && (
+          {params?.electionDashboardSlug && (
             <Burger
               opened={store.dashboardMenu}
               onClick={() => store.toggleDashboardMenu()}
               size="sm"
-              color={theme.colors.gray[6]}
+              color="gray.6"
               py="xl"
               visibleFrom="sm"
             />
-          )} */}
+          )}
 
           <UnstyledButton component={Link} href={user ? "/dashboard" : "/"}>
             <Group gap="xs">
@@ -234,7 +239,6 @@ export default function HeaderContent({ user }: { user: User | null }) {
           )}
         </Group>
       </Container>
-      {/* </Header> */}
     </>
   );
 }

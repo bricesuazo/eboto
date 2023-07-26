@@ -19,6 +19,7 @@
     "@trpc/client": "^10.33.1",
     "@trpc/server": "^10.33.1",
     "drizzle-orm": "0.27.2",
+    "nanoid": "^4.0.2",
     "next": "^13.4.12",
     "superjson": "1.13.1",
     "zod": "^3.21.4",

@@ -20,6 +20,7 @@ import type {
 } from "@eboto-mo/db/schema";
 import { TRPCError } from "@trpc/server";
 import { and, eq, inArray } from "drizzle-orm";
+import { nanoid } from "nanoid";
 import { z } from "zod";
 
 import { positionTemplate, takenSlugs } from "../constants";
@@ -206,7 +207,7 @@ export const electionRouter = createTRPCRouter({
         slug: z.string().min(1).trim().toLowerCase(),
         start_date: z.date(),
         end_date: z.date(),
-        template: z.number().nonnegative().default(0),
+        template: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -224,7 +225,7 @@ export const electionRouter = createTRPCRouter({
         throw new Error("Election slug is already exists");
       }
 
-      const id = crypto.randomUUID();
+      const id = nanoid();
       await db.insert(elections).values({
         id,
         name: input.name,
@@ -233,28 +234,31 @@ export const electionRouter = createTRPCRouter({
         end_date: input.end_date,
       });
       await db.insert(commissioners).values({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         election_id: id,
         user_id: ctx.auth.userId,
       });
       await db.insert(partylists).values({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         name: "Independent",
         acronym: "IND",
         election_id: id,
       });
 
-      if (input.template !== 0)
-        await db.insert(positions).values(
-          positionTemplate
-            .find((template) => template.id === input.template)
-            ?.positions.map((position, index) => ({
-              id: crypto.randomUUID(),
+      const positions1 =
+        positionTemplate
+          .find((template) => template.id === input.template)
+          ?.organizations.flatMap((org) =>
+            org.positions.map((position, i) => ({
+              id: nanoid(),
               name: position,
+              order: i,
               election_id: id,
-              order: index,
-            })) ?? [],
-        );
+            })),
+          ) ?? [];
+
+      if (input.template !== "none")
+        await db.insert(positions).values(positions1);
     }),
   editElection: protectedProcedure
     .input(
@@ -331,7 +335,7 @@ export const electionRouter = createTRPCRouter({
       if (isAcronymExists) throw new Error("Acronym is already exists");
 
       await db.insert(partylists).values({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         name: input.name,
         acronym: input.acronym,
         election_id: input.election_id,
@@ -435,7 +439,7 @@ export const electionRouter = createTRPCRouter({
       // TODO: Validate commissioner
 
       await db.insert(positions).values({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         name: input.name,
         order: input.order,
         min: input.min,
@@ -517,7 +521,7 @@ export const electionRouter = createTRPCRouter({
       if (isCandidateSlugExists)
         throw new Error("Candidate slug is already exists");
 
-      const id = crypto.randomUUID();
+      const id = nanoid();
 
       await db.insert(candidates).values({
         id,
@@ -560,7 +564,7 @@ export const electionRouter = createTRPCRouter({
         throw new Error("Candidate slug is already exists");
 
       await db.insert(candidates).values({
-        id: crypto.randomUUID(),
+        id: nanoid(),
         slug: input.slug,
         first_name: input.first_name,
         middle_name: input.middle_name,
@@ -620,7 +624,7 @@ export const electionRouter = createTRPCRouter({
       if (!user) throw new Error("Unauthorized");
       if (input.email === user.emailAddresses[0]?.emailAddress) {
         await db.insert(voters).values({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           user_id: ctx.auth.userId,
           election_id: input.election_id,
           field: input.field,
@@ -668,7 +672,7 @@ export const electionRouter = createTRPCRouter({
         if (isInvitedVoterEmailExists)
           throw new Error("Email is already exists");
         await db.insert(invited_voters).values({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           email: input.email,
           field: input.field,
           election_id: input.election_id,
@@ -901,7 +905,7 @@ export const electionRouter = createTRPCRouter({
 
       const voters = await db.insert(invited_voters).values(
         input.voters.map((voter) => ({
-          id: crypto.randomUUID(),
+          id: nanoid(),
           email: voter.email,
           field: voter.field,
           election_id: input.election_id,
