@@ -21,15 +21,15 @@ import {
   useMantineColorScheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconLogout } from "@tabler/icons-react";
 import {
   IconAlertCircle,
   IconChartBar,
   IconChevronDown,
+  IconLogout,
+  IconMoon,
+  IconSun,
   IconUserCircle,
 } from "@tabler/icons-react";
-import { IconMoon } from "@tabler/icons-react";
-import { IconSun } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -52,22 +52,11 @@ export default function HeaderContent({ user }: { user: User | null }) {
   const store = useStore();
 
   return (
-    <>
-      <Container h="100%" size="md">
-        <Group h="100%" align="center" justify="space-between" gap="xs">
-          {params?.electionDashboardSlug && (
-            <Burger
-              opened={store.dashboardMenu}
-              onClick={() => store.toggleDashboardMenu()}
-              size="sm"
-              color="gray.6"
-              py="xl"
-              visibleFrom="sm"
-            />
-          )}
-
+    <Container h="100%" size={!params.electionDashboardSlug ? "md" : undefined}>
+      <Group h="100%" align="center" justify="space-between" gap="xs">
+        <Group h="100%" align="center">
           <UnstyledButton component={Link} href={user ? "/dashboard" : "/"}>
-            <Group gap="xs">
+            <Group gap="xs" align="center">
               <Image
                 src="/images/logo.png"
                 alt="eBoto Mo Logo"
@@ -80,180 +69,197 @@ export default function HeaderContent({ user }: { user: User | null }) {
               </Text>
             </Group>
           </UnstyledButton>
-          {user ? (
-            <Menu
-              position="bottom-end"
-              opened={openedMenu}
-              onChange={() => (openedMenu ? closeMenu() : openMenu())}
-              withinPortal
-              width={200}
-            >
-              <Menu.Target>
-                <UnstyledButton h="100%">
-                  <Group gap="xs">
-                    <Box
-                      style={{
-                        position: "relative",
-                        borderRadius: "50%",
-                        overflow: "hidden",
-                        width: 24,
-                        height: 24,
 
-                        // [theme.fn.largerThan("sm")]: {
-                        //   width: 32,
-                        //   height: 32,
-                        // },
-                      }}
-                    >
-                      <Image
-                        src={user.imageUrl}
-                        alt="Profile picture"
-                        fill
-                        sizes="100%"
-                        priority
-                        style={{ objectFit: "cover" }}
-                      />
-                    </Box>
+          <Center h="100%">
+            {params.electionDashboardSlug && (
+              <Burger
+                opened={store.dashboardMenu}
+                onClick={() => store.toggleDashboardMenu()}
+                size="sm"
+                color="gray.6"
+                py="xl"
+                hiddenFrom="xs"
+                h="100%"
+              />
+            )}
+          </Center>
+        </Group>
 
-                    <Box
-                      style={{
-                        width: 100,
-                        // [theme.fn.largerThan("sm")]: {
-                        //   width: 140,
-                        // },
-                      }}
-                    >
-                      <Text size="xs" truncate fw="bold">
-                        {user.firstName} {user.lastName}
-                      </Text>
-                      <Text size="xs" truncate>
-                        {user.emailAddresses[0].emailAddress}
-                      </Text>
-                    </Box>
+        {user ? (
+          <Menu
+            position="bottom-end"
+            opened={openedMenu}
+            onChange={() => (openedMenu ? closeMenu() : openMenu())}
+            withinPortal
+            width={200}
+          >
+            <Menu.Target>
+              <UnstyledButton h="100%">
+                <Group gap="xs">
+                  <Box
+                    style={{
+                      position: "relative",
+                      borderRadius: "50%",
+                      overflow: "hidden",
+                      width: 24,
+                      height: 24,
 
-                    <IconChevronDown
-                      size={16}
+                      // [theme.fn.largerThan("sm")]: {
+                      //   width: 32,
+                      //   height: 32,
+                      // },
+                    }}
+                  >
+                    <Image
+                      src={user.imageUrl}
+                      alt="Profile picture"
+                      fill
+                      sizes="100%"
+                      priority
                       style={{
-                        rotate: openedMenu ? "-180deg" : "0deg",
-                        transition: "all 0.25s",
+                        objectFit: "cover",
                       }}
                     />
-                  </Group>
-                </UnstyledButton>
-              </Menu.Target>
+                  </Box>
 
-              <Menu.Dropdown>
-                <Menu.Item
-                  component={Link}
-                  href="/dashboard"
-                  leftSection={<IconChartBar size={16} />}
-                >
-                  Dashboard
-                </Menu.Item>
-                <Menu.Item
-                  component={Link}
-                  href="/account"
-                  leftSection={<IconUserCircle size={16} />}
-                >
-                  Account settings
-                </Menu.Item>
+                  <Box
+                    style={{
+                      width: 100,
+                      // [theme.fn.largerThan("sm")]: {
+                      //   width: 140,
+                      // },
+                    }}
+                  >
+                    <Text size="xs" truncate fw="bold">
+                      {user.firstName} {user.lastName}
+                    </Text>
+                    <Text size="xs" truncate>
+                      {user.emailAddresses[0].emailAddress}
+                    </Text>
+                  </Box>
 
-                <Menu.Item
-                  leftSection={
-                    computedColorScheme === "light" ? (
-                      <IconMoon size={16} />
-                    ) : (
-                      <IconSun size={16} />
-                    )
-                  }
-                  onClick={() =>
-                    setColorScheme(
-                      computedColorScheme === "light" ? "dark" : "light",
-                    )
-                  }
-                  closeMenuOnClick={false}
-                >
-                  {computedColorScheme === "light" ? "Dark mode" : "Light mode"}
-                </Menu.Item>
-                <Menu.Item
-                  leftSection={<IconAlertCircle size={16} />}
-                  // onClick={openReportAProblem}
-                >
-                  Report a problem
-                </Menu.Item>
-                <Menu.Item
-                  onClick={() => {
-                    setLogoutLoading(true);
-                    void (async () =>
-                      await signOut({
-                        // callbackUrl: "/signin",
-                      }))();
-                  }}
-                  closeMenuOnClick={false}
-                  leftSection={
-                    !logoutLoading ? (
-                      <IconLogout
-                        style={{
-                          transform: "translateX(2px)",
-                        }}
-                        size={16}
-                      />
-                    ) : undefined
-                  }
-                  disabled={logoutLoading}
-                >
-                  {logoutLoading ? (
-                    <Center>
-                      <Loader size="xs" />
-                    </Center>
+                  <IconChevronDown
+                    size={16}
+                    style={{
+                      rotate: openedMenu ? "-180deg" : "0deg",
+                      transition: "all 0.25s",
+                    }}
+                  />
+                </Group>
+              </UnstyledButton>
+            </Menu.Target>
+
+            <Menu.Dropdown>
+              <Menu.Item
+                component={Link}
+                href="/dashboard"
+                leftSection={<IconChartBar size={16} />}
+              >
+                Dashboard
+              </Menu.Item>
+              <Menu.Item
+                component={Link}
+                href="/account"
+                leftSection={<IconUserCircle size={16} />}
+              >
+                Account settings
+              </Menu.Item>
+
+              <Menu.Item
+                leftSection={
+                  computedColorScheme === "light" ? (
+                    <IconMoon size={16} />
                   ) : (
-                    "Log out"
-                  )}
-                </Menu.Item>
-              </Menu.Dropdown>
-            </Menu>
-          ) : (
-            <Group gap="xs">
-              <ActionIcon
-                variant="subtle"
-                size={36}
+                    <IconSun size={16} />
+                  )
+                }
                 onClick={() =>
                   setColorScheme(
                     computedColorScheme === "light" ? "dark" : "light",
                   )
                 }
+                closeMenuOnClick={false}
               >
-                <IconSun size="1rem" className={classes.light} />
-                <IconMoon size="1rem" className={classes.dark} />
-              </ActionIcon>
+                {computedColorScheme === "light" ? "Dark mode" : "Light mode"}
+              </Menu.Item>
+              <Menu.Item
+                leftSection={<IconAlertCircle size={16} />}
+                // onClick={openReportAProblem}
+              >
+                Report a problem
+              </Menu.Item>
+              <Menu.Item
+                onClick={() => {
+                  setLogoutLoading(true);
+                  void (async () =>
+                    await signOut({
+                      // callbackUrl: "/signin",
+                    }))();
+                }}
+                closeMenuOnClick={false}
+                leftSection={
+                  !logoutLoading ? (
+                    <IconLogout
+                      style={{
+                        transform: "translateX(2px)",
+                      }}
+                      size={16}
+                    />
+                  ) : undefined
+                }
+                disabled={logoutLoading}
+              >
+                {logoutLoading ? (
+                  <Center>
+                    <Loader size="xs" />
+                  </Center>
+                ) : (
+                  "Log out"
+                )}
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        ) : (
+          <Group gap="xs">
+            <ActionIcon
+              variant="subtle"
+              size={36}
+              onClick={() =>
+                setColorScheme(
+                  computedColorScheme === "light" ? "dark" : "light",
+                )
+              }
+            >
+              <IconSun size="1rem" className={classes.light} />
+              <IconMoon size="1rem" className={classes.dark} />
+            </ActionIcon>
 
-              <Button
-                hiddenFrom="sm"
-                component={Link}
-                href={env.NEXT_PUBLIC_CLERK_SIGN_IN_URL}
-              >
-                Sign in
-              </Button>
-              <Button
-                variant="outline"
-                visibleFrom="sm"
-                component={Link}
-                href={env.NEXT_PUBLIC_CLERK_SIGN_IN_URL}
-              >
-                Sign in
-              </Button>
+            <Button
+              hiddenFrom="sm"
+              component={Link}
+              href={env.NEXT_PUBLIC_CLERK_SIGN_IN_URL}
+            >
+              Sign in
+            </Button>
+            <Button
+              variant="outline"
+              visibleFrom="sm"
+              component={Link}
+              href={env.NEXT_PUBLIC_CLERK_SIGN_IN_URL}
+            >
+              Sign in
+            </Button>
 
-              <Button
-                visibleFrom="sm"
-                component={Link}
-                href={env.NEXT_PUBLIC_CLERK_SIGN_UP_URL}
-              >
-                Get Started
-              </Button>
-            </Group>
-          )}
-        </Group>
-      </Container>
-    </>
+            <Button
+              visibleFrom="sm"
+              component={Link}
+              href={env.NEXT_PUBLIC_CLERK_SIGN_UP_URL}
+            >
+              Get Started
+            </Button>
+          </Group>
+        )}
+      </Group>
+    </Container>
   );
 }

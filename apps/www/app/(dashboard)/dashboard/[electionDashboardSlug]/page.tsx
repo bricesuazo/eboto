@@ -1,27 +1,28 @@
-"use client";
-
 import QRCode from "@/components/client/modals/show-qr-code";
-import type { Election } from "@eboto-mo/db/schema";
-import {
-  ActionIcon,
-  Box, // Button,
-  Group,
-  Stack,
-  Text,
-  Title,
-  rem,
-} from "@mantine/core";
+import { db } from "@eboto-mo/db";
+import { ActionIcon, Box, Group, Stack, Text, Title } from "@mantine/core";
 import { IconExternalLink } from "@tabler/icons-react";
+import moment from "moment";
 import Link from "next/link";
-import Moment from "react-moment";
+import { notFound } from "next/navigation";
 
-export default function DashboardOverview({
-  election,
+export default async function Page({
+  params: { electionDashboardSlug },
 }: {
-  election: Election;
+  params: { electionDashboardSlug: string };
 }) {
+  // const election = await electionCaller.getElectionBySlug({
+  //   slug: electionDashboardSlug,
+  // });
+
+  const election = await db.query.elections.findFirst({
+    where: (elections, { eq }) => eq(elections.slug, electionDashboardSlug),
+  });
+
+  if (!election) notFound();
+
   return (
-    <Stack>
+    <Stack p="md">
       <Box>
         <Group justify="space-between" align="center" gap="xs">
           <Group align="center" gap="sm">
@@ -35,27 +36,25 @@ export default function DashboardOverview({
               component={Link}
               href={`/${election.slug}`}
               target="_blank"
-              style={(theme) => ({
-                borderRadius: "50%",
-                width: 34,
-                height: 34,
-                padding: theme.radius.xs,
-              })}
+              radius="50%"
+              w={34}
+              h={34}
+              p="xs"
             >
-              <IconExternalLink size={rem(18)} />
+              <IconExternalLink size="18rem" />
             </ActionIcon>
           </Group>
           <QRCode election={election} />
         </Group>
         <Text>
-          <Moment format="MMMM DD, YYYY HA" date={election.start_date} />
+          {moment(election.start_date).local().format("MMMM DD, YYYY hA")}
           {" - "}
-          <Moment format="MMMM DD, YYYY HA" date={election.end_date} />
+          {moment(election.end_date).local().format("MMMM DD, YYYY hA")}
         </Text>
         <Text>
           Created:{" "}
-          <Moment format="MMMM DD, YYYY hh:mmA" date={election.created_at} /> (
-          <Moment fromNow interval={1000} date={election.created_at} />)
+          {moment(election.created_at).local().format("MMMM DD, YYYY hA")} (
+          {moment(election.created_at).fromNow()})
         </Text>
         <Text>
           Publicity:{" "}
@@ -65,20 +64,17 @@ export default function DashboardOverview({
       </Box>
 
       <Box
-        style={(theme) => ({
-          display: "flex",
+        display="flex"
 
-          borderRadius: theme.radius.md,
-          // backgroundColor:
-          //   theme.colorScheme === "dark"
-          //     ? theme.colors.dark[6]
-          //     : theme.colors.gray[1],
-          // overflow: "hidden",
+        // backgroundColor:
+        //   theme.colorScheme === "dark"
+        //     ? theme.colors.dark[6]
+        //     : theme.colors.gray[1],
+        // overflow: "hidden",
 
-          // [theme.fn.smallerThan("sm")]: {
-          //   flexDirection: "column",
-          // },
-        })}
+        // [theme.fn.smallerThan("sm")]: {
+        //   flexDirection: "column",
+        // },
       >
         {/* {[
           {

@@ -1,5 +1,6 @@
 "use client";
 
+import classes from "@/styles/DashboardCard.module.css";
 import type { Election, Vote } from "@eboto-mo/db/schema";
 import { ActionIcon, Box, Text, UnstyledButton, rem } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
@@ -19,14 +20,7 @@ const DashboardCard = ({
 }) => {
   const { hovered, ref } = useHover();
   return (
-    <Box
-      ref={ref}
-      style={() => ({
-        position: "relative",
-
-        // [theme.fn.smallerThan("xs")]: { width: "100%" },
-      })}
-    >
+    <Box ref={ref} className={classes.container} w={{ sm: "100%" }}>
       {type === "vote" && (
         <ActionIcon
           variant="outline"
