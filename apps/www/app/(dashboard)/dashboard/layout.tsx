@@ -1,22 +1,16 @@
-import HeaderContent from "@/components/client/components/header";
-import { currentUser } from "@clerk/nextjs";
+import Header from "@/components/server/components/header";
 import {
   AppShell,
   AppShellHeader,
   AppShellMain,
   Container,
 } from "@mantine/core";
-import { redirect } from "next/navigation";
 
-export default async function DashboardLayout(props: React.PropsWithChildren) {
-  const user = await currentUser();
-
-  if (!user) redirect("/sign-in");
-
+export default function DashboardLayout(props: React.PropsWithChildren) {
   return (
     <AppShell header={{ height: 60 }}>
       <AppShellHeader>
-        <HeaderContent user={user} />
+        <Header />
       </AppShellHeader>
 
       <AppShellMain>

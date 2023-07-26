@@ -1,6 +1,5 @@
 import Footer from "@/components/client/components/footer";
-import HeaderContent from "@/components/client/components/header";
-import { currentUser } from "@clerk/nextjs";
+import Header from "@/components/server/components/header";
 import {
   AppShell,
   AppShellFooter,
@@ -10,12 +9,11 @@ import {
 
 // export const runtime = "edge";
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const user = await currentUser();
   return (
     <AppShell
       padding={0}
@@ -25,7 +23,7 @@ export default async function RootLayout({
       //  navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
     >
       <AppShellHeader>
-        <HeaderContent user={user} />
+        <Header />
       </AppShellHeader>
 
       <AppShellMain>{children}</AppShellMain>

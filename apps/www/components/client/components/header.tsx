@@ -80,7 +80,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
               width={200}
             >
               <Menu.Target>
-                <UnstyledButton py="md">
+                <UnstyledButton h="100%">
                   <Group gap="xs">
                     <Box
                       style={{
@@ -108,7 +108,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
 
                     <Box
                       style={{
-                        width: 80,
+                        width: 100,
                         // [theme.fn.largerThan("sm")]: {
                         //   width: 140,
                         // },
