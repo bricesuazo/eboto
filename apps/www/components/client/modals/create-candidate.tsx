@@ -216,10 +216,10 @@ export default function CreateCandidate({
       >
         <IconUserPlus />
 
-        <Text>
-          Add
-          <Text hiddenFrom="sm"> candidate</Text>
-        </Text>
+        <Box>
+          <Text>Add</Text>
+          <Text visibleFrom="sm"> candidate</Text>
+        </Box>
       </UnstyledButton>
 
       <Modal

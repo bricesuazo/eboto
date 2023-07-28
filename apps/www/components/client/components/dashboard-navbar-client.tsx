@@ -200,7 +200,7 @@ export default function NavbarComponent() {
           </Stack>
         </Stack>
 
-        <Stack>
+        <Stack hiddenFrom="xs">
           <Divider />
 
           <Button

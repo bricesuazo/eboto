@@ -1,3 +1,9 @@
+import { Center, Loader } from "@mantine/core";
+
 export default function loading() {
-  return <div>loading</div>;
+  return (
+    <Center h="100%">
+      <Loader />
+    </Center>
+  );
 }

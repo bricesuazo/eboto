@@ -11,16 +11,12 @@ import {
   Select,
   Stack,
   Text,
-  TextInput, // Textarea,
-  rem,
+  TextInput,
 } from "@mantine/core";
 import type { FileWithPath } from "@mantine/dropzone";
-import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { IconLetterCase, IconX } from "@tabler/icons-react";
-import Image from "next/image";
-import { useRef } from "react";
+import { IconLetterCase } from "@tabler/icons-react";
 
 export default function DashboardSettings({
   election,
@@ -54,7 +50,6 @@ export default function DashboardSettings({
   //       });
   //     },
   //   });
-  const openRef = useRef<() => void>(null);
   const [opened, { open, close }] = useDisclosure(false);
 
   const form = useForm<{
@@ -412,7 +407,7 @@ export default function DashboardSettings({
               Election logo
             </Text>
             <Stack gap="xs">
-              <Dropzone
+              {/* <Dropzone
                 id="logo"
                 onDrop={(files) => {
                   if (!files[0]) return;
@@ -500,7 +495,7 @@ export default function DashboardSettings({
                     <IconX size="3.2rem" stroke={1.5} />
                   </Dropzone.Reject>
                 </Group>
-              </Dropzone>
+              </Dropzone> */}
               <Group grow>
                 <Button
                   variant="light"
@@ -550,7 +545,7 @@ export default function DashboardSettings({
               type="submit"
               // loading={isLoading}
               disabled={!form.isDirty() || !form.isValid()}
-              visibleFrom="sm"
+              hiddenFrom="sm"
             >
               Update
             </Button>
@@ -558,7 +553,7 @@ export default function DashboardSettings({
               type="submit"
               // loading={isLoading}
               disabled={!form.isDirty() || !form.isValid()}
-              hiddenFrom="sm"
+              visibleFrom="sm"
             >
               Update election
             </Button>
@@ -566,17 +561,6 @@ export default function DashboardSettings({
               variant="outline"
               color="red"
               onClick={open}
-              //   loading={deleteElectionMutation.isLoading}
-              // disabled={isLoading}
-              visibleFrom="sm"
-            >
-              Delete
-            </Button>
-            <Button
-              variant="outline"
-              color="red"
-              onClick={open}
-              //   loading={deleteElectionMutation.isLoading}
               // disabled={isLoading}
               // style={(theme) => ({
               //   [theme.fn.smallerThan("xs")]: {

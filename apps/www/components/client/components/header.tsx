@@ -15,6 +15,9 @@ import {
   Group,
   Loader,
   Menu,
+  MenuDropdown,
+  MenuItem,
+  MenuTarget,
   Text,
   UnstyledButton,
   useComputedColorScheme,
@@ -42,8 +45,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
 
   const { setColorScheme } = useMantineColorScheme();
 
-  const [openedMenu, { open: openMenu, close: closeMenu }] =
-    useDisclosure(false);
+  const [openedMenu, { toggle }] = useDisclosure(false);
 
   const computedColorScheme = useComputedColorScheme("light", {
     getInitialValueInEffect: true,
@@ -71,17 +73,16 @@ export default function HeaderContent({ user }: { user: User | null }) {
           </UnstyledButton>
 
           <Center h="100%">
-            {params.electionDashboardSlug && (
-              <Burger
-                opened={store.dashboardMenu}
-                onClick={() => store.toggleDashboardMenu()}
-                size="sm"
-                color="gray.6"
-                py="xl"
-                hiddenFrom="xs"
-                h="100%"
-              />
-            )}
+            <Burger
+              opened={store.dashboardMenu}
+              onClick={() => store.toggleDashboardMenu()}
+              size="sm"
+              color="gray.6"
+              py="xl"
+              hiddenFrom="xs"
+              h="100%"
+              hidden={!!params.electionDashboardSlug}
+            />
           </Center>
         </Group>
 
@@ -89,11 +90,11 @@ export default function HeaderContent({ user }: { user: User | null }) {
           <Menu
             position="bottom-end"
             opened={openedMenu}
-            onChange={() => (openedMenu ? closeMenu() : openMenu())}
+            onChange={toggle}
             withinPortal
             width={200}
           >
-            <Menu.Target>
+            <MenuTarget>
               <UnstyledButton h="100%">
                 <Group gap="xs">
                   <Box
@@ -147,25 +148,25 @@ export default function HeaderContent({ user }: { user: User | null }) {
                   />
                 </Group>
               </UnstyledButton>
-            </Menu.Target>
+            </MenuTarget>
 
-            <Menu.Dropdown>
-              <Menu.Item
+            <MenuDropdown>
+              <MenuItem
                 component={Link}
                 href="/dashboard"
                 leftSection={<IconChartBar size={16} />}
               >
                 Dashboard
-              </Menu.Item>
-              <Menu.Item
+              </MenuItem>
+              <MenuItem
                 component={Link}
                 href="/account"
                 leftSection={<IconUserCircle size={16} />}
               >
                 Account settings
-              </Menu.Item>
+              </MenuItem>
 
-              <Menu.Item
+              <MenuItem
                 leftSection={
                   computedColorScheme === "light" ? (
                     <IconMoon size={16} />
@@ -181,14 +182,14 @@ export default function HeaderContent({ user }: { user: User | null }) {
                 closeMenuOnClick={false}
               >
                 {computedColorScheme === "light" ? "Dark mode" : "Light mode"}
-              </Menu.Item>
-              <Menu.Item
+              </MenuItem>
+              <MenuItem
                 leftSection={<IconAlertCircle size={16} />}
                 // onClick={openReportAProblem}
               >
                 Report a problem
-              </Menu.Item>
-              <Menu.Item
+              </MenuItem>
+              <MenuItem
                 onClick={() => {
                   setLogoutLoading(true);
                   void (async () =>
@@ -216,8 +217,8 @@ export default function HeaderContent({ user }: { user: User | null }) {
                 ) : (
                   "Log out"
                 )}
-              </Menu.Item>
-            </Menu.Dropdown>
+              </MenuItem>
+            </MenuDropdown>
           </Menu>
         ) : (
           <Group gap="xs">

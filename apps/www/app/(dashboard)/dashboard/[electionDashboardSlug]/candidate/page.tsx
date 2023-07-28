@@ -80,6 +80,7 @@ export default async function Page({
     where: (partylists, { eq }) => eq(partylists.election_id, election.id),
     orderBy: (partylists, { asc }) => asc(partylists.created_at),
   });
+  console.log("🚀 ~ file: page.tsx:83 ~ partylists:", partylists);
 
   const positions = await db.query.positions.findMany({
     where: (positions, { eq }) => eq(positions.election_id, election.id),
@@ -89,10 +90,14 @@ export default async function Page({
   return (
     <>
       <DashboardCandidate
-        election={election}
-        positionsWithCandidates={positionsWithCandidates}
-        partylists={partylists}
-        positions={positions}
+        election={JSON.parse(JSON.stringify(election)) as typeof election}
+        positionsWithCandidates={
+          JSON.parse(
+            JSON.stringify(positionsWithCandidates),
+          ) as typeof positionsWithCandidates
+        }
+        partylists={JSON.parse(JSON.stringify(partylists)) as typeof partylists}
+        positions={JSON.parse(JSON.stringify(positions)) as typeof positions}
       />
     </>
   );
