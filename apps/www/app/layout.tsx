@@ -1,5 +1,4 @@
 import { siteConfig } from "@/config/site";
-import { env } from "@/env.mjs";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
@@ -59,7 +58,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
 };
 
-export const runtime = env.NODE_ENV !== "development" ? "edge" : "nodejs";
+export const runtime = "edge";
 
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (

@@ -1,5 +1,6 @@
 "use client";
 
+import classes from "@/styles/Candidate.module.css";
 import { api } from "@/trpc/client";
 import type { Partylist, Position } from "@eboto-mo/db/schema";
 import {
@@ -185,34 +186,7 @@ export default function CreateCandidate({
     <>
       <UnstyledButton
         onClick={open}
-        style={(theme) => ({
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column",
-          rowGap: theme.spacing.xs,
-          width: 100,
-          height: 140,
-          textAlign: "center",
-          // backgroundColor:
-          //   theme.colorScheme === "dark"
-          //     ? theme.colors.dark[6]
-          //     : theme.colors.gray[0],
-          borderRadius: theme.radius.sm,
-          fontSize: theme.fontSizes.sm,
-          transition: "all 100ms ease-in-out",
-
-          // "&:hover": {
-          //   backgroundColor:
-          //     theme.colorScheme === "dark"
-          //       ? theme.colors.dark[5]
-          //       : theme.colors.gray[1],
-          // },
-
-          // [theme.fn.smallerThan("xs")]: {
-          //   width: 60,
-          // },
-        })}
+        className={classes["create-candidate-button"]}
       >
         <IconUserPlus />
 

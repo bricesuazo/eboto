@@ -1,5 +1,7 @@
 import CreateCandidate from "@/components/client/modals/create-candidate";
-// import classes from "@/styles/Candidate.module.css";
+import DeleteCandidate from "@/components/client/modals/delete-candidate";
+import EditCandidate from "@/components/client/modals/edit-candidate";
+import classes from "@/styles/Candidate.module.css";
 import { db } from "@eboto-mo/db";
 import { Anchor, Box, Group, Stack, Text } from "@mantine/core";
 import { IconUser } from "@tabler/icons-react";
@@ -86,7 +88,6 @@ export default async function Page({
     where: (partylists, { eq }) => eq(partylists.election_id, election.id),
     orderBy: (partylists, { asc }) => asc(partylists.created_at),
   });
-  console.log("🚀 ~ file: page.tsx:83 ~ partylists:", partylists);
 
   const positions = await db.query.positions.findMany({
     where: (positions, { eq }) => eq(positions.election_id, election.id),
@@ -141,64 +142,48 @@ export default async function Page({
                   </Text>
                 ) : (
                   position.candidates.map((candidate) => (
-                    <Box>
-                      <Group
-                        h={140}
-                        p={8}
-                        align="center"
-                        justify="space-between"
-                        style={() => ({
-                          width: 200,
-                          border: "1px solid",
-                          // borderColor:
-                          //   theme.colorScheme === "dark"
-                          //     ? theme.colors.dark[5]
-                          //     : theme.colors.gray[3],
-                          borderRadius: 8,
-                        })}
-                      >
-                        <Group align="center">
-                          {candidate.image_link ? (
-                            <Image
-                              src={candidate.image_link}
-                              width={52}
-                              height={52}
-                              alt={
-                                candidate.first_name +
-                                " " +
-                                candidate.last_name +
-                                " image"
-                              }
-                              priority
-                              style={{ objectFit: "cover" }}
-                            />
-                          ) : (
-                            <IconUser
-                              size={52}
-                              style={{
-                                padding: 8,
-                              }}
-                            />
-                          )}
-                          <Text ta="center" w="full" lineClamp={1}>
-                            {candidate.first_name}
-                            {candidate.middle_name &&
-                              ` ${candidate.middle_name}`}{" "}
-                            {candidate.last_name}
-                          </Text>
-                        </Group>
+                    <Group className={classes["candidate-card"]} gap="xs">
+                      <Stack align="center" justify="center" gap="xs">
+                        {candidate.image_link ? (
+                          <Image
+                            src={candidate.image_link}
+                            width={52}
+                            height={52}
+                            alt={
+                              candidate.first_name +
+                              " " +
+                              candidate.last_name +
+                              " image"
+                            }
+                            priority
+                            style={{ objectFit: "cover" }}
+                          />
+                        ) : (
+                          <IconUser
+                            size={52}
+                            style={{
+                              padding: 8,
+                            }}
+                          />
+                        )}
+                        <Text ta="center" w="full" lineClamp={1}>
+                          {candidate.first_name}
+                          {candidate.middle_name &&
+                            ` ${candidate.middle_name}`}{" "}
+                          {candidate.last_name}
+                        </Text>
+                      </Stack>
 
-                        {/* <Group gap="xs">
-                    <EditCandidate
-                      positions={positions}
-                      candidate={candidate}
-                      partylists={partylists}
-                        data-superjson
-                    />
-                    <DeleteCandidate candidate={candidate}  data-superjson />
-                  </Group> */}
+                      <Group gap="xs" align="center">
+                        <EditCandidate
+                          positions={positions}
+                          candidate={candidate}
+                          partylists={partylists}
+                          data-superjson
+                        />
+                        <DeleteCandidate candidate={candidate} data-superjson />
                       </Group>
-                    </Box>
+                    </Group>
                   ))
                 )}
               </Group>

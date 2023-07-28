@@ -38,8 +38,7 @@ export default function DeleteCandidate({
         onClick={open}
         variant="light"
         color="red"
-        // compact
-        size="sm"
+        size="compact-sm"
         w="fit-content"
       >
         Delete
