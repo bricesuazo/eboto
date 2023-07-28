@@ -87,11 +87,13 @@ export default async function Page({
   });
 
   return (
-    <DashboardCandidate
-      election={election}
-      positionsWithCandidates={positionsWithCandidates}
-      partylists={partylists}
-      positions={positions}
-    />
+    <>
+      <DashboardCandidate
+        election={election}
+        positionsWithCandidates={positionsWithCandidates}
+        partylists={partylists}
+        positions={positions}
+      />
+    </>
   );
 }

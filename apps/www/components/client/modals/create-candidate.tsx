@@ -8,16 +8,19 @@ import {
   Group,
   Modal,
   Select,
+  SimpleGrid,
   Stack,
   Tabs,
+  TabsList,
+  TabsPanel,
+  TabsTab,
   Text,
-  TextInput, // Textarea,
+  TextInput,
   UnstyledButton,
-  rem,
 } from "@mantine/core";
-import { YearPickerInput } from "@mantine/dates";
+// import { YearPickerInput } from "@mantine/dates";
 import type { DateValue } from "@mantine/dates";
-import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
+// import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import type { FileWithPath } from "@mantine/dropzone";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
@@ -29,11 +32,9 @@ import {
   IconPlus,
   IconUserPlus,
   IconUserSearch,
-  IconX,
 } from "@tabler/icons-react";
-import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 export default function CreateCandidate({
   position,
@@ -47,7 +48,7 @@ export default function CreateCandidate({
   const [opened, { open, close }] = useDisclosure(false);
 
   const params = useParams();
-  const openRef = useRef<() => void>(null);
+  // const openRef = useRef<() => void>(null);
 
   // TODO: Implement this
 
@@ -179,6 +180,7 @@ export default function CreateCandidate({
       // reset();
     }
   }, [opened]);
+
   return (
     <>
       <UnstyledButton
@@ -266,38 +268,36 @@ export default function CreateCandidate({
           })}
         >
           <Tabs radius="xs" defaultValue="basic-info">
-            <Tabs.List grow>
-              <Tabs.Tab
-                value="basic-info"
-                leftSection={<IconUserSearch size="0.8rem" />}
-                px="2rem"
-              >
-                Basic Info
-              </Tabs.Tab>
-              <Tabs.Tab
-                value="image"
-                leftSection={<IconPhoto size="0.8rem" />}
-                px="2rem"
-              >
-                Image
-              </Tabs.Tab>
-              <Tabs.Tab
-                value="platforms"
-                leftSection={<IconInfoCircle size="0.8rem" />}
-                px="2rem"
-              >
-                Platforms
-              </Tabs.Tab>
-              <Tabs.Tab
-                value="credentials"
-                leftSection={<IconInfoCircle size="0.8rem" />}
-                px="2rem"
-              >
-                Credentials
-              </Tabs.Tab>
-            </Tabs.List>
+            <TabsList grow>
+              <SimpleGrid cols={2} w="100%" spacing={0} verticalSpacing={0}>
+                <TabsTab
+                  value="basic-info"
+                  leftSection={<IconUserSearch size="0.8rem" />}
+                >
+                  Basic Info
+                </TabsTab>
+                <TabsTab
+                  value="image"
+                  leftSection={<IconPhoto size="0.8rem" />}
+                >
+                  Image
+                </TabsTab>
+                <TabsTab
+                  value="platforms"
+                  leftSection={<IconInfoCircle size="0.8rem" />}
+                >
+                  Platforms
+                </TabsTab>
+                <TabsTab
+                  value="credentials"
+                  leftSection={<IconInfoCircle size="0.8rem" />}
+                >
+                  Credentials
+                </TabsTab>
+              </SimpleGrid>
+            </TabsList>
             <Stack gap="sm">
-              <Tabs.Panel value="basic-info" pt="xs">
+              <TabsPanel value="basic-info" pt="xs">
                 <Stack gap="xs">
                   <TextInput
                     label="First name"
@@ -327,7 +327,7 @@ export default function CreateCandidate({
                     label="Slug"
                     placeholder="Enter slug"
                     description={
-                      <Text>
+                      <Text size="xs">
                         This will be used as the candidate&apos;s URL.
                         <br />
                         eboto-mo.com/{params?.electionDashboardSlug?.toString()}
@@ -368,10 +368,10 @@ export default function CreateCandidate({
                     })}
                   />
                 </Stack>
-              </Tabs.Panel>
-              <Tabs.Panel value="image" pt="xs">
+              </TabsPanel>
+              <TabsPanel value="image" pt="xs">
                 <Stack gap="xs">
-                  <Dropzone
+                  {/* <Dropzone
                     id="image"
                     onDrop={(files) => {
                       if (!files[0]) return;
@@ -438,7 +438,7 @@ export default function CreateCandidate({
                         <IconX size="3.2rem" stroke={1.5} />
                       </Dropzone.Reject>
                     </Group>
-                  </Dropzone>
+                  </Dropzone> */}
                   <Button
                     onClick={() => {
                       form.setFieldValue("image", null);
@@ -451,8 +451,8 @@ export default function CreateCandidate({
                     Delete image
                   </Button>
                 </Stack>
-              </Tabs.Panel>
-              <Tabs.Panel value="platforms" pt="xs">
+              </TabsPanel>
+              <TabsPanel value="platforms" pt="xs">
                 <Stack gap="xs">
                   {form.values.platforms.map((platform, index) => (
                     <Box key={index}>
@@ -538,27 +538,27 @@ export default function CreateCandidate({
                     Add platform
                   </Button>
                 </Stack>
-              </Tabs.Panel>
-              <Tabs.Panel value="credentials" pt="xs">
+              </TabsPanel>
+              <TabsPanel value="credentials" pt="xs">
                 <Tabs variant="outline" radius="xs" defaultValue="achievements">
-                  <Tabs.List grow>
-                    <Tabs.Tab value="achievements">
+                  <TabsList grow>
+                    <TabsTab value="achievements">
                       <Text size="xs" truncate>
                         Achievement
                       </Text>
-                    </Tabs.Tab>
-                    <Tabs.Tab value="affiliations">
+                    </TabsTab>
+                    <TabsTab value="affiliations">
                       <Text size="xs" truncate>
                         Affiliations
                       </Text>
-                    </Tabs.Tab>
-                    <Tabs.Tab value="events-attended">
+                    </TabsTab>
+                    <TabsTab value="events-attended">
                       <Text size="xs" truncate>
                         Seminars Attended
                       </Text>
-                    </Tabs.Tab>
-                  </Tabs.List>
-                  <Tabs.Panel value="achievements" pt="xs">
+                    </TabsTab>
+                  </TabsList>
+                  <TabsPanel value="achievements" pt="xs">
                     <Stack gap="md">
                       {form.values.achievements.map((achievement, index) => (
                         <Box key={index}>
@@ -584,7 +584,7 @@ export default function CreateCandidate({
                                 });
                               }}
                             />
-                            <YearPickerInput
+                            {/* <YearPickerInput
                               // label="Year"
                               placeholder="Enter year"
                               popoverProps={{
@@ -606,7 +606,7 @@ export default function CreateCandidate({
                                 });
                               }}
                               // required
-                            />
+                            /> */}
                           </Group>
                           <Button
                             variant="outline"
@@ -648,8 +648,8 @@ export default function CreateCandidate({
                         Add achievement
                       </Button>
                     </Stack>
-                  </Tabs.Panel>
-                  <Tabs.Panel value="affiliations" pt="xs">
+                  </TabsPanel>
+                  <TabsPanel value="affiliations" pt="xs">
                     <Stack gap="md">
                       {form.values.affiliations.map((affiliation, index) => (
                         <Box key={index}>
@@ -697,7 +697,7 @@ export default function CreateCandidate({
                           />
 
                           <Group gap="xs">
-                            <YearPickerInput
+                            {/* <YearPickerInput
                               // label="Start year"
                               placeholder="Enter start year"
                               style={{ width: "100%" }}
@@ -720,8 +720,8 @@ export default function CreateCandidate({
                                 });
                               }}
                               // required
-                            />
-                            <YearPickerInput
+                            /> */}
+                            {/* <YearPickerInput
                               // label="End year"
                               placeholder="Enter end year"
                               style={{ width: "100%" }}
@@ -744,7 +744,7 @@ export default function CreateCandidate({
                                 });
                               }}
                               // required
-                            />
+                            /> */}
                           </Group>
                           <Button
                             variant="outline"
@@ -791,8 +791,8 @@ export default function CreateCandidate({
                         Add affiliation
                       </Button>
                     </Stack>
-                  </Tabs.Panel>
-                  <Tabs.Panel value="events-attended" pt="xs">
+                  </TabsPanel>
+                  <TabsPanel value="events-attended" pt="xs">
                     <Stack gap="md">
                       {form.values.eventsAttended.map(
                         (eventAttended, index) => (
@@ -820,7 +820,7 @@ export default function CreateCandidate({
                                   });
                                 }}
                               />
-                              <YearPickerInput
+                              {/* <YearPickerInput
                                 // label="Year"
                                 placeholder="Enter year"
                                 popoverProps={{
@@ -843,7 +843,7 @@ export default function CreateCandidate({
                                   });
                                 }}
                                 // required
-                              />
+                              /> */}
                             </Group>
                             <Button
                               variant="outline"
@@ -887,9 +887,9 @@ export default function CreateCandidate({
                         Add seminar attended
                       </Button>
                     </Stack>
-                  </Tabs.Panel>
+                  </TabsPanel>
                 </Tabs>
-              </Tabs.Panel>
+              </TabsPanel>
 
               {/* {isError && (
                 <Alert
