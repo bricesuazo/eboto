@@ -69,5 +69,5 @@ export default async function Page({
       })),
     );
 
-  return <DashboardVoter election={election} voters={voters} />;
+  return <DashboardVoter election={election} voters={voters} data-superjson />;
 }

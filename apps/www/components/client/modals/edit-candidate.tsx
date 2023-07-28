@@ -9,8 +9,12 @@ import {
   Group,
   Modal,
   Select,
+  SimpleGrid,
   Stack,
   Tabs,
+  TabsList,
+  TabsPanel,
+  TabsTab,
   Text,
   TextInput,
 } from "@mantine/core";
@@ -316,39 +320,41 @@ export default function EditCandidate({
           })}
         >
           <Tabs radius="xs" defaultValue="basic-info">
-            <Tabs.List grow>
-              <Tabs.Tab
-                value="basic-info"
-                leftSection={<IconUserSearch size="0.8rem" />}
-                px="2rem"
-              >
-                Basic Info
-              </Tabs.Tab>
-              <Tabs.Tab
-                value="image"
-                leftSection={<IconPhoto size="0.8rem" />}
-                px="2rem"
-              >
-                Image
-              </Tabs.Tab>
-              <Tabs.Tab
-                value="platforms"
-                leftSection={<IconInfoCircle size="0.8rem" />}
-                px="2rem"
-              >
-                Platforms
-              </Tabs.Tab>
-              <Tabs.Tab
-                value="credentials"
-                leftSection={<IconInfoCircle size="0.8rem" />}
-                px="2rem"
-              >
-                Credentials
-              </Tabs.Tab>
-            </Tabs.List>
+            <TabsList grow>
+              <SimpleGrid cols={2} w="100%" spacing={0} verticalSpacing={0}>
+                <TabsTab
+                  value="basic-info"
+                  leftSection={<IconUserSearch size="0.8rem" />}
+                  px="2rem"
+                >
+                  Basic Info
+                </TabsTab>
+                <TabsTab
+                  value="image"
+                  leftSection={<IconPhoto size="0.8rem" />}
+                  px="2rem"
+                >
+                  Image
+                </TabsTab>
+                <TabsTab
+                  value="platforms"
+                  leftSection={<IconInfoCircle size="0.8rem" />}
+                  px="2rem"
+                >
+                  Platforms
+                </TabsTab>
+                <TabsTab
+                  value="credentials"
+                  leftSection={<IconInfoCircle size="0.8rem" />}
+                  px="2rem"
+                >
+                  Credentials
+                </TabsTab>
+              </SimpleGrid>
+            </TabsList>
 
             <Stack gap="sm">
-              <Tabs.Panel value="basic-info" pt="xs">
+              <TabsPanel value="basic-info" pt="xs">
                 <Stack gap="xs">
                   <TextInput
                     label="First name"
@@ -378,7 +384,7 @@ export default function EditCandidate({
                     label="Slug"
                     placeholder="Enter slug"
                     description={
-                      <Text>
+                      <Text size="xs">
                         This will be used as the candidate&apos;s URL.
                         <br />
                         eboto-mo.com/{params?.electionSlug?.toString()}/
@@ -419,9 +425,9 @@ export default function EditCandidate({
                     })}
                   />
                 </Stack>
-              </Tabs.Panel>
+              </TabsPanel>
 
-              <Tabs.Panel value="image" pt="xs">
+              <TabsPanel value="image" pt="xs">
                 <Stack gap="xs">
                   {/* <Dropzone
                     id="image"
@@ -554,9 +560,9 @@ export default function EditCandidate({
                     </Button>
                   </Group>
                 </Stack>
-              </Tabs.Panel>
+              </TabsPanel>
 
-              <Tabs.Panel value="platforms" pt="xs">
+              <TabsPanel value="platforms" pt="xs">
                 <Stack gap="xs">
                   {form.values.platforms.map((platform, index) => (
                     <Box key={index}>
@@ -629,29 +635,29 @@ export default function EditCandidate({
                     Add platform
                   </Button>
                 </Stack>
-              </Tabs.Panel>
+              </TabsPanel>
 
-              <Tabs.Panel value="credentials" pt="xs">
+              <TabsPanel value="credentials" pt="xs">
                 <Tabs variant="outline" radius="xs" defaultValue="achievements">
-                  <Tabs.List grow>
-                    <Tabs.Tab value="achievements">
+                  <TabsList grow>
+                    <TabsTab value="achievements">
                       <Text size="xs" truncate>
                         Achievement
                       </Text>
-                    </Tabs.Tab>
-                    <Tabs.Tab value="affiliations">
+                    </TabsTab>
+                    <TabsTab value="affiliations">
                       <Text size="xs" truncate>
                         Affiliations
                       </Text>
-                    </Tabs.Tab>
-                    <Tabs.Tab value="events-attended">
+                    </TabsTab>
+                    <TabsTab value="events-attended">
                       <Text size="xs" truncate>
                         Seminars Attended
                       </Text>
-                    </Tabs.Tab>
-                  </Tabs.List>
+                    </TabsTab>
+                  </TabsList>
 
-                  <Tabs.Panel value="achievements" pt="xs">
+                  <TabsPanel value="achievements" pt="xs">
                     <Stack gap="md">
                       {form.values.achievements.map((achievement, index) => {
                         return (
@@ -734,8 +740,8 @@ export default function EditCandidate({
                         Add achievement
                       </Button>
                     </Stack>
-                  </Tabs.Panel>
-                  <Tabs.Panel value="affiliations" pt="xs">
+                  </TabsPanel>
+                  <TabsPanel value="affiliations" pt="xs">
                     <Stack gap="md">
                       {form.values.affiliations.map((affiliation, index) => {
                         return (
@@ -878,8 +884,8 @@ export default function EditCandidate({
                         Add affiliation
                       </Button>
                     </Stack>
-                  </Tabs.Panel>
-                  <Tabs.Panel value="events-attended" pt="xs">
+                  </TabsPanel>
+                  <TabsPanel value="events-attended" pt="xs">
                     <Stack gap="md">
                       {form.values.events_attended.map(
                         (events_attended, index) => {
@@ -972,9 +978,9 @@ export default function EditCandidate({
                         Add seminar attended
                       </Button>
                     </Stack>
-                  </Tabs.Panel>
+                  </TabsPanel>
                 </Tabs>
-              </Tabs.Panel>
+              </TabsPanel>
 
               {/* {isError && (
                 <Alert
@@ -986,17 +992,17 @@ export default function EditCandidate({
                 </Alert>
               )} */}
 
-              <Group justify="space-around" gap={0}>
+              <Group justify="space-between" gap={0}>
                 <ActionIcon
                   size="lg"
                   variant="outline"
                   color="green"
-                  visibleFrom="sm"
+                  hiddenFrom="xs"
                 >
                   <IconExternalLink size="1.25rem" />
                 </ActionIcon>
                 <Button
-                  hiddenFrom="sm"
+                  visibleFrom="xs"
                   leftSection={<IconExternalLink size="1.25rem" />}
                   variant="outline"
                   component={Link}

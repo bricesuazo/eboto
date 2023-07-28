@@ -4,6 +4,7 @@
   justify-content: center;
   flex-direction: column;
   row-gap: var(--mantine-spacing-xs);
+  padding: var(--mantine-spacing-md);
   width: 100px;
   height: 140px;
   text-align: center;

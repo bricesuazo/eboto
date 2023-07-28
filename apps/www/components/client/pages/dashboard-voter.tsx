@@ -1,28 +1,15 @@
 "use client";
 
 import CreateVoter from "@/components/client/modals/create-voter";
-import DeleteBulkVoter from "@/components/client/modals/delete-bulk-voter";
-import DeleteVoter from "@/components/client/modals/delete-voter";
-import EditVoter from "@/components/client/modals/edit-voter";
 import InviteAllAddedVoters from "@/components/client/modals/invite-all-added-voters";
 import UpdateVoterField from "@/components/client/modals/update-voter-field";
 import UploadBulkVoter from "@/components/client/modals/upload-bulk-voter";
 import { isElectionOngoing } from "@eboto-mo/api/src/utils";
 import type { Election, VoterField } from "@eboto-mo/db/schema";
-import {
-  ActionIcon,
-  Box,
-  Button,
-  Group,
-  Stack,
-  Text,
-  Tooltip,
-} from "@mantine/core";
-import { IconRefresh } from "@tabler/icons-react";
-import type { MRT_ColumnDef, MRT_RowSelectionState } from "mantine-react-table";
-import { MantineReactTable } from "mantine-react-table";
-import moment from "moment";
-import { useMemo, useState } from "react";
+import { Box, Group, Stack, Text, Tooltip } from "@mantine/core";
+
+// import type { MRT_ColumnDef, MRT_RowSelectionState } from "mantine-react-table";
+// import { MantineReactTable } from "mantine-react-table";
 
 export default function DashboardVoter({
   election,
@@ -38,46 +25,46 @@ export default function DashboardVoter({
     field: Record<string, string>;
   }[];
 }) {
-  const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
+  // const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
 
-  const columns = useMemo<MRT_ColumnDef<(typeof voters)[0]>[]>(
-    () => [
-      {
-        accessorKey: "email",
-        header: "Email",
-      },
-      ...((election.voter_fields.map((voter_field) => ({
-        accessorKey: "field." + voter_field.name,
-        header: voter_field.name,
-      })) ?? []) as MRT_ColumnDef<(typeof voters)[0]>[]),
-      {
-        accessorKey: "account_status",
-        header: "Status",
-        size: 75,
-        enableClickToCopy: false,
-        Cell: ({ cell }) =>
-          cell.getValue<string>().charAt(0) +
-          cell.getValue<string>().slice(1).toLowerCase(),
-      },
-      {
-        accessorKey: "has_voted",
-        header: "Voted?",
-        size: 75,
-        Cell: ({ cell }) => (cell.getValue<boolean>() ? "Yes" : "No"),
-        enableClickToCopy: false,
-      },
-      {
-        accessorKey: "created_at",
-        header: "Created",
-        size: 100,
-        Cell: ({ cell }) => moment(cell.getValue<Date>()).fromNow(),
-      },
-    ],
-    [election.voter_fields],
-  );
+  // const columns = useMemo<MRT_ColumnDef<(typeof voters)[0]>[]>(
+  //   () => [
+  //     {
+  //       accessorKey: "email",
+  //       header: "Email",
+  //     },
+  //     ...((election.voter_fields.map((voter_field) => ({
+  //       accessorKey: "field." + voter_field.name,
+  //       header: voter_field.name,
+  //     })) ?? []) as MRT_ColumnDef<(typeof voters)[0]>[]),
+  //     {
+  //       accessorKey: "account_status",
+  //       header: "Status",
+  //       size: 75,
+  //       enableClickToCopy: false,
+  //       Cell: ({ cell }) =>
+  //         cell.getValue<string>().charAt(0) +
+  //         cell.getValue<string>().slice(1).toLowerCase(),
+  //     },
+  //     {
+  //       accessorKey: "has_voted",
+  //       header: "Voted?",
+  //       size: 75,
+  //       Cell: ({ cell }) => (cell.getValue<boolean>() ? "Yes" : "No"),
+  //       enableClickToCopy: false,
+  //     },
+  //     {
+  //       accessorKey: "created_at",
+  //       header: "Created",
+  //       size: 100,
+  //       Cell: ({ cell }) => moment(cell.getValue<Date>()).fromNow(),
+  //     },
+  //   ],
+  //   [election.voter_fields],
+  // );
 
   // const context = api.useContext();
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  // const [isRefreshing, setIsRefreshing] = useState(false);
 
   return (
     <Box>
@@ -133,7 +120,7 @@ export default function DashboardVoter({
           </Group>
         </Group>
 
-        <MantineReactTable
+        {/* <MantineReactTable
           columns={columns}
           data={voters}
           enableFullScreenToggle={false}
@@ -256,7 +243,7 @@ export default function DashboardVoter({
               </Tooltip>
             </Box>
           )}
-        />
+        /> */}
       </Stack>
     </Box>
   );

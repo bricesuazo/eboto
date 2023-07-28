@@ -10,20 +10,11 @@ import {
   Stack,
   Table,
   Text,
-  rem,
 } from "@mantine/core";
-import { Dropzone, MS_EXCEL_MIME_TYPE } from "@mantine/dropzone";
+// import { Dropzone, MS_EXCEL_MIME_TYPE } from "@mantine/dropzone";
 import { useDisclosure } from "@mantine/hooks";
-import {
-  IconDownload,
-  IconFileSpreadsheet,
-  IconTrash,
-  IconUpload,
-  IconX,
-} from "@tabler/icons-react";
+import { IconDownload, IconTrash, IconUpload } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
-import Balancer from "react-wrap-balancer";
-import readXlsxFile from "read-excel-file";
 import * as XLSX from "xlsx";
 
 export default function UploadBulkVoter({
@@ -186,7 +177,7 @@ export default function UploadBulkVoter({
               </Stack>
             </>
           )}
-          <Dropzone
+          {/* <Dropzone
             openRef={openRef}
             hidden={!!selectedFiles.length}
             onDrop={(files) => {
@@ -277,7 +268,7 @@ export default function UploadBulkVoter({
                 </Balancer>
               </div>
             </Group>
-          </Dropzone>
+          </Dropzone> */}
 
           {/* {isError && (
             <Alert
