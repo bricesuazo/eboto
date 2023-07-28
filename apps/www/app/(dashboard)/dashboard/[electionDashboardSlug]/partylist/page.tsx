@@ -34,5 +34,11 @@ export default async function Page({
       ),
     orderBy: (partylists, { desc }) => desc(partylists.updated_at),
   });
-  return <DashboardPartylist election={election} partylists={partylists} />;
+  return (
+    <DashboardPartylist
+      election={election}
+      partylists={partylists}
+      data-superjson
+    />
+  );
 }

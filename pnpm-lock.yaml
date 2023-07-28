@@ -140,6 +140,9 @@ importers:
       next:
         specifier: ^13.4.12
         version: registry.npmjs.org/next@13.4.12(@babel/core@7.22.9)(react-dom@18.2.0)(react@18.2.0)
+      next-superjson-plugin:
+        specifier: ^0.5.9
+        version: registry.npmjs.org/next-superjson-plugin@0.5.9(next@13.4.12)(superjson@1.13.1)
       qrcode.react:
         specifier: ^3.1.0
         version: registry.npmjs.org/qrcode.react@3.1.0(react@18.2.0)
@@ -6573,6 +6576,20 @@ packages:
     version: 2.0.2
     engines: {node: '>= 0.4.0'}
     dev: true
+
+  registry.npmjs.org/next-superjson-plugin@0.5.9(next@13.4.12)(superjson@1.13.1):
+    resolution: {integrity: sha512-xEU+SvrSDk8PGAQ2TrJM/OhkZBcWjWWqSjpUtlxTAI9ovTjKBxxQumcFt7oXzoBLJsRtq0BWTHrcnzL/9izXPQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/next-superjson-plugin/-/next-superjson-plugin-0.5.9.tgz}
+    id: registry.npmjs.org/next-superjson-plugin/0.5.9
+    name: next-superjson-plugin
+    version: 0.5.9
+    peerDependencies:
+      next: ^13
+      superjson: ^1
+    dependencies:
+      hoist-non-react-statics: registry.npmjs.org/hoist-non-react-statics@3.3.2
+      next: registry.npmjs.org/next@13.4.12(@babel/core@7.22.9)(react-dom@18.2.0)(react@18.2.0)
+      superjson: registry.npmjs.org/superjson@1.13.1
+    dev: false
 
   registry.npmjs.org/next-tick@1.1.0:
     resolution: {integrity: sha512-CXdUiJembsNjuToQvxayPZF9Vqht7hewsvy2sOWafLvi2awflj9mOC6bHIg50orX8IJvWKY9wYQ/zB2kogPslQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/next-tick/-/next-tick-1.1.0.tgz}

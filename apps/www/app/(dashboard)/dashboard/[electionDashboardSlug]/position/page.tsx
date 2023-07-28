@@ -56,8 +56,8 @@ export default async function Page({
               </Box>
 
               <Group gap="xs">
-                <EditPosition position={position} />
-                <DeletePosition position={position} />
+                <EditPosition position={position} data-superjson />
+                <DeletePosition position={position} data-superjson />
               </Group>
             </Stack>
           ))

@@ -4,5 +4,5 @@ import { currentUser } from "@clerk/nextjs";
 export default async function Header() {
   const user = await currentUser();
 
-  return <HeaderContent user={user} />;
+  return <HeaderContent user={user} data-superjson />;
 }
