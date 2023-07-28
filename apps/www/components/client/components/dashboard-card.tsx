@@ -34,12 +34,6 @@ const DashboardCard = ({
       h={300}
       // w={{ base: "100%", sm: 256 }}
       // h={{ base: "100%", sm: 256 }}
-      style={(theme) => ({
-        backgroundColor: hovered ? theme.colors.gray[8] : theme.colors.gray[9],
-        borderRadius: theme.radius.md,
-        transition: "background-color 100ms ease-in-out",
-        position: "relative",
-      })}
       component={Link}
       href={
         type === "vote" ? `/${election.slug}` : `/dashboard/${election.slug}`

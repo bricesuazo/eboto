@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: "Voters",
 };
 
-export const runtime = "nodejs";
+// export const runtime = "nodejs";
 
 export default async function Page({
   params: { electionDashboardSlug },
