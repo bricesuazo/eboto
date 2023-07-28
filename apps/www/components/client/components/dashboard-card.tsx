@@ -1,6 +1,6 @@
 "use client";
 
-import classes from "@/styles/DashboardCard.module.css";
+import classes from "@/styles/Dashboard.module.css";
 import type { Election, Vote } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
@@ -29,7 +29,7 @@ const DashboardCard = ({
   return (
     <UnstyledButton
       ref={ref}
-      className={classes.container}
+      className={classes["card-container"]}
       w={256}
       h={300}
       // w={{ base: "100%", sm: 256 }}

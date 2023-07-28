@@ -1,5 +1,9 @@
-import DashboardPosition from "@/components/client/pages/dashboard-position";
+import CreatePosition from "@/components/client/modals/create-position";
+import DeletePosition from "@/components/client/modals/delete-position";
+import EditPosition from "@/components/client/modals/edit-position";
+import classes from "@/styles/Position.module.css";
 import { db } from "@eboto-mo/db";
+import { Box, Group, Stack, Text } from "@mantine/core";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -29,5 +33,36 @@ export default async function Page({
     where: (positions, { eq }) => eq(positions.election_id, election.id),
     orderBy: (positions, { asc }) => asc(positions.order),
   });
-  return <DashboardPosition election={election} positions={positions} />;
+  return (
+    <Stack>
+      <CreatePosition election_id={election.id} />
+
+      <Group gap="xs">
+        {!positions.length ? (
+          <Text>No positions yet.</Text>
+        ) : (
+          positions.map((position) => (
+            <Stack className={classes["position-card"]}>
+              {/* <Text>{i + 1}</Text> */}
+
+              <Box>
+                <Text fw="bold" ta="center">
+                  {position.name}
+                </Text>
+
+                <Text ta="center">
+                  {position.min} - {position.max} candidate(s)
+                </Text>
+              </Box>
+
+              <Group gap="xs">
+                <EditPosition position={position} />
+                <DeletePosition position={position} />
+              </Group>
+            </Stack>
+          ))
+        )}
+      </Group>
+    </Stack>
+  );
 }

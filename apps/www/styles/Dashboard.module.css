@@ -1,9 +1,13 @@
-.navbar {
+.card-container {
+  position: relative;
+}
+
+.navbar-navbar {
   /* background-color:
       theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white, */
 }
 
-.link {
+.navbar-link {
   /* ...theme.fn.focusStyles(), */
   width: "100%";
   display: "flex";
@@ -31,7 +35,7 @@
     }, */
 }
 
-.linkIcon {
+.navbar-linkIcon {
   /* ref: getStylesRef("icon"); */
   width: "1.25rem";
   /* color:
@@ -41,7 +45,7 @@
   margin-right: var(--mantine-spacing-sm);
 }
 
-.linkActive {
+.navbar-linkActive {
   /* "&, &:hover" {
       backgroundColor: theme.fn.variant({
         variant: "light";

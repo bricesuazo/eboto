@@ -31,13 +31,7 @@ export default function DeletePosition({ position }: { position: Position }) {
 
   return (
     <>
-      <Button
-        onClick={open}
-        variant="light"
-        color="red"
-        size="sm"
-        // compact
-      >
+      <Button onClick={open} variant="subtle" color="red" size="compact-sm">
         Delete
       </Button>
       <Modal

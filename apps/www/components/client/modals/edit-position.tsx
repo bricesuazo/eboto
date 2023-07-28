@@ -16,13 +16,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconLetterCase } from "@tabler/icons-react";
 import { useEffect } from "react";
 
-export default function EditPosition({
-  position,
-  order,
-}: {
-  position: Position;
-  order: number;
-}) {
+export default function EditPosition({ position }: { position: Position }) {
   const [opened, { open, close }] = useDisclosure(false);
 
   const form = useForm({
@@ -93,12 +87,7 @@ export default function EditPosition({
   }, [opened]);
   return (
     <>
-      <Button
-        onClick={open}
-        variant="light"
-        size="sm"
-        // compact
-      >
+      <Button onClick={open} variant="subtle" size="compact-sm">
         Edit
       </Button>
       <Modal
@@ -117,7 +106,6 @@ export default function EditPosition({
                 name: value.name,
                 min: value.isSingle ? value.min : undefined,
                 max: value.isSingle ? value.max : undefined,
-                order,
                 election_id: position.election_id,
               });
             })();

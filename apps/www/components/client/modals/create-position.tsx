@@ -17,10 +17,8 @@ import { useEffect } from "react";
 
 export default function CreatePosition({
   election_id,
-  order,
 }: {
   election_id: string;
-  order: number;
 }) {
   // const { mutate, isLoading, isError, error, reset } =
   //   api.election.createPosition.useMutation({
@@ -116,7 +114,6 @@ export default function CreatePosition({
               await api.election.createPosition.mutate({
                 name: value.name,
                 election_id,
-                order,
                 min: form.values.isSingle ? value.min : undefined,
                 max: form.values.isSingle ? value.max : undefined,
               });

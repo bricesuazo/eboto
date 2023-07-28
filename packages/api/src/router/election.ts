@@ -429,7 +429,6 @@ export const electionRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string().min(1),
-        order: z.number().nonnegative(),
         min: z.number().nonnegative().optional(),
         max: z.number().nonnegative().optional(),
         election_id: z.string().min(1),
@@ -438,10 +437,18 @@ export const electionRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       // TODO: Validate commissioner
 
+      const positionsInDB = await db.query.positions.findMany({
+        where: (positions, { eq }) =>
+          eq(positions.election_id, input.election_id),
+        columns: {
+          id: true,
+        },
+      });
+
       await db.insert(positions).values({
         id: nanoid(),
         name: input.name,
-        order: input.order,
+        order: positionsInDB.length,
         min: input.min,
         max: input.max,
         election_id: input.election_id,
@@ -471,19 +478,26 @@ export const electionRouter = createTRPCRouter({
         id: z.string().min(1),
         name: z.string().min(1),
         description: z.string().optional(),
-        order: z.number().nonnegative(),
         min: z.number().nonnegative().optional(),
         max: z.number().nonnegative().optional(),
         election_id: z.string().min(1),
       }),
     )
     .mutation(async ({ input }) => {
+      const positionsInDB = await db.query.positions.findMany({
+        where: (positions, { eq }) =>
+          eq(positions.election_id, input.election_id),
+        columns: {
+          id: true,
+        },
+      });
+
       await db
         .update(positions)
         .set({
           name: input.name,
           description: input.description,
-          order: input.order,
+          order: positionsInDB.length,
           min: input.min,
           max: input.max,
         })
