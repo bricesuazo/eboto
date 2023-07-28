@@ -2,12 +2,19 @@
 
 import classes from "@/styles/DashboardCard.module.css";
 import type { Election, Vote } from "@eboto-mo/db/schema";
-import { ActionIcon, Box, Text, UnstyledButton, rem } from "@mantine/core";
+import {
+  ActionIcon,
+  Box,
+  Center,
+  Text,
+  Title,
+  UnstyledButton,
+} from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import { IconExternalLink } from "@tabler/icons-react";
+import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
-import Moment from "react-moment";
 
 const DashboardCard = ({
   election,
@@ -18,98 +25,86 @@ const DashboardCard = ({
   type: "vote" | "manage";
   vote?: Vote[];
 }) => {
-  const { hovered, ref } = useHover();
+  const { hovered, ref } = useHover<HTMLAnchorElement>();
   return (
-    <Box ref={ref} className={classes.container} w={{ sm: "100%" }}>
+    <UnstyledButton
+      ref={ref}
+      className={classes.container}
+      w={256}
+      h={300}
+      // w={{ base: "100%", sm: 256 }}
+      // h={{ base: "100%", sm: 256 }}
+      style={(theme) => ({
+        backgroundColor: hovered ? theme.colors.gray[8] : theme.colors.gray[9],
+        borderRadius: theme.radius.md,
+        transition: "background-color 100ms ease-in-out",
+        position: "relative",
+      })}
+      component={Link}
+      href={
+        type === "vote" ? `/${election.slug}` : `/dashboard/${election.slug}`
+      }
+      target={type === "vote" ? "_blank" : undefined}
+    >
       {type === "vote" && (
         <ActionIcon
-          variant="outline"
+          variant="default"
           disabled
-          style={(theme) => ({
+          style={{
             position: "absolute",
-            top: "-" + theme.spacing.sm,
-            right: "-" + theme.spacing.sm,
+            top: -12,
+            right: -12,
             width: 32,
             height: 32,
             borderRadius: "100%",
             opacity: hovered ? 1 : 0,
             transition: "opacity 100ms ease-in-out",
             pointerEvents: "none",
-          })}
+          }}
         >
-          <IconExternalLink size={rem(20)} />
+          <IconExternalLink size="1rem" />
         </ActionIcon>
       )}
-      <UnstyledButton
-        component={Link}
-        href={
-          type === "vote" ? `/${election.slug}` : `/dashboard/${election.slug}`
-        }
-        key={election.id}
-        target={type === "vote" ? "_blank" : undefined}
-        style={(theme) => ({
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
-          justifyContent: "center",
-          gap: theme.spacing.xs,
-          width: 250,
-          height: type === "vote" ? 352 : 332,
-          borderRadius: theme.radius.md,
-          padding: theme.spacing.sm,
-          // backgroundColor:
-          //   theme.colorScheme === "dark"
-          //     ? theme.colors.dark[6]
-          //     : theme.colors.gray[1],
 
-          // [theme.fn.smallerThan("xs")]: { width: "100%" },
-
-          "&:focus": {
-            boxShadow: `0 0 0 2px ${theme.primaryColor}`,
-          },
-
-          // "&:hover": {
-          //   backgroundColor:
-          //     theme.colorScheme === "dark"
-          //       ? theme.colors.dark[5]
-          //       : theme.colors.gray[2],
-          // },
-        })}
-      >
-        {election.logo && (
-          <Box
+      {election.logo && (
+        <Box
+          style={{
+            position: "relative",
+            width: "100%",
+            aspectRatio: "1/1",
+          }}
+        >
+          <Image
+            src={election.logo}
+            alt={election.name + " logo"}
+            fill
+            sizes="100%"
             style={{
-              position: "relative",
-              width: "100%",
-              aspectRatio: "1/1",
+              objectFit: "contain",
             }}
-          >
-            <Image
-              src={election.logo}
-              alt={election.name + " logo"}
-              fill
-              sizes="100%"
-              style={{
-                objectFit: "contain",
-              }}
-              priority
-              blurDataURL={election.logo}
-            />
-          </Box>
-        )}
-        <Box w="100%">
-          <Text fw="bold" lineClamp={1} ta="center">
+            priority
+            blurDataURL={election.logo}
+          />
+        </Box>
+      )}
+      <Center h="100%">
+        <Box>
+          <Title fw="bold" ta="center" order={3}>
             {election.name}
-          </Text>
-          <Text size="sm" color="GrayText" lineClamp={1} ta="center">
-            <Moment format="MMM D, YYYY">{election.start_date}</Moment>
+          </Title>
+          <Text size="sm" color="GrayText" ta="center">
+            {moment(election.start_date)
+              .local()
+              .format("MMMM DD, YYYY hA (dddd)")}
             {" - "}
-            <Moment format="MMM D, YYYY">{election.end_date}</Moment>
+            {moment(election.end_date)
+              .local()
+              .format("MMMM DD, YYYY hA (dddd)")}
           </Text>
-          <Text size="sm" lineClamp={1} color="dimmed" ta="center">
+          {/* <Text size="sm" lineClamp={1} color="dimmed" ta="center">
             Open from <Moment format="H A">{election.start_date}</Moment> to{" "}
             <Moment format="H A">{election.end_date}</Moment>
-          </Text>
+          </Text> */}
 
           <Text size="sm" lineClamp={1} color="dimmed" ta="center">
             Publicity:{" "}
@@ -123,8 +118,8 @@ const DashboardCard = ({
             </Text>
           )}
         </Box>
-      </UnstyledButton>
-    </Box>
+      </Center>
+    </UnstyledButton>
   );
 };
 
