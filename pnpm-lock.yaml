@@ -3717,7 +3717,7 @@ packages:
     hasBin: true
     dependencies:
       caniuse-lite: registry.npmjs.org/caniuse-lite@1.0.30001517
-      electron-to-chromium: registry.npmjs.org/electron-to-chromium@1.4.475
+      electron-to-chromium: registry.npmjs.org/electron-to-chromium@1.4.477
       node-releases: registry.npmjs.org/node-releases@2.0.13
       update-browserslist-db: registry.npmjs.org/update-browserslist-db@1.0.11(browserslist@4.21.9)
     dev: false
@@ -4525,10 +4525,10 @@ packages:
       readable-stream: registry.npmjs.org/readable-stream@2.3.8
     dev: false
 
-  registry.npmjs.org/electron-to-chromium@1.4.475:
-    resolution: {integrity: sha512-mTye5u5P98kSJO2n7zYALhpJDmoSQejIGya0iR01GpoRady8eK3bw7YHHnjA1Rfi4ZSLdpuzlAC7Zw+1Zu7Z6A==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.4.475.tgz}
+  registry.npmjs.org/electron-to-chromium@1.4.477:
+    resolution: {integrity: sha512-shUVy6Eawp33dFBFIoYbIwLHrX0IZ857AlH9ug2o4rvbWmpaCUdBpQ5Zw39HRrfzAFm4APJE9V+E2A/WB0YqJw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.4.477.tgz}
     name: electron-to-chromium
-    version: 1.4.475
+    version: 1.4.477
     dev: false
 
   registry.npmjs.org/embla-carousel-react@8.0.0-rc11(react@18.2.0):

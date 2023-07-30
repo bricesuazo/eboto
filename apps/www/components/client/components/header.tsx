@@ -81,7 +81,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
               py="xl"
               hiddenFrom="xs"
               h="100%"
-              hidden={!!params.electionDashboardSlug}
+              hidden={!params.electionDashboardSlug}
             />
           </Center>
         </Group>
