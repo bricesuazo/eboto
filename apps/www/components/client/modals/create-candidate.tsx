@@ -17,6 +17,7 @@ import {
   TabsTab,
   Text,
   TextInput,
+  Textarea,
   UnstyledButton,
 } from "@mantine/core";
 // import { YearPickerInput } from "@mantine/dates";
@@ -451,7 +452,7 @@ export default function CreateCandidate({
                           });
                         }}
                       />
-                      {/* <Textarea
+                      <Textarea
                         w="100%"
                         label="Description"
                         placeholder="Enter description"
@@ -471,7 +472,7 @@ export default function CreateCandidate({
                             }),
                           });
                         }}
-                      /> */}
+                      />
 
                       <Button
                         variant="outline"

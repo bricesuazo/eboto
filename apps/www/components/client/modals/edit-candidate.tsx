@@ -17,6 +17,7 @@ import {
   TabsTab,
   Text,
   TextInput,
+  Textarea,
 } from "@mantine/core";
 // import { YearPickerInput } from "@mantine/dates";
 import type { FileWithPath } from "@mantine/dropzone";
@@ -587,7 +588,7 @@ export default function EditCandidate({
                           });
                         }}
                       />
-                      {/* <Textarea
+                      <Textarea
                         w="100%"
                         label="Description"
                         placeholder="Enter description"
@@ -607,7 +608,7 @@ export default function EditCandidate({
                             }),
                           });
                         }}
-                      /> */}
+                      />
 
                       <DeleteCredentialButton
                         type="PLATFORM"

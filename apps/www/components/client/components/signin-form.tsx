@@ -9,6 +9,7 @@ import {
   Divider,
   Group,
   Paper,
+  PasswordInput,
   Stack,
   TextInput,
 } from "@mantine/core";
@@ -100,8 +101,7 @@ export default function SigninForm() {
               disabled={loadings.credential || loadings.google}
             />
 
-            <TextInput
-              type="password"
+            <PasswordInput
               placeholder="Enter your password"
               withAsterisk
               label="Password"

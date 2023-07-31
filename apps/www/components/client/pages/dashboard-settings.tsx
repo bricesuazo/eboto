@@ -12,6 +12,7 @@ import {
   Stack,
   Text,
   TextInput,
+  Textarea,
 } from "@mantine/core";
 import type { FileWithPath } from "@mantine/dropzone";
 import { hasLength, useForm } from "@mantine/form";
@@ -298,7 +299,7 @@ export default function DashboardSettings({
             // disabled={isLoading}
           />
 
-          {/* <Textarea
+          <Textarea
             label="Election description"
             description="This will be shown on the election page."
             placeholder="Enter election description"
@@ -312,8 +313,8 @@ export default function DashboardSettings({
             //   (updateElectionMutation.error?.data?.code === "CONFLICT" &&
             //     updateElectionMutation.error?.message)
             // }
-            disabled={isLoading}
-          /> */}
+            // disabled={isLoading}
+          />
 
           {/* <TextInput
                     label="Election voter's domain"

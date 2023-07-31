@@ -1,7 +1,15 @@
 "use client";
 
 import { useSignUp } from "@clerk/nextjs";
-import { Button, Divider, Group, Paper, Stack, TextInput } from "@mantine/core";
+import {
+  Button,
+  Divider,
+  Group,
+  Paper,
+  PasswordInput,
+  Stack,
+  TextInput,
+} from "@mantine/core";
 import {
   hasLength,
   isEmail,
@@ -136,26 +144,20 @@ export default function RegisterForm() {
               {...form.getInputProps("email")}
             />
 
-            <TextInput
-              type="password"
+            <PasswordInput
               placeholder="Enter your password"
               withAsterisk
               label="Password"
               required
-              // visible={visible}
-              // onVisibilityChange={toggle}
               {...form.getInputProps("password")}
               disabled={loadings.credential}
               leftSection={<IconLock size="1rem" />}
             />
-            <TextInput
-              type="password"
+            <PasswordInput
               placeholder="Confirm your password"
               withAsterisk
               label="Confirm password"
               required
-              // visible={visible}
-              // onVisibilityChange={toggle}
               {...form.getInputProps("confirmPassword")}
               disabled={loadings.credential}
               leftSection={<IconLock size="1rem" />}
