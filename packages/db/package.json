@@ -13,11 +13,11 @@
   "dependencies": {
     "@planetscale/database": "^1.10.0",
     "drizzle-orm": "0.27.2",
-    "mysql2": "^3.5.2"
+    "mysql2": "^3.6.0"
   },
   "devDependencies": {
     "@eboto-mo/tsconfig": "workspace:*",
-    "@types/node": "^20.4.5",
+    "@types/node": "^20.4.8",
     "dotenv-cli": "^7.2.1",
     "drizzle-kit": "0.19.11",
     "typescript": "^5.1.6"
