@@ -141,7 +141,7 @@ export default function CreateCandidate({
       first_name: "",
       last_name: "",
       slug: "",
-      partylist_id: partylists[0]?.id || "",
+      partylist_id: partylists[0]?.id ?? "",
       middle_name: "",
       position_id: position.id,
       image: null,
