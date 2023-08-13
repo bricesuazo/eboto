@@ -1,8 +1,9 @@
-import { db } from "@eboto-mo/db";
-import { verification_tokens } from "@eboto-mo/db/schema";
+// import { db } from "@eboto-mo/db";
+// import { verification_tokens } from "@eboto-mo/db/schema";
 import type { Election, TokenType } from "@eboto-mo/db/schema";
 import type { FileWithPath } from "@mantine/dropzone";
-import { nanoid } from "nanoid";
+
+// import { nanoid } from "nanoid";
 
 export const isElectionOngoing = ({ election }: { election: Election }) => {
   const end = new Date(election.end_date);
@@ -31,9 +32,9 @@ export const isElectionEnded = ({
     : end_date.getTime() <= now.getTime();
 };
 
-export const sendEmail = async ({
-  type,
-  user_id,
+export const sendEmail = ({
+  // type,
+  // user_id,
   email,
 }: {
   type: TokenType;
@@ -41,13 +42,13 @@ export const sendEmail = async ({
   email: string;
 }) => {
   console.log("🚀 ~ file: index.tsx:42 ~ email:", email);
-  const token = await db.insert(verification_tokens).values({
-    id: nanoid(),
-    user_id,
-    type,
-    expires_at: new Date(Date.now() + 1000 * 60 * 60 * 3), // 3 hours
-  });
-  console.log("🚀 ~ file: index.tsx:48 ~ token ~ token:", token);
+  // const token = await db.insert(verification_tokens).values({
+  //   id: nanoid(),
+  //   user_id,
+  //   type,
+  //   expires_at: new Date(Date.now() + 1000 * 60 * 60 * 3), // 3 hours
+  // });
+  // console.log("🚀 ~ file: index.tsx:48 ~ token ~ token:", token);
 
   // switch (type) {
   //   case 'EMAIL_VERIFICATION':
@@ -74,6 +75,7 @@ export const uploadImage = async ({
   path: string;
   image: FileWithPath;
 }): Promise<string> => {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   console.log("🚀 ~ file: index.tsx:76 ~ image:", image);
   console.log("🚀 ~ file: index.tsx:76 ~ path:", path);
   // await supabase.storage.from("eboto-mo").upload(path, image, {

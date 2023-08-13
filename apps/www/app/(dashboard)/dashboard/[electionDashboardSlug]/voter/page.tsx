@@ -52,7 +52,7 @@ export default async function Page({
       id: voter.id,
       email:
         users.find((user) => user.id === voter.user_id)?.emailAddresses[0]
-          .emailAddress ?? "",
+          ?.emailAddress ?? "",
       account_status: "ACCEPTED",
       created_at: voter.created_at,
       has_voted: voter.votes.length > 0,

@@ -23,9 +23,9 @@ import { and, eq, inArray } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { z } from "zod";
 
-import { positionTemplate, takenSlugs } from "../constants";
+import { positionTemplate, takenSlugs } from "../../../../apps/www/constants";
+import { account_status_type_with_accepted } from "../../../../apps/www/utils/zod-schema";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { account_status_type_with_accepted } from "../utils/zod-schema";
 
 export const electionRouter = createTRPCRouter({
   // getElectionBySlug: publicProcedure

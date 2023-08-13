@@ -1,9 +1,9 @@
 "use client";
 
 import CreateElection from "@/components/client/modals/create-election";
+import { electionDashboardNavbar } from "@/constants";
 import { useStore } from "@/store";
 import { useClerk } from "@clerk/nextjs";
-import { electionDashboardNavbar } from "@eboto-mo/api/src/constants";
 import type { Commissioner, Election } from "@eboto-mo/db/schema";
 import { AppShellNavbar, Button, Divider, Select, Stack } from "@mantine/core";
 import {
@@ -38,7 +38,7 @@ export default function NavbarComponent() {
   const currentElection = elections
     ? elections.find(
         (election) =>
-          election.election.slug === params.electionDashboardSlug.toString(),
+          election.election.slug === params.electionDashboardSlug?.toString(),
       )?.election
     : null;
 
@@ -116,7 +116,7 @@ export default function NavbarComponent() {
                             : "Ongoing",
                         selected:
                           election.slug ===
-                          params.electionDashboardSlug.toString(),
+                          params.electionDashboardSlug?.toString(),
                       }))
                   : []
               }

@@ -1,5 +1,5 @@
+import { FAQs } from "@/constants";
 import classes from "@/styles/Home.module.css";
-import { FAQs } from "@eboto-mo/api/src/constants";
 import {
   Accordion,
   AccordionControl,

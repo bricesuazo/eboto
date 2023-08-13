@@ -135,7 +135,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
                       {user.firstName} {user.lastName}
                     </Text>
                     <Text size="xs" truncate>
-                      {user.emailAddresses[0].emailAddress}
+                      {user.emailAddresses[0]?.emailAddress}
                     </Text>
                   </Box>
 

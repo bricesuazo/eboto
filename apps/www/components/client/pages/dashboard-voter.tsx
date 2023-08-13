@@ -4,7 +4,7 @@ import CreateVoter from "@/components/client/modals/create-voter";
 import InviteAllAddedVoters from "@/components/client/modals/invite-all-added-voters";
 import UpdateVoterField from "@/components/client/modals/update-voter-field";
 import UploadBulkVoter from "@/components/client/modals/upload-bulk-voter";
-import { isElectionOngoing } from "@eboto-mo/api/src/utils";
+import { isElectionOngoing } from "@/utils";
 import type { Election, VoterField } from "@eboto-mo/db/schema";
 import { Box, Group, Stack, Text, Tooltip } from "@mantine/core";
 

@@ -122,7 +122,8 @@ export default function CreateVoter({
 
                 field: voter_fields.reduce(
                   (acc, field) => {
-                    acc[field.name] = value[field.name];
+                    acc[field.name] = value[field.name]!;
+
                     return acc;
                   },
                   {} as Record<string, string>,

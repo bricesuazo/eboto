@@ -1,7 +1,5 @@
 import * as z from "zod";
 
-import { env } from "./src/env.mjs";
-
 /**
  * Shared validators used in both the frontend and backend
  */
