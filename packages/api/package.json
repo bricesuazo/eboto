@@ -16,7 +16,7 @@
     "@t3-oss/env-nextjs": "^0.6.0",
     "@trpc/client": "^10.37.1",
     "@trpc/server": "^10.37.1",
-    "drizzle-orm": "0.27.2",
+    "drizzle-orm": "0.28.2",
     "nanoid": "^4.0.2",
     "superjson": "1.13.1",
     "zod": "^3.21.4",
