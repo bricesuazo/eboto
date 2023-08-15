@@ -12,6 +12,7 @@ import {
   Button,
   Center,
   Container,
+  Flex,
   Group,
   Loader,
   Menu,
@@ -55,8 +56,8 @@ export default function HeaderContent({ user }: { user: User | null }) {
 
   return (
     <Container h="100%" size={!params.electionDashboardSlug ? "md" : undefined}>
-      <Group h="100%" align="center" justify="space-between" gap="xs">
-        <Group h="100%" align="center">
+      <Flex h="100%" align="center" justify="space-between" gap="xs">
+        <Flex h="100%" align="center">
           <UnstyledButton component={Link} href={user ? "/dashboard" : "/"}>
             <Group gap="xs" align="center">
               <Image
@@ -84,7 +85,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
               hidden={!params.electionDashboardSlug}
             />
           </Center>
-        </Group>
+        </Flex>
 
         {user ? (
           <Menu
@@ -96,7 +97,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
           >
             <MenuTarget>
               <UnstyledButton h="100%">
-                <Group gap="xs">
+                <Flex gap="xs">
                   <Box
                     style={{
                       position: "relative",
@@ -123,14 +124,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
                     />
                   </Box>
 
-                  <Box
-                    style={{
-                      width: 100,
-                      // [theme.fn.largerThan("sm")]: {
-                      //   width: 140,
-                      // },
-                    }}
-                  >
+                  <Box w={{ base: 100, sm: 140 }}>
                     <Text size="xs" truncate fw="bold">
                       {user.firstName} {user.lastName}
                     </Text>
@@ -146,7 +140,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
                       transition: "all 0.25s",
                     }}
                   />
-                </Group>
+                </Flex>
               </UnstyledButton>
             </MenuTarget>
 
@@ -260,7 +254,7 @@ export default function HeaderContent({ user }: { user: User | null }) {
             </Button>
           </Group>
         )}
-      </Group>
+      </Flex>
     </Container>
   );
 }

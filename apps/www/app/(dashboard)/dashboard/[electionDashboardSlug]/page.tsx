@@ -1,14 +1,6 @@
 import QRCode from "@/components/client/modals/show-qr-code";
 import { db } from "@eboto-mo/db";
-import {
-  ActionIcon,
-  Box,
-  Flex,
-  Group,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
+import { ActionIcon, Box, Flex, Stack, Text, Title } from "@mantine/core";
 import { IconExternalLink } from "@tabler/icons-react";
 import moment from "moment";
 import Link from "next/link";
@@ -32,8 +24,8 @@ export default async function Page({
   return (
     <Stack>
       <Box>
-        <Group justify="space-between" align="center" gap="xs">
-          <Group align="center" gap="xs">
+        <Flex justify="space-between" gap="xs">
+          <Flex gap="xs">
             <Title order={2} style={{ lineClamp: 1 }}>
               {election.name} (@{election.slug})
             </Title>
@@ -43,14 +35,13 @@ export default async function Page({
               href={`/${election.slug}`}
               target="_blank"
               radius="50%"
-              w={40}
-              h={40}
+              size="lg"
             >
               <IconExternalLink size="1rem" />
             </ActionIcon>
-          </Group>
+          </Flex>
           <QRCode election={election} />
-        </Group>
+        </Flex>
         <Text>
           {moment(election.start_date)
             .local()
