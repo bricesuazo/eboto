@@ -25,7 +25,7 @@
   "devDependencies": {
     "@eboto-mo/eslint-config": "workspace:*",
     "eslint": "^8.47.0",
-    "next": "^13.4.13",
+    "next": "^13.4.15",
     "typescript": "^5.1.6"
   }
 }
