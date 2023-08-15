@@ -24,6 +24,10 @@ import { IconCalendar, IconLetterCase, IconX } from "@tabler/icons-react";
 import Image from "next/image";
 import { useRef } from "react";
 
+// TODO: Remove this
+// Error: The Edge Function "dashboard/[electionDashboardSlug]/settings" size is 1.02 MB and your plan size limit is 1 MB. Learn More: https://vercel.link/edge-function-size
+export const runtime = "nodejs";
+
 export default function DashboardSettings({
   election,
 }: {
