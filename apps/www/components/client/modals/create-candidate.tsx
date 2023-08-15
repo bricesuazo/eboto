@@ -19,10 +19,11 @@ import {
   TextInput,
   Textarea,
   UnstyledButton,
+  rem,
 } from "@mantine/core";
-// import { YearPickerInput } from "@mantine/dates";
+import { YearPickerInput } from "@mantine/dates";
 import type { DateValue } from "@mantine/dates";
-// import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
+import { Dropzone, DropzoneReject, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import type { FileWithPath } from "@mantine/dropzone";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
@@ -34,9 +35,11 @@ import {
   IconPlus,
   IconUserPlus,
   IconUserSearch,
+  IconX,
 } from "@tabler/icons-react";
+import Image from "next/image";
 import { useParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export default function CreateCandidate({
   position,
@@ -50,7 +53,7 @@ export default function CreateCandidate({
   const [opened, { open, close }] = useDisclosure(false);
 
   const params = useParams();
-  // const openRef = useRef<() => void>(null);
+  const openRef = useRef<() => void>(null);
 
   // TODO: Implement this
 
@@ -346,7 +349,7 @@ export default function CreateCandidate({
               </TabsPanel>
               <TabsPanel value="image" pt="xs">
                 <Stack gap="xs">
-                  {/* <Dropzone
+                  <Dropzone
                     id="image"
                     onDrop={(files) => {
                       if (!files[0]) return;
@@ -409,11 +412,11 @@ export default function CreateCandidate({
                           </Text>
                         </Box>
                       )}
-                      <Dropzone.Reject>
+                      <DropzoneReject>
                         <IconX size="3.2rem" stroke={1.5} />
-                      </Dropzone.Reject>
+                      </DropzoneReject>
                     </Group>
-                  </Dropzone> */}
+                  </Dropzone>
                   <Button
                     onClick={() => {
                       form.setFieldValue("image", null);
@@ -559,7 +562,7 @@ export default function CreateCandidate({
                                 });
                               }}
                             />
-                            {/* <YearPickerInput
+                            <YearPickerInput
                               // label="Year"
                               placeholder="Enter year"
                               popoverProps={{
@@ -581,7 +584,7 @@ export default function CreateCandidate({
                                 });
                               }}
                               // required
-                            /> */}
+                            />
                           </Group>
                           <Button
                             variant="outline"
@@ -672,7 +675,7 @@ export default function CreateCandidate({
                           />
 
                           <Group gap="xs">
-                            {/* <YearPickerInput
+                            <YearPickerInput
                               // label="Start year"
                               placeholder="Enter start year"
                               style={{ width: "100%" }}
@@ -695,8 +698,8 @@ export default function CreateCandidate({
                                 });
                               }}
                               // required
-                            /> */}
-                            {/* <YearPickerInput
+                            />
+                            <YearPickerInput
                               // label="End year"
                               placeholder="Enter end year"
                               style={{ width: "100%" }}
@@ -719,7 +722,7 @@ export default function CreateCandidate({
                                 });
                               }}
                               // required
-                            /> */}
+                            />
                           </Group>
                           <Button
                             variant="outline"
@@ -795,7 +798,7 @@ export default function CreateCandidate({
                                   });
                                 }}
                               />
-                              {/* <YearPickerInput
+                              <YearPickerInput
                                 // label="Year"
                                 placeholder="Enter year"
                                 popoverProps={{
@@ -818,7 +821,7 @@ export default function CreateCandidate({
                                   });
                                 }}
                                 // required
-                              /> */}
+                              />
                             </Group>
                             <Button
                               variant="outline"

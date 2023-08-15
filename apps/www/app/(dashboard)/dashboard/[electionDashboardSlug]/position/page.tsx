@@ -42,7 +42,7 @@ export default async function Page({
           <Text>No positions yet.</Text>
         ) : (
           positions.map((position) => (
-            <Stack className={classes["position-card"]}>
+            <Stack key={position.id} className={classes["position-card"]}>
               {/* <Text>{i + 1}</Text> */}
 
               <Box>

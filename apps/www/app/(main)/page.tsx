@@ -55,7 +55,7 @@ export default function HomePage() {
         <Box className={classes.controls}>
           <Button
             component={Link}
-            href="/signin"
+            href="/sign-in"
             className={classes.control}
             size="md"
             variant="outline"
@@ -64,7 +64,7 @@ export default function HomePage() {
           </Button>
           <Button
             component={Link}
-            href="/signup"
+            href="/register"
             className={classes.control}
             size="md"
           >

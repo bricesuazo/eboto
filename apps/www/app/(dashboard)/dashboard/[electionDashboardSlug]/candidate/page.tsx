@@ -111,7 +111,7 @@ export default async function Page({
         </Box>
       ) : (
         positionsWithCandidates.map((position) => (
-          <Box>
+          <Box key={position.id}>
             <Text
               fw="bold"
               size="xl"
@@ -142,7 +142,11 @@ export default async function Page({
                   </Text>
                 ) : (
                   position.candidates.map((candidate) => (
-                    <Group className={classes["candidate-card"]} gap="xs">
+                    <Group
+                      key={candidate.id}
+                      className={classes["candidate-card"]}
+                      gap="xs"
+                    >
                       <Stack align="center" justify="center" gap="xs">
                         {candidate.image_link ? (
                           <Image

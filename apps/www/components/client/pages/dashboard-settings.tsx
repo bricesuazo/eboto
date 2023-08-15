@@ -13,17 +13,23 @@ import {
   Text,
   TextInput,
   Textarea,
+  rem,
 } from "@mantine/core";
+import { DateTimePicker } from "@mantine/dates";
+import { Dropzone, DropzoneReject, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import type { FileWithPath } from "@mantine/dropzone";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { IconLetterCase } from "@tabler/icons-react";
+import { IconCalendar, IconLetterCase, IconX } from "@tabler/icons-react";
+import Image from "next/image";
+import { useRef } from "react";
 
 export default function DashboardSettings({
   election,
 }: {
   election: Election;
 }) {
+  const openRef = useRef<() => void>(null);
   // const { mutate, isLoading, isError, error } =
   //   api.election.editElection.useMutation({
   //     onSuccess: async () => {
@@ -337,7 +343,7 @@ export default function DashboardSettings({
                     }
                   /> */}
 
-          {/* <DateTimePicker
+          <DateTimePicker
             valueFormat="MMMM DD, YYYY (dddd) hh:mm A"
             label="Election start date"
             placeholder="Enter election start date"
@@ -352,7 +358,7 @@ export default function DashboardSettings({
             minDate={new Date(new Date().setDate(new Date().getDate() + 1))}
             firstDayOfWeek={0}
             {...form.getInputProps("start_date")}
-            icon={<IconCalendar size="1rem" />}
+            leftSection={<IconCalendar size="1rem" />}
             // disabled={
             //   loading ||
             //   isElectionOngoing({
@@ -360,8 +366,8 @@ export default function DashboardSettings({
             //     withTime: false,
             //   })
             // }
-          /> */}
-          {/* <DateTimePicker
+          />
+          <DateTimePicker
             valueFormat="MMMM DD, YYYY (dddd) hh:mm A"
             label="Election end date"
             placeholder="Enter election end date"
@@ -379,7 +385,7 @@ export default function DashboardSettings({
             }
             firstDayOfWeek={0}
             {...form.getInputProps("end_date")}
-            icon={<IconCalendar size="1rem" />}
+            leftSection={<IconCalendar size="1rem" />}
             // disabled={
             //   loading ||
             //   isElectionOngoing({
@@ -387,7 +393,7 @@ export default function DashboardSettings({
             //     withTime: false,
             //   })
             // }
-          /> */}
+          />
 
           <Select
             label="Election publicity"
@@ -408,7 +414,7 @@ export default function DashboardSettings({
               Election logo
             </Text>
             <Stack gap="xs">
-              {/* <Dropzone
+              <Dropzone
                 id="logo"
                 onDrop={(files) => {
                   if (!files[0]) return;
@@ -492,11 +498,11 @@ export default function DashboardSettings({
                       </Text>
                     </Box>
                   )}
-                  <Dropzone.Reject>
+                  <DropzoneReject>
                     <IconX size="3.2rem" stroke={1.5} />
-                  </Dropzone.Reject>
+                  </DropzoneReject>
                 </Group>
-              </Dropzone> */}
+              </Dropzone>
               <Group grow>
                 <Button
                   variant="light"

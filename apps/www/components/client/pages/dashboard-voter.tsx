@@ -213,7 +213,7 @@ export default function DashboardVoter({
           enableRowActions
           positionActionsColumn="last"
           renderRowActions={({ row }) => (
-            <Box style={{ display: "flex", gap: "16px" }}>
+            <Flex style={{ gap: "16px" }}>
               <Tooltip withArrow label="Edit">
                 <EditVoter
                   voter_fields={election.voter_fields}
@@ -241,7 +241,7 @@ export default function DashboardVoter({
                   election_id={election.id}
                 />
               </Tooltip>
-            </Box>
+            </Flex>
           )}
         /> */}
       </Stack>

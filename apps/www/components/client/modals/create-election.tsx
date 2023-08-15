@@ -4,9 +4,15 @@ import { positionTemplate } from "@/constants";
 import { api } from "@/trpc/client";
 import type { MantineStyleProp } from "@mantine/core";
 import { Button, Group, Modal, Select, Stack, TextInput } from "@mantine/core";
+import { DateTimePicker } from "@mantine/dates";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { IconLetterCase, IconPlus, IconTemplate } from "@tabler/icons-react";
+import {
+  IconCalendar,
+  IconLetterCase,
+  IconPlus,
+  IconTemplate,
+} from "@tabler/icons-react";
 import { useEffect } from "react";
 
 export default function CreateElection({
@@ -147,7 +153,7 @@ export default function CreateElection({
               // }
             />
 
-            {/* <DateTimePicker
+            <DateTimePicker
               valueFormat="MMMM DD, YYYY (dddd) hh:mm A"
               label="Election start date"
               placeholder="Enter election start date"
@@ -164,8 +170,8 @@ export default function CreateElection({
               {...form.getInputProps("start_date")}
               leftSection={<IconCalendar size="1rem" />}
               // disabled={isLoading}
-            /> */}
-            {/* <DateTimePicker
+            />
+            <DateTimePicker
               valueFormat="MMMM DD, YYYY (dddd) hh:mm A"
               label="Election end date"
               placeholder="Enter election end date"
@@ -178,14 +184,14 @@ export default function CreateElection({
                 position: "bottom",
               }}
               minDate={
-                form.values.start_date ||
+                form.values.start_date ??
                 new Date(new Date().setDate(new Date().getDate() + 1))
               }
               firstDayOfWeek={0}
               {...form.getInputProps("end_date")}
               leftSection={<IconCalendar size="1rem" />}
               // disabled={isLoading}
-            /> */}
+            />
 
             <Select
               label="Election template"

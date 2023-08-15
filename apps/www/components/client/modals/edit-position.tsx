@@ -5,8 +5,10 @@ import type { Position } from "@eboto-mo/db/schema";
 import {
   Button,
   Checkbox,
+  Flex,
   Group,
-  Modal, // NumberInput,
+  Modal,
+  NumberInput,
   Stack,
   Text,
   TextInput,
@@ -127,7 +129,7 @@ export default function EditPosition({ position }: { position: Position }) {
               {...form.getInputProps("isSingle", { type: "checkbox" })}
             />
 
-            {/* {form.values.isSingle && (
+            {form.values.isSingle && (
               <Flex gap="sm">
                 <NumberInput
                   {...form.getInputProps("min")}
@@ -146,7 +148,7 @@ export default function EditPosition({ position }: { position: Position }) {
                   required={form.values.isSingle}
                 />
               </Flex>
-            )} */}
+            )}
 
             {/* {isError && (
               <Alert color="red" title="Error">

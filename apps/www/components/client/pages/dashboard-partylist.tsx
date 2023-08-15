@@ -24,6 +24,7 @@ export default function DashboardPartylist({
         ) : (
           partylists.map((partylist) => (
             <Group
+              key={partylist.id}
               style={(theme) => ({
                 flexDirection: "column",
                 justifyContent: "space-between",

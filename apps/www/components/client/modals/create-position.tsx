@@ -5,7 +5,8 @@ import {
   Button,
   Checkbox,
   Group,
-  Modal, // NumberInput,
+  Modal,
+  NumberInput,
   Stack,
   Text,
   TextInput,
@@ -135,7 +136,7 @@ export default function CreatePosition({
               {...form.getInputProps("isSingle", { type: "checkbox" })}
             />
 
-            {/* {form.values.isSingle && (
+            {form.values.isSingle && (
               <Group gap="sm">
                 <NumberInput
                   {...form.getInputProps("min")}
@@ -154,7 +155,7 @@ export default function CreatePosition({
                   required={form.values.isSingle}
                 />
               </Group>
-            )} */}
+            )}
 
             {/* {isError && (
               <Alert

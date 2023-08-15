@@ -1,6 +1,14 @@
 import QRCode from "@/components/client/modals/show-qr-code";
 import { db } from "@eboto-mo/db";
-import { ActionIcon, Box, Group, Stack, Text, Title } from "@mantine/core";
+import {
+  ActionIcon,
+  Box,
+  Flex,
+  Group,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import { IconExternalLink } from "@tabler/icons-react";
 import moment from "moment";
 import Link from "next/link";
@@ -62,18 +70,16 @@ export default async function Page({
         </Text>
       </Box>
 
-      <Box
-        display="flex"
+      <Flex
+      // backgroundColor:
+      //   theme.colorScheme === "dark"
+      //     ? theme.colors.dark[6]
+      //     : theme.colors.gray[1],
+      // overflow: "hidden",
 
-        // backgroundColor:
-        //   theme.colorScheme === "dark"
-        //     ? theme.colors.dark[6]
-        //     : theme.colors.gray[1],
-        // overflow: "hidden",
-
-        // [theme.fn.smallerThan("sm")]: {
-        //   flexDirection: "column",
-        // },
+      // [theme.fn.smallerThan("sm")]: {
+      //   flexDirection: "column",
+      // },
       >
         {/* {[
           {
@@ -150,7 +156,7 @@ export default async function Page({
             </UnstyledButton>
           );
         })} */}
-      </Box>
+      </Flex>
 
       {/* <Box
         style={(theme) => ({

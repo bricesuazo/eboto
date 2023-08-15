@@ -18,10 +18,11 @@ import {
   Text,
   TextInput,
   Textarea,
+  rem,
 } from "@mantine/core";
-// import { YearPickerInput } from "@mantine/dates";
+import { YearPickerInput } from "@mantine/dates";
 import type { FileWithPath } from "@mantine/dropzone";
-// import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
+import { Dropzone, DropzoneReject, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -32,9 +33,12 @@ import {
   IconPhoto,
   IconPlus,
   IconUserSearch,
+  IconX,
 } from "@tabler/icons-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useRef } from "react";
 
 export default function EditCandidate({
   candidate,
@@ -72,7 +76,7 @@ export default function EditCandidate({
   partylists: Partylist[];
 }) {
   const [opened, { open, close }] = useDisclosure(false);
-  // const openRef = useRef<() => void>(null);
+  const openRef = useRef<() => void>(null);
   const params = useParams();
 
   // const { mutate, isLoading, isError, error, reset } =
@@ -430,7 +434,7 @@ export default function EditCandidate({
 
               <TabsPanel value="image" pt="xs">
                 <Stack gap="xs">
-                  {/* <Dropzone
+                  <Dropzone
                     id="image"
                     onDrop={(files) => {
                       if (!files[0]) return;
@@ -524,11 +528,11 @@ export default function EditCandidate({
                           </Text>
                         </Box>
                       )}
-                      <Dropzone.Reject>
+                      <DropzoneReject>
                         <IconX size="3.2rem" stroke={1.5} />
-                      </Dropzone.Reject>
+                      </DropzoneReject>
                     </Group>
-                  </Dropzone> */}
+                  </Dropzone>
                   <Group gap="sm">
                     <Button
                       onClick={() => {
@@ -685,7 +689,7 @@ export default function EditCandidate({
                                   });
                                 }}
                               />
-                              {/* <YearPickerInput
+                              <YearPickerInput
                                 // label="Year"
                                 placeholder="Enter year"
                                 popoverProps={{
@@ -709,7 +713,7 @@ export default function EditCandidate({
                                   });
                                 }}
                                 // required
-                              /> */}
+                              />
                             </Group>
                             <DeleteCredentialButton
                               type="ACHIEVEMENT"
@@ -791,7 +795,7 @@ export default function EditCandidate({
                             />
 
                             <Group gap="xs">
-                              {/* <YearPickerInput
+                              <YearPickerInput
                                 // label="Start year"
                                 placeholder="Enter start year"
                                 style={{ width: "100%" }}
@@ -819,8 +823,8 @@ export default function EditCandidate({
                                   });
                                 }}
                                 // required
-                              /> */}
-                              {/* <YearPickerInput
+                              />
+                              <YearPickerInput
                                 // label="End year"
                                 placeholder="Enter end year"
                                 style={{ width: "100%" }}
@@ -848,7 +852,7 @@ export default function EditCandidate({
                                   });
                                 }}
                                 // required
-                              /> */}
+                              />
                             </Group>
                             <DeleteCredentialButton
                               type="AFFILIATION"
@@ -918,7 +922,7 @@ export default function EditCandidate({
                                     });
                                   }}
                                 />
-                                {/* <YearPickerInput
+                                <YearPickerInput
                                   // label="Year"
                                   placeholder="Enter year"
                                   popoverProps={{
@@ -946,7 +950,7 @@ export default function EditCandidate({
                                     });
                                   }}
                                   // required
-                                /> */}
+                                />
                               </Group>
                               <DeleteCredentialButton
                                 type="EVENTATTENDED"

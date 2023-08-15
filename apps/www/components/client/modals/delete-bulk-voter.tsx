@@ -4,7 +4,9 @@ import { api } from "@/trpc/client";
 import {
   ActionIcon,
   Button,
-  Group, // List,
+  Group,
+  List,
+  ListItem,
   Modal,
   Stack,
   Text,
@@ -79,11 +81,11 @@ export default function DeleteBulkVoter({
             undone.
           </Text>
 
-          {/* <List>
+          <List>
             {voters.map((voter) => (
-              <List.Item key={voter.id}>{voter.email}</List.Item>
+              <ListItem key={voter.id}>{voter.email}</ListItem>
             ))}
-          </List> */}
+          </List>
           {/* {isError && (
             <Alert
               icon={<IconAlertCircle size="1rem" />}
