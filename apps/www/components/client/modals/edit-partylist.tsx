@@ -72,12 +72,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
 
   return (
     <>
-      <Button
-        onClick={open}
-        variant="light"
-        size="sm"
-        // compact
-      >
+      <Button onClick={open} size="compact-sm" variant="subtle">
         Edit
       </Button>
       <Modal

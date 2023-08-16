@@ -19,7 +19,7 @@
     "drizzle-orm": "0.28.2",
     "nanoid": "^4.0.2",
     "superjson": "1.13.1",
-    "zod": "^3.21.4",
+    "zod": "^3.22.1",
     "zod-form-data": "^2.0.1"
   },
   "devDependencies": {

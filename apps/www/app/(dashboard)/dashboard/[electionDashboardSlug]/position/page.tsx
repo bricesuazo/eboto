@@ -3,7 +3,7 @@ import DeletePosition from "@/components/client/modals/delete-position";
 import EditPosition from "@/components/client/modals/edit-position";
 import classes from "@/styles/Position.module.css";
 import { db } from "@eboto-mo/db";
-import { Box, Group, Stack, Text } from "@mantine/core";
+import { Box, Flex, Group, Stack, Text } from "@mantine/core";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -55,10 +55,10 @@ export default async function Page({
                 </Text>
               </Box>
 
-              <Group gap="xs">
+              <Flex gap="xs">
                 <EditPosition position={position} data-superjson />
                 <DeletePosition position={position} data-superjson />
-              </Group>
+              </Flex>
             </Stack>
           ))
         )}

@@ -3,6 +3,7 @@
 import CreatePartylist from "@/components/client/modals/create-partylist";
 import DeletePartylist from "@/components/client/modals/delete-partylist";
 import EditPartylist from "@/components/client/modals/edit-partylist";
+import classes from "@/styles/Partylist.module.css";
 import type { Election, Partylist } from "@eboto-mo/db/schema";
 import { Box, Flex, Group, Stack, Text, Title } from "@mantine/core";
 import { IconFlag } from "@tabler/icons-react";
@@ -23,24 +24,7 @@ export default function DashboardPartylist({
           <Text>No partylists yet.</Text>
         ) : (
           partylists.map((partylist) => (
-            <Flex
-              key={partylist.id}
-              gap="xs"
-              p="md"
-              align="center"
-              justify="center"
-              direction="column"
-              w={{ base: "100%", sm: 200 }}
-              mih={200}
-              style={(theme) => ({
-                border: "1px solid",
-                // borderColor:
-                //   theme.colorScheme === "dark"
-                //     ? theme.colors.dark[5]
-                //     : theme.colors.gray[3],
-                borderRadius: theme.radius.md,
-              })}
-            >
+            <Flex key={partylist.id} className={classes["partylist-card"]}>
               <Flex direction="column" align="center">
                 <Box>
                   <IconFlag size={40} />

@@ -34,13 +34,7 @@ export default function DeletePartylist({
   const [opened, { open, close }] = useDisclosure(false);
   return (
     <>
-      <Button
-        onClick={open}
-        variant="light"
-        color="red"
-        size="sm"
-        // compact
-      >
+      <Button onClick={open} variant="subtle" color="red" size="compact-sm">
         Delete
       </Button>
 
