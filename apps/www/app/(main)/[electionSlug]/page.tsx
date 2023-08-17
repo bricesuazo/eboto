@@ -7,6 +7,7 @@ import {
   Button,
   Container,
   Group,
+  Spoiler,
   Stack,
   Text,
   Title,
@@ -150,13 +151,13 @@ export default async function ElectionPage({
                 {election.description && (
                   <Box maw="40rem" mt="sm" ta="center">
                     <Text>About this election:</Text>
-                    {/* <Spoiler
+                    <Spoiler
                       maxHeight={50}
                       showLabel="Show more"
                       hideLabel="Hide"
                     >
                       {election.description}
-                    </Spoiler> */}
+                    </Spoiler>
                   </Box>
                 )}
 
