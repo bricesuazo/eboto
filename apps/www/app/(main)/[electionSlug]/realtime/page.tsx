@@ -1,7 +1,7 @@
 import ScrollToTopButton from "@/components/client/components/scroll-to-top";
 import { api } from "@/trpc/server";
 import { isElectionEnded, isElectionOngoing } from "@/utils";
-import { currentUser } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs";
 import { db } from "@eboto-mo/db";
 import {
   Box,
@@ -74,7 +74,7 @@ export default async function RelatimePage({
 }: {
   params: { electionSlug: string };
 }) {
-  const session = await currentUser();
+  const { userId } = auth();
   const election = await db.query.elections.findFirst({
     where: (election, { eq }) => eq(election.slug, electionSlug),
   });
@@ -83,7 +83,7 @@ export default async function RelatimePage({
   if (!election) notFound();
 
   if (election.publicity === "PRIVATE") {
-    if (!session)
+    if (!userId)
       redirect(
         `/sign-in?callbackUrl=https://eboto-mo.com/${election.slug}/realtime`,
       );
@@ -92,7 +92,7 @@ export default async function RelatimePage({
       where: (commissioners, { eq, and }) =>
         and(
           eq(commissioners.election_id, election.id),
-          eq(commissioners.user_id, session.id),
+          eq(commissioners.user_id, userId),
         ),
     });
 
@@ -116,29 +116,26 @@ export default async function RelatimePage({
 
     if (isVoter && !vote) redirect(`/${election.slug}`);
   } else if (election.publicity === "VOTER") {
-    if (!session)
+    if (!userId)
       redirect(
         `/sign-in?callbackUrl=https://eboto-mo.com/${election.slug}/realtime`,
       );
 
     const vote = await db.query.votes.findFirst({
       where: (votes, { eq, and }) =>
-        and(eq(votes.election_id, election.id), eq(votes.voter_id, session.id)),
+        and(eq(votes.election_id, election.id), eq(votes.voter_id, userId)),
     });
 
     const isVoter = await db.query.voters.findFirst({
       where: (voters, { eq, and }) =>
-        and(
-          eq(voters.election_id, election.id),
-          eq(voters.user_id, session.id),
-        ),
+        and(eq(voters.election_id, election.id), eq(voters.user_id, userId)),
     });
 
     const isCommissioner = await db.query.commissioners.findFirst({
       where: (commissioners, { eq, and }) =>
         and(
           eq(commissioners.election_id, election.id),
-          eq(commissioners.user_id, session.id),
+          eq(commissioners.user_id, userId),
         ),
     });
 

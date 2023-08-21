@@ -164,6 +164,9 @@ importers:
       superjson:
         specifier: ^1.13.1
         version: registry.npmjs.org/superjson@1.13.1
+      to-words:
+        specifier: ^3.6.1
+        version: registry.npmjs.org/to-words@3.6.1
       xlsx:
         specifier: ^0.18.5
         version: registry.npmjs.org/xlsx@0.18.5
@@ -7879,6 +7882,13 @@ packages:
     version: 1.0.0
     dependencies:
       to-no-case: registry.npmjs.org/to-no-case@1.0.2
+    dev: false
+
+  registry.npmjs.org/to-words@3.6.1:
+    resolution: {integrity: sha512-X2KDRjBXM0bQ4eTblqNnVfIBGEwhSClR3eWubD6B7gY29vh1k+ntQGSaShwgrsQT3Akt/tbIjKkn8mMOYHihnw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/to-words/-/to-words-3.6.1.tgz}
+    name: to-words
+    version: 3.6.1
+    engines: {node: '>=12.0.0'}
     dev: false
 
   registry.npmjs.org/traverse@0.3.9:

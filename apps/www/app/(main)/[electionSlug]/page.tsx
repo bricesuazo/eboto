@@ -86,7 +86,7 @@ export default async function ElectionPage({
 
   const isOngoing = isElectionOngoing({ election });
 
-  // const session = await currentUser();
+  // const { userId } = auth();
   // TODO: Add authorization here.
   // https://github.com/bricesuazo/eboto-mo/blob/main/src/pages/%5BelectionSlug%5D/index.tsx
 

@@ -1,4 +1,4 @@
-import { currentUser } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs";
 import { db } from "@eboto-mo/db";
 import {
   Anchor,
@@ -88,7 +88,7 @@ export default async function CandidatePage({
 }: {
   params: { electionSlug: string; candidateSlug: string };
 }) {
-  const session = await currentUser();
+  const { userId } = auth();
   const election = await db.query.elections.findFirst({
     where: (elections, { eq }) => eq(elections.slug, electionSlug),
     // where: {
@@ -103,34 +103,31 @@ export default async function CandidatePage({
   if (!election) notFound();
 
   if (election.publicity === "PRIVATE") {
-    if (!session) notFound();
+    if (!userId) notFound();
 
     const commissioner = await db.query.commissioners.findFirst({
       where: (commissioners, { eq, and }) =>
         and(
           eq(commissioners.election_id, election.id),
-          eq(commissioners.user_id, session.id),
+          eq(commissioners.user_id, userId),
         ),
     });
 
     if (!commissioner) notFound();
   } else if (election.publicity === "VOTER") {
     const callbackUrl = `/sign-in?callbackUrl=https://eboto-mo.com/${electionSlug}/${candidateSlug}`;
-    if (!session) redirect(callbackUrl);
+    if (!userId) redirect(callbackUrl);
 
     const voter = await db.query.voters.findFirst({
       where: (voters, { eq, and }) =>
-        and(
-          eq(voters.election_id, election.id),
-          eq(voters.user_id, session.id),
-        ),
+        and(eq(voters.election_id, election.id), eq(voters.user_id, userId)),
     });
 
     const commissioner = await db.query.commissioners.findFirst({
       where: (commissioners, { eq, and }) =>
         and(
           eq(commissioners.election_id, election.id),
-          eq(commissioners.user_id, session.id),
+          eq(commissioners.user_id, userId),
         ),
     });
 

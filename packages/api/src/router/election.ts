@@ -29,6 +29,21 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { isElectionOngoing } from "./../../../../apps/www/utils/index";
 
 export const electionRouter = createTRPCRouter({
+  getElectionVoting: publicProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      return ctx.db.query.positions.findMany({
+        where: (positions, { eq }) => eq(positions.election_id, input),
+        orderBy: (positions, { asc }) => asc(positions.order),
+        with: {
+          candidates: {
+            with: {
+              partylist: true,
+            },
+          },
+        },
+      });
+    }),
   getElectionRealtime: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
