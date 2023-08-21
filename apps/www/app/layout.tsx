@@ -7,12 +7,18 @@ import "@mantine/dropzone/styles.css";
 import { Notifications } from "@mantine/notifications";
 import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import {
+  // Lexend,
+  Poppins,
+} from "next/font/google";
 
 const font = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   subsets: ["latin"],
 });
+// const font = Lexend({
+//   subsets: ["latin"],
+// });
 
 export const metadata: Metadata = {
   title: {

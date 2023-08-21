@@ -1,12 +1,12 @@
 import ScrollToTopButton from "@/components/client/components/scroll-to-top";
-import QRCode from "@/components/client/modals/show-qr-code";
+import ElectionShowQRCode from "@/components/client/modals/election-show-qr-code";
 import { isElectionOngoing } from "@/utils";
 import { db } from "@eboto-mo/db";
 import {
   Box,
   Button,
   Container,
-  Group,
+  Flex,
   Spoiler,
   Stack,
   Text,
@@ -94,7 +94,7 @@ export default async function ElectionPage({
     <>
       <ScrollToTopButton />
 
-      <Container py="xl">
+      <Container py="xl" size="md">
         {positions.length === 0 ? (
           <Text>
             This election has no positions. Please contact the election
@@ -102,10 +102,9 @@ export default async function ElectionPage({
           </Text>
         ) : (
           <>
-            <QRCode election={election} />
             <Stack align="center">
               <Box>
-                <Group align="center" mb={8}>
+                <Flex justify="center" mb={8}>
                   {election.logo ? (
                     <Image
                       src={election.logo}
@@ -117,7 +116,7 @@ export default async function ElectionPage({
                   ) : (
                     <IconFingerprint size={92} style={{ padding: 8 }} />
                   )}
-                </Group>
+                </Flex>
 
                 <Title order={2} ta="center" maw={600}>
                   {election.name} (@{election.slug})
@@ -161,7 +160,7 @@ export default async function ElectionPage({
                   </Box>
                 )}
 
-                <Group align="center" mt={8}>
+                <Flex justify="center" gap="sm" mt={8}>
                   {
                     // hasVoted ||
                     election.end_date < new Date() ? (
@@ -188,11 +187,11 @@ export default async function ElectionPage({
                       </Button>
                     )
                   }
-                  <QRCode election={election} />
-                </Group>
+                  <ElectionShowQRCode election={election} />
+                </Flex>
               </Box>
 
-              <Stack gap="lg">
+              <Stack gap="lg" w="100%">
                 {positions.map((position) => (
                   <Stack gap={4} key={position.id}>
                     <Title
@@ -204,14 +203,17 @@ export default async function ElectionPage({
                       <Balancer>{position.name}</Balancer>
                     </Title>
 
-                    <Group align="center" gap="sm">
+                    <Flex gap="sm" mih="12rem">
                       {position.candidates.length === 0 ? (
-                        <Text>No candidates</Text>
+                        <Text ta="center">No candidates</Text>
                       ) : (
                         position.candidates.map((candidate) => (
                           <UnstyledButton
                             component={Link}
                             href={`/${election?.slug || ""}/${candidate.slug}`}
+                            style={{
+                              backgroundColor: "red",
+                            }}
                             // style={(theme) => ({
                             //   display: "flex",
                             //   flexDirection: "column",
@@ -280,7 +282,7 @@ export default async function ElectionPage({
                           </UnstyledButton>
                         ))
                       )}
-                    </Group>
+                    </Flex>
                   </Stack>
                 ))}
               </Stack>

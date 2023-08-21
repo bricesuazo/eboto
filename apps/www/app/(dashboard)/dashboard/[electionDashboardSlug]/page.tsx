@@ -1,4 +1,4 @@
-import QRCode from "@/components/client/modals/show-qr-code";
+import DashboardShowQRCode from "@/components/client/modals/dashboard-show-qr-code";
 import { db } from "@eboto-mo/db";
 import { ActionIcon, Box, Flex, Stack, Text, Title } from "@mantine/core";
 import { IconExternalLink } from "@tabler/icons-react";
@@ -40,7 +40,7 @@ export default async function Page({
               <IconExternalLink size="1rem" />
             </ActionIcon>
           </Flex>
-          <QRCode election={election} />
+          <DashboardShowQRCode election={election} />
         </Flex>
         <Text>
           {moment(election.start_date)
