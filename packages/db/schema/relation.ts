@@ -115,6 +115,7 @@ export const positionsRelations = relations(positions, ({ one, many }) => ({
     references: [elections.id],
   }),
   candidates: many(candidates),
+  votes: many(votes),
 }));
 
 export const candidatesRelations = relations(candidates, ({ one, many }) => ({

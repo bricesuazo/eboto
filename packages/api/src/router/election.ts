@@ -25,9 +25,66 @@ import { z } from "zod";
 
 import { positionTemplate, takenSlugs } from "../../../../apps/www/constants";
 import { account_status_type_with_accepted } from "../../../../apps/www/utils/zod-schema";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { isElectionOngoing } from "./../../../../apps/www/utils/index";
 
 export const electionRouter = createTRPCRouter({
+  getElectionRealtime: publicProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      const realtimeResult = await ctx.db.query.positions.findMany({
+        where: (positions, { eq }) => eq(positions.election_id, input),
+        // new
+        with: {
+          votes: true,
+          candidates: {
+            with: {
+              votes: {
+                with: {
+                  candidate: true,
+                },
+              },
+              partylist: {
+                columns: {
+                  acronym: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      // make the candidate as "Candidate 1"... "Candidate N" if the election is ongoing
+
+      const election = await ctx.db.query.elections.findFirst({
+        where: (elections, { eq }) => eq(elections.slug, input),
+      });
+
+      if (!election) throw new Error("Election not found");
+
+      return realtimeResult.map((position) => ({
+        ...position,
+        votes: position.votes.length,
+        candidate: position.candidates
+          .sort((a, b) => b.votes.length - a.votes.length)
+          .map((candidate, index) => {
+            return {
+              id: candidate.id,
+              first_name: isElectionOngoing({ election })
+                ? `Candidate ${index + 1}`
+                : candidate.first_name,
+              last_name: isElectionOngoing({ election })
+                ? ""
+                : candidate.last_name,
+              middle_name: isElectionOngoing({ election })
+                ? ""
+                : candidate.middle_name,
+              partylist: candidate.partylist,
+              vote: candidate.votes.length,
+            };
+          }),
+      }));
+    }),
   // getElectionBySlug: publicProcedure
   //   .input(
   //     z.object({
