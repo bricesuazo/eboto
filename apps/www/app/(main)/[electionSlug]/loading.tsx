@@ -3,7 +3,7 @@ import React, { Fragment } from "react";
 
 export default function ElectionPageLoading() {
   return (
-    <Container py="xl">
+    <Container py="xl" size="md">
       <Stack align="center" gap={12}>
         <Stack gap={8} align="center">
           <Group align="center" mb={4}>

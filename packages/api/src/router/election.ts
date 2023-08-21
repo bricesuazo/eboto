@@ -32,9 +32,15 @@ export const electionRouter = createTRPCRouter({
   getElectionRealtime: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
+      const election = await ctx.db.query.elections.findFirst({
+        where: (elections, { eq }) => eq(elections.slug, input),
+      });
+
+      if (!election) throw new Error("Election not found");
+
       const realtimeResult = await ctx.db.query.positions.findMany({
-        where: (positions, { eq }) => eq(positions.election_id, input),
-        // new
+        where: (positions, { eq }) => eq(positions.election_id, election.id),
+        orderBy: (positions, { asc }) => asc(positions.order),
         with: {
           votes: true,
           candidates: {
@@ -56,16 +62,10 @@ export const electionRouter = createTRPCRouter({
 
       // make the candidate as "Candidate 1"... "Candidate N" if the election is ongoing
 
-      const election = await ctx.db.query.elections.findFirst({
-        where: (elections, { eq }) => eq(elections.slug, input),
-      });
-
-      if (!election) throw new Error("Election not found");
-
       return realtimeResult.map((position) => ({
         ...position,
         votes: position.votes.length,
-        candidate: position.candidates
+        candidates: position.candidates
           .sort((a, b) => b.votes.length - a.votes.length)
           .map((candidate, index) => {
             return {

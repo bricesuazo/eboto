@@ -12,6 +12,12 @@ import {
   SimpleGrid,
   Stack,
   Table,
+  TableCaption,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
   Text,
   Title,
 } from "@mantine/core";
@@ -151,7 +157,7 @@ export default async function RelatimePage({
   return (
     <>
       <ScrollToTopButton />
-      <Container py="xl">
+      <Container py="xl" size="md">
         <Stack gap="xl">
           <Center>
             <Box>
@@ -195,41 +201,48 @@ export default async function RelatimePage({
 
           <Stack gap="xl">
             <SimpleGrid
-              cols={3}
-              //   breakpoints={[
-              //     { maxWidth: "md", cols: 2, spacing: "md" },
-              //     { maxWidth: "xs", cols: 1, spacing: "sm" },
-              //   ]}
+              cols={{
+                base: 1,
+                xs: 2,
+                sm: 3,
+              }}
+              spacing={{
+                base: "md",
+                xs: "sm",
+              }}
             >
               {positions.map((position) => (
                 <Table
                   key={position.id}
                   striped
                   highlightOnHover
-                  //   withBorder
+                  withTableBorder
+                  withColumnBorders
                   captionSide="bottom"
                   h="fit-content"
                 >
                   {!isEnded && (
-                    <caption>
+                    <TableCaption>
                       As of{" "}
                       {moment(new Date()).format("MMMM Do YYYY, h:mm:ss A")}
-                    </caption>
+                    </TableCaption>
                   )}
-                  <thead>
-                    <tr>
-                      <th>
-                        <Text lineClamp={2}>{position.name}</Text>
-                      </th>
-                    </tr>
-                  </thead>
+                  <TableThead>
+                    <TableTr>
+                      <TableTh>
+                        <Text lineClamp={2} fw="bold">
+                          {position.name}
+                        </Text>
+                      </TableTh>
+                    </TableTr>
+                  </TableThead>
 
-                  <tbody>
-                    {position.candidate
+                  <TableTbody>
+                    {position.candidates
                       .sort((a, b) => b.vote - a.vote)
                       .map((candidate) => (
-                        <tr key={candidate.id}>
-                          <td>
+                        <TableTr key={candidate.id}>
+                          <TableTd>
                             <Flex justify="space-between" align="center">
                               <Text lineClamp={2}>
                                 {isOngoing
@@ -245,18 +258,18 @@ export default async function RelatimePage({
                               </Text>
                               <Text>{candidate.vote}</Text>
                             </Flex>
-                          </td>
-                        </tr>
+                          </TableTd>
+                        </TableTr>
                       ))}
-                    <tr>
-                      <td>
-                        <Flex justify="space-between">
+                    <TableTr>
+                      <TableTd>
+                        <Flex justify="space-between" align="center">
                           <Text>Abstain</Text>
                           <Text>{position.votes}</Text>
                         </Flex>
-                      </td>
-                    </tr>
-                  </tbody>
+                      </TableTd>
+                    </TableTr>
+                  </TableTbody>
                 </Table>
               ))}
             </SimpleGrid>
