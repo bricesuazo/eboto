@@ -1,19 +1,30 @@
 import ScrollToTopButton from "@/components/client/components/scroll-to-top";
 import ElectionShowQRCode from "@/components/client/modals/election-show-qr-code";
+import classes from "@/styles/Election.module.css";
 import { isElectionOngoing } from "@/utils";
 import { db } from "@eboto-mo/db";
 import {
+  ActionIcon,
   Box,
   Button,
   Container,
   Flex,
+  Group,
+  HoverCard,
+  HoverCardDropdown,
+  HoverCardTarget,
   Spoiler,
   Stack,
   Text,
   Title,
   UnstyledButton,
 } from "@mantine/core";
-import { IconClock, IconFingerprint, IconUser } from "@tabler/icons-react";
+import {
+  IconClock,
+  IconFingerprint,
+  IconInfoCircle,
+  IconUser,
+} from "@tabler/icons-react";
 import moment from "moment";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -88,21 +99,22 @@ export default async function ElectionPage({
         },
       },
     },
+    orderBy: (positions, { asc }) => [asc(positions.order)],
   });
 
   return (
     <>
       <ScrollToTopButton />
 
-      <Container py="xl" size="md">
+      <Container pt={40} pb={80} size="md">
         {positions.length === 0 ? (
-          <Text>
+          <Text ta="center">
             This election has no positions. Please contact the election
             commissioner for more information.
           </Text>
         ) : (
           <>
-            <Stack align="center">
+            <Stack align="center" gap="xl">
               <Box>
                 <Flex justify="center" mb={8}>
                   {election.logo ? (
@@ -118,34 +130,62 @@ export default async function ElectionPage({
                   )}
                 </Flex>
 
-                <Title order={2} ta="center" maw={600}>
-                  {election.name} (@{election.slug})
+                <Title order={1} ta="center" maw={600} mb={4}>
+                  <Balancer>
+                    {election.name} (@{election.slug})
+                  </Balancer>
                 </Title>
 
                 <Text ta="center">
-                  {moment(election.start_date)
-                    .local()
-                    .format("MMMM DD, YYYY hA (dddd)")}
-                  {" - "}
-                  {moment(election.end_date)
-                    .local()
-                    .format("MMMM DD, YYYY hA (dddd)")}
+                  <Balancer>
+                    {moment(election.start_date)
+                      .local()
+                      .format("MMMM DD, YYYY hA (ddd)")}
+                    {" - "}
+                    {moment(election.end_date)
+                      .local()
+                      .format("MMMM DD, YYYY hA (ddd)")}
+                  </Balancer>
                 </Text>
-                <Text ta="center">
-                  Publicity:{" "}
-                  {(() => {
-                    switch (election.publicity) {
-                      case "PRIVATE":
-                        return "Private (Only commissioners can see this election)";
-                      case "VOTER":
-                        return "Voter (Only voters and commissioners can see this election)";
-                      case "PUBLIC":
-                        return "Public (Everyone can see this election)";
-                      default:
-                        return null;
-                    }
-                  })()}
-                </Text>
+
+                <Flex align="center" justify="center" gap="xs">
+                  <Text ta="center">
+                    Publicity:{" "}
+                    {election.publicity.charAt(0) +
+                      election.publicity.slice(1).toLowerCase()}{" "}
+                  </Text>
+                  <HoverCard width={180} shadow="md">
+                    <HoverCardTarget>
+                      <ActionIcon
+                        size="xs"
+                        color="gray"
+                        variant="subtle"
+                        radius="xl"
+                        aria-label="Publicity information"
+                      >
+                        <IconInfoCircle />
+                      </ActionIcon>
+                    </HoverCardTarget>
+                    <HoverCardDropdown>
+                      <Text size="sm">
+                        <Balancer>
+                          {(() => {
+                            switch (election.publicity) {
+                              case "PRIVATE":
+                                return "Only commissioners can see this election";
+                              case "VOTER":
+                                return "Only voters and commissioners can see this election";
+                              case "PUBLIC":
+                                return "Everyone can see this election";
+                              default:
+                                return null;
+                            }
+                          })()}
+                        </Balancer>
+                      </Text>
+                    </HoverCardDropdown>
+                  </HoverCard>
+                </Flex>
 
                 {election.description && (
                   <Box maw="40rem" mt="sm" ta="center">
@@ -191,71 +231,49 @@ export default async function ElectionPage({
                 </Flex>
               </Box>
 
-              <Stack gap="lg" w="100%">
+              <Stack gap="xl" w="100%">
                 {positions.map((position) => (
-                  <Stack gap={4} key={position.id}>
+                  <Stack gap="xs" key={position.id}>
                     <Title
-                      order={3}
+                      order={2}
                       tw="bold"
                       ta="center"
-                      style={{ lineClamp: 2 }}
+                      style={{ lineClamp: 2, wordBreak: "break-word" }}
                     >
                       <Balancer>{position.name}</Balancer>
                     </Title>
 
-                    <Flex gap="sm" mih="12rem">
-                      {position.candidates.length === 0 ? (
-                        <Text ta="center">No candidates</Text>
+                    <Group justify="center" gap="sm">
+                      {!position.candidates.length ? (
+                        <Text fz="lg" ta="center">
+                          <Balancer>
+                            No candidates for this position yet.
+                          </Balancer>
+                        </Text>
                       ) : (
                         position.candidates.map((candidate) => (
                           <UnstyledButton
-                            component={Link}
-                            href={`/${election?.slug || ""}/${candidate.slug}`}
-                            style={{
-                              backgroundColor: "red",
-                            }}
-                            // style={(theme) => ({
-                            //   display: "flex",
-                            //   flexDirection: "column",
-                            //   alignItems: "center",
-                            //   width: 200,
-                            //   height: 192,
-                            //   padding: theme.spacing.xs,
-                            //   borderRadius: theme.radius.md,
-                            //   transition: "background-color 0.2s ease",
-                            //   // backgroundColor:
-                            //   //   theme.colorScheme === "dark"
-                            //   //     ? theme.colors.dark[6]
-                            //   //     : theme.colors.gray[0],
-                            //   // "&:hover": {
-                            //   //   backgroundColor:
-                            //   //     theme.colorScheme === "dark"
-                            //   //       ? theme.colors.dark[5]
-                            //   //       : theme.colors.gray[1],
-                            //   // },
-
-                            //   // [theme.fn.smallerThan("xs")]: {
-                            //   //   width: "100%",
-                            //   //   flexDirection: "row",
-                            //   //   justifyContent: "flex-start",
-                            //   //   columnGap: theme.spacing.xs,
-                            //   //   height: 128,
-                            //   // },
-                            // })}
                             key={candidate.id}
+                            component={Link}
+                            href={`/${election.slug}/${candidate.slug}`}
+                            className={classes["candidate-card"]}
                           >
                             <Box>
                               {candidate.image_link ? (
-                                <Image
-                                  src={candidate.image_link}
-                                  alt="Candidate's image"
-                                  width={92}
-                                  height={92}
-                                  style={{
-                                    objectFit: "cover",
-                                  }}
-                                  priority
-                                />
+                                <Box
+                                  pos="relative"
+                                  style={{ aspectRatio: 1 / 1 }}
+                                >
+                                  <Image
+                                    src={candidate.image_link}
+                                    alt="Candidate's image"
+                                    fill
+                                    style={{
+                                      objectFit: "cover",
+                                    }}
+                                    priority
+                                  />
+                                </Box>
                               ) : (
                                 <IconUser
                                   style={{ width: 92, height: 92, padding: 8 }}
@@ -263,15 +281,7 @@ export default async function ElectionPage({
                               )}
                             </Box>
 
-                            <Text lineClamp={2} ta="center" hiddenFrom="sm">
-                              {candidate.first_name}{" "}
-                              {candidate.middle_name
-                                ? candidate.middle_name + " "
-                                : ""}
-                              {candidate.last_name} (
-                              {candidate.partylist.acronym})
-                            </Text>
-                            <Text lineClamp={2} ta="left" visibleFrom="sm">
+                            <Text lineClamp={2} ta="center">
                               {candidate.first_name}{" "}
                               {candidate.middle_name
                                 ? candidate.middle_name + " "
@@ -282,7 +292,7 @@ export default async function ElectionPage({
                           </UnstyledButton>
                         ))
                       )}
-                    </Flex>
+                    </Group>
                   </Stack>
                 ))}
               </Stack>

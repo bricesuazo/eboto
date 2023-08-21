@@ -32,7 +32,7 @@ export default function ElectionShowQRCode({
         visibleFrom="md"
         leftSection={<IconQrcode />}
       >
-        Download/Scan QR Code
+        QR Code
       </Button>
 
       <QRCodeModal election={election} close={close} opened={opened} />
