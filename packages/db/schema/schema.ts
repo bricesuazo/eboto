@@ -1,4 +1,4 @@
-import { InferModel } from "drizzle-orm";
+import type { InferModel } from "drizzle-orm";
 import {
   date,
   int,
