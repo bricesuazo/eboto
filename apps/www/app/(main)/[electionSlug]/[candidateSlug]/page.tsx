@@ -19,8 +19,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
-export const runtime = "nodejs";
-
 export async function generateMetadata({
   params: { electionSlug, candidateSlug },
 }: {
