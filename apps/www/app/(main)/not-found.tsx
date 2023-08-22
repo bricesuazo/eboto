@@ -17,12 +17,7 @@ export default function NotFound() {
       <Title className={classes.title}>
         <Balancer>You have found a secret place.</Balancer>
       </Title>
-      <Text
-        color="dimmed"
-        size="lg"
-        ta="center"
-        className={classes.description}
-      >
+      <Text c="dimmed" size="lg" ta="center" className={classes.description}>
         <Balancer>
           Unfortunately, this is only a 404 page. You may have mistyped the
           address, or the page has been moved to another URL.
