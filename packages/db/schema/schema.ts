@@ -254,7 +254,7 @@ export const reported_problems = mysqlTable("reported_problems", {
 });
 
 export type Election = InferModel<typeof elections>;
-// export type User = InferModel<typeof users>;
+export type User = InferModel<typeof users>;
 export type Vote = InferModel<typeof votes>;
 export type Commissioner = InferModel<typeof commissioners>;
 export type InvitedCommissioner = InferModel<typeof invited_commissioners>;
