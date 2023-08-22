@@ -40,50 +40,50 @@ export default async function VotePage({
 
   if (!election) notFound();
 
-  //   if (!isElectionOngoing({ election })) redirect(`/${election.slug}`);
+  if (!isElectionOngoing({ election })) redirect(`/${election.slug}`);
 
-  //   if (election.publicity === "PRIVATE") {
-  //     const commissioner = await db.query.commissioners.findFirst({
-  //       where: (commissioners, { eq, and }) =>
-  //         and(
-  //           eq(commissioners.user_id, userId),
-  //           eq(commissioners.election_id, election.id),
-  //         ),
-  //     });
+  if (election.publicity === "PRIVATE") {
+    const commissioner = await db.query.commissioners.findFirst({
+      where: (commissioners, { eq, and }) =>
+        and(
+          eq(commissioners.user_id, userId),
+          eq(commissioners.election_id, election.id),
+        ),
+    });
 
-  //     if (!commissioner) notFound();
+    if (!commissioner) notFound();
 
-  //     const isVoter = await db.query.voters.findFirst({
-  //       where: (voters, { eq, and }) =>
-  //         and(eq(voters.user_id, userId), eq(voters.election_id, election.id)),
-  //     });
+    const isVoter = await db.query.voters.findFirst({
+      where: (voters, { eq, and }) =>
+        and(eq(voters.user_id, userId), eq(voters.election_id, election.id)),
+    });
 
-  //     if (!isVoter) redirect(`/${election.slug}/realtime`);
-  //   } else if (
-  //     election.publicity === "VOTER" ||
-  //     election.publicity === "PUBLIC"
-  //   ) {
-  //     const vote = await db.query.votes.findFirst({
-  //       where: (votes, { eq, and }) =>
-  //         and(eq(votes.voter_id, userId), eq(votes.election_id, election.id)),
-  //     });
+    if (!isVoter) redirect(`/${election.slug}/realtime`);
+  } else if (
+    election.publicity === "VOTER" ||
+    election.publicity === "PUBLIC"
+  ) {
+    const vote = await db.query.votes.findFirst({
+      where: (votes, { eq, and }) =>
+        and(eq(votes.voter_id, userId), eq(votes.election_id, election.id)),
+    });
 
-  //     const isCommissioner = await db.query.commissioners.findFirst({
-  //       where: (commissioners, { eq, and }) =>
-  //         and(
-  //           eq(commissioners.user_id, userId),
-  //           eq(commissioners.election_id, election.id),
-  //         ),
-  //     });
+    const isCommissioner = await db.query.commissioners.findFirst({
+      where: (commissioners, { eq, and }) =>
+        and(
+          eq(commissioners.user_id, userId),
+          eq(commissioners.election_id, election.id),
+        ),
+    });
 
-  //     const isVoter = await db.query.voters.findFirst({
-  //       where: (voters, { eq, and }) =>
-  //         and(eq(voters.user_id, userId), eq(voters.election_id, election.id)),
-  //     });
+    const isVoter = await db.query.voters.findFirst({
+      where: (voters, { eq, and }) =>
+        and(eq(voters.user_id, userId), eq(voters.election_id, election.id)),
+    });
 
-  //     if (vote ?? (isCommissioner && !isVoter) ?? !isVoter)
-  //       redirect(`/${election.slug}/realtime`);
-  //   }
+    if (vote ?? (isCommissioner && !isVoter) ?? !isVoter)
+      redirect(`/${election.slug}/realtime`);
+  }
 
   const positions = await api.election.getElectionVoting.query(election.id);
 

@@ -45,7 +45,20 @@ export default function VoteForm({
         isValid: boolean;
       }
     >
-  >();
+  >({
+    initialValues: Object.fromEntries(
+      positions.map((position) => [
+        position.id,
+        {
+          votes: [],
+          min: position.min,
+          max: position.max,
+          isValid: false,
+        },
+      ]),
+    ),
+  });
+
   const [opened, { open, close }] = useDisclosure(false);
 
   return (
@@ -284,10 +297,10 @@ export default function VoteForm({
         >
           <Button
             onClick={open}
-            // disabled={
-            //   voteMutation.isLoading ??
-            //   !Object.values(form.values).every((value) => value?.isValid)
-            // }
+            disabled={
+              // voteMutation.isLoading ??
+              !Object.values(form.values).every((value) => value?.isValid)
+            }
             leftSection={<IconFingerprint />}
             size="lg"
             radius="xl"
