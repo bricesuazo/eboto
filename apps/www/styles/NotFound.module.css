@@ -1,0 +1,35 @@
+.root {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+.label {
+  text-align: center;
+  font-weight: 900;
+  font-size: 12rem;
+  line-height: 1;
+  margin-bottom: calc(var(--mantine-spacing-xl) * 1.5);
+  color: light-dark(var(--mantine-color-dark-4), var(--mantine-color-gray-2));
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    font-size: 10rem;
+  }
+  @media (max-width: $mantine-breakpoint-xs) {
+    font-size: 8rem;
+  }
+}
+
+.title {
+  text-align: center;
+  font-weight: 900;
+  font-size: 4rem;
+  @media (max-width: $mantine-breakpoint-sm) {
+    font-size: 2rem;
+  }
+}
+
+.description {
+  margin: auto;
+  margin-top: var(--mantine-spacing-xl);
+  margin-bottom: calc(var(--mantine-spacing-xl) * 1.5);
+}
