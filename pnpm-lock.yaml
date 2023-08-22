@@ -35,6 +35,9 @@ importers:
       '@clerk/nextjs':
         specifier: ^4.23.2
         version: registry.npmjs.org/@clerk/nextjs@4.23.2(next@13.4.16)(react-dom@18.2.0)(react@18.2.0)
+      '@clerk/themes':
+        specifier: ^1.7.5
+        version: registry.npmjs.org/@clerk/themes@1.7.5(react@18.2.0)
       '@eboto-mo/api':
         specifier: workspace:*
         version: link:../../packages/api
@@ -594,6 +597,18 @@ packages:
       js-cookie: registry.npmjs.org/js-cookie@3.0.1
       react: registry.npmjs.org/react@18.2.0
       swr: registry.npmjs.org/swr@1.3.0(react@18.2.0)
+    dev: false
+
+  registry.npmjs.org/@clerk/themes@1.7.5(react@18.2.0):
+    resolution: {integrity: sha512-kIdCIBSCp6t1saGAzbelcfZi5P+L3+CuVFwSjpulwGTRxeOOs/S8hB4CAHVbTwfxPw5Ms+AnN4dXJKHjSnxPIg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@clerk/themes/-/themes-1.7.5.tgz}
+    id: registry.npmjs.org/@clerk/themes/1.7.5
+    name: '@clerk/themes'
+    version: 1.7.5
+    engines: {node: '>=14'}
+    peerDependencies:
+      react: '>=16'
+    dependencies:
+      react: registry.npmjs.org/react@18.2.0
     dev: false
 
   registry.npmjs.org/@clerk/types@3.49.0:
