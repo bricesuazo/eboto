@@ -8,6 +8,7 @@ import {
   partylists,
   positions,
   publicity,
+  reported_problems,
   voter_fields,
   voters,
 } from "@eboto-mo/db/schema";
@@ -29,6 +30,23 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { isElectionOngoing } from "./../../../../apps/www/utils/index";
 
 export const electionRouter = createTRPCRouter({
+  reportAProblem: protectedProcedure
+    .input(
+      z.object({
+        subject: z.string().min(1),
+        description: z.string().min(1),
+        election_id: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      await ctx.db.insert(reported_problems).values({
+        id: nanoid(),
+        subject: input.subject,
+        description: input.description,
+        election_id: input.election_id,
+        user_id: ctx.auth.userId,
+      });
+    }),
   getElectionVoting: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
