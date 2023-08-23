@@ -23,7 +23,7 @@ export default function QRCodeModal({
       }
     >
       <Stack>
-        <Center visibleFrom="sm">
+        <Center hiddenFrom="sm">
           <QRCodeCanvas
             id="qr-gen"
             value={`https://eboto-mo.com/${election.slug}`}
@@ -39,7 +39,7 @@ export default function QRCodeModal({
             }}
           />
         </Center>
-        <Center hiddenFrom="sm">
+        <Center visibleFrom="sm">
           <QRCodeCanvas
             id="qr-gen"
             value={`https://eboto-mo.com/${election.slug}`}
