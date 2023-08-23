@@ -10,7 +10,6 @@ import {
   AppShellFooter,
   AppShellHeader,
   AppShellMain,
-  AppShellNavbar,
 } from "@mantine/core";
 import { useParams } from "next/navigation";
 
@@ -40,9 +39,7 @@ export default function ElectionDashboard({
 
       <AppShellMain>{children}</AppShellMain>
 
-      <AppShellNavbar>
-        <NavbarComponent />
-      </AppShellNavbar>
+      <NavbarComponent />
 
       <AppShellFooter>
         <Footer />

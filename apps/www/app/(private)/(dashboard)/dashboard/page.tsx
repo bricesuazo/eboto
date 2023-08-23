@@ -96,8 +96,8 @@ export default async function Page() {
             ) : (
               electionsAsCommissioner.map((commissioner) => (
                 <DashboardCard
-                  election={commissioner.election}
                   key={commissioner.id}
+                  election={commissioner.election}
                   type="manage"
                 />
               ))
@@ -141,8 +141,8 @@ export default async function Page() {
             ) : (
               electionsAsVoter.map((voter) => (
                 <DashboardCard
-                  election={voter.election}
                   key={voter.id}
+                  election={voter.election}
                   type="vote"
                   // vote={election.vote}
                 />
