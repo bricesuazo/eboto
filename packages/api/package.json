@@ -13,19 +13,19 @@
   "dependencies": {
     "@clerk/nextjs": "^4.23.2",
     "@eboto-mo/db": "workspace:*",
-    "@t3-oss/env-nextjs": "^0.6.0",
+    "@t3-oss/env-nextjs": "^0.6.1",
     "@trpc/client": "^10.37.1",
     "@trpc/server": "^10.37.1",
-    "drizzle-orm": "0.28.2",
+    "drizzle-orm": "0.28.3",
     "nanoid": "^4.0.2",
     "superjson": "1.13.1",
-    "zod": "^3.22.1",
+    "zod": "^3.22.2",
     "zod-form-data": "^2.0.1"
   },
   "devDependencies": {
     "@eboto-mo/eslint-config": "workspace:*",
     "eslint": "^8.47.0",
-    "next": "^13.4.16",
+    "next": "^13.4.20-canary.3",
     "typescript": "^5.1.6"
   }
 }

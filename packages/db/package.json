@@ -11,15 +11,15 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@planetscale/database": "^1.10.0",
-    "drizzle-orm": "0.28.2",
+    "@planetscale/database": "^1.11.0",
+    "drizzle-orm": "0.28.3",
     "mysql2": "^3.6.0"
   },
   "devDependencies": {
     "@eboto-mo/tsconfig": "workspace:*",
-    "@types/node": "^20.5.0",
-    "dotenv-cli": "^7.2.1",
-    "drizzle-kit": "0.19.12",
+    "@types/node": "^20.5.3",
+    "dotenv-cli": "^7.3.0",
+    "drizzle-kit": "0.19.13",
     "typescript": "^5.1.6"
   }
 }
