@@ -86,7 +86,7 @@ const DashboardCard = ({
           <Title fw="bold" ta="center" order={3}>
             {election.name}
           </Title>
-          <Text size="sm" color="GrayText" ta="center">
+          <Text size="sm" c="GrayText" ta="center">
             {moment(election.start_date)
               .local()
               .format("MMMM DD, YYYY hA (dddd)")}
@@ -100,14 +100,14 @@ const DashboardCard = ({
             <Moment format="H A">{election.end_date}</Moment>
           </Text> */}
 
-          <Text size="sm" lineClamp={1} color="dimmed" ta="center">
+          <Text size="sm" lineClamp={1} c="dimmed" ta="center">
             Publicity:{" "}
             {election.publicity.charAt(0) +
               election.publicity.slice(1).toLowerCase()}
           </Text>
 
           {type === "vote" && (
-            <Text size="sm" color="dimmed" lineClamp={1} ta="center">
+            <Text size="sm" c="dimmed" lineClamp={1} ta="center">
               {vote?.length ? "You have voted" : "You have not voted"}
             </Text>
           )}

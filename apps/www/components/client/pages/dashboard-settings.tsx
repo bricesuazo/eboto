@@ -493,7 +493,7 @@ export default function DashboardSettings({
                       <Text size="xl" inline ta="center">
                         Drag image here or click to select image
                       </Text>
-                      <Text size="sm" color="dimmed" inline mt={7} ta="center">
+                      <Text size="sm" c="dimmed" inline mt={7} ta="center">
                         Attach a logo to your election. Max file size is 5MB.
                       </Text>
                     </Box>

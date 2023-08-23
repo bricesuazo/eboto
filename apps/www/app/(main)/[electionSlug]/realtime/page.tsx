@@ -181,7 +181,7 @@ export default async function RelatimePage({
               </Text>
 
               {!isEnded ? (
-                <Text ta="center" size="xs" color="dimmed">
+                <Text ta="center" size="xs" c="dimmed">
                   <Balancer>
                     Realtime result as of{" "}
                     {moment(new Date()).format("MMMM Do YYYY, h:mm:ss A")}

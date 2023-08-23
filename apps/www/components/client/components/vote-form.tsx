@@ -88,7 +88,7 @@ export default function VoteForm({
               return (
                 <Box key={position.id}>
                   <Text lineClamp={1}>{position.name}</Text>
-                  <Text lineClamp={1} size="xs" color="dimmed">
+                  <Text lineClamp={1} size="xs" c="dimmed">
                     {position.min === 0 && position.max === 1
                       ? `One selection only (1)`
                       : `${
@@ -113,7 +113,7 @@ export default function VoteForm({
                           key={candidateId}
                           fw={600}
                           lineClamp={2}
-                          color="gray.500"
+                          c="gray.500"
                           size="lg"
                         >
                           {candidate
@@ -169,7 +169,7 @@ export default function VoteForm({
             return (
               <Box key={position.id}>
                 <Text size="xl">{position.name}</Text>
-                <Text size="sm" color="grayText">
+                <Text size="sm" c="grayText">
                   {position.min === 0 && position.max === 1
                     ? "Select only one."
                     : `Select ${

@@ -516,13 +516,7 @@ export default function EditCandidate({
                           <Text size="xl" inline ta="center">
                             Drag image here or click to select image
                           </Text>
-                          <Text
-                            size="sm"
-                            color="dimmed"
-                            inline
-                            mt={7}
-                            ta="center"
-                          >
+                          <Text size="sm" c="dimmed" inline mt={7} ta="center">
                             Attach a image to your account. Max file size is
                             5MB.
                           </Text>

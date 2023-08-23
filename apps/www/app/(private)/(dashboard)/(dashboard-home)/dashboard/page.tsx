@@ -6,6 +6,7 @@ import type { Commissioner, Election, Vote, Voter } from "@eboto-mo/db/schema";
 import {
   Box,
   Container,
+  Flex,
   Group,
   Skeleton,
   Stack,
@@ -52,28 +53,17 @@ export default async function Page() {
     <Container size="md" my="md">
       <Stack gap="lg">
         <Box>
-          <Group align="center" justify="space-between">
-            <Title
-              order={2}
-              // style={(theme) => ({
-              //   [theme.fn.smallerThan("xs")]: {
-              //     fontSize: theme.fontSizes.xl,
-              //   },
-              // })}
-            >
+          <Flex align="center" justify="space-between">
+            <Title order={2} visibleFrom="xs">
+              My elections
+            </Title>
+            <Title order={4} hiddenFrom="xs">
               My elections
             </Title>
 
             <CreateElection />
-          </Group>
-          <Text
-            size="xs"
-            color="grayText"
-            mb="md"
-            //   style={(theme) => ({
-            //     marginBottom: theme.spacing.xs,
-            //   })}
-          >
+          </Flex>
+          <Text size="xs" c="grayText" mb="md">
             You can manage the elections below.
           </Text>
           <Group>
@@ -106,17 +96,13 @@ export default async function Page() {
         </Box>
 
         <Box>
-          <Title
-            order={2}
-            // style={(theme) => ({
-            //   [theme.fn.smallerThan("xs")]: {
-            //     fontSize: theme.fontSizes.xl,
-            //   },
-            // })}
-          >
+          <Title order={2} visibleFrom="xs">
             My elections I can vote in
           </Title>
-          <Text size="xs" color="grayText" mb="sm">
+          <Title order={4} hiddenFrom="xs">
+            My elections I can vote in
+          </Title>
+          <Text size="xs" c="grayText" mb="sm">
             You can vote in the elections below. You can only vote once per
             election.
           </Text>

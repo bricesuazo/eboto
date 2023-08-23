@@ -93,6 +93,16 @@ export default function CreateElection({
         onClick={open}
         style={style}
         leftSection={<IconPlus size="1.25rem" />}
+        hiddenFrom="xs"
+        size="xs"
+      >
+        Create Election
+      </Button>
+      <Button
+        onClick={open}
+        style={style}
+        leftSection={<IconPlus size="1.25rem" />}
+        visibleFrom="xs"
       >
         Create Election
       </Button>

@@ -13,7 +13,7 @@ export default function RegisterPage() {
       <Title ta="center" order={2}>
         Create an account!
       </Title>
-      <Text color="dimmed" size="sm" ta="center" mt={5} mb={30}>
+      <Text c="dimmed" size="sm" ta="center" mt={5} mb={30}>
         Already have an account?{" "}
         <Anchor size="sm" component={Link} href="/sign-in" truncate>
           Sign in
