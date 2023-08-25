@@ -19,7 +19,7 @@ const id = varchar("id", { length: 256 })
   .unique()
   .$defaultFn(() => nanoid());
 const created_at = timestamp("created_at").notNull().defaultNow();
-const updated_at = timestamp("updated_at").notNull().onUpdateNow();
+const updated_at = timestamp("updated_at").defaultNow().notNull().onUpdateNow();
 const election_id = varchar("election_id", { length: 256 }).notNull();
 const user_id = varchar("user_id", { length: 256 }).notNull();
 const voter_id = varchar("voter_id", { length: 256 }).notNull();
