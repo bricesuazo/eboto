@@ -13,25 +13,36 @@ import {
   AppShellMain,
   AppShellNavbar,
   Button,
+  CheckIcon,
+  Combobox,
+  ComboboxChevron,
+  ComboboxDropdown,
+  ComboboxGroup,
+  ComboboxOption,
+  ComboboxOptions,
+  ComboboxTarget,
   Divider,
-  Select,
+  Group,
+  InputBase,
+  InputPlaceholder,
   Stack,
+  useCombobox,
 } from "@mantine/core";
-import {
-  IconExternalLink,
-  IconFingerprint,
-  IconLogout,
-} from "@tabler/icons-react";
-import Image from "next/image";
+import { IconExternalLink, IconLogout } from "@tabler/icons-react";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
 
 import Footer from "../components/footer";
 import HeaderContent from "../components/header";
 
-export default function DashboardElection(
-  props: React.PropsWithChildren<{ user: User | null }>,
-) {
+export default function DashboardElection({
+  children,
+  user,
+  elections,
+}: React.PropsWithChildren<{
+  user: User | null;
+  elections: (Commissioner & { election: Election })[];
+}>) {
   const { signOut } = useClerk();
   const router = useRouter();
   const params = useParams();
@@ -44,7 +55,13 @@ export default function DashboardElection(
   //   error,
   // } = api.election.getAllMyElections.query();
   // const elections = api.election.getAllMyElections.query();
-  const elections: (Commissioner & { election: Election })[] = [];
+
+  // const {
+  //   data: elections,
+  //   isLoading,
+  //   error,
+  // } = api.election.getAllMyElections.query();
+  // const elections: (Commissioner & { election: Election })[] = [];
 
   const currentElection = elections
     ? elections.find(
@@ -52,7 +69,16 @@ export default function DashboardElection(
           election.election.slug === params.electionDashboardSlug?.toString(),
       )?.election
     : null;
-
+  const combobox = useCombobox({
+    onDropdownOpen: (eventSource) => {
+      store.toggleDashboardMenu(true);
+      if (eventSource === "keyboard") {
+        combobox.selectActiveOption();
+      } else {
+        combobox.updateSelectedOptionIndex("active");
+      }
+    },
+  });
   const store = useStore();
 
   return (
@@ -70,10 +96,10 @@ export default function DashboardElection(
       p="md"
     >
       <AppShellHeader>
-        <HeaderContent user={props.user} />
+        <HeaderContent user={user} />
       </AppShellHeader>
 
-      <AppShellMain>{props.children}</AppShellMain>
+      <AppShellMain>{children}</AppShellMain>
 
       <AppShellNavbar
         p="md"
@@ -88,107 +114,128 @@ export default function DashboardElection(
             <Divider />
 
             <Stack gap="xs">
-              <Select
-                placeholder={
-                  // isLoading ? "Loading..." :
-                  "Select election"
-                }
-                leftSectionWidth={48}
-                disabled={
-                  !elections
-                  // || isLoading
-                }
-                // error={error?.message}
-                leftSection={
-                  currentElection?.logo ? (
-                    <Image
-                      src={currentElection?.logo}
-                      alt={currentElection?.name}
-                      width={28}
-                      height={28}
-                      priority
-                    />
-                  ) : (
-                    <IconFingerprint size={28} />
-                  )
-                }
-                size="md"
-                data={
-                  elections
-                    ? elections
-                        .sort(
-                          (a, b) =>
-                            b.election.updated_at.getTime() -
-                            a.election.updated_at.getTime(),
-                        )
-                        .filter(
-                          ({ election }) =>
-                            election.start_date < new Date() &&
-                            election.end_date > new Date(),
-                        )
-                        .concat(
-                          elections.filter(
-                            ({ election }) =>
-                              !(
-                                election.start_date < new Date() &&
-                                election.end_date > new Date()
-                              ),
-                          ),
-                        )
-                        .map(({ election }) => ({
-                          label: election.name,
-                          value: election.slug,
-                          group:
-                            election.start_date > new Date()
-                              ? "Upcoming"
-                              : election.end_date < new Date()
-                              ? "Completed"
-                              : "Ongoing",
-                          selected:
-                            election.slug ===
-                            params.electionDashboardSlug?.toString(),
-                        }))
-                    : []
-                }
-                // itemComponent={(props: React.ComponentPropsWithoutRef<"button">) => {
-                //   const election = elections
-                //     ? elections.find(({ election }) => election.slug === props.value)
-                //         ?.election ?? null
-                //     : null;
-                //   if (!election) return null;
-                //   return (
-                //     <UnstyledButton
-                //       {...props}
-                //       h={48}
-                //       style={(theme) => ({
-                //         display: "flex",
-                //         alignItems: "center",
-                //         gap: theme.spacing.xs,
-                //       })}
-                //     >
-                //       {election.logo ? (
-                //         <Image
-                //           src={election.logo}
-                //           alt={election.name}
-                //           width={20}
-                //           height={20}
-                //           priority
-                //         />
-                //       ) : (
-                //         <IconFingerprint size={20} />
-                //       )}
-                //       <Text truncate size="sm">
-                //         {election.name}
-                //       </Text>
-                //     </UnstyledButton>
-                //   );
-                // }}
-                value={params.electionDashboardSlug?.toString() ?? undefined}
-                onChange={(value) => {
-                  router.push(`/dashboard/${value ?? ""}`);
-                  store.toggleDashboardMenu(false);
+              <Combobox
+                store={combobox}
+                resetSelectionOnOptionHover
+                onOptionSubmit={(val) => {
+                  router.push(`/dashboard/${val ?? ""}`);
+                  combobox.updateSelectedOptionIndex("active");
+                  combobox.toggleDropdown();
                 }}
-              />
+              >
+                <ComboboxTarget targetType="button">
+                  <InputBase
+                    component="button"
+                    pointer
+                    rightSection={<ComboboxChevron />}
+                    onClick={() => combobox.toggleDropdown()}
+                  >
+                    {currentElection?.name ?? (
+                      <InputPlaceholder>Pick value</InputPlaceholder>
+                    )}
+                  </InputBase>
+                </ComboboxTarget>
+
+                <ComboboxDropdown>
+                  <ComboboxOptions>
+                    {[
+                      {
+                        group: "Ongoing",
+                        elections: elections
+                          .filter(
+                            ({ election }) =>
+                              election.start_date < new Date() &&
+                              election.end_date > new Date(),
+                          )
+                          .sort(
+                            (a, b) =>
+                              b.election.updated_at.getTime() -
+                              a.election.updated_at.getTime(),
+                          ),
+                      },
+                      {
+                        group: "Upcoming",
+                        elections: elections
+                          .filter(
+                            ({ election }) => election.start_date > new Date(),
+                          )
+                          .sort(
+                            (a, b) =>
+                              b.election.updated_at.getTime() -
+                              a.election.updated_at.getTime(),
+                          ),
+                      },
+                      {
+                        group: "Completed",
+                        elections: elections
+                          .filter(
+                            ({ election }) => election.end_date < new Date(),
+                          )
+                          .sort(
+                            (a, b) =>
+                              b.election.updated_at.getTime() -
+                              a.election.updated_at.getTime(),
+                          ),
+                      },
+                    ].map(({ group, elections }) => (
+                      <ComboboxGroup key={group} label={group}>
+                        {elections.map(({ election }) => (
+                          <ComboboxOption
+                            key={election.id}
+                            value={election.slug}
+                            active={currentElection?.slug === election.slug}
+                          >
+                            <Group gap="xs">
+                              {currentElection?.slug === election.slug && (
+                                <CheckIcon size={12} />
+                              )}
+                              <span>{election.name}</span>
+                            </Group>
+                          </ComboboxOption>
+                        ))}
+                      </ComboboxGroup>
+                    ))}
+                    {/* <Button
+                          c="gray.3"
+                          fw="400"
+                          w="100%"
+                          p="sm"
+                          size="sm"
+                          justify="left"
+                          component={ComboboxOption}
+                          value={election.slug}
+                          variant={
+                            currentElection?.slug === election.slug
+                              ? "filled"
+                              : "subtle"
+                          }
+                        >
+                          {election.name}
+                        </Button> */}
+                    {/* <ComboboxGroup
+                          key={election.id}
+                          label="Test"
+                        >
+                          <Button
+                            c="gray.3"
+                            fw="400"
+                            w="100%"
+                            size="md"
+                            justify="left"
+                            component={ComboboxOption}
+                            value={election.slug}
+                            variant={
+                              currentElection?.slug === election.slug
+                                ? "filled"
+                                : "subtle"
+                            }
+                          >
+                            {election.name}
+                          </Button>
+                        </ComboboxGroup> */}
+                  </ComboboxOptions>
+                </ComboboxDropdown>
+              </Combobox>
 
               <Button
                 variant="outline"
