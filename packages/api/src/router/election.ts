@@ -356,7 +356,7 @@ export const electionRouter = createTRPCRouter({
         id: z.string().min(1),
         name: z.string().min(1),
         description: z.string().nullable(),
-        oldSlug: z.string().trim().toLowerCase().optional(),
+        oldSlug: z.string().trim().toLowerCase(),
         newSlug: z.string().min(1).trim().toLowerCase(),
         start_date: z.date(),
         end_date: z.date(),

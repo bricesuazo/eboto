@@ -29,6 +29,7 @@ export default function CreateElection({
     end_date: Date | null;
     template: string;
   }>({
+    validateInputOnChange: true,
     initialValues: {
       name: "",
       slug: "",
@@ -36,8 +37,17 @@ export default function CreateElection({
       end_date: null,
       template: "none",
     },
-    validateInputOnBlur: true,
 
+    validateInputOnBlur: true,
+    transformValues: (values) => ({
+      ...values,
+      start_date: values.start_date
+        ? new Date(values.start_date?.setSeconds(0, 0))
+        : null,
+      end_date: values.end_date
+        ? new Date(values.end_date?.setSeconds(0, 0))
+        : null,
+    }),
     validate: {
       name: hasLength(
         { min: 3 },
@@ -58,16 +68,32 @@ export default function CreateElection({
         if (!value) {
           return "Please enter an election start date";
         }
-        if (values.end_date && value > values.end_date) {
+        if (values.end_date && value.getTime() >= values.end_date.getTime()) {
           return "Start date must be before end date";
+        }
+
+        if (value.getTime() <= new Date().getTime()) {
+          return "Start date must be in the future";
         }
       },
       end_date: (value, values) => {
         if (!value) {
           return "Please enter an election end date";
         }
-        if (values.start_date && value < values.start_date) {
+        if (
+          values.start_date &&
+          value.getTime() <= values.start_date.getTime()
+        ) {
           return "End date must be after start date";
+        }
+
+        if (value.getTime() <= new Date().getTime()) {
+          return "End date must be in the future";
+        }
+      },
+      template: (value) => {
+        if (!value) {
+          return "Please select an election template";
         }
       },
     },
@@ -206,6 +232,7 @@ export default function CreateElection({
             <Select
               label="Election template"
               description="Select a template for your election"
+              placeholder="Select a template"
               withAsterisk
               required
               {...form.getInputProps("template")}
@@ -215,11 +242,12 @@ export default function CreateElection({
                   group: template.name,
 
                   items: template.organizations.map((organization) => ({
+                    // disabled: form.values.template === organization.id,
                     value: organization.id,
                     label: organization.name,
                   })),
                 }))}
-              // nothingFound="No position template found"
+              nothingFoundMessage="No position template found"
               leftSection={<IconTemplate size="1rem" />}
               searchable
               // disabled={isLoading}

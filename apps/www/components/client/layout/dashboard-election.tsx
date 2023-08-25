@@ -26,6 +26,7 @@ import {
   InputBase,
   InputPlaceholder,
   Stack,
+  Text,
   useCombobox,
 } from "@mantine/core";
 import { IconExternalLink, IconLogout } from "@tabler/icons-react";
@@ -48,20 +49,6 @@ export default function DashboardElection({
   const params = useParams();
 
   const pathname = usePathname();
-
-  // const {
-  //   data: elections,
-  //   isLoading,
-  //   error,
-  // } = api.election.getAllMyElections.query();
-  // const elections = api.election.getAllMyElections.query();
-
-  // const {
-  //   data: elections,
-  //   isLoading,
-  //   error,
-  // } = api.election.getAllMyElections.query();
-  // const elections: (Commissioner & { election: Election })[] = [];
 
   const currentElection = elections
     ? elections.find(
@@ -118,9 +105,13 @@ export default function DashboardElection({
                 store={combobox}
                 resetSelectionOnOptionHover
                 onOptionSubmit={(val) => {
-                  router.push(`/dashboard/${val ?? ""}`);
-                  combobox.updateSelectedOptionIndex("active");
                   combobox.toggleDropdown();
+                  if (!val) return;
+
+                  if (currentElection?.slug === val) return;
+
+                  router.push(`/dashboard/${val}`);
+                  combobox.updateSelectedOptionIndex("active");
                 }}
               >
                 <ComboboxTarget targetType="button">
@@ -130,7 +121,11 @@ export default function DashboardElection({
                     rightSection={<ComboboxChevron />}
                     onClick={() => combobox.toggleDropdown()}
                   >
-                    {currentElection?.name ?? (
+                    {currentElection?.name ? (
+                      <Text truncate size="sm">
+                        {currentElection?.name}
+                      </Text>
+                    ) : (
                       <InputPlaceholder>Pick value</InputPlaceholder>
                     )}
                   </InputBase>
@@ -184,6 +179,7 @@ export default function DashboardElection({
                             key={election.id}
                             value={election.slug}
                             active={currentElection?.slug === election.slug}
+                            selected={currentElection?.slug === election.slug}
                           >
                             <Group gap="xs">
                               {currentElection?.slug === election.slug && (
@@ -195,44 +191,6 @@ export default function DashboardElection({
                         ))}
                       </ComboboxGroup>
                     ))}
-                    {/* <Button
-                          c="gray.3"
-                          fw="400"
-                          w="100%"
-                          p="sm"
-                          size="sm"
-                          justify="left"
-                          component={ComboboxOption}
-                          value={election.slug}
-                          variant={
-                            currentElection?.slug === election.slug
-                              ? "filled"
-                              : "subtle"
-                          }
-                        >
-                          {election.name}
-                        </Button> */}
-                    {/* <ComboboxGroup
-                          key={election.id}
-                          label="Test"
-                        >
-                          <Button
-                            c="gray.3"
-                            fw="400"
-                            w="100%"
-                            size="md"
-                            justify="left"
-                            component={ComboboxOption}
-                            value={election.slug}
-                            variant={
-                              currentElection?.slug === election.slug
-                                ? "filled"
-                                : "subtle"
-                            }
-                          >
-                            {election.name}
-                          </Button>
-                        </ComboboxGroup> */}
                   </ComboboxOptions>
                 </ComboboxDropdown>
               </Combobox>

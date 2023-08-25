@@ -81,6 +81,11 @@ export default function DashboardSettings({
     },
     validateInputOnBlur: true,
     clearInputErrorOnChange: true,
+    transformValues: (values) => ({
+      ...values,
+      start_date: new Date(values.start_date.setSeconds(0, 0)),
+      end_date: new Date(values.end_date.setSeconds(0, 0)),
+    }),
     validate: {
       name: hasLength(
         { min: 3 },
@@ -101,7 +106,7 @@ export default function DashboardSettings({
         if (!value) {
           return "Please enter an election start date";
         }
-        if (values.end_date && value > values.end_date) {
+        if (values.end_date && value.getTime() >= values.end_date.getTime()) {
           return "Start date must be before end date";
         }
       },
@@ -109,7 +114,10 @@ export default function DashboardSettings({
         if (!value) {
           return "Please enter an election end date";
         }
-        if (values.start_date && value < values.start_date) {
+        if (
+          values.start_date &&
+          value.getTime() <= values.start_date.getTime()
+        ) {
           return "End date must be after start date";
         }
       },
@@ -235,6 +243,7 @@ export default function DashboardSettings({
               name: values.name,
               newSlug: values.newSlug,
               description: values.description,
+              oldSlug: election.slug,
               // voter_domain: values.voter_domain,
               start_date: values.start_date,
               end_date: values.end_date,
