@@ -55,6 +55,7 @@
     "react-wrap-balancer": "^1.1.0",
     "read-excel-file": "^5.6.1",
     "superjson": "^1.13.1",
+    "svix": "^1.8.1",
     "to-words": "^3.6.1",
     "xlsx": "^0.18.5",
     "zod": "^3.22.2",

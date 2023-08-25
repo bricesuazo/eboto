@@ -10,6 +10,7 @@ export const env = createEnv({
     DATABASE_URL: z.string().min(1),
     NODE_ENV: z.enum(["development", "test", "production"]),
     CLERK_SECRET_KEY: z.string().min(1),
+    WEBHOOK_SECRET: z.string().min(1),
   },
 
   /**
@@ -41,5 +42,6 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL,
     NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL:
       process.env.NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL,
+    WEBHOOK_SECRET: process.env.WEBHOOK_SECRET,
   },
 });
