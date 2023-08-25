@@ -30,10 +30,9 @@ const DashboardCard = ({
     <UnstyledButton
       ref={ref}
       className={classes["card-container"]}
-      w={256}
+      w={{ base: "100%", xs: 256 }}
       h={300}
-      // w={{ base: "100%", sm: 256 }}
-      // h={{ base: "100%", sm: 256 }}
+      p="md"
       component={Link}
       href={
         type === "vote" ? `/${election.slug}` : `/dashboard/${election.slug}`
@@ -95,10 +94,6 @@ const DashboardCard = ({
               .local()
               .format("MMMM DD, YYYY hA (dddd)")}
           </Text>
-          {/* <Text size="sm" lineClamp={1} color="dimmed" ta="center">
-            Open from <Moment format="H A">{election.start_date}</Moment> to{" "}
-            <Moment format="H A">{election.end_date}</Moment>
-          </Text> */}
 
           <Text size="sm" lineClamp={1} c="dimmed" ta="center">
             Publicity:{" "}

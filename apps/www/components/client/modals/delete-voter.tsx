@@ -19,7 +19,7 @@ export default function DeleteVoter({
   const [opened, { open, close }] = useDisclosure(false);
 
   // const { mutate, isLoading, isError, error, reset } =
-  //   api.election.deleteVoter.useMutation({
+  //   api.election.deleteSingleVoter.useMutation({
   //     onSuccess: () => {
   //       notifications.show({
   //         title: "Success!",
@@ -82,12 +82,11 @@ export default function DeleteVoter({
             <Button
               color="red"
               // loading={isLoading}
-              onClick={() =>
-                api.election.deleteVoter.mutate({
+              onClick={async () =>
+                await api.election.deleteSingleVoter.mutate({
                   election_id,
                   id: voter.id,
-                  is_invited_voter:
-                    voter.account_status !== "ACCEPTED" ? true : false,
+                  is_invited_voter: voter.account_status !== "ACCEPTED",
                 })
               }
             >

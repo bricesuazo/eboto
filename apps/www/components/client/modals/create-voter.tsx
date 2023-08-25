@@ -26,7 +26,7 @@ export default function CreateVoter({
   const [opened, { open, close }] = useDisclosure(false);
 
   // const { mutate, isLoading, isError, error, reset } =
-  //   api.election.createVoter.useMutation({
+  //   api.election.createSingleVoter.useMutation({
   //     onSuccess: async () => {
   //       notifications.show({
   //         title: `${form.values.email} added!`,
@@ -116,7 +116,7 @@ export default function CreateVoter({
         <form
           onSubmit={form.onSubmit((value) => {
             void (async () => {
-              await api.election.createVoter.mutate({
+              await api.election.createSingleVoter.mutate({
                 election_id,
                 email: value.email,
 

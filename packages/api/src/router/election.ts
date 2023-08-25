@@ -1,5 +1,4 @@
 import { clerkClient } from "@clerk/nextjs";
-import { db } from "@eboto-mo/db";
 import {
   candidates,
   commissioners,
@@ -11,13 +10,6 @@ import {
   reported_problems,
   voter_fields,
   voters,
-} from "@eboto-mo/db/schema";
-import type {
-  Candidate,
-  Election,
-  InvitedVoter,
-  Partylist,
-  Voter,
 } from "@eboto-mo/db/schema";
 import { TRPCError } from "@trpc/server";
 import { and, eq, inArray } from "drizzle-orm";
@@ -125,13 +117,13 @@ export const electionRouter = createTRPCRouter({
   //     }),
   //   )
   //   .query(async ({ input }) => {
-  //     return await db.query.elections.findFirst({
+  //     return await ctx.db.query.elections.findFirst({
   //       where: (elections, { eq }) => eq(elections.slug, input.slug),
   //     });
   //   }),
   getAllMyElections: protectedProcedure.query(async ({ ctx }) => {
     // TODO: Validate commissioner
-    return await db.query.commissioners.findMany({
+    return await ctx.db.query.commissioners.findMany({
       where: (commissioners, { eq }) =>
         eq(commissioners.user_id, ctx.auth.userId),
       with: {
@@ -147,7 +139,7 @@ export const electionRouter = createTRPCRouter({
   //   )
   //   .query(async ({ ctx, input }) => {
   //     // TODO: Validate commissioner
-  //     return await db.query.partylists.findMany({
+  //     return await ctx.db.query.partylists.findMany({
   //       where: (partylists, { eq, and }) =>
   //         and(
   //           eq(partylists.election_id, input.election_id),
@@ -164,7 +156,7 @@ export const electionRouter = createTRPCRouter({
   //   )
   //   .query(async ({ ctx, input }) => {
   //     // TODO: Validate commissioner
-  //     return await db.query.partylists.findMany({
+  //     return await ctx.db.query.partylists.findMany({
   //       where: (partylists, { eq }) =>
   //         eq(partylists.election_id, input.election_id),
   //       orderBy: (partylists, { asc }) => asc(partylists.created_at),
@@ -178,7 +170,7 @@ export const electionRouter = createTRPCRouter({
   //   )
   //   .query(async ({ ctx, input }) => {
   //     // TODO: Validate commissioner
-  //     return await db.query.positions.findMany({
+  //     return await ctx.db.query.positions.findMany({
   //       where: (positions, { eq }) =>
   //         eq(positions.election_id, input.election_id),
   //       orderBy: (positions, { asc }) => asc(positions.order),
@@ -192,7 +184,7 @@ export const electionRouter = createTRPCRouter({
   //   )
   //   .query(async ({ ctx, input }) => {
   //     // TODO: Validate commissioner
-  //     return await db.query.positions.findMany({
+  //     return await ctx.db.query.positions.findMany({
   //       where: (positions, { eq }) =>
   //         eq(positions.election_id, input.election_id),
   //       orderBy: (positions, { asc }) => asc(positions.order),
@@ -248,8 +240,8 @@ export const electionRouter = createTRPCRouter({
         election_id: z.string().min(1),
       }),
     )
-    .query(async ({ input }) => {
-      const voters = await db.query.voters.findMany({
+    .query(async ({ input, ctx }) => {
+      const voters = await ctx.db.query.voters.findMany({
         where: (voters, { eq }) => eq(voters.election_id, input.election_id),
 
         with: {
@@ -259,7 +251,7 @@ export const electionRouter = createTRPCRouter({
           },
         },
       });
-      const invitedVoters = await db.query.invited_voters.findMany({
+      const invitedVoters = await ctx.db.query.invited_voters.findMany({
         where: (invited_voters, { eq }) =>
           eq(invited_voters.election_id, input.election_id),
       });
@@ -306,29 +298,28 @@ export const electionRouter = createTRPCRouter({
         throw new Error("Election slug is already exists");
       }
 
-      const isElectionSlugExists: Election | undefined =
-        await db.query.elections.findFirst({
-          where: (elections, { eq }) => eq(elections.slug, input.slug),
-        });
+      const isElectionSlugExists = await ctx.db.query.elections.findFirst({
+        where: (elections, { eq }) => eq(elections.slug, input.slug),
+      });
 
       if (isElectionSlugExists) {
         throw new Error("Election slug is already exists");
       }
 
       const id = nanoid();
-      await db.insert(elections).values({
+      await ctx.db.insert(elections).values({
         id,
         name: input.name,
         slug: input.slug,
         start_date: input.start_date,
         end_date: input.end_date,
       });
-      await db.insert(commissioners).values({
+      await ctx.db.insert(commissioners).values({
         id: nanoid(),
         election_id: id,
         user_id: ctx.auth.userId,
       });
-      await db.insert(partylists).values({
+      await ctx.db.insert(partylists).values({
         id: nanoid(),
         name: "Independent",
         acronym: "IND",
@@ -348,7 +339,7 @@ export const electionRouter = createTRPCRouter({
           ) ?? [];
 
       if (input.template !== "none")
-        await db.insert(positions).values(positions1);
+        await ctx.db.insert(positions).values(positions1);
     }),
   editElection: protectedProcedure
     .input(
@@ -371,17 +362,16 @@ export const electionRouter = createTRPCRouter({
           throw new Error("Election slug is already exists");
         }
 
-        const isElectionSlugExists: Election | undefined =
-          await db.query.elections.findFirst({
-            where: (elections, { eq }) => eq(elections.slug, input.newSlug),
-          });
+        const isElectionSlugExists = await ctx.db.query.elections.findFirst({
+          where: (elections, { eq }) => eq(elections.slug, input.newSlug),
+        });
 
         if (isElectionSlugExists)
           throw new Error("Election slug is already exists");
       }
 
-      const isElectionCommissionerExists: Election | undefined =
-        await db.query.elections.findFirst({
+      const isElectionCommissionerExists =
+        await ctx.db.query.elections.findFirst({
           with: {
             commissioners: {
               where: (commissioners, { eq }) =>
@@ -392,7 +382,7 @@ export const electionRouter = createTRPCRouter({
 
       if (!isElectionCommissionerExists) throw new Error("Unauthorized");
 
-      await db
+      await ctx.db
         .update(elections)
         .set({
           name: input.name,
@@ -411,20 +401,19 @@ export const electionRouter = createTRPCRouter({
         election_id: z.string().min(1),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       // TODO: Validate commissioner
-      const isAcronymExists: Partylist | undefined =
-        await db.query.partylists.findFirst({
-          where: (partylists, { eq, and }) =>
-            and(
-              eq(partylists.election_id, input.election_id),
-              eq(partylists.acronym, input.acronym),
-            ),
-        });
+      const isAcronymExists = await ctx.db.query.partylists.findFirst({
+        where: (partylist, { eq, and }) =>
+          and(
+            eq(partylist.election_id, input.election_id),
+            eq(partylist.acronym, input.acronym),
+          ),
+      });
 
       if (isAcronymExists) throw new Error("Acronym is already exists");
 
-      await db.insert(partylists).values({
+      await ctx.db.insert(partylists).values({
         id: nanoid(),
         name: input.name,
         acronym: input.acronym,
@@ -443,7 +432,7 @@ export const electionRouter = createTRPCRouter({
         logo_link: z.string().nullable(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       // TODO: Validate commissioner
       if (input.newAcronym === "IND")
         throw new TRPCError({
@@ -452,14 +441,13 @@ export const electionRouter = createTRPCRouter({
         });
 
       if (input.oldAcronym !== input.newAcronym) {
-        const isAcronymExists: Partylist | undefined =
-          await db.query.partylists.findFirst({
-            where: (partylists, { eq, and }) =>
-              and(
-                eq(partylists.election_id, input.election_id),
-                eq(partylists.acronym, input.newAcronym),
-              ),
-          });
+        const isAcronymExists = await ctx.db.query.partylists.findFirst({
+          where: (partylist, { eq, and }) =>
+            and(
+              eq(partylist.election_id, input.election_id),
+              eq(partylist.acronym, input.newAcronym),
+            ),
+        });
 
         if (isAcronymExists)
           throw new TRPCError({
@@ -468,7 +456,7 @@ export const electionRouter = createTRPCRouter({
           });
       }
 
-      await db
+      await ctx.db
         .update(partylists)
         .set({
           name: input.name,
@@ -485,9 +473,9 @@ export const electionRouter = createTRPCRouter({
         election_id: z.string().min(1),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       // TODO: Validate commissioner
-      await db
+      await ctx.db
         .delete(partylists)
         .where(
           and(
@@ -503,10 +491,10 @@ export const electionRouter = createTRPCRouter({
         election_id: z.string().min(1),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       // TODO: Validate commissioner
 
-      await db
+      await ctx.db
         .delete(candidates)
         .where(
           and(
@@ -524,10 +512,10 @@ export const electionRouter = createTRPCRouter({
         election_id: z.string().min(1),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       // TODO: Validate commissioner
 
-      const positionsInDB = await db.query.positions.findMany({
+      const positionsInDB = await ctx.db.query.positions.findMany({
         where: (positions, { eq }) =>
           eq(positions.election_id, input.election_id),
         columns: {
@@ -535,7 +523,7 @@ export const electionRouter = createTRPCRouter({
         },
       });
 
-      await db.insert(positions).values({
+      await ctx.db.insert(positions).values({
         id: nanoid(),
         name: input.name,
         order: positionsInDB.length,
@@ -551,9 +539,9 @@ export const electionRouter = createTRPCRouter({
         election_id: z.string().min(1),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       // TODO: Validate commissioner
-      await db
+      await ctx.db
         .delete(positions)
         .where(
           and(
@@ -573,16 +561,16 @@ export const electionRouter = createTRPCRouter({
         election_id: z.string().min(1),
       }),
     )
-    .mutation(async ({ input }) => {
-      const positionsInDB = await db.query.positions.findMany({
-        where: (positions, { eq }) =>
-          eq(positions.election_id, input.election_id),
+    .mutation(async ({ input, ctx }) => {
+      const positionsInDB = await ctx.db.query.positions.findMany({
+        where: (position, { eq }) =>
+          eq(position.election_id, input.election_id),
         columns: {
           id: true,
         },
       });
 
-      await db
+      await ctx.db
         .update(positions)
         .set({
           name: input.name,
@@ -611,23 +599,22 @@ export const electionRouter = createTRPCRouter({
         image_link: z.string().nullable(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       // TODO: Validate commissioner
-      const isCandidateSlugExists: Candidate | undefined =
-        await db.query.candidates.findFirst({
-          where: (candidates, { eq, and }) =>
-            and(
-              eq(candidates.slug, input.slug),
-              eq(candidates.election_id, input.election_id),
-            ),
-        });
+      const isCandidateSlugExists = await ctx.db.query.candidates.findFirst({
+        where: (candidates, { eq, and }) =>
+          and(
+            eq(candidates.slug, input.slug),
+            eq(candidates.election_id, input.election_id),
+          ),
+      });
 
       if (isCandidateSlugExists)
         throw new Error("Candidate slug is already exists");
 
       const id = nanoid();
 
-      await db.insert(candidates).values({
+      await ctx.db.insert(candidates).values({
         id,
         slug: input.slug,
         first_name: input.first_name,
@@ -653,21 +640,20 @@ export const electionRouter = createTRPCRouter({
         image_link: z.string().nullable(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       // TODO: Validate commissioner
-      const isCandidateSlugExists: Candidate | undefined =
-        await db.query.candidates.findFirst({
-          where: (candidates, { eq, and }) =>
-            and(
-              eq(candidates.slug, input.slug),
-              eq(candidates.election_id, input.election_id),
-            ),
-        });
+      const isCandidateSlugExists = await ctx.db.query.candidates.findFirst({
+        where: (candidates, { eq, and }) =>
+          and(
+            eq(candidates.slug, input.slug),
+            eq(candidates.election_id, input.election_id),
+          ),
+      });
 
       if (isCandidateSlugExists)
         throw new Error("Candidate slug is already exists");
 
-      await db.insert(candidates).values({
+      await ctx.db.insert(candidates).values({
         id: nanoid(),
         slug: input.slug,
         first_name: input.first_name,
@@ -687,7 +673,7 @@ export const electionRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       // TODO: Validate commissioner
-      const isElectionExists = await db.query.elections.findFirst({
+      const isElectionExists = await ctx.db.query.elections.findFirst({
         where: (elections, { eq }) => eq(elections.id, input.election_id),
         with: {
           commissioners: {
@@ -699,7 +685,7 @@ export const electionRouter = createTRPCRouter({
       if (!isElectionExists) throw new Error("Election does not exists");
       if (isElectionExists.commissioners.length === 0)
         throw new Error("Unauthorized");
-      // const invitedVoters = await db.query.invited_voters.findMany({
+      // const invitedVoters = await ctx.db.query.invited_voters.findMany({
       //   where: (invited_voters, { eq }) =>
       //     eq(invited_voters.election_id, input.election_id),
       // });
@@ -707,7 +693,7 @@ export const electionRouter = createTRPCRouter({
       //   (invitedVoter) => invitedVoter.id,
       // );
     }),
-  createVoter: protectedProcedure
+  createSingleVoter: protectedProcedure
     .input(
       z.object({
         email: z.string().min(1),
@@ -716,40 +702,42 @@ export const electionRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      // TODO: Validate commissioner
+      const isElectionExists = await ctx.db.query.elections.findFirst({
+        where: (elections, { eq }) => eq(elections.id, input.election_id),
+        with: {
+          commissioners: {
+            where: (commissioners, { eq }) =>
+              eq(commissioners.user_id, ctx.auth.userId),
+          },
+        },
+      });
 
-      const users = await clerkClient.users.getUserList({
+      if (!isElectionExists)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election does not exists",
+        });
+
+      if (isElectionExists.commissioners.length === 0)
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Unauthorized",
+        });
+
+      const [user] = await clerkClient.users.getUserList({
         emailAddress: [input.email],
       });
-      const user = users[0];
-      // const user = await db.query.users.findFirst({
-      //   where: (users, { eq }) => eq(users.id, ctx.auth.userId),
-      // });
-      if (!user) throw new Error("Unauthorized");
-      if (input.email === user.emailAddresses[0]?.emailAddress) {
-        await db.insert(voters).values({
+
+      if (input.email === user?.emailAddresses[0]?.emailAddress) {
+        await ctx.db.insert(voters).values({
           id: nanoid(),
           user_id: ctx.auth.userId,
           election_id: input.election_id,
           field: input.field,
         });
       } else {
-        const isVoterExists = await db.query.elections.findFirst({
-          where: (elections, { eq }) => eq(elections.id, input.election_id),
-          with: {
-            commissioners: {
-              where: (commissioners, { eq }) =>
-                eq(commissioners.user_id, ctx.auth.userId),
-            },
-          },
-        });
-        if (!isVoterExists) throw new Error("Election does not exists");
-
-        if (isVoterExists.commissioners.length === 0)
-          throw new Error("Unauthorized");
-
-        const voters = await db.query.voters.findMany({
-          where: (voters, { eq }) => eq(voters.election_id, input.election_id),
+        const voters = await ctx.db.query.voters.findMany({
+          where: (voter, { eq }) => eq(voter.election_id, input.election_id),
           with: {
             user: true,
           },
@@ -763,23 +751,32 @@ export const electionRouter = createTRPCRouter({
           (user) => user.emailAddresses[0]?.emailAddress === input.email,
         );
 
-        if (isVoterEmailExists) throw new Error("Email is already a voter");
+        if (isVoterEmailExists)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Email is already a voter",
+          });
 
         const isInvitedVoterEmailExists =
-          await db.query.invited_voters.findFirst({
+          await ctx.db.query.invited_voters.findFirst({
             where: (invited_voters, { eq, and }) =>
               and(
                 eq(invited_voters.election_id, input.election_id),
                 eq(invited_voters.email, input.email),
               ),
           });
+
         if (isInvitedVoterEmailExists)
-          throw new Error("Email is already exists");
-        await db.insert(invited_voters).values({
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Email is already invited",
+          });
+
+        await ctx.db.insert(invited_voters).values({
           id: nanoid(),
           email: input.email,
           field: input.field,
-          election_id: input.election_id,
+          election_id: isElectionExists.id,
         });
       }
     }),
@@ -796,9 +793,9 @@ export const electionRouter = createTRPCRouter({
         election_id: z.string().min(1),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       // TODO: Validate commissioner
-      await db
+      await ctx.db
         .update(voter_fields)
         .set(input)
         .where(eq(voter_fields.election_id, input.election_id));
@@ -810,8 +807,8 @@ export const electionRouter = createTRPCRouter({
         field_id: z.string().min(1),
       }),
     )
-    .mutation(async ({ input }) => {
-      await db
+    .mutation(async ({ input, ctx }) => {
+      await ctx.db
         .delete(voter_fields)
         .where(
           and(
@@ -830,10 +827,35 @@ export const electionRouter = createTRPCRouter({
         account_status: z.enum(account_status_type_with_accepted),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       // TODO: Validate commissioner
+      const isElectionExists = await ctx.db.query.elections.findFirst({
+        where: (elections, { eq }) => eq(elections.id, input.election_id),
+      });
+
+      if (!isElectionExists)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election does not exists",
+        });
+
+      const isElectionCommissionerExists =
+        await ctx.db.query.commissioners.findFirst({
+          where: (commissioner, { eq, and }) =>
+            and(
+              eq(commissioner.election_id, input.election_id),
+              eq(commissioner.user_id, ctx.auth.userId),
+            ),
+        });
+
+      if (!isElectionCommissionerExists)
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Unauthorized",
+        });
+
       if (input.account_status === "ACCEPTED") {
-        const voter: Voter | undefined = await db.query.voters.findFirst({
+        const voter = await ctx.db.query.voters.findFirst({
           where: (voters, { eq, and }) =>
             and(
               eq(voters.id, input.id),
@@ -842,7 +864,7 @@ export const electionRouter = createTRPCRouter({
         });
 
         if (!voter) throw new Error("Voter not found");
-        await db
+        await ctx.db
           .update(voters)
           .set({
             field: input.field,
@@ -851,17 +873,16 @@ export const electionRouter = createTRPCRouter({
 
         return { type: "voter" };
       } else {
-        const invited_voter: InvitedVoter | undefined =
-          await db.query.invited_voters.findFirst({
-            where: (invited_voters, { eq, and }) =>
-              and(
-                eq(invited_voters.id, input.id),
-                eq(invited_voters.election_id, input.election_id),
-              ),
-          });
+        const invited_voter = await ctx.db.query.invited_voters.findFirst({
+          where: (invited_voters, { eq, and }) =>
+            and(
+              eq(invited_voters.id, input.id),
+              eq(invited_voters.election_id, input.election_id),
+            ),
+        });
         if (!invited_voter) throw new Error("Voter not found");
 
-        await db
+        await ctx.db
           .update(invited_voters)
           .set({
             email: input.email,
@@ -877,7 +898,7 @@ export const electionRouter = createTRPCRouter({
         return { type: "invited_voter" };
       }
     }),
-  deleteVoter: protectedProcedure
+  deleteSingleVoter: protectedProcedure
     .input(
       z.object({
         id: z.string().min(1),
@@ -885,20 +906,48 @@ export const electionRouter = createTRPCRouter({
         is_invited_voter: z.boolean(),
       }),
     )
-    .mutation(async ({ input }) => {
-      // TODO: Validate commissioner
-      if (!input.is_invited_voter) {
-        const voter: Voter | undefined = await db.query.voters.findFirst({
-          where: (voters, { eq, and }) =>
+    .mutation(async ({ input, ctx }) => {
+      const isElectionExists = await ctx.db.query.elections.findFirst({
+        where: (election, { eq }) => eq(election.id, input.election_id),
+      });
+
+      if (!isElectionExists)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election does not exists",
+        });
+
+      const isElectionCommissionerExists =
+        await ctx.db.query.commissioners.findFirst({
+          where: (commissioner, { eq, and }) =>
             and(
-              eq(voters.id, input.id),
-              eq(voters.election_id, input.election_id),
+              eq(commissioner.election_id, input.election_id),
+              eq(commissioner.user_id, ctx.auth.userId),
             ),
         });
 
-        if (!voter) throw new Error("Voter not found");
+      if (!isElectionCommissionerExists)
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Unauthorized",
+        });
 
-        await db
+      if (!input.is_invited_voter) {
+        const voter = await ctx.db.query.voters.findFirst({
+          where: (voter, { eq, and }) =>
+            and(
+              eq(voter.id, input.id),
+              eq(voter.election_id, input.election_id),
+            ),
+        });
+
+        if (!voter)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Voter not found",
+          });
+
+        await ctx.db
           .delete(voters)
           .where(
             and(
@@ -907,18 +956,21 @@ export const electionRouter = createTRPCRouter({
             ),
           );
       } else {
-        const invited_voter: InvitedVoter | undefined =
-          await db.query.invited_voters.findFirst({
-            where: (invited_voters, { eq, and }) =>
-              and(
-                eq(invited_voters.id, input.id),
-                eq(invited_voters.election_id, input.election_id),
-              ),
+        const invited_voter = await ctx.db.query.invited_voters.findFirst({
+          where: (invited_voter, { eq, and }) =>
+            and(
+              eq(invited_voter.id, input.id),
+              eq(invited_voter.election_id, input.election_id),
+            ),
+        });
+
+        if (!invited_voter)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Voter not found",
           });
 
-        if (!invited_voter) throw new Error("Voter not found");
-
-        await db
+        await ctx.db
           .delete(invited_voters)
           .where(
             and(
@@ -941,7 +993,7 @@ export const electionRouter = createTRPCRouter({
         ),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       // TODO: Validate commissioner
       const votersIds = input.voters
         .filter((voter) => voter.isVoter)
@@ -950,7 +1002,7 @@ export const electionRouter = createTRPCRouter({
         .filter((voter) => !voter.isVoter)
         .map((voter) => voter.id);
       if (votersIds.length)
-        await db
+        await ctx.db
           .delete(voters)
           .where(
             and(
@@ -959,7 +1011,7 @@ export const electionRouter = createTRPCRouter({
             ),
           );
       if (invitedVotersIds.length)
-        await db
+        await ctx.db
           .delete(invited_voters)
           .where(
             and(
@@ -983,7 +1035,7 @@ export const electionRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       // TODO: Validate commissioner
-      const isElectionExists = await db.query.elections.findFirst({
+      const isElectionExists = await ctx.db.query.elections.findFirst({
         where: (elections, { eq }) => eq(elections.id, input.election_id),
         with: {
           commissioners: {
@@ -1007,7 +1059,7 @@ export const electionRouter = createTRPCRouter({
       //   }),
       // );
 
-      const voters = await db.insert(invited_voters).values(
+      const voters = await ctx.db.insert(invited_voters).values(
         input.voters.map((voter) => ({
           id: nanoid(),
           email: voter.email,
