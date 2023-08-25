@@ -1,5 +1,6 @@
 import type { InferModel } from "drizzle-orm";
 import {
+  boolean,
   date,
   int,
   json,
@@ -13,7 +14,7 @@ import {
 
 const id = varchar("id", { length: 256 }).primaryKey().notNull().unique();
 const created_at = timestamp("created_at").notNull().defaultNow();
-const updated_at = timestamp("updated_at").notNull().defaultNow().onUpdateNow();
+const updated_at = timestamp("updated_at").notNull().onUpdateNow();
 const election_id = varchar("election_id", { length: 256 }).notNull();
 const user_id = varchar("user_id", { length: 256 }).notNull();
 const voter_id = varchar("voter_id", { length: 256 }).notNull();
@@ -56,6 +57,7 @@ export const elections = mysqlTable("elections", {
   publicity: mysqlEnum("publicity", publicity).default("PRIVATE").notNull(),
   logo: longtext("logo"),
   voter_domain: text("voter_domain"),
+  mark_as_deleted: boolean("mark_as_deleted").default(false),
 
   created_at,
   updated_at,
@@ -230,7 +232,7 @@ export const generated_election_results = mysqlTable(
 
     created_at,
 
-    election_id: varchar("election_id", { length: 256 }),
+    election_id,
   },
 );
 export const voter_fields = mysqlTable("voter_fields", {
@@ -239,7 +241,7 @@ export const voter_fields = mysqlTable("voter_fields", {
 
   created_at,
 
-  election_id: varchar("election_id", { length: 256 }),
+  election_id,
 });
 
 export const reported_problems = mysqlTable("reported_problems", {

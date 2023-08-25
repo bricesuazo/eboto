@@ -121,6 +121,11 @@ export default function DashboardSettings({
           return "End date must be after start date";
         }
       },
+      publicity: (value) => {
+        if (!value) {
+          return "Please select an election publicity";
+        }
+      },
       // voter_domain: (value) => {
       //   if (
       //     value &&
@@ -185,9 +190,13 @@ export default function DashboardSettings({
         title={<Text fw={600}>Delete election</Text>}
       >
         <form
-        // onSubmit={deleteForm.onSubmit(() =>
-
-        // )}
+          onSubmit={deleteForm.onSubmit(
+            () =>
+              void (async () =>
+                await api.election.deleteElection.mutate({
+                  election_id: election.id,
+                }))(),
+          )}
         >
           <Stack gap="sm">
             <TextInput
@@ -408,7 +417,9 @@ export default function DashboardSettings({
             label="Election publicity"
             description="Private elections are only visible to you and the other commissioners. Voter elections are visible to voters you invite. Public elections are visible to everyone."
             withAsterisk
-            // withinPortal
+            comboboxProps={{
+              withinPortal: true,
+            }}
             required
             {...form.getInputProps("publicity")}
             data={publicity.map((p) => ({

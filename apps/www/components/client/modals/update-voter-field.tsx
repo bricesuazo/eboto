@@ -5,6 +5,7 @@ import type { Election, VoterField } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
   Button,
+  Flex,
   Group,
   Modal,
   Stack,
@@ -211,25 +212,8 @@ function VoterFieldInput({
   field: Field;
   election_id: string;
 }) {
-  // const { mutate, isLoading, isError, error, reset } =
-  //   api.election.updateVoterField.useMutation({
-  //     onSuccess: async () => {
-  //       form.setFieldValue(
-  //         "field",
-  //         form.values.field.filter((f) => f.id !== field.id),
-  //       );
-  //     },
-  //     onError: (error) => {
-  //       notifications.show({
-  //         title: "Error",
-  //         message: error.message,
-  //         color: "red",
-  //         autoClose: 3000,
-  //       });
-  //     },
-  //   });
   return (
-    <Group gap="xs" justify="end">
+    <Flex gap="xs" align="end">
       <TextInput
         w="100%"
         placeholder="Enter field"
@@ -262,16 +246,21 @@ function VoterFieldInput({
         onClick={() => {
           if (field.type === "fromDb") {
             void (async () => {
-              await api.election.updateVoterField.mutate({
+              await api.election.deleteSingleVoterField.mutate({
                 election_id,
-                fields: form.values.field,
+                field_id: field.id,
               });
             })();
+          } else {
+            form.setFieldValue(
+              "field",
+              form.values.field.filter((f) => f.id !== field.id),
+            );
           }
         }}
       >
         <IconTrash size="1.125rem" />
       </ActionIcon>
-    </Group>
+    </Flex>
   );
 }

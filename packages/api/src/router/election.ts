@@ -794,11 +794,19 @@ export const electionRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      // TODO: Validate commissioner
-      await ctx.db
-        .update(voter_fields)
-        .set(input)
-        .where(eq(voter_fields.election_id, input.election_id));
+      await ctx.db.transaction(async (db) => {
+        await db
+          .delete(voter_fields)
+          .where(eq(voter_fields.election_id, input.election_id));
+
+        await db.insert(voter_fields).values(
+          input.fields.map((field) => ({
+            id: nanoid(),
+            name: field.name,
+            election_id: input.election_id,
+          })),
+        );
+      });
     }),
   deleteSingleVoterField: protectedProcedure
     .input(
@@ -1069,5 +1077,29 @@ export const electionRouter = createTRPCRouter({
       );
 
       return { count: voters.size };
+    }),
+  deleteElection: protectedProcedure
+    .input(
+      z.object({
+        election_id: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.transaction(async (db) => {
+        await db
+          .delete(commissioners)
+          .where(
+            and(
+              eq(commissioners.user_id, ctx.auth.userId),
+              eq(commissioners.election_id, input.election_id),
+            ),
+          );
+        await db
+          .update(elections)
+          .set({
+            mark_as_deleted: true,
+          })
+          .where(eq(elections.id, input.election_id));
+      });
     }),
 });
