@@ -43,7 +43,6 @@ export const sendEmail = ({
 }) => {
   console.log("🚀 ~ file: index.tsx:42 ~ email:", email);
   // const token = await db.insert(verification_tokens).values({
-  //   id: nanoid(),
   //   user_id,
   //   type,
   //   expires_at: new Date(Date.now() + 1000 * 60 * 60 * 3), // 3 hours

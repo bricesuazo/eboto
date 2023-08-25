@@ -32,7 +32,6 @@ export const electionRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       await ctx.db.insert(reported_problems).values({
-        id: nanoid(),
         subject: input.subject,
         description: input.description,
         election_id: input.election_id,
@@ -315,12 +314,10 @@ export const electionRouter = createTRPCRouter({
         end_date: input.end_date,
       });
       await ctx.db.insert(commissioners).values({
-        id: nanoid(),
         election_id: id,
         user_id: ctx.auth.userId,
       });
       await ctx.db.insert(partylists).values({
-        id: nanoid(),
         name: "Independent",
         acronym: "IND",
         election_id: id,
@@ -331,7 +328,6 @@ export const electionRouter = createTRPCRouter({
           .find((template) => template.id === input.template)
           ?.organizations.flatMap((org) =>
             org.positions.map((position, i) => ({
-              id: nanoid(),
               name: position,
               order: i,
               election_id: id,
@@ -414,7 +410,6 @@ export const electionRouter = createTRPCRouter({
       if (isAcronymExists) throw new Error("Acronym is already exists");
 
       await ctx.db.insert(partylists).values({
-        id: nanoid(),
         name: input.name,
         acronym: input.acronym,
         election_id: input.election_id,
@@ -524,7 +519,6 @@ export const electionRouter = createTRPCRouter({
       });
 
       await ctx.db.insert(positions).values({
-        id: nanoid(),
         name: input.name,
         order: positionsInDB.length,
         min: input.min,
@@ -612,10 +606,7 @@ export const electionRouter = createTRPCRouter({
       if (isCandidateSlugExists)
         throw new Error("Candidate slug is already exists");
 
-      const id = nanoid();
-
       await ctx.db.insert(candidates).values({
-        id,
         slug: input.slug,
         first_name: input.first_name,
         middle_name: input.middle_name,
@@ -654,7 +645,6 @@ export const electionRouter = createTRPCRouter({
         throw new Error("Candidate slug is already exists");
 
       await ctx.db.insert(candidates).values({
-        id: nanoid(),
         slug: input.slug,
         first_name: input.first_name,
         middle_name: input.middle_name,
@@ -730,7 +720,6 @@ export const electionRouter = createTRPCRouter({
 
       if (input.email === user?.emailAddresses[0]?.emailAddress) {
         await ctx.db.insert(voters).values({
-          id: nanoid(),
           user_id: ctx.auth.userId,
           election_id: input.election_id,
           field: input.field,
@@ -773,7 +762,6 @@ export const electionRouter = createTRPCRouter({
           });
 
         await ctx.db.insert(invited_voters).values({
-          id: nanoid(),
           email: input.email,
           field: input.field,
           election_id: isElectionExists.id,
@@ -801,7 +789,6 @@ export const electionRouter = createTRPCRouter({
 
         await db.insert(voter_fields).values(
           input.fields.map((field) => ({
-            id: nanoid(),
             name: field.name,
             election_id: input.election_id,
           })),
@@ -1069,7 +1056,6 @@ export const electionRouter = createTRPCRouter({
 
       const voters = await ctx.db.insert(invited_voters).values(
         input.voters.map((voter) => ({
-          id: nanoid(),
           email: voter.email,
           field: voter.field,
           election_id: input.election_id,

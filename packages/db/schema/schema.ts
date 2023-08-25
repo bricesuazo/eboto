@@ -11,8 +11,13 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/mysql-core";
+import { nanoid } from "nanoid";
 
-const id = varchar("id", { length: 256 }).primaryKey().notNull().unique();
+const id = varchar("id", { length: 256 })
+  .primaryKey()
+  .notNull()
+  .unique()
+  .$defaultFn(() => nanoid());
 const created_at = timestamp("created_at").notNull().defaultNow();
 const updated_at = timestamp("updated_at").notNull().onUpdateNow();
 const election_id = varchar("election_id", { length: 256 }).notNull();
@@ -57,7 +62,9 @@ export const elections = mysqlTable("elections", {
   publicity: mysqlEnum("publicity", publicity).default("PRIVATE").notNull(),
   logo: longtext("logo"),
   voter_domain: text("voter_domain"),
-  mark_as_deleted: boolean("mark_as_deleted").default(false),
+  mark_as_deleted: boolean("mark_as_deleted")
+    .$default(() => false)
+    .notNull(),
 
   created_at,
   updated_at,
@@ -167,7 +174,7 @@ export const credentials = mysqlTable("credentials", {
 export const platforms = mysqlTable("platforms", {
   id,
   title: text("title").notNull(),
-  description: longtext("description").notNull().default(""),
+  description: longtext("description").notNull(),
 
   created_at,
   updated_at,

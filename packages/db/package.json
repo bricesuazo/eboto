@@ -13,7 +13,8 @@
   "dependencies": {
     "@planetscale/database": "^1.11.0",
     "drizzle-orm": "0.28.5",
-    "mysql2": "^3.6.0"
+    "mysql2": "^3.6.0",
+    "nanoid": "^4.0.2"
   },
   "devDependencies": {
     "@eboto-mo/tsconfig": "workspace:*",
