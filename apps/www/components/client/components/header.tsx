@@ -4,8 +4,9 @@ import { env } from "@/env.mjs";
 import { useStore } from "@/store";
 import classes from "@/styles/Header.module.css";
 import { api } from "@/trpc/client";
-import { useClerk } from "@clerk/nextjs";
+import { UserProfile, useClerk } from "@clerk/nextjs";
 import type { User } from "@clerk/nextjs/api";
+import { dark } from "@clerk/themes";
 import {
   ActionIcon,
   Box,
@@ -21,6 +22,13 @@ import {
   MenuItem,
   MenuTarget,
   Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  ModalRoot,
+  ModalTitle,
   Select,
   Stack,
   Text,
@@ -58,6 +66,10 @@ export default function HeaderContent({ user }: { user: User | null }) {
   const [
     openedReportAProblem,
     { open: openReportAProblem, close: closeReportAProblem },
+  ] = useDisclosure(false);
+  const [
+    openedAccountSettings,
+    { open: openAccountSettings, close: closeAccountSettings },
   ] = useDisclosure(false);
 
   const [openedMenu, { toggle }] = useDisclosure(false);
@@ -107,6 +119,42 @@ export default function HeaderContent({ user }: { user: User | null }) {
 
   return (
     <>
+      <ModalRoot
+        opened={openedAccountSettings}
+        onClose={closeAccountSettings}
+        // scrollAreaComponent={ScrollArea.Autosize}
+        size="xl"
+        radius="lg"
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <ModalTitle>Account settings</ModalTitle>
+            <ModalCloseButton />
+          </ModalHeader>
+          <ModalBody p={0}>
+            <UserProfile
+              routing="virtual"
+              appearance={{
+                baseTheme: computedColorScheme === "dark" ? dark : undefined,
+
+                elements: {
+                  rootBox: {
+                    width: "100%",
+                  },
+                  card: {
+                    maxWidth: "100%",
+                    width: "100%",
+                    padding: 0,
+                    borderRadius: 0,
+                  },
+                },
+              }}
+            />
+          </ModalBody>
+        </ModalContent>
+      </ModalRoot>
+
       <Modal
         opened={openedReportAProblem}
         onClose={closeReportAProblem}
@@ -269,9 +317,11 @@ export default function HeaderContent({ user }: { user: User | null }) {
                 >
                   Dashboard
                 </MenuItem>
+
                 <MenuItem
-                  component={Link}
-                  href="/account"
+                  // component={Link}
+                  // href="/account"
+                  onClick={openAccountSettings}
                   leftSection={<IconUserCircle size={16} />}
                 >
                   Account settings
