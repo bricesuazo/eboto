@@ -109,7 +109,7 @@ export default function DashboardElection({
 
                   if (currentElection?.slug === val) return;
 
-                  router.push(`/d/${val}`);
+                  router.push(`/dashboard/${val}`);
                   combobox.updateSelectedOptionIndex("active");
                 }}
               >
@@ -210,7 +210,7 @@ export default function DashboardElection({
                     }
                     fw="normal"
                     fz="sm"
-                    href={`/d/${params.electionDashboardSlug?.toString()}/${
+                    href={`/dashboard/${params.electionDashboardSlug?.toString()}/${
                       item.path ?? ""
                     }`}
                     onClick={() => {

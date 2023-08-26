@@ -34,7 +34,9 @@ const DashboardCard = ({
       h={300}
       p="md"
       component={Link}
-      href={type === "vote" ? `/${election.slug}` : `/d/${election.slug}`}
+      href={
+        type === "vote" ? `/${election.slug}` : `/dashboard/${election.slug}`
+      }
       target={type === "vote" ? "_blank" : undefined}
     >
       {type === "vote" && (
