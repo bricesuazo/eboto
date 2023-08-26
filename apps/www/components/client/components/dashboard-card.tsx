@@ -1,7 +1,7 @@
 "use client";
 
 import classes from "@/styles/Dashboard.module.css";
-import type { Election, Vote } from "@eboto-mo/db/schema";
+import type { Election } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
   Box,
@@ -19,11 +19,11 @@ import Link from "next/link";
 const DashboardCard = ({
   election,
   type,
-  vote,
+  hasVoted,
 }: {
   election: Election;
   type: "vote" | "manage";
-  vote?: Vote[];
+  hasVoted?: boolean;
 }) => {
   const { hovered, ref } = useHover<HTMLAnchorElement>();
   return (
@@ -101,7 +101,7 @@ const DashboardCard = ({
 
           {type === "vote" && (
             <Text size="sm" c="dimmed" lineClamp={1} ta="center">
-              {vote?.length ? "You have voted" : "You have not voted"}
+              {hasVoted ? "You have voted" : "You have not voted"}
             </Text>
           )}
         </Box>

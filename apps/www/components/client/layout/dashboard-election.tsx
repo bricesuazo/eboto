@@ -1,5 +1,7 @@
 "use client";
 
+import Footer from "@/components/client/components/footer";
+import Header from "@/components/client/components/header";
 import CreateElection from "@/components/client/modals/create-election";
 import { electionDashboardNavbar } from "@/constants";
 import { useStore } from "@/store";
@@ -32,9 +34,6 @@ import { IconExternalLink, IconLogout } from "@tabler/icons-react";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
 
-import Footer from "../components/footer";
-import Header from "../components/header";
-
 export default function DashboardElection({
   children,
   userId,
@@ -47,6 +46,7 @@ export default function DashboardElection({
 
   const pathname = usePathname();
 
+  // TODO: Get elections in client
   const elections: Election[] = [];
 
   const currentElection = elections
@@ -125,7 +125,7 @@ export default function DashboardElection({
                         {currentElection?.name}
                       </Text>
                     ) : (
-                      <InputPlaceholder>Pick value</InputPlaceholder>
+                      <InputPlaceholder>Select an election</InputPlaceholder>
                     )}
                   </InputBase>
                 </ComboboxTarget>

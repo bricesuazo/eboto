@@ -19,6 +19,7 @@ export default function RootLayout({
       padding={0}
       header={{ height: 60 }}
       footer={{ height: 60 }}
+
       // navbar={{ sm: 240, md: 300, xl: 340 }}
       //  navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
     >

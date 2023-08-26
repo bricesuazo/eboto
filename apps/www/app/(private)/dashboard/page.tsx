@@ -2,17 +2,7 @@ import DashboardCard from "@/components/client/components/dashboard-card";
 import CreateElection from "@/components/client/modals/create-election";
 import { auth } from "@clerk/nextjs";
 import { db } from "@eboto-mo/db";
-import type { Commissioner, Election, Vote, Voter } from "@eboto-mo/db/schema";
-import {
-  Box,
-  Container,
-  Flex,
-  Group,
-  Skeleton,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Box, Container, Flex, Group, Stack, Text, Title } from "@mantine/core";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -26,17 +16,14 @@ export default async function Page() {
 
   if (!userId) notFound();
 
-  const electionsAsCommissioner: (Commissioner & { election: Election })[] =
-    await db.query.commissioners.findMany({
-      where: (commissioners, { eq }) => eq(commissioners.user_id, userId),
-      with: {
-        election: true,
-      },
-    });
+  const electionsAsCommissioner = await db.query.commissioners.findMany({
+    where: (commissioners, { eq }) => eq(commissioners.user_id, userId),
+    with: {
+      election: true,
+    },
+  });
 
-  const electionsAsVoter: (Voter & {
-    election: Election & { votes: Vote[] };
-  })[] = await db.query.voters.findMany({
+  const electionsAsVoter = await db.query.voters.findMany({
     where: (voters, { eq }) => eq(voters.user_id, userId),
     with: {
       election: {
@@ -104,19 +91,7 @@ export default async function Page() {
           </Text>
 
           <Group>
-            {!electionsAsVoter ? (
-              Array(3).map((_, i) => (
-                <Skeleton
-                  key={i}
-                  width={250}
-                  height={352}
-                  radius="md"
-                  // style={(theme) => ({
-                  //   [theme.fn.smallerThan("xs")]: { width: "100%" },
-                  // })}
-                />
-              ))
-            ) : electionsAsVoter.length === 0 ? (
+            {electionsAsVoter.length === 0 ? (
               <Box h={72}>
                 <Text>No vote elections found</Text>
               </Box>
@@ -126,7 +101,7 @@ export default async function Page() {
                   key={voter.id}
                   election={voter.election}
                   type="vote"
-                  // vote={election.vote}
+                  hasVoted={voter.election.votes.length > 0}
                 />
               ))
             )}

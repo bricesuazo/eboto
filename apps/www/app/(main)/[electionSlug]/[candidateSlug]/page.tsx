@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs";
 import { db } from "@eboto-mo/db";
 import {
   Anchor,
@@ -17,51 +16,18 @@ import moment from "moment";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 export async function generateMetadata({
   params: { electionSlug, candidateSlug },
 }: {
   params: { electionSlug: string; candidateSlug: string };
 }): Promise<Metadata> {
-  const { userId } = auth();
   const election = await db.query.elections.findFirst({
     where: (election, { eq }) => eq(election.slug, electionSlug),
   });
 
   if (!election) notFound();
-
-  if (election.publicity === "PRIVATE") {
-    if (!userId) notFound();
-
-    const commissioner = await db.query.commissioners.findFirst({
-      where: (commissioner, { eq, and }) =>
-        and(
-          eq(commissioner.election_id, election.id),
-          eq(commissioner.user_id, userId),
-        ),
-    });
-
-    if (!commissioner) notFound();
-  } else if (election.publicity === "VOTER") {
-    const callbackUrl = `/sign-in?callbackUrl=https://eboto-mo.com/${electionSlug}/${candidateSlug}`;
-    if (!userId) redirect(callbackUrl);
-
-    const voter = await db.query.voters.findFirst({
-      where: (voter, { eq, and }) =>
-        and(eq(voter.election_id, election.id), eq(voter.user_id, userId)),
-    });
-
-    const commissioner = await db.query.commissioners.findFirst({
-      where: (commissioner, { eq, and }) =>
-        and(
-          eq(commissioner.election_id, election.id),
-          eq(commissioner.user_id, userId),
-        ),
-    });
-
-    if (!voter && !commissioner) redirect(callbackUrl);
-  }
 
   const candidate = await db.query.candidates.findFirst({
     where: (candidates, { eq, and }) =>
@@ -119,51 +85,11 @@ export default async function CandidatePage({
 }: {
   params: { electionSlug: string; candidateSlug: string };
 }) {
-  const { userId } = auth();
   const election = await db.query.elections.findFirst({
     where: (elections, { eq }) => eq(elections.slug, electionSlug),
-    // where: {
-    //   candidates: {
-    //     some: {
-    //       slug: context.query.candidateSlug,
-    //     },
-    //   },
-    // },
   });
 
   if (!election) notFound();
-
-  if (election.publicity === "PRIVATE") {
-    if (!userId) notFound();
-
-    const commissioner = await db.query.commissioners.findFirst({
-      where: (commissioners, { eq, and }) =>
-        and(
-          eq(commissioners.election_id, election.id),
-          eq(commissioners.user_id, userId),
-        ),
-    });
-
-    if (!commissioner) notFound();
-  } else if (election.publicity === "VOTER") {
-    const callbackUrl = `/sign-in?callbackUrl=https://eboto-mo.com/${electionSlug}/${candidateSlug}`;
-    if (!userId) redirect(callbackUrl);
-
-    const voter = await db.query.voters.findFirst({
-      where: (voters, { eq, and }) =>
-        and(eq(voters.election_id, election.id), eq(voters.user_id, userId)),
-    });
-
-    const commissioner = await db.query.commissioners.findFirst({
-      where: (commissioners, { eq, and }) =>
-        and(
-          eq(commissioners.election_id, election.id),
-          eq(commissioners.user_id, userId),
-        ),
-    });
-
-    if (!voter && !commissioner) redirect(callbackUrl);
-  }
 
   const candidate = await db.query.candidates.findFirst({
     where: (candidates, { eq, and }) =>

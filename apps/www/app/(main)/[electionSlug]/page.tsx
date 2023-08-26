@@ -41,7 +41,7 @@ export async function generateMetadata({
     where: (election, { eq }) => eq(election.slug, electionSlug),
   });
 
-  if (!election) return notFound();
+  if (!election) notFound();
 
   return {
     title: election.name,
@@ -79,16 +79,12 @@ export default async function ElectionPage({
   params: { electionSlug: string };
 }) {
   const election = await db.query.elections.findFirst({
-    where: (election, { eq }) => eq(election.slug, electionSlug),
+    where: (elections, { eq }) => eq(elections.slug, electionSlug),
   });
 
-  if (!election) return notFound();
+  if (!election) notFound();
 
   const isOngoing = isElectionOngoing({ election });
-
-  // const { userId } = auth();
-  // TODO: Add authorization here.
-  // https://github.com/bricesuazo/eboto-mo/blob/main/src/pages/%5BelectionSlug%5D/index.tsx
 
   const positions = await db.query.positions.findMany({
     where: (position, { eq }) => eq(position.election_id, election.id),
