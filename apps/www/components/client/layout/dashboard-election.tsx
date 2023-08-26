@@ -4,7 +4,6 @@ import CreateElection from "@/components/client/modals/create-election";
 import { electionDashboardNavbar } from "@/constants";
 import { useStore } from "@/store";
 import { useClerk } from "@clerk/nextjs";
-import type { User } from "@clerk/nextjs/api";
 import type { Election } from "@eboto-mo/db/schema";
 import {
   AppShell,
@@ -34,14 +33,14 @@ import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
 
 import Footer from "../components/footer";
-import HeaderContent from "../components/header";
+import Header from "../components/header";
 
 export default function DashboardElection({
   children,
-  user,
+  userId,
   elections,
 }: React.PropsWithChildren<{
-  user: User | null;
+  userId: string | null;
   elections: Election[];
 }>) {
   const { signOut } = useClerk();
@@ -83,7 +82,7 @@ export default function DashboardElection({
       p="md"
     >
       <AppShellHeader>
-        <HeaderContent user={user} elections={elections} />
+        <Header userId={userId} elections={elections} />
       </AppShellHeader>
 
       <AppShellMain>{children}</AppShellMain>

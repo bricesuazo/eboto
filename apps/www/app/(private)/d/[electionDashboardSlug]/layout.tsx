@@ -1,19 +1,19 @@
 import DashboardElection from "@/components/client/layout/dashboard-election";
 import { api } from "@/trpc/server";
-import { currentUser } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 export default async function DashboardLayout(props: React.PropsWithChildren) {
-  const user = await currentUser();
+  const { userId } = auth();
 
-  if (!user)
+  if (!userId)
     return redirect(process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL ?? "/sign-in");
 
   const elections = await api.election.getAllMyElections.query();
 
   return (
     <DashboardElection
-      user={user}
+      userId={userId}
       elections={elections.map(({ election }) => election)}
     >
       {props.children}

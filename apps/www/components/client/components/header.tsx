@@ -4,8 +4,7 @@ import { env } from "@/env.mjs";
 import { useStore } from "@/store";
 import classes from "@/styles/Header.module.css";
 import { api } from "@/trpc/client";
-import { UserProfile, useClerk } from "@clerk/nextjs";
-import type { User } from "@clerk/nextjs/api";
+import { UserProfile, useClerk, useUser } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import type { Election } from "@eboto-mo/db/schema";
 import {
@@ -31,6 +30,7 @@ import {
   ModalRoot,
   ModalTitle,
   Select,
+  Skeleton,
   Stack,
   Text,
   TextInput,
@@ -56,13 +56,14 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function HeaderContent({
-  user,
+export default function Header({
+  userId,
   elections,
 }: {
-  user: User | null;
+  userId: string | null;
   elections?: Election[];
 }) {
+  const { isSignedIn, user } = useUser();
   const { signOut } = useClerk();
   const params = useParams();
   const [logoutLoading, setLogoutLoading] = useState(false);
@@ -237,7 +238,7 @@ export default function HeaderContent({
       >
         <Flex h="100%" align="center" justify="space-between" gap="xs">
           <Flex h="100%" align="center" gap="xs">
-            <UnstyledButton component={Link} href={user ? "/dashboard" : "/"}>
+            <UnstyledButton component={Link} href={userId ? "/dashboard" : "/"}>
               <Flex gap="xs" align="center">
                 <Image
                   src="/images/logo.png"
@@ -265,7 +266,7 @@ export default function HeaderContent({
             </Center>
           </Flex>
 
-          {user ? (
+          {userId ? (
             <Menu
               position="bottom-end"
               opened={openedMenu}
@@ -290,25 +291,38 @@ export default function HeaderContent({
                         // },
                       }}
                     >
-                      <Image
-                        src={user.imageUrl}
-                        alt="Profile picture"
-                        fill
-                        sizes="100%"
-                        priority
-                        style={{
-                          objectFit: "cover",
-                        }}
-                      />
+                      {isSignedIn ? (
+                        <Image
+                          src={user.imageUrl}
+                          alt="Profile picture"
+                          fill
+                          sizes="100%"
+                          priority
+                          style={{
+                            objectFit: "cover",
+                          }}
+                        />
+                      ) : (
+                        <Skeleton w={24} h={24} />
+                      )}
                     </Box>
 
                     <Box w={{ base: 100, sm: 140 }}>
-                      <Text size="xs" truncate fw="bold">
-                        {user.firstName} {user.lastName}
-                      </Text>
-                      <Text size="xs" truncate>
-                        {user.emailAddresses[0]?.emailAddress}
-                      </Text>
+                      {isSignedIn ? (
+                        <>
+                          <Text size="xs" truncate fw="bold">
+                            {user.firstName} {user.lastName}
+                          </Text>
+                          <Text size="xs" truncate>
+                            {user.emailAddresses[0]?.emailAddress}
+                          </Text>
+                        </>
+                      ) : (
+                        <>
+                          <Skeleton h={12} my={4} />
+                          <Skeleton h={12} my={4} />
+                        </>
+                      )}
                     </Box>
 
                     <IconChevronDown

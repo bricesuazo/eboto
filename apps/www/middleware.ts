@@ -11,6 +11,7 @@ export default authMiddleware({
     "/api(.*)",
     "/sso-callback(.*)",
     "/api/webhooks/users",
+    "/:electionSlug",
   ],
 });
 

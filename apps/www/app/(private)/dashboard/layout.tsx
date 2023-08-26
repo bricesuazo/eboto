@@ -1,6 +1,6 @@
 import Footer from "@/components/client/components/footer";
-import HeaderContent from "@/components/client/components/header";
-import { currentUser } from "@clerk/nextjs";
+import Header from "@/components/client/components/header";
+import { auth } from "@clerk/nextjs";
 import {
   AppShell,
   AppShellFooter,
@@ -8,12 +8,13 @@ import {
   AppShellMain,
 } from "@mantine/core";
 
-export default async function DashboardLayout(props: React.PropsWithChildren) {
-  const user = await currentUser();
+export default function DashboardLayout(props: React.PropsWithChildren) {
+  const { userId } = auth();
+
   return (
     <AppShell header={{ height: 60 }} footer={{ height: 52 }}>
       <AppShellHeader>
-        <HeaderContent user={user} />
+        <Header userId={userId} />
       </AppShellHeader>
 
       <AppShellMain>{props.children}</AppShellMain>
