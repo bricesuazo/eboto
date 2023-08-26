@@ -355,7 +355,10 @@ export const electionRouter = createTRPCRouter({
       // TODO: Validate commissioner
       if (input.newSlug !== input.oldSlug) {
         if (takenSlugs.includes(input.newSlug)) {
-          throw new Error("Election slug is already exists");
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Election slug is already exists",
+          });
         }
 
         const isElectionSlugExists = await ctx.db.query.elections.findFirst({
@@ -363,7 +366,10 @@ export const electionRouter = createTRPCRouter({
         });
 
         if (isElectionSlugExists)
-          throw new Error("Election slug is already exists");
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Election slug is already exists",
+          });
       }
 
       const isElectionCommissionerExists =
@@ -376,7 +382,11 @@ export const electionRouter = createTRPCRouter({
           },
         });
 
-      if (!isElectionCommissionerExists) throw new Error("Unauthorized");
+      if (!isElectionCommissionerExists)
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Unauthorized",
+        });
 
       await ctx.db
         .update(elections)
@@ -384,8 +394,10 @@ export const electionRouter = createTRPCRouter({
           name: input.name,
           slug: input.newSlug,
           description: input.description,
+          publicity: input.publicity,
           start_date: input.start_date,
           end_date: input.end_date,
+          logo: input.logo,
         })
         .where(eq(elections.id, input.id));
     }),
@@ -621,7 +633,8 @@ export const electionRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string().min(1),
-        slug: z.string().min(1).trim().toLowerCase(),
+        old_slug: z.string().min(1).trim(),
+        new_slug: z.string().min(1).trim(),
         first_name: z.string().min(1),
         middle_name: z.string().nullable(),
         last_name: z.string().min(1),
@@ -633,27 +646,40 @@ export const electionRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       // TODO: Validate commissioner
-      const isCandidateSlugExists = await ctx.db.query.candidates.findFirst({
-        where: (candidates, { eq, and }) =>
+
+      if (input.old_slug !== input.new_slug) {
+        const isCandidateSlugExists = await ctx.db.query.candidates.findFirst({
+          where: (candidates, { eq, and }) =>
+            and(
+              eq(candidates.slug, input.new_slug),
+              eq(candidates.election_id, input.election_id),
+            ),
+        });
+
+        if (isCandidateSlugExists)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Candidate slug is already exists",
+          });
+      }
+
+      await ctx.db
+        .update(candidates)
+        .set({
+          slug: input.new_slug,
+          first_name: input.first_name,
+          middle_name: input.middle_name,
+          last_name: input.last_name,
+          position_id: input.position_id,
+          partylist_id: input.partylist_id,
+          image_link: input.image_link,
+        })
+        .where(
           and(
-            eq(candidates.slug, input.slug),
+            eq(candidates.id, input.id),
             eq(candidates.election_id, input.election_id),
           ),
-      });
-
-      if (isCandidateSlugExists)
-        throw new Error("Candidate slug is already exists");
-
-      await ctx.db.insert(candidates).values({
-        slug: input.slug,
-        first_name: input.first_name,
-        middle_name: input.middle_name,
-        last_name: input.last_name,
-        election_id: input.election_id,
-        position_id: input.position_id,
-        partylist_id: input.partylist_id,
-        image_link: input.image_link,
-      });
+        );
     }),
   inviteAllInvitedVoters: protectedProcedure
     .input(
@@ -1074,12 +1100,7 @@ export const electionRouter = createTRPCRouter({
       await ctx.db.transaction(async (db) => {
         await db
           .delete(commissioners)
-          .where(
-            and(
-              eq(commissioners.user_id, ctx.auth.userId),
-              eq(commissioners.election_id, input.election_id),
-            ),
-          );
+          .where(eq(commissioners.election_id, input.election_id));
         await db
           .update(elections)
           .set({

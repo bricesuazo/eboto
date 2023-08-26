@@ -5,7 +5,7 @@ import { electionDashboardNavbar } from "@/constants";
 import { useStore } from "@/store";
 import { useClerk } from "@clerk/nextjs";
 import type { User } from "@clerk/nextjs/api";
-import type { Commissioner, Election } from "@eboto-mo/db/schema";
+import type { Election } from "@eboto-mo/db/schema";
 import {
   AppShell,
   AppShellFooter,
@@ -42,7 +42,7 @@ export default function DashboardElection({
   elections,
 }: React.PropsWithChildren<{
   user: User | null;
-  elections: (Commissioner & { election: Election })[];
+  elections: Election[];
 }>) {
   const { signOut } = useClerk();
   const router = useRouter();
@@ -53,8 +53,8 @@ export default function DashboardElection({
   const currentElection = elections
     ? elections.find(
         (election) =>
-          election.election.slug === params.electionDashboardSlug?.toString(),
-      )?.election
+          election.slug === params.electionDashboardSlug?.toString(),
+      )
     : null;
   const combobox = useCombobox({
     onDropdownOpen: (eventSource) => {
@@ -83,7 +83,7 @@ export default function DashboardElection({
       p="md"
     >
       <AppShellHeader>
-        <HeaderContent user={user} />
+        <HeaderContent user={user} elections={elections} />
       </AppShellHeader>
 
       <AppShellMain>{children}</AppShellMain>
@@ -138,43 +138,38 @@ export default function DashboardElection({
                         group: "Ongoing",
                         elections: elections
                           .filter(
-                            ({ election }) =>
+                            (election) =>
                               election.start_date < new Date() &&
                               election.end_date > new Date(),
                           )
                           .sort(
                             (a, b) =>
-                              b.election.updated_at.getTime() -
-                              a.election.updated_at.getTime(),
+                              b.updated_at.getTime() - a.updated_at.getTime(),
                           ),
                       },
                       {
                         group: "Upcoming",
                         elections: elections
                           .filter(
-                            ({ election }) => election.start_date > new Date(),
+                            (election) => election.start_date > new Date(),
                           )
                           .sort(
                             (a, b) =>
-                              b.election.updated_at.getTime() -
-                              a.election.updated_at.getTime(),
+                              b.updated_at.getTime() - a.updated_at.getTime(),
                           ),
                       },
                       {
                         group: "Completed",
                         elections: elections
-                          .filter(
-                            ({ election }) => election.end_date < new Date(),
-                          )
+                          .filter((election) => election.end_date < new Date())
                           .sort(
                             (a, b) =>
-                              b.election.updated_at.getTime() -
-                              a.election.updated_at.getTime(),
+                              b.updated_at.getTime() - a.updated_at.getTime(),
                           ),
                       },
                     ].map(({ group, elections }) => (
                       <ComboboxGroup key={group} label={group}>
-                        {elections.map(({ election }) => (
+                        {elections.map((election) => (
                           <ComboboxOption
                             key={election.id}
                             value={election.slug}

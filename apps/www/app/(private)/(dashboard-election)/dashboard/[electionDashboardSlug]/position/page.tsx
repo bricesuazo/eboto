@@ -21,7 +21,7 @@ export default async function Page({
   // });
 
   const election = await db.query.elections.findFirst({
-    where: (elections, { eq }) => eq(elections.slug, electionDashboardSlug),
+    where: (election, { eq }) => eq(election.slug, electionDashboardSlug),
   });
 
   if (!election) notFound();
@@ -30,8 +30,8 @@ export default async function Page({
   //   election_id: election.id,
   // });
   const positions = await db.query.positions.findMany({
-    where: (positions, { eq }) => eq(positions.election_id, election.id),
-    orderBy: (positions, { asc }) => asc(positions.order),
+    where: (position, { eq }) => eq(position.election_id, election.id),
+    orderBy: (position, { asc }) => asc(position.order),
   });
   return (
     <Stack>

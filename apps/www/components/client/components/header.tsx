@@ -7,6 +7,7 @@ import { api } from "@/trpc/client";
 import { UserProfile, useClerk } from "@clerk/nextjs";
 import type { User } from "@clerk/nextjs/api";
 import { dark } from "@clerk/themes";
+import type { Election } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
   Box,
@@ -55,7 +56,13 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function HeaderContent({ user }: { user: User | null }) {
+export default function HeaderContent({
+  user,
+  elections,
+}: {
+  user: User | null;
+  elections?: Election[];
+}) {
   const { signOut } = useClerk();
   const params = useParams();
   const [logoutLoading, setLogoutLoading] = useState(false);
@@ -83,33 +90,33 @@ export default function HeaderContent({ user }: { user: User | null }) {
   const formReportAProblem = useForm<{
     subject: string;
     description: string;
-    election_id: string | null;
+    election_id?: string;
   }>({
     initialValues: {
       subject: "",
       description: "",
-      election_id: null,
+      election_id: elections?.[0]?.id,
     },
-    validate: (values) => {
-      const errors: Record<string, string> = {};
-
-      if (!values.subject.trim() ?? !values.subject.length) {
-        errors.subject = "Subject is required";
-      }
-
-      if (!values.description.trim() ?? !values.description.length) {
-        errors.description = "Description is required";
-      }
-
-      if (!values.election_id?.trim() ?? !values.election_id.length) {
-        errors.election_id = "Election is required";
-      }
-
-      return errors;
+    validateInputOnBlur: true,
+    validateInputOnChange: true,
+    validate: {
+      subject: (value) => {
+        if (!value.trim() || !value.length) {
+          return "Subject is required";
+        }
+      },
+      description: (value) => {
+        if (!value.trim() || !value.length) {
+          return "Description is required";
+        }
+      },
+      election_id: (value) => {
+        if (!value ?? !value?.length) {
+          return "Election is required";
+        }
+      },
     },
   });
-
-  const data = ["React", "Angular", "Vue", "Svelte"];
 
   useEffect(() => {
     if (openedReportAProblem) {
@@ -168,7 +175,8 @@ export default function HeaderContent({ user }: { user: User | null }) {
 
             void (async () => {
               await reportAProblemMutation.mutate({
-                ...values,
+                subject: values.subject,
+                description: values.description,
                 election_id: values.election_id!,
               });
 
@@ -199,9 +207,15 @@ export default function HeaderContent({ user }: { user: User | null }) {
               {...formReportAProblem.getInputProps("description")}
             />
             <Select
-              label="Your favorite library"
-              placeholder="Pick value"
-              data={data}
+              label="Election"
+              placeholder="Select an election"
+              withAsterisk
+              data={
+                elections?.map((election) => ({
+                  value: election.id,
+                  label: election.name,
+                })) ?? []
+              }
               disabled={reportAProblemLoading}
               {...formReportAProblem.getInputProps("election_id")}
             />

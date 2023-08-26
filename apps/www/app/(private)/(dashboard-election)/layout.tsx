@@ -12,7 +12,10 @@ export default async function DashboardLayout(props: React.PropsWithChildren) {
   const elections = await api.election.getAllMyElections.query();
 
   return (
-    <DashboardElection user={user} elections={elections}>
+    <DashboardElection
+      user={user}
+      elections={elections.map(({ election }) => election)}
+    >
       {props.children}
     </DashboardElection>
   );

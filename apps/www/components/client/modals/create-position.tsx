@@ -4,6 +4,7 @@ import { api } from "@/trpc/client";
 import {
   Button,
   Checkbox,
+  Flex,
   Group,
   Modal,
   NumberInput,
@@ -137,7 +138,7 @@ export default function CreatePosition({
             />
 
             {form.values.isSingle && (
-              <Group gap="sm">
+              <Flex gap="sm">
                 <NumberInput
                   {...form.getInputProps("min")}
                   placeholder="Enter minimum"
@@ -154,7 +155,7 @@ export default function CreatePosition({
                   min={1}
                   required={form.values.isSingle}
                 />
-              </Group>
+              </Flex>
             )}
 
             {/* {isError && (

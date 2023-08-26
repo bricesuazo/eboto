@@ -78,6 +78,7 @@ export default function EditCandidate({
   const [opened, { open, close }] = useDisclosure(false);
   const openRef = useRef<() => void>(null);
   const params = useParams();
+  console.log("🚀 ~ file: edit-candidate.tsx:81 ~ params:", params);
 
   // const { mutate, isLoading, isError, error, reset } =
   //   api.election.editCandidate.useMutation({
@@ -100,7 +101,8 @@ export default function EditCandidate({
     first_name: string;
     middle_name: string | null;
     last_name: string;
-    slug: string;
+    old_slug: string;
+    new_slug: string;
     partylist_id: string;
     position: string;
     image: FileWithPath | null | string;
@@ -133,7 +135,8 @@ export default function EditCandidate({
       first_name: candidate.first_name,
       middle_name: candidate.middle_name,
       last_name: candidate.last_name,
-      slug: candidate.slug,
+      old_slug: candidate.slug,
+      new_slug: candidate.slug,
       partylist_id: candidate.partylist_id,
       position: candidate.position_id,
       image: candidate.image_link,
@@ -154,7 +157,7 @@ export default function EditCandidate({
         { min: 1 },
         "Last name must be at least 1 characters",
       ),
-      slug: (value) => {
+      new_slug: (value) => {
         if (!value) {
           return "Please enter an election slug";
         }
@@ -163,6 +166,11 @@ export default function EditCandidate({
         }
         if (value.length < 3 || value.length > 24) {
           return "Election slug must be between 3 and 24 characters";
+        }
+      },
+      partylist_id: (value) => {
+        if (!value) {
+          return "Please select a partylist";
         }
       },
     },
@@ -283,7 +291,8 @@ export default function EditCandidate({
                 first_name: values.first_name,
                 middle_name: values.middle_name,
                 last_name: values.last_name,
-                slug: values.slug,
+                old_slug: candidate.slug,
+                new_slug: values.new_slug,
                 partylist_id: values.partylist_id,
                 election_id: candidate.election_id,
                 position_id: values.position,
@@ -392,13 +401,13 @@ export default function EditCandidate({
                       <Text size="xs">
                         This will be used as the candidate&apos;s URL.
                         <br />
-                        eboto-mo.com/{params?.electionSlug?.toString()}/
-                        {form.values.slug || "candidate-slug"}
+                        eboto-mo.com/{params.electionDashboardSlug?.toString()}/
+                        {form.values.new_slug || "candidate-slug"}
                       </Text>
                     }
                     required
                     withAsterisk
-                    {...form.getInputProps("slug")}
+                    {...form.getInputProps("new_slug")}
                     leftSection={<IconLetterCase size="1rem" />}
                   />
 
@@ -1021,7 +1030,7 @@ export default function EditCandidate({
                   </Button>
                   <Button
                     type="submit"
-                    disabled={!form.isDirty()}
+                    disabled={!form.isDirty() || !form.isValid()}
                     // loading={isLoading}
                   >
                     Update
