@@ -2,6 +2,7 @@
 
 import type { GeneratedElectionResult } from "@eboto-mo/db/schema";
 import { Box, Button, Group, Text } from "@mantine/core";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { IconDownload } from "@tabler/icons-react";
 import moment from "moment";
 import { useState } from "react";
@@ -11,6 +12,7 @@ export default function GenerateResultRow({
 }: {
   result: GeneratedElectionResult;
 }) {
+  const supabase = createClientComponentClient();
   const [states, setStates] = useState<{
     isGenerating: boolean;
     error: string | null;
@@ -54,31 +56,31 @@ export default function GenerateResultRow({
 
           await new Promise((resolve) => setTimeout(resolve, 1000));
 
-          //   const { data, error } = await supabase.storage
-          //     .from("eboto-mo")
-          //     .download(`elections/${result.electionId}/results/${result.name}`);
+          const { data, error } = await supabase.storage
+            .from("eboto-mo")
+            .download(`elections/${result.election_id}/results/${result.name}`);
 
-          //   if (error) {
-          //     setStates({
-          //       isGenerating: false,
-          //       error: error.message,
-          //     });
-          //     return;
-          //   }
+          if (error) {
+            setStates({
+              isGenerating: false,
+              error: error.message,
+            });
+            return;
+          }
 
-          //   const url = URL.createObjectURL(data);
+          const url = URL.createObjectURL(data);
 
-          //   const anchor = document.createElement("a");
-          //   anchor.href = url;
-          //   anchor.download = result.name;
+          const anchor = document.createElement("a");
+          anchor.href = url;
+          anchor.download = result.name;
 
-          //   document.body.appendChild(anchor);
+          document.body.appendChild(anchor);
 
-          //   anchor.click();
+          anchor.click();
 
-          //   document.body.removeChild(anchor);
+          document.body.removeChild(anchor);
 
-          //   URL.revokeObjectURL(url);
+          URL.revokeObjectURL(url);
 
           setStates({
             isGenerating: false,

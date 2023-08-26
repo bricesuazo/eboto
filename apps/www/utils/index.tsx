@@ -2,6 +2,7 @@
 // import { verification_tokens } from "@eboto-mo/db/schema";
 import type { Election, TokenType } from "@eboto-mo/db/schema";
 import type { FileWithPath } from "@mantine/dropzone";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 // import { nanoid } from "nanoid";
 
@@ -74,16 +75,15 @@ export const uploadImage = async ({
   path: string;
   image: FileWithPath;
 }): Promise<string> => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  console.log("🚀 ~ file: index.tsx:76 ~ image:", image);
-  console.log("🚀 ~ file: index.tsx:76 ~ path:", path);
-  // await supabase.storage.from("eboto-mo").upload(path, image, {
-  //   contentType: "image/png",
-  // });
+  const supabase = createClientComponentClient();
 
-  // const {
-  //   data: { publicUrl },
-  // } = supabase.storage.from("eboto-mo").getPublicUrl(path);
+  await supabase.storage.from("eboto-mo").upload(path, image, {
+    contentType: "image/png",
+  });
 
-  return "publicUrl";
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from("eboto-mo").getPublicUrl(path);
+
+  return publicUrl;
 };

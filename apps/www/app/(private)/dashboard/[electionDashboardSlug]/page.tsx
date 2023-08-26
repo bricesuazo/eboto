@@ -144,7 +144,7 @@ export default async function Page({
               </Box>
               <Box>
                 <Title>{stat.count}</Title>
-                <Text tt="uppercase" fw={700} c="primary">
+                <Text tt="uppercase" fw={700} c="green">
                   {stat.title}
                 </Text>
               </Box>
@@ -222,28 +222,12 @@ export default async function Page({
               style={{
                 flex: 1,
               }}
-              // style={(theme) => ({
-              //   "&:hover": {
-              //     backgroundColor:
-              //       theme.colorScheme === "dark"
-              //         ? theme.colors.dark[5]
-              //         : theme.colors.gray[2],
-              //   },
-              // })}
             >
               <Title order={2}>{stat.count}</Title>
-              <Text tt="uppercase" fw={700} c="primary">
+              <Text tt="uppercase" fw={700} c="green">
                 {stat.title}
               </Text>
-              <Text
-                fz="sm"
-                // style={(theme) => ({
-                //   color:
-                //     theme.colorScheme === "dark"
-                //       ? theme.colors.dark[2]
-                //       : theme.colors.gray[6],
-                // })}
-              >
+              <Text fz="sm" c="dimmed">
                 {stat.description}
               </Text>
             </Box>

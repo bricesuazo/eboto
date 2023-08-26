@@ -5,6 +5,7 @@
   justify-content: center;
   align-items: center;
   width: 200px;
+  height: 240px;
 
   @media (max-width: $mantine-breakpoint-xs) {
     width: 100%;

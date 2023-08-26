@@ -1,6 +1,7 @@
 "use client";
 
 import { api } from "@/trpc/client";
+import { uploadImage } from "@/utils";
 import type { Candidate, Partylist, Position } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
@@ -78,7 +79,6 @@ export default function EditCandidate({
   const [opened, { open, close }] = useDisclosure(false);
   const openRef = useRef<() => void>(null);
   const params = useParams();
-  console.log("🚀 ~ file: edit-candidate.tsx:81 ~ params:", params);
 
   // const { mutate, isLoading, isError, error, reset } =
   //   api.election.editCandidate.useMutation({
@@ -296,18 +296,16 @@ export default function EditCandidate({
                 partylist_id: values.partylist_id,
                 election_id: candidate.election_id,
                 position_id: values.position,
-                image_link: "",
-
-                //   image: !value.image
-                //     ? null
-                //     : typeof value.image === "string"
-                //     ? value.image
-                //     : await uploadImage({
-                //         path: `elections/${candidate.electionId}/candidates/${
-                //           candidate.id
-                //         }/image/${Date.now().toString()}`,
-                //         image: value.image,
-                //       }),
+                image_link: !values.image
+                  ? null
+                  : typeof values.image === "string"
+                  ? values.image
+                  : await uploadImage({
+                      path: `elections/${candidate.election_id}/candidates/${
+                        candidate.id
+                      }/image/${Date.now().toString()}`,
+                      image: values.image,
+                    }),
 
                 // platforms: value.platforms,
 
