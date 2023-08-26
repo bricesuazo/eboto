@@ -16,7 +16,7 @@ import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
 
-const DashboardCard = ({
+export default function DashboardCard({
   election,
   type,
   hasVoted,
@@ -24,14 +24,15 @@ const DashboardCard = ({
   election: Election;
   type: "vote" | "manage";
   hasVoted?: boolean;
-}) => {
+}) {
   const { hovered, ref } = useHover<HTMLAnchorElement>();
   return (
     <UnstyledButton
       ref={ref}
       className={classes["card-container"]}
-      w={{ base: "100%", xs: 256 }}
-      h={300}
+      maw={288}
+      w="100%"
+      h={400}
       p="md"
       component={Link}
       href={
@@ -61,10 +62,12 @@ const DashboardCard = ({
 
       {election.logo && (
         <Box
+          mx="auto"
           style={{
             position: "relative",
             width: "100%",
             aspectRatio: "1/1",
+            // maxWidth: 256,
           }}
         >
           <Image
@@ -80,26 +83,30 @@ const DashboardCard = ({
           />
         </Box>
       )}
-      <Center h="100%">
+      <Center style={{ flex: 1 }}>
         <Box>
-          <Title fw="bold" ta="center" order={3}>
+          <Title
+            fw="bold"
+            ta="center"
+            order={3}
+            style={{
+              lineClamp: 2,
+            }}
+            w="100%"
+          >
             {election.name}
           </Title>
           <Text size="sm" c="GrayText" ta="center">
-            {moment(election.start_date)
-              .local()
-              .format("MMMM DD, YYYY hA (dddd)")}
+            {moment(election.start_date).local().format("MMM DD (hA)")}
             {" - "}
-            {moment(election.end_date)
-              .local()
-              .format("MMMM DD, YYYY hA (dddd)")}
+            {moment(election.end_date).local().format("MMM DD (hA)")}
           </Text>
 
-          <Text size="sm" lineClamp={1} c="dimmed" ta="center">
+          {/* <Text size="sm" lineClamp={1} c="dimmed" ta="center">
             Publicity:{" "}
             {election.publicity.charAt(0) +
               election.publicity.slice(1).toLowerCase()}
-          </Text>
+          </Text> */}
 
           {type === "vote" && (
             <Text size="sm" c="dimmed" lineClamp={1} ta="center">
@@ -110,6 +117,4 @@ const DashboardCard = ({
       </Center>
     </UnstyledButton>
   );
-};
-
-export default DashboardCard;
+}

@@ -40,22 +40,19 @@ export default async function Page() {
   return (
     <Dashboard>
       <Container size="md" my="md">
-        <Stack gap="lg">
+        <Stack gap="xl">
+          <Box hiddenFrom="xs">
+            <CreateElection style={{ width: "100%" }} />
+          </Box>
           <Box>
             <Flex align="center" justify="space-between">
-              <Title order={2} visibleFrom="xs">
-                My elections
-              </Title>
-              <Title order={4} hiddenFrom="xs">
-                My elections
-              </Title>
+              <Title order={2}>My elections</Title>
 
-              <CreateElection />
+              <Box visibleFrom="xs">
+                <CreateElection />
+              </Box>
             </Flex>
-            <Text size="xs" c="grayText" mb="md" hiddenFrom="xs">
-              You can manage the elections below.
-            </Text>
-            <Text size="sm" c="grayText" mb="md" visibleFrom="xs">
+            <Text size="sm" c="grayText" mb="md">
               You can manage the elections below.
             </Text>
             <Group>
@@ -76,18 +73,9 @@ export default async function Page() {
           </Box>
 
           <Box>
-            <Title order={2} visibleFrom="xs">
-              My elections I can vote in
-            </Title>
-            <Title order={4} hiddenFrom="xs">
-              My elections I can vote in
-            </Title>
+            <Title order={2}>My elections I can vote in</Title>
 
-            <Text size="xs" c="grayText" mb="sm" hiddenFrom="xs">
-              You can vote in the elections below. You can only vote once per
-              election.
-            </Text>
-            <Text size="sm" c="grayText" mb="md" visibleFrom="xs">
+            <Text size="sm" c="grayText" mb="sm">
               You can vote in the elections below. You can only vote once per
               election.
             </Text>

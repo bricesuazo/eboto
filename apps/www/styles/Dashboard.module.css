@@ -2,6 +2,10 @@
   position: relative;
   border-radius: var(--mantine-radius-md);
   transition: all 100ms ease-in-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-xs);
   background-color: light-dark(
     var(--mantine-color-gray-0),
     var(--mantine-color-dark-6)

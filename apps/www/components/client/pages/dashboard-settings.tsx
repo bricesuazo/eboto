@@ -30,7 +30,6 @@ export default function DashboardSettings({
 }: {
   election: Election;
 }) {
-  console.log("🚀 ~ file: dashboard-settings.tsx:33 ~ election:", election);
   const openRef = useRef<() => void>(null);
   // const { mutate, isLoading, isError, error } =
   //   api.election.editElection.useMutation({
@@ -511,6 +510,7 @@ export default function DashboardSettings({
                               src={election.logo}
                               alt="Logo"
                               fill
+                              sizes="100%"
                               priority
                               style={{ objectFit: "cover" }}
                             />
