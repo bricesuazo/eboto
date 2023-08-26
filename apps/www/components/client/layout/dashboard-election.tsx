@@ -38,16 +38,16 @@ import Header from "../components/header";
 export default function DashboardElection({
   children,
   userId,
-  elections,
 }: React.PropsWithChildren<{
   userId: string | null;
-  elections: Election[];
 }>) {
   const { signOut } = useClerk();
   const router = useRouter();
   const params = useParams();
 
   const pathname = usePathname();
+
+  const elections: Election[] = [];
 
   const currentElection = elections
     ? elections.find(
