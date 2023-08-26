@@ -30,6 +30,7 @@ export default function DashboardSettings({
 }: {
   election: Election;
 }) {
+  console.log("🚀 ~ file: dashboard-settings.tsx:33 ~ election:", election);
   const openRef = useRef<() => void>(null);
   // const { mutate, isLoading, isError, error } =
   //   api.election.editElection.useMutation({
@@ -263,7 +264,7 @@ export default function DashboardSettings({
                   ? values.logo
                   : await uploadImage({
                       path:
-                        "/elections/" +
+                        "elections/" +
                         election.id +
                         "/logo/" +
                         Date.now().toString(),
