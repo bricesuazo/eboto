@@ -1,22 +1,9 @@
 import DashboardCard from "@/components/client/components/dashboard-card";
-import Footer from "@/components/client/components/footer";
-import Header from "@/components/client/components/header";
+import Dashboard from "@/components/client/layout/dashboard";
 import CreateElection from "@/components/client/modals/create-election";
 import { auth } from "@clerk/nextjs";
 import { db } from "@eboto-mo/db";
-import {
-  AppShell,
-  AppShellFooter,
-  AppShellHeader,
-  AppShellMain,
-  Box,
-  Container,
-  Flex,
-  Group,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Box, Container, Flex, Group, Stack, Text, Title } from "@mantine/core";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -51,88 +38,79 @@ export default async function Page() {
   });
 
   return (
-    <AppShell header={{ height: 60 }} footer={{ height: 52 }}>
-      <AppShellHeader>
-        <Header userId={userId} />
-      </AppShellHeader>
-
-      <AppShellMain>
-        <Container size="md" my="md">
-          <Stack gap="lg">
-            <Box>
-              <Flex align="center" justify="space-between">
-                <Title order={2} visibleFrom="xs">
-                  My elections
-                </Title>
-                <Title order={4} hiddenFrom="xs">
-                  My elections
-                </Title>
-
-                <CreateElection />
-              </Flex>
-              <Text size="xs" c="grayText" mb="md" hiddenFrom="xs">
-                You can manage the elections below.
-              </Text>
-              <Text size="sm" c="grayText" mb="md" visibleFrom="xs">
-                You can manage the elections below.
-              </Text>
-              <Group>
-                {electionsAsCommissioner.length === 0 ? (
-                  <Box h={72}>
-                    <Text>No elections found</Text>
-                  </Box>
-                ) : (
-                  electionsAsCommissioner.map((commissioner) => (
-                    <DashboardCard
-                      key={commissioner.id}
-                      election={commissioner.election}
-                      type="manage"
-                    />
-                  ))
-                )}
-              </Group>
-            </Box>
-
-            <Box>
+    <Dashboard>
+      <Container size="md" my="md">
+        <Stack gap="lg">
+          <Box>
+            <Flex align="center" justify="space-between">
               <Title order={2} visibleFrom="xs">
-                My elections I can vote in
+                My elections
               </Title>
               <Title order={4} hiddenFrom="xs">
-                My elections I can vote in
+                My elections
               </Title>
 
-              <Text size="xs" c="grayText" mb="sm" hiddenFrom="xs">
-                You can vote in the elections below. You can only vote once per
-                election.
-              </Text>
-              <Text size="sm" c="grayText" mb="md" visibleFrom="xs">
-                You can vote in the elections below. You can only vote once per
-                election.
-              </Text>
+              <CreateElection />
+            </Flex>
+            <Text size="xs" c="grayText" mb="md" hiddenFrom="xs">
+              You can manage the elections below.
+            </Text>
+            <Text size="sm" c="grayText" mb="md" visibleFrom="xs">
+              You can manage the elections below.
+            </Text>
+            <Group>
+              {electionsAsCommissioner.length === 0 ? (
+                <Box h={72}>
+                  <Text>No elections found</Text>
+                </Box>
+              ) : (
+                electionsAsCommissioner.map((commissioner) => (
+                  <DashboardCard
+                    key={commissioner.id}
+                    election={commissioner.election}
+                    type="manage"
+                  />
+                ))
+              )}
+            </Group>
+          </Box>
 
-              <Group>
-                {electionsAsVoter.length === 0 ? (
-                  <Box h={72}>
-                    <Text>No vote elections found</Text>
-                  </Box>
-                ) : (
-                  electionsAsVoter.map((voter) => (
-                    <DashboardCard
-                      key={voter.id}
-                      election={voter.election}
-                      type="vote"
-                      hasVoted={voter.election.votes.length > 0}
-                    />
-                  ))
-                )}
-              </Group>
-            </Box>
-          </Stack>
-        </Container>
-      </AppShellMain>
-      <AppShellFooter>
-        <Footer />
-      </AppShellFooter>
-    </AppShell>
+          <Box>
+            <Title order={2} visibleFrom="xs">
+              My elections I can vote in
+            </Title>
+            <Title order={4} hiddenFrom="xs">
+              My elections I can vote in
+            </Title>
+
+            <Text size="xs" c="grayText" mb="sm" hiddenFrom="xs">
+              You can vote in the elections below. You can only vote once per
+              election.
+            </Text>
+            <Text size="sm" c="grayText" mb="md" visibleFrom="xs">
+              You can vote in the elections below. You can only vote once per
+              election.
+            </Text>
+
+            <Group>
+              {electionsAsVoter.length === 0 ? (
+                <Box h={72}>
+                  <Text>No vote elections found</Text>
+                </Box>
+              ) : (
+                electionsAsVoter.map((voter) => (
+                  <DashboardCard
+                    key={voter.id}
+                    election={voter.election}
+                    type="vote"
+                    hasVoted={voter.election.votes.length > 0}
+                  />
+                ))
+              )}
+            </Group>
+          </Box>
+        </Stack>
+      </Container>
+    </Dashboard>
   );
 }
