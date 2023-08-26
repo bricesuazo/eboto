@@ -207,6 +207,7 @@ export const takenSlugs: TakenSlugs = [
   "github",
   "linkedin",
   "email",
+  "d",
 ];
 
 export const FAQs: { id: string; question: string; answer: string }[] = [

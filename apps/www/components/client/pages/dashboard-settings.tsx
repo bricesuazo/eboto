@@ -22,7 +22,6 @@ import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCalendar, IconLetterCase, IconX } from "@tabler/icons-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useRef } from "react";
 
 export default function DashboardSettings({
@@ -31,7 +30,6 @@ export default function DashboardSettings({
   election: Election;
 }) {
   const openRef = useRef<() => void>(null);
-  const router = useRouter();
   // const { mutate, isLoading, isError, error } =
   //   api.election.editElection.useMutation({
   //     onSuccess: async () => {
@@ -248,7 +246,7 @@ export default function DashboardSettings({
 
       <form
         onSubmit={form.onSubmit((values) => {
-          void (async () => {
+          void (async () =>
             await api.election.editElection.mutate({
               id: election.id,
               name: values.name,
@@ -260,11 +258,7 @@ export default function DashboardSettings({
               end_date: values.end_date,
               publicity: values.publicity,
               logo: typeof values.logo === "string" ? values.logo : "",
-            });
-
-            if (election.slug !== values.newSlug)
-              router.push(`/dashboard/${values.newSlug}/settings/`);
-          })();
+            }))();
 
           // await updateElectionMutation.mutateAsync({
           //   id: value.id,

@@ -16,8 +16,7 @@ export default async function DashboardLayout(props: React.PropsWithChildren) {
         <HeaderContent user={user} />
       </AppShellHeader>
 
-      <AppShellMain> {props.children}</AppShellMain>
-
+      <AppShellMain>{props.children}</AppShellMain>
       <AppShellFooter>
         <Footer />
       </AppShellFooter>

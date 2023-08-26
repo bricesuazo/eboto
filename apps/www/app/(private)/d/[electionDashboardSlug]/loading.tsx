@@ -1,6 +1,6 @@
 import { Center, Loader } from "@mantine/core";
 
-export default function DashboardLoading() {
+export default function DashboardElectionLoading() {
   return (
     <Center h="100%">
       <Loader />

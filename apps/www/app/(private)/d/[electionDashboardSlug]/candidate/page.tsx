@@ -100,10 +100,7 @@ export default async function Page({
         <Box>
           <Text>
             No positions yet. Please add{" "}
-            <Anchor
-              component={Link}
-              href={`/dashboard/${election.slug}/position`}
-            >
+            <Anchor component={Link} href={`/d/${election.slug}/position`}>
               positions
             </Anchor>{" "}
             first.

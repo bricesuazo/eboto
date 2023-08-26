@@ -236,9 +236,9 @@ export default function HeaderContent({
         size={!params.electionDashboardSlug ? "md" : undefined}
       >
         <Flex h="100%" align="center" justify="space-between" gap="xs">
-          <Flex h="100%" align="center">
+          <Flex h="100%" align="center" gap="xs">
             <UnstyledButton component={Link} href={user ? "/dashboard" : "/"}>
-              <Group gap="xs" align="center">
+              <Flex gap="xs" align="center">
                 <Image
                   src="/images/logo.png"
                   alt="eBoto Mo Logo"
@@ -249,17 +249,16 @@ export default function HeaderContent({
                 <Text fw={600} visibleFrom="xs">
                   eBoto Mo
                 </Text>
-              </Group>
+              </Flex>
             </UnstyledButton>
 
-            <Center h="100%">
+            <Center h="100%" hiddenFrom="xs">
               <Burger
                 opened={store.dashboardMenu}
                 onClick={() => store.toggleDashboardMenu()}
                 size="sm"
                 color="gray.6"
                 py="xl"
-                hiddenFrom="xs"
                 h="100%"
                 hidden={!params.electionDashboardSlug}
               />
@@ -276,7 +275,7 @@ export default function HeaderContent({
             >
               <MenuTarget>
                 <UnstyledButton h="100%">
-                  <Flex gap="xs">
+                  <Flex gap="xs" align="center">
                     <Box
                       style={{
                         position: "relative",

@@ -63,23 +63,14 @@ export default async function Page() {
 
             <CreateElection />
           </Flex>
-          <Text size="xs" c="grayText" mb="md">
+          <Text size="xs" c="grayText" mb="md" hiddenFrom="xs">
+            You can manage the elections below.
+          </Text>
+          <Text size="sm" c="grayText" mb="md" visibleFrom="xs">
             You can manage the elections below.
           </Text>
           <Group>
-            {!electionsAsCommissioner ? (
-              Array(3).map((_, i) => (
-                <Skeleton
-                  key={i}
-                  width={250}
-                  height={332}
-                  radius="md"
-                  // style={(theme) => ({
-                  //   [theme.fn.smallerThan("xs")]: { width: "100%" },
-                  // })}
-                />
-              ))
-            ) : electionsAsCommissioner.length === 0 ? (
+            {electionsAsCommissioner.length === 0 ? (
               <Box h={72}>
                 <Text>No elections found</Text>
               </Box>
@@ -102,7 +93,12 @@ export default async function Page() {
           <Title order={4} hiddenFrom="xs">
             My elections I can vote in
           </Title>
-          <Text size="xs" c="grayText" mb="sm">
+
+          <Text size="xs" c="grayText" mb="sm" hiddenFrom="xs">
+            You can vote in the elections below. You can only vote once per
+            election.
+          </Text>
+          <Text size="sm" c="grayText" mb="md" visibleFrom="xs">
             You can vote in the elections below. You can only vote once per
             election.
           </Text>

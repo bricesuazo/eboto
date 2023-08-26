@@ -3,8 +3,13 @@ import { db } from "@eboto-mo/db";
 import { ActionIcon, Box, Flex, Stack, Text, Title } from "@mantine/core";
 import { IconExternalLink } from "@tabler/icons-react";
 import moment from "moment";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "Overview",
+};
 
 export default async function Page({
   params: { electionDashboardSlug },
