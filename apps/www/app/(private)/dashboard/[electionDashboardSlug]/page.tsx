@@ -1,7 +1,21 @@
+import GenerateResultRow from "@/components/client/components/generated-result-row";
 import DashboardShowQRCode from "@/components/client/modals/dashboard-show-qr-code";
 import { db } from "@eboto-mo/db";
-import { ActionIcon, Box, Flex, Stack, Text, Title } from "@mantine/core";
-import { IconExternalLink } from "@tabler/icons-react";
+import {
+  ActionIcon,
+  Box,
+  Flex,
+  Stack,
+  Text,
+  Title,
+  UnstyledButton,
+} from "@mantine/core";
+import {
+  IconExternalLink,
+  IconFlag,
+  IconReplace,
+  IconUserSearch,
+} from "@tabler/icons-react";
 import moment from "moment";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -22,6 +36,18 @@ export default async function Page({
 
   const election = await db.query.elections.findFirst({
     where: (elections, { eq }) => eq(elections.slug, electionDashboardSlug),
+    with: {
+      positions: true,
+      partylists: true,
+      voters: {
+        with: {
+          votes: true,
+        },
+      },
+      invited_voters: true,
+      generated_election_results: true,
+      candidates: true,
+    },
   });
 
   if (!election) notFound();
@@ -67,36 +93,34 @@ export default async function Page({
       </Box>
 
       <Flex
-      // backgroundColor:
-      //   theme.colorScheme === "dark"
-      //     ? theme.colors.dark[6]
-      //     : theme.colors.gray[1],
-      // overflow: "hidden",
-
-      // [theme.fn.smallerThan("sm")]: {
-      //   flexDirection: "column",
-      // },
+        direction={{
+          base: "column",
+          md: "row",
+        }}
+        style={{
+          borderRadius: "var(--mantine-radius-md)",
+          overflow: "hidden",
+          backgroundColor: "var(--mantine-color-gray-light)",
+        }}
       >
-        {/* {[
+        {[
           {
             id: 0,
-            count: (
-              electionOverview.data.partylists._count._all - 1
-            ).toString(),
+            count: election.partylists.length.toString(),
             title: "Partylists",
             icon: IconFlag,
             href: "partylist",
           },
           {
             id: 1,
-            count: electionOverview.data.positions._count._all.toString(),
+            count: election.positions.length.toString(),
             title: "Positions",
             icon: IconReplace,
             href: "position",
           },
           {
             id: 2,
-            count: electionOverview.data.candidates._count._all.toString(),
+            count: election.candidates.length.toString(),
             title: "Candidates",
             icon: IconUserSearch,
             href: "candidate",
@@ -106,103 +130,87 @@ export default async function Page({
             <UnstyledButton
               key={stat.id}
               component={Link}
-              href={`/dashboard/${electionOverview.data.election.slug}/${stat.href}`}
-              style={(theme) => ({
+              href={`/dashboard/${election.slug}/${stat.href}`}
+              style={{
                 display: "flex",
                 alignItems: "center",
-                columnGap: theme.spacing.md,
-                padding: theme.spacing.md,
+                columnGap: "var(--mantine-spacing-md)",
+                padding: "var(--mantine-spacing-md)",
                 flex: 1,
-
-                borderStartStartRadius: stat.id === 0 ? theme.radius.md : 0,
-                borderStartEndRadius: stat.id === 2 ? theme.radius.md : 0,
-                borderEndStartRadius: stat.id === 0 ? theme.radius.md : 0,
-                borderEndEndRadius: stat.id === 2 ? theme.radius.md : 0,
-
-                [theme.fn.smallerThan("sm")]: {
-                  borderStartStartRadius: stat.id === 0 ? theme.radius.md : 0,
-                  borderStartEndRadius: stat.id === 0 ? theme.radius.md : 0,
-                  borderEndStartRadius: stat.id === 2 ? theme.radius.md : 0,
-                  borderEndEndRadius: stat.id === 2 ? theme.radius.md : 0,
-                },
-
-                "&:hover": {
-                  backgroundColor:
-                    theme.colorScheme === "dark"
-                      ? theme.colors.dark[5]
-                      : theme.colors.gray[2],
-                },
-              })}
+              }}
             >
               <Box>
                 <stat.icon size="2rem" />
               </Box>
               <Box>
                 <Title>{stat.count}</Title>
-                <Text
-                  style={(theme) => ({
-                    textTransform: "uppercase",
-                    fontWeight: 700,
-                    color: theme.primaryColor,
-                  })}
-                >
+                <Text tt="uppercase" fw={700} c="primary">
                   {stat.title}
                 </Text>
               </Box>
             </UnstyledButton>
           );
-        })} */}
+        })}
       </Flex>
 
-      {/* <Box
-        style={(theme) => ({
-          display: "flex",
-          borderRadius: theme.radius.md,
-          backgroundColor:
-            theme.colorScheme === "dark"
-              ? theme.colors.dark[6]
-              : theme.colors.gray[1],
+      <Flex
+        direction={{
+          base: "column",
+          md: "row",
+        }}
+        style={{
+          borderRadius: "var(--mantine-radius-md)",
           overflow: "hidden",
-
-          [theme.fn.smallerThan("sm")]: {
-            flexDirection: "column",
-          },
-        })}
+          backgroundColor: "var(--mantine-color-gray-light)",
+        }}
       >
         {[
           {
             id: 0,
-            count: `${electionOverview.data.voted._count._all} (${
+            count: `${
+              election.voters.length === 0
+                ? 0
+                : election.voters.filter((voter) => voter.votes.length > 0)
+                    .length
+            } (${
               isNaN(
-                (electionOverview.data.voted._count._all /
-                  electionOverview.data.voters._count._all) *
-                  100
+                (election.voters.filter((voter) => voter.votes.length > 0)
+                  .length /
+                  election.voters.length) *
+                  100,
               )
                 ? 0
                 : (
-                    (electionOverview.data.voted._count._all /
-                      electionOverview.data.voters._count._all) *
+                    (election.voters.filter((voter) => voter.votes.length > 0)
+                      .length /
+                      election.voters.length) *
                     100
-                  ).toFixed(0)
+                  ).toFixed(2)
             }%)`,
             title: "Voted",
             description: "Voters who already voted",
           },
           {
             id: 1,
-            count: electionOverview.data.voters._count._all.toString(),
+            count: election.voters
+              .filter((voter) => voter.votes.length > 0)
+              .length.toString(),
             title: "Accepted Voters",
             description: "Voters who accepted the invitation to vote",
           },
           {
             id: 2,
-            count: electionOverview.data.invitedVoters._count._all.toString(),
+            count: election.invited_voters
+              .filter((invited_voter) => invited_voter.status === "INVITED")
+              .length.toString(),
             title: "Invited Voters",
             description: "Voters who were invited to vote",
           },
           {
             id: 3,
-            count: electionOverview.data.declinedVoters._count._all.toString(),
+            count: election.invited_voters
+              .filter((invited_voter) => invited_voter.status === "DECLINED")
+              .length.toString(),
             title: "Declined Voters",
             description: "Voters who declined the invitation to vote",
           },
@@ -210,43 +218,38 @@ export default async function Page({
           return (
             <Box
               key={stat.id}
-              style={(theme) => ({
+              p="md"
+              style={{
                 flex: 1,
-                padding: theme.spacing.md,
-
-                "&:hover": {
-                  backgroundColor:
-                    theme.colorScheme === "dark"
-                      ? theme.colors.dark[5]
-                      : theme.colors.gray[2],
-                },
-              })}
+              }}
+              // style={(theme) => ({
+              //   "&:hover": {
+              //     backgroundColor:
+              //       theme.colorScheme === "dark"
+              //         ? theme.colors.dark[5]
+              //         : theme.colors.gray[2],
+              //   },
+              // })}
             >
               <Title order={2}>{stat.count}</Title>
-              <Text
-                style={(theme) => ({
-                  textTransform: "uppercase",
-                  fontWeight: 700,
-                  color: theme.primaryColor,
-                })}
-              >
+              <Text tt="uppercase" fw={700} c="primary">
                 {stat.title}
               </Text>
               <Text
-                style={(theme) => ({
-                  color:
-                    theme.colorScheme === "dark"
-                      ? theme.colors.dark[2]
-                      : theme.colors.gray[6],
-                  fontSize: theme.fontSizes.sm,
-                })}
+                fz="sm"
+                // style={(theme) => ({
+                //   color:
+                //     theme.colorScheme === "dark"
+                //       ? theme.colors.dark[2]
+                //       : theme.colors.gray[6],
+                // })}
               >
                 {stat.description}
               </Text>
             </Box>
           );
         })}
-      </Box> */}
+      </Flex>
       {/* <Box>
         <Title
           order={3}
@@ -319,42 +322,30 @@ export default async function Page({
       <Box>
         <Title
           order={3}
-          // style={(theme) => ({
-          //   [theme.fn.smallerThan("xs")]: {
-          //     textAlign: "center",
-          //   },
-          // })}
+          ta={{
+            base: "center",
+            xs: "left",
+          }}
         >
           Generated Results
         </Title>
 
-        {/* <Box>
-          {electionOverview.isLoading ? (
+        <Box>
+          {election.generated_election_results.length === 0 ? (
             <Text
-              style={(theme) => ({
-                [theme.fn.smallerThan("xs")]: {
-                  textAlign: "center",
-                },
-              })}
-            >
-              Loading...
-            </Text>
-          ) : !generateResults.data || generateResults.data.length === 0 ? (
-            <Text
-              style={(theme) => ({
-                [theme.fn.smallerThan("xs")]: {
-                  textAlign: "center",
-                },
-              })}
+              ta={{
+                base: "center",
+                xs: "left",
+              }}
             >
               No generated results yet.
             </Text>
           ) : (
-            generateResults.data.map((result) => (
-              <GenerateResultRow result={result} key={result.id} />
+            election.generated_election_results.map((result) => (
+              <GenerateResultRow key={result.id} result={result} />
             ))
           )}
-        </Box> */}
+        </Box>
       </Box>
     </Stack>
   );

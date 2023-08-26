@@ -125,7 +125,11 @@ export default function DashboardElection({
                         {currentElection?.name}
                       </Text>
                     ) : (
-                      <InputPlaceholder>Select an election</InputPlaceholder>
+                      <InputPlaceholder>
+                        <Text truncate size="sm">
+                          Select an election
+                        </Text>
+                      </InputPlaceholder>
                     )}
                   </InputBase>
                 </ComboboxTarget>

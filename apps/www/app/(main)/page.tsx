@@ -8,6 +8,7 @@ import {
   Box,
   Button,
   Container,
+  Flex,
   SimpleGrid,
   Stack,
   Text,
@@ -25,14 +26,20 @@ const ReactPlayer = dynamic(
 
 export default function HomePage() {
   return (
-    <Container size="md" className={classes.wrapper}>
+    <Container size="md" pos="relative">
       <Dots className={classes.dots} style={{ left: 0, top: 0 }} />
       <Dots className={classes.dots} style={{ left: 60, top: 0 }} />
       <Dots className={classes.dots} style={{ left: 0, top: 140 }} />
       <Dots className={classes.dots} style={{ right: 0, top: 60 }} />
 
       <Box pos="relative" py={156}>
-        <Title className={classes.title}>
+        <Title
+          ta={{ base: "left", sm: "center" }}
+          fz={{ base: "2.25rem", sm: "3rem" }}
+          mb="md"
+          lts={-1}
+          className={classes.title}
+        >
           <Balancer>
             Your{" "}
             <Text component="span" className={classes.highlight} inherit>
@@ -43,7 +50,10 @@ export default function HomePage() {
         </Title>
 
         <Container p={0} size="md">
-          <Text size="lg" className={classes.description}>
+          <Text
+            fz={{ base: "md", sm: "lg", md: "xl" }}
+            ta={{ base: "left", sm: "center" }}
+          >
             <Balancer>
               Empower your elections with eBoto Mo, the versatile and web-based
               voting platform that offers secure online elections for any type
@@ -52,7 +62,12 @@ export default function HomePage() {
           </Text>
         </Container>
 
-        <Box className={classes.controls}>
+        <Flex
+          justify="center"
+          mt="lg"
+          gap="sm"
+          direction={{ base: "column", sm: "row" }}
+        >
           <Button
             component={Link}
             href="/sign-in"
@@ -70,7 +85,7 @@ export default function HomePage() {
           >
             Get started
           </Button>
-        </Box>
+        </Flex>
       </Box>
 
       <Stack gap="lg" my="xl">
@@ -90,11 +105,11 @@ export default function HomePage() {
 
       <SimpleGrid cols={{ base: 1, sm: 2 }} className={classes.grid}>
         <Box
-          className={classes.imageContainer}
           top={60}
           style={{
             aspectRatio: "3/2",
           }}
+          pos={{ base: "inherit", sm: "sticky" }}
         >
           <Image
             src="/images/faq.svg"
