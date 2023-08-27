@@ -1,5 +1,8 @@
+import GenerateResult from "@/pdf/generate-result";
+import type { ResultType } from "@/pdf/generate-result";
 import { db } from "@eboto-mo/db";
 import { generated_election_results } from "@eboto-mo/db/schema";
+import ReactPDF from "@react-pdf/renderer";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { verifySignature } from "@upstash/qstash/nextjs";
 import type { NextApiRequest, NextApiResponse } from "next";
@@ -60,30 +63,28 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   });
 
   for (const election of electionsEnd) {
-    // const result = {
-    //   id: election.id,
-    //   name: election.name,
-    //   slug: election.slug,
-    //   start_date: election.start_date,
-    //   end_date: election.end_date,
-    //   logo: election.logo || null,
-    //   voting_start: election.voting_start,
-    //   voting_end: election.voting_end,
-    //   positions: election.positions.map((position) => ({
-    //     id: position.id,
-    //     name: position.name,
-    //     votes: position.vote.length,
-    //     candidates: position.candidate.map((candidate) => ({
-    //       id: candidate.id,
-    //       name: `${candidate.last_name}, ${candidate.first_name}${
-    //         candidate.middle_name
-    //           ? " " + candidate.middle_name.charAt(0) + "."
-    //           : ""
-    //       } (${candidate.partylist.acronym})`,
-    //       votes: candidate.vote.length,
-    //     })),
-    //   })),
-    // } satisfies ResultType;
+    const result = {
+      id: election.id,
+      name: election.name,
+      slug: election.slug,
+      start_date: election.start_date,
+      end_date: election.end_date,
+      logo: election.logo ?? null,
+      positions: election.positions.map((position) => ({
+        id: position.id,
+        name: position.name,
+        votes: position.votes.length,
+        candidates: position.candidates.map((candidate) => ({
+          id: candidate.id,
+          name: `${candidate.last_name}, ${candidate.first_name}${
+            candidate.middle_name
+              ? " " + candidate.middle_name.charAt(0) + "."
+              : ""
+          } (${candidate.partylist.acronym})`,
+          votes: candidate.votes.length,
+        })),
+      })),
+    } satisfies ResultType;
 
     const nowForName = new Date();
 
@@ -97,10 +98,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       cookies,
     });
 
-    // await supabase.storage.from("eboto-mo").upload(
-    //   path,
-    //   // await ReactPDF.renderToStream(<GenerateResult result={result} />),
-    // );
+    await supabase.storage
+      .from("eboto-mo")
+      .upload(
+        path,
+        await ReactPDF.renderToStream(<GenerateResult result={result} />),
+      );
     const {
       data: { publicUrl },
     } = supabase.storage.from("eboto-mo").getPublicUrl(path);
