@@ -234,7 +234,7 @@ export default function Header({
       </Modal>
       <Container
         h="100%"
-        size={!params.electionDashboardSlug ? "md" : undefined}
+        size={!params?.electionDashboardSlug ? "md" : undefined}
       >
         <Flex h="100%" align="center" justify="space-between" gap="xs">
           <Flex h="100%" align="center" gap="xs">
@@ -261,7 +261,7 @@ export default function Header({
                 color="gray.6"
                 py="xl"
                 h="100%"
-                hidden={!params.electionDashboardSlug}
+                hidden={!params?.electionDashboardSlug}
               />
             </Center>
           </Flex>

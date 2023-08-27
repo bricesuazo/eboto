@@ -71,7 +71,7 @@ export default function RegisterForm() {
                   strategy: "oauth_google",
                   redirectUrl: "/sso-callback",
                   redirectUrlComplete:
-                    params.callbackUrl?.toString() ?? "/dashboard",
+                    params?.callbackUrl?.toString() ?? "/dashboard",
                 })
                 .catch((err) => console.error("error", err));
             })();
@@ -98,7 +98,7 @@ export default function RegisterForm() {
                   firstName: values.firstName,
                   lastName: values.lastName,
                   actionCompleteRedirectUrl:
-                    (params.callbackUrl as string) ?? "/dashboard",
+                    (params?.callbackUrl as string | undefined) ?? "/dashboard",
                 })
                 .then(async (result) => {
                   if (result.status === "complete") {

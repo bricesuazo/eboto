@@ -54,7 +54,7 @@ export default function SigninForm() {
                 strategy: "oauth_google",
                 redirectUrl: "/sso-callback",
                 redirectUrlComplete:
-                  params.callbackUrl?.toString() ?? "/dashboard",
+                  params?.callbackUrl?.toString() ?? "/dashboard",
               });
             })();
           }}
@@ -75,7 +75,7 @@ export default function SigninForm() {
                 .create({
                   identifier: values.email,
                   password: values.password,
-                  redirectUrl: params.callbackUrl?.toString() ?? "/dashboard",
+                  redirectUrl: params?.callbackUrl?.toString() ?? "/dashboard",
                 })
                 .then(async (result) => {
                   if (result.status === "complete") {

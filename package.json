@@ -17,9 +17,9 @@
   "devDependencies": {
     "@eboto-mo/eslint-config": "workspace:*",
     "@eboto-mo/tsconfig": "workspace:*",
-    "@turbo/gen": "^1.10.12",
+    "@turbo/gen": "^1.10.13",
     "dotenv-cli": "^7.3.0",
-    "eslint": "^8.47.0",
+    "eslint": "^8.48.0",
     "prettier": "^3.0.2",
     "turbo": "^1.10.13"
   },

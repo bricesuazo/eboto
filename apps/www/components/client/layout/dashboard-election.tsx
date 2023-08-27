@@ -52,7 +52,7 @@ export default function DashboardElection({
   const currentElection = elections
     ? elections.find(
         (election) =>
-          election.slug === params.electionDashboardSlug?.toString(),
+          election.slug === params?.electionDashboardSlug?.toString(),
       )
     : null;
   const combobox = useCombobox({
@@ -198,7 +198,7 @@ export default function DashboardElection({
                 w="100%"
                 rightSection={<IconExternalLink size="1rem" />}
                 component={Link}
-                href={`/${params.electionDashboardSlug?.toString()}`}
+                href={`/${params?.electionDashboardSlug?.toString()}`}
                 target="_blank"
               >
                 Visit election
@@ -214,7 +214,7 @@ export default function DashboardElection({
                     }
                     fw="normal"
                     fz="sm"
-                    href={`/dashboard/${params.electionDashboardSlug?.toString()}/${
+                    href={`/dashboard/${params?.electionDashboardSlug?.toString()}/${
                       item.path ?? ""
                     }`}
                     onClick={() => {

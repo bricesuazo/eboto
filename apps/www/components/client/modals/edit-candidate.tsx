@@ -399,8 +399,8 @@ export default function EditCandidate({
                       <Text size="xs">
                         This will be used as the candidate&apos;s URL.
                         <br />
-                        eboto-mo.com/{params.electionDashboardSlug?.toString()}/
-                        {form.values.new_slug || "candidate-slug"}
+                        eboto-mo.com/{params?.electionDashboardSlug?.toString()}
+                        /{form.values.new_slug || "candidate-slug"}
                       </Text>
                     }
                     required
