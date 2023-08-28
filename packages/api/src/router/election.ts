@@ -1,10 +1,15 @@
 import { clerkClient } from "@clerk/nextjs";
 import {
+  achievements,
+  affiliations,
   candidates,
   commissioners,
+  credentials,
   elections,
+  events_attended,
   invited_voters,
   partylists,
+  platforms,
   positions,
   publicity,
   reported_problems,
@@ -592,7 +597,38 @@ export const electionRouter = createTRPCRouter({
           ),
         );
     }),
-  createCandidate: protectedProcedure
+  uploadImage: protectedProcedure
+    .input(z.object({ candidate_id: z.string(), file: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const candidate = await ctx.db.query.candidates.findFirst({
+        where: (candidate, { eq }) => eq(candidate.id, input.candidate_id),
+        with: {
+          election: {
+            with: {
+              commissioners: true,
+            },
+          },
+        },
+      });
+
+      if (
+        !candidate?.election.commissioners.some(
+          (commissioner) => commissioner.user_id === ctx.auth.userId,
+        )
+      )
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Unauthorized",
+        });
+
+      return ctx.db
+        .update(candidates)
+        .set({
+          image_link: input.file,
+        })
+        .where(eq(candidates.id, input.candidate_id));
+    }),
+  createSingleCandidate: protectedProcedure
     .input(
       z.object({
         slug: z.string().min(1).trim().toLowerCase(),
@@ -602,32 +638,106 @@ export const electionRouter = createTRPCRouter({
         election_id: z.string().min(1),
         position_id: z.string().min(1),
         partylist_id: z.string().min(1),
-        image_link: z.string().nullable(),
+
+        platforms: z.array(
+          z.object({
+            title: z.string().min(1),
+            description: z.string().min(1),
+          }),
+        ),
+
+        achievements: z.array(
+          z.object({
+            name: z.string().min(1),
+            year: z.date(),
+          }),
+        ),
+        affiliations: z.array(
+          z.object({
+            org_name: z.string().min(1),
+            org_position: z.string().min(1),
+            start_year: z.date(),
+            end_year: z.date(),
+          }),
+        ),
+        eventsAttended: z.array(
+          z.object({
+            name: z.string().min(1),
+            year: z.date(),
+          }),
+        ),
       }),
     )
     .mutation(async ({ input, ctx }) => {
       // TODO: Validate commissioner
       const isCandidateSlugExists = await ctx.db.query.candidates.findFirst({
-        where: (candidates, { eq, and }) =>
+        where: (candidate, { eq, and }) =>
           and(
-            eq(candidates.slug, input.slug),
-            eq(candidates.election_id, input.election_id),
+            eq(candidate.slug, input.slug),
+            eq(candidate.election_id, input.election_id),
           ),
       });
 
       if (isCandidateSlugExists)
         throw new Error("Candidate slug is already exists");
 
-      await ctx.db.insert(candidates).values({
-        slug: input.slug,
-        first_name: input.first_name,
-        middle_name: input.middle_name,
-        last_name: input.last_name,
-        election_id: input.election_id,
-        position_id: input.position_id,
-        partylist_id: input.partylist_id,
-        image_link: input.image_link,
+      const candidateId = nanoid();
+      const credentialId = nanoid();
+      await ctx.db.transaction(async (db) => {
+        await db.insert(candidates).values({
+          id: candidateId,
+          slug: input.slug,
+          first_name: input.first_name,
+          middle_name: input.middle_name,
+          last_name: input.last_name,
+          election_id: input.election_id,
+          position_id: input.position_id,
+          partylist_id: input.partylist_id,
+          credential_id: credentialId,
+        });
+
+        await db.insert(credentials).values({
+          id: credentialId,
+          candidate_id: candidateId,
+        });
+
+        await db.insert(platforms).values(
+          input.platforms.map((platform) => ({
+            title: platform.title,
+            description: platform.description,
+            candidate_id: candidateId,
+          })),
+        );
+
+        await db.insert(affiliations).values(
+          input.affiliations.map((affiliation) => ({
+            org_name: affiliation.org_name,
+            org_position: affiliation.org_position,
+            start_year: affiliation.start_year,
+            end_year: affiliation.end_year,
+            credential_id: credentialId,
+          })),
+        );
+
+        await db.insert(achievements).values(
+          input.achievements.map((achievement) => ({
+            name: achievement.name,
+            year: achievement.year,
+            credential_id: credentialId,
+          })),
+        );
+
+        await db.insert(events_attended).values(
+          input.eventsAttended.map((event) => ({
+            name: event.name,
+            year: event.year,
+            credential_id: credentialId,
+          })),
+        );
       });
+      return {
+        candidate_id: candidateId,
+      };
     }),
   editCandidate: protectedProcedure
     .input(

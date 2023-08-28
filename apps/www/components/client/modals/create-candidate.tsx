@@ -2,10 +2,12 @@
 
 import classes from "@/styles/Candidate.module.css";
 import { api } from "@/trpc/client";
+import { uploadImage } from "@/utils";
 import type { Partylist, Position } from "@eboto-mo/db/schema";
 import {
   Box,
   Button,
+  Flex,
   Group,
   Modal,
   Select,
@@ -212,36 +214,50 @@ export default function CreateCandidate({
         <form
           onSubmit={form.onSubmit((value) => {
             void (async () => {
-              await api.election.createCandidate.mutate({
-                first_name: value.first_name,
-                last_name: value.last_name,
-                slug: value.slug,
-                partylist_id: value.partylist_id,
-                position_id: value.position_id,
-                middle_name: value.middle_name,
-                election_id: position.election_id,
-                image_link: "",
+              const { candidate_id } =
+                await api.election.createSingleCandidate.mutate({
+                  first_name: value.first_name,
+                  last_name: value.last_name,
+                  slug: value.slug,
+                  partylist_id: value.partylist_id,
+                  position_id: value.position_id,
+                  middle_name: value.middle_name,
+                  election_id: position.election_id,
 
-                // platforms: value.platforms.map((p) => ({
-                //   title: p.title,
-                //   description: p.description,
-                // })),
+                  platforms: value.platforms.map((p) => ({
+                    title: p.title,
+                    description: p.description,
+                  })),
 
-                // achievements: value.achievements.map((a) => ({
-                //   name: a.name,
-                //   year: new Date(a.year?.toDateString() ?? ""),
-                // })),
-                // affiliations: value.affiliations.map((a) => ({
-                //   org_name: a.org_name,
-                //   org_position: a.org_position,
-                //   start_year: new Date(a.start_year?.toDateString() ?? ""),
-                //   end_year: new Date(a.end_year?.toDateString() ?? ""),
-                // })),
-                // eventsAttended: value.eventsAttended.map((a) => ({
-                //   name: a.name,
-                //   year: new Date(a.year?.toDateString() ?? ""),
-                // })),
-              });
+                  achievements: value.achievements.map((a) => ({
+                    name: a.name,
+                    year: new Date(a.year?.toDateString() ?? ""),
+                  })),
+                  affiliations: value.affiliations.map((a) => ({
+                    org_name: a.org_name,
+                    org_position: a.org_position,
+                    start_year: new Date(a.start_year?.toDateString() ?? ""),
+                    end_year: new Date(a.end_year?.toDateString() ?? ""),
+                  })),
+                  eventsAttended: value.eventsAttended.map((a) => ({
+                    name: a.name,
+                    year: new Date(a.year?.toDateString() ?? ""),
+                  })),
+                });
+
+              if (value.image && typeof value.image !== "string") {
+                const image_link = await uploadImage({
+                  path: `elections/${
+                    position.election_id
+                  }/candidates/${candidate_id}/image/${Date.now().toString()}`,
+                  image: value.image,
+                });
+
+                await api.election.uploadImage.mutate({
+                  candidate_id,
+                  file: image_link,
+                });
+              }
             })();
           })}
         >
@@ -534,7 +550,7 @@ export default function CreateCandidate({
                     <Stack gap="md">
                       {form.values.achievements.map((achievement, index) => (
                         <Box key={index}>
-                          <Group gap="xs">
+                          <Flex align="end" gap="xs">
                             <TextInput
                               w="100%"
                               label="Achievement"
@@ -579,7 +595,7 @@ export default function CreateCandidate({
                               }}
                               // required
                             />
-                          </Group>
+                          </Flex>
                           <Button
                             variant="outline"
                             mt="xs"
@@ -668,11 +684,11 @@ export default function CreateCandidate({
                             }}
                           />
 
-                          <Group gap="xs">
+                          <Flex gap="xs">
                             <YearPickerInput
-                              // label="Start year"
+                              label="Start year"
                               placeholder="Enter start year"
-                              style={{ width: "100%" }}
+                              w="100%"
                               popoverProps={{
                                 withinPortal: true,
                               }}
@@ -691,12 +707,12 @@ export default function CreateCandidate({
                                   ),
                                 });
                               }}
-                              // required
+                              required
                             />
                             <YearPickerInput
-                              // label="End year"
+                              label="End year"
                               placeholder="Enter end year"
-                              style={{ width: "100%" }}
+                              w="100%"
                               popoverProps={{
                                 withinPortal: true,
                               }}
@@ -715,9 +731,9 @@ export default function CreateCandidate({
                                   ),
                                 });
                               }}
-                              // required
+                              required
                             />
-                          </Group>
+                          </Flex>
                           <Button
                             variant="outline"
                             mt="xs"
@@ -769,7 +785,7 @@ export default function CreateCandidate({
                       {form.values.eventsAttended.map(
                         (eventAttended, index) => (
                           <Box key={index}>
-                            <Group gap="xs">
+                            <Flex gap="xs" align="end">
                               <TextInput
                                 w="100%"
                                 label="Seminars attended"
@@ -816,7 +832,7 @@ export default function CreateCandidate({
                                 }}
                                 // required
                               />
-                            </Group>
+                            </Flex>
                             <Button
                               variant="outline"
                               mt="xs"

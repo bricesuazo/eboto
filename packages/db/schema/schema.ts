@@ -157,7 +157,7 @@ export const candidates = mysqlTable("candidates", {
   updated_at,
 
   election_id,
-  credential_id: varchar("credential_id", { length: 256 }),
+  credential_id: varchar("credential_id", { length: 256 }).notNull(),
   position_id: varchar("position_id", { length: 256 }).notNull(),
   partylist_id: varchar("partylist_id", { length: 256 }).notNull(),
 });
@@ -192,7 +192,7 @@ export const affiliations = mysqlTable("affiliations", {
   created_at,
   updated_at,
 
-  credential_id: varchar("candidate_id", { length: 256 }).notNull(),
+  credential_id: varchar("credential_id", { length: 256 }).notNull(),
 });
 
 export const achievements = mysqlTable("achievements", {
@@ -203,7 +203,7 @@ export const achievements = mysqlTable("achievements", {
   created_at,
   updated_at,
 
-  credential_id: varchar("candidate_id", { length: 256 }).notNull(),
+  credential_id: varchar("credential_id", { length: 256 }).notNull(),
 });
 
 export const events_attended = mysqlTable("events_attended", {
@@ -214,7 +214,7 @@ export const events_attended = mysqlTable("events_attended", {
   created_at,
   updated_at,
 
-  credential_id: varchar("candidate_id", { length: 256 }).notNull(),
+  credential_id: varchar("credential_id", { length: 256 }).notNull(),
 });
 
 export const verification_tokens = mysqlTable("verification_tokens", {

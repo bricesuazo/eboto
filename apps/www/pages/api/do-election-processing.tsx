@@ -9,12 +9,9 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { cookies } from "next/headers";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const nowUTC = new Date();
-  const nowPHT = new Date(
-    nowUTC.toLocaleString("en-US", { timeZone: "Asia/Manila" }),
-  );
+  const now = new Date();
 
-  // const start_date = new Date(nowPHT);
+  // const start_date = new Date(now);
 
   // const elections = await db.query.elections.findMany({
   //   where: (election, { eq }) => eq(election.start_date, start_date),
@@ -42,8 +39,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   //   // }
   // }
 
-  // Generate election results when the election is over
-  const end_date = new Date(nowPHT);
+  const end_date = new Date(now);
 
   const electionsEnd = await db.query.elections.findMany({
     where: (election, { eq }) => eq(election.end_date, end_date),
@@ -118,7 +114,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   res.status(200).end();
 }
 
-// export default handler;
 export default verifySignature(handler);
 
 export const config = {
