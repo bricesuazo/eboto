@@ -10,7 +10,6 @@ import {
   events_attended,
   generated_election_results,
   invited_commissioners,
-  invited_voters,
   partylists,
   platforms,
   positions,
@@ -29,7 +28,6 @@ export const electionsRelations = relations(elections, ({ many }) => ({
   candidates: many(candidates),
   commissioners: many(commissioners),
   voters: many(voters),
-  invited_voters: many(invited_voters),
   invited_commissioners: many(invited_commissioners),
   generated_election_results: many(generated_election_results),
   voter_fields: many(voter_fields),
@@ -90,17 +88,6 @@ export const votersRelations = relations(voters, ({ one, many }) => ({
   votes: many(votes),
 }));
 
-export const invited_votersRelations = relations(
-  invited_voters,
-  ({ one, many }) => ({
-    election: one(elections, {
-      fields: [invited_voters.election_id],
-      references: [elections.id],
-    }),
-    verification_tokens: many(verification_tokens),
-  }),
-);
-
 export const partylistsRelations = relations(partylists, ({ one, many }) => ({
   election: one(elections, {
     fields: [partylists.election_id],
@@ -142,14 +129,6 @@ export const candidatesRelations = relations(candidates, ({ one, many }) => ({
 export const verification_tokensRelations = relations(
   verification_tokens,
   ({ one }) => ({
-    user: one(users, {
-      fields: [verification_tokens.user_id],
-      references: [users.id],
-    }),
-    invited_voter: one(invited_voters, {
-      fields: [verification_tokens.invited_voter_id],
-      references: [invited_voters.id],
-    }),
     invited_commissioner: one(invited_commissioners, {
       fields: [verification_tokens.invited_commissioner_id],
       references: [invited_commissioners.id],

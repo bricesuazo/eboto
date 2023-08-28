@@ -8,7 +8,6 @@ import {
   credentials,
   elections,
   events_attended,
-  invited_voters,
   partylists,
   platforms,
   positions,
@@ -255,36 +254,21 @@ export const electionRouter = createTRPCRouter({
           },
         },
       });
-      const invitedVoters = await ctx.db.query.invited_voters.findMany({
-        where: (invited_voters, { eq }) =>
-          eq(invited_voters.election_id, input.election_id),
-      });
 
       const userFromVoters = await clerkClient.users.getUserList({
         emailAddress: voters.map((voter) => voter.user.id),
       });
 
-      return voters
-        .map((voter) => ({
-          id: voter.id,
-          email: userFromVoters.find(
-            (user) => user.emailAddresses[0]?.emailAddress === voter.user.id,
-          )?.emailAddresses[0]?.emailAddress,
-          account_status: "ACCEPTED",
-          created_at: voter.created_at,
-          has_voted: voter.votes.length > 0,
-          field: voter.field,
-        }))
-        .concat(
-          invitedVoters.map((voter) => ({
-            id: voter.id,
-            email: voter.email,
-            account_status: voter.status,
-            created_at: voter.created_at,
-            has_voted: false,
-            field: voter.field,
-          })),
-        );
+      return voters.map((voter) => ({
+        id: voter.id,
+        email: userFromVoters.find(
+          (user) => user.emailAddresses[0]?.emailAddress === voter.user.id,
+        )?.emailAddresses[0]?.emailAddress,
+        account_status: "ACCEPTED",
+        created_at: voter.created_at,
+        has_voted: voter.votes.length > 0,
+        field: voter.field,
+      }));
     }),
   createElection: protectedProcedure
     .input(
@@ -1026,27 +1010,6 @@ export const electionRouter = createTRPCRouter({
             code: "BAD_REQUEST",
             message: "Email is already a voter",
           });
-
-        const isInvitedVoterEmailExists =
-          await ctx.db.query.invited_voters.findFirst({
-            where: (invited_voters, { eq, and }) =>
-              and(
-                eq(invited_voters.election_id, input.election_id),
-                eq(invited_voters.email, input.email),
-              ),
-          });
-
-        if (isInvitedVoterEmailExists)
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Email is already invited",
-          });
-
-        await ctx.db.insert(invited_voters).values({
-          email: input.email,
-          field: input.field,
-          election_id: isElectionExists.id,
-        });
       }
     }),
   updateVoterField: protectedProcedure
@@ -1148,30 +1111,6 @@ export const electionRouter = createTRPCRouter({
           .where(eq(voters.id, input.id));
 
         return { type: "voter" };
-      } else {
-        const invited_voter = await ctx.db.query.invited_voters.findFirst({
-          where: (invited_voters, { eq, and }) =>
-            and(
-              eq(invited_voters.id, input.id),
-              eq(invited_voters.election_id, input.election_id),
-            ),
-        });
-        if (!invited_voter) throw new Error("Voter not found");
-
-        await ctx.db
-          .update(invited_voters)
-          .set({
-            email: input.email,
-            field: input.field,
-          })
-          .where(
-            and(
-              eq(invited_voters.id, input.id),
-              eq(invited_voters.election_id, input.election_id),
-            ),
-          );
-
-        return { type: "invited_voter" };
       }
     }),
   deleteSingleVoter: protectedProcedure
@@ -1231,29 +1170,6 @@ export const electionRouter = createTRPCRouter({
               eq(voters.election_id, input.election_id),
             ),
           );
-      } else {
-        const invited_voter = await ctx.db.query.invited_voters.findFirst({
-          where: (invited_voter, { eq, and }) =>
-            and(
-              eq(invited_voter.id, input.id),
-              eq(invited_voter.election_id, input.election_id),
-            ),
-        });
-
-        if (!invited_voter)
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Voter not found",
-          });
-
-        await ctx.db
-          .delete(invited_voters)
-          .where(
-            and(
-              eq(invited_voters.id, input.id),
-              eq(invited_voters.election_id, input.election_id),
-            ),
-          );
       }
     }),
   deleteBulkVoter: protectedProcedure
@@ -1274,9 +1190,7 @@ export const electionRouter = createTRPCRouter({
       const votersIds = input.voters
         .filter((voter) => voter.isVoter)
         .map((voter) => voter.id);
-      const invitedVotersIds = input.voters
-        .filter((voter) => !voter.isVoter)
-        .map((voter) => voter.id);
+
       if (votersIds.length)
         await ctx.db
           .delete(voters)
@@ -1286,16 +1200,6 @@ export const electionRouter = createTRPCRouter({
               inArray(voters.id, votersIds),
             ),
           );
-      if (invitedVotersIds.length)
-        await ctx.db
-          .delete(invited_voters)
-          .where(
-            and(
-              eq(invited_voters.election_id, input.election_id),
-              inArray(invited_voters.id, invitedVotersIds),
-            ),
-          );
-      return { count: input.voters.length };
     }),
   uploadBulkVoter: protectedProcedure
     .input(
@@ -1334,16 +1238,6 @@ export const electionRouter = createTRPCRouter({
       //     });
       //   }),
       // );
-
-      const voters = await ctx.db.insert(invited_voters).values(
-        input.voters.map((voter) => ({
-          email: voter.email,
-          field: voter.field,
-          election_id: input.election_id,
-        })),
-      );
-
-      return { count: voters.size };
     }),
   deleteElection: protectedProcedure
     .input(

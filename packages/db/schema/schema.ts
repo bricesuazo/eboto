@@ -1,4 +1,3 @@
-import type { InferModel } from "drizzle-orm";
 import {
   boolean,
   date,
@@ -36,18 +35,6 @@ export type TokenType = (typeof token_type)[number];
 export const account_status_type = ["ADDED", "INVITED", "DECLINED"] as const;
 export type AccountStatusType = (typeof account_status_type)[number];
 
-// export const users = mysqlTable("users", {
-//   id,
-//   email: varchar("email", { length: 256 }).notNull().unique(),
-//   email_verified: timestamp("email_verified"),
-//   first_name: text("first_name").notNull(),
-//   middle_name: text("middle_name"),
-//   last_name: text("last_name").notNull(),
-//   image_link: longtext("image_link"),
-//   password: longtext("password"),
-//   created_at,
-//   updated_at,
-// });
 export const users = mysqlTable("users", {
   id,
 });
@@ -97,17 +84,6 @@ export const invited_commissioners = mysqlTable("invited_commissioners", {
 
   election_id,
 });
-export const invited_voters = mysqlTable("invited_voters", {
-  id,
-  email: text("email").notNull(),
-  status: mysqlEnum("status", account_status_type).default("ADDED").notNull(),
-  field: json("field").$type<Record<string, string>>().notNull(),
-
-  created_at,
-
-  election_id,
-});
-
 export const voters = mysqlTable("voters", {
   id,
   created_at,
@@ -225,8 +201,6 @@ export const verification_tokens = mysqlTable("verification_tokens", {
   created_at,
   updated_at,
 
-  user_id: varchar("user_id", { length: 256 }),
-  invited_voter_id: varchar("invited_voter_id", { length: 256 }),
   invited_commissioner_id: varchar("invited_commissioner_id", { length: 256 }),
 });
 
@@ -262,24 +236,22 @@ export const reported_problems = mysqlTable("reported_problems", {
   user_id,
 });
 
-export type Election = InferModel<typeof elections>;
-export type User = InferModel<typeof users>;
-export type Vote = InferModel<typeof votes>;
-export type Commissioner = InferModel<typeof commissioners>;
-export type InvitedCommissioner = InferModel<typeof invited_commissioners>;
-export type InvitedVoter = InferModel<typeof invited_voters>;
-export type Voter = InferModel<typeof voters>;
-export type Partylist = InferModel<typeof partylists>;
-export type Position = InferModel<typeof positions>;
-export type Candidate = InferModel<typeof candidates>;
-export type Credential = InferModel<typeof credentials>;
-export type Platform = InferModel<typeof platforms>;
-export type Affiliation = InferModel<typeof affiliations>;
-export type Achievement = InferModel<typeof achievements>;
-export type EventAttended = InferModel<typeof events_attended>;
-export type VerificationToken = InferModel<typeof verification_tokens>;
-export type GeneratedElectionResult = InferModel<
-  typeof generated_election_results
->;
-export type VoterField = InferModel<typeof voter_fields>;
-export type ReportedProblem = InferModel<typeof reported_problems>;
+export type Election = typeof elections.$inferSelect;
+export type User = typeof users.$inferSelect;
+export type Vote = typeof votes.$inferSelect;
+export type Commissioner = typeof commissioners.$inferSelect;
+export type InvitedCommissioner = typeof invited_commissioners.$inferSelect;
+export type Voter = typeof voters.$inferSelect;
+export type Partylist = typeof partylists.$inferSelect;
+export type Position = typeof positions.$inferSelect;
+export type Candidate = typeof candidates.$inferSelect;
+export type Credential = typeof credentials.$inferSelect;
+export type Platform = typeof platforms.$inferSelect;
+export type Affiliation = typeof affiliations.$inferSelect;
+export type Achievement = typeof achievements.$inferSelect;
+export type EventAttended = typeof events_attended.$inferSelect;
+export type VerificationToken = typeof verification_tokens.$inferSelect;
+export type GeneratedElectionResult =
+  typeof generated_election_results.$inferSelect;
+export type VoterField = typeof voter_fields.$inferSelect;
+export type ReportedProblem = typeof reported_problems.$inferSelect;

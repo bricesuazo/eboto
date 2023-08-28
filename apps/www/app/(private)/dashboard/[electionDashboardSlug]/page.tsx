@@ -47,7 +47,6 @@ export default async function Page({
           votes: true,
         },
       },
-      invited_voters: true,
       generated_election_results: true,
       candidates: true,
     },
@@ -198,24 +197,8 @@ export default async function Page({
             count: election.voters
               .filter((voter) => voter.votes.length > 0)
               .length.toString(),
-            title: "Accepted Voters",
-            description: "Voters who accepted the invitation to vote",
-          },
-          {
-            id: 2,
-            count: election.invited_voters
-              .filter((invited_voter) => invited_voter.status === "INVITED")
-              .length.toString(),
-            title: "Invited Voters",
-            description: "Voters who were invited to vote",
-          },
-          {
-            id: 3,
-            count: election.invited_voters
-              .filter((invited_voter) => invited_voter.status === "DECLINED")
-              .length.toString(),
-            title: "Declined Voters",
-            description: "Voters who declined the invitation to vote",
+            title: "Voters",
+            description: "Voters",
           },
         ].map((stat) => {
           return (

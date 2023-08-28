@@ -36,36 +36,20 @@ export default async function Page({
     },
   });
 
-  const invitedVotersFromDB = await db.query.invited_voters.findMany({
-    where: (invited_voters, { eq }) =>
-      eq(invited_voters.election_id, election.id),
-  });
-
   const users = await clerkClient.users.getUserList({
     userId: votersFromDB.map((voter) => voter.user_id),
   });
 
-  const voters = votersFromDB
-    .map((voter) => ({
-      id: voter.id,
-      email:
-        users.find((user) => user.id === voter.user_id)?.emailAddresses[0]
-          ?.emailAddress ?? "",
-      account_status: "ACCEPTED",
-      created_at: voter.created_at,
-      has_voted: voter.votes.length > 0,
-      field: voter.field,
-    }))
-    .concat(
-      invitedVotersFromDB.map((voter) => ({
-        id: voter.id,
-        email: voter.email,
-        account_status: voter.status,
-        created_at: voter.created_at,
-        has_voted: false,
-        field: voter.field,
-      })),
-    );
+  const voters = votersFromDB.map((voter) => ({
+    id: voter.id,
+    email:
+      users.find((user) => user.id === voter.user_id)?.emailAddresses[0]
+        ?.emailAddress ?? "",
+    account_status: "ACCEPTED",
+    created_at: voter.created_at,
+    has_voted: voter.votes.length > 0,
+    field: voter.field,
+  }));
 
   return <DashboardVoter election={election} voters={voters} data-superjson />;
 }
