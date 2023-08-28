@@ -1,7 +1,7 @@
 "use client";
 
-import { positionTemplate } from "@/constants";
 import { api } from "@/trpc/client";
+import { positionTemplate } from "@eboto-mo/constants";
 import type { MantineStyleProp } from "@mantine/core";
 import { Button, Group, Modal, Select, Stack, TextInput } from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";

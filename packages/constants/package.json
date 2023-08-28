@@ -1,0 +1,14 @@
+{
+  "name": "@eboto-mo/constants",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./index.ts",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@tabler/icons-react": "^2.32.0",
+    "zod": "^3.22.2"
+  }
+}

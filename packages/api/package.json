@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^4.23.2",
+    "@eboto-mo/constants": "workspace:*",
     "@eboto-mo/db": "workspace:*",
     "@t3-oss/env-nextjs": "^0.6.1",
     "@trpc/client": "^10.38.0",

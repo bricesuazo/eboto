@@ -13,6 +13,7 @@
     "@clerk/nextjs": "^4.23.2",
     "@clerk/themes": "^1.7.5",
     "@eboto-mo/api": "workspace:*",
+    "@eboto-mo/constants": "workspace:*",
     "@eboto-mo/db": "workspace:*",
     "@eboto-mo/eslint-config": "workspace:*",
     "@emotion/react": "^11.11.1",

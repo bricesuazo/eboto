@@ -41,6 +41,9 @@ importers:
       '@eboto-mo/api':
         specifier: workspace:*
         version: link:../../packages/api
+      '@eboto-mo/constants':
+        specifier: workspace:*
+        version: link:../../packages/constants
       '@eboto-mo/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -240,6 +243,9 @@ importers:
       '@clerk/nextjs':
         specifier: ^4.23.2
         version: registry.npmjs.org/@clerk/nextjs@4.23.2(next@13.4.20-canary.8)(react-dom@18.2.0)(react@18.2.0)
+      '@eboto-mo/constants':
+        specifier: workspace:*
+        version: link:../constants
       '@eboto-mo/db':
         specifier: workspace:*
         version: link:../db
@@ -322,6 +328,15 @@ importers:
         version: registry.npmjs.org/typescript@5.2.2
 
   packages/config/tsconfig: {}
+
+  packages/constants:
+    dependencies:
+      '@tabler/icons-react':
+        specifier: ^2.32.0
+        version: registry.npmjs.org/@tabler/icons-react@2.32.0(react@18.2.0)
+      zod:
+        specifier: ^3.22.2
+        version: registry.npmjs.org/zod@3.22.2
 
   packages/db:
     dependencies:

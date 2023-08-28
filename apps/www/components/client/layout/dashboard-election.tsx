@@ -3,9 +3,9 @@
 import Footer from "@/components/client/components/footer";
 import Header from "@/components/client/components/header";
 import CreateElection from "@/components/client/modals/create-election";
-import { electionDashboardNavbar } from "@/constants";
 import { useStore } from "@/store";
 import { useClerk } from "@clerk/nextjs";
+import { electionDashboardNavbar } from "@eboto-mo/constants";
 import type { Election } from "@eboto-mo/db/schema";
 import {
   AppShell,

@@ -1,4 +1,5 @@
 import { clerkClient } from "@clerk/nextjs";
+import { positionTemplate, takenSlugs } from "@eboto-mo/constants";
 import {
   achievements,
   affiliations,
@@ -21,7 +22,6 @@ import { and, eq, inArray } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { z } from "zod";
 
-import { positionTemplate, takenSlugs } from "../../../../apps/www/constants";
 import { account_status_type_with_accepted } from "../../../../apps/www/utils/zod-schema";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { isElectionOngoing } from "./../../../../apps/www/utils/index";
@@ -311,36 +311,39 @@ export const electionRouter = createTRPCRouter({
       }
 
       const id = nanoid();
-      await ctx.db.insert(elections).values({
-        id,
-        name: input.name,
-        slug: input.slug,
-        start_date: input.start_date,
-        end_date: input.end_date,
-      });
-      await ctx.db.insert(commissioners).values({
-        election_id: id,
-        user_id: ctx.auth.userId,
-      });
-      await ctx.db.insert(partylists).values({
-        name: "Independent",
-        acronym: "IND",
-        election_id: id,
-      });
 
-      const positions1 =
-        positionTemplate
-          .find((template) => template.id === input.template)
-          ?.organizations.flatMap((org) =>
-            org.positions.map((position, i) => ({
-              name: position,
-              order: i,
-              election_id: id,
-            })),
-          ) ?? [];
+      await ctx.db.transaction(async (db) => {
+        await db.insert(elections).values({
+          id,
+          name: input.name,
+          slug: input.slug,
+          start_date: input.start_date,
+          end_date: input.end_date,
+        });
+        await db.insert(commissioners).values({
+          election_id: id,
+          user_id: ctx.auth.userId,
+        });
+        await db.insert(partylists).values({
+          name: "Independent",
+          acronym: "IND",
+          election_id: id,
+        });
 
-      if (input.template !== "none")
-        await ctx.db.insert(positions).values(positions1);
+        const positions1 =
+          positionTemplate
+            .find((template) => template.id === input.template)
+            ?.organizations.flatMap((org) =>
+              org.positions.map((position, i) => ({
+                name: position,
+                order: i,
+                election_id: id,
+              })),
+            ) ?? [];
+
+        if (input.template !== "none")
+          await db.insert(positions).values(positions1);
+      });
     }),
   editElection: protectedProcedure
     .input(

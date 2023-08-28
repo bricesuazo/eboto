@@ -5,3 +5,4 @@ packages:
   - packages/db
   - packages/config/eslint
   - packages/config/tsconfig
+  - packages/constants
