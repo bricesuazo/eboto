@@ -61,13 +61,15 @@ export default async function Page() {
                   <Text>No elections found</Text>
                 </Box>
               ) : (
-                electionsAsCommissioner.map((commissioner) => (
-                  <DashboardCard
-                    key={commissioner.id}
-                    election={commissioner.election}
-                    type="manage"
-                  />
-                ))
+                electionsAsCommissioner
+                  .filter((commissioner) => !commissioner.election.deleted_at)
+                  .map((commissioner) => (
+                    <DashboardCard
+                      key={commissioner.id}
+                      election={commissioner.election}
+                      type="manage"
+                    />
+                  ))
               )}
             </Group>
           </Box>
@@ -86,14 +88,16 @@ export default async function Page() {
                   <Text>No vote elections found</Text>
                 </Box>
               ) : (
-                electionsAsVoter.map((voter) => (
-                  <DashboardCard
-                    key={voter.id}
-                    election={voter.election}
-                    type="vote"
-                    hasVoted={voter.election.votes.length > 0}
-                  />
-                ))
+                electionsAsVoter
+                  .filter((voter) => !voter.election.deleted_at)
+                  .map((voter) => (
+                    <DashboardCard
+                      key={voter.id}
+                      election={voter.election}
+                      type="vote"
+                      hasVoted={voter.election.votes.length > 0}
+                    />
+                  ))
               )}
             </Group>
           </Box>

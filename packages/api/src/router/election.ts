@@ -17,7 +17,7 @@ import {
   voters,
 } from "@eboto-mo/db/schema";
 import { TRPCError } from "@trpc/server";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, isNull } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { z } from "zod";
 
@@ -46,10 +46,16 @@ export const electionRouter = createTRPCRouter({
     .input(z.string())
     .query(async ({ input, ctx }) => {
       return ctx.db.query.positions.findMany({
-        where: (positions, { eq }) => eq(positions.election_id, input),
-        orderBy: (positions, { asc }) => asc(positions.order),
+        where: (position, { eq, and }) =>
+          and(eq(position.election_id, input), isNull(position.deleted_at)),
+        orderBy: (position, { asc }) => asc(position.order),
         with: {
           candidates: {
+            where: (candidate, { eq, and }) =>
+              and(
+                eq(candidate.election_id, input),
+                isNull(candidate.deleted_at),
+              ),
             with: {
               partylist: true,
             },
@@ -61,17 +67,27 @@ export const electionRouter = createTRPCRouter({
     .input(z.string())
     .query(async ({ input, ctx }) => {
       const election = await ctx.db.query.elections.findFirst({
-        where: (elections, { eq }) => eq(elections.slug, input),
+        where: (election, { eq, and }) =>
+          and(eq(election.slug, input), isNull(election.deleted_at)),
       });
 
       if (!election) throw new Error("Election not found");
 
       const realtimeResult = await ctx.db.query.positions.findMany({
-        where: (positions, { eq }) => eq(positions.election_id, election.id),
-        orderBy: (positions, { asc }) => asc(positions.order),
+        where: (position, { eq, and }) =>
+          and(
+            eq(position.election_id, election.id),
+            isNull(position.deleted_at),
+          ),
+        orderBy: (position, { asc }) => asc(position.order),
         with: {
           votes: true,
           candidates: {
+            where: (candidate, { eq, and }) =>
+              and(
+                eq(candidate.election_id, election.id),
+                isNull(candidate.deleted_at),
+              ),
             with: {
               votes: {
                 with: {
@@ -479,7 +495,10 @@ export const electionRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       // TODO: Validate commissioner
       await ctx.db
-        .delete(partylists)
+        .update(partylists)
+        .set({
+          deleted_at: new Date(),
+        })
         .where(
           and(
             eq(partylists.id, input.partylist_id),
@@ -544,7 +563,10 @@ export const electionRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       // TODO: Validate commissioner
       await ctx.db
-        .delete(positions)
+        .update(positions)
+        .set({
+          deleted_at: new Date(),
+        })
         .where(
           and(
             eq(positions.id, input.position_id),
@@ -1253,7 +1275,7 @@ export const electionRouter = createTRPCRouter({
         await db
           .update(elections)
           .set({
-            mark_as_deleted: true,
+            deleted_at: new Date(),
           })
           .where(eq(elections.id, input.election_id));
       });

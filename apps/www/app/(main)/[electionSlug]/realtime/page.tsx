@@ -22,6 +22,7 @@ import {
   Title,
 } from "@mantine/core";
 import { IconFingerprint } from "@tabler/icons-react";
+import { isNull } from "drizzle-orm";
 import moment from "moment";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -34,7 +35,8 @@ export async function generateMetadata({
   params: { electionSlug: string };
 }): Promise<Metadata> {
   const election = await db.query.elections.findFirst({
-    where: (election, { eq }) => eq(election.slug, electionSlug),
+    where: (election, { eq, and }) =>
+      and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
   });
 
   if (!election) return notFound();
@@ -76,7 +78,8 @@ export default async function RelatimePage({
 }) {
   const { userId } = auth();
   const election = await db.query.elections.findFirst({
-    where: (election, { eq }) => eq(election.slug, electionSlug),
+    where: (election, { eq, and }) =>
+      and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
   });
   const positions = await api.election.getElectionRealtime.query(electionSlug);
 
@@ -89,28 +92,30 @@ export default async function RelatimePage({
       );
 
     const isCommissioner = await db.query.commissioners.findFirst({
-      where: (commissioners, { eq, and }) =>
+      where: (commissioner, { eq, and }) =>
         and(
-          eq(commissioners.election_id, election.id),
-          eq(commissioners.user_id, userId),
+          eq(commissioner.election_id, election.id),
+          eq(commissioner.user_id, userId),
+          isNull(commissioner.deleted_at),
         ),
     });
 
     if (!isCommissioner) notFound();
 
     const isVoter = await db.query.voters.findFirst({
-      where: (voters, { eq, and }) =>
+      where: (voter, { eq, and }) =>
         and(
-          eq(voters.election_id, election.id),
-          eq(voters.user_id, isCommissioner.user_id),
+          eq(voter.election_id, election.id),
+          eq(voter.user_id, isCommissioner.user_id),
+          isNull(voter.deleted_at),
         ),
     });
 
     const vote = await db.query.votes.findFirst({
-      where: (votes, { eq, and }) =>
+      where: (vote, { eq, and }) =>
         and(
-          eq(votes.election_id, election.id),
-          eq(votes.voter_id, isCommissioner.user_id),
+          eq(vote.election_id, election.id),
+          eq(vote.voter_id, isCommissioner.user_id),
         ),
     });
 
@@ -127,15 +132,20 @@ export default async function RelatimePage({
     });
 
     const isVoter = await db.query.voters.findFirst({
-      where: (voters, { eq, and }) =>
-        and(eq(voters.election_id, election.id), eq(voters.user_id, userId)),
+      where: (voter, { eq, and }) =>
+        and(
+          eq(voter.election_id, election.id),
+          eq(voter.user_id, userId),
+          isNull(voter.deleted_at),
+        ),
     });
 
     const isCommissioner = await db.query.commissioners.findFirst({
-      where: (commissioners, { eq, and }) =>
+      where: (commissioner, { eq, and }) =>
         and(
-          eq(commissioners.election_id, election.id),
-          eq(commissioners.user_id, userId),
+          eq(commissioner.election_id, election.id),
+          eq(commissioner.user_id, userId),
+          isNull(commissioner.deleted_at),
         ),
     });
 

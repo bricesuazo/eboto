@@ -1,6 +1,7 @@
 import { isElectionOngoing } from "@/utils";
 import { auth } from "@clerk/nextjs";
 import { db } from "@eboto-mo/db";
+import { isNull } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
 
 export default async function ElectionLayout(
@@ -8,7 +9,11 @@ export default async function ElectionLayout(
 ) {
   const { userId } = auth();
   const election = await db.query.elections.findFirst({
-    where: (elections, { eq }) => eq(elections.slug, props.params.electionSlug),
+    where: (elections, { eq, and }) =>
+      and(
+        eq(elections.slug, props.params.electionSlug),
+        isNull(elections.deleted_at),
+      ),
   });
 
   if (!election) notFound();

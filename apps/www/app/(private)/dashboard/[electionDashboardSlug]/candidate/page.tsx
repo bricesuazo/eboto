@@ -16,6 +16,7 @@ import {
   Text,
 } from "@mantine/core";
 import { IconUser } from "@tabler/icons-react";
+import { isNull } from "drizzle-orm";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -32,7 +33,11 @@ export default async function Page({
   params: { electionDashboardSlug: string };
 }) {
   const election = await db.query.elections.findFirst({
-    where: (elections, { eq }) => eq(elections.slug, electionDashboardSlug),
+    where: (election, { eq, and }) =>
+      and(
+        eq(election.slug, electionDashboardSlug),
+        isNull(election.deleted_at),
+      ),
   });
 
   if (!election) notFound();
@@ -48,10 +53,16 @@ export default async function Page({
   //   election_id: election.id,
   // });
   const positionsWithCandidates = await db.query.positions.findMany({
-    where: (positions, { eq }) => eq(positions.election_id, election.id),
-    orderBy: (positions, { asc }) => asc(positions.order),
+    where: (position, { eq, and }) =>
+      and(eq(position.election_id, election.id), isNull(position.deleted_at)),
+    orderBy: (position, { asc }) => asc(position.order),
     with: {
       candidates: {
+        where: (candidate, { eq, and }) =>
+          and(
+            eq(candidate.election_id, election.id),
+            isNull(candidate.deleted_at),
+          ),
         with: {
           partylist: true,
           credential: {
@@ -96,12 +107,17 @@ export default async function Page({
     },
   });
   const partylists = await db.query.partylists.findMany({
-    where: (partylists, { eq }) => eq(partylists.election_id, election.id),
+    where: (partylists, { eq, and }) =>
+      and(
+        eq(partylists.election_id, election.id),
+        isNull(partylists.deleted_at),
+      ),
     orderBy: (partylists, { asc }) => asc(partylists.created_at),
   });
 
   const positions = await db.query.positions.findMany({
-    where: (positions, { eq }) => eq(positions.election_id, election.id),
+    where: (positions, { eq, and }) =>
+      and(eq(positions.election_id, election.id), isNull(positions.deleted_at)),
     orderBy: (positions, { asc }) => asc(positions.order),
   });
 

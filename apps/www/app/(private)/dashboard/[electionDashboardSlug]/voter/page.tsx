@@ -1,6 +1,7 @@
 import DashboardVoter from "@/components/client/pages/dashboard-voter";
 import { clerkClient } from "@clerk/nextjs";
 import { db } from "@eboto-mo/db";
+import { isNull } from "drizzle-orm";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -14,7 +15,11 @@ export default async function Page({
   params: { electionDashboardSlug: string };
 }) {
   const election = await db.query.elections.findFirst({
-    where: (elections, { eq }) => eq(elections.slug, electionDashboardSlug),
+    where: (election, { eq, and }) =>
+      and(
+        eq(election.slug, electionDashboardSlug),
+        isNull(election.deleted_at),
+      ),
     with: {
       voter_fields: true,
     },
@@ -27,7 +32,8 @@ export default async function Page({
   // });
 
   const votersFromDB = await db.query.voters.findMany({
-    where: (voters, { eq }) => eq(voters.election_id, election.id),
+    where: (voter, { eq, and }) =>
+      and(eq(voter.election_id, election.id), isNull(voter.deleted_at)),
     with: {
       user: true,
       votes: {

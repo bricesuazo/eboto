@@ -1,5 +1,4 @@
 import {
-  boolean,
   date,
   int,
   json,
@@ -18,6 +17,7 @@ const id = varchar("id", { length: 256 })
   .unique()
   .$defaultFn(() => nanoid());
 const created_at = timestamp("created_at").notNull().defaultNow();
+const deleted_at = timestamp("deleted_at");
 const updated_at = timestamp("updated_at").defaultNow().notNull().onUpdateNow();
 const election_id = varchar("election_id", { length: 256 }).notNull();
 const user_id = varchar("user_id", { length: 256 }).notNull();
@@ -49,9 +49,7 @@ export const elections = mysqlTable("elections", {
   publicity: mysqlEnum("publicity", publicity).default("PRIVATE").notNull(),
   logo: longtext("logo"),
   voter_domain: text("voter_domain"),
-  mark_as_deleted: boolean("mark_as_deleted")
-    .$default(() => false)
-    .notNull(),
+  deleted_at,
 
   created_at,
   updated_at,
@@ -71,6 +69,8 @@ export const commissioners = mysqlTable("commissioners", {
   id,
   created_at,
 
+  deleted_at,
+
   user_id,
   election_id,
 });
@@ -84,11 +84,14 @@ export const invited_commissioners = mysqlTable("invited_commissioners", {
 
   election_id,
 });
+
 export const voters = mysqlTable("voters", {
   id,
   created_at,
 
   field: json("field").$type<Record<string, string>>().notNull(),
+
+  deleted_at,
 
   user_id,
   election_id,
@@ -104,6 +107,8 @@ export const partylists = mysqlTable("partylists", {
   created_at,
   updated_at,
 
+  deleted_at,
+
   election_id,
 });
 
@@ -118,6 +123,8 @@ export const positions = mysqlTable("positions", {
   created_at,
   updated_at,
 
+  deleted_at,
+
   election_id,
 });
 
@@ -131,6 +138,8 @@ export const candidates = mysqlTable("candidates", {
 
   created_at,
   updated_at,
+
+  deleted_at,
 
   election_id,
   credential_id: varchar("credential_id", { length: 256 }).notNull(),

@@ -4,6 +4,7 @@ import { isElectionOngoing } from "@/utils";
 import { auth } from "@clerk/nextjs";
 import { db } from "@eboto-mo/db";
 import { Box, Container, Stack, Text, Title } from "@mantine/core";
+import { isNull } from "drizzle-orm";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import Balancer from "react-wrap-balancer";
@@ -14,7 +15,8 @@ export async function generateMetadata({
   params: { electionSlug: string };
 }): Promise<Metadata> {
   const election = await db.query.elections.findFirst({
-    where: (election, { eq }) => eq(election.slug, electionSlug),
+    where: (election, { eq, and }) =>
+      and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
   });
 
   if (!election) return notFound();
@@ -35,7 +37,8 @@ export default async function VotePage({
     redirect(`/sign-in?callbackUrl=https://eboto-mo.com/${electionSlug}/vote`);
 
   const election = await db.query.elections.findFirst({
-    where: (election, { eq }) => eq(election.slug, electionSlug),
+    where: (election, { eq, and }) =>
+      and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
   });
 
   if (!election) notFound();
@@ -44,18 +47,23 @@ export default async function VotePage({
 
   if (election.publicity === "PRIVATE") {
     const commissioner = await db.query.commissioners.findFirst({
-      where: (commissioners, { eq, and }) =>
+      where: (commissioner, { eq, and }) =>
         and(
-          eq(commissioners.user_id, userId),
-          eq(commissioners.election_id, election.id),
+          eq(commissioner.user_id, userId),
+          eq(commissioner.election_id, election.id),
+          isNull(commissioner.deleted_at),
         ),
     });
 
     if (!commissioner) notFound();
 
     const isVoter = await db.query.voters.findFirst({
-      where: (voters, { eq, and }) =>
-        and(eq(voters.user_id, userId), eq(voters.election_id, election.id)),
+      where: (voter, { eq, and }) =>
+        and(
+          eq(voter.user_id, userId),
+          eq(voter.election_id, election.id),
+          isNull(voter.deleted_at),
+        ),
     });
 
     if (!isVoter) redirect(`/${election.slug}/realtime`);
@@ -69,16 +77,20 @@ export default async function VotePage({
     });
 
     const isCommissioner = await db.query.commissioners.findFirst({
-      where: (commissioners, { eq, and }) =>
+      where: (commissioner, { eq, and }) =>
         and(
-          eq(commissioners.user_id, userId),
-          eq(commissioners.election_id, election.id),
+          eq(commissioner.user_id, userId),
+          eq(commissioner.election_id, election.id),
         ),
     });
 
     const isVoter = await db.query.voters.findFirst({
-      where: (voters, { eq, and }) =>
-        and(eq(voters.user_id, userId), eq(voters.election_id, election.id)),
+      where: (voter, { eq, and }) =>
+        and(
+          eq(voter.user_id, userId),
+          eq(voter.election_id, election.id),
+          isNull(voter.deleted_at),
+        ),
     });
 
     if (vote ?? (isCommissioner && !isVoter) ?? !isVoter)

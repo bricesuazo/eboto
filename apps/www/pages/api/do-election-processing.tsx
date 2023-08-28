@@ -5,6 +5,7 @@ import { generated_election_results } from "@eboto-mo/db/schema";
 import ReactPDF from "@react-pdf/renderer";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { verifySignature } from "@upstash/qstash/nextjs";
+import { isNull } from "drizzle-orm";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { cookies } from "next/headers";
 
@@ -14,7 +15,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   // const start_date = new Date(now);
 
   // const elections = await db.query.elections.findMany({
-  //   where: (election, { eq }) => eq(election.start_date, start_date),
+  //   where: (election, { eq, and }) =>
+  //     and(eq(election.start_date, start_date), isNull(election.deleted_at)),
   // });
 
   // for (const election of elections) {
@@ -42,7 +44,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   const end_date = new Date(now);
 
   const electionsEnd = await db.query.elections.findMany({
-    where: (election, { eq }) => eq(election.end_date, end_date),
+    where: (election, { eq, and }) =>
+      and(eq(election.end_date, end_date), isNull(election.deleted_at)),
     with: {
       positions: {
         with: {

@@ -4,6 +4,7 @@ import EditPosition from "@/components/client/modals/edit-position";
 import classes from "@/styles/Position.module.css";
 import { db } from "@eboto-mo/db";
 import { Box, Flex, Group, Stack, Text } from "@mantine/core";
+import { isNull } from "drizzle-orm";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -21,7 +22,11 @@ export default async function Page({
   // });
 
   const election = await db.query.elections.findFirst({
-    where: (election, { eq }) => eq(election.slug, electionDashboardSlug),
+    where: (election, { eq, and }) =>
+      and(
+        eq(election.slug, electionDashboardSlug),
+        isNull(election.deleted_at),
+      ),
   });
 
   if (!election) notFound();
@@ -30,7 +35,8 @@ export default async function Page({
   //   election_id: election.id,
   // });
   const positions = await db.query.positions.findMany({
-    where: (position, { eq }) => eq(position.election_id, election.id),
+    where: (position, { eq, and }) =>
+      and(eq(position.election_id, election.id), isNull(position.deleted_at)),
     orderBy: (position, { asc }) => asc(position.order),
   });
   return (

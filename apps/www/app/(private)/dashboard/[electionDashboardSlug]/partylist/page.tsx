@@ -1,6 +1,6 @@
 import DashboardPartylist from "@/components/client/pages/dashboard-partylist";
 import { db } from "@eboto-mo/db";
-import { not } from "drizzle-orm";
+import { isNull, not } from "drizzle-orm";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -17,7 +17,11 @@ export default async function Page({
   //   slug: electionDashboardSlug,
   // });
   const election = await db.query.elections.findFirst({
-    where: (elections, { eq }) => eq(elections.slug, electionDashboardSlug),
+    where: (elections, { eq, and }) =>
+      and(
+        eq(elections.slug, electionDashboardSlug),
+        isNull(elections.deleted_at),
+      ),
   });
 
   if (!election) notFound();
@@ -31,6 +35,7 @@ export default async function Page({
       and(
         eq(partylists.election_id, election.id),
         not(eq(partylists.acronym, "IND")),
+        isNull(partylists.deleted_at),
       ),
     orderBy: (partylists, { desc }) => desc(partylists.updated_at),
   });

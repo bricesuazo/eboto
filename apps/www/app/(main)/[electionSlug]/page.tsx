@@ -26,6 +26,7 @@ import {
   IconInfoCircle,
   IconUser,
 } from "@tabler/icons-react";
+import { isNull } from "drizzle-orm";
 import moment from "moment";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -39,7 +40,8 @@ export async function generateMetadata({
   params: { electionSlug: string };
 }): Promise<Metadata> {
   const election = await db.query.elections.findFirst({
-    where: (election, { eq }) => eq(election.slug, electionSlug),
+    where: (election, { eq, and }) =>
+      and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
   });
 
   if (!election) notFound();
@@ -80,7 +82,8 @@ export default async function ElectionPage({
   params: { electionSlug: string };
 }) {
   const election = await db.query.elections.findFirst({
-    where: (elections, { eq }) => eq(elections.slug, electionSlug),
+    where: (election, { eq, and }) =>
+      and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
   });
 
   if (!election) notFound();
@@ -88,9 +91,15 @@ export default async function ElectionPage({
   const isOngoing = isElectionOngoing({ election });
 
   const positions = await db.query.positions.findMany({
-    where: (position, { eq }) => eq(position.election_id, election.id),
+    where: (position, { eq, and }) =>
+      and(eq(position.election_id, election.id), isNull(position.deleted_at)),
     with: {
       candidates: {
+        where: (candidate, { eq, and }) =>
+          and(
+            eq(candidate.election_id, election.id),
+            isNull(candidate.deleted_at),
+          ),
         with: {
           partylist: true,
         },
