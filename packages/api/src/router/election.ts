@@ -297,6 +297,7 @@ export const electionRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      console.log("🚀 ~ file: election.ts:287 ~ .mutation ~ input:", input);
       // TODO: Validate commissioner
       if (takenSlugs.includes(input.slug)) {
         throw new Error("Election slug is already exists");
@@ -330,19 +331,23 @@ export const electionRouter = createTRPCRouter({
           election_id: id,
         });
 
-        const positions1 =
+        const positionsInTemplate =
           positionTemplate
-            .find((template) => template.id === input.template)
-            ?.organizations.flatMap((org) =>
-              org.positions.map((position, i) => ({
-                name: position,
-                order: i,
-                election_id: id,
-              })),
-            ) ?? [];
-
-        if (input.template !== "none")
-          await db.insert(positions).values(positions1);
+            .find((template) =>
+              template.organizations.find(
+                (organization) => organization.id === input.template,
+              ),
+            )
+            ?.organizations.find(
+              (organization) => organization.id === input.template,
+            )
+            ?.positions.map((position, i) => ({
+              name: position,
+              order: i,
+              election_id: id,
+            })) ?? [];
+        if (input.template !== "none" && positionsInTemplate.length > 0)
+          await db.insert(positions).values(positionsInTemplate);
       });
     }),
   editElection: protectedProcedure
