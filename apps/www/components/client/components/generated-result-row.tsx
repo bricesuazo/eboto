@@ -23,11 +23,15 @@ export default function GenerateResultRow({
 
   return (
     <Group
-      justify="apart"
+      justify="space-between"
       align="center"
       style={(theme) => ({
         padding: theme.spacing.md,
         borderRadius: theme.radius.md,
+
+        borderWidth: 2,
+        borderStyle: "solid",
+        borderColor: "var(--mantine-color-green-light-hover)",
 
         // "&:hover": {
         //   backgroundColor:

@@ -86,7 +86,7 @@ export default function DashboardCard({
             fill
             sizes="100%"
             style={{
-              objectFit: "contain",
+              objectFit: "cover",
             }}
             priority
             blurDataURL={election.logo}
