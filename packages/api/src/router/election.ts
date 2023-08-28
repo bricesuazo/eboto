@@ -739,6 +739,29 @@ export const electionRouter = createTRPCRouter({
         candidate_id: candidateId,
       };
     }),
+  deleteSingleCredential: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        type: z.enum(["ACHIEVEMENT", "AFFILIATION", "EVENTATTENDED"]),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      if (input.type === "ACHIEVEMENT") {
+        return ctx.db.delete(achievements).where(eq(achievements.id, input.id));
+      } else if (input.type === "AFFILIATION") {
+        return ctx.db.delete(affiliations).where(eq(affiliations.id, input.id));
+      } else if (input.type === "EVENTATTENDED") {
+        return ctx.db
+          .delete(events_attended)
+          .where(eq(events_attended.id, input.id));
+      }
+    }),
+  deleteSinglePlatform: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      return ctx.db.delete(platforms).where(eq(platforms.id, input.id));
+    }),
   editCandidate: protectedProcedure
     .input(
       z.object({
@@ -752,6 +775,40 @@ export const electionRouter = createTRPCRouter({
         position_id: z.string().min(1),
         partylist_id: z.string().min(1),
         image_link: z.string().nullable(),
+
+        credential_id: z.string().min(1),
+
+        platforms: z.array(
+          z.object({
+            id: z.string(),
+            title: z.string().min(1),
+            description: z.string().min(1),
+          }),
+        ),
+
+        achievements: z.array(
+          z.object({
+            id: z.string(),
+            name: z.string().min(1),
+            year: z.date(),
+          }),
+        ),
+        affiliations: z.array(
+          z.object({
+            id: z.string(),
+            org_name: z.string().min(1),
+            org_position: z.string().min(1),
+            start_year: z.date(),
+            end_year: z.date(),
+          }),
+        ),
+        eventsAttended: z.array(
+          z.object({
+            id: z.string(),
+            name: z.string().min(1),
+            year: z.date(),
+          }),
+        ),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -773,23 +830,100 @@ export const electionRouter = createTRPCRouter({
           });
       }
 
-      await ctx.db
-        .update(candidates)
-        .set({
-          slug: input.new_slug,
-          first_name: input.first_name,
-          middle_name: input.middle_name,
-          last_name: input.last_name,
-          position_id: input.position_id,
-          partylist_id: input.partylist_id,
-          image_link: input.image_link,
-        })
-        .where(
-          and(
-            eq(candidates.id, input.id),
-            eq(candidates.election_id, input.election_id),
-          ),
-        );
+      await ctx.db.transaction(async (db) => {
+        await db
+          .update(candidates)
+          .set({
+            slug: input.new_slug,
+            first_name: input.first_name,
+            middle_name: input.middle_name,
+            last_name: input.last_name,
+            position_id: input.position_id,
+            partylist_id: input.partylist_id,
+            image_link: input.image_link,
+          })
+          .where(
+            and(
+              eq(candidates.id, input.id),
+              eq(candidates.election_id, input.election_id),
+            ),
+          );
+
+        for (const platform of input.platforms) {
+          await db
+            .insert(platforms)
+            .values({
+              id: platform.id,
+              title: platform.title,
+              description: platform.description,
+              candidate_id: input.id,
+            })
+            .onDuplicateKeyUpdate({
+              set: {
+                title: platform.title,
+                description: platform.description,
+              },
+            });
+        }
+
+        for (const affiliation of input.affiliations) {
+          await db
+            .insert(affiliations)
+            .values({
+              id: affiliation.id,
+              org_name: affiliation.org_name,
+              org_position: affiliation.org_position,
+              start_year: affiliation.start_year,
+              end_year: affiliation.end_year,
+              credential_id: input.credential_id,
+            })
+            .onDuplicateKeyUpdate({
+              set: {
+                org_name: affiliation.org_name,
+                org_position: affiliation.org_position,
+                start_year: affiliation.start_year,
+                end_year: affiliation.end_year,
+                credential_id: input.credential_id,
+              },
+            });
+        }
+
+        for (const achievement of input.achievements) {
+          await db
+            .insert(achievements)
+            .values({
+              id: achievement.id,
+              name: achievement.name,
+              year: achievement.year,
+              credential_id: input.credential_id,
+            })
+            .onDuplicateKeyUpdate({
+              set: {
+                name: achievement.name,
+                year: achievement.year,
+                credential_id: input.credential_id,
+              },
+            });
+        }
+
+        for (const event of input.eventsAttended) {
+          await db
+            .insert(events_attended)
+            .values({
+              id: event.id,
+              name: event.name,
+              year: event.year,
+              credential_id: input.credential_id,
+            })
+            .onDuplicateKeyUpdate({
+              set: {
+                name: event.name,
+                year: event.year,
+                credential_id: input.credential_id,
+              },
+            });
+        }
+      });
     }),
   inviteAllInvitedVoters: protectedProcedure
     .input(

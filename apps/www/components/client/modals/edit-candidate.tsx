@@ -7,6 +7,7 @@ import {
   ActionIcon,
   Box,
   Button,
+  Flex,
   Group,
   Modal,
   Select,
@@ -191,13 +192,13 @@ export default function EditCandidate({
       <Button
         variant="outline"
         mt="xs"
-        size="sm"
+        size="xs"
         w="100%"
         color="red"
-        onClick={() => {
+        onClick={async () => {
           if (type === "PLATFORM") {
             if (candidate.platforms.find((a) => a.id === id)) {
-              // await deletePlatformMutation.mutateAsync({ id });
+              await api.election.deleteSinglePlatform.mutate({ id });
               // await context.candidate.getAll.invalidate();
               close();
             } else {
@@ -208,7 +209,7 @@ export default function EditCandidate({
             }
           } else if (type === "ACHIEVEMENT") {
             if (candidate.credential?.achievements.find((a) => a.id === id)) {
-              // await deleteCredentialMutation.mutateAsync({ id, type });
+              await api.election.deleteSingleCredential.mutate({ id, type });
               // await context.candidate.getAll.invalidate();
               close();
             } else {
@@ -221,7 +222,7 @@ export default function EditCandidate({
             }
           } else if (type === "AFFILIATION") {
             if (candidate.credential?.affiliations.find((a) => a.id === id)) {
-              // await deleteCredentialMutation.mutateAsync({ id, type });
+              await api.election.deleteSingleCredential.mutate({ id, type });
               // await context.candidate.getAll.invalidate();
               close();
             } else {
@@ -236,7 +237,7 @@ export default function EditCandidate({
             if (
               candidate.credential?.events_attended.find((a) => a.id === id)
             ) {
-              // await deleteCredentialMutation.mutateAsync({ id, type });
+              await api.election.deleteSingleCredential.mutate({ id, type });
               // await context.candidate.getAll.invalidate();
               close();
             } else {
@@ -254,13 +255,18 @@ export default function EditCandidate({
         // }
       >
         Delete{" "}
-        {type === "PLATFORM"
-          ? "Platform"
-          : type === "ACHIEVEMENT"
-          ? "Achievement"
-          : type === "AFFILIATION"
-          ? "Affiliation"
-          : "Event Attended"}
+        {(() => {
+          switch (type) {
+            case "PLATFORM":
+              return "platform";
+            case "ACHIEVEMENT":
+              return "achievement";
+            case "AFFILIATION":
+              return "affiliation";
+            case "EVENTATTENDED":
+              return "seminar attended";
+          }
+        })()}
       </Button>
     );
   };
@@ -307,26 +313,27 @@ export default function EditCandidate({
                       image: values.image,
                     }),
 
-                // platforms: value.platforms,
+                credential_id: candidate.credential_id,
+                platforms: values.platforms,
 
-                // achievements: value.achievements.map((a) => ({
-                //   id: a.id,
-                //   name: a.name,
-                //   year: new Date(a.year?.toDateString() ?? ""),
-                // })),
+                achievements: values.achievements.map((a) => ({
+                  id: a.id,
+                  name: a.name,
+                  year: new Date(a.year?.toDateString() ?? ""),
+                })),
 
-                // affiliations: value.affiliations.map((a) => ({
-                //   id: a.id,
-                //   org_name: a.org_name,
-                //   org_position: a.org_position,
-                //   start_year: new Date(a.start_year?.toDateString() ?? ""),
-                //   end_year: new Date(a.end_year?.toDateString() ?? ""),
-                // })),
-                // eventsAttended: value.events_attended.map((a) => ({
-                //   id: a.id,
-                //   name: a.name,
-                //   year: new Date(a.year?.toDateString() ?? ""),
-                // })),
+                affiliations: values.affiliations.map((a) => ({
+                  id: a.id,
+                  org_name: a.org_name,
+                  org_position: a.org_position,
+                  start_year: new Date(a.start_year?.toDateString() ?? ""),
+                  end_year: new Date(a.end_year?.toDateString() ?? ""),
+                })),
+                eventsAttended: values.events_attended.map((a) => ({
+                  id: a.id,
+                  name: a.name,
+                  year: new Date(a.year?.toDateString() ?? ""),
+                })),
               });
             })();
           })}
@@ -668,7 +675,7 @@ export default function EditCandidate({
                       {form.values.achievements.map((achievement, index) => {
                         return (
                           <Box key={index}>
-                            <Group gap="xs">
+                            <Flex gap="xs" align="end">
                               <TextInput
                                 w="100%"
                                 label="Achievement"
@@ -691,7 +698,7 @@ export default function EditCandidate({
                                 }}
                               />
                               <YearPickerInput
-                                // label="Year"
+                                label="Year"
                                 placeholder="Enter year"
                                 popoverProps={{
                                   withinPortal: true,
@@ -713,9 +720,9 @@ export default function EditCandidate({
                                     ),
                                   });
                                 }}
-                                // required
+                                required
                               />
-                            </Group>
+                            </Flex>
                             <DeleteCredentialButton
                               type="ACHIEVEMENT"
                               id={achievement.id}
@@ -795,9 +802,9 @@ export default function EditCandidate({
                               }}
                             />
 
-                            <Group gap="xs">
+                            <Flex gap="xs">
                               <YearPickerInput
-                                // label="Start year"
+                                label="Start year"
                                 placeholder="Enter start year"
                                 style={{ width: "100%" }}
                                 popoverProps={{
@@ -823,10 +830,10 @@ export default function EditCandidate({
                                     ),
                                   });
                                 }}
-                                // required
+                                required
                               />
                               <YearPickerInput
-                                // label="End year"
+                                label="End year"
                                 placeholder="Enter end year"
                                 style={{ width: "100%" }}
                                 popoverProps={{
@@ -852,9 +859,9 @@ export default function EditCandidate({
                                     ),
                                   });
                                 }}
-                                // required
+                                required
                               />
-                            </Group>
+                            </Flex>
                             <DeleteCredentialButton
                               type="AFFILIATION"
                               id={affiliation.id}
@@ -897,7 +904,7 @@ export default function EditCandidate({
                         (events_attended, index) => {
                           return (
                             <Box key={index}>
-                              <Group gap="xs">
+                              <Flex gap="xs" align="end">
                                 <TextInput
                                   w="100%"
                                   label="Seminars attended"
@@ -952,7 +959,7 @@ export default function EditCandidate({
                                   }}
                                   // required
                                 />
-                              </Group>
+                              </Flex>
                               <DeleteCredentialButton
                                 type="EVENTATTENDED"
                                 id={events_attended.id}
