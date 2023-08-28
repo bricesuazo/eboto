@@ -16,6 +16,7 @@ import {
   IconReplace,
   IconUserSearch,
 } from "@tabler/icons-react";
+import { not } from "drizzle-orm";
 import moment from "moment";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -38,7 +39,9 @@ export default async function Page({
     where: (elections, { eq }) => eq(elections.slug, electionDashboardSlug),
     with: {
       positions: true,
-      partylists: true,
+      partylists: {
+        where: (partylist, { eq }) => not(eq(partylist.acronym, "IND")),
+      },
       voters: {
         with: {
           votes: true,

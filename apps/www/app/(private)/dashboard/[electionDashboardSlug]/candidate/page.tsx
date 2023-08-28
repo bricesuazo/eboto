@@ -3,7 +3,18 @@ import DeleteCandidate from "@/components/client/modals/delete-candidate";
 import EditCandidate from "@/components/client/modals/edit-candidate";
 import classes from "@/styles/Candidate.module.css";
 import { db } from "@eboto-mo/db";
-import { Anchor, Box, Group, Stack, Text } from "@mantine/core";
+import {
+  Anchor,
+  Box,
+  Flex,
+  Group,
+  HoverCard,
+  HoverCardDropdown,
+  HoverCardTarget,
+  ScrollArea,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { IconUser } from "@tabler/icons-react";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -121,77 +132,100 @@ export default async function Page({
               <Balancer>{position.name}</Balancer>
             </Text>
 
-            <Group gap="md">
-              <CreateCandidate
-                position={position}
-                partylists={partylists}
-                positions={positions}
-                data-superjson
-              />
+            <ScrollArea scrollbarSize={10} offsetScrollbars={"x"}>
+              <Flex gap="md">
+                <Box>
+                  <CreateCandidate
+                    position={position}
+                    partylists={partylists}
+                    positions={positions}
+                    data-superjson
+                  />
+                </Box>
 
-              <Group
-                gap="xs"
-                style={{
-                  overflow: "auto",
-                }}
-                align="center"
-              >
-                {!position.candidates.length ? (
-                  <Text lineClamp={4}>
-                    <Balancer>No candidate in {position.name} yet...</Balancer>
-                  </Text>
-                ) : (
-                  position.candidates.map((candidate) => (
-                    <Group
-                      key={candidate.id}
-                      className={classes["candidate-card"]}
-                      gap="xs"
-                    >
-                      <Stack align="center" justify="center" gap="xs">
-                        {candidate.image_link ? (
-                          <Image
-                            src={candidate.image_link}
-                            width={52}
-                            height={52}
-                            alt={
-                              candidate.first_name +
-                              " " +
-                              candidate.last_name +
-                              " image"
-                            }
-                            priority
-                            style={{ objectFit: "cover" }}
-                          />
-                        ) : (
-                          <IconUser
-                            size={52}
-                            style={{
-                              padding: 8,
-                            }}
-                          />
-                        )}
-                        <Text ta="center" w="full" lineClamp={1}>
-                          {candidate.first_name}
-                          {candidate.middle_name &&
-                            ` ${candidate.middle_name}`}{" "}
-                          {candidate.last_name}
-                        </Text>
-                      </Stack>
+                <Group
+                  gap="xs"
+                  style={{
+                    overflow: "auto",
+                  }}
+                  align="center"
+                >
+                  {!position.candidates.length ? (
+                    <Box>
+                      <Text lineClamp={4}>
+                        <Balancer>
+                          No candidate in {position.name} yet...
+                        </Balancer>
+                      </Text>
+                    </Box>
+                  ) : (
+                    position.candidates.map((candidate) => {
+                      const title = `${candidate.first_name} ${
+                        candidate.middle_name && ` ${candidate.middle_name}`
+                      } ${candidate.last_name} (${candidate.partylist?.name})`;
+                      return (
+                        <HoverCard
+                          shadow="md"
+                          openDelay={500}
+                          width={256}
+                          offset={60}
+                        >
+                          <Group
+                            key={candidate.id}
+                            className={classes["candidate-card"]}
+                            gap="xs"
+                          >
+                            <HoverCardTarget>
+                              <Stack align="center" justify="center" gap="xs">
+                                {candidate.image_link ? (
+                                  <Image
+                                    src={candidate.image_link}
+                                    width={100}
+                                    height={100}
+                                    alt={
+                                      candidate.first_name +
+                                      " " +
+                                      candidate.last_name +
+                                      " image"
+                                    }
+                                    priority
+                                    style={{ objectFit: "cover" }}
+                                  />
+                                ) : (
+                                  <IconUser
+                                    size={100}
+                                    style={{
+                                      padding: 8,
+                                    }}
+                                  />
+                                )}
+                                <Text ta="center" w="full" lineClamp={1}>
+                                  {title}
+                                </Text>
+                              </Stack>
+                            </HoverCardTarget>
 
-                      <Group gap="xs" align="center">
-                        <EditCandidate
-                          positions={positions}
-                          candidate={candidate}
-                          partylists={partylists}
-                          data-superjson
-                        />
-                        <DeleteCandidate candidate={candidate} data-superjson />
-                      </Group>
-                    </Group>
-                  ))
-                )}
-              </Group>
-            </Group>
+                            <Group gap="xs" align="center">
+                              <EditCandidate
+                                positions={positions}
+                                candidate={candidate}
+                                partylists={partylists}
+                                data-superjson
+                              />
+                              <DeleteCandidate
+                                candidate={candidate}
+                                data-superjson
+                              />
+                            </Group>
+                          </Group>
+                          <HoverCardDropdown>{title}</HoverCardDropdown>
+                        </HoverCard>
+                      );
+                    })
+                  )}
+                </Group>
+              </Flex>
+            </ScrollArea>
           </Box>
         ))
       )}

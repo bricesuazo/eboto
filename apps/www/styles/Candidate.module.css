@@ -6,7 +6,7 @@
   row-gap: var(--mantine-spacing-xs);
   padding: var(--mantine-spacing-md);
   width: 100px;
-  height: 140px;
+  height: 200px;
   text-align: center;
   border-radius: var(--mantine-radius-sm);
   font-size: var(--mantine-font-size-sm);
@@ -27,8 +27,8 @@
 }
 
 .candidate-card {
-  height: 140px;
   width: 256px;
+  height: 200px;
   border: 1px solid
     light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
   border-radius: var(--mantine-radius-sm);

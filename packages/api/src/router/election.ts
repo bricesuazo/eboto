@@ -297,7 +297,6 @@ export const electionRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      console.log("🚀 ~ file: election.ts:287 ~ .mutation ~ input:", input);
       // TODO: Validate commissioner
       if (takenSlugs.includes(input.slug)) {
         throw new Error("Election slug is already exists");
@@ -704,44 +703,49 @@ export const electionRouter = createTRPCRouter({
           credential_id: credentialId,
         });
 
-        await db.insert(credentials).values({
-          id: credentialId,
-          candidate_id: candidateId,
-        });
-
-        await db.insert(platforms).values(
-          input.platforms.map((platform) => ({
-            title: platform.title,
-            description: platform.description,
+        if (input.platforms.length > 0)
+          await db.insert(credentials).values({
+            id: credentialId,
             candidate_id: candidateId,
-          })),
-        );
+          });
 
-        await db.insert(affiliations).values(
-          input.affiliations.map((affiliation) => ({
-            org_name: affiliation.org_name,
-            org_position: affiliation.org_position,
-            start_year: affiliation.start_year,
-            end_year: affiliation.end_year,
-            credential_id: credentialId,
-          })),
-        );
+        if (input.achievements.length > 0)
+          await db.insert(platforms).values(
+            input.platforms.map((platform) => ({
+              title: platform.title,
+              description: platform.description,
+              candidate_id: candidateId,
+            })),
+          );
 
-        await db.insert(achievements).values(
-          input.achievements.map((achievement) => ({
-            name: achievement.name,
-            year: achievement.year,
-            credential_id: credentialId,
-          })),
-        );
+        if (input.affiliations.length > 0)
+          await db.insert(affiliations).values(
+            input.affiliations.map((affiliation) => ({
+              org_name: affiliation.org_name,
+              org_position: affiliation.org_position,
+              start_year: affiliation.start_year,
+              end_year: affiliation.end_year,
+              credential_id: credentialId,
+            })),
+          );
 
-        await db.insert(events_attended).values(
-          input.eventsAttended.map((event) => ({
-            name: event.name,
-            year: event.year,
-            credential_id: credentialId,
-          })),
-        );
+        if (input.achievements.length > 0)
+          await db.insert(achievements).values(
+            input.achievements.map((achievement) => ({
+              name: achievement.name,
+              year: achievement.year,
+              credential_id: credentialId,
+            })),
+          );
+
+        if (input.eventsAttended.length > 0)
+          await db.insert(events_attended).values(
+            input.eventsAttended.map((event) => ({
+              name: event.name,
+              year: event.year,
+              credential_id: credentialId,
+            })),
+          );
       });
       return {
         candidate_id: candidateId,
