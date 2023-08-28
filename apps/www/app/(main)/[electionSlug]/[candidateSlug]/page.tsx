@@ -134,13 +134,12 @@ export default async function CandidatePage({
         </Breadcrumbs>
         <Flex gap="md" direction={{ base: "column", xs: "row" }}>
           <Box pos={{ base: "initial", xs: "sticky" }} top={76} h="100%">
-            {candidate.image_link ? (
-              <Box
-                pos="relative"
-                w={{ base: 280, sm: 200, xs: "100%" }}
-                h={{ base: 280, sm: 200, xs: "auto" }}
-                style={{ aspectRatio: "1/1" }}
-              >
+            <Box
+              pos="relative"
+              w={{ base: "100%", xs: 200, sm: 280 }}
+              style={{ aspectRatio: "1/1" }}
+            >
+              {candidate.image_link ? (
                 <Image
                   src={candidate.image_link}
                   alt={candidate.first_name + " " + candidate.last_name}
@@ -149,12 +148,10 @@ export default async function CandidatePage({
                   priority
                   style={{ objectFit: "cover" }}
                 />
-              </Box>
-            ) : (
-              <Box>
+              ) : (
                 <IconUser width="100%" height="100%" stroke={1.5} />
-              </Box>
-            )}
+              )}
+            </Box>
           </Box>
 
           <Box style={{ flex: 1 }}>
@@ -173,18 +170,18 @@ export default async function CandidatePage({
                 </Title>
                 <List withPadding listStyleType="none">
                   {candidate.platforms.map((platform) => (
-                    <List.Item key={platform.id}>
+                    <ListItem key={platform.id}>
                       <Title order={4}>{platform.title}</Title>
                       <Text>{platform.description}</Text>
-                    </List.Item>
+                    </ListItem>
                   ))}
                 </List>
               </Stack>
             ) : null}
 
-            {candidate.credential?.affiliations.length ??
-            candidate.credential?.achievements.length ??
-            candidate.credential?.events_attended.length ? (
+            {candidate.credential.affiliations.length ||
+            candidate.credential.achievements.length ||
+            candidate.credential.events_attended.length ? (
               <Stack mt="xl" gap="xs">
                 <Title order={3}>Credentials</Title>
 
@@ -197,7 +194,8 @@ export default async function CandidatePage({
                     <List withPadding listStyleType="none">
                       {candidate.credential.achievements.map((achievement) => (
                         <ListItem key={achievement.id}>
-                          ({moment(achievement.year).format("YYYY")})
+                          {achievement.name} - (
+                          {moment(achievement.year).format("YYYY")})
                         </ListItem>
                       ))}
                     </List>
@@ -249,7 +247,12 @@ export default async function CandidatePage({
                   </Box>
                 ) : null}
               </Stack>
-            ) : null}
+            ) : (
+              <Text mt="xl">
+                No credentials found. If you are the candidate, please contact
+                the election commissioner to add your credentials.
+              </Text>
+            )}
           </Box>
         </Flex>
       </Stack>

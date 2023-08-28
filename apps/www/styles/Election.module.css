@@ -1,15 +1,16 @@
 .candidate-card {
   padding: var(--mantine-spacing-md);
   display: flex;
+  gap: var(--mantine-spacing-xs);
   flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 200px;
-  height: 240px;
+  height: 260px;
 
   @media (max-width: $mantine-breakpoint-xs) {
     width: 100%;
-    height: 200px;
+    height: 240px;
   }
 
   background-color: light-dark(

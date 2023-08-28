@@ -2,7 +2,12 @@
 
 import { api } from "@/trpc/client";
 import { uploadImage } from "@/utils";
-import type { Candidate, Partylist, Position } from "@eboto-mo/db/schema";
+import type {
+  Candidate,
+  Election,
+  Partylist,
+  Position,
+} from "@eboto-mo/db/schema";
 import {
   ActionIcon,
   Box,
@@ -39,14 +44,15 @@ import {
 } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import { useRef } from "react";
 
 export default function EditCandidate({
   candidate,
   positions,
   partylists,
+  election,
 }: {
+  election: Election;
   candidate: Candidate & {
     credential: {
       id: string;
@@ -79,7 +85,6 @@ export default function EditCandidate({
 }) {
   const [opened, { open, close }] = useDisclosure(false);
   const openRef = useRef<() => void>(null);
-  const params = useParams();
 
   // const { mutate, isLoading, isError, error, reset } =
   //   api.election.editCandidate.useMutation({
@@ -300,7 +305,7 @@ export default function EditCandidate({
                 old_slug: candidate.slug,
                 new_slug: values.new_slug,
                 partylist_id: values.partylist_id,
-                election_id: candidate.election_id,
+                election_id: election.id,
                 position_id: values.position,
                 image_link: !values.image
                   ? null
@@ -406,8 +411,8 @@ export default function EditCandidate({
                       <Text size="xs">
                         This will be used as the candidate&apos;s URL.
                         <br />
-                        eboto-mo.com/{params?.electionDashboardSlug?.toString()}
-                        /{form.values.new_slug || "candidate-slug"}
+                        eboto-mo.com/{election.slug}/
+                        {form.values.new_slug || "candidate-slug"}
                       </Text>
                     }
                     required
@@ -1019,7 +1024,7 @@ export default function EditCandidate({
                   leftSection={<IconExternalLink size="1.25rem" />}
                   variant="outline"
                   component={Link}
-                  href={`/${params?.electionSlug as string}/${candidate.slug}`}
+                  href={`/${election.slug}/${candidate.slug}`}
                   target="_blank"
                 >
                   Visit

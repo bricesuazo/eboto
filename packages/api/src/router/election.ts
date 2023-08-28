@@ -703,13 +703,12 @@ export const electionRouter = createTRPCRouter({
           credential_id: credentialId,
         });
 
-        if (input.platforms.length > 0)
-          await db.insert(credentials).values({
-            id: credentialId,
-            candidate_id: candidateId,
-          });
+        await db.insert(credentials).values({
+          id: credentialId,
+          candidate_id: candidateId,
+        });
 
-        if (input.achievements.length > 0)
+        if (input.platforms.length > 0)
           await db.insert(platforms).values(
             input.platforms.map((platform) => ({
               title: platform.title,

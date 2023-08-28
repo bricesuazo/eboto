@@ -51,7 +51,7 @@
     "embla-carousel-react": "8.0.0-rc12",
     "mantine-react-table": "^1.2.0",
     "moment": "^2.29.4",
-    "next": "13.4.20-canary.8",
+    "next": "13.4.20-canary.9",
     "next-superjson-plugin": "^0.5.9",
     "qrcode.react": "^3.1.0",
     "react": "^18.2.0",

@@ -26,7 +26,7 @@
   "devDependencies": {
     "@eboto-mo/eslint-config": "workspace:*",
     "eslint": "^8.47.0",
-    "next": "13.4.20-canary.8",
+    "next": "13.4.20-canary.9",
     "typescript": "^5.2.2"
   }
 }

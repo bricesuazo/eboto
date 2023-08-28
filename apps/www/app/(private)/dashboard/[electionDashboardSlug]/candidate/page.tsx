@@ -162,19 +162,17 @@ export default async function Page({
                     position.candidates.map((candidate) => {
                       const title = `${candidate.first_name} ${
                         candidate.middle_name && ` ${candidate.middle_name}`
-                      } ${candidate.last_name} (${candidate.partylist?.name})`;
+                      } ${candidate.last_name} (${
+                        candidate.partylist.acronym
+                      })`;
                       return (
-                        <HoverCard
-                          shadow="md"
-                          openDelay={500}
-                          width={256}
-                          offset={60}
+                        <Group
+                          key={candidate.id}
+                          className={classes["candidate-card"]}
+                          // gap="xs"
+                          px="md"
                         >
-                          <Group
-                            key={candidate.id}
-                            className={classes["candidate-card"]}
-                            gap="xs"
-                          >
+                          <HoverCard openDelay={500} width={256} offset={60}>
                             <HoverCardTarget>
                               <Stack align="center" justify="center" gap="xs">
                                 {candidate.image_link ? (
@@ -205,21 +203,22 @@ export default async function Page({
                               </Stack>
                             </HoverCardTarget>
 
-                            <Group gap="xs" align="center">
+                            <Flex gap="xs" align="center">
                               <EditCandidate
                                 positions={positions}
                                 candidate={candidate}
                                 partylists={partylists}
+                                election={election}
                                 data-superjson
                               />
                               <DeleteCandidate
                                 candidate={candidate}
                                 data-superjson
                               />
-                            </Group>
-                          </Group>
-                          <HoverCardDropdown>{title}</HoverCardDropdown>
-                        </HoverCard>
+                            </Flex>
+                            <HoverCardDropdown>{title}</HoverCardDropdown>
+                          </HoverCard>
+                        </Group>
                       );
                     })
                   )}
