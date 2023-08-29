@@ -148,7 +148,7 @@ export default async function Page({
               <Balancer>{position.name}</Balancer>
             </Text>
 
-            <ScrollArea scrollbarSize={10} offsetScrollbars={"x"}>
+            <ScrollArea scrollbarSize={10} offsetScrollbars="x">
               <Flex gap="md">
                 <Box>
                   <CreateCandidate
@@ -159,10 +159,11 @@ export default async function Page({
                   />
                 </Box>
 
-                <Group
+                <Flex
                   gap="xs"
                   style={{
                     overflow: "auto",
+                    flex: 1,
                   }}
                   align="center"
                 >
@@ -238,7 +239,7 @@ export default async function Page({
                       );
                     })
                   )}
-                </Group>
+                </Flex>
               </Flex>
             </ScrollArea>
           </Box>
