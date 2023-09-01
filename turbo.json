@@ -14,7 +14,8 @@
     "start": {},
     "db:push": {},
     "db:studio": {},
-    "db:generate": {}
+    "db:generate": {},
+    "email:dev": {}
   },
   "globalEnv": [
     "CI",

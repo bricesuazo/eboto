@@ -1,0 +1,21 @@
+{
+  "name": "@eboto-mo/email",
+  "main": "./index.tsx",
+  "version": "0.0.0",
+  "scripts": {
+    "email:dev": "email dev"
+  },
+  "dependencies": {
+    "@aws-sdk/client-ses": "^3.398.0",
+    "@react-email/button": "0.0.10",
+    "@react-email/html": "0.0.4",
+    "@react-email/render": "^0.0.7",
+    "react": "^18.2.0",
+    "react-email": "1.9.4"
+  },
+  "devDependencies": {
+    "@eboto-mo/tsconfig": "workspace:*",
+    "eslint": "^8.48.0",
+    "typescript": "^5.2.2"
+  }
+}

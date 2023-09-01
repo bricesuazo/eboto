@@ -12,6 +12,7 @@
     "db:push": "pnpm with-env turbo --filter @eboto-mo/db db:push --no-daemon",
     "db:studio": "pnpm with-env turbo --filter @eboto-mo/db db:studio --no-daemon",
     "db:generate": "pnpm with-env turbo --filter @eboto-mo/db db:generate --no-daemon",
+    "email:dev": "pnpm with-env turbo --filter @eboto-mo/email email:dev --no-daemon",
     "with-env": "dotenv -e .env --"
   },
   "devDependencies": {

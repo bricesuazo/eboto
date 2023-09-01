@@ -6,3 +6,4 @@ packages:
   - packages/config/eslint
   - packages/config/tsconfig
   - packages/constants
+  - packages/email
