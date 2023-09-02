@@ -54,7 +54,6 @@ export default async function Page({
     account_status: "ACCEPTED",
     created_at: voter.created_at,
     has_voted: voter.votes.length > 0,
-    field: voter.field,
   }));
 
   return <DashboardVoter election={election} voters={voters} data-superjson />;

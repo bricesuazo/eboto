@@ -1,7 +1,7 @@
 import { SES } from "@aws-sdk/client-ses";
 import { render } from "@react-email/render";
 
-import { Email } from "./src/email";
+import { Email } from "./emails/email";
 
 // eslint-disable-next-line turbo/no-undeclared-env-vars
 const ses = new SES({ region: process.env.AWS_SES_REGION });

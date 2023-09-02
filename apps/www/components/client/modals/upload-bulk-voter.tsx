@@ -58,7 +58,6 @@ export default function UploadBulkVoter({
       fileName: string;
       voters: {
         email: string;
-        field: Record<string, string>;
       }[];
     }[]
   >([]);
@@ -146,13 +145,7 @@ export default function UploadBulkVoter({
                             <td>
                               <Text truncate>{voter.email}</Text>
                             </td>
-                            {voter_fields.map((field) => (
-                              <td key={field.name}>
-                                <Text truncate>
-                                  {voter.field[field.name] ?? ""}
-                                </Text>
-                              </td>
-                            ))}
+
                             <td>
                               <ActionIcon
                                 title="Remove voter"
@@ -356,7 +349,7 @@ export default function UploadBulkVoter({
                 onClick={() =>
                   api.election.uploadBulkVoter.mutate({
                     election_id,
-                    voters: selectedFiles.map((f) => f.voters).flat(),
+                    voters: selectedFiles.flatMap((file) => file.voters),
                   })
                 }
               >

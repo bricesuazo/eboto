@@ -7,60 +7,38 @@ import {
   Button,
   Group,
   Modal,
-  Select,
   Stack,
   Text,
   TextInput,
 } from "@mantine/core";
 import { isEmail, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { IconAt, IconEdit, IconLetterCase } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { IconAt, IconEdit } from "@tabler/icons-react";
+import { useEffect } from "react";
 
 export default function EditVoter({
   election_id,
   voter,
-  voter_fields,
 }: {
   election_id: string;
   voter: {
     id: string;
-    field: Record<string, string>;
     email: string;
     account_status: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
   };
   voter_fields: VoterField[];
 }) {
   const [opened, { open, close }] = useDisclosure(false);
-  const [data] = useState<
-    {
-      fieldName: string;
-      values: {
-        value: string;
-      }[];
-    }[]
-  >([]);
+
   const form = useForm<{
     email: string;
-    field: Record<string, string>;
   }>({
     initialValues: {
       email: voter.email,
-      field: voter.field ?? {},
     },
     validateInputOnBlur: true,
     validate: {
       email: isEmail("Please enter a valid email address"),
-      field: voter_fields.reduce(
-        (acc, field) => {
-          acc[field.name] = (value) =>
-            value === undefined || value.trim() === ""
-              ? `${field.name} is required`
-              : undefined;
-          return acc;
-        },
-        {} as Record<string, (value: string | undefined) => string | undefined>,
-      ),
     },
   });
 
@@ -83,7 +61,6 @@ export default function EditVoter({
 
       const dataForForm: typeof form.values = {
         email: voter.email,
-        field: voter.field,
       };
 
       form.setValues(dataForForm);
@@ -122,7 +99,6 @@ export default function EditVoter({
               await api.election.editVoter.mutate({
                 id: voter.id,
                 election_id,
-                field: values.field,
                 email: values.email,
                 account_status: voter.account_status,
               });
@@ -143,42 +119,6 @@ export default function EditVoter({
                 "You can only edit the email address of a voter if they have not yet accepted their invitation."
               }
             />
-
-            {voter_fields.map((field) => (
-              <Select
-                key={field.id}
-                data={
-                  data
-                    .find((item) => item.fieldName === field.name)
-                    ?.values.map((item) => ({
-                      value: item.value,
-                      label: item.value,
-                    })) ?? []
-                }
-                // onCreate={(query) => {
-                //   setData((prev) =>
-                //     prev.map((item) => {
-                //       if (item.fieldName === field.name) {
-                //         item.values.push({ value: query });
-                //       }
-                //       return item;
-                //     }),
-                //   );
-                //   return query;
-                // }}
-                label={field.name}
-                placeholder={`Enter ${field.name}`}
-                // nothingFound="Nothing found"
-                searchable
-                // creatable
-                // withinPortal
-                // getCreateLabel={(query) => `+ Create ${query}`}
-                {...form.getInputProps(["field", field.name].join("."))}
-                required
-                withAsterisk
-                leftSection={<IconLetterCase size="1rem" />}
-              />
-            ))}
 
             {/* {isError && (
               <Alert

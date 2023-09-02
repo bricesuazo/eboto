@@ -3,7 +3,7 @@
   "main": "./index.tsx",
   "version": "0.0.0",
   "scripts": {
-    "email:dev": "email dev"
+    "email:dev": "email dev --port 3002"
   },
   "dependencies": {
     "@aws-sdk/client-ses": "^3.398.0",
@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@eboto-mo/tsconfig": "workspace:*",
+    "@types/node": "^20.5.7",
     "eslint": "^8.48.0",
     "typescript": "^5.2.2"
   }

@@ -283,7 +283,6 @@ export const electionRouter = createTRPCRouter({
         account_status: "ACCEPTED",
         created_at: voter.created_at,
         has_voted: voter.votes.length > 0,
-        field: voter.field,
       }));
     }),
   createElection: protectedProcedure
@@ -974,7 +973,6 @@ export const electionRouter = createTRPCRouter({
     .input(
       z.object({
         email: z.string().min(1),
-        field: z.record(z.string().min(1)),
         election_id: z.string().min(1),
       }),
     )
@@ -1001,38 +999,26 @@ export const electionRouter = createTRPCRouter({
           message: "Unauthorized",
         });
 
-      const [user] = await clerkClient.users.getUserList({
-        emailAddress: [input.email],
+      const voters = await ctx.db.query.voters.findMany({
+        where: (voter, { eq }) => eq(voter.election_id, input.election_id),
+        with: {
+          user: true,
+        },
       });
 
-      if (input.email === user?.emailAddresses[0]?.emailAddress) {
-        await ctx.db.insert(voters).values({
-          user_id: ctx.auth.userId,
-          election_id: input.election_id,
-          field: input.field,
-        });
-      } else {
-        const voters = await ctx.db.query.voters.findMany({
-          where: (voter, { eq }) => eq(voter.election_id, input.election_id),
-          with: {
-            user: true,
-          },
-        });
+      const userFromVoters = await clerkClient.users.getUserList({
+        emailAddress: voters.map((voter) => voter.user.id),
+      });
 
-        const userFromVoters = await clerkClient.users.getUserList({
-          emailAddress: voters.map((voter) => voter.user.id),
+      const isVoterEmailExists = userFromVoters.find(
+        (user) => user.emailAddresses[0]?.emailAddress === input.email,
+      );
+
+      if (isVoterEmailExists)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Email is already a voter",
         });
-
-        const isVoterEmailExists = userFromVoters.find(
-          (user) => user.emailAddresses[0]?.emailAddress === input.email,
-        );
-
-        if (isVoterEmailExists)
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Email is already a voter",
-          });
-      }
     }),
   updateVoterField: protectedProcedure
     .input(
@@ -1083,7 +1069,6 @@ export const electionRouter = createTRPCRouter({
       z.object({
         id: z.string().min(1),
         email: z.string().min(1),
-        field: z.record(z.string().min(1)),
         election_id: z.string().min(1),
         account_status: z.enum(account_status_type_with_accepted),
       }),
@@ -1115,25 +1100,14 @@ export const electionRouter = createTRPCRouter({
           message: "Unauthorized",
         });
 
-      if (input.account_status === "ACCEPTED") {
-        const voter = await ctx.db.query.voters.findFirst({
-          where: (voters, { eq, and }) =>
-            and(
-              eq(voters.id, input.id),
-              eq(voters.election_id, input.election_id),
-            ),
-        });
+      await ctx.db
+        .update(voters)
+        .set({
+          email: input.email,
+        })
+        .where(eq(voters.id, input.id));
 
-        if (!voter) throw new Error("Voter not found");
-        await ctx.db
-          .update(voters)
-          .set({
-            field: input.field,
-          })
-          .where(eq(voters.id, input.id));
-
-        return { type: "voter" };
-      }
+      return { type: "voter" };
     }),
   deleteSingleVoter: protectedProcedure
     .input(
@@ -1230,7 +1204,6 @@ export const electionRouter = createTRPCRouter({
         voters: z.array(
           z.object({
             email: z.string().min(1),
-            field: z.record(z.string().min(1)),
           }),
         ),
       }),

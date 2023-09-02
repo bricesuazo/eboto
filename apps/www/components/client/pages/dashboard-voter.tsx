@@ -1,7 +1,6 @@
 "use client";
 
 import CreateVoter from "@/components/client/modals/create-voter";
-import InviteAllAddedVoters from "@/components/client/modals/invite-all-added-voters";
 import UpdateVoterField from "@/components/client/modals/update-voter-field";
 import UploadBulkVoter from "@/components/client/modals/upload-bulk-voter";
 import { isElectionOngoing } from "@/utils";
@@ -39,7 +38,6 @@ export default function DashboardVoter({
     account_status: string;
     created_at: Date;
     has_voted: boolean;
-    field: Record<string, string>;
   }[];
 }) {
   const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
@@ -88,10 +86,7 @@ export default function DashboardVoter({
       <Stack>
         <Flex gap="xs" direction={{ base: "column", sm: "row" }}>
           <Group gap="xs">
-            <CreateVoter
-              voter_fields={election.voter_fields}
-              election_id={election.id}
-            />
+            <CreateVoter election_id={election.id} />
             <UploadBulkVoter
               election_id={election.id}
               voter_fields={election.voter_fields}
@@ -117,16 +112,6 @@ export default function DashboardVoter({
                 }
               />
             </Tooltip>
-
-            {!isElectionOngoing({ election }) && (
-              <InviteAllAddedVoters
-                election_id={election.id}
-                isDisabled={
-                  voters.filter((voter) => voter.account_status === "ADDED")
-                    .length === 0
-                }
-              />
-            )}
           </Group>
         </Flex>
 
@@ -231,7 +216,6 @@ export default function DashboardVoter({
                   voter={{
                     id: row.id,
                     email: row.getValue<string>("email"),
-                    field: voters.find((v) => v.id === row.id)?.field ?? {},
                     account_status: row.getValue<
                       "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED"
                     >("account_status"),

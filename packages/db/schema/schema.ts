@@ -1,7 +1,6 @@
 import {
   date,
   int,
-  json,
   longtext,
   mysqlEnum,
   mysqlTable,
@@ -89,7 +88,7 @@ export const voters = mysqlTable("voters", {
   id,
   created_at,
 
-  field: json("field").$type<Record<string, string>>().notNull(),
+  email: text("email").notNull(),
 
   deleted_at,
 
