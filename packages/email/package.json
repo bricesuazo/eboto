@@ -6,7 +6,7 @@
     "email:dev": "email dev --port 3002"
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.398.0",
+    "@aws-sdk/client-ses": "^3.414.0",
     "@react-email/button": "0.0.10",
     "@react-email/html": "0.0.4",
     "@react-email/render": "^0.0.7",
@@ -15,8 +15,8 @@
   },
   "devDependencies": {
     "@eboto-mo/tsconfig": "workspace:*",
-    "@types/node": "^20.5.7",
-    "eslint": "^8.48.0",
+    "@types/node": "^20.6.2",
+    "eslint": "^8.49.0",
     "typescript": "^5.2.2"
   }
 }

@@ -8,7 +8,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@tabler/icons-react": "^2.32.0",
+    "@tabler/icons-react": "^2.34.0",
     "zod": "^3.22.2"
   }
 }

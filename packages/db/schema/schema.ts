@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
   date,
   int,
@@ -15,9 +16,14 @@ const id = varchar("id", { length: 256 })
   .notNull()
   .unique()
   .$defaultFn(() => nanoid());
-const created_at = timestamp("created_at").notNull().defaultNow();
+const created_at = timestamp("created_at")
+  .default(sql`CURRENT_TIMESTAMP`)
+  .notNull();
 const deleted_at = timestamp("deleted_at");
-const updated_at = timestamp("updated_at").defaultNow().notNull().onUpdateNow();
+const updated_at = timestamp("updated_at")
+  .default(sql`CURRENT_TIMESTAMP`)
+  .onUpdateNow()
+  .notNull();
 const election_id = varchar("election_id", { length: 256 }).notNull();
 const user_id = varchar("user_id", { length: 256 }).notNull();
 const voter_id = varchar("voter_id", { length: 256 }).notNull();
