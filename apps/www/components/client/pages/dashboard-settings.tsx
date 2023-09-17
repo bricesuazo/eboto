@@ -5,6 +5,7 @@ import { uploadImage } from "@/utils";
 import type { Election, Publicity } from "@eboto-mo/db/schema";
 import { publicity } from "@eboto-mo/db/schema";
 import {
+  Alert,
   Box,
   Button,
   Group,
@@ -21,8 +22,16 @@ import { Dropzone, DropzoneReject, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import type { FileWithPath } from "@mantine/dropzone";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { IconCalendar, IconLetterCase, IconX } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import {
+  IconAlertCircle,
+  IconCalendar,
+  IconCheck,
+  IconLetterCase,
+  IconX,
+} from "@tabler/icons-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useRef } from "react";
 
 export default function DashboardSettings({
@@ -30,34 +39,35 @@ export default function DashboardSettings({
 }: {
   election: Election;
 }) {
+  const router = useRouter();
   const openRef = useRef<() => void>(null);
-  // const { mutate, isLoading, isError, error } =
-  //   api.election.editElection.useMutation({
-  //     onSuccess: async () => {
-  //       if (form.values.newSlug !== election.slug) {
-  //         router.push(`/dashboard/${form.values.newSlug}/settings`);
-  //       }
+  const { mutate, isLoading, isError, error } =
+    api.election.editElection.useMutation({
+      onSuccess: () => {
+        if (form.values.newSlug !== election.slug) {
+          router.push(`/dashboard/${form.values.newSlug}/settings`);
+        }
 
-  //       queryClient.invalidateQueries({ queryKey: ["getAllMyElections"] });
+        // queryClient.invalidateQueries({ queryKey: ["getAllMyElections"] });
 
-  //       notifications.show({
-  //         title: "Election settings updated.",
-  //         leftSection: <IconCheck size="1.1rem" />,
-  //         message: "Your changes have been saved.",
-  //         autoClose: 3000,
-  //       });
+        notifications.show({
+          title: "Election settings updated.",
+          icon: <IconCheck size="1.1rem" />,
+          message: "Your changes have been saved.",
+          autoClose: 3000,
+        });
 
-  //       form.resetDirty();
-  //     },
-  //     onError: (error) => {
-  //       notifications.show({
-  //         title: "Error",
-  //         message: error.message,
-  //         color: "red",
-  //         autoClose: 3000,
-  //       });
-  //     },
-  //   });
+        form.resetDirty();
+      },
+      onError: (error) => {
+        notifications.show({
+          title: "Error",
+          message: error.message,
+          color: "red",
+          autoClose: 3000,
+        });
+      },
+    });
   const [opened, { open, close }] = useDisclosure(false);
 
   const form = useForm<{
@@ -163,25 +173,25 @@ export default function DashboardSettings({
     },
   });
 
-  //   const deleteElectionMutation = api.election.delete.useMutation({
-  //     onSuccess: async () => {
-  //       await router.push("/dashboard");
-  //       notifications.show({
-  //         title: "Election deleted.",
-  //         message: "Your election has been deleted.",
-  //         leftSection: <IconCheck size="1.1rem" />,
-  //         autoClose: 3000,
-  //       });
-  //     },
-  //     onError: (error) => {
-  //       notifications.show({
-  //         title: "Error",
-  //         message: error.message,
-  //         color: "red",
-  //         autoClose: 3000,
-  //       });
-  //     },
-  //   });
+  const deleteElectionMutation = api.election.deleteElection.useMutation({
+    onSuccess: () => {
+      router.push("/dashboard");
+      notifications.show({
+        title: "Election deleted.",
+        message: "Your election has been deleted.",
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 3000,
+      });
+    },
+    onError: (error) => {
+      notifications.show({
+        title: "Error",
+        message: error.message,
+        color: "red",
+        autoClose: 3000,
+      });
+    },
+  });
 
   return (
     <Box h="100%">
@@ -191,12 +201,10 @@ export default function DashboardSettings({
         title={<Text fw={600}>Delete election</Text>}
       >
         <form
-          onSubmit={deleteForm.onSubmit(
-            () =>
-              void (async () =>
-                await api.election.deleteElection.mutate({
-                  election_id: election.id,
-                }))(),
+          onSubmit={deleteForm.onSubmit(() =>
+            deleteElectionMutation.mutate({
+              election_id: election.id,
+            }),
           )}
         >
           <Stack gap="sm">
@@ -248,7 +256,7 @@ export default function DashboardSettings({
       <form
         onSubmit={form.onSubmit((values) => {
           void (async () =>
-            await api.election.editElection.mutate({
+            mutate({
               id: election.id,
               name: values.name,
               newSlug: values.newSlug,
@@ -308,7 +316,7 @@ export default function DashboardSettings({
             placeholder="Enter election name"
             {...form.getInputProps("name")}
             leftSection={<IconLetterCase size="1rem" />}
-            // disabled={isLoading}
+            disabled={isLoading}
           />
 
           <TextInput
@@ -325,12 +333,11 @@ export default function DashboardSettings({
             placeholder="Enter election slug"
             {...form.getInputProps("newSlug")}
             leftSection={<IconLetterCase size="1rem" />}
-            // error={
-            //   form.errors.slug ||
-            //   (updateElectionMutation.error?.data?.code === "CONFLICT" &&
-            //     updateElectionMutation.error?.message)
-            // }
-            // disabled={isLoading}
+            error={
+              form.errors.slug ??
+              (error?.data?.code === "CONFLICT" && error?.message)
+            }
+            disabled={isLoading}
           />
 
           <Textarea
@@ -342,12 +349,11 @@ export default function DashboardSettings({
             minRows={3}
             maxRows={8}
             autosize
-            // error={
-            //   form.errors.description ||
-            //   (updateElectionMutation.error?.data?.code === "CONFLICT" &&
-            //     updateElectionMutation.error?.message)
-            // }
-            // disabled={isLoading}
+            error={
+              form.errors.description ??
+              (error?.data?.code === "CONFLICT" && error?.message)
+            }
+            disabled={isLoading}
           />
 
           {/* <TextInput
@@ -436,7 +442,7 @@ export default function DashboardSettings({
               value: p,
               label: p.charAt(0) + p.slice(1).toLowerCase(),
             }))}
-            // disabled={isLoading}
+            disabled={isLoading}
           />
 
           <Box>
@@ -454,7 +460,7 @@ export default function DashboardSettings({
                 maxSize={5 * 1024 ** 2}
                 accept={IMAGE_MIME_TYPE}
                 multiple={false}
-                // loading={isLoading}
+                loading={isLoading}
               >
                 <Group
                   justify="center"
@@ -544,9 +550,9 @@ export default function DashboardSettings({
                     });
                   }}
                   disabled={
-                    typeof form.values.logo === "string" || !election.logo
-                    // ||
-                    // isLoading
+                    typeof form.values.logo === "string" ||
+                    !election.logo ||
+                    isLoading
                   }
                 >
                   Reset logo
@@ -557,10 +563,7 @@ export default function DashboardSettings({
                   onClick={() => {
                     form.setFieldValue("logo", null);
                   }}
-                  disabled={
-                    !form.values.logo
-                    // || isLoading
-                  }
+                  disabled={!form.values.logo || isLoading}
                 >
                   Delete logo
                 </Button>
@@ -568,7 +571,7 @@ export default function DashboardSettings({
             </Stack>
           </Box>
 
-          {/* {isError && (
+          {isError && (
             <Alert
               icon={<IconAlertCircle size="1rem" />}
               title="Error"
@@ -576,12 +579,12 @@ export default function DashboardSettings({
             >
               {error.message}
             </Alert>
-          )} */}
+          )}
 
           <Group justify="space-between">
             <Button
               type="submit"
-              // loading={isLoading}
+              loading={isLoading}
               disabled={!form.isDirty() || !form.isValid()}
               hiddenFrom="sm"
             >
@@ -599,7 +602,7 @@ export default function DashboardSettings({
               variant="outline"
               color="red"
               onClick={open}
-              // disabled={isLoading}
+              disabled={isLoading}
               // style={(theme) => ({
               //   [theme.fn.smallerThan("xs")]: {
               //     display: "none",

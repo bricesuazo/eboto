@@ -1,6 +1,7 @@
 "use client";
 
 import { api } from "@/trpc/client";
+import { useConfetti } from "@/utils/confetti";
 import { positionTemplate } from "@eboto-mo/constants";
 import type { MantineStyleProp } from "@mantine/core";
 import {
@@ -15,9 +16,11 @@ import {
 import { DateTimePicker } from "@mantine/dates";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import {
   IconAlertCircle,
   IconCalendar,
+  IconCheck,
   IconLetterCase,
   IconPlus,
   IconTemplate,
@@ -31,6 +34,7 @@ export default function CreateElection({
   style?: MantineStyleProp;
 }) {
   const router = useRouter();
+  const { fireConfetti } = useConfetti();
   const [opened, { open, close }] = useDisclosure(false);
 
   const form = useForm<{
@@ -118,9 +122,16 @@ export default function CreateElection({
 
   const { mutate, isLoading, isError, error } =
     api.election.createElection.useMutation({
-      onSuccess: () => {
+      onSuccess: async () => {
         router.push(`/dashboard/${form.values.slug}`);
         close();
+        notifications.show({
+          title: "Election created!",
+          message: "Successfully created election",
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        await fireConfetti();
       },
     });
 

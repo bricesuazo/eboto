@@ -4,6 +4,7 @@ import { api } from "@/trpc/client";
 import type { VoterField } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
+  Alert,
   Button,
   Group,
   Modal,
@@ -20,7 +21,10 @@ import {
   MS_EXCEL_MIME_TYPE,
 } from "@mantine/dropzone";
 import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import {
+  IconAlertCircle,
+  IconCheck,
   IconDownload,
   IconFileSpreadsheet,
   IconTrash,
@@ -40,18 +44,18 @@ export default function UploadBulkVoter({
 }) {
   const [opened, { open, close }] = useDisclosure();
 
-  // const { mutate, isLoading, isError, error, reset } =
-  //   api.election.uploadBulkVoter.useMutation({
-  //     onSuccess: ({ count }) => {
-  //       notifications.show({
-  //         title: `${count} voter(s) added!`,
-  //         message: "Successfully added voters",
-  //         icon: <IconCheck size="1.1rem" />,
-  //         autoClose: 5000,
-  //       });
-  //       close();
-  //     },
-  //   });
+  const { mutate, isLoading, isError, error, reset } =
+    api.election.uploadBulkVoter.useMutation({
+      onSuccess: ({ count }) => {
+        notifications.show({
+          title: `${count} voter(s) added!`,
+          message: "Successfully added voters",
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+      },
+    });
 
   const [selectedFiles, setSelectedFiles] = useState<
     {
@@ -67,12 +71,12 @@ export default function UploadBulkVoter({
   useEffect(() => {
     if (opened) {
       setSelectedFiles([]);
-      // reset();
+      reset();
     }
   }, [opened]);
 
   useEffect(() => {
-    // reset();
+    reset();
   }, [selectedFiles]);
 
   return (
@@ -278,7 +282,7 @@ export default function UploadBulkVoter({
             </Group>
           </Dropzone>
 
-          {/* {isError && (
+          {isError && (
             <Alert
               icon={<IconAlertCircle size="1rem" />}
               color="red"
@@ -286,7 +290,7 @@ export default function UploadBulkVoter({
             >
               {error.message}
             </Alert>
-          )} */}
+          )}
 
           <Button
             size="xs"
@@ -335,19 +339,15 @@ export default function UploadBulkVoter({
               <IconTrash size="1.25rem" />
             </ActionIcon>
             <Group justify="right" gap="xs">
-              <Button
-                variant="default"
-                onClick={close}
-                //   disabled={createVoterMutation.isLoading}
-              >
+              <Button variant="default" onClick={close} disabled={isLoading}>
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={selectedFiles.length === 0}
-                // loading={isLoading}
+                loading={isLoading}
                 onClick={() =>
-                  api.election.uploadBulkVoter.mutate({
+                  mutate({
                     election_id,
                     voters: selectedFiles.flatMap((file) => file.voters),
                   })

@@ -1196,6 +1196,10 @@ export const electionRouter = createTRPCRouter({
               inArray(voters.id, votersIds),
             ),
           );
+
+      return {
+        count: votersIds.length,
+      };
     }),
   uploadBulkVoter: protectedProcedure
     .input(
@@ -1233,6 +1237,10 @@ export const electionRouter = createTRPCRouter({
       //     });
       //   }),
       // );
+
+      return {
+        count: input.voters.length,
+      };
     }),
   deleteElection: protectedProcedure
     .input(

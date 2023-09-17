@@ -10,6 +10,7 @@ import type {
 } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
+  Alert,
   Box,
   Button,
   Flex,
@@ -32,7 +33,10 @@ import type { FileWithPath } from "@mantine/dropzone";
 import { Dropzone, DropzoneReject, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import {
+  IconAlertCircle,
+  IconCheck,
   IconExternalLink,
   IconFlag,
   IconInfoCircle,
@@ -44,7 +48,7 @@ import {
 } from "@tabler/icons-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 export default function EditCandidate({
   candidate,
@@ -86,22 +90,22 @@ export default function EditCandidate({
   const [opened, { open, close }] = useDisclosure(false);
   const openRef = useRef<() => void>(null);
 
-  // const { mutate, isLoading, isError, error, reset } =
-  //   api.election.editCandidate.useMutation({
-  //     onSuccess: () => {
-  //       notifications.show({
-  //         title: `${form.values.first_name}${
-  //           form.values.middle_name && ` ${form.values.middle_name}`
-  //         } ${form.values.last_name} created!`,
-  //         message: `Successfully updated candidate: ${form.values.first_name}${
-  //           form.values.middle_name && ` ${form.values.middle_name}`
-  //         } ${form.values.last_name}`,
-  //         icon: <IconCheck size="1.1rem" />,
-  //         autoClose: 5000,
-  //       });
-  //       close();
-  //     },
-  //   });
+  const { mutate, isLoading, isError, error, reset } =
+    api.election.editCandidate.useMutation({
+      onSuccess: () => {
+        notifications.show({
+          title: `${form.values.first_name}${
+            form.values.middle_name && ` ${form.values.middle_name}`
+          } ${form.values.last_name} created!`,
+          message: `Successfully updated candidate: ${form.values.first_name}${
+            form.values.middle_name && ` ${form.values.middle_name}`
+          } ${form.values.last_name}`,
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+      },
+    });
 
   const form = useForm<{
     first_name: string;
@@ -182,6 +186,12 @@ export default function EditCandidate({
     },
   });
 
+  useEffect(() => {
+    if (opened) {
+      reset();
+    }
+  }, [opened]);
+
   const DeleteCredentialButton = ({
     type,
     id,
@@ -189,10 +199,10 @@ export default function EditCandidate({
     type: "PLATFORM" | "ACHIEVEMENT" | "AFFILIATION" | "EVENTATTENDED";
     id: string;
   }) => {
-    // const deleteCredentialMutation =
-    //   api.candidate.deleteSingleCredential.useMutation();
-    // const deletePlatformMutation =
-    //   api.candidate.deleteSinglePlatform.useMutation();
+    const deleteCredentialMutation =
+      api.election.deleteSingleCredential.useMutation();
+    const deletePlatformMutation =
+      api.election.deleteSinglePlatform.useMutation();
     return (
       <Button
         variant="outline"
@@ -203,7 +213,7 @@ export default function EditCandidate({
         onClick={async () => {
           if (type === "PLATFORM") {
             if (candidate.platforms.find((a) => a.id === id)) {
-              await api.election.deleteSinglePlatform.mutate({ id });
+              await deletePlatformMutation.mutateAsync({ id });
               // await context.candidate.getAll.invalidate();
               close();
             } else {
@@ -214,7 +224,7 @@ export default function EditCandidate({
             }
           } else if (type === "ACHIEVEMENT") {
             if (candidate.credential?.achievements.find((a) => a.id === id)) {
-              await api.election.deleteSingleCredential.mutate({ id, type });
+              await deleteCredentialMutation.mutateAsync({ id, type });
               // await context.candidate.getAll.invalidate();
               close();
             } else {
@@ -227,7 +237,7 @@ export default function EditCandidate({
             }
           } else if (type === "AFFILIATION") {
             if (candidate.credential?.affiliations.find((a) => a.id === id)) {
-              await api.election.deleteSingleCredential.mutate({ id, type });
+              await deleteCredentialMutation.mutateAsync({ id, type });
               // await context.candidate.getAll.invalidate();
               close();
             } else {
@@ -242,7 +252,7 @@ export default function EditCandidate({
             if (
               candidate.credential?.events_attended.find((a) => a.id === id)
             ) {
-              await api.election.deleteSingleCredential.mutate({ id, type });
+              await deleteCredentialMutation.mutateAsync({ id, type });
               // await context.candidate.getAll.invalidate();
               close();
             } else {
@@ -255,9 +265,9 @@ export default function EditCandidate({
             }
           }
         }}
-        // loading={
-        //   deleteCredentialMutation.isLoading || deletePlatformMutation.isLoading
-        // }
+        loading={
+          deleteCredentialMutation.isLoading || deletePlatformMutation.isLoading
+        }
       >
         Delete{" "}
         {(() => {
@@ -297,7 +307,7 @@ export default function EditCandidate({
         <form
           onSubmit={form.onSubmit((values) => {
             void (async () => {
-              await api.election.editCandidate.mutate({
+              mutate({
                 id: candidate.id,
                 first_name: values.first_name,
                 middle_name: values.middle_name,
@@ -556,9 +566,8 @@ export default function EditCandidate({
                       }}
                       disabled={
                         !candidate.image_link ||
-                        typeof form.values.image === "string"
-                        // ||
-                        // isLoading
+                        typeof form.values.image === "string" ||
+                        isLoading
                       }
                       style={{ flex: 1 }}
                     >
@@ -568,10 +577,7 @@ export default function EditCandidate({
                       onClick={() => {
                         form.setFieldValue("image", null);
                       }}
-                      disabled={
-                        !form.values.image
-                        // || isLoading
-                      }
+                      disabled={!form.values.image || isLoading}
                       style={{ flex: 1 }}
                     >
                       Delete image
@@ -1000,7 +1006,7 @@ export default function EditCandidate({
                 </Tabs>
               </TabsPanel>
 
-              {/* {isError && (
+              {isError && (
                 <Alert
                   icon={<IconAlertCircle size="1rem" />}
                   title="Error"
@@ -1008,7 +1014,7 @@ export default function EditCandidate({
                 >
                   {error.message}
                 </Alert>
-              )} */}
+              )}
 
               <Group justify="space-between" gap={0}>
                 <ActionIcon
@@ -1034,14 +1040,14 @@ export default function EditCandidate({
                   <Button
                     variant="default"
                     onClick={close}
-                    // disabled={isLoading}
+                    disabled={isLoading}
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
                     disabled={!form.isDirty() || !form.isValid()}
-                    // loading={isLoading}
+                    loading={isLoading}
                   >
                     Update
                   </Button>

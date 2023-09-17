@@ -2,10 +2,23 @@
 
 import { api } from "@/trpc/client";
 import type { Partylist } from "@eboto-mo/db/schema";
-import { Button, Group, Modal, Stack, Text, TextInput } from "@mantine/core";
+import {
+  Alert,
+  Button,
+  Group,
+  Modal,
+  Stack,
+  Text,
+  TextInput,
+} from "@mantine/core";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { IconLetterCase } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import {
+  IconAlertCircle,
+  IconCheck,
+  IconLetterCase,
+} from "@tabler/icons-react";
 import { useEffect } from "react";
 
 export default function EditPartylist({ partylist }: { partylist: Partylist }) {
@@ -40,33 +53,33 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
     },
   });
 
-  // const { mutate, isLoading, isError, error, reset } =
-  //   api.election.editPartylist.useMutation({
-  //     onSuccess: async (_, data) => {
-  //       notifications.show({
-  //         title: `${form.values.name} (${form.values.newAcronym}) updated.`,
-  //         leftSection: <IconCheck size="1.1rem" />,
-  //         message: "Your changes have been saved.",
-  //         autoClose: 3000,
-  //       });
-  //       close();
+  const { mutate, isLoading, isError, error, reset } =
+    api.election.editPartylist.useMutation({
+      onSuccess: () => {
+        notifications.show({
+          title: `${form.values.name} (${form.values.newAcronym}) updated.`,
+          icon: <IconCheck size="1.1rem" />,
+          message: "Your changes have been saved.",
+          autoClose: 3000,
+        });
+        close();
 
-  //       form.resetDirty(form.values);
-  //     },
-  //     onError: (error) => {
-  //       notifications.show({
-  //         title: "Error",
-  //         message: error.message,
-  //         color: "red",
-  //         autoClose: 3000,
-  //       });
-  //     },
-  //   });
+        form.resetDirty(form.values);
+      },
+      onError: (error) => {
+        notifications.show({
+          title: "Error",
+          message: error.message,
+          color: "red",
+          autoClose: 3000,
+        });
+      },
+    });
 
   useEffect(() => {
     if (opened) {
       form.resetDirty();
-      // reset();
+      reset();
     }
   }, [opened]);
 
@@ -89,17 +102,15 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
       >
         <form
           onSubmit={form.onSubmit((value) => {
-            void (async () => {
-              await api.election.editPartylist.mutate({
-                id: partylist.id,
-                name: value.name,
-                oldAcronym: partylist.acronym,
-                newAcronym: value.newAcronym,
-                election_id: partylist.election_id,
-                description: value.description,
-                logo_link: value.logo_link,
-              });
-            })();
+            mutate({
+              id: partylist.id,
+              name: value.name,
+              oldAcronym: partylist.acronym,
+              newAcronym: value.newAcronym,
+              election_id: partylist.election_id,
+              description: value.description,
+              logo_link: value.logo_link,
+            });
           })}
         >
           <Stack gap="sm">
@@ -108,6 +119,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
               label="Name"
               required
               withAsterisk
+              disabled={isLoading}
               {...form.getInputProps("name")}
               leftSection={<IconLetterCase size="1rem" />}
             />
@@ -117,33 +129,30 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
               label="Acronym"
               required
               withAsterisk
+              disabled={isLoading}
               {...form.getInputProps("newAcronym")}
               leftSection={<IconLetterCase size="1rem" />}
             />
 
-            {/* {isError && (
+            {isError && (
               <Alert
-                leftSection={<IconAlertCircle size="1rem" />}
+                icon={<IconAlertCircle size="1rem" />}
                 color="red"
                 title="Error"
                 variant="filled"
               >
                 {error.message}
               </Alert>
-            )} */}
+            )}
 
             <Group justify="right" gap="xs">
-              <Button
-                variant="default"
-                onClick={close}
-                // disabled={isLoading}
-              >
+              <Button variant="default" onClick={close} disabled={isLoading}>
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isDirty()}
-                // loading={isLoading}
+                loading={isLoading}
               >
                 Update
               </Button>

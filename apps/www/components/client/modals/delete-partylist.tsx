@@ -2,36 +2,46 @@
 
 import { api } from "@/trpc/client";
 import type { Partylist } from "@eboto-mo/db/schema";
-import { Button, Group, Mark, Modal, Stack, Text } from "@mantine/core";
+import { Alert, Button, Group, Mark, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
+import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
+import { useEffect } from "react";
 
 export default function DeletePartylist({
   partylist,
 }: {
   partylist: Partylist;
 }) {
-  // const { mutate, isLoading, isError, error, reset } =
-  //   api.election.deletePartylist.useMutation({
-  //     onSuccess: async () => {
-  //       notifications.show({
-  //         title: `${partylist.name} (${partylist.acronym}) deleted!`,
-  //         message: "Successfully deleted partylist",
-  //         icon: <IconCheck size="1.1rem" />,
-  //         autoClose: 5000,
-  //       });
-  //     },
-  //     onError: (error) => {
-  //       notifications.show({
-  //         title: "Error",
-  //         message: error.message,
-  //         color: "red",
-  //         autoClose: 3000,
-  //       });
-  //     },
-  //     onMutate: () => close(),
-  //   });
+  const { mutate, isLoading, isError, error, reset } =
+    api.election.deletePartylist.useMutation({
+      onSuccess: () => {
+        notifications.show({
+          title: `${partylist.name} (${partylist.acronym}) deleted!`,
+          message: "Successfully deleted partylist",
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+      },
+      onError: (error) => {
+        notifications.show({
+          title: "Error",
+          message: error.message,
+          color: "red",
+          autoClose: 3000,
+        });
+      },
+      onMutate: () => close(),
+    });
 
   const [opened, { open, close }] = useDisclosure(false);
+
+  useEffect(() => {
+    if (opened) {
+      reset();
+    }
+  }, [opened]);
+
   return (
     <>
       <Button onClick={open} variant="subtle" color="red" size="compact-sm">
@@ -59,7 +69,7 @@ export default function DeletePartylist({
             </Mark>
             <Text>This action cannot be undone.</Text>
           </Stack>
-          {/* {isError && (
+          {isError && (
             <Alert
               icon={<IconAlertCircle size="1rem" />}
               color="red"
@@ -68,20 +78,16 @@ export default function DeletePartylist({
             >
               {error.message}
             </Alert>
-          )} */}
+          )}
           <Group justify="right" gap="xs">
-            <Button
-              variant="default"
-              onClick={close}
-              // disabled={isLoading}
-            >
+            <Button variant="default" onClick={close} disabled={isLoading}>
               Cancel
             </Button>
             <Button
               color="red"
-              // loading={isLoading}
+              loading={isLoading}
               onClick={() =>
-                api.election.deletePartylist.mutate({
+                mutate({
                   partylist_id: partylist.id,
                   election_id: partylist.election_id,
                 })

@@ -167,6 +167,9 @@ importers:
       react:
         specifier: ^18.2.0
         version: registry.npmjs.org/react@18.2.0
+      react-canvas-confetti:
+        specifier: ^1.4.0
+        version: registry.npmjs.org/react-canvas-confetti@1.4.0(react@18.2.0)
       react-dom:
         specifier: ^18.2.0
         version: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
@@ -3977,6 +3980,12 @@ packages:
       '@types/node': registry.npmjs.org/@types/node@20.6.2
     dev: false
 
+  registry.npmjs.org/@types/canvas-confetti@1.6.0:
+    resolution: {integrity: sha512-Yq6rIccwcco0TLD5SMUrIM7Fk7Fe/C0jmNRxJJCLtAF6gebDkPuUjK5EHedxecm69Pi/aA+It39Ux4OHmFhjRw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@types/canvas-confetti/-/canvas-confetti-1.6.0.tgz}
+    name: '@types/canvas-confetti'
+    version: 1.6.0
+    dev: false
+
   registry.npmjs.org/@types/connect@3.4.35:
     resolution: {integrity: sha512-cdeYyv4KWoEgpBISTxWvqYsVy444DOqehiF3fM3ne10AmJ62RSyNkUnxMJXHQWRQQX2eR94m5y1IZyDwBjV9FQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@types/connect/-/connect-3.4.35.tgz}
     name: '@types/connect'
@@ -4971,6 +4980,12 @@ packages:
     resolution: {integrity: sha512-vlPVrhsCS7XaSh2VvWluIQEzVhefrUQcEsQWSS5A5V+dM07uv1qHeQzAOTGIMy9i3e9bH15+muvI/UHojVgS/Q==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001534.tgz}
     name: caniuse-lite
     version: 1.0.30001534
+
+  registry.npmjs.org/canvas-confetti@1.6.0:
+    resolution: {integrity: sha512-ej+w/m8Jzpv9Z7W7uJZer14Ke8P2ogsjg4ZMGIuq4iqUOqY2Jq8BNW42iGmNfRwREaaEfFIczLuZZiEVSYNHAA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/canvas-confetti/-/canvas-confetti-1.6.0.tgz}
+    name: canvas-confetti
+    version: 1.6.0
+    dev: false
 
   registry.npmjs.org/case-anything@2.1.13:
     resolution: {integrity: sha512-zlOQ80VrQ2Ue+ymH5OuM/DlDq64mEm+B9UTdHULv5osUMD6HalNTblf2b1u/m6QecjsnOkBpqVZ+XPwIVsy7Ng==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/case-anything/-/case-anything-2.1.13.tgz}
@@ -9313,6 +9328,19 @@ packages:
       minimist: registry.npmjs.org/minimist@1.2.8
       strip-json-comments: registry.npmjs.org/strip-json-comments@2.0.1
     dev: true
+
+  registry.npmjs.org/react-canvas-confetti@1.4.0(react@18.2.0):
+    resolution: {integrity: sha512-ByBdSsNGUxlcJuOqSgbZw1VWNNO3b7njTmnuM1Y36mvwdCkCRs8rLkRAjn6MQK96LgWcfDVhr6ZT5olm2w8Zwg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/react-canvas-confetti/-/react-canvas-confetti-1.4.0.tgz}
+    id: registry.npmjs.org/react-canvas-confetti/1.4.0
+    name: react-canvas-confetti
+    version: 1.4.0
+    peerDependencies:
+      react: '*'
+    dependencies:
+      '@types/canvas-confetti': registry.npmjs.org/@types/canvas-confetti@1.6.0
+      canvas-confetti: registry.npmjs.org/canvas-confetti@1.6.0
+      react: registry.npmjs.org/react@18.2.0
+    dev: false
 
   registry.npmjs.org/react-dom@18.2.0(react@18.2.0):
     resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/react-dom/-/react-dom-18.2.0.tgz}

@@ -1,10 +1,24 @@
 "use client";
 
 import { api } from "@/trpc/client";
-import { Button, Group, Modal, Stack, Text, TextInput } from "@mantine/core";
+import {
+  Alert,
+  Button,
+  Group,
+  Modal,
+  Stack,
+  Text,
+  TextInput,
+} from "@mantine/core";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { IconFlag, IconLetterCase } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import {
+  IconAlertCircle,
+  IconCheck,
+  IconFlag,
+  IconLetterCase,
+} from "@tabler/icons-react";
 import { useEffect } from "react";
 
 export default function CreatePartylist({
@@ -38,18 +52,18 @@ export default function CreatePartylist({
     },
   });
 
-  // const { mutate, isLoading, isError, error } =
-  //   api.election.createPartylist.useMutation({
-  //     onSuccess: () => {
-  //       notifications.show({
-  //         title: `${form.values.name} (${form.values.acronym}) created!`,
-  //         message: "Successfully created partylist",
-  //         icon: <IconCheck size="1.1rem" />,
-  //         autoClose: 5000,
-  //       });
-  //       close();
-  //     },
-  //   });
+  const { mutate, isLoading, isError, error } =
+    api.election.createPartylist.useMutation({
+      onSuccess: () => {
+        notifications.show({
+          title: `${form.values.name} (${form.values.acronym}) created!`,
+          message: "Successfully created partylist",
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+      },
+    });
 
   useEffect(() => {
     if (opened) form.reset();
@@ -68,22 +82,17 @@ export default function CreatePartylist({
         Add partylist
       </Button>
       <Modal
-        opened={
-          opened
-          // || isLoading
-        }
+        opened={opened || isLoading}
         onClose={close}
         title={<Text fw={600}>Create partylist</Text>}
       >
         <form
           onSubmit={form.onSubmit((value) => {
-            void (async () => {
-              await api.election.createPartylist.mutate({
-                name: value.name,
-                acronym: value.acronym,
-                election_id,
-              });
-            })();
+            mutate({
+              name: value.name,
+              acronym: value.acronym,
+              election_id,
+            });
           })}
         >
           <Stack gap="sm">
@@ -92,6 +101,7 @@ export default function CreatePartylist({
               label="Name"
               required
               withAsterisk
+              disabled={isLoading}
               {...form.getInputProps("name")}
               leftSection={<IconLetterCase size="1rem" />}
             />
@@ -100,12 +110,13 @@ export default function CreatePartylist({
               placeholder="Enter acronym"
               label="Acronym"
               required
+              disabled={isLoading}
               withAsterisk
               {...form.getInputProps("acronym")}
               leftSection={<IconLetterCase size="1rem" />}
             />
 
-            {/* {isError && (
+            {isError && (
               <Alert
                 icon={<IconAlertCircle size="1rem" />}
                 color="red"
@@ -114,20 +125,16 @@ export default function CreatePartylist({
               >
                 {error.message}
               </Alert>
-            )} */}
+            )}
 
             <Group justify="right" gap="xs">
-              <Button
-                variant="default"
-                onClick={close}
-                // disabled={isLoading}
-              >
+              <Button variant="default" onClick={close} disabled={isLoading}>
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isValid()}
-                // loading={isLoading}
+                loading={isLoading}
               >
                 Create
               </Button>

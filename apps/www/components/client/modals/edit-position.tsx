@@ -3,6 +3,7 @@
 import { api } from "@/trpc/client";
 import type { Position } from "@eboto-mo/db/schema";
 import {
+  Alert,
   Button,
   Checkbox,
   Flex,
@@ -15,7 +16,12 @@ import {
 } from "@mantine/core";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { IconLetterCase } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import {
+  IconAlertCircle,
+  IconCheck,
+  IconLetterCase,
+} from "@tabler/icons-react";
 import { useEffect } from "react";
 
 export default function EditPosition({ position }: { position: Position }) {
@@ -60,31 +66,31 @@ export default function EditPosition({ position }: { position: Position }) {
     },
   });
 
-  // const { mutate, isLoading, isError, error, reset } =
-  //   api.election.editPosition.useMutation({
-  //     onSuccess: async () => {
-  //       notifications.show({
-  //         title: `${form.values.name} updated!`,
-  //         message: "Successfully updated position",
-  //         leftSection: <IconCheck size="1.1rem" />,
-  //         autoClose: 5000,
-  //       });
-  //       close();
-  //     },
-  //     onError: (error) => {
-  //       notifications.show({
-  //         title: "Error",
-  //         message: error.message,
-  //         color: "red",
-  //         autoClose: 3000,
-  //       });
-  //     },
-  //   });
+  const { mutate, isLoading, isError, error, reset } =
+    api.election.editPosition.useMutation({
+      onSuccess: () => {
+        notifications.show({
+          title: `${form.values.name} updated!`,
+          message: "Successfully updated position",
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+      },
+      onError: (error) => {
+        notifications.show({
+          title: "Error",
+          message: error.message,
+          color: "red",
+          autoClose: 3000,
+        });
+      },
+    });
 
   useEffect(() => {
     if (opened) {
       form.resetDirty();
-      // reset();
+      reset();
     }
   }, [opened]);
   return (
@@ -93,24 +99,19 @@ export default function EditPosition({ position }: { position: Position }) {
         Edit
       </Button>
       <Modal
-        opened={
-          opened
-          // || isLoading
-        }
+        opened={opened || isLoading}
         onClose={close}
         title={<Text fw={600}>Edit Position - {position.name}</Text>}
       >
         <form
           onSubmit={form.onSubmit((value) => {
-            void (async () => {
-              await api.election.editPosition.mutate({
-                id: position.id,
-                name: value.name,
-                min: value.isSingle ? value.min : undefined,
-                max: value.isSingle ? value.max : undefined,
-                election_id: position.election_id,
-              });
-            })();
+            mutate({
+              id: position.id,
+              name: value.name,
+              min: value.isSingle ? value.min : undefined,
+              max: value.isSingle ? value.max : undefined,
+              election_id: position.election_id,
+            });
           })}
         >
           <Stack gap="sm">
@@ -121,12 +122,14 @@ export default function EditPosition({ position }: { position: Position }) {
               withAsterisk
               {...form.getInputProps("name")}
               leftSection={<IconLetterCase size="1rem" />}
+              disabled={isLoading}
             />
 
             <Checkbox
               label="Select multiple candidates?"
               description="If checked, you can select multiple candidates for this position when voting"
               {...form.getInputProps("isSingle", { type: "checkbox" })}
+              disabled={isLoading}
             />
 
             {form.values.isSingle && (
@@ -136,6 +139,7 @@ export default function EditPosition({ position }: { position: Position }) {
                   placeholder="Enter minimum"
                   label="Minimum"
                   withAsterisk
+                  disabled={isLoading}
                   min={0}
                   required={form.values.isSingle}
                 />
@@ -144,30 +148,32 @@ export default function EditPosition({ position }: { position: Position }) {
                   placeholder="Enter maximum"
                   label="Maximum"
                   withAsterisk
+                  disabled={isLoading}
                   min={1}
                   required={form.values.isSingle}
                 />
               </Flex>
             )}
 
-            {/* {isError && (
-              <Alert color="red" title="Error">
+            {isError && (
+              <Alert
+                icon={<IconAlertCircle size="1rem" />}
+                color="red"
+                title="Error"
+                variant="filled"
+              >
                 {error.message}
               </Alert>
-            )} */}
+            )}
 
             <Group justify="right" gap="xs">
-              <Button
-                variant="default"
-                onClick={close}
-                // disabled={isLoading}
-              >
+              <Button variant="default" onClick={close} disabled={isLoading}>
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isDirty() || !form.isValid()}
-                // loading={isLoading}
+                loading={isLoading}
               >
                 Update
               </Button>

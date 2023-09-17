@@ -3,6 +3,7 @@
 import { api } from "@/trpc/client";
 import {
   ActionIcon,
+  Alert,
   Button,
   Group,
   List,
@@ -12,7 +13,8 @@ import {
   Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconUserMinus } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import { IconAlertCircle, IconCheck, IconUserMinus } from "@tabler/icons-react";
 
 export default function DeleteBulkVoter({
   voters,
@@ -30,19 +32,18 @@ export default function DeleteBulkVoter({
 }) {
   const [opened, { open, close }] = useDisclosure();
 
-  // const { mutate, isLoading, isError, error } =
-  //   api.election.deleteBulkVoter.useMutation({
-  //     onSuccess: ({ count }) => {
-  //       notifications.show({
-  //         title: `${count} voter(s) successfully deleted!`,
-  //         message: `Successfully deleted voters`,
-  //         icon: <IconCheck size="1.1rem" />,
-  //         autoClose: 5000,
-  //       });
-  //       close();
-  //       onSuccess && onSuccess();
-  //     },
-  //   });
+  const { mutate, isLoading, isError, error } =
+    api.election.deleteBulkVoter.useMutation({
+      onSuccess: ({ count }) => {
+        notifications.show({
+          title: `${count} voter(s) successfully deleted!`,
+          message: `Successfully deleted voters`,
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+      },
+    });
 
   return (
     <>
@@ -86,7 +87,7 @@ export default function DeleteBulkVoter({
               <ListItem key={voter.id}>{voter.email}</ListItem>
             ))}
           </List>
-          {/* {isError && (
+          {isError && (
             <Alert
               icon={<IconAlertCircle size="1rem" />}
               color="red"
@@ -95,20 +96,16 @@ export default function DeleteBulkVoter({
             >
               {error.message}
             </Alert>
-          )} */}
+          )}
           <Group justify="right" gap="xs">
-            <Button
-              variant="default"
-              onClick={close}
-              // disabled={isLoading}
-            >
+            <Button variant="default" onClick={close} disabled={isLoading}>
               Cancel
             </Button>
             <Button
               color="red"
-              // loading={isLoading}
+              loading={isLoading}
               onClick={() =>
-                api.election.deleteBulkVoter.mutate({
+                mutate({
                   election_id,
                   voters,
                 })

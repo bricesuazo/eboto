@@ -4,6 +4,7 @@ import { api } from "@/trpc/client";
 import type { VoterField } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
+  Alert,
   Button,
   Group,
   Modal,
@@ -13,7 +14,13 @@ import {
 } from "@mantine/core";
 import { isEmail, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { IconAt, IconEdit } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import {
+  IconAlertCircle,
+  IconAt,
+  IconCheck,
+  IconEdit,
+} from "@tabler/icons-react";
 import { useEffect } from "react";
 
 export default function EditVoter({
@@ -42,22 +49,22 @@ export default function EditVoter({
     },
   });
 
-  // const { mutate, isLoading, isError, error, reset } =
-  //   api.election.editVoter.useMutation({
-  //     onSuccess: () => {
-  //       notifications.show({
-  //         title: "Success",
-  //         message: "Successfully updated voter!",
-  //         leftSection: <IconCheck size="1.1rem" />,
-  //         autoClose: 5000,
-  //       });
-  //       close();
-  //     },
-  //   });
+  const { mutate, isLoading, isError, error, reset } =
+    api.election.editVoter.useMutation({
+      onSuccess: () => {
+        notifications.show({
+          title: "Success",
+          message: "Successfully updated voter!",
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+      },
+    });
 
   useEffect(() => {
     if (opened) {
-      // reset();
+      reset();
 
       const dataForForm: typeof form.values = {
         email: voter.email,
@@ -86,23 +93,18 @@ export default function EditVoter({
         <IconEdit size="1.25rem" />
       </ActionIcon>
       <Modal
-        opened={
-          opened
-          // || isLoading
-        }
+        opened={opened || isLoading}
         onClose={close}
         title={<Text fw={600}>Edit voter - {voter.email}</Text>}
       >
         <form
           onSubmit={form.onSubmit((values) => {
-            void (async () => {
-              await api.election.editVoter.mutate({
-                id: voter.id,
-                election_id,
-                email: values.email,
-                account_status: voter.account_status,
-              });
-            })();
+            mutate({
+              id: voter.id,
+              election_id,
+              email: values.email,
+              account_status: voter.account_status,
+            });
           })}
         >
           <Stack gap="sm">
@@ -113,34 +115,30 @@ export default function EditVoter({
               withAsterisk
               {...form.getInputProps("email")}
               leftSection={<IconAt size="1rem" />}
-              disabled={voter.account_status !== "ADDED"}
+              disabled={voter.account_status !== "ADDED" || isLoading}
               description={
                 voter.account_status !== "ADDED" &&
                 "You can only edit the email address of a voter if they have not yet accepted their invitation."
               }
             />
 
-            {/* {isError && (
+            {isError && (
               <Alert
-                leftSection={<IconAlertCircle size="1rem" />}
+                icon={<IconAlertCircle size="1rem" />}
                 title="Error"
                 color="red"
               >
                 {error.message}
               </Alert>
-            )} */}
+            )}
             <Group justify="right" gap="xs">
-              <Button
-                variant="default"
-                onClick={close}
-                // disabled={isLoading}
-              >
+              <Button variant="default" onClick={close} disabled={isLoading}>
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isValid() || !form.isDirty()}
-                // loading={isLoading}
+                loading={isLoading}
               >
                 Update
               </Button>

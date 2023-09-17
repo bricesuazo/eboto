@@ -1,35 +1,49 @@
 "use client";
 
 import { api } from "@/trpc/client";
-import { Button, Group, Modal, Stack, Text, TextInput } from "@mantine/core";
+import {
+  Alert,
+  Button,
+  Group,
+  Modal,
+  Stack,
+  Text,
+  TextInput,
+} from "@mantine/core";
 import { isEmail, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { IconAt, IconUserPlus } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import {
+  IconAlertCircle,
+  IconAt,
+  IconCheck,
+  IconUserPlus,
+} from "@tabler/icons-react";
 import { useEffect } from "react";
 
 export default function CreateVoter({ election_id }: { election_id: string }) {
   const [opened, { open, close }] = useDisclosure(false);
 
-  // const { mutate, isLoading, isError, error, reset } =
-  //   api.election.createSingleVoter.useMutation({
-  //     onSuccess: async () => {
-  //       notifications.show({
-  //         title: `${form.values.email} added!`,
-  //         message: "Successfully deleted partylist",
-  //         leftSection: <IconCheck size="1.1rem" />,
-  //         autoClose: 5000,
-  //       });
-  //       close();
-  //     },
-  //     onError: (error) => {
-  //       notifications.show({
-  //         title: "Error",
-  //         message: error.message,
-  //         color: "red",
-  //         autoClose: 3000,
-  //       });
-  //     },
-  //   });
+  const { mutate, isLoading, isError, error, reset } =
+    api.election.createSingleVoter.useMutation({
+      onSuccess: () => {
+        notifications.show({
+          title: `${form.values.email} added!`,
+          message: "Successfully deleted partylist",
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+      },
+      onError: (error) => {
+        notifications.show({
+          title: "Error",
+          message: error.message,
+          color: "red",
+          autoClose: 3000,
+        });
+      },
+    });
 
   const form = useForm<{
     email: string;
@@ -46,7 +60,7 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
   useEffect(() => {
     if (opened) {
       form.reset();
-      // reset();
+      reset();
     }
   }, [opened]);
 
@@ -55,7 +69,7 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
       <Button
         leftSection={<IconUserPlus size="1rem" />}
         onClick={open}
-        // disabled={isLoading}
+        disabled={isLoading}
         // style={(theme) => ({
         //   [theme.fn.smallerThan("xs")]: {
         //     width: "100%",
@@ -66,21 +80,16 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
       </Button>
 
       <Modal
-        opened={
-          opened
-          // || isLoading
-        }
+        opened={opened || isLoading}
         onClose={close}
         title={<Text fw={600}>Add voter</Text>}
       >
         <form
           onSubmit={form.onSubmit((value) => {
-            void (async () => {
-              await api.election.createSingleVoter.mutate({
-                election_id,
-                email: value.email,
-              });
-            })();
+            mutate({
+              election_id,
+              email: value.email,
+            });
           })}
         >
           <Stack gap="sm">
@@ -88,32 +97,29 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
               placeholder="Enter voter's email"
               label="Email address"
               required
+              disabled={isLoading}
               withAsterisk
               {...form.getInputProps("email")}
               leftSection={<IconAt size="1rem" />}
             />
 
-            {/* {isError && (
+            {isError && (
               <Alert
-                leftSection={<IconAlertCircle size="1rem" />}
+                icon={<IconAlertCircle size="1rem" />}
                 title="Error"
                 color="red"
               >
                 {error.message}
               </Alert>
-            )} */}
+            )}
             <Group justify="right" gap="xs">
-              <Button
-                variant="default"
-                onClick={close}
-                // disabled={isLoading}
-              >
+              <Button variant="default" onClick={close} disabled={isLoading}>
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isValid()}
-                // loading={isLoading}
+                loading={isLoading}
               >
                 Create
               </Button>

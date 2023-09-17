@@ -2,6 +2,7 @@
 
 import { api } from "@/trpc/client";
 import {
+  Alert,
   Button,
   Checkbox,
   Flex,
@@ -14,7 +15,13 @@ import {
 } from "@mantine/core";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { IconLetterCase, IconReplace } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import {
+  IconAlertCircle,
+  IconCheck,
+  IconLetterCase,
+  IconReplace,
+} from "@tabler/icons-react";
 import { useEffect } from "react";
 
 export default function CreatePosition({
@@ -22,18 +29,18 @@ export default function CreatePosition({
 }: {
   election_id: string;
 }) {
-  // const { mutate, isLoading, isError, error, reset } =
-  //   api.election.createPosition.useMutation({
-  //     onSuccess: async () => {
-  //       notifications.show({
-  //         title: `${form.values.name} created!`,
-  //         message: "Successfully created position",
-  //         icon: <IconCheck size="1.1rem" />,
-  //         autoClose: 5000,
-  //       });
-  //       close();
-  //     },
-  //   });
+  const { mutate, isLoading, isError, error, reset } =
+    api.election.createPosition.useMutation({
+      onSuccess: () => {
+        notifications.show({
+          title: `${form.values.name} created!`,
+          message: "Successfully created position",
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+      },
+    });
 
   const [opened, { open, close }] = useDisclosure(false);
   const form = useForm({
@@ -78,7 +85,7 @@ export default function CreatePosition({
   useEffect(() => {
     if (opened) {
       form.reset();
-      // reset();
+      reset();
     }
   }, [opened]);
 
@@ -103,23 +110,18 @@ export default function CreatePosition({
         Add position
       </Button>
       <Modal
-        opened={
-          opened
-          // || isLoading
-        }
+        opened={opened || isLoading}
         onClose={close}
         title={<Text fw={600}>Create position</Text>}
       >
         <form
           onSubmit={form.onSubmit((value) => {
-            void (async () => {
-              await api.election.createPosition.mutate({
-                name: value.name,
-                election_id,
-                min: form.values.isSingle ? value.min : undefined,
-                max: form.values.isSingle ? value.max : undefined,
-              });
-            })();
+            mutate({
+              name: value.name,
+              election_id,
+              min: form.values.isSingle ? value.min : undefined,
+              max: form.values.isSingle ? value.max : undefined,
+            });
           })}
         >
           <Stack gap="sm">
@@ -144,6 +146,7 @@ export default function CreatePosition({
                   placeholder="Enter minimum"
                   label="Minimum"
                   withAsterisk
+                  disabled={isLoading}
                   min={0}
                   required={form.values.isSingle}
                 />
@@ -152,13 +155,14 @@ export default function CreatePosition({
                   placeholder="Enter maximum"
                   label="Maximum"
                   withAsterisk
+                  disabled={isLoading}
                   min={1}
                   required={form.values.isSingle}
                 />
               </Flex>
             )}
 
-            {/* {isError && (
+            {isError && (
               <Alert
                 icon={<IconAlertCircle size="1rem" />}
                 title="Error"
@@ -166,19 +170,15 @@ export default function CreatePosition({
               >
                 {error.message}
               </Alert>
-            )} */}
+            )}
             <Group justify="right" gap="xs">
-              <Button
-                variant="default"
-                onClick={close}
-                // disabled={isLoading}
-              >
+              <Button variant="default" onClick={close} disabled={isLoading}>
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isValid()}
-                // loading={isLoading}
+                loading={isLoading}
               >
                 Create
               </Button>

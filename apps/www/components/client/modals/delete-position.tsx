@@ -2,32 +2,41 @@
 
 import { api } from "@/trpc/client";
 import type { Position } from "@eboto-mo/db/schema";
-import { Button, Group, Mark, Modal, Stack, Text } from "@mantine/core";
+import { Alert, Button, Group, Mark, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
+import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
+import { useEffect } from "react";
 
 export default function DeletePosition({ position }: { position: Position }) {
   const [opened, { open, close }] = useDisclosure(false);
 
-  // const { mutate, isLoading, isError, error, reset } =
-  //   api.election.deletePosition.useMutation({
-  //     onSuccess: async () => {
-  //       notifications.show({
-  //         title: `${position.name} deleted!`,
-  //         message: "Successfully deleted position",
-  //         icon: <IconCheck size="1.1rem" />,
-  //         autoClose: 5000,
-  //       });
-  //       close();
-  //     },
-  //     onError: (error) => {
-  //       notifications.show({
-  //         title: "Error",
-  //         message: error.message,
-  //         color: "red",
-  //         autoClose: 3000,
-  //       });
-  //     },
-  //   });
+  const { mutate, isLoading, isError, error, reset } =
+    api.election.deletePosition.useMutation({
+      onSuccess: () => {
+        notifications.show({
+          title: `${position.name} deleted!`,
+          message: "Successfully deleted position",
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+      },
+      onError: (error) => {
+        notifications.show({
+          title: "Error",
+          message: error.message,
+          color: "red",
+          autoClose: 3000,
+        });
+      },
+    });
+
+  useEffect(() => {
+    if (opened) {
+      reset();
+    }
+  }, [opened]);
 
   return (
     <>
@@ -35,10 +44,7 @@ export default function DeletePosition({ position }: { position: Position }) {
         Delete
       </Button>
       <Modal
-        opened={
-          opened
-          // || isLoading
-        }
+        opened={opened || isLoading}
         onClose={close}
         title={<Text fw={600}>Confirm Delete Position - {position.name}</Text>}
       >
@@ -51,7 +57,7 @@ export default function DeletePosition({ position }: { position: Position }) {
             </Mark>
             <Text>This action cannot be undone.</Text>
           </Stack>
-          {/* {isError && (
+          {isError && (
             <Alert
               icon={<IconAlertCircle size="1rem" />}
               color="red"
@@ -60,20 +66,16 @@ export default function DeletePosition({ position }: { position: Position }) {
             >
               {error.message}
             </Alert>
-          )} */}
+          )}
           <Group justify="right" gap="xs">
-            <Button
-              variant="default"
-              onClick={close}
-              // disabled={isLoading}
-            >
+            <Button variant="default" onClick={close} disabled={isLoading}>
               Cancel
             </Button>
             <Button
               color="red"
-              // loading={isLoading}
+              loading={isLoading}
               onClick={() =>
-                api.election.deletePosition.mutate({
+                mutate({
                   position_id: position.id,
                   election_id: position.election_id,
                 })
