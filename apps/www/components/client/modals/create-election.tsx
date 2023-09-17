@@ -1,7 +1,6 @@
 "use client";
 
 import { api } from "@/trpc/client";
-import { useConfetti } from "@/utils/confetti";
 import { positionTemplate } from "@eboto-mo/constants";
 import type { MantineStyleProp } from "@mantine/core";
 import {
@@ -34,7 +33,7 @@ export default function CreateElection({
   style?: MantineStyleProp;
 }) {
   const router = useRouter();
-  const { fireConfetti } = useConfetti();
+  // const { fireConfetti } = useConfetti();
   const [opened, { open, close }] = useDisclosure(false);
 
   const form = useForm<{
@@ -122,7 +121,7 @@ export default function CreateElection({
 
   const { mutate, isLoading, isError, error } =
     api.election.createElection.useMutation({
-      onSuccess: async () => {
+      onSuccess: () => {
         router.push(`/dashboard/${form.values.slug}`);
         close();
         notifications.show({
@@ -131,7 +130,8 @@ export default function CreateElection({
           icon: <IconCheck size="1.1rem" />,
           autoClose: 5000,
         });
-        await fireConfetti();
+        // TODO: Fix confetti
+        // await fireConfetti();
       },
     });
 
