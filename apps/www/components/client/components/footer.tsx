@@ -20,10 +20,7 @@ import { useParams } from "next/navigation";
 export default function Footer() {
   const params = useParams();
   return (
-    <Container
-      h="100%"
-      size={!params?.electionDashboardSlug ? "md" : undefined}
-    >
+    <Container h="100%" fluid={!!params?.electionDashboardSlug}>
       <Group justify="space-between" w="100%" gap={0} h="100%">
         <UnstyledButton component={Link} href="/">
           <Group gap={4}>

@@ -87,6 +87,7 @@ export default function EditCandidate({
   positions: Position[];
   partylists: Partylist[];
 }) {
+  // const context = api.useContext();
   const [opened, { open, close }] = useDisclosure(false);
   const openRef = useRef<() => void>(null);
 
@@ -104,6 +105,7 @@ export default function EditCandidate({
           autoClose: 5000,
         });
         close();
+        // await context.election.getAllMyElections.invalidate();
       },
     });
 

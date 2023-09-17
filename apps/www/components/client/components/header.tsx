@@ -96,7 +96,10 @@ export default function Header({
     initialValues: {
       subject: "",
       description: "",
-      election_id: elections?.[0]?.id,
+      election_id: elections?.find(
+        (election) =>
+          election.slug === params?.electionDashboardSlug?.toString(),
+      )?.id,
     },
     validateInputOnBlur: true,
     validateInputOnChange: true,
@@ -232,10 +235,7 @@ export default function Header({
           </Stack>
         </form>
       </Modal>
-      <Container
-        h="100%"
-        size={!params?.electionDashboardSlug ? "md" : undefined}
-      >
+      <Container h="100%" fluid={!!params?.electionDashboardSlug}>
         <Flex h="100%" align="center" justify="space-between" gap="xs">
           <Flex h="100%" align="center" gap="xs">
             <UnstyledButton component={Link} href={userId ? "/dashboard" : "/"}>
