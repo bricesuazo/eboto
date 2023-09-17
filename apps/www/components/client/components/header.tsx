@@ -68,7 +68,7 @@ export default function Header({
   const params = useParams();
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [reportAProblemLoading, setReportAProblemLoading] = useState(false);
-  const reportAProblemMutation = api.election.reportAProblem;
+  const reportAProblemMutation = api.election.reportAProblem.useMutation();
 
   const { setColorScheme } = useMantineColorScheme();
   const [
@@ -175,7 +175,7 @@ export default function Header({
             setReportAProblemLoading(true);
 
             void (async () => {
-              await reportAProblemMutation.mutate({
+              await reportAProblemMutation.mutateAsync({
                 subject: values.subject,
                 description: values.description,
                 election_id: values.election_id!,

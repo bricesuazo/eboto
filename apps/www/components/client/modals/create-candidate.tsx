@@ -29,7 +29,10 @@ import { Dropzone, DropzoneReject, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import type { FileWithPath } from "@mantine/dropzone";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import {
+  IconAlertCircle,
+  IconCheck,
   IconFlag,
   IconInfoCircle,
   IconLetterCase,
@@ -59,42 +62,42 @@ export default function CreateCandidate({
 
   // TODO: Implement this
 
-  //   const uploadImageMutation = api.candidate.uploadImage.useMutation();
+  const uploadImageMutation = api.election.uploadImage.useMutation();
 
-  //   const createCandidateMutation = api.candidate.createSingle.useMutation({
-  //     onSuccess: async (data) => {
-  //       if (form.values.image && typeof form.values.image !== "string") {
-  //         await uploadImageMutation.mutateAsync({
-  //           candidateId: data.id,
-  //           file: await uploadImage({
-  //             path: `elections/${data.electionId}/candidates/${
-  //               data.id
-  //             }/image/${Date.now().toString()}`,
-  //             image: form.values.image,
-  //           }),
-  //         });
-  //       }
+  const createCandidateMutation =
+    api.election.createSingleCandidate.useMutation({
+      onSuccess: async (data) => {
+        if (form.values.image && typeof form.values.image !== "string") {
+          await uploadImageMutation.mutateAsync({
+            candidate_id: data.candidate_id,
+            file: await uploadImage({
+              path: `elections/${position.election_id}/candidates/${
+                data.candidate_id
+              }/image/${Date.now().toString()}`,
+              image: form.values.image,
+            }),
+          });
+        }
 
-  //       await context.candidate.getAll.invalidate();
-  //       notifications.show({
-  //         title: `${data.first_name} ${data.last_name} created!`,
-  //         message: "Successfully created position",
-  //         icon: <IconCheck size="1.1rem" />,
-  //         autoClose: 5000,
-  //       });
-  //       onClose();
-  //     },
-  //     onError: (error) => {
-  //       notifications.show({
-  //         title: "Error creating candidate",
-  //         message: error.message,
-  //         icon: <IconAlertCircle size="1.1rem" />,
-  //         color: "red",
-  //         autoClose: 5000,
-  //       });
-  //       setLoading(false);
-  //     },
-  //   });
+        // await context.candidate.getAll.invalidate();
+        notifications.show({
+          title: `${form.values.first_name} ${form.values.last_name} created!`,
+          message: "Successfully created position",
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        close();
+      },
+      onError: (error) => {
+        notifications.show({
+          title: "Error creating candidate",
+          message: error.message,
+          icon: <IconAlertCircle size="1.1rem" />,
+          color: "red",
+          autoClose: 5000,
+        });
+      },
+    });
 
   // const { mutate, isLoading, isError, error, reset } =
   //   api.election.createCandidate.useMutation({
@@ -215,7 +218,7 @@ export default function CreateCandidate({
           onSubmit={form.onSubmit((value) => {
             void (async () => {
               const { candidate_id } =
-                await api.election.createSingleCandidate.mutate({
+                await createCandidateMutation.mutateAsync({
                   first_name: value.first_name,
                   last_name: value.last_name,
                   slug: value.slug,
@@ -253,7 +256,7 @@ export default function CreateCandidate({
                   image: value.image,
                 });
 
-                await api.election.uploadImage.mutate({
+                await uploadImageMutation.mutateAsync({
                   candidate_id,
                   file: image_link,
                 });

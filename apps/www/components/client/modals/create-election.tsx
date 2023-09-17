@@ -3,16 +3,26 @@
 import { api } from "@/trpc/client";
 import { positionTemplate } from "@eboto-mo/constants";
 import type { MantineStyleProp } from "@mantine/core";
-import { Button, Group, Modal, Select, Stack, TextInput } from "@mantine/core";
+import {
+  Alert,
+  Button,
+  Group,
+  Modal,
+  Select,
+  Stack,
+  TextInput,
+} from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import {
+  IconAlertCircle,
   IconCalendar,
   IconLetterCase,
   IconPlus,
   IconTemplate,
 } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function CreateElection({
@@ -20,6 +30,7 @@ export default function CreateElection({
 }: {
   style?: MantineStyleProp;
 }) {
+  const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
 
   const form = useForm<{
@@ -105,13 +116,13 @@ export default function CreateElection({
     }
   }, [opened]);
 
-  // const { mutate, isLoading, isError, error } =
-  //   api.election.createElection.useMutation({
-  //     onSuccess: () => {
-  //       router.push(`/dashboard/${form.values.slug}`);
-  //       close();
-  //     },
-  //   });
+  const { mutate, isLoading, isError, error } =
+    api.election.createElection.useMutation({
+      onSuccess: () => {
+        router.push(`/dashboard/${form.values.slug}`);
+        close();
+      },
+    });
 
   return (
     <>
@@ -131,18 +142,16 @@ export default function CreateElection({
         <form
           onSubmit={form.onSubmit((value) => {
             const now = new Date();
-            void (async () => {
-              await api.election.createElection.mutate({
-                ...value,
-                name: value.name.trim(),
-                slug: value.slug.trim(),
-                start_date:
-                  value.start_date ?? new Date(now.setDate(now.getDate() + 1)),
-                end_date:
-                  value.end_date ?? new Date(now.setDate(now.getDate() + 5)),
-                template: value.template,
-              });
-            })();
+            mutate({
+              ...value,
+              name: value.name.trim(),
+              slug: value.slug.trim(),
+              start_date:
+                value.start_date ?? new Date(now.setDate(now.getDate() + 1)),
+              end_date:
+                value.end_date ?? new Date(now.setDate(now.getDate() + 5)),
+              template: value.template,
+            });
           })}
         >
           <Stack gap="sm">
@@ -154,7 +163,7 @@ export default function CreateElection({
               placeholder="Enter election name"
               {...form.getInputProps("name")}
               leftSection={<IconLetterCase size="1rem" />}
-              // disabled={isLoading}
+              disabled={isLoading}
             />
 
             <TextInput
@@ -166,17 +175,13 @@ export default function CreateElection({
                   eboto-mo.com/{form.values.slug || "election-slug"}
                 </>
               }
-              // disabled={isLoading}
+              disabled={isLoading}
               withAsterisk
               required
               placeholder="Enter election slug"
               {...form.getInputProps("slug")}
               leftSection={<IconLetterCase size="1rem" />}
-              // error={
-              //   form.errors.slug ||
-              //   (createElectionMutation.error?.data?.code === "CONFLICT" &&
-              //     createElectionMutation.error?.message)
-              // }
+              error={error?.data?.code === "CONFLICT" && error?.message}
             />
 
             <DateTimePicker
@@ -195,7 +200,7 @@ export default function CreateElection({
               firstDayOfWeek={0}
               {...form.getInputProps("start_date")}
               leftSection={<IconCalendar size="1rem" />}
-              // disabled={isLoading}
+              disabled={isLoading}
             />
             <DateTimePicker
               valueFormat="MMMM DD, YYYY (dddd) hh:mm A"
@@ -216,7 +221,7 @@ export default function CreateElection({
               firstDayOfWeek={0}
               {...form.getInputProps("end_date")}
               leftSection={<IconCalendar size="1rem" />}
-              // disabled={isLoading}
+              disabled={isLoading}
             />
 
             <Select
@@ -240,32 +245,32 @@ export default function CreateElection({
               nothingFoundMessage="No position template found"
               leftSection={<IconTemplate size="1rem" />}
               searchable
-              // disabled={isLoading}
+              disabled={isLoading}
             />
 
-            {/* {isError && (
+            {isError && (
               <Alert
-                leftSection={<IconAlertCircle size="1rem" />}
+                icon={<IconAlertCircle size="1rem" />}
                 title="Error"
                 color="red"
               >
                 {error.message}
               </Alert>
-            )} */}
+            )}
 
             <Group justify="right" gap="xs">
               <Button
                 variant="default"
                 mr={2}
                 onClick={close}
-                // disabled={isLoading}
+                disabled={isLoading}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isValid()}
-                // loading={isLoading}
+                loading={isLoading}
               >
                 Create
               </Button>

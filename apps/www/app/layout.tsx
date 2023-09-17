@@ -1,4 +1,5 @@
 import { siteConfig } from "@/config/site";
+import TRPCProvider from "@/trpc/TRPCProvider";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
@@ -68,27 +69,30 @@ export const metadata: Metadata = {
 };
 
 // export const runtime = "edge";
+// export const dynamic = "force-dynamic";
 
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <head>
-          <ColorSchemeScript />
-        </head>
-        <body className={font.className}>
-          <MantineProvider
-            theme={{
-              primaryColor: "green",
-              fontFamily: font.style.fontFamily,
-            }}
-          >
-            <Notifications />
-            {children}
-            <Analytics />
-          </MantineProvider>
-        </body>
-      </html>
+      <TRPCProvider>
+        <html lang="en">
+          <head>
+            <ColorSchemeScript />
+          </head>
+          <body className={font.className}>
+            <MantineProvider
+              theme={{
+                primaryColor: "green",
+                fontFamily: font.style.fontFamily,
+              }}
+            >
+              <Notifications />
+              {children}
+              <Analytics />
+            </MantineProvider>
+          </body>
+        </html>
+      </TRPCProvider>
     </ClerkProvider>
   );
 }

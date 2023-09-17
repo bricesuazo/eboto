@@ -31,5 +31,6 @@ export const authRouter = createTRPCRouter({
     );
   }),
   getSession: publicProcedure.query(({ ctx }) => ctx.auth),
+  getTest: publicProcedure.query(() => "test"),
   test: publicProcedure.mutation(() => ""),
 });
