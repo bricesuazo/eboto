@@ -20,7 +20,7 @@
     "@eboto-mo/tsconfig": "workspace:*",
     "@turbo/gen": "^1.10.14",
     "dotenv-cli": "^7.3.0",
-    "eslint": "^8.49.0",
+    "eslint": "^8.50.0",
     "prettier": "^3.0.3",
     "turbo": "^1.10.14"
   },
