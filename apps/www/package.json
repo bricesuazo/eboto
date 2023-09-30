@@ -1,13 +1,14 @@
 {
   "name": "www",
-  "version": "1.0.0",
-  "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "clean": "git clean -xdf .next .turbo node_modules"
+    "build": "pnpm with-env next build",
+    "clean": "git clean -xdf .next .turbo node_modules",
+    "dev": "pnpm with-env next dev",
+    "lint": "dotenv -v SKIP_ENV_VALIDATION=1 next lint",
+    "format": "prettier --check \"**/*.{js,cjs,mjs,ts,tsx,md,json}\"",
+    "start": "pnpm with-env next start",
+    "typecheck": "tsc --noEmit",
+    "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
     "@eboto-mo/api": "workspace:*",
@@ -48,6 +49,7 @@
     "bcryptjs": "^2.4.3",
     "clsx": "^2.0.0",
     "dayjs": "^1.11.10",
+    "dotenv-cli": "^7.3.0",
     "drizzle-orm": "0.28.6",
     "embla-carousel-react": "8.0.0-rc14",
     "mantine-react-table": "^1.3.1",

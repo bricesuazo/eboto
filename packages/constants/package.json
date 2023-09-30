@@ -1,7 +1,5 @@
 {
   "name": "@eboto-mo/constants",
-  "version": "0.0.0",
-  "private": true,
   "main": "./index.ts",
   "license": "MIT",
   "publishConfig": {
@@ -14,5 +12,4 @@
   "devDependencies": {
     "@eboto-mo/db": "workspace:*"
   }
-  
 }

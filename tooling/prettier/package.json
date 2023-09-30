@@ -1,6 +1,5 @@
 {
   "name": "@eboto-mo/prettier-config",
-  "private": true,
   "version": "0.1.0",
   "main": "index.mjs",
   "scripts": {

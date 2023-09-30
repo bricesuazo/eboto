@@ -1,6 +1,5 @@
 {
   "name": "@eboto-mo/auth",
-  "private": true,
   "main": "./index.ts",
   "types": "./index.ts",
   "license": "MIT",
