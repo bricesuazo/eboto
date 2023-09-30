@@ -16,7 +16,7 @@ import { Analytics } from "@vercel/analytics/react";
 
 const font = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-  subsets: ["latin"],
+  subsets: ["latin", "latin-ext", "devanagari"],
 });
 // const font = Lexend({
 //   subsets: ["latin"],
@@ -75,17 +75,18 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         <ColorSchemeScript />
       </head>
       <body className={font.className}>
-        <TRPCReactProvider>
-          <MantineProvider
-            theme={{
-              primaryColor: "green",
-            }}
-          >
+        <MantineProvider
+          theme={{
+            primaryColor: "green",
+            fontFamily: font.style.fontFamily,
+          }}
+        >
+          <TRPCReactProvider>
             <Notifications />
             {children}
             <Analytics />
-          </MantineProvider>
-        </TRPCReactProvider>
+          </TRPCReactProvider>
+        </MantineProvider>
       </body>
     </html>
   );

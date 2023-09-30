@@ -30,7 +30,7 @@ import {
   ModalRoot,
   ModalTitle,
   Select,
-  // Skeleton,
+  Skeleton,
   Stack,
   Text,
   Textarea,
@@ -61,9 +61,9 @@ export default function Header({
   userId?: string;
   elections?: Election[];
 }) {
-  // const session = useSession();
+  const session = api.auth.getSession.useQuery();
   const params = useParams();
-  const [logoutLoading, setLogoutLoading] = useState(false);
+  const [logoutLoading] = useState(false);
   const [reportAProblemLoading, setReportAProblemLoading] = useState(false);
   const reportAProblemMutation = api.election.reportAProblem.useMutation();
 
@@ -289,10 +289,9 @@ export default function Header({
                         // },
                       }}
                     >
-                      {/* {session.status === "authenticated" &&
-                      session.data?.user.image ? (
+                      {!session.isLoading && session.data?.user.image ? (
                         <Image
-                          src={session.data.user.image}
+                          src={session.data?.user.image}
                           alt="Profile picture"
                           fill
                           sizes="100%"
@@ -303,7 +302,7 @@ export default function Header({
                         />
                       ) : (
                         <Skeleton w={24} h={24} />
-                      )} */}
+                      )}
                     </Box>
 
                     <IconChevronDown
@@ -360,11 +359,7 @@ export default function Header({
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
-                    setLogoutLoading(true);
-                    // void (async () =>
-                    //   await signOut({
-                    //     // callbackUrl: "/signin",
-                    //   }))();
+                    // signOut();
                   }}
                   closeMenuOnClick={false}
                   leftSection={
