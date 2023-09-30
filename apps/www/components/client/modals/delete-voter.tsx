@@ -1,19 +1,15 @@
 "use client";
 
+import { useEffect } from "react";
 import { api } from "@/trpc/client";
-import {
-  ActionIcon,
-  Alert,
-  Button,
-  Group,
-  Modal,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { ActionIcon, Alert, Button, Group, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconAlertCircle, IconCheck, IconTrash } from "@tabler/icons-react";
-import { useEffect } from "react";
+
+
+
+
 
 export default function DeleteVoter({
   voter,
@@ -53,6 +49,7 @@ export default function DeleteVoter({
     if (opened) {
       reset();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
   return (
     <>

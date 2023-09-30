@@ -1,5 +1,6 @@
-import { clerkClient } from "@clerk/nextjs";
-import { positionTemplate, takenSlugs } from "@eboto-mo/constants";
+
+
+import { positionTemplate, takenSlugs,isElectionOngoing } from "@eboto-mo/constants";
 import {
   achievements,
   affiliations,
@@ -23,7 +24,6 @@ import { z } from "zod";
 
 import { account_status_type_with_accepted } from "../../../../apps/www/utils/zod-schema";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { isElectionOngoing } from "./../../../../apps/www/utils/index";
 
 export const electionRouter = createTRPCRouter({
   reportAProblem: protectedProcedure
@@ -39,7 +39,7 @@ export const electionRouter = createTRPCRouter({
         subject: input.subject,
         description: input.description,
         election_id: input.election_id,
-        user_id: ctx.auth.userId,
+        user_id:ctx.session.user.id
       });
     }),
   getElectionVoting: publicProcedure
@@ -144,7 +144,7 @@ export const electionRouter = createTRPCRouter({
     // TODO: Validate commissioner
     return await ctx.db.query.commissioners.findMany({
       where: (commissioners, { eq }) =>
-        eq(commissioners.user_id, ctx.auth.userId),
+        eq(commissioners.user_id, ctx.session.user.id),
       with: {
         election: true,
       },
@@ -271,15 +271,9 @@ export const electionRouter = createTRPCRouter({
         },
       });
 
-      const userFromVoters = await clerkClient.users.getUserList({
-        emailAddress: voters.map((voter) => voter.user.id),
-      });
-
       return voters.map((voter) => ({
         id: voter.id,
-        email: userFromVoters.find(
-          (user) => user.emailAddresses[0]?.emailAddress === voter.user.id,
-        )?.emailAddresses[0]?.emailAddress,
+        email: voter.user.email,
         account_status: "ACCEPTED",
         created_at: voter.created_at,
         has_voted: voter.votes.length > 0,
@@ -321,7 +315,7 @@ export const electionRouter = createTRPCRouter({
         });
         await db.insert(commissioners).values({
           election_id: id,
-          user_id: ctx.auth.userId,
+          user_id: ctx.session.user.id,
         });
         await db.insert(partylists).values({
           name: "Independent",
@@ -388,7 +382,7 @@ export const electionRouter = createTRPCRouter({
           with: {
             commissioners: {
               where: (commissioners, { eq }) =>
-                eq(commissioners.user_id, ctx.auth.userId),
+                eq(commissioners.user_id, ctx.session.user.id),
             },
           },
         });
@@ -625,7 +619,7 @@ export const electionRouter = createTRPCRouter({
 
       if (
         !candidate?.election.commissioners.some(
-          (commissioner) => commissioner.user_id === ctx.auth.userId,
+          (commissioner) => commissioner.user_id === ctx.session.user.id,
         )
       )
         throw new TRPCError({
@@ -954,7 +948,7 @@ export const electionRouter = createTRPCRouter({
         with: {
           commissioners: {
             where: (commissioners, { eq }) =>
-              eq(commissioners.user_id, ctx.auth.userId),
+              eq(commissioners.user_id, ctx.session.user.id),
           },
         },
       });
@@ -982,7 +976,7 @@ export const electionRouter = createTRPCRouter({
         with: {
           commissioners: {
             where: (commissioners, { eq }) =>
-              eq(commissioners.user_id, ctx.auth.userId),
+              eq(commissioners.user_id, ctx.session.user.id),
           },
         },
       });
@@ -1006,13 +1000,11 @@ export const electionRouter = createTRPCRouter({
         },
       });
 
-      const userFromVoters = await clerkClient.users.getUserList({
-        emailAddress: voters.map((voter) => voter.user.id),
-      });
 
-      const isVoterEmailExists = userFromVoters.find(
-        (user) => user.emailAddresses[0]?.emailAddress === input.email,
+      const isVoterEmailExists = voters.some(
+        (voter) => voter.user.email === input.email,
       );
+
 
       if (isVoterEmailExists)
         throw new TRPCError({
@@ -1090,7 +1082,7 @@ export const electionRouter = createTRPCRouter({
           where: (commissioner, { eq, and }) =>
             and(
               eq(commissioner.election_id, input.election_id),
-              eq(commissioner.user_id, ctx.auth.userId),
+              eq(commissioner.user_id, ctx.session.user.id),
             ),
         });
 
@@ -1133,7 +1125,7 @@ export const electionRouter = createTRPCRouter({
           where: (commissioner, { eq, and }) =>
             and(
               eq(commissioner.election_id, input.election_id),
-              eq(commissioner.user_id, ctx.auth.userId),
+              eq(commissioner.user_id, ctx.session.user.id),
             ),
         });
 
@@ -1219,7 +1211,7 @@ export const electionRouter = createTRPCRouter({
         with: {
           commissioners: {
             where: (commissioners, { eq }) =>
-              eq(commissioners.user_id, ctx.auth.userId),
+              eq(commissioners.user_id, ctx.session.user.id),
           },
         },
       });

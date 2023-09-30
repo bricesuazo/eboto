@@ -1,6 +1,8 @@
 "use client";
 
-import { useSignIn } from "@clerk/nextjs";
+import { useState } from "react";
+import Link from "next/link";
+// import { useParams } from "next/navigation";
 import {
   Anchor,
   Button,
@@ -15,9 +17,6 @@ import {
 } from "@mantine/core";
 import { hasLength, isEmail, isNotEmpty, useForm } from "@mantine/form";
 import { IconAt, IconBrandGoogle, IconLock } from "@tabler/icons-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useState } from "react";
 
 export default function SigninForm() {
   const [loadings, setLoadings] = useState<{
@@ -27,7 +26,6 @@ export default function SigninForm() {
     google: false,
     credential: false,
   });
-  const { isLoaded, signIn, setActive } = useSignIn();
   const form = useForm({
     initialValues: {
       email: "",
@@ -40,23 +38,23 @@ export default function SigninForm() {
     },
   });
 
-  const params = useParams();
+  // const params = useParams();
 
   return (
     <Paper withBorder shadow="md" mt={30} radius="md" p="md">
       <Stack>
         <Button
           onClick={() => {
-            if (!isLoaded) return;
+            // if (!isLoaded) return;
             setLoadings((loadings) => ({ ...loadings, google: true }));
-            void (async () => {
-              await signIn.authenticateWithRedirect({
-                strategy: "oauth_google",
-                redirectUrl: "/sso-callback",
-                redirectUrlComplete:
-                  params?.callbackUrl?.toString() ?? "/dashboard",
-              });
-            })();
+            // void (async () => {
+            //   await signIn.authenticateWithRedirect({
+            //     strategy: "oauth_google",
+            //     redirectUrl: "/sso-callback",
+            //     redirectUrlComplete:
+            //       params?.callbackUrl?.toString() ?? "/dashboard",
+            //   });
+            // })();
           }}
           leftSection={<IconBrandGoogle size={18} />}
           variant="outline"
@@ -67,26 +65,26 @@ export default function SigninForm() {
         </Button>
         <Divider label="Or continue with email" labelPosition="center" />
         <form
-          onSubmit={form.onSubmit((values) => {
+          onSubmit={form.onSubmit(() => {
             setLoadings((loadings) => ({ ...loadings, credential: true }));
-            if (!isLoaded) return;
-            void (async () => {
-              await signIn
-                .create({
-                  identifier: values.email,
-                  password: values.password,
-                  redirectUrl: params?.callbackUrl?.toString() ?? "/dashboard",
-                })
-                .then(async (result) => {
-                  if (result.status === "complete") {
-                    console.log(result);
-                    await setActive({ session: result.createdSessionId });
-                  } else {
-                    console.log(result);
-                  }
-                })
-                .catch((err) => console.error("error", err));
-            })();
+            // if (!isLoaded) return;
+            // void (async () => {
+            //   await signIn
+            //     .create({
+            //       identifier: values.email,
+            //       password: values.password,
+            //       redirectUrl: params?.callbackUrl?.toString() ?? "/dashboard",
+            //     })
+            //     .then(async (result) => {
+            //       if (result.status === "complete") {
+            //         console.log(result);
+            //         await setActive({ session: result.createdSessionId });
+            //       } else {
+            //         console.log(result);
+            //       }
+            //     })
+            //     .catch((err) => console.error("error", err));
+            // })();
           })}
         >
           <Stack>

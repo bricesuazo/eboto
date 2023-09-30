@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { api } from "@/trpc/client";
-import { positionTemplate } from "@eboto-mo/constants";
 import type { MantineStyleProp } from "@mantine/core";
 import {
   Alert,
@@ -24,8 +25,8 @@ import {
   IconPlus,
   IconTemplate,
 } from "@tabler/icons-react";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+
+import { positionTemplate } from "@eboto-mo/constants";
 
 export default function CreateElection({
   style,
@@ -117,6 +118,7 @@ export default function CreateElection({
     if (opened) {
       form.reset();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
 
   const { mutate, isLoading, isError, error } =

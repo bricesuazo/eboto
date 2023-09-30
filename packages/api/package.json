@@ -1,32 +1,40 @@
 {
   "name": "@eboto-mo/api",
-  "version": "0.0.0",
+  "private": true,
   "main": "./index.ts",
   "types": "./index.ts",
   "license": "MIT",
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
-    "lint": "SKIP_ENV_VALIDATION=1  eslint .",
-    "lint:fix": "pnpm lint --fix",
-    "type-check": "tsc --noEmit"
+    "lint": "eslint .",
+    "format": "prettier --check \"**/*.{mjs,ts,md,json}\"",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@clerk/nextjs": "^4.25.1",
+    "@eboto-mo/auth": "workspace:*",
     "@eboto-mo/constants": "workspace:*",
     "@eboto-mo/db": "workspace:*",
     "@t3-oss/env-nextjs": "^0.6.1",
-    "@trpc/client": "^10.38.5",
-    "@trpc/server": "^10.38.5",
+    "@trpc/client": "^10.38.4",
+    "@trpc/server": "^10.38.4",
     "drizzle-orm": "0.28.6",
     "nanoid": "^5.0.1",
-    "superjson": "1.13.3",
-    "zod": "^3.22.2",
-    "zod-form-data": "^2.0.1"
+    "superjson": "1.13.1",
+    "zod": "^3.22.2"
   },
   "devDependencies": {
     "@eboto-mo/eslint-config": "workspace:*",
+    "@eboto-mo/prettier-config": "workspace:*",
+    "@eboto-mo/tsconfig": "workspace:*",
     "eslint": "^8.50.0",
-    "next": "13.5.3",
+    "prettier": "^3.0.3",
     "typescript": "^5.2.2"
-  }
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@eboto-mo/eslint-config/base"
+    ]
+  },
+  "prettier": "@eboto-mo/prettier-config"
 }

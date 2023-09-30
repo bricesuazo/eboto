@@ -10,5 +10,9 @@
   "dependencies": {
     "@tabler/icons-react": "^2.37.0",
     "zod": "^3.22.2"
+  },
+  "devDependencies": {
+    "@eboto-mo/db": "workspace:*"
   }
+  
 }

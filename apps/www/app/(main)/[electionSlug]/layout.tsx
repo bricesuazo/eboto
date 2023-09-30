@@ -1,5 +1,5 @@
-import { isElectionOngoing } from "@/utils";
-import { auth } from "@clerk/nextjs";
+import { isElectionOngoing } from "@eboto-mo/constants";
+import { auth } from "@eboto-mo/auth";
 import { db } from "@eboto-mo/db";
 import { isNull } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
@@ -7,7 +7,7 @@ import { notFound, redirect } from "next/navigation";
 export default async function ElectionLayout(
   props: React.PropsWithChildren<{ params: { electionSlug: string } }>,
 ) {
-  const { userId } = auth();
+  const session = await auth();
   const election = await db.query.elections.findFirst({
     where: (elections, { eq, and }) =>
       and(
@@ -21,31 +21,31 @@ export default async function ElectionLayout(
   const isOngoing = isElectionOngoing({ election });
 
   if (election.publicity === "PRIVATE") {
-    if (!userId) notFound();
+    if (!session) notFound();
 
     const commissioner = await db.query.commissioners.findFirst({
       where: (commissioner, { eq, and }) =>
         and(
           eq(commissioner.election_id, election.id),
-          eq(commissioner.user_id, userId),
+          eq(commissioner.user_id, session.user.id),
         ),
     });
 
     if (!commissioner) notFound();
   } else if (election.publicity === "VOTER") {
     const callbackUrl = `/sign-in?callbackUrl=https://eboto-mo.com/${props.params.electionSlug}`;
-    if (!userId) redirect(callbackUrl);
+    if (!session) redirect(callbackUrl);
 
     const voter = await db.query.voters.findFirst({
       where: (voter, { eq, and }) =>
-        and(eq(voter.election_id, election.id), eq(voter.user_id, userId)),
+        and(eq(voter.election_id, election.id), eq(voter.user_id, session.user.id)),
     });
 
     const commissioner = await db.query.commissioners.findFirst({
       where: (commissioner, { eq, and }) =>
         and(
           eq(commissioner.election_id, election.id),
-          eq(commissioner.user_id, userId),
+          eq(commissioner.user_id, session.user.id),
         ),
     });
 

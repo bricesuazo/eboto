@@ -1,12 +1,19 @@
 "use client";
 
+import { useEffect } from "react";
 import { api } from "@/trpc/client";
-import type { Candidate } from "@eboto-mo/db/schema";
 import { Alert, Button, Group, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
-import { useEffect } from "react";
+
+
+
+import type { Candidate } from "@eboto-mo/db/schema";
+
+
+
+
 
 export default function DeleteCandidate({
   candidate,
@@ -40,6 +47,7 @@ export default function DeleteCandidate({
     if (opened) {
       reset();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
 
   return (

@@ -1,15 +1,18 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+import Image from "next/image";
+import { useParams } from "next/navigation";
 import classes from "@/styles/Candidate.module.css";
 import { api } from "@/trpc/client";
 import { uploadImage } from "@/utils";
-import type { Partylist, Position } from "@eboto-mo/db/schema";
 import {
   Box,
   Button,
   Flex,
   Group,
   Modal,
+  rem,
   Select,
   SimpleGrid,
   Stack,
@@ -18,10 +21,9 @@ import {
   TabsPanel,
   TabsTab,
   Text,
-  TextInput,
   Textarea,
+  TextInput,
   UnstyledButton,
-  rem,
 } from "@mantine/core";
 import { YearPickerInput } from "@mantine/dates";
 import type { DateValue } from "@mantine/dates";
@@ -42,9 +44,8 @@ import {
   IconUserSearch,
   IconX,
 } from "@tabler/icons-react";
-import Image from "next/image";
-import { useParams } from "next/navigation";
-import { useEffect, useRef } from "react";
+
+import type { Partylist, Position } from "@eboto-mo/db/schema";
 
 export default function CreateCandidate({
   position,
@@ -189,6 +190,7 @@ export default function CreateCandidate({
       form.reset();
       // reset();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
 
   return (

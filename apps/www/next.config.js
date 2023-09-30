@@ -2,7 +2,7 @@
 
 module.exports = {
   reactStrictMode: true,
-  transpilePackages: ["@eboto-mo/db", "@eboto-mo/api"],
+  transpilePackages: ["@eboto-mo/db","@eboto-mo/auth", "@eboto-mo/api"],
   experimental: {
     serverActions: true,
     // forceSwcTransforms: true,
@@ -11,7 +11,6 @@ module.exports = {
   images: {
     domains: [
       "lh3.googleusercontent.com",
-      "img.clerk.com",
       "ocozashcaobsffletnyj.supabase.co",
     ],
   },

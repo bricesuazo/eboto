@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { api } from "@/trpc/client";
 import {
   Alert,
@@ -22,7 +23,6 @@ import {
   IconLetterCase,
   IconReplace,
 } from "@tabler/icons-react";
-import { useEffect } from "react";
 
 export default function CreatePosition({
   election_id,
@@ -87,6 +87,7 @@ export default function CreatePosition({
       form.reset();
       reset();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
 
   useEffect(() => {
@@ -96,6 +97,7 @@ export default function CreatePosition({
         max: 1,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values.isSingle]);
   return (
     <>

@@ -1,10 +1,9 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import CreateVoter from "@/components/client/modals/create-voter";
 import UpdateVoterField from "@/components/client/modals/update-voter-field";
 import UploadBulkVoter from "@/components/client/modals/upload-bulk-voter";
-import { isElectionOngoing } from "@/utils";
-import type { Election, VoterField } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
   Box,
@@ -19,7 +18,9 @@ import { IconRefresh } from "@tabler/icons-react";
 import type { MRT_ColumnDef, MRT_RowSelectionState } from "mantine-react-table";
 import { MantineReactTable } from "mantine-react-table";
 import moment from "moment";
-import { useMemo, useState } from "react";
+
+import { isElectionOngoing } from "@eboto-mo/constants";
+import type { Election, VoterField } from "@eboto-mo/db/schema";
 
 import DeleteBulkVoter from "../modals/delete-bulk-voter";
 import DeleteVoter from "../modals/delete-voter";

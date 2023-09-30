@@ -1,7 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
 import { api } from "@/trpc/client";
-import type { Election, VoterField } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
   Alert,
@@ -23,7 +23,8 @@ import {
   IconTrash,
   IconUsersGroup,
 } from "@tabler/icons-react";
-import { useEffect } from "react";
+
+import type { Election, VoterField } from "@eboto-mo/db/schema";
 
 interface Field {
   id: string;
@@ -101,6 +102,7 @@ export default function UpdateVoterField({
 
       form.resetDirty({ field: data });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
 
   return (

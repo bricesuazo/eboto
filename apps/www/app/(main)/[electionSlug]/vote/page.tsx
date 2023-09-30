@@ -1,7 +1,7 @@
 import VoteForm from "@/components/client/components/vote-form";
 import { api } from "@/trpc/server";
-import { isElectionOngoing } from "@/utils";
-import { auth } from "@clerk/nextjs";
+import { isElectionOngoing } from "@eboto-mo/constants";
+import { auth } from "@eboto-mo/auth";
 import { db } from "@eboto-mo/db";
 import { Box, Container, Stack, Text, Title } from "@mantine/core";
 import { isNull } from "drizzle-orm";
@@ -31,9 +31,9 @@ export default async function VotePage({
 }: {
   params: { electionSlug: string };
 }) {
-  const { userId } = auth();
+  const session = await auth();
 
-  if (!userId)
+  if (!session)
     redirect(`/sign-in?callbackUrl=https://eboto-mo.com/${electionSlug}/vote`);
 
   const election = await db.query.elections.findFirst({
@@ -49,7 +49,7 @@ export default async function VotePage({
     const commissioner = await db.query.commissioners.findFirst({
       where: (commissioner, { eq, and }) =>
         and(
-          eq(commissioner.user_id, userId),
+          eq(commissioner.user_id, session.user.id),
           eq(commissioner.election_id, election.id),
           isNull(commissioner.deleted_at),
         ),
@@ -60,7 +60,7 @@ export default async function VotePage({
     const isVoter = await db.query.voters.findFirst({
       where: (voter, { eq, and }) =>
         and(
-          eq(voter.user_id, userId),
+          eq(voter.user_id, session.user.id),
           eq(voter.election_id, election.id),
           isNull(voter.deleted_at),
         ),
@@ -73,13 +73,13 @@ export default async function VotePage({
   ) {
     const vote = await db.query.votes.findFirst({
       where: (votes, { eq, and }) =>
-        and(eq(votes.voter_id, userId), eq(votes.election_id, election.id)),
+        and(eq(votes.voter_id, session.user.id), eq(votes.election_id, election.id)),
     });
 
     const isCommissioner = await db.query.commissioners.findFirst({
       where: (commissioner, { eq, and }) =>
         and(
-          eq(commissioner.user_id, userId),
+          eq(commissioner.user_id, session.user.id),
           eq(commissioner.election_id, election.id),
         ),
     });
@@ -87,7 +87,7 @@ export default async function VotePage({
     const isVoter = await db.query.voters.findFirst({
       where: (voter, { eq, and }) =>
         and(
-          eq(voter.user_id, userId),
+          eq(voter.user_id, session.user.id),
           eq(voter.election_id, election.id),
           isNull(voter.deleted_at),
         ),

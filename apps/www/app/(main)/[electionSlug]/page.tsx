@@ -1,8 +1,11 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 import ScrollToTopButton from "@/components/client/components/scroll-to-top";
 import ElectionShowQRCode from "@/components/client/modals/election-show-qr-code";
+import { env } from "@/env.mjs";
 import classes from "@/styles/Election.module.css";
-import { isElectionOngoing } from "@/utils";
-import { db } from "@eboto-mo/db";
 import {
   ActionIcon,
   Box,
@@ -28,11 +31,10 @@ import {
 } from "@tabler/icons-react";
 import { isNull } from "drizzle-orm";
 import moment from "moment";
-import type { Metadata } from "next";
-import Image from "next/image";
-import Link from "next/link";
-import { notFound } from "next/navigation";
 import Balancer from "react-wrap-balancer";
+
+import { isElectionOngoing } from "@eboto-mo/constants";
+import { db } from "@eboto-mo/db";
 
 export async function generateMetadata({
   params: { electionSlug },
@@ -55,7 +57,7 @@ export async function generateMetadata({
       images: [
         {
           url: `${
-            process.env.NODE_ENV === "production"
+            env.NODE_ENV === "production"
               ? "https://eboto-mo.com"
               : "http://localhost:3000"
           }/api/og?type=election&election_name=${encodeURIComponent(

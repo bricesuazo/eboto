@@ -1,6 +1,6 @@
 "use client";
 
-import { useSignUp } from "@clerk/nextjs";
+import { useState } from "react";
 import {
   Button,
   Divider,
@@ -17,10 +17,12 @@ import {
   matchesField,
   useForm,
 } from "@mantine/form";
-import { IconAt, IconLetterCase, IconLock } from "@tabler/icons-react";
-import { IconBrandGoogle } from "@tabler/icons-react";
-import { useParams } from "next/navigation";
-import { useState } from "react";
+import {
+  IconAt,
+  IconBrandGoogle,
+  IconLetterCase,
+  IconLock,
+} from "@tabler/icons-react";
 
 export default function RegisterForm() {
   const [loadings, setLoadings] = useState<{
@@ -30,8 +32,6 @@ export default function RegisterForm() {
     google: false,
     credential: false,
   });
-  const params = useParams();
-  const { isLoaded: isSignUpLoaded, signUp, setActive } = useSignUp();
 
   const form = useForm({
     initialValues: {
@@ -64,17 +64,16 @@ export default function RegisterForm() {
         <Button
           onClick={() => {
             setLoadings((loadings) => ({ ...loadings, google: true }));
-            if (!isSignUpLoaded) return;
-            void (async () => {
-              await signUp
-                .authenticateWithRedirect({
-                  strategy: "oauth_google",
-                  redirectUrl: "/sso-callback",
-                  redirectUrlComplete:
-                    params?.callbackUrl?.toString() ?? "/dashboard",
-                })
-                .catch((err) => console.error("error", err));
-            })();
+            // void (async () => {
+            //   await signUp
+            //     .authenticateWithRedirect({
+            //       strategy: "oauth_google",
+            //       redirectUrl: "/sso-callback",
+            //       redirectUrlComplete:
+            //         params?.callbackUrl?.toString() ?? "/dashboard",
+            //     })
+            //     .catch((err) => console.error("error", err));
+            // })();
           }}
           loading={loadings.google}
           disabled={loadings.credential}
@@ -86,30 +85,30 @@ export default function RegisterForm() {
 
         <Divider label="Or continue with email" labelPosition="center" />
         <form
-          onSubmit={form.onSubmit((values) => {
-            if (!isSignUpLoaded) return;
+          onSubmit={form.onSubmit(() => {
+            // if (!isSignUpLoaded) return;
 
             setLoadings((loadings) => ({ ...loadings, credential: true }));
-            void (async () => {
-              await signUp
-                .create({
-                  emailAddress: values.email,
-                  password: values.password,
-                  firstName: values.firstName,
-                  lastName: values.lastName,
-                  actionCompleteRedirectUrl:
-                    (params?.callbackUrl as string | undefined) ?? "/dashboard",
-                })
-                .then(async (result) => {
-                  if (result.status === "complete") {
-                    console.log(result);
-                    await setActive({ session: result.createdSessionId });
-                  } else {
-                    console.log(result);
-                  }
-                })
-                .catch((err) => console.error("error", err));
-            })();
+            // void (async () => {
+            //   await signUp
+            //     .create({
+            //       emailAddress: values.email,
+            //       password: values.password,
+            //       firstName: values.firstName,
+            //       lastName: values.lastName,
+            //       actionCompleteRedirectUrl:
+            //         (params?.callbackUrl as string | undefined) ?? "/dashboard",
+            //     })
+            //     .then(async (result) => {
+            //       if (result.status === "complete") {
+            //         console.log(result);
+            //         await setActive({ session: result.createdSessionId });
+            //       } else {
+            //         console.log(result);
+            //       }
+            //     })
+            //     .catch((err) => console.error("error", err));
+            // })();
           })}
         >
           <Stack gap="sm">

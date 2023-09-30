@@ -1,10 +1,12 @@
 import { sql } from "drizzle-orm";
 import {
   date,
+  index,
   int,
   longtext,
   mysqlEnum,
   mysqlTable,
+  primaryKey,
   text,
   timestamp,
   varchar,
@@ -39,10 +41,6 @@ export const token_type = [
 export type TokenType = (typeof token_type)[number];
 export const account_status_type = ["ADDED", "INVITED", "DECLINED"] as const;
 export type AccountStatusType = (typeof account_status_type)[number];
-
-export const users = mysqlTable("users", {
-  id,
-});
 
 export const elections = mysqlTable("elections", {
   id,
@@ -268,4 +266,71 @@ export type VerificationToken = typeof verification_tokens.$inferSelect;
 export type GeneratedElectionResult =
   typeof generated_election_results.$inferSelect;
 export type VoterField = typeof voter_fields.$inferSelect;
+
 export type ReportedProblem = typeof reported_problems.$inferSelect;
+
+import type { AdapterAccount } from "@auth/core/adapters";
+
+export const users = mysqlTable("users", {
+  id: varchar("id", { length: 255 }).notNull().primaryKey(),
+  name: varchar("name", { length: 255 }),
+  email: varchar("email", { length: 255 }).notNull(),
+  emailVerified: timestamp("emailVerified", {
+    mode: "date",
+    fsp: 3,
+  }).default(sql`CURRENT_TIMESTAMP(3)`),
+  image: varchar("image", { length: 255 }),
+});
+
+
+export const accounts = mysqlTable(
+  "accounts",
+  {
+    userId: varchar("userId", { length: 255 }).notNull(),
+    type: varchar("type", { length: 255 })
+      .$type<AdapterAccount["type"]>()
+      .notNull(),
+    provider: varchar("provider", { length: 255 }).notNull(),
+    providerAccountId: varchar("providerAccountId", { length: 255 }).notNull(),
+    refresh_token: varchar("refresh_token", { length: 255 }),
+    access_token: varchar("access_token", { length: 255 }),
+    expires_at: int("expires_at"),
+    token_type: varchar("token_type", { length: 255 }),
+    scope: varchar("scope", { length: 255 }),
+    id_token: text("id_token"),
+    session_state: varchar("session_state", { length: 255 }),
+  },
+  (account) => ({
+    compoundKey: primaryKey(account.provider, account.providerAccountId),
+    userIdIdx: index("userId_idx").on(account.userId),
+  }),
+);
+
+
+export const sessions = mysqlTable(
+  "sessions",
+  {
+    sessionToken: varchar("sessionToken", { length: 255 })
+      .notNull()
+      .primaryKey(),
+    userId: varchar("userId", { length: 255 }).notNull(),
+    expires: timestamp("expires", { mode: "date" }).notNull(),
+  },
+  (session) => ({
+    userIdIdx: index("userId_idx").on(session.userId),
+  }),
+);
+
+
+
+export const verificationTokens = mysqlTable(
+  "verificationTokens",
+  {
+    identifier: varchar("identifier", { length: 255 }).notNull(),
+    token: varchar("token", { length: 255 }).notNull(),
+    expires: timestamp("expires", { mode: "date" }).notNull(),
+  },
+  (vt) => ({
+    compoundKey: primaryKey(vt.identifier, vt.token),
+  }),
+);

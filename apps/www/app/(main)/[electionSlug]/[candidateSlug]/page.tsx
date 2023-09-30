@@ -1,4 +1,8 @@
-import { db } from "@eboto-mo/db";
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { env } from "@/env.mjs";
 import {
   Anchor,
   Box,
@@ -14,10 +18,8 @@ import {
 import { IconUser } from "@tabler/icons-react";
 import { isNull } from "drizzle-orm";
 import moment from "moment";
-import type { Metadata } from "next";
-import Image from "next/image";
-import Link from "next/link";
-import { notFound } from "next/navigation";
+
+import { db } from "@eboto-mo/db";
 
 export async function generateMetadata({
   params: { electionSlug, candidateSlug },
@@ -58,7 +60,7 @@ export async function generateMetadata({
       images: [
         {
           url: `${
-            process.env.NODE_ENV === "production"
+            env.NODE_ENV === "production"
               ? "https://eboto-mo.com"
               : "http://localhost:3000"
           }/api/og?type=candidate&candidate_name=${encodeURIComponent(

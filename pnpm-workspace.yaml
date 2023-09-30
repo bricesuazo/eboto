@@ -1,9 +1,4 @@
 packages:
-  - "apps/*"
-  - "packages/*"
-  - packages/api
-  - packages/db
-  - packages/config/eslint
-  - packages/config/tsconfig
-  - packages/constants
-  - packages/email
+  - apps/*
+  - packages/*
+  - tooling/*

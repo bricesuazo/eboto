@@ -1,12 +1,13 @@
 "use client";
 
+import { useEffect } from "react";
 import { api } from "@/trpc/client";
-import type { Position } from "@eboto-mo/db/schema";
 import { Alert, Button, Group, Mark, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
-import { useEffect } from "react";
+
+import type { Position } from "@eboto-mo/db/schema";
 
 export default function DeletePosition({ position }: { position: Position }) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -36,6 +37,7 @@ export default function DeletePosition({ position }: { position: Position }) {
     if (opened) {
       reset();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
 
   return (

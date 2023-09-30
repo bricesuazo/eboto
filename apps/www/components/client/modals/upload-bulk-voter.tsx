@@ -1,17 +1,17 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { api } from "@/trpc/client";
-import type { VoterField } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
   Alert,
   Button,
   Group,
   Modal,
+  rem,
   Stack,
   Table,
   Text,
-  rem,
 } from "@mantine/core";
 import {
   Dropzone,
@@ -31,9 +31,10 @@ import {
   IconUpload,
   IconX,
 } from "@tabler/icons-react";
-import { useEffect, useRef, useState } from "react";
 import Balancer from "react-wrap-balancer";
 import * as XLSX from "xlsx";
+
+import type { VoterField } from "@eboto-mo/db/schema";
 
 export default function UploadBulkVoter({
   election_id,
@@ -73,10 +74,12 @@ export default function UploadBulkVoter({
       setSelectedFiles([]);
       reset();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
 
   useEffect(() => {
     reset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFiles]);
 
   return (

@@ -1,8 +1,12 @@
-import { edgeRouter } from "./edge";
-import { lambdaRouter } from "./lambda";
-import { mergeRouters } from "./trpc";
 
-// Used to provide a good DX with a single client
-// Then, a custom link is used to generate the correct URL for the request
-export const appRouter = mergeRouters(edgeRouter, lambdaRouter);
+import { authRouter } from "./router/auth";
+import { electionRouter } from "./router/election";
+import { createTRPCRouter } from "./trpc";
+
+export const appRouter = createTRPCRouter({
+  auth: authRouter,
+  election: electionRouter,
+});
+
+// export type definition of API
 export type AppRouter = typeof appRouter;

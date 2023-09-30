@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@eboto-mo/eslint-config": "workspace:*",
+    "@eboto-mo/prettier-config": "workspace:*",
     "@eboto-mo/tsconfig": "workspace:*",
     "@turbo/gen": "^1.10.14",
     "dotenv-cli": "^7.3.0",
@@ -24,5 +25,6 @@
     "prettier": "^3.0.3",
     "turbo": "^1.10.14"
   },
-  "packageManager": "pnpm@8.6.7"
+  "packageManager": "pnpm@8.6.7",
+  "prettier": "@eboto-mo/prettier-config"
 }

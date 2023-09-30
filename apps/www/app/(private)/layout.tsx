@@ -1,11 +1,12 @@
-import { auth } from "@clerk/nextjs";
+
+import { auth } from "@eboto-mo/auth";
 import { redirect } from "next/navigation";
 
-export default function DashboardLayout(props: React.PropsWithChildren) {
-  const { userId } = auth();
+export default async function DashboardLayout(props: React.PropsWithChildren) {
+  const session =await auth();
 
-  if (!userId)
-    return redirect(process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL ?? "/sign-in");
+  if (!session)
+    return redirect("/sign-in");
 
   return <>{props.children}</>;
 }

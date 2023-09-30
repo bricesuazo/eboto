@@ -8,6 +8,36 @@ import {
 } from "@tabler/icons-react";
 import type { TablerIconsProps } from "@tabler/icons-react";
 import { z } from "zod";
+import type { Election } from "@eboto-mo/db/schema";
+
+
+export const isElectionEnded = ({
+  election,
+  dateOnly,
+}: {
+  election: Election;
+  dateOnly?: boolean;
+}) => {
+  const end_date = new Date(election.end_date);
+  const now = new Date();
+
+  return dateOnly
+    ? end_date.getTime() <=
+        new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
+    : end_date.getTime() <= now.getTime();
+};
+
+
+export const isElectionOngoing = ({ election }: { election: Election }) => {
+  const end = new Date(election.end_date);
+  end.setDate(end.getDate() + 1);
+
+  const now = new Date();
+  return (
+    election.start_date.getTime() <= now.getTime() &&
+    end.getTime() > now.getTime()
+  );
+};
 
 export const electionDashboardNavbar: {
   id: number;

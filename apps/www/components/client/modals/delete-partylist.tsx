@@ -1,12 +1,13 @@
 "use client";
 
+import { useEffect } from "react";
 import { api } from "@/trpc/client";
-import type { Partylist } from "@eboto-mo/db/schema";
 import { Alert, Button, Group, Mark, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
-import { useEffect } from "react";
+
+import type { Partylist } from "@eboto-mo/db/schema";
 
 export default function DeletePartylist({
   partylist,
@@ -40,6 +41,7 @@ export default function DeletePartylist({
     if (opened) {
       reset();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
 
   return (

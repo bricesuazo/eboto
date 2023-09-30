@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 
 import {
+  accounts,
   achievements,
   affiliations,
   candidates,
@@ -14,12 +15,15 @@ import {
   platforms,
   positions,
   reported_problems,
+  sessions,
   users,
   verification_tokens,
   voter_fields,
   voters,
   votes,
 } from "./schema";
+
+
 
 export const electionsRelations = relations(elections, ({ many }) => ({
   votes: many(votes),
@@ -207,3 +211,15 @@ export const events_attendedRelations = relations(
     }),
   }),
 );
+
+export const usersRelations = relations(users, ({ many }) => ({
+  accounts: many(accounts),
+}));
+
+
+export const accountsRelations = relations(accounts, ({ one }) => ({
+  user: one(users, { fields: [accounts.userId], references: [users.id] }),
+}));
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+  user: one(users, { fields: [sessions.userId], references: [users.id] }),
+}));

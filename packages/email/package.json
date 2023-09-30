@@ -14,9 +14,11 @@
     "react-email": "1.9.5"
   },
   "devDependencies": {
+    "@eboto-mo/prettier-config": "workspace:*",
     "@eboto-mo/tsconfig": "workspace:*",
     "@types/node": "^20.7.2",
     "eslint": "^8.50.0",
     "typescript": "^5.2.2"
-  }
+  },
+  "prettier": "@eboto-mo/prettier-config"
 }

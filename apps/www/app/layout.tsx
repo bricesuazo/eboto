@@ -1,6 +1,5 @@
 import { siteConfig } from "@/config/site";
-import TRPCProvider from "@/trpc/TRPCProvider";
-import { ClerkProvider } from "@clerk/nextjs";
+import {TRPCReactProvider} from "@/trpc/TRPCProvider";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
@@ -68,13 +67,10 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
 };
 
-// export const runtime = "edge";
-export const dynamic = "force-dynamic";
 
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
-    <ClerkProvider>
-      <TRPCProvider>
+      <TRPCReactProvider>
         <html lang="en">
           <head>
             <ColorSchemeScript />
@@ -92,7 +88,6 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
             </MantineProvider>
           </body>
         </html>
-      </TRPCProvider>
-    </ClerkProvider>
+      </TRPCReactProvider>
   );
 }

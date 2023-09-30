@@ -1,6 +1,6 @@
 import Footer from "@/components/client/components/footer";
 import Header from "@/components/client/components/header";
-import { auth } from "@clerk/nextjs";
+import { auth } from "@eboto-mo/auth";
 import {
   AppShell,
   AppShellFooter,
@@ -8,12 +8,12 @@ import {
   AppShellMain,
 } from "@mantine/core";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { userId } = auth();
+  const session = await auth();
   return (
     <AppShell
       padding={0}
@@ -24,7 +24,7 @@ export default function RootLayout({
       //  navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
     >
       <AppShellHeader>
-        <Header userId={userId} />
+        <Header userId={session?.user.id} />
       </AppShellHeader>
 
       <AppShellMain>{children}</AppShellMain>

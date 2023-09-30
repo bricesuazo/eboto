@@ -1,49 +1,55 @@
-import { auth, currentUser } from "@clerk/nextjs";
-import { appRouter } from "@eboto-mo/api/src/root";
-import type { AppRouter } from "@eboto-mo/api/src/root";
-import { db } from "@eboto-mo/db";
+import { cookies } from "next/headers";
+import { env } from "@/env.mjs";
 import { loggerLink } from "@trpc/client";
 import { experimental_nextCacheLink as nextCacheLink } from "@trpc/next/app-dir/links/nextCache";
+import { experimental_nextHttpLink as nextHttpLink } from "@trpc/next/app-dir/links/nextHttp";
 import { experimental_createTRPCNextAppDirServer as createTRPCNextAppDirServer } from "@trpc/next/app-dir/server";
-import { cookies, headers } from "next/headers";
 import superjson from "superjson";
 
-import { endingLink } from "./shared";
+import { appRouter } from "@eboto-mo/api/src/root";
+import type { AppRouter } from "@eboto-mo/api/src/root";
+import { auth } from "@eboto-mo/auth";
+import { db } from "@eboto-mo/db";
+
+import { getUrl } from "./shared";
 
 /**
  * This client invokes procedures directly on the server without fetching over HTTP.
  */
 export const api = createTRPCNextAppDirServer<AppRouter>({
-  config() {
-    return {
-      transformer: superjson,
-      links: [
-        loggerLink({
-          enabled: (opts) =>
-            process.env.NODE_ENV === "development" ||
-            (opts.direction === "down" && opts.result instanceof Error),
-        }),
-        endingLink({
-          headers: Object.fromEntries(headers().entries()),
-        }),
-        nextCacheLink({
-          revalidate: 1,
-          router: appRouter,
-          async createContext() {
-            await currentUser();
-            const authentication = auth();
-            return {
-              auth: authentication,
-              db,
+  config: () => ({
+    transformer: superjson,
+    links: [
+      loggerLink({
+        enabled: (opts) =>
+          env.NODE_ENV === "development" ||
+          (opts.direction === "down" && opts.result instanceof Error),
+      }),
+      nextHttpLink({
+        batch: true,
+        url: getUrl(),
+        headers() {
+          return {
+            cookie: cookies().toString(),
+            "x-trpc-source": "rsc-http",
+          };
+        },
+      }),
+      nextCacheLink({
+        revalidate: 1,
+        router: appRouter,
+        async createContext() {
+          return {
+            session: await auth(),
+            db,
 
-              headers: {
-                cookie: cookies().toString(),
-                "x-trpc-source": "rsc-invoke",
-              },
-            };
-          },
-        }),
-      ],
-    };
-  },
+            headers: {
+              cookie: cookies().toString(),
+              "x-trpc-source": "rsc-invoke",
+            },
+          };
+        },
+      }),
+    ],
+  }),
 });

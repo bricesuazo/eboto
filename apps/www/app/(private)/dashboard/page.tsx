@@ -1,7 +1,7 @@
 import DashboardCard from "@/components/client/components/dashboard-card";
 import Dashboard from "@/components/client/layout/dashboard";
 import CreateElection from "@/components/client/modals/create-election";
-import { auth } from "@clerk/nextjs";
+import { auth } from "@eboto-mo/auth";
 import { db } from "@eboto-mo/db";
 import { Box, Container, Flex, Group, Stack, Text, Title } from "@mantine/core";
 import type { Metadata } from "next";
@@ -13,24 +13,24 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const { userId } = auth();
+  const session = await auth();
 
-  if (!userId) notFound();
+  if (!session) notFound();
 
   const electionsAsCommissioner = await db.query.commissioners.findMany({
-    where: (commissioners, { eq }) => eq(commissioners.user_id, userId),
+    where: (commissioners, { eq }) => eq(commissioners.user_id, session.user.id),
     with: {
       election: true,
     },
   });
 
   const electionsAsVoter = await db.query.voters.findMany({
-    where: (voters, { eq }) => eq(voters.user_id, userId),
+    where: (voters, { eq }) => eq(voters.user_id, session.user.id),
     with: {
       election: {
         with: {
           votes: {
-            where: (votes, { eq }) => eq(votes.voter_id, userId),
+            where: (votes, { eq }) => eq(votes.voter_id, session.user.id),
           },
         },
       },

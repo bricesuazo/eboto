@@ -1,7 +1,7 @@
 import ScrollToTopButton from "@/components/client/components/scroll-to-top";
 import { api } from "@/trpc/server";
-import { isElectionEnded, isElectionOngoing } from "@/utils";
-import { auth } from "@clerk/nextjs";
+import { auth } from "@eboto-mo/auth";
+import { isElectionEnded, isElectionOngoing } from "@eboto-mo/constants";
 import { db } from "@eboto-mo/db";
 import {
   Box,
@@ -76,7 +76,7 @@ export default async function RelatimePage({
 }: {
   params: { electionSlug: string };
 }) {
-  const { userId } = auth();
+  const session = await auth();
   const election = await db.query.elections.findFirst({
     where: (election, { eq, and }) =>
       and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
@@ -86,7 +86,7 @@ export default async function RelatimePage({
   if (!election) notFound();
 
   if (election.publicity === "PRIVATE") {
-    if (!userId)
+    if (!session)
       redirect(
         `/sign-in?callbackUrl=https://eboto-mo.com/${election.slug}/realtime`,
       );
@@ -95,7 +95,7 @@ export default async function RelatimePage({
       where: (commissioner, { eq, and }) =>
         and(
           eq(commissioner.election_id, election.id),
-          eq(commissioner.user_id, userId),
+          eq(commissioner.user_id, session.user.id),
           isNull(commissioner.deleted_at),
         ),
     });
@@ -121,21 +121,21 @@ export default async function RelatimePage({
 
     if (isVoter && !vote) redirect(`/${election.slug}`);
   } else if (election.publicity === "VOTER") {
-    if (!userId)
+    if (!session)
       redirect(
         `/sign-in?callbackUrl=https://eboto-mo.com/${election.slug}/realtime`,
       );
 
     const vote = await db.query.votes.findFirst({
       where: (votes, { eq, and }) =>
-        and(eq(votes.election_id, election.id), eq(votes.voter_id, userId)),
+        and(eq(votes.election_id, election.id), eq(votes.voter_id, session.user.id)),
     });
 
     const isVoter = await db.query.voters.findFirst({
       where: (voter, { eq, and }) =>
         and(
           eq(voter.election_id, election.id),
-          eq(voter.user_id, userId),
+          eq(voter.user_id, session.user.id),
           isNull(voter.deleted_at),
         ),
     });
@@ -144,7 +144,7 @@ export default async function RelatimePage({
       where: (commissioner, { eq, and }) =>
         and(
           eq(commissioner.election_id, election.id),
-          eq(commissioner.user_id, userId),
+          eq(commissioner.user_id, session.user.id),
           isNull(commissioner.deleted_at),
         ),
     });

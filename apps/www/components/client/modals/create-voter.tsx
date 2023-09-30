@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { api } from "@/trpc/client";
 import {
   Alert,
@@ -19,7 +20,6 @@ import {
   IconCheck,
   IconUserPlus,
 } from "@tabler/icons-react";
-import { useEffect } from "react";
 
 export default function CreateVoter({ election_id }: { election_id: string }) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -62,6 +62,7 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
       form.reset();
       reset();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
 
   return (

@@ -1,12 +1,12 @@
 "use client";
 
-import { env } from "@/env.mjs";
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useStore } from "@/store";
 import classes from "@/styles/Header.module.css";
 import { api } from "@/trpc/client";
-import { UserProfile, useClerk, useUser } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
-import type { Election } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
   Box,
@@ -33,8 +33,8 @@ import {
   Skeleton,
   Stack,
   Text,
-  TextInput,
   Textarea,
+  TextInput,
   UnstyledButton,
   useComputedColorScheme,
   useMantineColorScheme,
@@ -51,20 +51,18 @@ import {
   IconSun,
   IconUserCircle,
 } from "@tabler/icons-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { signIn, signOut, useSession } from "next-auth/react";
+
+import type { Election } from "@eboto-mo/db/schema";
 
 export default function Header({
   userId,
   elections,
 }: {
-  userId: string | null;
+  userId?: string;
   elections?: Election[];
 }) {
-  const { isSignedIn, user } = useUser();
-  const { signOut } = useClerk();
+  const session = useSession();
   const params = useParams();
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [reportAProblemLoading, setReportAProblemLoading] = useState(false);
@@ -126,6 +124,7 @@ export default function Header({
     if (openedReportAProblem) {
       formReportAProblem.reset();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openedReportAProblem]);
 
   return (
@@ -144,7 +143,7 @@ export default function Header({
             <ModalCloseButton />
           </ModalHeader>
           <ModalBody p={0}>
-            <UserProfile
+            {/* <UserProfile
               routing="virtual"
               appearance={{
                 baseTheme: computedColorScheme === "dark" ? dark : undefined,
@@ -161,7 +160,7 @@ export default function Header({
                   },
                 },
               }}
-            />
+            /> */}
           </ModalBody>
         </ModalContent>
       </ModalRoot>
@@ -291,9 +290,10 @@ export default function Header({
                         // },
                       }}
                     >
-                      {isSignedIn ? (
+                      {session.status === "authenticated" &&
+                      session.data?.user.image ? (
                         <Image
-                          src={user.imageUrl}
+                          src={session.data.user.image}
                           alt="Profile picture"
                           fill
                           sizes="100%"
@@ -308,13 +308,13 @@ export default function Header({
                     </Box>
 
                     <Box w={{ base: 100, sm: 140 }}>
-                      {isSignedIn ? (
+                      {session.status === "authenticated" ? (
                         <>
                           <Text size="xs" truncate fw="bold">
-                            {user.firstName} {user.lastName}
+                            {session.data.user.name}
                           </Text>
                           <Text size="xs" truncate>
-                            {user.emailAddresses[0]?.emailAddress}
+                            {/* {user.emailAddresses[0]?.emailAddress} */}
                           </Text>
                         </>
                       ) : (
@@ -423,27 +423,18 @@ export default function Header({
                 <IconMoon size="1rem" className={classes.dark} />
               </ActionIcon>
 
-              <Button
-                hiddenFrom="sm"
-                component={Link}
-                href={env.NEXT_PUBLIC_CLERK_SIGN_IN_URL}
-              >
+              <Button hiddenFrom="sm" onClick={() => signIn()}>
                 Sign in
               </Button>
               <Button
                 variant="outline"
                 visibleFrom="sm"
-                component={Link}
-                href={env.NEXT_PUBLIC_CLERK_SIGN_IN_URL}
+                onClick={() => signIn()}
               >
                 Sign in
               </Button>
 
-              <Button
-                visibleFrom="sm"
-                component={Link}
-                href={env.NEXT_PUBLIC_CLERK_SIGN_UP_URL}
-              >
+              <Button visibleFrom="sm" onClick={() => signIn()}>
                 Get Started
               </Button>
             </Group>

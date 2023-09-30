@@ -1,5 +1,5 @@
 import DashboardElection from "@/components/client/layout/dashboard-election";
-import { auth } from "@clerk/nextjs";
+import { auth } from "@eboto-mo/auth";
 import { db } from "@eboto-mo/db";
 import { isNull } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
@@ -7,10 +7,10 @@ import { notFound, redirect } from "next/navigation";
 export default async function DashboardLayout(
   props: React.PropsWithChildren<{ params: { electionDashboardSlug: string } }>,
 ) {
-  const { userId } = auth();
+  const session = await auth();
 
-  if (!userId)
-    return redirect(process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL ?? "/sign-in");
+  if (!session)
+    return redirect("/sign-in");
 
   const election = await db.query.elections.findFirst({
     where: (election, { eq, and }) =>
@@ -23,6 +23,6 @@ export default async function DashboardLayout(
   if (!election) notFound();
 
   return (
-    <DashboardElection userId={userId}>{props.children}</DashboardElection>
+    <DashboardElection userId={session.user.id}>{props.children}</DashboardElection>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
 import { api } from "@/trpc/client";
-import type { Partylist } from "@eboto-mo/db/schema";
 import {
   Alert,
   Button,
@@ -19,7 +19,8 @@ import {
   IconCheck,
   IconLetterCase,
 } from "@tabler/icons-react";
-import { useEffect } from "react";
+
+import type { Partylist } from "@eboto-mo/db/schema";
 
 export default function EditPartylist({ partylist }: { partylist: Partylist }) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -81,6 +82,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
       form.resetDirty();
       reset();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
 
   return (

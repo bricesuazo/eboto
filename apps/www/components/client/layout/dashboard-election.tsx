@@ -1,12 +1,12 @@
 "use client";
 
+import Link from "next/link";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import Footer from "@/components/client/components/footer";
 import Header from "@/components/client/components/header";
 import CreateElection from "@/components/client/modals/create-election";
 import { useStore } from "@/store";
 import { api } from "@/trpc/client";
-import { useClerk } from "@clerk/nextjs";
-import { electionDashboardNavbar } from "@eboto-mo/constants";
 import {
   AppShell,
   AppShellFooter,
@@ -31,8 +31,9 @@ import {
   useCombobox,
 } from "@mantine/core";
 import { IconExternalLink, IconLogout } from "@tabler/icons-react";
-import Link from "next/link";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
+
+import { electionDashboardNavbar } from "@eboto-mo/constants";
 
 export default function DashboardElection({
   children,
@@ -40,7 +41,7 @@ export default function DashboardElection({
 }: React.PropsWithChildren<{
   userId: string | null;
 }>) {
-  const { signOut } = useClerk();
+  const { data } = useSession();
   const router = useRouter();
   const params = useParams();
 
@@ -85,7 +86,7 @@ export default function DashboardElection({
     >
       <AppShellHeader>
         <Header
-          userId={userId}
+          userId={data?.user.id ?? userId ?? undefined}
           elections={elections?.map(({ election }) => election)}
         />
       </AppShellHeader>

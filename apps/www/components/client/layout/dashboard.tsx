@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs";
+
 import {
   AppShell,
   AppShellFooter,
@@ -10,11 +10,10 @@ import Footer from "../components/footer";
 import Header from "../components/header";
 
 export default function Dashboard(props: React.PropsWithChildren) {
-  const { userId } = auth();
   return (
     <AppShell header={{ height: 60 }} footer={{ height: 52 }}>
       <AppShellHeader>
-        <Header userId={userId} />
+        <Header />
       </AppShellHeader>
 
       <AppShellMain>{props.children} </AppShellMain>

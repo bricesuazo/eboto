@@ -1,5 +1,4 @@
 import classes from "@/styles/NotFound.module.css";
-import { auth } from "@clerk/nextjs";
 import { Button, Container, Group, Text, Title } from "@mantine/core";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -9,7 +8,6 @@ export const metadata: Metadata = {
   title: "404 – Page Not Found",
 };
 export default function NotFound() {
-  const { userId } = auth();
 
   return (
     <Container className={classes.root} size="md">
@@ -28,7 +26,7 @@ export default function NotFound() {
           variant="subtle"
           size="md"
           component={Link}
-          href={userId ? "/dashboard" : "/"}
+          href="/"
         >
           Take me back to home page
         </Button>

@@ -1,27 +1,20 @@
 "use client";
 
+import { useEffect } from "react";
 import { api } from "@/trpc/client";
-import type { VoterField } from "@eboto-mo/db/schema";
-import {
-  ActionIcon,
-  Alert,
-  Button,
-  Group,
-  Modal,
-  Stack,
-  Text,
-  TextInput,
-} from "@mantine/core";
+import { ActionIcon, Alert, Button, Group, Modal, Stack, Text, TextInput } from "@mantine/core";
 import { isEmail, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import {
-  IconAlertCircle,
-  IconAt,
-  IconCheck,
-  IconEdit,
-} from "@tabler/icons-react";
-import { useEffect } from "react";
+import { IconAlertCircle, IconAt, IconCheck, IconEdit } from "@tabler/icons-react";
+
+
+
+import type { VoterField } from "@eboto-mo/db/schema";
+
+
+
+
 
 export default function EditVoter({
   election_id,
@@ -73,6 +66,7 @@ export default function EditVoter({
       form.setValues(dataForForm);
       form.resetDirty(dataForForm);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
 
   return (

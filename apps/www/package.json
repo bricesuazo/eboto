@@ -10,9 +10,8 @@
     "clean": "git clean -xdf .next .turbo node_modules"
   },
   "dependencies": {
-    "@clerk/nextjs": "^4.25.1",
-    "@clerk/themes": "^1.7.6",
     "@eboto-mo/api": "workspace:*",
+    "@eboto-mo/auth": "workspace:*",
     "@eboto-mo/constants": "workspace:*",
     "@eboto-mo/db": "workspace:*",
     "@eboto-mo/eslint-config": "workspace:*",
@@ -35,6 +34,8 @@
     "@tabler/icons-react": "^2.37.0",
     "@tanstack/query-core": "^4.35.3",
     "@tanstack/react-query": "^4.35.3",
+    "@tanstack/react-query-devtools": "^4.35.3",
+    "@tanstack/react-query-next-experimental": "5.0.0-alpha.80",
     "@tiptap/extension-link": "^2.1.11",
     "@tiptap/react": "^2.1.11",
     "@tiptap/starter-kit": "^2.1.11",
@@ -52,6 +53,7 @@
     "mantine-react-table": "^1.3.1",
     "moment": "^2.29.4",
     "next": "13.5.3",
+    "next-auth": "0.0.0-manual.c885ac1d",
     "next-superjson-plugin": "^0.5.9",
     "qrcode.react": "^3.1.0",
     "react": "^18.2.0",
@@ -60,7 +62,7 @@
     "react-player": "^2.13.0",
     "react-wrap-balancer": "^1.1.0",
     "read-excel-file": "^5.6.1",
-    "superjson": "^1.13.3",
+    "superjson": "^1.13.1",
     "svix": "^1.12.0",
     "to-words": "^3.6.1",
     "xlsx": "^0.18.5",
@@ -68,12 +70,12 @@
     "zustand": "^4.4.1"
   },
   "devDependencies": {
-    "@clerk/types": "^3.53.0",
+    "@eboto-mo/eslint-config": "workspace:*",
+    "@eboto-mo/prettier-config": "workspace:*",
     "@eboto-mo/tsconfig": "workspace:*",
     "@tanstack/eslint-plugin-query": "^4.34.1",
-    "@trivago/prettier-plugin-sort-imports": "^4.2.0",
     "@types/bcryptjs": "^2.4.4",
-    "@types/node": "^20.7.2",
+    "@types/node": "^20.8.0",
     "@types/react": "^18.2.23",
     "@types/react-dom": "^18.2.8",
     "drizzle-kit": "0.19.13",
@@ -81,5 +83,14 @@
     "postcss-preset-mantine": "^1.7.0",
     "postcss-simple-vars": "^7.0.1",
     "typescript": "^5.2.2"
-  }
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@eboto-mo/eslint-config/base",
+      "@eboto-mo/eslint-config/nextjs",
+      "@eboto-mo/eslint-config/react"
+    ]
+  },
+  "prettier": "@eboto-mo/prettier-config"
 }
