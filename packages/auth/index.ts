@@ -24,9 +24,7 @@ declare module "next-auth" {
 export const {
   handlers: { GET, POST },
   auth,
-  signIn,
-  signOut,
-  update,
+  CSRF_experimental,
 } = NextAuth({
   adapter: DrizzleAdapter(db),
   providers: [

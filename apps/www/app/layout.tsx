@@ -1,17 +1,18 @@
-import { siteConfig } from "@/config/site";
-import {TRPCReactProvider} from "@/trpc/TRPCProvider";
-import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
 import "@mantine/dropzone/styles.css";
-import { Notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
-import { Analytics } from "@vercel/analytics/react";
+
 import type { Metadata } from "next";
 import {
   // Lexend,
   Poppins,
 } from "next/font/google";
+import { siteConfig } from "@/config/site";
+import { TRPCReactProvider } from "@/trpc/TRPCProvider";
+import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
+import { Analytics } from "@vercel/analytics/react";
 
 const font = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -67,27 +68,25 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
 };
 
-
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
-      <TRPCReactProvider>
-        <html lang="en">
-          <head>
-            <ColorSchemeScript />
-          </head>
-          <body className={font.className}>
-            <MantineProvider
-              theme={{
-                primaryColor: "green",
-                fontFamily: font.style.fontFamily,
-              }}
-            >
-              <Notifications />
-              {children}
-              <Analytics />
-            </MantineProvider>
-          </body>
-        </html>
-      </TRPCReactProvider>
+    <html lang="en">
+      <head>
+        <ColorSchemeScript />
+      </head>
+      <body className={font.className}>
+        <TRPCReactProvider>
+          <MantineProvider
+            theme={{
+              primaryColor: "green",
+            }}
+          >
+            <Notifications />
+            {children}
+            <Analytics />
+          </MantineProvider>
+        </TRPCReactProvider>
+      </body>
+    </html>
   );
 }

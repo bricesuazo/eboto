@@ -31,17 +31,15 @@ import {
   useCombobox,
 } from "@mantine/core";
 import { IconExternalLink, IconLogout } from "@tabler/icons-react";
-import { signOut, useSession } from "next-auth/react";
 
 import { electionDashboardNavbar } from "@eboto-mo/constants";
 
 export default function DashboardElection({
-  children,
-  userId,
+  children, // userId,
 }: React.PropsWithChildren<{
   userId: string | null;
 }>) {
-  const { data } = useSession();
+  // const { data } = useSession();
   const router = useRouter();
   const params = useParams();
 
@@ -86,7 +84,7 @@ export default function DashboardElection({
     >
       <AppShellHeader>
         <Header
-          userId={data?.user.id ?? userId ?? undefined}
+          // userId={data?.user.id ?? userId ?? undefined}
           elections={elections?.map(({ election }) => election)}
         />
       </AppShellHeader>
@@ -256,7 +254,7 @@ export default function DashboardElection({
               fz="sm"
               size="md"
               variant="subtle"
-              onClick={() => signOut()}
+              // onClick={() => signOut()}
               leftSection={<IconLogout size="1.25rem" />}
             >
               Logout

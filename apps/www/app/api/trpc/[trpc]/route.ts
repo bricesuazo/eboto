@@ -47,7 +47,7 @@ import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter, createTRPCContext } from "@eboto-mo/api";
 import { auth } from "@eboto-mo/auth";
 
-// export const runtime = "edge";
+export const runtime = "edge";
 
 const handler = (req: NextRequest) =>
   fetchRequestHandler({

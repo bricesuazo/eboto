@@ -30,7 +30,7 @@ import {
   ModalRoot,
   ModalTitle,
   Select,
-  Skeleton,
+  // Skeleton,
   Stack,
   Text,
   Textarea,
@@ -51,7 +51,6 @@ import {
   IconSun,
   IconUserCircle,
 } from "@tabler/icons-react";
-import { signIn, signOut, useSession } from "next-auth/react";
 
 import type { Election } from "@eboto-mo/db/schema";
 
@@ -62,7 +61,7 @@ export default function Header({
   userId?: string;
   elections?: Election[];
 }) {
-  const session = useSession();
+  // const session = useSession();
   const params = useParams();
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [reportAProblemLoading, setReportAProblemLoading] = useState(false);
@@ -290,7 +289,7 @@ export default function Header({
                         // },
                       }}
                     >
-                      {session.status === "authenticated" &&
+                      {/* {session.status === "authenticated" &&
                       session.data?.user.image ? (
                         <Image
                           src={session.data.user.image}
@@ -304,25 +303,7 @@ export default function Header({
                         />
                       ) : (
                         <Skeleton w={24} h={24} />
-                      )}
-                    </Box>
-
-                    <Box w={{ base: 100, sm: 140 }}>
-                      {session.status === "authenticated" ? (
-                        <>
-                          <Text size="xs" truncate fw="bold">
-                            {session.data.user.name}
-                          </Text>
-                          <Text size="xs" truncate>
-                            {/* {user.emailAddresses[0]?.emailAddress} */}
-                          </Text>
-                        </>
-                      ) : (
-                        <>
-                          <Skeleton h={12} my={4} />
-                          <Skeleton h={12} my={4} />
-                        </>
-                      )}
+                      )} */}
                     </Box>
 
                     <IconChevronDown
@@ -380,10 +361,10 @@ export default function Header({
                 <MenuItem
                   onClick={() => {
                     setLogoutLoading(true);
-                    void (async () =>
-                      await signOut({
-                        // callbackUrl: "/signin",
-                      }))();
+                    // void (async () =>
+                    //   await signOut({
+                    //     // callbackUrl: "/signin",
+                    //   }))();
                   }}
                   closeMenuOnClick={false}
                   leftSection={
@@ -423,7 +404,7 @@ export default function Header({
                 <IconMoon size="1rem" className={classes.dark} />
               </ActionIcon>
 
-              <Button hiddenFrom="sm" onClick={() => signIn()}>
+              {/* <Button hiddenFrom="sm" onClick={() => signIn()}>
                 Sign in
               </Button>
               <Button
@@ -436,7 +417,7 @@ export default function Header({
 
               <Button visibleFrom="sm" onClick={() => signIn()}>
                 Get Started
-              </Button>
+              </Button> */}
             </Group>
           )}
         </Flex>

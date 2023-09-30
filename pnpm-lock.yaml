@@ -117,16 +117,16 @@ importers:
         specifier: ^2.1.11
         version: registry.npmjs.org/@tiptap/starter-kit@2.1.11(@tiptap/pm@2.1.11)
       '@trpc/client':
-        specifier: ^10.38.5
+        specifier: ^10.38.4
         version: registry.npmjs.org/@trpc/client@10.38.5(@trpc/server@10.38.5)
       '@trpc/next':
-        specifier: ^10.38.5
+        specifier: ^10.38.4
         version: registry.npmjs.org/@trpc/next@10.38.5(@tanstack/react-query@4.35.3)(@trpc/client@10.38.5)(@trpc/react-query@10.38.5)(@trpc/server@10.38.5)(next@13.5.3)(react-dom@18.2.0)(react@18.2.0)
       '@trpc/react-query':
-        specifier: ^10.38.5
+        specifier: ^10.38.4
         version: registry.npmjs.org/@trpc/react-query@10.38.5(@tanstack/react-query@4.35.3)(@trpc/client@10.38.5)(@trpc/server@10.38.5)(react-dom@18.2.0)(react@18.2.0)
       '@trpc/server':
-        specifier: ^10.38.5
+        specifier: ^10.38.4
         version: registry.npmjs.org/@trpc/server@10.38.5
       '@upstash/qstash':
         specifier: ^0.3.6
@@ -161,9 +161,6 @@ importers:
       next:
         specifier: 13.5.3
         version: registry.npmjs.org/next@13.5.3(react-dom@18.2.0)(react@18.2.0)
-      next-auth:
-        specifier: 0.0.0-manual.c885ac1d
-        version: registry.npmjs.org/next-auth@0.0.0-manual.c885ac1d(next@13.5.3)(react@18.2.0)
       next-superjson-plugin:
         specifier: ^0.5.9
         version: registry.npmjs.org/next-superjson-plugin@0.5.9(next@13.5.3)(superjson@1.13.1)
@@ -314,8 +311,8 @@ importers:
         specifier: ^13.5.3
         version: registry.npmjs.org/next@13.5.3(react-dom@18.2.0)(react@18.2.0)
       next-auth:
-        specifier: 0.0.0-manual.c885ac1d
-        version: registry.npmjs.org/next-auth@0.0.0-manual.c885ac1d(next@13.5.3)(react@18.2.0)
+        specifier: 0.0.0-manual.b53ca00b
+        version: registry.npmjs.org/next-auth@0.0.0-manual.b53ca00b(next@13.5.3)(react-dom@18.2.0)(react@18.2.0)
       react:
         specifier: 18.2.0
         version: registry.npmjs.org/react@18.2.0
@@ -592,6 +589,22 @@ packages:
     version: 0.3.2
     dependencies:
       '@auth/core': registry.npmjs.org/@auth/core@0.12.0
+    transitivePeerDependencies:
+      - nodemailer
+    dev: false
+
+  registry.npmjs.org/@auth/nextjs@0.0.0-manual.179c08d4(next@13.5.3)(react@18.2.0):
+    resolution: {integrity: sha512-HVuDgb6xlYLV5mHTGc0Pycg8BlwtcvjvS+54QXEbOBpA5tulzKxAH8QlCoKj5R9XHW9hP9DiCnvXyVV9x2N+jA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@auth/nextjs/-/nextjs-0.0.0-manual.179c08d4.tgz}
+    id: registry.npmjs.org/@auth/nextjs/0.0.0-manual.179c08d4
+    name: '@auth/nextjs'
+    version: 0.0.0-manual.179c08d4
+    peerDependencies:
+      next: ^13.4.6
+      react: ^18.2.0
+    dependencies:
+      '@auth/core': registry.npmjs.org/@auth/core@0.0.0-manual.e9863699
+      next: registry.npmjs.org/next@13.5.3(react-dom@18.2.0)(react@18.2.0)
+      react: registry.npmjs.org/react@18.2.0
     transitivePeerDependencies:
       - nodemailer
     dev: false
@@ -8525,22 +8538,25 @@ packages:
     engines: {node: '>= 0.4.0'}
     dev: true
 
-  registry.npmjs.org/next-auth@0.0.0-manual.c885ac1d(next@13.5.3)(react@18.2.0):
-    resolution: {integrity: sha512-kL5Ead+uIQNjfSWjo/MVxzte+jJSD+N/XIGkYmqyjQmNxE5wDvJ6zuwo+h+QPBnTVf+jmOsOlzr65tPN7OY5fA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/next-auth/-/next-auth-0.0.0-manual.c885ac1d.tgz}
-    id: registry.npmjs.org/next-auth/0.0.0-manual.c885ac1d
+  registry.npmjs.org/next-auth@0.0.0-manual.b53ca00b(next@13.5.3)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-hV/FhWoNGwpLe/+eaBVCDx4SBiauNuwA4fIT5DacSY0KrobcC6rvWQkL89WQZZKh3EpYqOefFkiXRkHNz90miw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/next-auth/-/next-auth-0.0.0-manual.b53ca00b.tgz}
+    id: registry.npmjs.org/next-auth/0.0.0-manual.b53ca00b
     name: next-auth
-    version: 0.0.0-manual.c885ac1d
+    version: 0.0.0-manual.b53ca00b
     peerDependencies:
-      next: ^13.5.3
+      next: ^13.4.5
       nodemailer: ^6.6.5
-      react: ^18.2.0
+      react: ^17.0.2 || ^18
+      react-dom: ^17.0.2 || ^18
     peerDependenciesMeta:
       nodemailer:
         optional: true
     dependencies:
       '@auth/core': registry.npmjs.org/@auth/core@0.0.0-manual.e9863699
+      '@auth/nextjs': registry.npmjs.org/@auth/nextjs@0.0.0-manual.179c08d4(next@13.5.3)(react@18.2.0)
       next: registry.npmjs.org/next@13.5.3(react-dom@18.2.0)(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
+      react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
     dev: false
 
   registry.npmjs.org/next-superjson-plugin@0.5.9(next@13.5.3)(superjson@1.13.1):
