@@ -27,6 +27,7 @@ import type { Position } from "@eboto-mo/db/schema";
 
 export default function EditPosition({ position }: { position: Position }) {
   const [opened, { open, close }] = useDisclosure(false);
+  const context = api.useContext();
 
   const form = useForm({
     initialValues: {
@@ -69,7 +70,7 @@ export default function EditPosition({ position }: { position: Position }) {
 
   const { mutate, isLoading, isError, error, reset } =
     api.election.editPosition.useMutation({
-      onSuccess: () => {
+      onSuccess: async () => {
         notifications.show({
           title: `${form.values.name} updated!`,
           message: "Successfully updated position",
@@ -77,6 +78,7 @@ export default function EditPosition({ position }: { position: Position }) {
           autoClose: 5000,
         });
         close();
+        await context.election.getAllPositionsByElectionId.invalidate();
       },
       onError: (error) => {
         notifications.show({

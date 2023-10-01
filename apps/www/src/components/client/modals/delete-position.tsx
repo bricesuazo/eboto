@@ -11,10 +11,11 @@ import type { Position } from "@eboto-mo/db/schema";
 
 export default function DeletePosition({ position }: { position: Position }) {
   const [opened, { open, close }] = useDisclosure(false);
+  const context = api.useContext();
 
   const { mutate, isLoading, isError, error, reset } =
     api.election.deletePosition.useMutation({
-      onSuccess: () => {
+      onSuccess: async () => {
         notifications.show({
           title: `${position.name} deleted!`,
           message: "Successfully deleted position",
@@ -22,6 +23,7 @@ export default function DeletePosition({ position }: { position: Position }) {
           autoClose: 5000,
         });
         close();
+        await context.election.getAllPositionsByElectionId.invalidate();
       },
       onError: (error) => {
         notifications.show({

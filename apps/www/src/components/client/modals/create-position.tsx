@@ -29,9 +29,10 @@ export default function CreatePosition({
 }: {
   election_id: string;
 }) {
+  const context = api.useContext();
   const { mutate, isLoading, isError, error, reset } =
     api.election.createPosition.useMutation({
-      onSuccess: () => {
+      onSuccess: async () => {
         notifications.show({
           title: `${form.values.name} created!`,
           message: "Successfully created position",
@@ -39,6 +40,8 @@ export default function CreatePosition({
           autoClose: 5000,
         });
         close();
+
+        await context.election.getAllPositionsByElectionId.invalidate();
       },
     });
 
