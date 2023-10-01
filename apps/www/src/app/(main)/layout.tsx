@@ -1,12 +1,13 @@
 import Footer from "@/components/client/components/footer";
 import Header from "@/components/client/components/header";
-import { auth } from "@eboto-mo/auth";
 import {
   AppShell,
   AppShellFooter,
   AppShellHeader,
   AppShellMain,
 } from "@mantine/core";
+
+import { auth } from "@eboto-mo/auth";
 
 export default async function RootLayout({
   children,

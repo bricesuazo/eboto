@@ -17,7 +17,7 @@ import {
   reported_problems,
   sessions,
   users,
-  verification_tokens,
+  // verification_tokens,
   voter_fields,
   voters,
   votes,
@@ -68,12 +68,12 @@ export const commissionersRelations = relations(commissioners, ({ one }) => ({
 
 export const invited_commissionersRelations = relations(
   invited_commissioners,
-  ({ one, many }) => ({
+  ({ one }) => ({
     election: one(elections, {
       fields: [invited_commissioners.election_id],
       references: [elections.id],
     }),
-    verification_tokens: many(verification_tokens),
+    // verification_tokens: many(verification_tokens),
   }),
 );
 

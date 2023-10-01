@@ -22,13 +22,6 @@ import {
   MenuItem,
   MenuTarget,
   Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  ModalRoot,
-  ModalTitle,
   Select,
   Skeleton,
   Stack,
@@ -51,30 +44,21 @@ import {
   IconSun,
   IconUserCircle,
 } from "@tabler/icons-react";
+import { signOut, useSession } from "next-auth/react";
 
-import type { Election } from "@eboto-mo/db/schema";
-
-export default function Header({
-  userId,
-  elections,
-}: {
-  userId?: string;
-  elections?: Election[];
-}) {
-  const session = api.auth.getSession.useQuery();
+export default function Header({ userId }: { userId?: string }) {
+  const session = useSession();
   const params = useParams();
   const [logoutLoading] = useState(false);
   const [reportAProblemLoading, setReportAProblemLoading] = useState(false);
   const reportAProblemMutation = api.election.reportAProblem.useMutation();
 
+  const electionsQuery = api.election.getAllMyElections.useQuery();
+
   const { setColorScheme } = useMantineColorScheme();
   const [
     openedReportAProblem,
     { open: openReportAProblem, close: closeReportAProblem },
-  ] = useDisclosure(false);
-  const [
-    openedAccountSettings,
-    { open: openAccountSettings, close: closeAccountSettings },
   ] = useDisclosure(false);
 
   const [openedMenu, { toggle }] = useDisclosure(false);
@@ -93,10 +77,6 @@ export default function Header({
     initialValues: {
       subject: "",
       description: "",
-      election_id: elections?.find(
-        (election) =>
-          election.slug === params?.electionDashboardSlug?.toString(),
-      )?.id,
     },
     validateInputOnBlur: true,
     validateInputOnChange: true,
@@ -128,42 +108,6 @@ export default function Header({
 
   return (
     <>
-      <ModalRoot
-        opened={openedAccountSettings}
-        onClose={closeAccountSettings}
-        // scrollAreaComponent={ScrollArea.Autosize}
-        size="xl"
-        radius="lg"
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>
-            <ModalTitle>Account settings</ModalTitle>
-            <ModalCloseButton />
-          </ModalHeader>
-          <ModalBody p={0}>
-            {/* <UserProfile
-              routing="virtual"
-              appearance={{
-                baseTheme: computedColorScheme === "dark" ? dark : undefined,
-
-                elements: {
-                  rootBox: {
-                    width: "100%",
-                  },
-                  card: {
-                    maxWidth: "100%",
-                    width: "100%",
-                    padding: 0,
-                    borderRadius: 0,
-                  },
-                },
-              }}
-            /> */}
-          </ModalBody>
-        </ModalContent>
-      </ModalRoot>
-
       <Modal
         opened={openedReportAProblem}
         onClose={closeReportAProblem}
@@ -213,7 +157,7 @@ export default function Header({
               placeholder="Select an election"
               withAsterisk
               data={
-                elections?.map((election) => ({
+                electionsQuery.data?.map(({ election }) => ({
                   value: election.id,
                   label: election.name,
                 })) ?? []
@@ -289,7 +233,8 @@ export default function Header({
                         // },
                       }}
                     >
-                      {!session.isLoading && session.data?.user.image ? (
+                      {session.status === "authenticated" &&
+                      session.data?.user.image ? (
                         <Image
                           src={session.data?.user.image}
                           alt="Profile picture"
@@ -302,6 +247,24 @@ export default function Header({
                         />
                       ) : (
                         <Skeleton w={24} h={24} />
+                      )}
+                    </Box>
+
+                    <Box w={{ base: 100, sm: 140 }}>
+                      {session.status === "authenticated" ? (
+                        <>
+                          <Text size="xs" truncate fw="bold">
+                            {session.data.user.name}
+                          </Text>
+                          <Text size="xs" truncate>
+                            {session.data.user.email}
+                          </Text>
+                        </>
+                      ) : (
+                        <>
+                          <Skeleton h={12} my={4} />
+                          <Skeleton h={12} my={4} />
+                        </>
                       )}
                     </Box>
 
@@ -326,9 +289,8 @@ export default function Header({
                 </MenuItem>
 
                 <MenuItem
-                  // component={Link}
-                  // href="/account"
-                  onClick={openAccountSettings}
+                  component={Link}
+                  href="/account"
                   leftSection={<IconUserCircle size={16} />}
                 >
                   Account settings
@@ -358,8 +320,8 @@ export default function Header({
                   Report a problem
                 </MenuItem>
                 <MenuItem
-                  onClick={() => {
-                    // signOut();
+                  onClick={async () => {
+                    await signOut();
                   }}
                   closeMenuOnClick={false}
                   leftSection={

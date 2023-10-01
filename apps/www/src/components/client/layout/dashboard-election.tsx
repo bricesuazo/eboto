@@ -35,9 +35,10 @@ import { IconExternalLink, IconLogout } from "@tabler/icons-react";
 import { electionDashboardNavbar } from "@eboto-mo/constants";
 
 export default function DashboardElection({
-  children, // userId,
+  children,
+  userId,
 }: React.PropsWithChildren<{
-  userId: string | null;
+  userId?: string;
 }>) {
   // const { data } = useSession();
   const router = useRouter();
@@ -83,10 +84,7 @@ export default function DashboardElection({
       p="md"
     >
       <AppShellHeader>
-        <Header
-          // userId={data?.user.id ?? userId ?? undefined}
-          elections={elections?.map(({ election }) => election)}
-        />
+        <Header userId={userId} />
       </AppShellHeader>
 
       <AppShellMain>{children}</AppShellMain>

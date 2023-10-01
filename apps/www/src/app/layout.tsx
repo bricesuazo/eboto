@@ -9,10 +9,12 @@ import {
   Poppins,
 } from "next/font/google";
 import { siteConfig } from "@/config/site";
-import { TRPCReactProvider } from "@/trpc/TRPCProvider";
+import TRPCProvider from "@/trpc/TRPCProvider";
+import { ConfettiProvider } from "@/utils/confetti";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { Analytics } from "@vercel/analytics/react";
+import { SessionProvider } from "next-auth/react";
 
 const font = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -81,11 +83,13 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
             fontFamily: font.style.fontFamily,
           }}
         >
-          <TRPCReactProvider>
-            <Notifications />
-            {children}
-            <Analytics />
-          </TRPCReactProvider>
+          <SessionProvider>
+            <TRPCProvider>
+              <Notifications />
+              <ConfettiProvider>{children}</ConfettiProvider>
+              <Analytics />
+            </TRPCProvider>
+          </SessionProvider>
         </MantineProvider>
       </body>
     </html>

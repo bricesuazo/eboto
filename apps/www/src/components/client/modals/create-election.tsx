@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/trpc/client";
+import { useConfetti } from "@/utils/confetti";
 import type { MantineStyleProp } from "@mantine/core";
 import {
   Alert,
@@ -34,8 +35,23 @@ export default function CreateElection({
   style?: MantineStyleProp;
 }) {
   const router = useRouter();
-  // const { fireConfetti } = useConfetti();
+  const { fireConfetti } = useConfetti();
   const [opened, { open, close }] = useDisclosure(false);
+
+  const { mutate, isLoading, isError, error } =
+    api.election.createElection.useMutation({
+      onSuccess: async () => {
+        router.push(`/dashboard/${form.values.slug}`);
+        close();
+        notifications.show({
+          title: "Election created!",
+          message: "Successfully created election",
+          icon: <IconCheck size="1.1rem" />,
+          autoClose: 5000,
+        });
+        await fireConfetti();
+      },
+    });
 
   const form = useForm<{
     name: string;
@@ -120,22 +136,6 @@ export default function CreateElection({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
-
-  const { mutate, isLoading, isError, error } =
-    api.election.createElection.useMutation({
-      onSuccess: () => {
-        router.push(`/dashboard/${form.values.slug}`);
-        close();
-        notifications.show({
-          title: "Election created!",
-          message: "Successfully created election",
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-        // TODO: Fix confetti
-        // await fireConfetti();
-      },
-    });
 
   return (
     <>

@@ -63,11 +63,10 @@ export default function RegisterForm() {
     <Paper withBorder shadow="md" p="md" radius="md">
       <Stack>
         <Button
-          onClick={() => {
+          onClick={async () => {
             setLoadings((loadings) => ({ ...loadings, google: true }));
-            void (async () => {
-              await signIn("google");
-            })();
+
+            await signIn("google");
           }}
           loading={loadings.google}
           disabled={loadings.credential}
