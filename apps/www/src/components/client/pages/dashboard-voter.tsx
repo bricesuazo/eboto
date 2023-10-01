@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import CreateVoter from "@/components/client/modals/create-voter";
 import UpdateVoterField from "@/components/client/modals/update-voter-field";
 import UploadBulkVoter from "@/components/client/modals/upload-bulk-voter";
+import { api } from "@/trpc/client";
 import {
   ActionIcon,
   Box,
@@ -19,6 +20,7 @@ import type { MRT_ColumnDef, MRT_RowSelectionState } from "mantine-react-table";
 import { MantineReactTable } from "mantine-react-table";
 import moment from "moment";
 
+import type { RouterOutputs } from "@eboto-mo/api";
 import { isElectionOngoing } from "@eboto-mo/constants";
 import type { Election, VoterField } from "@eboto-mo/db/schema";
 
@@ -33,17 +35,21 @@ export default function DashboardVoter({
   voters,
 }: {
   election: Election & { voter_fields: VoterField[] };
-  voters: {
-    id: string;
-    email: string;
-    account_status: string;
-    created_at: Date;
-    has_voted: boolean;
-  }[];
+  voters: RouterOutputs["election"]["getVotersByElectionId"];
 }) {
+  const context = api.useContext();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const votersQuery = api.election.getVotersByElectionId.useQuery(
+    {
+      election_id: election.id,
+    },
+    {
+      initialData: voters,
+    },
+  );
   const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
 
-  const columns = useMemo<MRT_ColumnDef<(typeof voters)[0]>[]>(
+  const columns = useMemo<MRT_ColumnDef<(typeof votersQuery.data)[number]>[]>(
     () => [
       {
         accessorKey: "email",
@@ -52,7 +58,7 @@ export default function DashboardVoter({
       ...((election.voter_fields.map((voter_field) => ({
         accessorKey: "field." + voter_field.name,
         header: voter_field.name,
-      })) ?? []) as MRT_ColumnDef<(typeof voters)[0]>[]),
+      })) ?? []) as MRT_ColumnDef<(typeof votersQuery.data)[number]>[]),
       {
         accessorKey: "account_status",
         header: "Status",
@@ -76,11 +82,9 @@ export default function DashboardVoter({
         Cell: ({ cell }) => moment(cell.getValue<Date>()).fromNow(),
       },
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [election.voter_fields],
   );
-
-  // const context = api.useContext();
-  // const [isRefreshing, setIsRefreshing] = useState(false);
 
   return (
     <Box>
@@ -104,12 +108,13 @@ export default function DashboardVoter({
             >
               <UpdateVoterField
                 election={election}
-                voters={voters.map((voter) => ({
+                voters={votersQuery.data.map((voter) => ({
                   id: voter.id,
                   email: voter.email,
                 }))}
                 isDisabled={
-                  isElectionOngoing({ election }) || voters.length !== 0
+                  isElectionOngoing({ election }) ||
+                  votersQuery.data.length !== 0
                 }
               />
             </Tooltip>
@@ -118,7 +123,7 @@ export default function DashboardVoter({
 
         <MantineReactTable
           columns={columns}
-          data={voters}
+          data={votersQuery.data}
           enableFullScreenToggle={false}
           enableDensityToggle={false}
           enableRowSelection
@@ -134,8 +139,8 @@ export default function DashboardVoter({
             pagination: { pageSize: 15, pageIndex: 0 },
           }}
           state={{
-            // isLoading: voters.isLoading,
-            // showAlertBanner: voters.isError,
+            isLoading: votersQuery.isLoading,
+            showAlertBanner: votersQuery.isError,
             rowSelection,
           }}
           enableClickToCopy={true}
@@ -155,13 +160,13 @@ export default function DashboardVoter({
                 <div>
                   <ActionIcon
                     variant="light"
-                    onClick={() => {
-                      // setIsRefreshing(true);
-                      // // await context.election.getVotersByElectionId.invalidate();
-                      // setIsRefreshing(false);
+                    onClick={async () => {
+                      setIsRefreshing(true);
+                      await context.election.getVotersByElectionId.invalidate();
+                      setIsRefreshing(false);
                     }}
                     size="lg"
-                    // loading={isRefreshing}
+                    loading={isRefreshing}
                     visibleFrom="sm"
                     loaderProps={{
                       width: 18,
@@ -171,12 +176,12 @@ export default function DashboardVoter({
                   </ActionIcon>
                   <Button
                     variant="light"
-                    onClick={() => {
-                      // setIsRefreshing(true);
-                      // // await context.election.getVotersByElectionId.invalidate();
-                      // setIsRefreshing(false);
+                    onClick={async () => {
+                      setIsRefreshing(true);
+                      await context.election.getVotersByElectionId.invalidate();
+                      setIsRefreshing(false);
                     }}
-                    // loading={isRefreshing}
+                    loading={isRefreshing}
                     leftSection={<IconRefresh size="1.25rem" />}
                     hiddenFrom="sm"
                     loaderProps={{
@@ -190,7 +195,7 @@ export default function DashboardVoter({
 
               <Tooltip withArrow label="Delete selected">
                 <DeleteBulkVoter
-                  voters={voters
+                  voters={votersQuery.data
                     .filter((voter) => rowSelection[voter.id])
                     .map((voter) => ({
                       id: voter.id,

@@ -1119,14 +1119,14 @@ export const electionRouter = createTRPCRouter({
           message: "Unauthorized",
         });
 
-      const voters = await ctx.db.query.voters.findMany({
+      const votersFromDb = await ctx.db.query.voters.findMany({
         where: (voter, { eq }) => eq(voter.election_id, input.election_id),
         with: {
           user: true,
         },
       });
 
-      const isVoterEmailExists = voters.some(
+      const isVoterEmailExists = votersFromDb.some(
         (voter) => voter.user.email === input.email,
       );
 
@@ -1135,6 +1135,16 @@ export const electionRouter = createTRPCRouter({
           code: "BAD_REQUEST",
           message: "Email is already a voter",
         });
+
+      // TODO: Implement adding of voters
+
+      // await ctx.db.transaction(async (db) => {
+      //   await db.insert(voters).values({
+      //     id: nanoid(),
+      //     email: input.email,
+      //     election_id: input.election_id,
+      //   });
+      // });
     }),
   updateVoterField: protectedProcedure
     .input(

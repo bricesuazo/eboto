@@ -24,26 +24,25 @@ import {
 export default function CreateVoter({ election_id }: { election_id: string }) {
   const [opened, { open, close }] = useDisclosure(false);
 
-  const { mutate, isLoading, isError, error, reset } =
-    api.election.createSingleVoter.useMutation({
-      onSuccess: () => {
-        notifications.show({
-          title: `${form.values.email} added!`,
-          message: "Successfully deleted partylist",
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-        close();
-      },
-      onError: (error) => {
-        notifications.show({
-          title: "Error",
-          message: error.message,
-          color: "red",
-          autoClose: 3000,
-        });
-      },
-    });
+  const createSingleVoterMutation = api.election.createSingleVoter.useMutation({
+    onSuccess: () => {
+      notifications.show({
+        title: `${form.values.email} added!`,
+        message: "Successfully added voter",
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
+      });
+      close();
+    },
+    onError: (error) => {
+      notifications.show({
+        title: "Error",
+        message: error.message,
+        color: "red",
+        autoClose: 3000,
+      });
+    },
+  });
 
   const form = useForm<{
     email: string;
@@ -60,7 +59,7 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
   useEffect(() => {
     if (opened) {
       form.reset();
-      reset();
+      createSingleVoterMutation.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
@@ -70,7 +69,7 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
       <Button
         leftSection={<IconUserPlus size="1rem" />}
         onClick={open}
-        disabled={isLoading}
+        disabled={createSingleVoterMutation.isLoading}
         // style={(theme) => ({
         //   [theme.fn.smallerThan("xs")]: {
         //     width: "100%",
@@ -81,13 +80,13 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
       </Button>
 
       <Modal
-        opened={opened || isLoading}
+        opened={opened || createSingleVoterMutation.isLoading}
         onClose={close}
         title={<Text fw={600}>Add voter</Text>}
       >
         <form
           onSubmit={form.onSubmit((value) => {
-            mutate({
+            createSingleVoterMutation.mutate({
               election_id,
               email: value.email,
             });
@@ -98,29 +97,33 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
               placeholder="Enter voter's email"
               label="Email address"
               required
-              disabled={isLoading}
+              disabled={createSingleVoterMutation.isLoading}
               withAsterisk
               {...form.getInputProps("email")}
               leftSection={<IconAt size="1rem" />}
             />
 
-            {isError && (
+            {createSingleVoterMutation.isError && (
               <Alert
                 icon={<IconAlertCircle size="1rem" />}
                 title="Error"
                 color="red"
               >
-                {error.message}
+                {createSingleVoterMutation.error.message}
               </Alert>
             )}
             <Group justify="right" gap="xs">
-              <Button variant="default" onClick={close} disabled={isLoading}>
+              <Button
+                variant="default"
+                onClick={close}
+                disabled={createSingleVoterMutation.isLoading}
+              >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isValid()}
-                loading={isLoading}
+                loading={createSingleVoterMutation.isLoading}
               >
                 Create
               </Button>
