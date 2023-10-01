@@ -29,6 +29,24 @@ import { account_status_type_with_accepted } from "../../../../apps/www/src/util
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const electionRouter = createTRPCRouter({
+  getAllPartylistsByElectionId: protectedProcedure
+    .input(
+      z.object({
+        election_id: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const partylists = await ctx.db.query.partylists.findMany({
+        where: (partylists, { eq, and, isNull }) =>
+          and(
+            eq(partylists.election_id, input.election_id),
+            isNull(partylists.deleted_at),
+          ),
+        orderBy: (partylists, { asc }) => asc(partylists.created_at),
+      });
+
+      return partylists;
+    }),
   getAllPositionsByElectionId: protectedProcedure
     .input(
       z.object({
@@ -37,15 +55,82 @@ export const electionRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const positions = await ctx.db.query.positions.findMany({
+        where: (positions, { eq, and, isNull }) =>
+          and(
+            eq(positions.election_id, input.election_id),
+            isNull(positions.deleted_at),
+          ),
+        orderBy: (positions, { asc }) => asc(positions.order),
+      });
+
+      return positions;
+    }),
+  getAllPositionsWithCandidatesByElectionId: protectedProcedure
+    .input(
+      z.object({
+        election_id: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const positionsWithCandidates = await ctx.db.query.positions.findMany({
         where: (position, { eq, and, isNull }) =>
           and(
             eq(position.election_id, input.election_id),
             isNull(position.deleted_at),
           ),
         orderBy: (position, { asc }) => asc(position.order),
+        with: {
+          candidates: {
+            where: (candidate, { eq, and, isNull }) =>
+              and(
+                eq(candidate.election_id, input.election_id),
+                isNull(candidate.deleted_at),
+              ),
+            with: {
+              partylist: true,
+              credential: {
+                columns: {
+                  id: true,
+                },
+                with: {
+                  affiliations: {
+                    columns: {
+                      id: true,
+                      org_name: true,
+                      org_position: true,
+                      start_year: true,
+                      end_year: true,
+                    },
+                  },
+                  achievements: {
+                    columns: {
+                      id: true,
+                      name: true,
+                      year: true,
+                    },
+                  },
+                  events_attended: {
+                    columns: {
+                      id: true,
+                      name: true,
+                      year: true,
+                    },
+                  },
+                },
+              },
+              platforms: {
+                columns: {
+                  id: true,
+                  title: true,
+                  description: true,
+                },
+              },
+            },
+          },
+        },
       });
 
-      return positions;
+      return positionsWithCandidates;
     }),
   getAllPartylistsWithoutINDByElectionId: protectedProcedure
     .input(

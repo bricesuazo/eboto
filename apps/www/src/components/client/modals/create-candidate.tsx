@@ -7,6 +7,7 @@ import classes from "@/styles/Candidate.module.css";
 import { api } from "@/trpc/client";
 import { uploadImage } from "@/utils";
 import {
+  Alert,
   Box,
   Button,
   Flex,
@@ -45,23 +46,20 @@ import {
   IconX,
 } from "@tabler/icons-react";
 
-import type { Partylist, Position } from "@eboto-mo/db/schema";
+import type { Position } from "@eboto-mo/db/schema";
 
-export default function CreateCandidate({
-  position,
-  positions,
-  partylists,
-}: {
-  position: Position;
-  positions: Position[];
-  partylists: Partylist[];
-}) {
+export default function CreateCandidate({ position }: { position: Position }) {
+  const context = api.useContext();
   const [opened, { open, close }] = useDisclosure(false);
+  const partylistsQuery = api.election.getAllPartylistsByElectionId.useQuery({
+    election_id: position.election_id,
+  });
+  const positionsQuery = api.election.getAllPositionsByElectionId.useQuery({
+    election_id: position.election_id,
+  });
 
   const params = useParams();
   const openRef = useRef<() => void>(null);
-
-  // TODO: Implement this
 
   const uploadImageMutation = api.election.uploadImage.useMutation();
 
@@ -80,7 +78,7 @@ export default function CreateCandidate({
           });
         }
 
-        // await context.candidate.getAll.invalidate();
+        await context.election.getAllPositionsWithCandidatesByElectionId.invalidate();
         notifications.show({
           title: `${form.values.first_name} ${form.values.last_name} created!`,
           message: "Successfully created position",
@@ -99,23 +97,6 @@ export default function CreateCandidate({
         });
       },
     });
-
-  // const { mutate, isLoading, isError, error, reset } =
-  //   api.election.createCandidate.useMutation({
-  //     onSuccess: () => {
-  //       notifications.show({
-  //         title: `${form.values.first_name}${
-  //           form.values.middle_name && ` ${form.values.middle_name}`
-  //         } ${form.values.last_name} created!`,
-  //         message: `Successfully created candidate: ${form.values.first_name}${
-  //           form.values.middle_name && ` ${form.values.middle_name}`
-  //         } ${form.values.last_name}`,
-  //         icon: <IconCheck size="1.1rem" />,
-  //         autoClose: 5000,
-  //       });
-  //       close();
-  //     },
-  //   });
 
   const form = useForm<{
     first_name: string;
@@ -150,7 +131,7 @@ export default function CreateCandidate({
       first_name: "",
       last_name: "",
       slug: "",
-      partylist_id: partylists[0]?.id ?? "",
+      partylist_id: partylistsQuery.data?.[0]?.id ?? "",
       middle_name: "",
       position_id: position.id,
       image: null,
@@ -188,7 +169,7 @@ export default function CreateCandidate({
   useEffect(() => {
     if (opened) {
       form.reset();
-      // reset();
+      createCandidateMutation.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
@@ -208,10 +189,7 @@ export default function CreateCandidate({
       </UnstyledButton>
 
       <Modal
-        opened={
-          opened
-          // || isLoading
-        }
+        opened={opened || createCandidateMutation.isLoading}
         onClose={close}
         title={<Text fw={600}>Create candidate</Text>}
         closeOnClickOutside={false}
@@ -340,12 +318,11 @@ export default function CreateCandidate({
                   />
 
                   <Select
-                    // withinPortal
                     placeholder="Select partylist"
                     label="Partylist"
                     leftSection={<IconFlag size="1rem" />}
                     {...form.getInputProps("partylist_id")}
-                    data={partylists.map((partylist) => {
+                    data={partylistsQuery.data?.map((partylist) => {
                       return {
                         label: partylist.name,
                         value: partylist.id,
@@ -354,12 +331,11 @@ export default function CreateCandidate({
                   />
 
                   <Select
-                    // withinPortal
                     placeholder="Select position"
                     label="Position"
                     leftSection={<IconUserSearch size="1rem" />}
                     {...form.getInputProps("position_id")}
-                    data={positions.map((position) => {
+                    data={positionsQuery.data?.map((position) => {
                       return {
                         label: position.name,
                         value: position.id,
@@ -380,7 +356,7 @@ export default function CreateCandidate({
                     maxSize={5 * 1024 ** 2}
                     accept={IMAGE_MIME_TYPE}
                     multiple={false}
-                    // loading={isLoading}
+                    loading={createCandidateMutation.isLoading}
                   >
                     <Group
                       justify="center"
@@ -437,8 +413,7 @@ export default function CreateCandidate({
                       form.setFieldValue("image", null);
                     }}
                     disabled={
-                      !form.values.image
-                      // || isLoading
+                      !form.values.image || createCandidateMutation.isLoading
                     }
                   >
                     Delete image
@@ -578,7 +553,7 @@ export default function CreateCandidate({
                               }}
                             />
                             <YearPickerInput
-                              // label="Year"
+                              label="Year"
                               placeholder="Enter year"
                               popoverProps={{
                                 withinPortal: true,
@@ -598,7 +573,7 @@ export default function CreateCandidate({
                                   ),
                                 });
                               }}
-                              // required
+                              required
                             />
                           </Flex>
                           <Button
@@ -814,7 +789,7 @@ export default function CreateCandidate({
                                 }}
                               />
                               <YearPickerInput
-                                // label="Year"
+                                label="Year"
                                 placeholder="Enter year"
                                 popoverProps={{
                                   withinPortal: true,
@@ -835,7 +810,7 @@ export default function CreateCandidate({
                                       ),
                                   });
                                 }}
-                                // required
+                                required
                               />
                             </Flex>
                             <Button
@@ -884,31 +859,30 @@ export default function CreateCandidate({
                 </Tabs>
               </TabsPanel>
 
-              {/* {isError && (
+              {createCandidateMutation.isError && (
                 <Alert
                   icon={<IconAlertCircle size="1rem" />}
                   title="Error"
                   color="red"
                 >
-                  {error.message}
+                  {createCandidateMutation.error.message}
                 </Alert>
-              )} */}
+              )}
 
               <Group justify="right" gap="xs">
                 <Button
                   variant="default"
                   onClick={close}
-                  // disabled={isLoading}
+                  disabled={createCandidateMutation.isLoading}
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   disabled={
-                    !form.isValid()
-                    // || isLoading
+                    !form.isValid() || createCandidateMutation.isLoading
                   }
-                  // loading={isLoading}
+                  loading={createCandidateMutation.isLoading}
                 >
                   Create
                 </Button>

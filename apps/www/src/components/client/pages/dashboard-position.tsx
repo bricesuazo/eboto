@@ -4,7 +4,8 @@ import classes from "@/styles/Position.module.css";
 import { api } from "@/trpc/client";
 import { Box, Flex, Group, Stack, Text } from "@mantine/core";
 
-import type { Election, Position } from "@eboto-mo/db/schema";
+import type { RouterOutputs } from "@eboto-mo/api";
+import type { Election } from "@eboto-mo/db/schema";
 
 import CreatePosition from "../modals/create-position";
 import DeletePosition from "../modals/delete-position";
@@ -15,7 +16,7 @@ export default function DashboardPosition({
   positions,
 }: {
   election: Election;
-  positions: Position[];
+  positions: RouterOutputs["election"]["getAllPositionsByElectionId"];
 }) {
   const positionsQuery = api.election.getAllPositionsByElectionId.useQuery(
     {

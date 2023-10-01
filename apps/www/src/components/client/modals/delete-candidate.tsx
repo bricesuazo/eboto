@@ -14,32 +14,33 @@ export default function DeleteCandidate({
 }: {
   candidate: Candidate;
 }) {
+  const context = api.useContext();
   const [opened, { open, close }] = useDisclosure(false);
-  const { mutate, isLoading, isError, error, reset } =
-    api.election.deleteCandidate.useMutation({
-      onSuccess: () => {
-        notifications.show({
-          title: `${candidate.first_name}${
-            candidate.middle_name && ` ${candidate.middle_name}`
-          } ${candidate.last_name} deleted!`,
-          message: "Successfully deleted partylist",
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-      },
-      onError: (error) => {
-        notifications.show({
-          title: "Error",
-          message: error.message,
-          color: "red",
-          autoClose: 3000,
-        });
-      },
-    });
+  const deleteCandidateMutation = api.election.deleteCandidate.useMutation({
+    onSuccess: async () => {
+      await context.election.getAllPositionsWithCandidatesByElectionId.invalidate();
+      notifications.show({
+        title: `${candidate.first_name}${
+          candidate.middle_name && ` ${candidate.middle_name}`
+        } ${candidate.last_name} deleted!`,
+        message: "Successfully deleted partylist",
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
+      });
+    },
+    onError: (error) => {
+      notifications.show({
+        title: "Error",
+        message: error.message,
+        color: "red",
+        autoClose: 3000,
+      });
+    },
+  });
 
   useEffect(() => {
     if (opened) {
-      reset();
+      deleteCandidateMutation.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
@@ -56,7 +57,7 @@ export default function DeleteCandidate({
         Delete
       </Button>
       <Modal
-        opened={opened || isLoading}
+        opened={opened || deleteCandidateMutation.isLoading}
         onClose={close}
         title={
           <Text fw={600}>
@@ -71,25 +72,29 @@ export default function DeleteCandidate({
             <Text>Are you sure you want to delete this candidate?</Text>
             <Text>This action cannot be undone.</Text>
           </Stack>
-          {isError && (
+          {deleteCandidateMutation.isError && (
             <Alert
               icon={<IconAlertCircle size="1rem" />}
               color="red"
               title="Error"
               variant="filled"
             >
-              {error.message}
+              {deleteCandidateMutation.error.message}
             </Alert>
           )}
           <Group justify="right" gap="xs">
-            <Button variant="default" onClick={close} disabled={isLoading}>
+            <Button
+              variant="default"
+              onClick={close}
+              disabled={deleteCandidateMutation.isLoading}
+            >
               Cancel
             </Button>
             <Button
               color="red"
-              loading={isLoading}
+              loading={deleteCandidateMutation.isLoading}
               onClick={() =>
-                mutate({
+                deleteCandidateMutation.mutate({
                   candidate_id: candidate.id,
                   election_id: candidate.election_id,
                 })

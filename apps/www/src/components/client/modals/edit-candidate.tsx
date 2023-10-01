@@ -44,17 +44,10 @@ import {
   IconX,
 } from "@tabler/icons-react";
 
-import type {
-  Candidate,
-  Election,
-  Partylist,
-  Position,
-} from "@eboto-mo/db/schema";
+import type { Candidate, Election } from "@eboto-mo/db/schema";
 
 export default function EditCandidate({
   candidate,
-  positions,
-  partylists,
   election,
 }: {
   election: Election;
@@ -85,30 +78,33 @@ export default function EditCandidate({
       description: string;
     }[];
   };
-  positions: Position[];
-  partylists: Partylist[];
 }) {
-  // const context = api.useContext();
+  const context = api.useContext();
   const [opened, { open, close }] = useDisclosure(false);
   const openRef = useRef<() => void>(null);
+  const partylistsQuery = api.election.getAllPartylistsByElectionId.useQuery({
+    election_id: election.id,
+  });
+  const positionsQuery = api.election.getAllPositionsByElectionId.useQuery({
+    election_id: election.id,
+  });
 
-  const { mutate, isLoading, isError, error, reset } =
-    api.election.editCandidate.useMutation({
-      onSuccess: () => {
-        notifications.show({
-          title: `${form.values.first_name}${
-            form.values.middle_name && ` ${form.values.middle_name}`
-          } ${form.values.last_name} created!`,
-          message: `Successfully updated candidate: ${form.values.first_name}${
-            form.values.middle_name && ` ${form.values.middle_name}`
-          } ${form.values.last_name}`,
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-        close();
-        // await context.election.getAllMyElections.invalidate();
-      },
-    });
+  const editCandidateMutation = api.election.editCandidate.useMutation({
+    onSuccess: async () => {
+      await context.election.getAllPositionsWithCandidatesByElectionId.invalidate();
+      notifications.show({
+        title: `${form.values.first_name}${
+          form.values.middle_name && ` ${form.values.middle_name}`
+        } ${form.values.last_name} created!`,
+        message: `Successfully updated candidate: ${form.values.first_name}${
+          form.values.middle_name && ` ${form.values.middle_name}`
+        } ${form.values.last_name}`,
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
+      });
+      close();
+    },
+  });
 
   const form = useForm<{
     first_name: string;
@@ -191,7 +187,7 @@ export default function EditCandidate({
 
   useEffect(() => {
     if (opened) {
-      reset();
+      editCandidateMutation.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
@@ -311,7 +307,7 @@ export default function EditCandidate({
         <form
           onSubmit={form.onSubmit((values) => {
             void (async () => {
-              mutate({
+              editCandidateMutation.mutate({
                 id: candidate.id,
                 first_name: values.first_name,
                 middle_name: values.middle_name,
@@ -441,7 +437,7 @@ export default function EditCandidate({
                     label="Partylist"
                     leftSection={<IconFlag size="1rem" />}
                     {...form.getInputProps("partylist_id")}
-                    data={partylists.map((partylist) => {
+                    data={partylistsQuery.data?.map((partylist) => {
                       return {
                         label: partylist.name,
                         value: partylist.id,
@@ -455,7 +451,7 @@ export default function EditCandidate({
                     label="Position"
                     leftSection={<IconUserSearch size="1rem" />}
                     {...form.getInputProps("position")}
-                    data={positions.map((position) => {
+                    data={positionsQuery.data?.map((position) => {
                       return {
                         label: position.name,
                         value: position.id,
@@ -571,7 +567,7 @@ export default function EditCandidate({
                       disabled={
                         !candidate.image_link ||
                         typeof form.values.image === "string" ||
-                        isLoading
+                        editCandidateMutation.isLoading
                       }
                       style={{ flex: 1 }}
                     >
@@ -581,7 +577,9 @@ export default function EditCandidate({
                       onClick={() => {
                         form.setFieldValue("image", null);
                       }}
-                      disabled={!form.values.image || isLoading}
+                      disabled={
+                        !form.values.image || editCandidateMutation.isLoading
+                      }
                       style={{ flex: 1 }}
                     >
                       Delete image
@@ -1010,13 +1008,13 @@ export default function EditCandidate({
                 </Tabs>
               </TabsPanel>
 
-              {isError && (
+              {editCandidateMutation.isError && (
                 <Alert
                   icon={<IconAlertCircle size="1rem" />}
                   title="Error"
                   color="red"
                 >
-                  {error.message}
+                  {editCandidateMutation.error.message}
                 </Alert>
               )}
 
@@ -1044,14 +1042,14 @@ export default function EditCandidate({
                   <Button
                     variant="default"
                     onClick={close}
-                    disabled={isLoading}
+                    disabled={editCandidateMutation.isLoading}
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
                     disabled={!form.isDirty() || !form.isValid()}
-                    loading={isLoading}
+                    loading={editCandidateMutation.isLoading}
                   >
                     Update
                   </Button>

@@ -8,14 +8,15 @@ import { api } from "@/trpc/client";
 import { Box, Flex, Group, Stack, Text, Title } from "@mantine/core";
 import { IconFlag } from "@tabler/icons-react";
 
-import type { Election, Partylist } from "@eboto-mo/db/schema";
+import type { RouterOutputs } from "@eboto-mo/api";
+import type { Election } from "@eboto-mo/db/schema";
 
 export default function DashboardPartylist({
   election,
   partylists,
 }: {
   election: Election;
-  partylists: Partylist[];
+  partylists: RouterOutputs["election"]["getAllPartylistsWithoutINDByElectionId"];
 }) {
   const partylistsQuery =
     api.election.getAllPartylistsWithoutINDByElectionId.useQuery(
