@@ -32,43 +32,52 @@ import {
   IconX,
 } from "@tabler/icons-react";
 
-import type { Election, Publicity } from "@eboto-mo/db/schema";
+import type { RouterOutputs } from "@eboto-mo/api";
+import { isElectionOngoing } from "@eboto-mo/constants";
+import type { Publicity } from "@eboto-mo/db/schema";
 import { publicity } from "@eboto-mo/db/schema";
 
 export default function DashboardSettings({
   election,
 }: {
-  election: Election;
+  election: RouterOutputs["election"]["getElectionBySlug"];
 }) {
+  const getElectionBySlugQuery = api.election.getElectionBySlug.useQuery(
+    {
+      slug: election.slug,
+    },
+    {
+      initialData: election,
+    },
+  );
   const router = useRouter();
   const openRef = useRef<() => void>(null);
-  const { mutate, isLoading, isError, error } =
-    api.election.editElection.useMutation({
-      onSuccess: () => {
-        if (form.values.newSlug !== election.slug) {
-          router.push(`/dashboard/${form.values.newSlug}/settings`);
-        }
+  const editElectionMutation = api.election.editElection.useMutation({
+    onSuccess: () => {
+      if (form.values.newSlug !== election.slug) {
+        router.push(`/dashboard/${form.values.newSlug}/settings`);
+      }
 
-        // queryClient.invalidateQueries({ queryKey: ["getAllMyElections"] });
+      // queryClient.invalidateQueries({ queryKey: ["getAllMyElections"] });
 
-        notifications.show({
-          title: "Election settings updated.",
-          icon: <IconCheck size="1.1rem" />,
-          message: "Your changes have been saved.",
-          autoClose: 3000,
-        });
+      notifications.show({
+        title: "Election settings updated.",
+        icon: <IconCheck size="1.1rem" />,
+        message: "Your changes have been saved.",
+        autoClose: 3000,
+      });
 
-        form.resetDirty();
-      },
-      onError: (error) => {
-        notifications.show({
-          title: "Error",
-          message: error.message,
-          color: "red",
-          autoClose: 3000,
-        });
-      },
-    });
+      form.resetDirty();
+    },
+    onError: (error) => {
+      notifications.show({
+        title: "Error",
+        message: error.message,
+        color: "red",
+        autoClose: 3000,
+      });
+    },
+  });
   const [opened, { open, close }] = useDisclosure(false);
 
   const form = useForm<{
@@ -257,7 +266,7 @@ export default function DashboardSettings({
       <form
         onSubmit={form.onSubmit((values) => {
           void (async () =>
-            mutate({
+            editElectionMutation.mutate({
               id: election.id,
               name: values.name,
               newSlug: values.newSlug,
@@ -317,7 +326,7 @@ export default function DashboardSettings({
             placeholder="Enter election name"
             {...form.getInputProps("name")}
             leftSection={<IconLetterCase size="1rem" />}
-            disabled={isLoading}
+            disabled={editElectionMutation.isLoading}
           />
 
           <TextInput
@@ -336,9 +345,10 @@ export default function DashboardSettings({
             leftSection={<IconLetterCase size="1rem" />}
             error={
               form.errors.slug ??
-              (error?.data?.code === "CONFLICT" && error?.message)
+              (editElectionMutation.error?.data?.code === "CONFLICT" &&
+                editElectionMutation.error?.message)
             }
-            disabled={isLoading}
+            disabled={editElectionMutation.isLoading}
           />
 
           <Textarea
@@ -352,9 +362,10 @@ export default function DashboardSettings({
             autosize
             error={
               form.errors.description ??
-              (error?.data?.code === "CONFLICT" && error?.message)
+              (editElectionMutation.error?.data?.code === "CONFLICT" &&
+                editElectionMutation.error?.message)
             }
-            disabled={isLoading}
+            disabled={editElectionMutation.isLoading}
           />
 
           {/* <TextInput
@@ -394,13 +405,12 @@ export default function DashboardSettings({
             firstDayOfWeek={0}
             {...form.getInputProps("start_date")}
             leftSection={<IconCalendar size="1rem" />}
-            // disabled={
-            //   loading ||
-            //   isElectionOngoing({
-            //     election: election.data,
-            //     withTime: false,
-            //   })
-            // }
+            disabled={
+              editElectionMutation.isLoading ||
+              isElectionOngoing({
+                election: getElectionBySlugQuery.data,
+              })
+            }
           />
           <DateTimePicker
             valueFormat="MMMM DD, YYYY (dddd) hh:mm A"
@@ -421,13 +431,12 @@ export default function DashboardSettings({
             firstDayOfWeek={0}
             {...form.getInputProps("end_date")}
             leftSection={<IconCalendar size="1rem" />}
-            // disabled={
-            //   loading ||
-            //   isElectionOngoing({
-            //     election: election.data,
-            //     withTime: false,
-            //   })
-            // }
+            disabled={
+              editElectionMutation.isLoading ||
+              isElectionOngoing({
+                election: getElectionBySlugQuery.data,
+              })
+            }
           />
 
           <Select
@@ -443,7 +452,7 @@ export default function DashboardSettings({
               value: p,
               label: p.charAt(0) + p.slice(1).toLowerCase(),
             }))}
-            disabled={isLoading}
+            disabled={editElectionMutation.isLoading}
           />
 
           <Box>
@@ -461,7 +470,7 @@ export default function DashboardSettings({
                 maxSize={5 * 1024 ** 2}
                 accept={IMAGE_MIME_TYPE}
                 multiple={false}
-                loading={isLoading}
+                loading={editElectionMutation.isLoading}
               >
                 <Group
                   justify="center"
@@ -553,7 +562,7 @@ export default function DashboardSettings({
                   disabled={
                     typeof form.values.logo === "string" ||
                     !election.logo ||
-                    isLoading
+                    editElectionMutation.isLoading
                   }
                 >
                   Reset logo
@@ -564,7 +573,7 @@ export default function DashboardSettings({
                   onClick={() => {
                     form.setFieldValue("logo", null);
                   }}
-                  disabled={!form.values.logo || isLoading}
+                  disabled={!form.values.logo || editElectionMutation.isLoading}
                 >
                   Delete logo
                 </Button>
@@ -572,20 +581,20 @@ export default function DashboardSettings({
             </Stack>
           </Box>
 
-          {isError && (
+          {editElectionMutation.isError && (
             <Alert
               icon={<IconAlertCircle size="1rem" />}
               title="Error"
               color="red"
             >
-              {error.message}
+              {editElectionMutation.error.message}
             </Alert>
           )}
 
           <Group justify="space-between">
             <Button
               type="submit"
-              loading={isLoading}
+              loading={editElectionMutation.isLoading}
               disabled={!form.isDirty() || !form.isValid()}
               hiddenFrom="sm"
             >
@@ -593,7 +602,7 @@ export default function DashboardSettings({
             </Button>
             <Button
               type="submit"
-              // loading={isLoading}
+              loading={editElectionMutation.isLoading}
               disabled={!form.isDirty() || !form.isValid()}
               visibleFrom="sm"
             >
@@ -603,7 +612,7 @@ export default function DashboardSettings({
               variant="outline"
               color="red"
               onClick={open}
-              disabled={isLoading}
+              disabled={editElectionMutation.isLoading}
               // style={(theme) => ({
               //   [theme.fn.smallerThan("xs")]: {
               //     display: "none",

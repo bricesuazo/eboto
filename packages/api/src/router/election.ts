@@ -29,6 +29,21 @@ import { account_status_type_with_accepted } from "../../../../apps/www/src/util
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const electionRouter = createTRPCRouter({
+  getElectionBySlug: publicProcedure
+    .input(
+      z.object({
+        slug: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const election = await ctx.db.query.elections.findFirst({
+        where: (elections, { eq }) => eq(elections.slug, input.slug),
+      });
+
+      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+
+      return election;
+    }),
   getAllPartylistsByElectionId: protectedProcedure
     .input(
       z.object({

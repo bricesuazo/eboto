@@ -1,7 +1,7 @@
-import DashboardSettings from "@/components/client/pages/dashboard-settings";
-import { db } from "@eboto-mo/db";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import DashboardSettings from "@/components/client/pages/dashboard-settings";
+import { api } from "@/trpc/server";
 
 export const metadata: Metadata = {
   title: "Settings",
@@ -12,11 +12,8 @@ export default async function Page({
 }: {
   params: { electionDashboardSlug: string };
 }) {
-  // const election = await electionCaller.getElectionBySlug({
-  //   slug: electionDashboardSlug,
-  // });
-  const election = await db.query.elections.findFirst({
-    where: (elections, { eq }) => eq(elections.slug, electionDashboardSlug),
+  const election = await api.election.getElectionBySlug.query({
+    slug: electionDashboardSlug,
   });
 
   if (!election) notFound();
