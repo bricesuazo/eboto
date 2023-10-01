@@ -2,15 +2,24 @@
 
 import { useEffect } from "react";
 import { api } from "@/trpc/client";
-import { Alert, Button, Group, Modal, Stack, Text, TextInput } from "@mantine/core";
+import {
+  Alert,
+  Button,
+  Group,
+  Modal,
+  Stack,
+  Text,
+  TextInput,
+} from "@mantine/core";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { IconAlertCircle, IconCheck, IconFlag, IconLetterCase } from "@tabler/icons-react";
-
-
-
-
+import {
+  IconAlertCircle,
+  IconCheck,
+  IconFlag,
+  IconLetterCase,
+} from "@tabler/icons-react";
 
 export default function CreatePartylist({
   election_id,

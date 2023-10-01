@@ -1,8 +1,9 @@
 // import { db } from "@eboto-mo/db";
 // import { verification_tokens } from "@eboto-mo/db/schema";
-import type { Election, TokenType } from "@eboto-mo/db/schema";
 import type { FileWithPath } from "@mantine/dropzone";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+
+import type { TokenType } from "@eboto-mo/db/schema";
 
 // import { nanoid } from "nanoid";
 

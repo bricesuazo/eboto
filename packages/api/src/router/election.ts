@@ -1,6 +1,13 @@
+import { TRPCError } from "@trpc/server";
+import { and, eq, inArray, isNull } from "drizzle-orm";
+import { nanoid } from "nanoid";
+import { z } from "zod";
 
-
-import { positionTemplate, takenSlugs,isElectionOngoing } from "@eboto-mo/constants";
+import {
+  isElectionOngoing,
+  positionTemplate,
+  takenSlugs,
+} from "@eboto-mo/constants";
 import {
   achievements,
   affiliations,
@@ -17,12 +24,8 @@ import {
   voter_fields,
   voters,
 } from "@eboto-mo/db/schema";
-import { TRPCError } from "@trpc/server";
-import { and, eq, inArray, isNull } from "drizzle-orm";
-import { nanoid } from "nanoid";
-import { z } from "zod";
 
-import { account_status_type_with_accepted } from "../../../../apps/www/utils/zod-schema";
+import { account_status_type_with_accepted } from "../../../../apps/www/src/utils/zod-schema";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const electionRouter = createTRPCRouter({
@@ -39,7 +42,7 @@ export const electionRouter = createTRPCRouter({
         subject: input.subject,
         description: input.description,
         election_id: input.election_id,
-        user_id:ctx.session.user.id
+        user_id: ctx.session.user.id,
       });
     }),
   getElectionVoting: publicProcedure
@@ -1000,11 +1003,9 @@ export const electionRouter = createTRPCRouter({
         },
       });
 
-
       const isVoterEmailExists = voters.some(
         (voter) => voter.user.email === input.email,
       );
-
 
       if (isVoterEmailExists)
         throw new TRPCError({

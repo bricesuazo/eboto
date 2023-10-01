@@ -1,8 +1,8 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import { notFound, redirect } from "next/navigation";
 import ScrollToTopButton from "@/components/client/components/scroll-to-top";
 import { api } from "@/trpc/server";
-import { auth } from "@eboto-mo/auth";
-import { isElectionEnded, isElectionOngoing } from "@eboto-mo/constants";
-import { db } from "@eboto-mo/db";
 import {
   Box,
   Center,
@@ -24,10 +24,11 @@ import {
 import { IconFingerprint } from "@tabler/icons-react";
 import { isNull } from "drizzle-orm";
 import moment from "moment";
-import type { Metadata } from "next";
-import Image from "next/image";
-import { notFound, redirect } from "next/navigation";
 import Balancer from "react-wrap-balancer";
+
+import { auth } from "@eboto-mo/auth";
+import { isElectionEnded, isElectionOngoing } from "@eboto-mo/constants";
+import { db } from "@eboto-mo/db";
 
 export async function generateMetadata({
   params: { electionSlug },
@@ -128,7 +129,10 @@ export default async function RelatimePage({
 
     const vote = await db.query.votes.findFirst({
       where: (votes, { eq, and }) =>
-        and(eq(votes.election_id, election.id), eq(votes.voter_id, session.user.id)),
+        and(
+          eq(votes.election_id, election.id),
+          eq(votes.voter_id, session.user.id),
+        ),
     });
 
     const isVoter = await db.query.voters.findFirst({

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { env } from "@/env.mjs";
 import {
   Anchor,
   Box,
@@ -17,6 +16,7 @@ import {
 } from "@mantine/core";
 import { IconUser } from "@tabler/icons-react";
 import { isNull } from "drizzle-orm";
+import { env } from "env.mjs";
 import moment from "moment";
 
 import { db } from "@eboto-mo/db";

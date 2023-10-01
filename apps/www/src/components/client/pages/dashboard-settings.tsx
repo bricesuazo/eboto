@@ -1,21 +1,22 @@
 "use client";
 
+import { useRef } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { api } from "@/trpc/client";
 import { uploadImage } from "@/utils";
-import type { Election, Publicity } from "@eboto-mo/db/schema";
-import { publicity } from "@eboto-mo/db/schema";
 import {
   Alert,
   Box,
   Button,
   Group,
   Modal,
+  rem,
   Select,
   Stack,
   Text,
-  TextInput,
   Textarea,
-  rem,
+  TextInput,
 } from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
 import { Dropzone, DropzoneReject, IMAGE_MIME_TYPE } from "@mantine/dropzone";
@@ -30,9 +31,9 @@ import {
   IconLetterCase,
   IconX,
 } from "@tabler/icons-react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useRef } from "react";
+
+import type { Election, Publicity } from "@eboto-mo/db/schema";
+import { publicity } from "@eboto-mo/db/schema";
 
 export default function DashboardSettings({
   election,

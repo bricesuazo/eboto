@@ -5,22 +5,51 @@ import Image from "next/image";
 import Link from "next/link";
 import { api } from "@/trpc/client";
 import { uploadImage } from "@/utils";
-import { ActionIcon, Alert, Box, Button, Flex, Group, Modal, rem, Select, SimpleGrid, Stack, Tabs, TabsList, TabsPanel, TabsTab, Text, Textarea, TextInput } from "@mantine/core";
+import {
+  ActionIcon,
+  Alert,
+  Box,
+  Button,
+  Flex,
+  Group,
+  Modal,
+  rem,
+  Select,
+  SimpleGrid,
+  Stack,
+  Tabs,
+  TabsList,
+  TabsPanel,
+  TabsTab,
+  Text,
+  Textarea,
+  TextInput,
+} from "@mantine/core";
 import { YearPickerInput } from "@mantine/dates";
 import type { FileWithPath } from "@mantine/dropzone";
 import { Dropzone, DropzoneReject, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { IconAlertCircle, IconCheck, IconExternalLink, IconFlag, IconInfoCircle, IconLetterCase, IconPhoto, IconPlus, IconUserSearch, IconX } from "@tabler/icons-react";
+import {
+  IconAlertCircle,
+  IconCheck,
+  IconExternalLink,
+  IconFlag,
+  IconInfoCircle,
+  IconLetterCase,
+  IconPhoto,
+  IconPlus,
+  IconUserSearch,
+  IconX,
+} from "@tabler/icons-react";
 
-
-
-import type { Candidate, Election, Partylist, Position } from "@eboto-mo/db/schema";
-
-
-
-
+import type {
+  Candidate,
+  Election,
+  Partylist,
+  Position,
+} from "@eboto-mo/db/schema";
 
 export default function EditCandidate({
   candidate,

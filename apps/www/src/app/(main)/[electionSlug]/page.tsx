@@ -4,7 +4,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import ScrollToTopButton from "@/components/client/components/scroll-to-top";
 import ElectionShowQRCode from "@/components/client/modals/election-show-qr-code";
-import { env } from "@/env.mjs";
 import classes from "@/styles/Election.module.css";
 import {
   ActionIcon,
@@ -30,6 +29,7 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import { isNull } from "drizzle-orm";
+import { env } from "env.mjs";
 import moment from "moment";
 import Balancer from "react-wrap-balancer";
 

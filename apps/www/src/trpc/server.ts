@@ -1,9 +1,9 @@
 import { cookies } from "next/headers";
-import { env } from "@/env.mjs";
 import { loggerLink } from "@trpc/client";
 import { experimental_nextCacheLink as nextCacheLink } from "@trpc/next/app-dir/links/nextCache";
 import { experimental_nextHttpLink as nextHttpLink } from "@trpc/next/app-dir/links/nextHttp";
 import { experimental_createTRPCNextAppDirServer as createTRPCNextAppDirServer } from "@trpc/next/app-dir/server";
+import { env } from "env.mjs";
 import superjson from "superjson";
 
 import { appRouter } from "@eboto-mo/api/src/root";

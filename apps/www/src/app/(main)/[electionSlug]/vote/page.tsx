@@ -1,13 +1,14 @@
-import VoteForm from "@/components/client/components/vote-form";
-import { api } from "@/trpc/server";
-import { isElectionOngoing } from "@eboto-mo/constants";
-import { auth } from "@eboto-mo/auth";
-import { db } from "@eboto-mo/db";
-import { Box, Container, Stack, Text, Title } from "@mantine/core";
-import { isNull } from "drizzle-orm";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
+import VoteForm from "@/components/client/components/vote-form";
+import { api } from "@/trpc/server";
+import { Box, Container, Stack, Text, Title } from "@mantine/core";
+import { isNull } from "drizzle-orm";
 import Balancer from "react-wrap-balancer";
+
+import { auth } from "@eboto-mo/auth";
+import { isElectionOngoing } from "@eboto-mo/constants";
+import { db } from "@eboto-mo/db";
 
 export async function generateMetadata({
   params: { electionSlug },
@@ -73,7 +74,10 @@ export default async function VotePage({
   ) {
     const vote = await db.query.votes.findFirst({
       where: (votes, { eq, and }) =>
-        and(eq(votes.voter_id, session.user.id), eq(votes.election_id, election.id)),
+        and(
+          eq(votes.voter_id, session.user.id),
+          eq(votes.election_id, election.id),
+        ),
     });
 
     const isCommissioner = await db.query.commissioners.findFirst({
