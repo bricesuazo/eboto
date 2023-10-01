@@ -15,7 +15,6 @@ import {
   Title,
 } from "@mantine/core";
 import { IconUser } from "@tabler/icons-react";
-import { isNull } from "drizzle-orm";
 import { env } from "env.mjs";
 import moment from "moment";
 
@@ -89,14 +88,14 @@ export default async function CandidatePage({
   params: { electionSlug: string; candidateSlug: string };
 }) {
   const election = await db.query.elections.findFirst({
-    where: (election, { eq, and }) =>
+    where: (election, { eq, and, isNull }) =>
       and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
   });
 
   if (!election) notFound();
 
   const candidate = await db.query.candidates.findFirst({
-    where: (candidate, { eq, and }) =>
+    where: (candidate, { eq, and, isNull }) =>
       and(
         eq(candidate.election_id, election.id),
         eq(candidate.slug, candidateSlug),

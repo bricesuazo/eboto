@@ -1,8 +1,11 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 import CreateCandidate from "@/components/client/modals/create-candidate";
 import DeleteCandidate from "@/components/client/modals/delete-candidate";
 import EditCandidate from "@/components/client/modals/edit-candidate";
 import classes from "@/styles/Candidate.module.css";
-import { db } from "@eboto-mo/db";
 import {
   Anchor,
   Box,
@@ -16,12 +19,9 @@ import {
   Text,
 } from "@mantine/core";
 import { IconUser } from "@tabler/icons-react";
-import { isNull } from "drizzle-orm";
-import type { Metadata } from "next";
-import Image from "next/image";
-import Link from "next/link";
-import { notFound } from "next/navigation";
 import Balancer from "react-wrap-balancer";
+
+import { db } from "@eboto-mo/db";
 
 export const metadata: Metadata = {
   title: "Candidates",
@@ -33,7 +33,7 @@ export default async function Page({
   params: { electionDashboardSlug: string };
 }) {
   const election = await db.query.elections.findFirst({
-    where: (election, { eq, and }) =>
+    where: (election, { eq, and, isNull }) =>
       and(
         eq(election.slug, electionDashboardSlug),
         isNull(election.deleted_at),
@@ -53,12 +53,12 @@ export default async function Page({
   //   election_id: election.id,
   // });
   const positionsWithCandidates = await db.query.positions.findMany({
-    where: (position, { eq, and }) =>
+    where: (position, { eq, and, isNull }) =>
       and(eq(position.election_id, election.id), isNull(position.deleted_at)),
     orderBy: (position, { asc }) => asc(position.order),
     with: {
       candidates: {
-        where: (candidate, { eq, and }) =>
+        where: (candidate, { eq, and, isNull }) =>
           and(
             eq(candidate.election_id, election.id),
             isNull(candidate.deleted_at),
@@ -107,7 +107,7 @@ export default async function Page({
     },
   });
   const partylists = await db.query.partylists.findMany({
-    where: (partylists, { eq, and }) =>
+    where: (partylists, { eq, and, isNull }) =>
       and(
         eq(partylists.election_id, election.id),
         isNull(partylists.deleted_at),
@@ -116,7 +116,7 @@ export default async function Page({
   });
 
   const positions = await db.query.positions.findMany({
-    where: (positions, { eq, and }) =>
+    where: (positions, { eq, and, isNull }) =>
       and(eq(positions.election_id, election.id), isNull(positions.deleted_at)),
     orderBy: (positions, { asc }) => asc(positions.order),
   });

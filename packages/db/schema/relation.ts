@@ -23,8 +23,6 @@ import {
   votes,
 } from "./schema";
 
-
-
 export const electionsRelations = relations(elections, ({ many }) => ({
   votes: many(votes),
   positions: many(positions),
@@ -130,15 +128,15 @@ export const candidatesRelations = relations(candidates, ({ one, many }) => ({
   votes: many(votes),
 }));
 
-export const verification_tokensRelations = relations(
-  verification_tokens,
-  ({ one }) => ({
-    invited_commissioner: one(invited_commissioners, {
-      fields: [verification_tokens.invited_commissioner_id],
-      references: [invited_commissioners.id],
-    }),
-  }),
-);
+// export const verification_tokensRelations = relations(
+//   verification_tokens,
+//   ({ one }) => ({
+//     invited_commissioner: one(invited_commissioners, {
+//       fields: [verification_tokens.invited_commissioner_id],
+//       references: [invited_commissioners.id],
+//     }),
+//   }),
+// );
 
 export const generated_election_resultsRelations = relations(
   generated_election_results,
@@ -215,7 +213,6 @@ export const events_attendedRelations = relations(
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
 }));
-
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
   user: one(users, { fields: [accounts.userId], references: [users.id] }),

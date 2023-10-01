@@ -1,15 +1,15 @@
-import { isElectionOngoing } from "@eboto-mo/constants";
-import { auth } from "@eboto-mo/auth";
-import { db } from "@eboto-mo/db";
-import { isNull } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
+
+import { auth } from "@eboto-mo/auth";
+import { isElectionOngoing } from "@eboto-mo/constants";
+import { db } from "@eboto-mo/db";
 
 export default async function ElectionLayout(
   props: React.PropsWithChildren<{ params: { electionSlug: string } }>,
 ) {
   const session = await auth();
   const election = await db.query.elections.findFirst({
-    where: (elections, { eq, and }) =>
+    where: (elections, { eq, and, isNull }) =>
       and(
         eq(elections.slug, props.params.electionSlug),
         isNull(elections.deleted_at),
@@ -38,7 +38,10 @@ export default async function ElectionLayout(
 
     const voter = await db.query.voters.findFirst({
       where: (voter, { eq, and }) =>
-        and(eq(voter.election_id, election.id), eq(voter.user_id, session.user.id)),
+        and(
+          eq(voter.election_id, election.id),
+          eq(voter.user_id, session.user.id),
+        ),
     });
 
     const commissioner = await db.query.commissioners.findFirst({

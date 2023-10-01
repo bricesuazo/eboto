@@ -1,12 +1,12 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import CreatePosition from "@/components/client/modals/create-position";
 import DeletePosition from "@/components/client/modals/delete-position";
 import EditPosition from "@/components/client/modals/edit-position";
 import classes from "@/styles/Position.module.css";
-import { db } from "@eboto-mo/db";
 import { Box, Flex, Group, Stack, Text } from "@mantine/core";
-import { isNull } from "drizzle-orm";
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+
+import { db } from "@eboto-mo/db";
 
 export const metadata: Metadata = {
   title: "Positions",
@@ -22,7 +22,7 @@ export default async function Page({
   // });
 
   const election = await db.query.elections.findFirst({
-    where: (election, { eq, and }) =>
+    where: (election, { eq, and, isNull }) =>
       and(
         eq(election.slug, electionDashboardSlug),
         isNull(election.deleted_at),
@@ -35,7 +35,7 @@ export default async function Page({
   //   election_id: election.id,
   // });
   const positions = await db.query.positions.findMany({
-    where: (position, { eq, and }) =>
+    where: (position, { eq, and, isNull }) =>
       and(eq(position.election_id, election.id), isNull(position.deleted_at)),
     orderBy: (position, { asc }) => asc(position.order),
   });

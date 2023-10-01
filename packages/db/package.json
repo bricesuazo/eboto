@@ -2,7 +2,6 @@
   "name": "@eboto-mo/db",
   "main": "./index.ts",
   "types": "./index.ts",
-  "version": "0.0.0",
   "scripts": {
     "db:push": "pnpm with-env drizzle-kit push:mysql -- --verbose",
     "db:studio": "pnpm with-env drizzle-kit studio --port 3001 --verbose",

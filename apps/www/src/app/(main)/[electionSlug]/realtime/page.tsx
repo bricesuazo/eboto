@@ -22,7 +22,6 @@ import {
   Title,
 } from "@mantine/core";
 import { IconFingerprint } from "@tabler/icons-react";
-import { isNull } from "drizzle-orm";
 import moment from "moment";
 import Balancer from "react-wrap-balancer";
 
@@ -36,7 +35,7 @@ export async function generateMetadata({
   params: { electionSlug: string };
 }): Promise<Metadata> {
   const election = await db.query.elections.findFirst({
-    where: (election, { eq, and }) =>
+    where: (election, { eq, and, isNull }) =>
       and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
   });
 
@@ -79,7 +78,7 @@ export default async function RelatimePage({
 }) {
   const session = await auth();
   const election = await db.query.elections.findFirst({
-    where: (election, { eq, and }) =>
+    where: (election, { eq, and, isNull }) =>
       and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
   });
   const positions = await api.election.getElectionRealtime.query(electionSlug);
@@ -93,7 +92,7 @@ export default async function RelatimePage({
       );
 
     const isCommissioner = await db.query.commissioners.findFirst({
-      where: (commissioner, { eq, and }) =>
+      where: (commissioner, { eq, and, isNull }) =>
         and(
           eq(commissioner.election_id, election.id),
           eq(commissioner.user_id, session.user.id),
@@ -104,7 +103,7 @@ export default async function RelatimePage({
     if (!isCommissioner) notFound();
 
     const isVoter = await db.query.voters.findFirst({
-      where: (voter, { eq, and }) =>
+      where: (voter, { eq, and, isNull }) =>
         and(
           eq(voter.election_id, election.id),
           eq(voter.user_id, isCommissioner.user_id),
@@ -136,7 +135,7 @@ export default async function RelatimePage({
     });
 
     const isVoter = await db.query.voters.findFirst({
-      where: (voter, { eq, and }) =>
+      where: (voter, { eq, and, isNull }) =>
         and(
           eq(voter.election_id, election.id),
           eq(voter.user_id, session.user.id),
@@ -145,7 +144,7 @@ export default async function RelatimePage({
     });
 
     const isCommissioner = await db.query.commissioners.findFirst({
-      where: (commissioner, { eq, and }) =>
+      where: (commissioner, { eq, and, isNull }) =>
         and(
           eq(commissioner.election_id, election.id),
           eq(commissioner.user_id, session.user.id),

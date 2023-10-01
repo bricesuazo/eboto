@@ -1,5 +1,4 @@
 import { TRPCError } from "@trpc/server";
-import { and, eq, inArray, isNull } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { z } from "zod";
 
@@ -8,6 +7,7 @@ import {
   positionTemplate,
   takenSlugs,
 } from "@eboto-mo/constants";
+import { and, eq, inArray } from "@eboto-mo/db";
 import {
   achievements,
   affiliations,
@@ -49,12 +49,12 @@ export const electionRouter = createTRPCRouter({
     .input(z.string())
     .query(async ({ input, ctx }) => {
       return ctx.db.query.positions.findMany({
-        where: (position, { eq, and }) =>
+        where: (position, { eq, and, isNull }) =>
           and(eq(position.election_id, input), isNull(position.deleted_at)),
         orderBy: (position, { asc }) => asc(position.order),
         with: {
           candidates: {
-            where: (candidate, { eq, and }) =>
+            where: (candidate, { eq, and, isNull }) =>
               and(
                 eq(candidate.election_id, input),
                 isNull(candidate.deleted_at),
@@ -70,14 +70,14 @@ export const electionRouter = createTRPCRouter({
     .input(z.string())
     .query(async ({ input, ctx }) => {
       const election = await ctx.db.query.elections.findFirst({
-        where: (election, { eq, and }) =>
+        where: (election, { eq, and, isNull }) =>
           and(eq(election.slug, input), isNull(election.deleted_at)),
       });
 
       if (!election) throw new Error("Election not found");
 
       const realtimeResult = await ctx.db.query.positions.findMany({
-        where: (position, { eq, and }) =>
+        where: (position, { eq, and, isNull }) =>
           and(
             eq(position.election_id, election.id),
             isNull(position.deleted_at),
@@ -86,7 +86,7 @@ export const electionRouter = createTRPCRouter({
         with: {
           votes: true,
           candidates: {
-            where: (candidate, { eq, and }) =>
+            where: (candidate, { eq, and, isNull }) =>
               and(
                 eq(candidate.election_id, election.id),
                 isNull(candidate.deleted_at),

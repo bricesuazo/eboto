@@ -5,7 +5,6 @@ import type { ResultType } from "@/pdf/generate-result";
 import ReactPDF from "@react-pdf/renderer";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { verifySignature } from "@upstash/qstash/nextjs";
-import { isNull } from "drizzle-orm";
 
 import { db } from "@eboto-mo/db";
 import { generated_election_results } from "@eboto-mo/db/schema";
@@ -45,7 +44,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   const end_date = new Date(now);
 
   const electionsEnd = await db.query.elections.findMany({
-    where: (election, { eq, and }) =>
+    where: (election, { eq, and, isNull }) =>
       and(eq(election.end_date, end_date), isNull(election.deleted_at)),
     with: {
       positions: {

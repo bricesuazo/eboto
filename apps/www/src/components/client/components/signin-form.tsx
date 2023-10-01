@@ -17,6 +17,7 @@ import {
 } from "@mantine/core";
 import { hasLength, isEmail, isNotEmpty, useForm } from "@mantine/form";
 import { IconAt, IconBrandGoogle, IconLock } from "@tabler/icons-react";
+import { signIn } from "next-auth/react";
 
 export default function SigninForm() {
   const [loadings, setLoadings] = useState<{
@@ -45,16 +46,10 @@ export default function SigninForm() {
       <Stack>
         <Button
           onClick={() => {
-            // if (!isLoaded) return;
             setLoadings((loadings) => ({ ...loadings, google: true }));
-            // void (async () => {
-            //   await signIn.authenticateWithRedirect({
-            //     strategy: "oauth_google",
-            //     redirectUrl: "/sso-callback",
-            //     redirectUrlComplete:
-            //       params?.callbackUrl?.toString() ?? "/dashboard",
-            //   });
-            // })();
+            void (async () => {
+              await signIn("google");
+            })();
           }}
           leftSection={<IconBrandGoogle size={18} />}
           variant="outline"
@@ -140,7 +135,7 @@ export default function SigninForm() {
             <Button
               type="submit"
               loading={loadings.credential}
-              disabled={loadings.google}
+              disabled={loadings.google || true}
             >
               Sign in
             </Button>

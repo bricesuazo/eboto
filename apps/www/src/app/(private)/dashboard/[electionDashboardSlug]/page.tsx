@@ -1,6 +1,8 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 import GenerateResultRow from "@/components/client/components/generated-result-row";
 import DashboardShowQRCode from "@/components/client/modals/dashboard-show-qr-code";
-import { db } from "@eboto-mo/db";
 import {
   ActionIcon,
   Box,
@@ -16,11 +18,9 @@ import {
   IconReplace,
   IconUserSearch,
 } from "@tabler/icons-react";
-import { not } from "drizzle-orm";
 import moment from "moment";
-import type { Metadata } from "next";
-import Link from "next/link";
-import { notFound } from "next/navigation";
+
+import { db } from "@eboto-mo/db";
 
 export const metadata: Metadata = {
   title: "Overview",
@@ -40,7 +40,7 @@ export default async function Page({
     with: {
       positions: true,
       partylists: {
-        where: (partylist, { eq }) => not(eq(partylist.acronym, "IND")),
+        where: (partylist, { eq, not }) => not(eq(partylist.acronym, "IND")),
       },
       voters: {
         with: {

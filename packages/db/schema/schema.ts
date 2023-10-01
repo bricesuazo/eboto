@@ -1,3 +1,4 @@
+import type { AdapterAccount } from "@auth/core/adapters";
 import { sql } from "drizzle-orm";
 import {
   date,
@@ -42,7 +43,7 @@ export type TokenType = (typeof token_type)[number];
 export const account_status_type = ["ADDED", "INVITED", "DECLINED"] as const;
 export type AccountStatusType = (typeof account_status_type)[number];
 
-export const elections = mysqlTable("elections", {
+export const elections = mysqlTable("election", {
   id,
   slug: varchar("slug", { length: 256 }).notNull().unique(),
   name: text("name").notNull(),
@@ -58,7 +59,7 @@ export const elections = mysqlTable("elections", {
   updated_at,
 });
 
-export const votes = mysqlTable("votes", {
+export const votes = mysqlTable("vote", {
   id,
   created_at,
 
@@ -68,7 +69,7 @@ export const votes = mysqlTable("votes", {
   election_id,
 });
 
-export const commissioners = mysqlTable("commissioners", {
+export const commissioners = mysqlTable("commissioner", {
   id,
   created_at,
 
@@ -78,7 +79,7 @@ export const commissioners = mysqlTable("commissioners", {
   election_id,
 });
 
-export const invited_commissioners = mysqlTable("invited_commissioners", {
+export const invited_commissioners = mysqlTable("invited_commissioner", {
   id,
   email: text("email").notNull(),
   status: mysqlEnum("status", account_status_type).default("INVITED"),
@@ -88,7 +89,7 @@ export const invited_commissioners = mysqlTable("invited_commissioners", {
   election_id,
 });
 
-export const voters = mysqlTable("voters", {
+export const voters = mysqlTable("voter", {
   id,
   created_at,
 
@@ -100,7 +101,7 @@ export const voters = mysqlTable("voters", {
   election_id,
 });
 
-export const partylists = mysqlTable("partylists", {
+export const partylists = mysqlTable("partylist", {
   id,
   name: text("name").notNull(),
   acronym: text("acronym").notNull(),
@@ -115,7 +116,7 @@ export const partylists = mysqlTable("partylists", {
   election_id,
 });
 
-export const positions = mysqlTable("positions", {
+export const positions = mysqlTable("position", {
   id,
   name: text("name").notNull(),
   description: longtext("description"),
@@ -131,7 +132,7 @@ export const positions = mysqlTable("positions", {
   election_id,
 });
 
-export const candidates = mysqlTable("candidates", {
+export const candidates = mysqlTable("candidate", {
   id,
   slug: varchar("slug", { length: 256 }).notNull(),
   first_name: text("first_name").notNull(),
@@ -150,7 +151,7 @@ export const candidates = mysqlTable("candidates", {
   partylist_id: varchar("partylist_id", { length: 256 }).notNull(),
 });
 
-export const credentials = mysqlTable("credentials", {
+export const credentials = mysqlTable("credential", {
   id,
 
   created_at,
@@ -159,7 +160,7 @@ export const credentials = mysqlTable("credentials", {
   candidate_id: varchar("candidate_id", { length: 256 }).notNull(),
 });
 
-export const platforms = mysqlTable("platforms", {
+export const platforms = mysqlTable("platform", {
   id,
   title: text("title").notNull(),
   description: longtext("description").notNull(),
@@ -170,7 +171,7 @@ export const platforms = mysqlTable("platforms", {
   candidate_id: varchar("candidate_id", { length: 256 }).notNull(),
 });
 
-export const affiliations = mysqlTable("affiliations", {
+export const affiliations = mysqlTable("affiliation", {
   id,
   org_name: text("org_name").notNull(),
   org_position: text("org_position").notNull(),
@@ -183,7 +184,7 @@ export const affiliations = mysqlTable("affiliations", {
   credential_id: varchar("credential_id", { length: 256 }).notNull(),
 });
 
-export const achievements = mysqlTable("achievements", {
+export const achievements = mysqlTable("achievement", {
   id,
   name: text("name").notNull(),
   year: date("year").notNull(),
@@ -194,7 +195,7 @@ export const achievements = mysqlTable("achievements", {
   credential_id: varchar("credential_id", { length: 256 }).notNull(),
 });
 
-export const events_attended = mysqlTable("events_attended", {
+export const events_attended = mysqlTable("event_attended", {
   id,
   name: text("name").notNull(),
   year: date("year").notNull(),
@@ -203,21 +204,10 @@ export const events_attended = mysqlTable("events_attended", {
   updated_at,
 
   credential_id: varchar("credential_id", { length: 256 }).notNull(),
-});
-
-export const verification_tokens = mysqlTable("verification_tokens", {
-  id,
-  type: mysqlEnum("type", token_type).notNull(),
-  expires_at: timestamp("expires_at").notNull(),
-
-  created_at,
-  updated_at,
-
-  invited_commissioner_id: varchar("invited_commissioner_id", { length: 256 }),
 });
 
 export const generated_election_results = mysqlTable(
-  "generated_election_results",
+  "generated_election_result",
   {
     id,
     name: text("name").notNull(),
@@ -228,7 +218,7 @@ export const generated_election_results = mysqlTable(
     election_id,
   },
 );
-export const voter_fields = mysqlTable("voter_fields", {
+export const voter_fields = mysqlTable("voter_field", {
   id,
   name: text("name").notNull(),
 
@@ -237,7 +227,7 @@ export const voter_fields = mysqlTable("voter_fields", {
   election_id,
 });
 
-export const reported_problems = mysqlTable("reported_problems", {
+export const reported_problems = mysqlTable("reported_problem", {
   id,
   subject: longtext("subject").notNull(),
   description: longtext("description").notNull(),
@@ -269,9 +259,7 @@ export type VoterField = typeof voter_fields.$inferSelect;
 
 export type ReportedProblem = typeof reported_problems.$inferSelect;
 
-import type { AdapterAccount } from "@auth/core/adapters";
-
-export const users = mysqlTable("users", {
+export const users = mysqlTable("user", {
   id: varchar("id", { length: 255 }).notNull().primaryKey(),
   name: varchar("name", { length: 255 }),
   email: varchar("email", { length: 255 }).notNull(),
@@ -282,9 +270,20 @@ export const users = mysqlTable("users", {
   image: varchar("image", { length: 255 }),
 });
 
+export const verification_tokens = mysqlTable(
+  "verification_token",
+  {
+    identifier: varchar("identifier", { length: 255 }).notNull(),
+    token: varchar("token", { length: 255 }).notNull(),
+    expires: timestamp("expires", { mode: "date" }).notNull(),
+  },
+  (vt) => ({
+    compoundKey: primaryKey(vt.identifier, vt.token),
+  }),
+);
 
 export const accounts = mysqlTable(
-  "accounts",
+  "account",
   {
     userId: varchar("userId", { length: 255 }).notNull(),
     type: varchar("type", { length: 255 })
@@ -305,10 +304,8 @@ export const accounts = mysqlTable(
     userIdIdx: index("userId_idx").on(account.userId),
   }),
 );
-
-
 export const sessions = mysqlTable(
-  "sessions",
+  "session",
   {
     sessionToken: varchar("sessionToken", { length: 255 })
       .notNull()
@@ -320,17 +317,13 @@ export const sessions = mysqlTable(
     userIdIdx: index("userId_idx").on(session.userId),
   }),
 );
+// export const verification_tokens = mysqlTable("verification_tokens", {
+//   id,
+//   type: mysqlEnum("type", token_type).notNull(),
+//   expires_at: timestamp("expires_at").notNull(),
 
+//   created_at,
+//   updated_at,
 
-
-export const verificationTokens = mysqlTable(
-  "verificationTokens",
-  {
-    identifier: varchar("identifier", { length: 255 }).notNull(),
-    token: varchar("token", { length: 255 }).notNull(),
-    expires: timestamp("expires", { mode: "date" }).notNull(),
-  },
-  (vt) => ({
-    compoundKey: primaryKey(vt.identifier, vt.token),
-  }),
-);
+//   invited_commissioner_id: varchar("invited_commissioner_id", { length: 256 }),
+// });

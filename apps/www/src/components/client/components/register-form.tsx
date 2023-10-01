@@ -23,6 +23,7 @@ import {
   IconLetterCase,
   IconLock,
 } from "@tabler/icons-react";
+import { signIn } from "next-auth/react";
 
 export default function RegisterForm() {
   const [loadings, setLoadings] = useState<{
@@ -64,16 +65,9 @@ export default function RegisterForm() {
         <Button
           onClick={() => {
             setLoadings((loadings) => ({ ...loadings, google: true }));
-            // void (async () => {
-            //   await signUp
-            //     .authenticateWithRedirect({
-            //       strategy: "oauth_google",
-            //       redirectUrl: "/sso-callback",
-            //       redirectUrlComplete:
-            //         params?.callbackUrl?.toString() ?? "/dashboard",
-            //     })
-            //     .catch((err) => console.error("error", err));
-            // })();
+            void (async () => {
+              await signIn("google");
+            })();
           }}
           loading={loadings.google}
           disabled={loadings.credential}
@@ -172,7 +166,7 @@ export default function RegisterForm() {
                     </Alert>
                   )} */}
 
-            <Button type="submit" loading={loadings.credential}>
+            <Button type="submit" loading={loadings.credential} disabled>
               Sign up
             </Button>
           </Stack>

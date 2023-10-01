@@ -1,8 +1,8 @@
-import DashboardVoter from "@/components/client/pages/dashboard-voter";
-import { db } from "@eboto-mo/db";
-import { isNull } from "drizzle-orm";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import DashboardVoter from "@/components/client/pages/dashboard-voter";
+
+import { db } from "@eboto-mo/db";
 
 export const metadata: Metadata = {
   title: "Voters",
@@ -14,7 +14,7 @@ export default async function Page({
   params: { electionDashboardSlug: string };
 }) {
   const election = await db.query.elections.findFirst({
-    where: (election, { eq, and }) =>
+    where: (election, { eq, and, isNull }) =>
       and(
         eq(election.slug, electionDashboardSlug),
         isNull(election.deleted_at),
@@ -31,7 +31,7 @@ export default async function Page({
   // });
 
   const votersFromDB = await db.query.voters.findMany({
-    where: (voter, { eq, and }) =>
+    where: (voter, { eq, and, isNull }) =>
       and(eq(voter.election_id, election.id), isNull(voter.deleted_at)),
     with: {
       user: true,
@@ -40,7 +40,6 @@ export default async function Page({
       },
     },
   });
-
 
   const voters = votersFromDB.map((voter) => ({
     id: voter.id,

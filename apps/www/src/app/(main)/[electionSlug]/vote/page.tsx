@@ -3,7 +3,6 @@ import { notFound, redirect } from "next/navigation";
 import VoteForm from "@/components/client/components/vote-form";
 import { api } from "@/trpc/server";
 import { Box, Container, Stack, Text, Title } from "@mantine/core";
-import { isNull } from "drizzle-orm";
 import Balancer from "react-wrap-balancer";
 
 import { auth } from "@eboto-mo/auth";
@@ -16,7 +15,7 @@ export async function generateMetadata({
   params: { electionSlug: string };
 }): Promise<Metadata> {
   const election = await db.query.elections.findFirst({
-    where: (election, { eq, and }) =>
+    where: (election, { eq, and, isNull }) =>
       and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
   });
 
@@ -38,7 +37,7 @@ export default async function VotePage({
     redirect(`/sign-in?callbackUrl=https://eboto-mo.com/${electionSlug}/vote`);
 
   const election = await db.query.elections.findFirst({
-    where: (election, { eq, and }) =>
+    where: (election, { eq, and, isNull }) =>
       and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
   });
 
@@ -48,7 +47,7 @@ export default async function VotePage({
 
   if (election.publicity === "PRIVATE") {
     const commissioner = await db.query.commissioners.findFirst({
-      where: (commissioner, { eq, and }) =>
+      where: (commissioner, { eq, and, isNull }) =>
         and(
           eq(commissioner.user_id, session.user.id),
           eq(commissioner.election_id, election.id),
@@ -59,7 +58,7 @@ export default async function VotePage({
     if (!commissioner) notFound();
 
     const isVoter = await db.query.voters.findFirst({
-      where: (voter, { eq, and }) =>
+      where: (voter, { eq, and, isNull }) =>
         and(
           eq(voter.user_id, session.user.id),
           eq(voter.election_id, election.id),
@@ -89,7 +88,7 @@ export default async function VotePage({
     });
 
     const isVoter = await db.query.voters.findFirst({
-      where: (voter, { eq, and }) =>
+      where: (voter, { eq, and, isNull }) =>
         and(
           eq(voter.user_id, session.user.id),
           eq(voter.election_id, election.id),

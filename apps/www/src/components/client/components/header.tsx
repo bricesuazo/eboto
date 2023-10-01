@@ -399,20 +399,21 @@ export default function Header({
                 <IconMoon size="1rem" className={classes.dark} />
               </ActionIcon>
 
-              {/* <Button hiddenFrom="sm" onClick={() => signIn()}>
+              <Button hiddenFrom="sm" component={Link} href="/sign-in">
                 Sign in
               </Button>
               <Button
                 variant="outline"
                 visibleFrom="sm"
-                onClick={() => signIn()}
+                component={Link}
+                href="/sign-in"
               >
                 Sign in
               </Button>
 
-              <Button visibleFrom="sm" onClick={() => signIn()}>
+              <Button visibleFrom="sm" component={Link} href="/register">
                 Get Started
-              </Button> */}
+              </Button>
             </Group>
           )}
         </Flex>
