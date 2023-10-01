@@ -14,15 +14,18 @@ export default function DeletePartylist({
 }: {
   partylist: Partylist;
 }) {
+  const context = api.useContext();
   const { mutate, isLoading, isError, error, reset } =
     api.election.deletePartylist.useMutation({
-      onSuccess: () => {
+      onSuccess: async () => {
         notifications.show({
           title: `${partylist.name} (${partylist.acronym}) deleted!`,
           message: "Successfully deleted partylist",
           icon: <IconCheck size="1.1rem" />,
           autoClose: 5000,
         });
+
+        await context.election.getAllPartylistsWithoutINDByElectionId.invalidate();
       },
       onError: (error) => {
         notifications.show({

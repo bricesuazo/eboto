@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import DashboardPartylist from "@/components/client/pages/dashboard-partylist";
+import { api } from "@/trpc/server";
 
 import { db } from "@eboto-mo/db";
 
@@ -26,19 +27,11 @@ export default async function Page({
 
   if (!election) notFound();
 
-  // const partylists =
-  //   await electionCaller.getAllPartylistsWithoutINDByElectionId({
-  //     election_id: election.id,
-  //   });
-  const partylists = await db.query.partylists.findMany({
-    where: (partylists, { eq, and, isNull, not }) =>
-      and(
-        eq(partylists.election_id, election.id),
-        not(eq(partylists.acronym, "IND")),
-        isNull(partylists.deleted_at),
-      ),
-    orderBy: (partylists, { desc }) => desc(partylists.updated_at),
-  });
+  const partylists =
+    await api.election.getAllPartylistsWithoutINDByElectionId.query({
+      election_id: election.id,
+    });
+
   return (
     <DashboardPartylist
       election={election}

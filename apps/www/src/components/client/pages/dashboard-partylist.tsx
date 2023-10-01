@@ -4,9 +4,11 @@ import CreatePartylist from "@/components/client/modals/create-partylist";
 import DeletePartylist from "@/components/client/modals/delete-partylist";
 import EditPartylist from "@/components/client/modals/edit-partylist";
 import classes from "@/styles/Partylist.module.css";
-import type { Election, Partylist } from "@eboto-mo/db/schema";
+import { api } from "@/trpc/client";
 import { Box, Flex, Group, Stack, Text, Title } from "@mantine/core";
 import { IconFlag } from "@tabler/icons-react";
+
+import type { Election, Partylist } from "@eboto-mo/db/schema";
 
 export default function DashboardPartylist({
   election,
@@ -15,15 +17,23 @@ export default function DashboardPartylist({
   election: Election;
   partylists: Partylist[];
 }) {
+  const partylistsQuery =
+    api.election.getAllPartylistsWithoutINDByElectionId.useQuery(
+      {
+        election_id: election.id,
+      },
+      { initialData: partylists },
+    );
+
   return (
     <Stack>
       <CreatePartylist election_id={election.id} />
 
       <Group gap="xs">
-        {!partylists.length ? (
+        {!partylistsQuery.data.length ? (
           <Text>No partylists yet.</Text>
         ) : (
-          partylists.map((partylist) => (
+          partylistsQuery.data.map((partylist) => (
             <Flex key={partylist.id} className={classes["partylist-card"]}>
               <Flex direction="column" align="center">
                 <Box>

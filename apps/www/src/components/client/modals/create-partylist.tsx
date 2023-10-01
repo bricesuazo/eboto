@@ -26,6 +26,7 @@ export default function CreatePartylist({
 }: {
   election_id: string;
 }) {
+  const context = api.useContext();
   const [opened, { open, close }] = useDisclosure(false);
 
   const form = useForm({
@@ -52,21 +53,25 @@ export default function CreatePartylist({
     },
   });
 
-  const { mutate, isLoading, isError, error } =
-    api.election.createPartylist.useMutation({
-      onSuccess: () => {
-        notifications.show({
-          title: `${form.values.name} (${form.values.acronym}) created!`,
-          message: "Successfully created partylist",
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-        close();
-      },
-    });
+  const createPartylistMutation = api.election.createPartylist.useMutation({
+    onSuccess: async () => {
+      notifications.show({
+        title: `${form.values.name} (${form.values.acronym}) created!`,
+        message: "Successfully created partylist",
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
+      });
+      close();
+
+      await context.election.getAllPartylistsWithoutINDByElectionId.invalidate();
+    },
+  });
 
   useEffect(() => {
-    if (opened) form.reset();
+    if (opened) {
+      form.reset();
+      createPartylistMutation.reset();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
 
@@ -83,13 +88,13 @@ export default function CreatePartylist({
         Add partylist
       </Button>
       <Modal
-        opened={opened || isLoading}
+        opened={opened || createPartylistMutation.isLoading}
         onClose={close}
         title={<Text fw={600}>Create partylist</Text>}
       >
         <form
           onSubmit={form.onSubmit((value) => {
-            mutate({
+            createPartylistMutation.mutate({
               name: value.name,
               acronym: value.acronym,
               election_id,
@@ -102,7 +107,7 @@ export default function CreatePartylist({
               label="Name"
               required
               withAsterisk
-              disabled={isLoading}
+              disabled={createPartylistMutation.isLoading}
               {...form.getInputProps("name")}
               leftSection={<IconLetterCase size="1rem" />}
             />
@@ -111,31 +116,35 @@ export default function CreatePartylist({
               placeholder="Enter acronym"
               label="Acronym"
               required
-              disabled={isLoading}
+              disabled={createPartylistMutation.isLoading}
               withAsterisk
               {...form.getInputProps("acronym")}
               leftSection={<IconLetterCase size="1rem" />}
             />
 
-            {isError && (
+            {createPartylistMutation.isError && (
               <Alert
                 icon={<IconAlertCircle size="1rem" />}
                 color="red"
                 title="Error"
                 variant="filled"
               >
-                {error.message}
+                {createPartylistMutation.error.message}
               </Alert>
             )}
 
             <Group justify="right" gap="xs">
-              <Button variant="default" onClick={close} disabled={isLoading}>
+              <Button
+                variant="default"
+                onClick={close}
+                disabled={createPartylistMutation.isLoading}
+              >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isValid()}
-                loading={isLoading}
+                loading={createPartylistMutation.isLoading}
               >
                 Create
               </Button>

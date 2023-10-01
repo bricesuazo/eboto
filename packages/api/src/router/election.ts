@@ -29,6 +29,25 @@ import { account_status_type_with_accepted } from "../../../../apps/www/src/util
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const electionRouter = createTRPCRouter({
+  getAllPartylistsWithoutINDByElectionId: protectedProcedure
+    .input(
+      z.object({
+        election_id: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const partylists = await ctx.db.query.partylists.findMany({
+        where: (partylists, { eq, and, isNull, not }) =>
+          and(
+            eq(partylists.election_id, input.election_id),
+            not(eq(partylists.acronym, "IND")),
+            isNull(partylists.deleted_at),
+          ),
+        orderBy: (partylists, { desc }) => desc(partylists.updated_at),
+      });
+
+      return partylists;
+    }),
   reportAProblem: protectedProcedure
     .input(
       z.object({
@@ -420,10 +439,11 @@ export const electionRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       // TODO: Validate commissioner
       const isAcronymExists = await ctx.db.query.partylists.findFirst({
-        where: (partylist, { eq, and }) =>
+        where: (partylist, { eq, and, isNull }) =>
           and(
             eq(partylist.election_id, input.election_id),
             eq(partylist.acronym, input.acronym),
+            isNull(partylist.deleted_at),
           ),
       });
 

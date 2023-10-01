@@ -24,6 +24,7 @@ import type { Partylist } from "@eboto-mo/db/schema";
 
 export default function EditPartylist({ partylist }: { partylist: Partylist }) {
   const [opened, { open, close }] = useDisclosure(false);
+  const context = api.useContext();
   const form = useForm({
     initialValues: {
       id: partylist.id,
@@ -54,33 +55,33 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
     },
   });
 
-  const { mutate, isLoading, isError, error, reset } =
-    api.election.editPartylist.useMutation({
-      onSuccess: () => {
-        notifications.show({
-          title: `${form.values.name} (${form.values.newAcronym}) updated.`,
-          icon: <IconCheck size="1.1rem" />,
-          message: "Your changes have been saved.",
-          autoClose: 3000,
-        });
-        close();
+  const editPartylistMutation = api.election.editPartylist.useMutation({
+    onSuccess: async () => {
+      notifications.show({
+        title: `${form.values.name} (${form.values.newAcronym}) updated.`,
+        icon: <IconCheck size="1.1rem" />,
+        message: "Your changes have been saved.",
+        autoClose: 3000,
+      });
+      close();
 
-        form.resetDirty(form.values);
-      },
-      onError: (error) => {
-        notifications.show({
-          title: "Error",
-          message: error.message,
-          color: "red",
-          autoClose: 3000,
-        });
-      },
-    });
+      form.resetDirty(form.values);
+      await context.election.getAllPartylistsWithoutINDByElectionId.invalidate();
+    },
+    onError: (error) => {
+      notifications.show({
+        title: "Error",
+        message: error.message,
+        color: "red",
+        autoClose: 3000,
+      });
+    },
+  });
 
   useEffect(() => {
     if (opened) {
       form.resetDirty();
-      reset();
+      editPartylistMutation.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
@@ -93,7 +94,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
       <Modal
         opened={
           opened
-          // || isLoading
+          // || editPartylistMutation.isLoading
         }
         onClose={close}
         title={
@@ -104,7 +105,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
       >
         <form
           onSubmit={form.onSubmit((value) => {
-            mutate({
+            editPartylistMutation.mutate({
               id: partylist.id,
               name: value.name,
               oldAcronym: partylist.acronym,
@@ -121,7 +122,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
               label="Name"
               required
               withAsterisk
-              disabled={isLoading}
+              disabled={editPartylistMutation.isLoading}
               {...form.getInputProps("name")}
               leftSection={<IconLetterCase size="1rem" />}
             />
@@ -131,30 +132,34 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
               label="Acronym"
               required
               withAsterisk
-              disabled={isLoading}
+              disabled={editPartylistMutation.isLoading}
               {...form.getInputProps("newAcronym")}
               leftSection={<IconLetterCase size="1rem" />}
             />
 
-            {isError && (
+            {editPartylistMutation.isError && (
               <Alert
                 icon={<IconAlertCircle size="1rem" />}
                 color="red"
                 title="Error"
                 variant="filled"
               >
-                {error.message}
+                {editPartylistMutation.error.message}
               </Alert>
             )}
 
             <Group justify="right" gap="xs">
-              <Button variant="default" onClick={close} disabled={isLoading}>
+              <Button
+                variant="default"
+                onClick={close}
+                disabled={editPartylistMutation.isLoading}
+              >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isDirty()}
-                loading={isLoading}
+                loading={editPartylistMutation.isLoading}
               >
                 Update
               </Button>

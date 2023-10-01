@@ -1,11 +1,12 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import DashboardCard from "@/components/client/components/dashboard-card";
 import Dashboard from "@/components/client/layout/dashboard";
 import CreateElection from "@/components/client/modals/create-election";
+import { Box, Container, Flex, Group, Stack, Text, Title } from "@mantine/core";
+
 import { auth } from "@eboto-mo/auth";
 import { db } from "@eboto-mo/db";
-import { Box, Container, Flex, Group, Stack, Text, Title } from "@mantine/core";
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -18,7 +19,8 @@ export default async function Page() {
   if (!session) notFound();
 
   const electionsAsCommissioner = await db.query.commissioners.findMany({
-    where: (commissioners, { eq }) => eq(commissioners.user_id, session.user.id),
+    where: (commissioners, { eq }) =>
+      eq(commissioners.user_id, session.user.id),
     with: {
       election: true,
     },
