@@ -53,12 +53,10 @@ export default function DashboardSettings({
   const router = useRouter();
   const openRef = useRef<() => void>(null);
   const editElectionMutation = api.election.editElection.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
       if (form.values.newSlug !== election.slug) {
         router.push(`/dashboard/${form.values.newSlug}/settings`);
       }
-
-      // queryClient.invalidateQueries({ queryKey: ["getAllMyElections"] });
 
       notifications.show({
         title: "Election settings updated.",
@@ -68,6 +66,8 @@ export default function DashboardSettings({
       });
 
       form.resetDirty();
+
+      await getElectionBySlugQuery.refetch();
     },
     onError: (error) => {
       notifications.show({
@@ -192,6 +192,7 @@ export default function DashboardSettings({
         icon: <IconCheck size="1.1rem" />,
         autoClose: 3000,
       });
+      close();
     },
     onError: (error) => {
       notifications.show({
@@ -206,7 +207,7 @@ export default function DashboardSettings({
   return (
     <Box h="100%">
       <Modal
-        opened={opened}
+        opened={opened || deleteElectionMutation.isLoading}
         onClose={close}
         title={<Text fw={600}>Delete election</Text>}
       >
@@ -247,14 +248,14 @@ export default function DashboardSettings({
                 variant="default"
                 mr={2}
                 onClick={close}
-                // disabled={deleteElectionMutation.isLoading}
+                disabled={deleteElectionMutation.isLoading}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!deleteForm.isValid()}
-                // loading={deleteElectionMutation.isLoading}
+                loading={deleteElectionMutation.isLoading}
               >
                 Confirm Delete
               </Button>

@@ -49,7 +49,7 @@ import { signOut, useSession } from "next-auth/react";
 export default function Header({ userId }: { userId?: string }) {
   const session = useSession();
   const params = useParams();
-  const [logoutLoading] = useState(false);
+  const [logoutLoading, setLogoutLoading] = useState(false);
   const [reportAProblemLoading, setReportAProblemLoading] = useState(false);
   const reportAProblemMutation = api.election.reportAProblem.useMutation();
 
@@ -321,28 +321,25 @@ export default function Header({ userId }: { userId?: string }) {
                 </MenuItem>
                 <MenuItem
                   onClick={async () => {
+                    setLogoutLoading(true);
                     await signOut();
                   }}
                   closeMenuOnClick={false}
                   leftSection={
-                    !logoutLoading ? (
+                    logoutLoading ? (
+                      <Loader size={16} m={0} />
+                    ) : (
                       <IconLogout
                         style={{
                           transform: "translateX(2px)",
                         }}
                         size={16}
                       />
-                    ) : undefined
+                    )
                   }
                   disabled={logoutLoading}
                 >
-                  {logoutLoading ? (
-                    <Center>
-                      <Loader size="xs" />
-                    </Center>
-                  ) : (
-                    "Log out"
-                  )}
+                  Log out
                 </MenuItem>
               </MenuDropdown>
             </Menu>
