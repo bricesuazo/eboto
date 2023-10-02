@@ -113,7 +113,7 @@ export default function EditCandidate({
     old_slug: string;
     new_slug: string;
     partylist_id: string;
-    position: string;
+    position_id: string;
     image: FileWithPath | null | string;
 
     platforms: {
@@ -147,7 +147,8 @@ export default function EditCandidate({
       old_slug: candidate.slug,
       new_slug: candidate.slug,
       partylist_id: candidate.partylist_id,
-      position: candidate.position_id,
+
+      position_id: candidate.position_id,
       image: candidate.image_link,
 
       platforms: candidate.platforms ?? [],
@@ -182,11 +183,17 @@ export default function EditCandidate({
           return "Please select a partylist";
         }
       },
+      position_id: (value) => {
+        if (!value) {
+          return "Please select a position";
+        }
+      },
     },
   });
 
   useEffect(() => {
     if (opened) {
+      form.resetDirty();
       editCandidateMutation.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -292,10 +299,7 @@ export default function EditCandidate({
         Edit
       </Button>
       <Modal
-        opened={
-          opened
-          // || isLoading
-        }
+        opened={opened || editCandidateMutation.isLoading}
         onClose={close}
         title={
           <Text fw={600} lineClamp={1}>
@@ -316,7 +320,7 @@ export default function EditCandidate({
                 new_slug: values.new_slug,
                 partylist_id: values.partylist_id,
                 election_id: election.id,
-                position_id: values.position,
+                position_id: values.position_id,
                 image_link: !values.image
                   ? null
                   : typeof values.image === "string"
@@ -450,7 +454,7 @@ export default function EditCandidate({
                     placeholder="Select position"
                     label="Position"
                     leftSection={<IconUserSearch size="1rem" />}
-                    {...form.getInputProps("position")}
+                    {...form.getInputProps("position_id")}
                     data={positionsQuery.data?.map((position) => {
                       return {
                         label: position.name,

@@ -163,6 +163,16 @@ export default function CreateCandidate({ position }: { position: Position }) {
           return "Election slug must be between 3 and 24 characters";
         }
       },
+      partylist_id: (value) => {
+        if (!value) {
+          return "Please select a partylist";
+        }
+      },
+      position_id: (value) => {
+        if (!value) {
+          return "Please select a position";
+        }
+      },
     },
   });
 
