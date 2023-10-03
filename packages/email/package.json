@@ -6,7 +6,7 @@
     "email:dev": "email dev --port 3002"
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.421.0",
+    "@aws-sdk/client-ses": "^3.423.0",
     "@react-email/button": "0.0.10",
     "@react-email/html": "0.0.4",
     "@react-email/render": "^0.0.7",
@@ -16,7 +16,7 @@
   "devDependencies": {
     "@eboto-mo/prettier-config": "workspace:*",
     "@eboto-mo/tsconfig": "workspace:*",
-    "@types/node": "^20.7.2",
+    "@types/node": "^20.8.2",
     "eslint": "^8.50.0",
     "typescript": "^5.2.2"
   },

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import DashboardCard from "@/components/client/components/dashboard-card";
 import Dashboard from "@/components/client/layout/dashboard";
 import CreateElection from "@/components/client/modals/create-election";
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default async function Page() {
   const session = await auth();
 
-  if (!session) notFound();
+  if (!session) redirect("/sign-in");
 
   const electionsAsCommissioner = await db.query.commissioners.findMany({
     where: (commissioners, { eq }) =>

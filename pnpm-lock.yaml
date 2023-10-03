@@ -16,7 +16,7 @@ importers:
         version: registry.npmjs.org/@manypkg/cli@0.21.0
       '@turbo/gen':
         specifier: ^1.10.14
-        version: registry.npmjs.org/@turbo/gen@1.10.14(@types/node@20.8.0)(typescript@5.2.2)
+        version: registry.npmjs.org/@turbo/gen@1.10.14(@types/node@20.8.2)(typescript@5.2.2)
       prettier:
         specifier: ^3.0.3
         version: registry.npmjs.org/prettier@3.0.3
@@ -46,40 +46,40 @@ importers:
         version: link:../../tooling/eslint
       '@emotion/react':
         specifier: ^11.11.1
-        version: registry.npmjs.org/@emotion/react@11.11.1(@types/react@18.2.23)(react@18.2.0)
+        version: registry.npmjs.org/@emotion/react@11.11.1(@types/react@18.2.24)(react@18.2.0)
       '@mantine/carousel':
-        specifier: 7.1.0
-        version: registry.npmjs.org/@mantine/carousel@7.1.0(@mantine/core@7.1.0)(@mantine/hooks@7.1.0)(embla-carousel-react@8.0.0-rc14)(react@18.2.0)
+        specifier: 7.1.1
+        version: registry.npmjs.org/@mantine/carousel@7.1.1(@mantine/core@7.1.1)(@mantine/hooks@7.1.1)(embla-carousel-react@8.0.0-rc14)(react@18.2.0)
       '@mantine/core':
-        specifier: 7.1.0
-        version: registry.npmjs.org/@mantine/core@7.1.0(@mantine/hooks@7.1.0)(@types/react@18.2.23)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 7.1.1
+        version: registry.npmjs.org/@mantine/core@7.1.1(@mantine/hooks@7.1.1)(@types/react@18.2.24)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/dates':
-        specifier: 7.1.0
-        version: registry.npmjs.org/@mantine/dates@7.1.0(@mantine/core@7.1.0)(@mantine/hooks@7.1.0)(dayjs@1.11.10)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 7.1.1
+        version: registry.npmjs.org/@mantine/dates@7.1.1(@mantine/core@7.1.1)(@mantine/hooks@7.1.1)(dayjs@1.11.10)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/dropzone':
-        specifier: 7.1.0
-        version: registry.npmjs.org/@mantine/dropzone@7.1.0(@mantine/core@7.1.0)(@mantine/hooks@7.1.0)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 7.1.1
+        version: registry.npmjs.org/@mantine/dropzone@7.1.1(@mantine/core@7.1.1)(@mantine/hooks@7.1.1)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/form':
-        specifier: 7.1.0
-        version: registry.npmjs.org/@mantine/form@7.1.0(react@18.2.0)
+        specifier: 7.1.1
+        version: registry.npmjs.org/@mantine/form@7.1.1(react@18.2.0)
       '@mantine/hooks':
-        specifier: 7.1.0
-        version: registry.npmjs.org/@mantine/hooks@7.1.0(react@18.2.0)
+        specifier: 7.1.1
+        version: registry.npmjs.org/@mantine/hooks@7.1.1(react@18.2.0)
       '@mantine/modals':
-        specifier: 7.1.0
-        version: registry.npmjs.org/@mantine/modals@7.1.0(@mantine/core@7.1.0)(@mantine/hooks@7.1.0)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 7.1.1
+        version: registry.npmjs.org/@mantine/modals@7.1.1(@mantine/core@7.1.1)(@mantine/hooks@7.1.1)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/notifications':
-        specifier: 7.1.0
-        version: registry.npmjs.org/@mantine/notifications@7.1.0(@mantine/core@7.1.0)(@mantine/hooks@7.1.0)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 7.1.1
+        version: registry.npmjs.org/@mantine/notifications@7.1.1(@mantine/core@7.1.1)(@mantine/hooks@7.1.1)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/nprogress':
-        specifier: 7.1.0
-        version: registry.npmjs.org/@mantine/nprogress@7.1.0(@mantine/core@7.1.0)(@mantine/hooks@7.1.0)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 7.1.1
+        version: registry.npmjs.org/@mantine/nprogress@7.1.1(@mantine/core@7.1.1)(@mantine/hooks@7.1.1)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/spotlight':
-        specifier: 7.1.0
-        version: registry.npmjs.org/@mantine/spotlight@7.1.0(@mantine/core@7.1.0)(@mantine/hooks@7.1.0)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 7.1.1
+        version: registry.npmjs.org/@mantine/spotlight@7.1.1(@mantine/core@7.1.1)(@mantine/hooks@7.1.1)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/tiptap':
-        specifier: 7.1.0
-        version: registry.npmjs.org/@mantine/tiptap@7.1.0(@mantine/core@7.1.0)(@mantine/hooks@7.1.0)(@tabler/icons-react@2.37.0)(@tiptap/extension-link@2.1.11)(@tiptap/react@2.1.11)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 7.1.1
+        version: registry.npmjs.org/@mantine/tiptap@7.1.1(@mantine/core@7.1.1)(@mantine/hooks@7.1.1)(@tabler/icons-react@2.38.0)(@tiptap/extension-link@2.1.11)(@tiptap/react@2.1.11)(react-dom@18.2.0)(react@18.2.0)
       '@react-pdf/renderer':
         specifier: ^3.1.12
         version: registry.npmjs.org/@react-pdf/renderer@3.1.12(encoding@0.1.13)(react@18.2.0)
@@ -93,20 +93,20 @@ importers:
         specifier: ^0.6.1
         version: registry.npmjs.org/@t3-oss/env-nextjs@0.6.1(typescript@5.2.2)(zod@3.22.2)
       '@tabler/icons-react':
-        specifier: ^2.37.0
-        version: registry.npmjs.org/@tabler/icons-react@2.37.0(react@18.2.0)
+        specifier: ^2.38.0
+        version: registry.npmjs.org/@tabler/icons-react@2.38.0(react@18.2.0)
       '@tanstack/query-core':
-        specifier: ^4.35.3
-        version: registry.npmjs.org/@tanstack/query-core@4.35.3
+        specifier: ^4.35.7
+        version: registry.npmjs.org/@tanstack/query-core@4.35.7
       '@tanstack/react-query':
-        specifier: ^4.35.3
-        version: registry.npmjs.org/@tanstack/react-query@4.35.3(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^4.35.7
+        version: registry.npmjs.org/@tanstack/react-query@4.35.7(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query-devtools':
-        specifier: ^4.35.3
-        version: registry.npmjs.org/@tanstack/react-query-devtools@4.35.3(@tanstack/react-query@4.35.3)(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^4.35.7
+        version: registry.npmjs.org/@tanstack/react-query-devtools@4.35.7(@tanstack/react-query@4.35.7)(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query-next-experimental':
         specifier: 5.0.0-alpha.80
-        version: registry.npmjs.org/@tanstack/react-query-next-experimental@5.0.0-alpha.80(@tanstack/react-query@4.35.3)(next@13.5.3)(react-dom@18.2.0)(react@18.2.0)
+        version: registry.npmjs.org/@tanstack/react-query-next-experimental@5.0.0-alpha.80(@tanstack/react-query@4.35.7)(next@13.5.4)(react-dom@18.2.0)(react@18.2.0)
       '@tiptap/extension-link':
         specifier: ^2.1.11
         version: registry.npmjs.org/@tiptap/extension-link@2.1.11(@tiptap/core@2.1.11)(@tiptap/pm@2.1.11)
@@ -121,10 +121,10 @@ importers:
         version: registry.npmjs.org/@trpc/client@10.38.5(@trpc/server@10.38.5)
       '@trpc/next':
         specifier: ^10.38.4
-        version: registry.npmjs.org/@trpc/next@10.38.5(@tanstack/react-query@4.35.3)(@trpc/client@10.38.5)(@trpc/react-query@10.38.5)(@trpc/server@10.38.5)(next@13.5.3)(react-dom@18.2.0)(react@18.2.0)
+        version: registry.npmjs.org/@trpc/next@10.38.5(@tanstack/react-query@4.35.7)(@trpc/client@10.38.5)(@trpc/react-query@10.38.5)(@trpc/server@10.38.5)(next@13.5.4)(react-dom@18.2.0)(react@18.2.0)
       '@trpc/react-query':
         specifier: ^10.38.4
-        version: registry.npmjs.org/@trpc/react-query@10.38.5(@tanstack/react-query@4.35.3)(@trpc/client@10.38.5)(@trpc/server@10.38.5)(react-dom@18.2.0)(react@18.2.0)
+        version: registry.npmjs.org/@trpc/react-query@10.38.5(@tanstack/react-query@4.35.7)(@trpc/client@10.38.5)(@trpc/server@10.38.5)(react-dom@18.2.0)(react@18.2.0)
       '@trpc/server':
         specifier: ^10.38.4
         version: registry.npmjs.org/@trpc/server@10.38.5
@@ -151,19 +151,19 @@ importers:
         version: registry.npmjs.org/embla-carousel-react@8.0.0-rc14(react@18.2.0)
       mantine-react-table:
         specifier: ^1.3.1
-        version: registry.npmjs.org/mantine-react-table@1.3.1(@emotion/react@11.11.1)(@mantine/core@7.1.0)(@mantine/dates@7.1.0)(@mantine/hooks@7.1.0)(@tabler/icons-react@2.37.0)(react-dom@18.2.0)(react@18.2.0)
+        version: registry.npmjs.org/mantine-react-table@1.3.1(@emotion/react@11.11.1)(@mantine/core@7.1.1)(@mantine/dates@7.1.1)(@mantine/hooks@7.1.1)(@tabler/icons-react@2.38.0)(react-dom@18.2.0)(react@18.2.0)
       moment:
         specifier: ^2.29.4
         version: registry.npmjs.org/moment@2.29.4
       next:
-        specifier: 13.5.3
-        version: registry.npmjs.org/next@13.5.3(react-dom@18.2.0)(react@18.2.0)
+        specifier: 13.5.4
+        version: registry.npmjs.org/next@13.5.4(react-dom@18.2.0)(react@18.2.0)
       next-auth:
         specifier: 0.0.0-manual.c885ac1d
-        version: registry.npmjs.org/next-auth@0.0.0-manual.c885ac1d(next@13.5.3)(react@18.2.0)
+        version: registry.npmjs.org/next-auth@0.0.0-manual.c885ac1d(next@13.5.4)(react@18.2.0)
       next-superjson-plugin:
         specifier: ^0.5.9
-        version: registry.npmjs.org/next-superjson-plugin@0.5.9(next@13.5.3)(superjson@1.13.1)
+        version: registry.npmjs.org/next-superjson-plugin@0.5.9(next@13.5.4)(superjson@1.13.1)
       qrcode.react:
         specifier: ^3.1.0
         version: registry.npmjs.org/qrcode.react@3.1.0(react@18.2.0)
@@ -188,9 +188,6 @@ importers:
       superjson:
         specifier: ^1.13.1
         version: registry.npmjs.org/superjson@1.13.1
-      svix:
-        specifier: ^1.12.0
-        version: registry.npmjs.org/svix@1.12.0(encoding@0.1.13)
       to-words:
         specifier: ^3.6.1
         version: registry.npmjs.org/to-words@3.6.1
@@ -201,8 +198,8 @@ importers:
         specifier: ^3.22.2
         version: registry.npmjs.org/zod@3.22.2
       zustand:
-        specifier: ^4.4.1
-        version: registry.npmjs.org/zustand@4.4.1(@types/react@18.2.23)(react@18.2.0)
+        specifier: ^4.4.2
+        version: registry.npmjs.org/zustand@4.4.2(@types/react@18.2.24)(react@18.2.0)
     devDependencies:
       '@eboto-mo/prettier-config':
         specifier: workspace:*
@@ -211,17 +208,17 @@ importers:
         specifier: workspace:*
         version: link:../../tooling/tsconfig
       '@tanstack/eslint-plugin-query':
-        specifier: ^4.34.1
-        version: registry.npmjs.org/@tanstack/eslint-plugin-query@4.34.1(eslint@8.50.0)
+        specifier: ^4.36.0
+        version: registry.npmjs.org/@tanstack/eslint-plugin-query@4.36.0(eslint@8.50.0)
       '@types/bcryptjs':
         specifier: ^2.4.4
         version: registry.npmjs.org/@types/bcryptjs@2.4.4
       '@types/node':
-        specifier: ^20.8.0
-        version: registry.npmjs.org/@types/node@20.8.0
+        specifier: ^20.8.2
+        version: registry.npmjs.org/@types/node@20.8.2
       '@types/react':
-        specifier: ^18.2.23
-        version: registry.npmjs.org/@types/react@18.2.23
+        specifier: ^18.2.24
+        version: registry.npmjs.org/@types/react@18.2.24
       '@types/react-dom':
         specifier: ^18.2.8
         version: registry.npmjs.org/@types/react-dom@18.2.8
@@ -229,8 +226,8 @@ importers:
         specifier: ^0.1.13
         version: registry.npmjs.org/encoding@0.1.13
       postcss-preset-mantine:
-        specifier: ^1.7.0
-        version: registry.npmjs.org/postcss-preset-mantine@1.7.0(postcss@8.4.31)
+        specifier: ^1.8.0
+        version: registry.npmjs.org/postcss-preset-mantine@1.8.0(postcss@8.4.31)
       postcss-simple-vars:
         specifier: ^7.0.1
         version: registry.npmjs.org/postcss-simple-vars@7.0.1(postcss@8.4.31)
@@ -253,10 +250,10 @@ importers:
         specifier: ^0.6.1
         version: registry.npmjs.org/@t3-oss/env-nextjs@0.6.1(typescript@5.2.2)(zod@3.22.2)
       '@trpc/client':
-        specifier: ^10.38.4
+        specifier: ^10.38.5
         version: registry.npmjs.org/@trpc/client@10.38.5(@trpc/server@10.38.5)
       '@trpc/server':
-        specifier: ^10.38.4
+        specifier: ^10.38.5
         version: registry.npmjs.org/@trpc/server@10.38.5
       nanoid:
         specifier: ^5.0.1
@@ -290,8 +287,8 @@ importers:
   packages/auth:
     dependencies:
       '@auth/core':
-        specifier: ^0.15.2
-        version: registry.npmjs.org/@auth/core@0.15.2
+        specifier: ^0.16.0
+        version: registry.npmjs.org/@auth/core@0.16.0
       '@auth/drizzle-adapter':
         specifier: ^0.3.2
         version: registry.npmjs.org/@auth/drizzle-adapter@0.3.2
@@ -301,12 +298,9 @@ importers:
       '@t3-oss/env-nextjs':
         specifier: ^0.6.1
         version: registry.npmjs.org/@t3-oss/env-nextjs@0.6.1(typescript@5.2.2)(zod@3.22.2)
-      next:
-        specifier: ^13.5.3
-        version: registry.npmjs.org/next@13.5.3(react-dom@18.2.0)(react@18.2.0)
       next-auth:
         specifier: 0.0.0-manual.c885ac1d
-        version: registry.npmjs.org/next-auth@0.0.0-manual.c885ac1d(next@13.5.3)(react@18.2.0)
+        version: registry.npmjs.org/next-auth@0.0.0-manual.c885ac1d(next@13.5.4)(react@18.2.0)
       react:
         specifier: 18.2.0
         version: registry.npmjs.org/react@18.2.0
@@ -339,8 +333,8 @@ importers:
   packages/constants:
     dependencies:
       '@tabler/icons-react':
-        specifier: ^2.37.0
-        version: registry.npmjs.org/@tabler/icons-react@2.37.0(react@18.2.0)
+        specifier: ^2.38.0
+        version: registry.npmjs.org/@tabler/icons-react@2.38.0(react@18.2.0)
       zod:
         specifier: ^3.22.2
         version: registry.npmjs.org/zod@3.22.2
@@ -377,8 +371,8 @@ importers:
         specifier: workspace:*
         version: link:../../tooling/tsconfig
       '@types/node':
-        specifier: ^20.7.2
-        version: registry.npmjs.org/@types/node@20.7.2
+        specifier: ^20.8.2
+        version: registry.npmjs.org/@types/node@20.8.2
       dotenv-cli:
         specifier: ^7.3.0
         version: registry.npmjs.org/dotenv-cli@7.3.0
@@ -392,8 +386,8 @@ importers:
   packages/email:
     dependencies:
       '@aws-sdk/client-ses':
-        specifier: ^3.421.0
-        version: registry.npmjs.org/@aws-sdk/client-ses@3.421.0
+        specifier: ^3.423.0
+        version: registry.npmjs.org/@aws-sdk/client-ses@3.423.0
       '@react-email/button':
         specifier: 0.0.10
         version: registry.npmjs.org/@react-email/button@0.0.10
@@ -417,8 +411,8 @@ importers:
         specifier: workspace:*
         version: link:../../tooling/tsconfig
       '@types/node':
-        specifier: ^20.7.2
-        version: registry.npmjs.org/@types/node@20.7.2
+        specifier: ^20.8.2
+        version: registry.npmjs.org/@types/node@20.8.2
       eslint:
         specifier: ^8.50.0
         version: registry.npmjs.org/eslint@8.50.0
@@ -520,7 +514,7 @@ packages:
     dependencies:
       '@panva/hkdf': registry.npmjs.org/@panva/hkdf@1.1.1
       cookie: registry.npmjs.org/cookie@0.5.0
-      jose: registry.npmjs.org/jose@4.14.6
+      jose: registry.npmjs.org/jose@4.15.1
       oauth4webapi: registry.npmjs.org/oauth4webapi@2.3.0
       preact: registry.npmjs.org/preact@10.11.3
       preact-render-to-string: registry.npmjs.org/preact-render-to-string@5.2.3(preact@10.11.3)
@@ -530,24 +524,6 @@ packages:
     resolution: {integrity: sha512-XYipdAc/nKu014VOgpcPyLlj1ghWlnwyloaB1UjQd9ElZRZQ9YpSizzXGLON23t/a0FyabOBBl0/awD2tW58Rg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@auth/core/-/core-0.12.0.tgz}
     name: '@auth/core'
     version: 0.12.0
-    peerDependencies:
-      nodemailer: ^6.8.0
-    peerDependenciesMeta:
-      nodemailer:
-        optional: true
-    dependencies:
-      '@panva/hkdf': registry.npmjs.org/@panva/hkdf@1.1.1
-      cookie: registry.npmjs.org/cookie@0.5.0
-      jose: registry.npmjs.org/jose@4.14.6
-      oauth4webapi: registry.npmjs.org/oauth4webapi@2.3.0
-      preact: registry.npmjs.org/preact@10.11.3
-      preact-render-to-string: registry.npmjs.org/preact-render-to-string@5.2.3(preact@10.11.3)
-    dev: false
-
-  registry.npmjs.org/@auth/core@0.15.2:
-    resolution: {integrity: sha512-z79WfH+7Hub/DP3bd5/oiymi6zqSkpeltG2u/vvZrLUXTz3LHWXEVtSxYIusHXpzLpEGfDwnACkiFB4izP1wEg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@auth/core/-/core-0.15.2.tgz}
-    name: '@auth/core'
-    version: 0.15.2
     peerDependencies:
       nodemailer: ^6.8.0
     peerDependenciesMeta:
@@ -574,7 +550,7 @@ packages:
     dependencies:
       '@panva/hkdf': registry.npmjs.org/@panva/hkdf@1.1.1
       cookie: registry.npmjs.org/cookie@0.5.0
-      jose: registry.npmjs.org/jose@4.14.6
+      jose: registry.npmjs.org/jose@4.15.1
       oauth4webapi: registry.npmjs.org/oauth4webapi@2.3.0
       preact: registry.npmjs.org/preact@10.11.3
       preact-render-to-string: registry.npmjs.org/preact-render-to-string@5.2.3(preact@10.11.3)
@@ -651,16 +627,16 @@ packages:
       tslib: registry.npmjs.org/tslib@1.14.1
     dev: false
 
-  registry.npmjs.org/@aws-sdk/client-ses@3.421.0:
-    resolution: {integrity: sha512-thLy+KdBHizk5HdJVNgXd++MvhXVJtUTKRT6ZwffFAujdD+IMVmfwAk3agTzh9F4MnDqrqRZyulbdvillPJMQg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@aws-sdk/client-ses/-/client-ses-3.421.0.tgz}
+  registry.npmjs.org/@aws-sdk/client-ses@3.423.0:
+    resolution: {integrity: sha512-NJCOGviKNPdRtCOnFTDRpho6ovbscnDBzyLpohE45pWQT2uqGrbxuKzEMRHqX1hyl/oJ6LKcpJclDrb8EsMFwg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@aws-sdk/client-ses/-/client-ses-3.423.0.tgz}
     name: '@aws-sdk/client-ses'
-    version: 3.421.0
+    version: 3.423.0
     engines: {node: '>=14.0.0'}
     dependencies:
       '@aws-crypto/sha256-browser': registry.npmjs.org/@aws-crypto/sha256-browser@3.0.0
       '@aws-crypto/sha256-js': registry.npmjs.org/@aws-crypto/sha256-js@3.0.0
-      '@aws-sdk/client-sts': registry.npmjs.org/@aws-sdk/client-sts@3.421.0
-      '@aws-sdk/credential-provider-node': registry.npmjs.org/@aws-sdk/credential-provider-node@3.421.0
+      '@aws-sdk/client-sts': registry.npmjs.org/@aws-sdk/client-sts@3.423.0
+      '@aws-sdk/credential-provider-node': registry.npmjs.org/@aws-sdk/credential-provider-node@3.423.0
       '@aws-sdk/middleware-host-header': registry.npmjs.org/@aws-sdk/middleware-host-header@3.418.0
       '@aws-sdk/middleware-logger': registry.npmjs.org/@aws-sdk/middleware-logger@3.418.0
       '@aws-sdk/middleware-recursion-detection': registry.npmjs.org/@aws-sdk/middleware-recursion-detection@3.418.0
@@ -700,10 +676,10 @@ packages:
       - aws-crt
     dev: false
 
-  registry.npmjs.org/@aws-sdk/client-sso@3.421.0:
-    resolution: {integrity: sha512-40CmW7K2/FZEn3CbOjbpRYeVjKu6aJQlpRHcAgEJGNoVEAnRA3YNH4H0BN2iWWITfYg3B7sIjMm5VE9fCIK1Ng==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@aws-sdk/client-sso/-/client-sso-3.421.0.tgz}
+  registry.npmjs.org/@aws-sdk/client-sso@3.423.0:
+    resolution: {integrity: sha512-znIufHkwhCIePgaYciIs3x/+BpzR57CZzbCKHR9+oOvGyufEPPpUT5bFLvbwTgfiVkTjuk6sG/ES3U5Bc+xtrA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@aws-sdk/client-sso/-/client-sso-3.423.0.tgz}
     name: '@aws-sdk/client-sso'
-    version: 3.421.0
+    version: 3.423.0
     engines: {node: '>=14.0.0'}
     dependencies:
       '@aws-crypto/sha256-browser': registry.npmjs.org/@aws-crypto/sha256-browser@3.0.0
@@ -744,15 +720,15 @@ packages:
       - aws-crt
     dev: false
 
-  registry.npmjs.org/@aws-sdk/client-sts@3.421.0:
-    resolution: {integrity: sha512-/92NOZMcdkBcvGrINk5B/l+6DGcVzYE4Ab3ME4vcY9y//u2gd0yNn5YYRSzzjVBLvhDP3u6CbTfLX2Bm4qihPw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@aws-sdk/client-sts/-/client-sts-3.421.0.tgz}
+  registry.npmjs.org/@aws-sdk/client-sts@3.423.0:
+    resolution: {integrity: sha512-EcpkKu02QZbRX6dQE0u7a8RgWrn/5riz1qAlKd7rM8FZJpr/D6GGX8ZzWxjgp7pRUgfNvinTmIudDnyQY3v9Mg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@aws-sdk/client-sts/-/client-sts-3.423.0.tgz}
     name: '@aws-sdk/client-sts'
-    version: 3.421.0
+    version: 3.423.0
     engines: {node: '>=14.0.0'}
     dependencies:
       '@aws-crypto/sha256-browser': registry.npmjs.org/@aws-crypto/sha256-browser@3.0.0
       '@aws-crypto/sha256-js': registry.npmjs.org/@aws-crypto/sha256-js@3.0.0
-      '@aws-sdk/credential-provider-node': registry.npmjs.org/@aws-sdk/credential-provider-node@3.421.0
+      '@aws-sdk/credential-provider-node': registry.npmjs.org/@aws-sdk/credential-provider-node@3.423.0
       '@aws-sdk/middleware-host-header': registry.npmjs.org/@aws-sdk/middleware-host-header@3.418.0
       '@aws-sdk/middleware-logger': registry.npmjs.org/@aws-sdk/middleware-logger@3.418.0
       '@aws-sdk/middleware-recursion-detection': registry.npmjs.org/@aws-sdk/middleware-recursion-detection@3.418.0
@@ -804,15 +780,15 @@ packages:
       tslib: registry.npmjs.org/tslib@2.6.2
     dev: false
 
-  registry.npmjs.org/@aws-sdk/credential-provider-ini@3.421.0:
-    resolution: {integrity: sha512-J5yH/gkpAk6FMeH5F9u5Nr6oG+97tj1kkn5q49g3XMbtWw7GiynadxdtoRBCeIg1C7o2LOQx4B1AnhNhIw1z/g==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@aws-sdk/credential-provider-ini/-/credential-provider-ini-3.421.0.tgz}
+  registry.npmjs.org/@aws-sdk/credential-provider-ini@3.423.0:
+    resolution: {integrity: sha512-7CsFWz8g7dQmblp57XzzxMirO4ClowGZIOwAheBkmk6q1XHbllcHFnbh2kdPyQQ0+JmjDg6waztIc7dY7Ycfvw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@aws-sdk/credential-provider-ini/-/credential-provider-ini-3.423.0.tgz}
     name: '@aws-sdk/credential-provider-ini'
-    version: 3.421.0
+    version: 3.423.0
     engines: {node: '>=14.0.0'}
     dependencies:
       '@aws-sdk/credential-provider-env': registry.npmjs.org/@aws-sdk/credential-provider-env@3.418.0
       '@aws-sdk/credential-provider-process': registry.npmjs.org/@aws-sdk/credential-provider-process@3.418.0
-      '@aws-sdk/credential-provider-sso': registry.npmjs.org/@aws-sdk/credential-provider-sso@3.421.0
+      '@aws-sdk/credential-provider-sso': registry.npmjs.org/@aws-sdk/credential-provider-sso@3.423.0
       '@aws-sdk/credential-provider-web-identity': registry.npmjs.org/@aws-sdk/credential-provider-web-identity@3.418.0
       '@aws-sdk/types': registry.npmjs.org/@aws-sdk/types@3.418.0
       '@smithy/credential-provider-imds': registry.npmjs.org/@smithy/credential-provider-imds@2.0.13
@@ -824,16 +800,16 @@ packages:
       - aws-crt
     dev: false
 
-  registry.npmjs.org/@aws-sdk/credential-provider-node@3.421.0:
-    resolution: {integrity: sha512-g1dvdvfDj0u8B/gOsHR3o1arP4O4QE/dFm2IJBYr/eUdKISMUgbQULWtg4zdtAf0Oz4xN0723i7fpXAF1gTnRA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@aws-sdk/credential-provider-node/-/credential-provider-node-3.421.0.tgz}
+  registry.npmjs.org/@aws-sdk/credential-provider-node@3.423.0:
+    resolution: {integrity: sha512-lygbGJJUnDpgo8OEqdoYd51BKkyBVQ1Catiua/m0aHvL+SCmVrHiYPQPawWYGxpH8X3DXdXa0nd0LkEaevrHRg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@aws-sdk/credential-provider-node/-/credential-provider-node-3.423.0.tgz}
     name: '@aws-sdk/credential-provider-node'
-    version: 3.421.0
+    version: 3.423.0
     engines: {node: '>=14.0.0'}
     dependencies:
       '@aws-sdk/credential-provider-env': registry.npmjs.org/@aws-sdk/credential-provider-env@3.418.0
-      '@aws-sdk/credential-provider-ini': registry.npmjs.org/@aws-sdk/credential-provider-ini@3.421.0
+      '@aws-sdk/credential-provider-ini': registry.npmjs.org/@aws-sdk/credential-provider-ini@3.423.0
       '@aws-sdk/credential-provider-process': registry.npmjs.org/@aws-sdk/credential-provider-process@3.418.0
-      '@aws-sdk/credential-provider-sso': registry.npmjs.org/@aws-sdk/credential-provider-sso@3.421.0
+      '@aws-sdk/credential-provider-sso': registry.npmjs.org/@aws-sdk/credential-provider-sso@3.423.0
       '@aws-sdk/credential-provider-web-identity': registry.npmjs.org/@aws-sdk/credential-provider-web-identity@3.418.0
       '@aws-sdk/types': registry.npmjs.org/@aws-sdk/types@3.418.0
       '@smithy/credential-provider-imds': registry.npmjs.org/@smithy/credential-provider-imds@2.0.13
@@ -858,13 +834,13 @@ packages:
       tslib: registry.npmjs.org/tslib@2.6.2
     dev: false
 
-  registry.npmjs.org/@aws-sdk/credential-provider-sso@3.421.0:
-    resolution: {integrity: sha512-f8T3L5rhImL6T6RTSvbOxaWw9k2fDOT2DZbNjcPz9ITWmwXj2NNbdHGWuRi3dv2HoY/nW2IJdNxnhdhbn6Fc1A==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@aws-sdk/credential-provider-sso/-/credential-provider-sso-3.421.0.tgz}
+  registry.npmjs.org/@aws-sdk/credential-provider-sso@3.423.0:
+    resolution: {integrity: sha512-zAH68IjRMmW22USbsCVQ5Q6AHqhmWABwLbZAMocSGMasddTGv/nkA/nUiVCJ/B4LI3P81FoPQVrG5JxNmkNH0w==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@aws-sdk/credential-provider-sso/-/credential-provider-sso-3.423.0.tgz}
     name: '@aws-sdk/credential-provider-sso'
-    version: 3.421.0
+    version: 3.423.0
     engines: {node: '>=14.0.0'}
     dependencies:
-      '@aws-sdk/client-sso': registry.npmjs.org/@aws-sdk/client-sso@3.421.0
+      '@aws-sdk/client-sso': registry.npmjs.org/@aws-sdk/client-sso@3.423.0
       '@aws-sdk/token-providers': registry.npmjs.org/@aws-sdk/token-providers@3.418.0
       '@aws-sdk/types': registry.npmjs.org/@aws-sdk/types@3.418.0
       '@smithy/property-provider': registry.npmjs.org/@smithy/property-provider@2.0.11
@@ -1429,7 +1405,7 @@ packages:
     version: 0.8.1
     dev: false
 
-  registry.npmjs.org/@emotion/react@11.11.1(@types/react@18.2.23)(react@18.2.0):
+  registry.npmjs.org/@emotion/react@11.11.1(@types/react@18.2.24)(react@18.2.0):
     resolution: {integrity: sha512-5mlW1DquU5HaxjLkfkGN1GA/fvVGdyHURRiX/0FHl2cfIfRxSOfmxEH5YS43edp0OldZrZ+dkBKbngxcNCdZvA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@emotion/react/-/react-11.11.1.tgz}
     id: registry.npmjs.org/@emotion/react/11.11.1
     name: '@emotion/react'
@@ -1448,7 +1424,7 @@ packages:
       '@emotion/use-insertion-effect-with-fallbacks': registry.npmjs.org/@emotion/use-insertion-effect-with-fallbacks@1.0.1(react@18.2.0)
       '@emotion/utils': registry.npmjs.org/@emotion/utils@1.2.1
       '@emotion/weak-memoize': registry.npmjs.org/@emotion/weak-memoize@0.3.1
-      '@types/react': registry.npmjs.org/@types/react@18.2.23
+      '@types/react': registry.npmjs.org/@types/react@18.2.24
       hoist-non-react-statics: registry.npmjs.org/hoist-non-react-statics@3.3.2
       react: registry.npmjs.org/react@18.2.0
     dev: false
@@ -1515,7 +1491,7 @@ packages:
     version: 2.6.5
     dependencies:
       '@esbuild-kit/core-utils': registry.npmjs.org/@esbuild-kit/core-utils@3.3.2
-      get-tsconfig: registry.npmjs.org/get-tsconfig@4.7.0
+      get-tsconfig: registry.npmjs.org/get-tsconfig@4.7.2
     dev: true
 
   registry.npmjs.org/@esbuild/android-arm64@0.16.4:
@@ -2019,6 +1995,13 @@ packages:
     name: '@eslint-community/regexpp'
     version: 4.9.0
     engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
+    dev: false
+
+  registry.npmjs.org/@eslint-community/regexpp@4.9.1:
+    resolution: {integrity: sha512-Y27x+MBLjXa+0JWDhykM3+JE+il3kHKAEqabfEWq3SDhZjLYb6/BHL/JKFnH3fe207JaXkyDo685Oc2Glt6ifA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@eslint-community/regexpp/-/regexpp-4.9.1.tgz}
+    name: '@eslint-community/regexpp'
+    version: 4.9.1
+    engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
 
   registry.npmjs.org/@eslint/eslintrc@2.1.2:
     resolution: {integrity: sha512-+wvgpDsrB1YqAMdEUCcnTlpfVBH7Vqn6A/NT3D8WVXFIaKMlErPIZT3oCIAVCOtarRpMtelZLqJeU3t7WY6X6g==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@eslint/eslintrc/-/eslintrc-2.1.2.tgz}
@@ -2189,89 +2172,89 @@ packages:
       '@jridgewell/resolve-uri': registry.npmjs.org/@jridgewell/resolve-uri@3.1.1
       '@jridgewell/sourcemap-codec': registry.npmjs.org/@jridgewell/sourcemap-codec@1.4.15
 
-  registry.npmjs.org/@mantine/carousel@7.1.0(@mantine/core@7.1.0)(@mantine/hooks@7.1.0)(embla-carousel-react@8.0.0-rc14)(react@18.2.0):
-    resolution: {integrity: sha512-3WHi0nVjXFfgUwoeJCEglX9PPOsP0Dsiauq31DDy2Cugn5LyxFluaiL7c21nHbs3Fd0If/sjgiBEEa+ZmVStiQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/carousel/-/carousel-7.1.0.tgz}
-    id: registry.npmjs.org/@mantine/carousel/7.1.0
+  registry.npmjs.org/@mantine/carousel@7.1.1(@mantine/core@7.1.1)(@mantine/hooks@7.1.1)(embla-carousel-react@8.0.0-rc14)(react@18.2.0):
+    resolution: {integrity: sha512-i/T7zuWYFpfvgsBiqvs+6r03R4dyIUqawngvSdKbD7BkgBteo/Qy2UppVsdfe9tX2/74VMVXDBKDMtxCo/bBCg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/carousel/-/carousel-7.1.1.tgz}
+    id: registry.npmjs.org/@mantine/carousel/7.1.1
     name: '@mantine/carousel'
-    version: 7.1.0
+    version: 7.1.1
     peerDependencies:
-      '@mantine/core': 7.1.0
-      '@mantine/hooks': 7.1.0
+      '@mantine/core': 7.1.1
+      '@mantine/hooks': 7.1.1
       embla-carousel-react: ^7.0.0
       react: ^18.2.0
     dependencies:
-      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.0(@mantine/hooks@7.1.0)(@types/react@18.2.23)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.0(react@18.2.0)
+      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.1(@mantine/hooks@7.1.1)(@types/react@18.2.24)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.1(react@18.2.0)
       embla-carousel-react: registry.npmjs.org/embla-carousel-react@8.0.0-rc14(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  registry.npmjs.org/@mantine/core@7.1.0(@mantine/hooks@7.1.0)(@types/react@18.2.23)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-DNexnix5Lz7na8bfXCNVDsCsorxMzF1we3mtU33B0mLyiLkH47BhpgKNxvf5OjEK5SUJ0Bi7r5m91Tm7pmAB7w==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/core/-/core-7.1.0.tgz}
-    id: registry.npmjs.org/@mantine/core/7.1.0
+  registry.npmjs.org/@mantine/core@7.1.1(@mantine/hooks@7.1.1)(@types/react@18.2.24)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-7PBbu/zlL3Uw4HtBVf48fpTy/IFVSJzhMkh3sxG9HQxZot6c5cjuBuTCT+FFY5xicuoYQTu6nkHjZiaz7j12Ug==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/core/-/core-7.1.1.tgz}
+    id: registry.npmjs.org/@mantine/core/7.1.1
     name: '@mantine/core'
-    version: 7.1.0
+    version: 7.1.1
     peerDependencies:
-      '@mantine/hooks': 7.1.0
+      '@mantine/hooks': 7.1.1
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
       '@floating-ui/react': registry.npmjs.org/@floating-ui/react@0.24.8(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.0(react@18.2.0)
+      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.1(react@18.2.0)
       clsx: registry.npmjs.org/clsx@2.0.0
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
       react-number-format: registry.npmjs.org/react-number-format@5.3.1(react-dom@18.2.0)(react@18.2.0)
-      react-remove-scroll: registry.npmjs.org/react-remove-scroll@2.5.6(@types/react@18.2.23)(react@18.2.0)
-      react-textarea-autosize: registry.npmjs.org/react-textarea-autosize@8.5.2(@types/react@18.2.23)(react@18.2.0)
+      react-remove-scroll: registry.npmjs.org/react-remove-scroll@2.5.6(@types/react@18.2.24)(react@18.2.0)
+      react-textarea-autosize: registry.npmjs.org/react-textarea-autosize@8.5.3(@types/react@18.2.24)(react@18.2.0)
       type-fest: registry.npmjs.org/type-fest@3.13.1
     transitivePeerDependencies:
       - '@types/react'
     dev: false
 
-  registry.npmjs.org/@mantine/dates@7.1.0(@mantine/core@7.1.0)(@mantine/hooks@7.1.0)(dayjs@1.11.10)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-Y2GJk03HZZKl+BHwi0evTeTtGafX9TPI5pZAfuOJO3t1Cv+jsVPdHYcpDUItxRceHU0yCv/x9/TEZXcR8jFKeA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/dates/-/dates-7.1.0.tgz}
-    id: registry.npmjs.org/@mantine/dates/7.1.0
+  registry.npmjs.org/@mantine/dates@7.1.1(@mantine/core@7.1.1)(@mantine/hooks@7.1.1)(dayjs@1.11.10)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-Fx8pZQi6Z1whMMTI9IGn15Kadbah2L7UKuqSlbr2+s+CBMooplAlm9ayB/sH5Z6beIK1R/rjHAkScvOa59z2Fg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/dates/-/dates-7.1.1.tgz}
+    id: registry.npmjs.org/@mantine/dates/7.1.1
     name: '@mantine/dates'
-    version: 7.1.0
+    version: 7.1.1
     peerDependencies:
-      '@mantine/core': 7.1.0
-      '@mantine/hooks': 7.1.0
+      '@mantine/core': 7.1.1
+      '@mantine/hooks': 7.1.1
       dayjs: ^1.10.5
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.0(@mantine/hooks@7.1.0)(@types/react@18.2.23)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.0(react@18.2.0)
+      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.1(@mantine/hooks@7.1.1)(@types/react@18.2.24)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.1(react@18.2.0)
       clsx: registry.npmjs.org/clsx@2.0.0
       dayjs: registry.npmjs.org/dayjs@1.11.10
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/@mantine/dropzone@7.1.0(@mantine/core@7.1.0)(@mantine/hooks@7.1.0)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-8//0f7mPC2IGjHtzHYv9ac29BgBQ7qmYyrtoVo/3F2pXXBwRzMi20MNa4V79qctMAPGlwUcWnYZ2L0iCwfOzhQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/dropzone/-/dropzone-7.1.0.tgz}
-    id: registry.npmjs.org/@mantine/dropzone/7.1.0
+  registry.npmjs.org/@mantine/dropzone@7.1.1(@mantine/core@7.1.1)(@mantine/hooks@7.1.1)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-dCSPR/jD+LAfENL/lAeU5kqg2v8V0+FiAY9PJpsW88UkEFzeuZzO3Daj9R7FRUttBtzZFSmY952X4Vl2+AmwpA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/dropzone/-/dropzone-7.1.1.tgz}
+    id: registry.npmjs.org/@mantine/dropzone/7.1.1
     name: '@mantine/dropzone'
-    version: 7.1.0
+    version: 7.1.1
     peerDependencies:
-      '@mantine/core': 7.1.0
-      '@mantine/hooks': 7.1.0
+      '@mantine/core': 7.1.1
+      '@mantine/hooks': 7.1.1
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.0(@mantine/hooks@7.1.0)(@types/react@18.2.23)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.0(react@18.2.0)
+      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.1(@mantine/hooks@7.1.1)(@types/react@18.2.24)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.1(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
-      react-dropzone: registry.npmjs.org/react-dropzone@14.2.3(react@18.2.0)
+      react-dropzone-esm: registry.npmjs.org/react-dropzone-esm@15.0.0(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/@mantine/form@7.1.0(react@18.2.0):
-    resolution: {integrity: sha512-Iu7Ecs2kFdvwakpvInOlmKRdMxy8XKiDAs9SjuVuRs4w/MWNEqWW6ecj1LGByfr2hyoIMyX+lhOQ/7IxgEaFjg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/form/-/form-7.1.0.tgz}
-    id: registry.npmjs.org/@mantine/form/7.1.0
+  registry.npmjs.org/@mantine/form@7.1.1(react@18.2.0):
+    resolution: {integrity: sha512-dUBZ/G6fesYqOtQH4wHtpYKTvoCe2UTQ/pJ4X9fdkX70HvYv2blKXcAmP2LStG+keeC6c1jHICM09BipVYlXBg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/form/-/form-7.1.1.tgz}
+    id: registry.npmjs.org/@mantine/form/7.1.1
     name: '@mantine/form'
-    version: 7.1.0
+    version: 7.1.1
     peerDependencies:
       react: ^18.2.0
     dependencies:
@@ -2280,117 +2263,117 @@ packages:
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  registry.npmjs.org/@mantine/hooks@7.1.0(react@18.2.0):
-    resolution: {integrity: sha512-XW8qYNoS81bIWmdI7yZV8BmBkTtr0//3fyBJ2dcKRSKWY5HVNPkLDXPQk9/E4bpQIRmufDGQ6pLmUfY+0VjO3g==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/hooks/-/hooks-7.1.0.tgz}
-    id: registry.npmjs.org/@mantine/hooks/7.1.0
+  registry.npmjs.org/@mantine/hooks@7.1.1(react@18.2.0):
+    resolution: {integrity: sha512-k+9NX/YW+pUioH0s2qPmHfGAoSXuNobu1tfT+2eiLMkiQkj3PcErD4K/KJ0MCkR4mGh9PmVcFZbxoYSxgLqRZw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/hooks/-/hooks-7.1.1.tgz}
+    id: registry.npmjs.org/@mantine/hooks/7.1.1
     name: '@mantine/hooks'
-    version: 7.1.0
+    version: 7.1.1
     peerDependencies:
       react: ^18.2.0
     dependencies:
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  registry.npmjs.org/@mantine/modals@7.1.0(@mantine/core@7.1.0)(@mantine/hooks@7.1.0)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-FBRzrYcZ+Jdyvi/nzmHcjr3hSngNjk9kVx+U0e80YuQhn9hpWqChtC7bBGcnVamzF7VkM835FW0jR6AVbHLrlw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/modals/-/modals-7.1.0.tgz}
-    id: registry.npmjs.org/@mantine/modals/7.1.0
+  registry.npmjs.org/@mantine/modals@7.1.1(@mantine/core@7.1.1)(@mantine/hooks@7.1.1)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-tzX/XFI2lRgxyyALmD62V+R7m0JnwUU8F/c7sKdVx1OTO+lfP61vSEPq3XXLPQ4/TpzqvlpDH93YxRXVAk3+GA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/modals/-/modals-7.1.1.tgz}
+    id: registry.npmjs.org/@mantine/modals/7.1.1
     name: '@mantine/modals'
-    version: 7.1.0
+    version: 7.1.1
     peerDependencies:
-      '@mantine/core': 7.1.0
-      '@mantine/hooks': 7.1.0
+      '@mantine/core': 7.1.1
+      '@mantine/hooks': 7.1.1
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.0(@mantine/hooks@7.1.0)(@types/react@18.2.23)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.0(react@18.2.0)
+      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.1(@mantine/hooks@7.1.1)(@types/react@18.2.24)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.1(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/@mantine/notifications@7.1.0(@mantine/core@7.1.0)(@mantine/hooks@7.1.0)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-ck6w/vugFSsmgSO41yOqYYcvfBTSxMvKJOvJJf+uWYXP+5OPP5aEzE5jJVJE2dS792bF3npGhBwVhRg56n/pAA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/notifications/-/notifications-7.1.0.tgz}
-    id: registry.npmjs.org/@mantine/notifications/7.1.0
+  registry.npmjs.org/@mantine/notifications@7.1.1(@mantine/core@7.1.1)(@mantine/hooks@7.1.1)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-6cjpIcFjCwT5CxoU9dmSkJoodjoG0qCVyoBqohT/twyIZV+iAJ6QovZJqiHiXQxikYficZVxIT1Nh4y0fMpWGg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/notifications/-/notifications-7.1.1.tgz}
+    id: registry.npmjs.org/@mantine/notifications/7.1.1
     name: '@mantine/notifications'
-    version: 7.1.0
+    version: 7.1.1
     peerDependencies:
-      '@mantine/core': 7.1.0
-      '@mantine/hooks': 7.1.0
+      '@mantine/core': 7.1.1
+      '@mantine/hooks': 7.1.1
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.0(@mantine/hooks@7.1.0)(@types/react@18.2.23)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.0(react@18.2.0)
-      '@mantine/store': registry.npmjs.org/@mantine/store@7.1.0(react@18.2.0)
+      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.1(@mantine/hooks@7.1.1)(@types/react@18.2.24)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.1(react@18.2.0)
+      '@mantine/store': registry.npmjs.org/@mantine/store@7.1.1(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
       react-transition-group: registry.npmjs.org/react-transition-group@4.4.5(react-dom@18.2.0)(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/@mantine/nprogress@7.1.0(@mantine/core@7.1.0)(@mantine/hooks@7.1.0)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-YPDynS2veldzS5GU5mZS0PxHcAmTHD8NA7VfKMI80RSYDsmYezHGgry8KK1N2ewPdw7pqgge/pIVACNRwWR0+w==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/nprogress/-/nprogress-7.1.0.tgz}
-    id: registry.npmjs.org/@mantine/nprogress/7.1.0
+  registry.npmjs.org/@mantine/nprogress@7.1.1(@mantine/core@7.1.1)(@mantine/hooks@7.1.1)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-GcqM5Cv4dc2/zwpcF8zOPTgu1e59VmRZ5oMEgiaNHHAh/Oo9o0uAEyyA+3WlBBd520GNusZqHpUzaMQ6Y4I9hQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/nprogress/-/nprogress-7.1.1.tgz}
+    id: registry.npmjs.org/@mantine/nprogress/7.1.1
     name: '@mantine/nprogress'
-    version: 7.1.0
+    version: 7.1.1
     peerDependencies:
-      '@mantine/core': 7.1.0
-      '@mantine/hooks': 7.1.0
+      '@mantine/core': 7.1.1
+      '@mantine/hooks': 7.1.1
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.0(@mantine/hooks@7.1.0)(@types/react@18.2.23)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.0(react@18.2.0)
-      '@mantine/store': registry.npmjs.org/@mantine/store@7.1.0(react@18.2.0)
+      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.1(@mantine/hooks@7.1.1)(@types/react@18.2.24)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.1(react@18.2.0)
+      '@mantine/store': registry.npmjs.org/@mantine/store@7.1.1(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/@mantine/spotlight@7.1.0(@mantine/core@7.1.0)(@mantine/hooks@7.1.0)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-pFSHG4A15pVZwwoTuJYvgITUSxRiScVMyD6LK3Vzuha1sHBsYJ+w30b7wVmctX/UUAjlvslc6pY5zL+OY8I+Ow==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/spotlight/-/spotlight-7.1.0.tgz}
-    id: registry.npmjs.org/@mantine/spotlight/7.1.0
+  registry.npmjs.org/@mantine/spotlight@7.1.1(@mantine/core@7.1.1)(@mantine/hooks@7.1.1)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-WTp9HFA5S7D1zt6a/hvvYdUUOyn9F9xazjOxVH39eFNpxFruUX3IbI5nBN+gp4u4UqVY+N8R8HQJrEJp5t2BeQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/spotlight/-/spotlight-7.1.1.tgz}
+    id: registry.npmjs.org/@mantine/spotlight/7.1.1
     name: '@mantine/spotlight'
-    version: 7.1.0
+    version: 7.1.1
     peerDependencies:
-      '@mantine/core': 7.1.0
-      '@mantine/hooks': 7.1.0
+      '@mantine/core': 7.1.1
+      '@mantine/hooks': 7.1.1
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.0(@mantine/hooks@7.1.0)(@types/react@18.2.23)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.0(react@18.2.0)
-      '@mantine/store': registry.npmjs.org/@mantine/store@7.1.0(react@18.2.0)
+      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.1(@mantine/hooks@7.1.1)(@types/react@18.2.24)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.1(react@18.2.0)
+      '@mantine/store': registry.npmjs.org/@mantine/store@7.1.1(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/@mantine/store@7.1.0(react@18.2.0):
-    resolution: {integrity: sha512-WmU1jxsHWex5gcoAoB6C/vyVbDiWp6k6iroXHRWIqzd7vQ9SiLzXNygLTlilwW4HwkkJZGUsskSbwzFo+oqiSw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/store/-/store-7.1.0.tgz}
-    id: registry.npmjs.org/@mantine/store/7.1.0
+  registry.npmjs.org/@mantine/store@7.1.1(react@18.2.0):
+    resolution: {integrity: sha512-gCF59GbcRdAOqhrjWQczCAL3Hg+gMaiuATkXFCgbjkwIYXy22zlFAnSKckKHxWuRu7d51dJkPrGelnc7HtZQzA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/store/-/store-7.1.1.tgz}
+    id: registry.npmjs.org/@mantine/store/7.1.1
     name: '@mantine/store'
-    version: 7.1.0
+    version: 7.1.1
     peerDependencies:
       react: ^18.2.0
     dependencies:
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  registry.npmjs.org/@mantine/tiptap@7.1.0(@mantine/core@7.1.0)(@mantine/hooks@7.1.0)(@tabler/icons-react@2.37.0)(@tiptap/extension-link@2.1.11)(@tiptap/react@2.1.11)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-pOlVk6tJApSYPv1M9zthBtmFXznwTf7Qw+R8O28lv8mfQMk+U9Y6rpEC0l5FuMI77HtuT8dvfukwo+mWnAUD8A==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/tiptap/-/tiptap-7.1.0.tgz}
-    id: registry.npmjs.org/@mantine/tiptap/7.1.0
+  registry.npmjs.org/@mantine/tiptap@7.1.1(@mantine/core@7.1.1)(@mantine/hooks@7.1.1)(@tabler/icons-react@2.38.0)(@tiptap/extension-link@2.1.11)(@tiptap/react@2.1.11)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-iCuvq7sDAPT4is/Yu7mGi2JxEZPJOBMnXEyEwE5XRB54Pjgn5Oy4nZ9kblG0rGys1l/nTH4GT7AY/WNFZzaERw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/tiptap/-/tiptap-7.1.1.tgz}
+    id: registry.npmjs.org/@mantine/tiptap/7.1.1
     name: '@mantine/tiptap'
-    version: 7.1.0
+    version: 7.1.1
     peerDependencies:
-      '@mantine/core': 7.1.0
-      '@mantine/hooks': 7.1.0
+      '@mantine/core': 7.1.1
+      '@mantine/hooks': 7.1.1
       '@tabler/icons-react': ^2.29.0
       '@tiptap/extension-link': ^2.0.4
       '@tiptap/react': ^2.0.4
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.0(@mantine/hooks@7.1.0)(@types/react@18.2.23)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.0(react@18.2.0)
-      '@tabler/icons-react': registry.npmjs.org/@tabler/icons-react@2.37.0(react@18.2.0)
+      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.1(@mantine/hooks@7.1.1)(@types/react@18.2.24)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.1(react@18.2.0)
+      '@tabler/icons-react': registry.npmjs.org/@tabler/icons-react@2.38.0(react@18.2.0)
       '@tiptap/extension-link': registry.npmjs.org/@tiptap/extension-link@2.1.11(@tiptap/core@2.1.11)(@tiptap/pm@2.1.11)
       '@tiptap/react': registry.npmjs.org/@tiptap/react@2.1.11(@tiptap/core@2.1.11)(@tiptap/pm@2.1.11)(react-dom@18.2.0)(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
@@ -2450,10 +2433,10 @@ packages:
       jju: registry.npmjs.org/jju@1.4.0
       read-yaml-file: registry.npmjs.org/read-yaml-file@1.1.0
 
-  registry.npmjs.org/@next/env@13.5.3:
-    resolution: {integrity: sha512-X4te86vsbjsB7iO4usY9jLPtZ827Mbx+WcwNBGUOIuswuTAKQtzsuoxc/6KLxCMvogKG795MhrR1LDhYgDvasg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@next/env/-/env-13.5.3.tgz}
+  registry.npmjs.org/@next/env@13.5.4:
+    resolution: {integrity: sha512-LGegJkMvRNw90WWphGJ3RMHMVplYcOfRWf2Be3td3sUa+1AaxmsYyANsA+znrGCBjXJNi4XAQlSoEfUxs/4kIQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@next/env/-/env-13.5.4.tgz}
     name: '@next/env'
-    version: 13.5.3
+    version: 13.5.4
     dev: false
 
   registry.npmjs.org/@next/eslint-plugin-next@13.5.3:
@@ -2464,10 +2447,10 @@ packages:
       glob: registry.npmjs.org/glob@7.1.7
     dev: false
 
-  registry.npmjs.org/@next/swc-darwin-arm64@13.5.3:
-    resolution: {integrity: sha512-6hiYNJxJmyYvvKGrVThzo4nTcqvqUTA/JvKim7Auaj33NexDqSNwN5YrrQu+QhZJCIpv2tULSHt+lf+rUflLSw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-13.5.3.tgz}
+  registry.npmjs.org/@next/swc-darwin-arm64@13.5.4:
+    resolution: {integrity: sha512-Df8SHuXgF1p+aonBMcDPEsaahNo2TCwuie7VXED4FVyECvdXfRT9unapm54NssV9tF3OQFKBFOdlje4T43VO0w==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-13.5.4.tgz}
     name: '@next/swc-darwin-arm64'
-    version: 13.5.3
+    version: 13.5.4
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [darwin]
@@ -2475,10 +2458,10 @@ packages:
     dev: false
     optional: true
 
-  registry.npmjs.org/@next/swc-darwin-x64@13.5.3:
-    resolution: {integrity: sha512-UpBKxu2ob9scbpJyEq/xPgpdrgBgN3aLYlxyGqlYX5/KnwpJpFuIHU2lx8upQQ7L+MEmz+fA1XSgesoK92ppwQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-13.5.3.tgz}
+  registry.npmjs.org/@next/swc-darwin-x64@13.5.4:
+    resolution: {integrity: sha512-siPuUwO45PnNRMeZnSa8n/Lye5ZX93IJom9wQRB5DEOdFrw0JjOMu1GINB8jAEdwa7Vdyn1oJ2xGNaQpdQQ9Pw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-13.5.4.tgz}
     name: '@next/swc-darwin-x64'
-    version: 13.5.3
+    version: 13.5.4
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [darwin]
@@ -2486,10 +2469,10 @@ packages:
     dev: false
     optional: true
 
-  registry.npmjs.org/@next/swc-linux-arm64-gnu@13.5.3:
-    resolution: {integrity: sha512-5AzM7Yx1Ky+oLY6pHs7tjONTF22JirDPd5Jw/3/NazJ73uGB05NqhGhB4SbeCchg7SlVYVBeRMrMSZwJwq/xoA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-13.5.3.tgz}
+  registry.npmjs.org/@next/swc-linux-arm64-gnu@13.5.4:
+    resolution: {integrity: sha512-l/k/fvRP/zmB2jkFMfefmFkyZbDkYW0mRM/LB+tH5u9pB98WsHXC0WvDHlGCYp3CH/jlkJPL7gN8nkTQVrQ/2w==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-13.5.4.tgz}
     name: '@next/swc-linux-arm64-gnu'
-    version: 13.5.3
+    version: 13.5.4
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
@@ -2497,10 +2480,10 @@ packages:
     dev: false
     optional: true
 
-  registry.npmjs.org/@next/swc-linux-arm64-musl@13.5.3:
-    resolution: {integrity: sha512-A/C1shbyUhj7wRtokmn73eBksjTM7fFQoY2v/0rTM5wehpkjQRLOXI8WJsag2uLhnZ4ii5OzR1rFPwoD9cvOgA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-13.5.3.tgz}
+  registry.npmjs.org/@next/swc-linux-arm64-musl@13.5.4:
+    resolution: {integrity: sha512-YYGb7SlLkI+XqfQa8VPErljb7k9nUnhhRrVaOdfJNCaQnHBcvbT7cx/UjDQLdleJcfyg1Hkn5YSSIeVfjgmkTg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-13.5.4.tgz}
     name: '@next/swc-linux-arm64-musl'
-    version: 13.5.3
+    version: 13.5.4
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
@@ -2508,10 +2491,10 @@ packages:
     dev: false
     optional: true
 
-  registry.npmjs.org/@next/swc-linux-x64-gnu@13.5.3:
-    resolution: {integrity: sha512-FubPuw/Boz8tKkk+5eOuDHOpk36F80rbgxlx4+xty/U71e3wZZxVYHfZXmf0IRToBn1Crb8WvLM9OYj/Ur815g==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-13.5.3.tgz}
+  registry.npmjs.org/@next/swc-linux-x64-gnu@13.5.4:
+    resolution: {integrity: sha512-uE61vyUSClnCH18YHjA8tE1prr/PBFlBFhxBZis4XBRJoR+txAky5d7gGNUIbQ8sZZ7LVkSVgm/5Fc7mwXmRAg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-13.5.4.tgz}
     name: '@next/swc-linux-x64-gnu'
-    version: 13.5.3
+    version: 13.5.4
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
@@ -2519,10 +2502,10 @@ packages:
     dev: false
     optional: true
 
-  registry.npmjs.org/@next/swc-linux-x64-musl@13.5.3:
-    resolution: {integrity: sha512-DPw8nFuM1uEpbX47tM3wiXIR0Qa+atSzs9Q3peY1urkhofx44o7E1svnq+a5Q0r8lAcssLrwiM+OyJJgV/oj7g==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-13.5.3.tgz}
+  registry.npmjs.org/@next/swc-linux-x64-musl@13.5.4:
+    resolution: {integrity: sha512-qVEKFYML/GvJSy9CfYqAdUexA6M5AklYcQCW+8JECmkQHGoPxCf04iMh7CPR7wkHyWWK+XLt4Ja7hhsPJtSnhg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-13.5.4.tgz}
     name: '@next/swc-linux-x64-musl'
-    version: 13.5.3
+    version: 13.5.4
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
@@ -2530,10 +2513,10 @@ packages:
     dev: false
     optional: true
 
-  registry.npmjs.org/@next/swc-win32-arm64-msvc@13.5.3:
-    resolution: {integrity: sha512-zBPSP8cHL51Gub/YV8UUePW7AVGukp2D8JU93IHbVDu2qmhFAn9LWXiOOLKplZQKxnIPUkJTQAJDCWBWU4UWUA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@next/swc-win32-arm64-msvc/-/swc-win32-arm64-msvc-13.5.3.tgz}
+  registry.npmjs.org/@next/swc-win32-arm64-msvc@13.5.4:
+    resolution: {integrity: sha512-mDSQfqxAlfpeZOLPxLymZkX0hYF3juN57W6vFHTvwKlnHfmh12Pt7hPIRLYIShk8uYRsKPtMTth/EzpwRI+u8w==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@next/swc-win32-arm64-msvc/-/swc-win32-arm64-msvc-13.5.4.tgz}
     name: '@next/swc-win32-arm64-msvc'
-    version: 13.5.3
+    version: 13.5.4
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [win32]
@@ -2541,10 +2524,10 @@ packages:
     dev: false
     optional: true
 
-  registry.npmjs.org/@next/swc-win32-ia32-msvc@13.5.3:
-    resolution: {integrity: sha512-ONcL/lYyGUj4W37D4I2I450SZtSenmFAvapkJQNIJhrPMhzDU/AdfLkW98NvH1D2+7FXwe7yclf3+B7v28uzBQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@next/swc-win32-ia32-msvc/-/swc-win32-ia32-msvc-13.5.3.tgz}
+  registry.npmjs.org/@next/swc-win32-ia32-msvc@13.5.4:
+    resolution: {integrity: sha512-aoqAT2XIekIWoriwzOmGFAvTtVY5O7JjV21giozBTP5c6uZhpvTWRbmHXbmsjZqY4HnEZQRXWkSAppsIBweKqw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@next/swc-win32-ia32-msvc/-/swc-win32-ia32-msvc-13.5.4.tgz}
     name: '@next/swc-win32-ia32-msvc'
-    version: 13.5.3
+    version: 13.5.4
     engines: {node: '>= 10'}
     cpu: [ia32]
     os: [win32]
@@ -2552,10 +2535,10 @@ packages:
     dev: false
     optional: true
 
-  registry.npmjs.org/@next/swc-win32-x64-msvc@13.5.3:
-    resolution: {integrity: sha512-2Vz2tYWaLqJvLcWbbTlJ5k9AN6JD7a5CN2pAeIzpbecK8ZF/yobA39cXtv6e+Z8c5UJuVOmaTldEAIxvsIux/Q==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-13.5.3.tgz}
+  registry.npmjs.org/@next/swc-win32-x64-msvc@13.5.4:
+    resolution: {integrity: sha512-cyRvlAxwlddlqeB9xtPSfNSCRy8BOa4wtMo0IuI9P7Y0XT2qpDrpFKRyZ7kUngZis59mPVla5k8X1oOJ8RxDYg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-13.5.4.tgz}
     name: '@next/swc-win32-x64-msvc'
-    version: 13.5.3
+    version: 13.5.4
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
@@ -3454,12 +3437,6 @@ packages:
       tslib: registry.npmjs.org/tslib@2.6.2
     dev: false
 
-  registry.npmjs.org/@stablelib/base64@1.0.1:
-    resolution: {integrity: sha512-1bnPQqSxSuc3Ii6MhBysoWCg58j97aUjuCSZrGSmDxNqtytIi0k8utUenAwTZN4V5mXXYGsVUI9zeBqy+jBOSQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@stablelib/base64/-/base64-1.0.1.tgz}
-    name: '@stablelib/base64'
-    version: 1.0.1
-    dev: false
-
   registry.npmjs.org/@supabase/auth-helpers-nextjs@0.8.1(@supabase/supabase-js@2.37.0):
     resolution: {integrity: sha512-ZO/UGDE9oaVXwPL4gpzGu2NpPwfKOgxTUnuK6no51So8Ah9BUuUUsTj+BdZlx7jJoZEIAkHWdRIx65WuQgWAiQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@supabase/auth-helpers-nextjs/-/auth-helpers-nextjs-0.8.1.tgz}
     id: registry.npmjs.org/@supabase/auth-helpers-nextjs/0.8.1
@@ -3615,30 +3592,30 @@ packages:
       zod: registry.npmjs.org/zod@3.22.2
     dev: false
 
-  registry.npmjs.org/@tabler/icons-react@2.37.0(react@18.2.0):
-    resolution: {integrity: sha512-1A2hae3WwF1rOes4J+BpNFCtXs+/syiXxeqadwq61tMGsCsM5TjZTu41RzLRPNP5i82th5JusGcqBrBhgcdvvg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tabler/icons-react/-/icons-react-2.37.0.tgz}
-    id: registry.npmjs.org/@tabler/icons-react/2.37.0
+  registry.npmjs.org/@tabler/icons-react@2.38.0(react@18.2.0):
+    resolution: {integrity: sha512-4oLo7z7HkFQXZNNAo3tmhpdZTeFrSNSxngmrEOGZ6WsjT2WRlc6kcEHMVxfCekV19JeB6Yprg30Bdr4sUYJLiQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tabler/icons-react/-/icons-react-2.38.0.tgz}
+    id: registry.npmjs.org/@tabler/icons-react/2.38.0
     name: '@tabler/icons-react'
-    version: 2.37.0
+    version: 2.38.0
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0
     dependencies:
-      '@tabler/icons': registry.npmjs.org/@tabler/icons@2.37.0
+      '@tabler/icons': registry.npmjs.org/@tabler/icons@2.38.0
       prop-types: registry.npmjs.org/prop-types@15.8.1
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  registry.npmjs.org/@tabler/icons@2.37.0:
-    resolution: {integrity: sha512-Qo/aRhs2xXcD8IDSuePonR/39GSvQUdwv6RXdbcAhMfpJZP+pHRn2TQFPNGJND9B5uUBez694j4Nx71539XHGA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tabler/icons/-/icons-2.37.0.tgz}
+  registry.npmjs.org/@tabler/icons@2.38.0:
+    resolution: {integrity: sha512-icDKK6n8jUYAavHK+L2Xe0/tYjwZVS7uhVazhCMVjdm3RfJLFbeLSNEIWcYdGOg6QAock9yqWse8hnhvsy2M3w==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tabler/icons/-/icons-2.38.0.tgz}
     name: '@tabler/icons'
-    version: 2.37.0
+    version: 2.38.0
     dev: false
 
-  registry.npmjs.org/@tanstack/eslint-plugin-query@4.34.1(eslint@8.50.0):
-    resolution: {integrity: sha512-RflOwyXamuHhuMX5RL6wtKiVw9Hi5Hhiv9gW2/ICVc4omflB+GflrxwvQ+EWRKrSRv3C0YcR0UzRxuiZ4mLq7Q==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tanstack/eslint-plugin-query/-/eslint-plugin-query-4.34.1.tgz}
-    id: registry.npmjs.org/@tanstack/eslint-plugin-query/4.34.1
+  registry.npmjs.org/@tanstack/eslint-plugin-query@4.36.0(eslint@8.50.0):
+    resolution: {integrity: sha512-dfKjV4k7QSAg7ROe25RlshcfkZsZKPIHcDibYtjckAlNkrwBFacCjwCsdNCt/neru6D7yCJYR0P59Ww8tg1JLQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tanstack/eslint-plugin-query/-/eslint-plugin-query-4.36.0.tgz}
+    id: registry.npmjs.org/@tanstack/eslint-plugin-query/4.36.0
     name: '@tanstack/eslint-plugin-query'
-    version: 4.34.1
+    version: 4.36.0
     peerDependencies:
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
     dependencies:
@@ -3654,31 +3631,31 @@ packages:
       remove-accents: registry.npmjs.org/remove-accents@0.4.2
     dev: false
 
-  registry.npmjs.org/@tanstack/query-core@4.35.3:
-    resolution: {integrity: sha512-PS+WEjd9wzKTyNjjQymvcOe1yg8f3wYc6mD+vb6CKyZAKvu4sIJwryfqfBULITKCla7P9C4l5e9RXePHvZOZeQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tanstack/query-core/-/query-core-4.35.3.tgz}
+  registry.npmjs.org/@tanstack/query-core@4.35.7:
+    resolution: {integrity: sha512-PgDJtX75ubFS0WCYFM7DqEoJ4QbxU3S5OH3gJSI40xr7UVVax3/J4CM3XUMOTs+EOT5YGEfssi3tfRVGte4DEw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tanstack/query-core/-/query-core-4.35.7.tgz}
     name: '@tanstack/query-core'
-    version: 4.35.3
+    version: 4.35.7
     dev: false
 
-  registry.npmjs.org/@tanstack/react-query-devtools@4.35.3(@tanstack/react-query@4.35.3)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-UvLT7qPzCuCZ3NfjwsOqDUVN84JvSOuW6ukrjZmSqgjPqVxD6ra/HUp1CEOatQY2TRvKCp8y1lTVu+trXM30fg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tanstack/react-query-devtools/-/react-query-devtools-4.35.3.tgz}
-    id: registry.npmjs.org/@tanstack/react-query-devtools/4.35.3
+  registry.npmjs.org/@tanstack/react-query-devtools@4.35.7(@tanstack/react-query@4.35.7)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-oe3reHNvXBTUvNb9jwLY8EYOXyp8Oq8/c40iwpXBnEkAtJI+RryrCXaGKFTivg72roPcYHzKILQHR9jbX8sn1Q==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tanstack/react-query-devtools/-/react-query-devtools-4.35.7.tgz}
+    id: registry.npmjs.org/@tanstack/react-query-devtools/4.35.7
     name: '@tanstack/react-query-devtools'
-    version: 4.35.3
+    version: 4.35.7
     peerDependencies:
-      '@tanstack/react-query': ^4.35.3
+      '@tanstack/react-query': ^4.35.7
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       '@tanstack/match-sorter-utils': registry.npmjs.org/@tanstack/match-sorter-utils@8.8.4
-      '@tanstack/react-query': registry.npmjs.org/@tanstack/react-query@4.35.3(react-dom@18.2.0)(react@18.2.0)
+      '@tanstack/react-query': registry.npmjs.org/@tanstack/react-query@4.35.7(react-dom@18.2.0)(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
       superjson: registry.npmjs.org/superjson@1.13.1
       use-sync-external-store: registry.npmjs.org/use-sync-external-store@1.2.0(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/@tanstack/react-query-next-experimental@5.0.0-alpha.80(@tanstack/react-query@4.35.3)(next@13.5.3)(react-dom@18.2.0)(react@18.2.0):
+  registry.npmjs.org/@tanstack/react-query-next-experimental@5.0.0-alpha.80(@tanstack/react-query@4.35.7)(next@13.5.4)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-J+rHrE+5BVEAoZVlvp5wryBdusKDBRrzysfpgOa4t6vcVRWHgzNlmWJFHelgipdHJrA3/4D6wSir8xmkp8ijtA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tanstack/react-query-next-experimental/-/react-query-next-experimental-5.0.0-alpha.80.tgz}
     id: registry.npmjs.org/@tanstack/react-query-next-experimental/5.0.0-alpha.80
     name: '@tanstack/react-query-next-experimental'
@@ -3689,17 +3666,17 @@ packages:
       react: ^18.0.0
       react-dom: ^18.0.0
     dependencies:
-      '@tanstack/react-query': registry.npmjs.org/@tanstack/react-query@4.35.3(react-dom@18.2.0)(react@18.2.0)
-      next: registry.npmjs.org/next@13.5.3(react-dom@18.2.0)(react@18.2.0)
+      '@tanstack/react-query': registry.npmjs.org/@tanstack/react-query@4.35.7(react-dom@18.2.0)(react@18.2.0)
+      next: registry.npmjs.org/next@13.5.4(react-dom@18.2.0)(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/@tanstack/react-query@4.35.3(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-UgTPioip/rGG3EQilXfA2j4BJkhEQsR+KAbF+KIuvQ7j4MkgnTCJF01SfRpIRNtQTlEfz/+IL7+jP8WA8bFbsw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tanstack/react-query/-/react-query-4.35.3.tgz}
-    id: registry.npmjs.org/@tanstack/react-query/4.35.3
+  registry.npmjs.org/@tanstack/react-query@4.35.7(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-0MankquP/6EOM2ATfEov6ViiKemey5uTbjGlFMX1xGotwNaqC76YKDMJdHumZupPbZcZPWAeoPGEHQmVKIKoOQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tanstack/react-query/-/react-query-4.35.7.tgz}
+    id: registry.npmjs.org/@tanstack/react-query/4.35.7
     name: '@tanstack/react-query'
-    version: 4.35.3
+    version: 4.35.7
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
@@ -3710,7 +3687,7 @@ packages:
       react-native:
         optional: true
     dependencies:
-      '@tanstack/query-core': registry.npmjs.org/@tanstack/query-core@4.35.3
+      '@tanstack/query-core': registry.npmjs.org/@tanstack/query-core@4.35.7
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
       use-sync-external-store: registry.npmjs.org/use-sync-external-store@1.2.0(react@18.2.0)
@@ -4038,7 +4015,7 @@ packages:
       prosemirror-state: registry.npmjs.org/prosemirror-state@1.4.3
       prosemirror-tables: registry.npmjs.org/prosemirror-tables@1.3.4
       prosemirror-trailing-node: registry.npmjs.org/prosemirror-trailing-node@2.0.7(prosemirror-model@1.19.3)(prosemirror-state@1.4.3)(prosemirror-view@1.32.0)
-      prosemirror-transform: registry.npmjs.org/prosemirror-transform@1.7.5
+      prosemirror-transform: registry.npmjs.org/prosemirror-transform@1.8.0
       prosemirror-view: registry.npmjs.org/prosemirror-view@1.32.0
     dev: false
 
@@ -4107,7 +4084,7 @@ packages:
       '@trpc/server': registry.npmjs.org/@trpc/server@10.38.5
     dev: false
 
-  registry.npmjs.org/@trpc/next@10.38.5(@tanstack/react-query@4.35.3)(@trpc/client@10.38.5)(@trpc/react-query@10.38.5)(@trpc/server@10.38.5)(next@13.5.3)(react-dom@18.2.0)(react@18.2.0):
+  registry.npmjs.org/@trpc/next@10.38.5(@tanstack/react-query@4.35.7)(@trpc/client@10.38.5)(@trpc/react-query@10.38.5)(@trpc/server@10.38.5)(next@13.5.4)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-sSPEiaNtNIH3psU+RiGtfLWjLbHFaD66pqcPvUR3C686u7A3TDFXznez9K20Ii0LRwpyQOWCz2Doe51oj7TL6w==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@trpc/next/-/next-10.38.5.tgz}
     id: registry.npmjs.org/@trpc/next/10.38.5
     name: '@trpc/next'
@@ -4121,17 +4098,17 @@ packages:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
-      '@tanstack/react-query': registry.npmjs.org/@tanstack/react-query@4.35.3(react-dom@18.2.0)(react@18.2.0)
+      '@tanstack/react-query': registry.npmjs.org/@tanstack/react-query@4.35.7(react-dom@18.2.0)(react@18.2.0)
       '@trpc/client': registry.npmjs.org/@trpc/client@10.38.5(@trpc/server@10.38.5)
-      '@trpc/react-query': registry.npmjs.org/@trpc/react-query@10.38.5(@tanstack/react-query@4.35.3)(@trpc/client@10.38.5)(@trpc/server@10.38.5)(react-dom@18.2.0)(react@18.2.0)
+      '@trpc/react-query': registry.npmjs.org/@trpc/react-query@10.38.5(@tanstack/react-query@4.35.7)(@trpc/client@10.38.5)(@trpc/server@10.38.5)(react-dom@18.2.0)(react@18.2.0)
       '@trpc/server': registry.npmjs.org/@trpc/server@10.38.5
-      next: registry.npmjs.org/next@13.5.3(react-dom@18.2.0)(react@18.2.0)
+      next: registry.npmjs.org/next@13.5.4(react-dom@18.2.0)(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
       react-ssr-prepass: registry.npmjs.org/react-ssr-prepass@1.5.0(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/@trpc/react-query@10.38.5(@tanstack/react-query@4.35.3)(@trpc/client@10.38.5)(@trpc/server@10.38.5)(react-dom@18.2.0)(react@18.2.0):
+  registry.npmjs.org/@trpc/react-query@10.38.5(@tanstack/react-query@4.35.7)(@trpc/client@10.38.5)(@trpc/server@10.38.5)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-cGpKfiQen3ba3lTII3+Y6Hm3KnC60AS9n2AYt07I7LZx/GknsGHq4h570imdIxr6Qb5LtYe3DFV13kzbm+yGeA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@trpc/react-query/-/react-query-10.38.5.tgz}
     id: registry.npmjs.org/@trpc/react-query/10.38.5
     name: '@trpc/react-query'
@@ -4143,7 +4120,7 @@ packages:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
-      '@tanstack/react-query': registry.npmjs.org/@tanstack/react-query@4.35.3(react-dom@18.2.0)(react@18.2.0)
+      '@tanstack/react-query': registry.npmjs.org/@tanstack/react-query@4.35.7(react-dom@18.2.0)(react@18.2.0)
       '@trpc/client': registry.npmjs.org/@trpc/client@10.38.5(@trpc/server@10.38.5)
       '@trpc/server': registry.npmjs.org/@trpc/server@10.38.5
       react: registry.npmjs.org/react@18.2.0
@@ -4180,7 +4157,7 @@ packages:
     version: 1.0.4
     dev: true
 
-  registry.npmjs.org/@turbo/gen@1.10.14(@types/node@20.8.0)(typescript@5.2.2):
+  registry.npmjs.org/@turbo/gen@1.10.14(@types/node@20.8.2)(typescript@5.2.2):
     resolution: {integrity: sha512-g7ecPx0GCCTpnbH53blBGNk6pP4LhcWiTtR0kEprGkXpiHqjYDpOydz4JFoz9IC+Hj1Z28/+M7T/GfwJAjf0FQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@turbo/gen/-/gen-1.10.14.tgz}
     id: registry.npmjs.org/@turbo/gen/1.10.14
     name: '@turbo/gen'
@@ -4195,7 +4172,7 @@ packages:
       minimatch: registry.npmjs.org/minimatch@9.0.3
       node-plop: registry.npmjs.org/node-plop@0.26.3
       proxy-agent: registry.npmjs.org/proxy-agent@6.3.1
-      ts-node: registry.npmjs.org/ts-node@10.9.1(@types/node@20.8.0)(typescript@5.2.2)
+      ts-node: registry.npmjs.org/ts-node@10.9.1(@types/node@20.8.2)(typescript@5.2.2)
       update-check: registry.npmjs.org/update-check@1.5.4
       validate-npm-package-name: registry.npmjs.org/validate-npm-package-name@5.0.0
     transitivePeerDependencies:
@@ -4259,7 +4236,7 @@ packages:
     version: 7.2.0
     dependencies:
       '@types/minimatch': registry.npmjs.org/@types/minimatch@5.1.2
-      '@types/node': registry.npmjs.org/@types/node@20.8.0
+      '@types/node': registry.npmjs.org/@types/node@20.8.2
     dev: true
 
   registry.npmjs.org/@types/inquirer@6.5.0:
@@ -4288,7 +4265,7 @@ packages:
     name: '@types/keyv'
     version: 3.1.4
     dependencies:
-      '@types/node': registry.npmjs.org/@types/node@20.8.0
+      '@types/node': registry.npmjs.org/@types/node@20.8.2
     dev: true
 
   registry.npmjs.org/@types/minimatch@5.1.2:
@@ -4297,16 +4274,10 @@ packages:
     version: 5.1.2
     dev: true
 
-  registry.npmjs.org/@types/node@20.7.2:
-    resolution: {integrity: sha512-RcdC3hOBOauLP+r/kRt27NrByYtDjsXyAuSbR87O6xpsvi763WI+5fbSIvYJrXnt9w4RuxhV6eAXfIs7aaf/FQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@types/node/-/node-20.7.2.tgz}
+  registry.npmjs.org/@types/node@20.8.2:
+    resolution: {integrity: sha512-Vvycsc9FQdwhxE3y3DzeIxuEJbWGDsnrxvMADzTDF/lcdR9/K+AQIeAghTQsHtotg/q0j3WEOYS/jQgSdWue3w==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@types/node/-/node-20.8.2.tgz}
     name: '@types/node'
-    version: 20.7.2
-    dev: true
-
-  registry.npmjs.org/@types/node@20.8.0:
-    resolution: {integrity: sha512-LzcWltT83s1bthcvjBmiBvGJiiUe84NWRHkw+ZV6Fr41z2FbIzvc815dk2nQ3RAKMuN2fkenM/z3Xv2QzEpYxQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@types/node/-/node-20.8.0.tgz}
-    name: '@types/node'
-    version: 20.8.0
+    version: 20.8.2
 
   registry.npmjs.org/@types/normalize-package-data@2.4.2:
     resolution: {integrity: sha512-lqa4UEhhv/2sjjIQgjX8B+RBjj47eo0mzGasklVJ78UKGQY1r0VpB9XHDaZZO9qzEFDdy4MrXLuEaSmPrPSe/A==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@types/normalize-package-data/-/normalize-package-data-2.4.2.tgz}
@@ -4338,25 +4309,25 @@ packages:
     version: 1.6.2
     dev: false
 
-  registry.npmjs.org/@types/prop-types@15.7.7:
-    resolution: {integrity: sha512-FbtmBWCcSa2J4zL781Zf1p5YUBXQomPEcep9QZCfRfQgTxz3pJWiDFLebohZ9fFntX5ibzOkSsrJ0TEew8cAog==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.7.tgz}
+  registry.npmjs.org/@types/prop-types@15.7.8:
+    resolution: {integrity: sha512-kMpQpfZKSCBqltAJwskgePRaYRFukDkm1oItcAbC3gNELR20XIBcN9VRgg4+m8DKsTfkWeA4m4Imp4DDuWy7FQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.8.tgz}
     name: '@types/prop-types'
-    version: 15.7.7
+    version: 15.7.8
 
   registry.npmjs.org/@types/react-dom@18.2.8:
     resolution: {integrity: sha512-bAIvO5lN/U8sPGvs1Xm61rlRHHaq5rp5N3kp9C+NJ/Q41P8iqjkXSu0+/qu8POsjH9pNWb0OYabFez7taP7omw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@types/react-dom/-/react-dom-18.2.8.tgz}
     name: '@types/react-dom'
     version: 18.2.8
     dependencies:
-      '@types/react': registry.npmjs.org/@types/react@18.2.23
+      '@types/react': registry.npmjs.org/@types/react@18.2.24
     dev: true
 
-  registry.npmjs.org/@types/react@18.2.23:
-    resolution: {integrity: sha512-qHLW6n1q2+7KyBEYnrZpcsAmU/iiCh9WGCKgXvMxx89+TYdJWRjZohVIo9XTcoLhfX3+/hP0Pbulu3bCZQ9PSA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@types/react/-/react-18.2.23.tgz}
+  registry.npmjs.org/@types/react@18.2.24:
+    resolution: {integrity: sha512-Ee0Jt4sbJxMu1iDcetZEIKQr99J1Zfb6D4F3qfUWoR1JpInkY1Wdg4WwCyBjL257D0+jGqSl1twBjV8iCaC0Aw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@types/react/-/react-18.2.24.tgz}
     name: '@types/react'
-    version: 18.2.23
+    version: 18.2.24
     dependencies:
-      '@types/prop-types': registry.npmjs.org/@types/prop-types@15.7.7
+      '@types/prop-types': registry.npmjs.org/@types/prop-types@15.7.8
       '@types/scheduler': registry.npmjs.org/@types/scheduler@0.16.4
       csstype: registry.npmjs.org/csstype@3.1.2
 
@@ -4365,7 +4336,7 @@ packages:
     name: '@types/responselike'
     version: 1.0.1
     dependencies:
-      '@types/node': registry.npmjs.org/@types/node@20.8.0
+      '@types/node': registry.npmjs.org/@types/node@20.8.2
     dev: true
 
   registry.npmjs.org/@types/scheduler@0.16.4:
@@ -4396,7 +4367,7 @@ packages:
     name: '@types/through'
     version: 0.0.31
     dependencies:
-      '@types/node': registry.npmjs.org/@types/node@20.8.0
+      '@types/node': registry.npmjs.org/@types/node@20.8.2
     dev: true
 
   registry.npmjs.org/@types/tinycolor2@1.4.4:
@@ -4410,7 +4381,7 @@ packages:
     name: '@types/websocket'
     version: 1.0.7
     dependencies:
-      '@types/node': registry.npmjs.org/@types/node@20.8.0
+      '@types/node': registry.npmjs.org/@types/node@20.8.2
     dev: false
 
   registry.npmjs.org/@typescript-eslint/eslint-plugin@6.7.3(@typescript-eslint/parser@6.7.3)(eslint@8.50.0)(typescript@5.2.2):
@@ -6220,12 +6191,6 @@ packages:
       es5-ext: registry.npmjs.org/es5-ext@0.10.62
       es6-symbol: registry.npmjs.org/es6-symbol@3.1.3
 
-  registry.npmjs.org/es6-promise@4.2.8:
-    resolution: {integrity: sha512-HJDGx5daxeIvxdBxvG2cb9g4tEvwIk3i8+nhX0yGrYmZUzbkdg8QbDevheDB8gd0//uPj4c1EQua8Q+MViT0/w==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/es6-promise/-/es6-promise-4.2.8.tgz}
-    name: es6-promise
-    version: 4.2.8
-    dev: false
-
   registry.npmjs.org/es6-symbol@3.1.3:
     resolution: {integrity: sha512-NJ6Yn3FuDinBaBRWl/q5X/s4koRHBrgKAu+yGI6JCBeiu3qrcbJhwT2GeR/EXVfylRk8dpQVJoLEFhK+Mu31NA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/es6-symbol/-/es6-symbol-3.1.3.tgz}
     name: es6-symbol
@@ -6565,7 +6530,7 @@ packages:
     hasBin: true
     dependencies:
       '@eslint-community/eslint-utils': registry.npmjs.org/@eslint-community/eslint-utils@4.4.0(eslint@8.50.0)
-      '@eslint-community/regexpp': registry.npmjs.org/@eslint-community/regexpp@4.9.0
+      '@eslint-community/regexpp': registry.npmjs.org/@eslint-community/regexpp@4.9.1
       '@eslint/eslintrc': registry.npmjs.org/@eslint/eslintrc@2.1.2
       '@eslint/js': registry.npmjs.org/@eslint/js@8.50.0
       '@humanwhocodes/config-array': registry.npmjs.org/@humanwhocodes/config-array@0.11.11
@@ -6744,12 +6709,6 @@ packages:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz}
     name: fast-levenshtein
     version: 2.0.6
-
-  registry.npmjs.org/fast-sha256@1.3.0:
-    resolution: {integrity: sha512-n11RGP/lrWEFI/bWdygLxhI+pVeo1ZYIVwvvPkW7azl/rOy+F3HYRZ2K5zeE9mmkhQppyv9sQFx0JM9UabnpPQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/fast-sha256/-/fast-sha256-1.3.0.tgz}
-    name: fast-sha256
-    version: 1.3.0
-    dev: false
 
   registry.npmjs.org/fast-xml-parser@4.2.5:
     resolution: {integrity: sha512-B9/wizE4WngqQftFPmdaMYlXoJlJOYxGQOanC77fq9k8+Z0v5dDSVh+3glErdIROP//s/jgb7ZuxKfB8nVyo0g==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/fast-xml-parser/-/fast-xml-parser-4.2.5.tgz}
@@ -7026,10 +6985,10 @@ packages:
       get-intrinsic: registry.npmjs.org/get-intrinsic@1.2.1
     dev: false
 
-  registry.npmjs.org/get-tsconfig@4.7.0:
-    resolution: {integrity: sha512-pmjiZ7xtB8URYm74PlGJozDNyhvsVLUcpBa8DZBG3bWHwaHa9bPiRpiSfovw+fjhwONSCWKRyk+JQHEGZmMrzw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/get-tsconfig/-/get-tsconfig-4.7.0.tgz}
+  registry.npmjs.org/get-tsconfig@4.7.2:
+    resolution: {integrity: sha512-wuMsz4leaj5hbGgg4IvDU0bqJagpftG5l5cXIAvo8uZrqn0NJqwtfupTN00VnkQJPcIRrxYrm1Ue24btpCha2A==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/get-tsconfig/-/get-tsconfig-4.7.2.tgz}
     name: get-tsconfig
-    version: 4.7.0
+    version: 4.7.2
     dependencies:
       resolve-pkg-maps: registry.npmjs.org/resolve-pkg-maps@1.0.0
     dev: true
@@ -7960,6 +7919,12 @@ packages:
     version: 4.14.6
     dev: false
 
+  registry.npmjs.org/jose@4.15.1:
+    resolution: {integrity: sha512-CinpaEMmwb/59YG0N6SC3DY1imdTU5iNl08HPWR7NdyxACPeFuQbqjaocEjCDGq04KbnxSqQu702vL3ZTvKe5w==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/jose/-/jose-4.15.1.tgz}
+    name: jose
+    version: 4.15.1
+    dev: false
+
   registry.npmjs.org/js-beautify@1.14.9:
     resolution: {integrity: sha512-coM7xq1syLcMyuVGyToxcj2AlzhkDjmfklL8r0JgJ7A76wyGMpJ1oA35mr4APdYNO/o/4YY8H54NQIJzhMbhBg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/js-beautify/-/js-beautify-1.14.9.tgz}
     name: js-beautify
@@ -8330,7 +8295,7 @@ packages:
     name: make-error
     version: 1.3.6
 
-  registry.npmjs.org/mantine-react-table@1.3.1(@emotion/react@11.11.1)(@mantine/core@7.1.0)(@mantine/dates@7.1.0)(@mantine/hooks@7.1.0)(@tabler/icons-react@2.37.0)(react-dom@18.2.0)(react@18.2.0):
+  registry.npmjs.org/mantine-react-table@1.3.1(@emotion/react@11.11.1)(@mantine/core@7.1.1)(@mantine/dates@7.1.1)(@mantine/hooks@7.1.1)(@tabler/icons-react@2.38.0)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-7eWv5Zyr4Gspe2D+/iNlyT/Mtor0uZ+CAFavdRMsoCe/++pHDrq96KAp8qJ4ywClBUCHnU49qAsWhNYHmLypEw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/mantine-react-table/-/mantine-react-table-1.3.1.tgz}
     id: registry.npmjs.org/mantine-react-table/1.3.1
     name: mantine-react-table
@@ -8345,11 +8310,11 @@ packages:
       react: '>=18.0'
       react-dom: '>=18.0'
     dependencies:
-      '@emotion/react': registry.npmjs.org/@emotion/react@11.11.1(@types/react@18.2.23)(react@18.2.0)
-      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.0(@mantine/hooks@7.1.0)(@types/react@18.2.23)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/dates': registry.npmjs.org/@mantine/dates@7.1.0(@mantine/core@7.1.0)(@mantine/hooks@7.1.0)(dayjs@1.11.10)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.0(react@18.2.0)
-      '@tabler/icons-react': registry.npmjs.org/@tabler/icons-react@2.37.0(react@18.2.0)
+      '@emotion/react': registry.npmjs.org/@emotion/react@11.11.1(@types/react@18.2.24)(react@18.2.0)
+      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.1(@mantine/hooks@7.1.1)(@types/react@18.2.24)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/dates': registry.npmjs.org/@mantine/dates@7.1.1(@mantine/core@7.1.1)(@mantine/hooks@7.1.1)(dayjs@1.11.10)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.1(react@18.2.0)
+      '@tabler/icons-react': registry.npmjs.org/@tabler/icons-react@2.38.0(react@18.2.0)
       '@tanstack/match-sorter-utils': registry.npmjs.org/@tanstack/match-sorter-utils@8.8.4
       '@tanstack/react-table': registry.npmjs.org/@tanstack/react-table@8.10.3(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-virtual': registry.npmjs.org/@tanstack/react-virtual@3.0.0-beta.60(react@18.2.0)
@@ -8578,7 +8543,7 @@ packages:
     engines: {node: '>= 0.4.0'}
     dev: true
 
-  registry.npmjs.org/next-auth@0.0.0-manual.c885ac1d(next@13.5.3)(react@18.2.0):
+  registry.npmjs.org/next-auth@0.0.0-manual.c885ac1d(next@13.5.4)(react@18.2.0):
     resolution: {integrity: sha512-kL5Ead+uIQNjfSWjo/MVxzte+jJSD+N/XIGkYmqyjQmNxE5wDvJ6zuwo+h+QPBnTVf+jmOsOlzr65tPN7OY5fA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/next-auth/-/next-auth-0.0.0-manual.c885ac1d.tgz}
     id: registry.npmjs.org/next-auth/0.0.0-manual.c885ac1d
     name: next-auth
@@ -8592,11 +8557,11 @@ packages:
         optional: true
     dependencies:
       '@auth/core': registry.npmjs.org/@auth/core@0.0.0-manual.e9863699
-      next: registry.npmjs.org/next@13.5.3(react-dom@18.2.0)(react@18.2.0)
+      next: registry.npmjs.org/next@13.5.4(react-dom@18.2.0)(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  registry.npmjs.org/next-superjson-plugin@0.5.9(next@13.5.3)(superjson@1.13.1):
+  registry.npmjs.org/next-superjson-plugin@0.5.9(next@13.5.4)(superjson@1.13.1):
     resolution: {integrity: sha512-xEU+SvrSDk8PGAQ2TrJM/OhkZBcWjWWqSjpUtlxTAI9ovTjKBxxQumcFt7oXzoBLJsRtq0BWTHrcnzL/9izXPQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/next-superjson-plugin/-/next-superjson-plugin-0.5.9.tgz}
     id: registry.npmjs.org/next-superjson-plugin/0.5.9
     name: next-superjson-plugin
@@ -8606,7 +8571,7 @@ packages:
       superjson: ^1
     dependencies:
       hoist-non-react-statics: registry.npmjs.org/hoist-non-react-statics@3.3.2
-      next: registry.npmjs.org/next@13.5.3(react-dom@18.2.0)(react@18.2.0)
+      next: registry.npmjs.org/next@13.5.4(react-dom@18.2.0)(react@18.2.0)
       superjson: registry.npmjs.org/superjson@1.13.1
     dev: false
 
@@ -8615,11 +8580,11 @@ packages:
     name: next-tick
     version: 1.1.0
 
-  registry.npmjs.org/next@13.5.3(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-4Nt4HRLYDW/yRpJ/QR2t1v63UOMS55A38dnWv3UDOWGezuY0ZyFO1ABNbD7mulVzs9qVhgy2+ppjdsANpKP1mg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/next/-/next-13.5.3.tgz}
-    id: registry.npmjs.org/next/13.5.3
+  registry.npmjs.org/next@13.5.4(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-+93un5S779gho8y9ASQhb/bTkQF17FNQOtXLKAj3lsNgltEcF0C5PMLLncDmH+8X1EnJH1kbqAERa29nRXqhjA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/next/-/next-13.5.4.tgz}
+    id: registry.npmjs.org/next/13.5.4
     name: next
-    version: 13.5.3
+    version: 13.5.4
     engines: {node: '>=16.14.0'}
     hasBin: true
     peerDependencies:
@@ -8633,26 +8598,25 @@ packages:
       sass:
         optional: true
     dependencies:
-      '@next/env': registry.npmjs.org/@next/env@13.5.3
+      '@next/env': registry.npmjs.org/@next/env@13.5.4
       '@swc/helpers': registry.npmjs.org/@swc/helpers@0.5.2
       busboy: registry.npmjs.org/busboy@1.6.0
       caniuse-lite: registry.npmjs.org/caniuse-lite@1.0.30001541
-      postcss: registry.npmjs.org/postcss@8.4.14
+      postcss: registry.npmjs.org/postcss@8.4.31
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
       styled-jsx: registry.npmjs.org/styled-jsx@5.1.1(react@18.2.0)
       watchpack: registry.npmjs.org/watchpack@2.4.0
-      zod: registry.npmjs.org/zod@3.21.4
     optionalDependencies:
-      '@next/swc-darwin-arm64': registry.npmjs.org/@next/swc-darwin-arm64@13.5.3
-      '@next/swc-darwin-x64': registry.npmjs.org/@next/swc-darwin-x64@13.5.3
-      '@next/swc-linux-arm64-gnu': registry.npmjs.org/@next/swc-linux-arm64-gnu@13.5.3
-      '@next/swc-linux-arm64-musl': registry.npmjs.org/@next/swc-linux-arm64-musl@13.5.3
-      '@next/swc-linux-x64-gnu': registry.npmjs.org/@next/swc-linux-x64-gnu@13.5.3
-      '@next/swc-linux-x64-musl': registry.npmjs.org/@next/swc-linux-x64-musl@13.5.3
-      '@next/swc-win32-arm64-msvc': registry.npmjs.org/@next/swc-win32-arm64-msvc@13.5.3
-      '@next/swc-win32-ia32-msvc': registry.npmjs.org/@next/swc-win32-ia32-msvc@13.5.3
-      '@next/swc-win32-x64-msvc': registry.npmjs.org/@next/swc-win32-x64-msvc@13.5.3
+      '@next/swc-darwin-arm64': registry.npmjs.org/@next/swc-darwin-arm64@13.5.4
+      '@next/swc-darwin-x64': registry.npmjs.org/@next/swc-darwin-x64@13.5.4
+      '@next/swc-linux-arm64-gnu': registry.npmjs.org/@next/swc-linux-arm64-gnu@13.5.4
+      '@next/swc-linux-arm64-musl': registry.npmjs.org/@next/swc-linux-arm64-musl@13.5.4
+      '@next/swc-linux-x64-gnu': registry.npmjs.org/@next/swc-linux-x64-gnu@13.5.4
+      '@next/swc-linux-x64-musl': registry.npmjs.org/@next/swc-linux-x64-musl@13.5.4
+      '@next/swc-win32-arm64-msvc': registry.npmjs.org/@next/swc-win32-arm64-msvc@13.5.4
+      '@next/swc-win32-ia32-msvc': registry.npmjs.org/@next/swc-win32-ia32-msvc@13.5.4
+      '@next/swc-win32-x64-msvc': registry.npmjs.org/@next/swc-win32-x64-msvc@13.5.4
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
@@ -9215,11 +9179,11 @@ packages:
       postcss-selector-parser: registry.npmjs.org/postcss-selector-parser@6.0.13
     dev: true
 
-  registry.npmjs.org/postcss-preset-mantine@1.7.0(postcss@8.4.31):
-    resolution: {integrity: sha512-mA3Qr57P/M4qCuGAgLlGwcMTDtZlG3nouUgq5lIv50WDpuqHme9d7GA6FngBb37pLKYKngTkR2TXP+v5HxvW/g==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/postcss-preset-mantine/-/postcss-preset-mantine-1.7.0.tgz}
-    id: registry.npmjs.org/postcss-preset-mantine/1.7.0
+  registry.npmjs.org/postcss-preset-mantine@1.8.0(postcss@8.4.31):
+    resolution: {integrity: sha512-aLc+EoDXsvnXM2lWWF1MI+lgGqbd5xatVJ3KyTmsheNoXBYN0OFAkRFqyy3tfdveH64Fno2SLNEr4w/njPSInw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/postcss-preset-mantine/-/postcss-preset-mantine-1.8.0.tgz}
+    id: registry.npmjs.org/postcss-preset-mantine/1.8.0
     name: postcss-preset-mantine
-    version: 1.7.0
+    version: 1.8.0
     peerDependencies:
       postcss: '>=8.0.0'
     dependencies:
@@ -9256,17 +9220,6 @@ packages:
     version: 4.2.0
     dev: false
 
-  registry.npmjs.org/postcss@8.4.14:
-    resolution: {integrity: sha512-E398TUmfAYFPBSdzgeieK2Y1+1cpdxJx8yXbK/m57nRhKSmk1GB2tO4lbLBtlkfPQTDKfe4Xqv1ASWPpayPEig==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/postcss/-/postcss-8.4.14.tgz}
-    name: postcss
-    version: 8.4.14
-    engines: {node: ^10 || ^12 || >=14}
-    dependencies:
-      nanoid: registry.npmjs.org/nanoid@3.3.6
-      picocolors: registry.npmjs.org/picocolors@1.0.0
-      source-map-js: registry.npmjs.org/source-map-js@1.0.2
-    dev: false
-
   registry.npmjs.org/postcss@8.4.31:
     resolution: {integrity: sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/postcss/-/postcss-8.4.31.tgz}
     name: postcss
@@ -9276,7 +9229,6 @@ packages:
       nanoid: registry.npmjs.org/nanoid@3.3.6
       picocolors: registry.npmjs.org/picocolors@1.0.0
       source-map-js: registry.npmjs.org/source-map-js@1.0.2
-    dev: true
 
   registry.npmjs.org/preact-render-to-string@5.2.3(preact@10.11.3):
     resolution: {integrity: sha512-aPDxUn5o3GhWdtJtW0svRC2SS/l8D9MAgo2+AWml+BhDImb27ALf04Q2d+AHqUUOc6RdSXFIBVa2gxzgMKgtZA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/preact-render-to-string/-/preact-render-to-string-5.2.3.tgz}
@@ -9361,7 +9313,7 @@ packages:
     name: prosemirror-changeset
     version: 2.2.1
     dependencies:
-      prosemirror-transform: registry.npmjs.org/prosemirror-transform@1.7.5
+      prosemirror-transform: registry.npmjs.org/prosemirror-transform@1.8.0
     dev: false
 
   registry.npmjs.org/prosemirror-collab@1.3.1:
@@ -9379,7 +9331,7 @@ packages:
     dependencies:
       prosemirror-model: registry.npmjs.org/prosemirror-model@1.19.3
       prosemirror-state: registry.npmjs.org/prosemirror-state@1.4.3
-      prosemirror-transform: registry.npmjs.org/prosemirror-transform@1.7.5
+      prosemirror-transform: registry.npmjs.org/prosemirror-transform@1.8.0
     dev: false
 
   registry.npmjs.org/prosemirror-dropcursor@1.8.1:
@@ -9388,7 +9340,7 @@ packages:
     version: 1.8.1
     dependencies:
       prosemirror-state: registry.npmjs.org/prosemirror-state@1.4.3
-      prosemirror-transform: registry.npmjs.org/prosemirror-transform@1.7.5
+      prosemirror-transform: registry.npmjs.org/prosemirror-transform@1.8.0
       prosemirror-view: registry.npmjs.org/prosemirror-view@1.32.0
     dev: false
 
@@ -9409,7 +9361,7 @@ packages:
     version: 1.3.2
     dependencies:
       prosemirror-state: registry.npmjs.org/prosemirror-state@1.4.3
-      prosemirror-transform: registry.npmjs.org/prosemirror-transform@1.7.5
+      prosemirror-transform: registry.npmjs.org/prosemirror-transform@1.8.0
       prosemirror-view: registry.npmjs.org/prosemirror-view@1.32.0
       rope-sequence: registry.npmjs.org/rope-sequence@1.3.4
     dev: false
@@ -9420,7 +9372,7 @@ packages:
     version: 1.2.1
     dependencies:
       prosemirror-state: registry.npmjs.org/prosemirror-state@1.4.3
-      prosemirror-transform: registry.npmjs.org/prosemirror-transform@1.7.5
+      prosemirror-transform: registry.npmjs.org/prosemirror-transform@1.8.0
     dev: false
 
   registry.npmjs.org/prosemirror-keymap@1.2.2:
@@ -9475,7 +9427,7 @@ packages:
     dependencies:
       prosemirror-model: registry.npmjs.org/prosemirror-model@1.19.3
       prosemirror-state: registry.npmjs.org/prosemirror-state@1.4.3
-      prosemirror-transform: registry.npmjs.org/prosemirror-transform@1.7.5
+      prosemirror-transform: registry.npmjs.org/prosemirror-transform@1.8.0
     dev: false
 
   registry.npmjs.org/prosemirror-state@1.4.3:
@@ -9484,7 +9436,7 @@ packages:
     version: 1.4.3
     dependencies:
       prosemirror-model: registry.npmjs.org/prosemirror-model@1.19.3
-      prosemirror-transform: registry.npmjs.org/prosemirror-transform@1.7.5
+      prosemirror-transform: registry.npmjs.org/prosemirror-transform@1.8.0
       prosemirror-view: registry.npmjs.org/prosemirror-view@1.32.0
     dev: false
 
@@ -9496,7 +9448,7 @@ packages:
       prosemirror-keymap: registry.npmjs.org/prosemirror-keymap@1.2.2
       prosemirror-model: registry.npmjs.org/prosemirror-model@1.19.3
       prosemirror-state: registry.npmjs.org/prosemirror-state@1.4.3
-      prosemirror-transform: registry.npmjs.org/prosemirror-transform@1.7.5
+      prosemirror-transform: registry.npmjs.org/prosemirror-transform@1.8.0
       prosemirror-view: registry.npmjs.org/prosemirror-view@1.32.0
     dev: false
 
@@ -9518,10 +9470,10 @@ packages:
       prosemirror-view: registry.npmjs.org/prosemirror-view@1.32.0
     dev: false
 
-  registry.npmjs.org/prosemirror-transform@1.7.5:
-    resolution: {integrity: sha512-U/fWB6frEzY7dzwJUo+ir8dU1JEanaI/RwL12Imy9js/527N0v/IRUKewocP1kTq998JNT18IGtThaDLwLOBxQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/prosemirror-transform/-/prosemirror-transform-1.7.5.tgz}
+  registry.npmjs.org/prosemirror-transform@1.8.0:
+    resolution: {integrity: sha512-BaSBsIMv52F1BVVMvOmp1yzD3u65uC3HTzCBQV1WDPqJRQ2LuHKcyfn0jwqodo8sR9vVzMzZyI+Dal5W9E6a9A==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/prosemirror-transform/-/prosemirror-transform-1.8.0.tgz}
     name: prosemirror-transform
-    version: 1.7.5
+    version: 1.8.0
     dependencies:
       prosemirror-model: registry.npmjs.org/prosemirror-model@1.19.3
     dev: false
@@ -9533,7 +9485,7 @@ packages:
     dependencies:
       prosemirror-model: registry.npmjs.org/prosemirror-model@1.19.3
       prosemirror-state: registry.npmjs.org/prosemirror-state@1.4.3
-      prosemirror-transform: registry.npmjs.org/prosemirror-transform@1.7.5
+      prosemirror-transform: registry.npmjs.org/prosemirror-transform@1.8.0
     dev: false
 
   registry.npmjs.org/proto-list@1.2.4:
@@ -9598,12 +9550,6 @@ packages:
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  registry.npmjs.org/querystringify@2.2.0:
-    resolution: {integrity: sha512-FIqgj2EUvTa7R50u0rGsyTftzjYmv/a3hO345bZNrqabNqjtgiDMgmo4mkUjd+nzU5oF3dClKqFIPUKybUyqoQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/querystringify/-/querystringify-2.2.0.tgz}
-    name: querystringify
-    version: 2.2.0
-    dev: false
-
   registry.npmjs.org/queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz}
     name: queue-microtask
@@ -9655,11 +9601,11 @@ packages:
       scheduler: registry.npmjs.org/scheduler@0.23.0
     dev: false
 
-  registry.npmjs.org/react-dropzone@14.2.3(react@18.2.0):
-    resolution: {integrity: sha512-O3om8I+PkFKbxCukfIR3QAGftYXDZfOE2N1mr/7qebQJHs7U+/RSL/9xomJNpRg9kM5h9soQSdf0Gc7OHF5Fug==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/react-dropzone/-/react-dropzone-14.2.3.tgz}
-    id: registry.npmjs.org/react-dropzone/14.2.3
-    name: react-dropzone
-    version: 14.2.3
+  registry.npmjs.org/react-dropzone-esm@15.0.0(react@18.2.0):
+    resolution: {integrity: sha512-ROSSyHpzdj0W/ZTLbvVDoFr3jMFk2bjMKQjQMYuRutddNZMeZNFvxRGt5ewxP9BvaCMQzHdyymIrEkIQTzn5Cw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/react-dropzone-esm/-/react-dropzone-esm-15.0.0.tgz}
+    id: registry.npmjs.org/react-dropzone-esm/15.0.0
+    name: react-dropzone-esm
+    version: 15.0.0
     engines: {node: '>= 10.13'}
     peerDependencies:
       react: '>= 16.8 || 18.0.0'
@@ -9739,7 +9685,7 @@ packages:
       react-fast-compare: registry.npmjs.org/react-fast-compare@3.2.2
     dev: false
 
-  registry.npmjs.org/react-remove-scroll-bar@2.3.4(@types/react@18.2.23)(react@18.2.0):
+  registry.npmjs.org/react-remove-scroll-bar@2.3.4(@types/react@18.2.24)(react@18.2.0):
     resolution: {integrity: sha512-63C4YQBUt0m6ALadE9XV56hV8BgJWDmmTPY758iIJjfQKt2nYwoUrPk0LXRXcB/yIj82T1/Ixfdpdk68LwIB0A==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/react-remove-scroll-bar/-/react-remove-scroll-bar-2.3.4.tgz}
     id: registry.npmjs.org/react-remove-scroll-bar/2.3.4
     name: react-remove-scroll-bar
@@ -9752,13 +9698,13 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': registry.npmjs.org/@types/react@18.2.23
+      '@types/react': registry.npmjs.org/@types/react@18.2.24
       react: registry.npmjs.org/react@18.2.0
-      react-style-singleton: registry.npmjs.org/react-style-singleton@2.2.1(@types/react@18.2.23)(react@18.2.0)
+      react-style-singleton: registry.npmjs.org/react-style-singleton@2.2.1(@types/react@18.2.24)(react@18.2.0)
       tslib: registry.npmjs.org/tslib@2.6.2
     dev: false
 
-  registry.npmjs.org/react-remove-scroll@2.5.6(@types/react@18.2.23)(react@18.2.0):
+  registry.npmjs.org/react-remove-scroll@2.5.6(@types/react@18.2.24)(react@18.2.0):
     resolution: {integrity: sha512-bO856ad1uDYLefgArk559IzUNeQ6SWH4QnrevIUjH+GczV56giDfl3h0Idptf2oIKxQmd1p9BN25jleKodTALg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/react-remove-scroll/-/react-remove-scroll-2.5.6.tgz}
     id: registry.npmjs.org/react-remove-scroll/2.5.6
     name: react-remove-scroll
@@ -9771,13 +9717,13 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': registry.npmjs.org/@types/react@18.2.23
+      '@types/react': registry.npmjs.org/@types/react@18.2.24
       react: registry.npmjs.org/react@18.2.0
-      react-remove-scroll-bar: registry.npmjs.org/react-remove-scroll-bar@2.3.4(@types/react@18.2.23)(react@18.2.0)
-      react-style-singleton: registry.npmjs.org/react-style-singleton@2.2.1(@types/react@18.2.23)(react@18.2.0)
+      react-remove-scroll-bar: registry.npmjs.org/react-remove-scroll-bar@2.3.4(@types/react@18.2.24)(react@18.2.0)
+      react-style-singleton: registry.npmjs.org/react-style-singleton@2.2.1(@types/react@18.2.24)(react@18.2.0)
       tslib: registry.npmjs.org/tslib@2.6.2
-      use-callback-ref: registry.npmjs.org/use-callback-ref@1.3.0(@types/react@18.2.23)(react@18.2.0)
-      use-sidecar: registry.npmjs.org/use-sidecar@1.1.2(@types/react@18.2.23)(react@18.2.0)
+      use-callback-ref: registry.npmjs.org/use-callback-ref@1.3.0(@types/react@18.2.24)(react@18.2.0)
+      use-sidecar: registry.npmjs.org/use-sidecar@1.1.2(@types/react@18.2.24)(react@18.2.0)
     dev: false
 
   registry.npmjs.org/react-ssr-prepass@1.5.0(react@18.2.0):
@@ -9791,7 +9737,7 @@ packages:
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  registry.npmjs.org/react-style-singleton@2.2.1(@types/react@18.2.23)(react@18.2.0):
+  registry.npmjs.org/react-style-singleton@2.2.1(@types/react@18.2.24)(react@18.2.0):
     resolution: {integrity: sha512-ZWj0fHEMyWkHzKYUr2Bs/4zU6XLmq9HsgBURm7g5pAVfyn49DgUiNgY2d4lXRlYSiCif9YBGpQleewkcqddc7g==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/react-style-singleton/-/react-style-singleton-2.2.1.tgz}
     id: registry.npmjs.org/react-style-singleton/2.2.1
     name: react-style-singleton
@@ -9804,18 +9750,18 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': registry.npmjs.org/@types/react@18.2.23
+      '@types/react': registry.npmjs.org/@types/react@18.2.24
       get-nonce: registry.npmjs.org/get-nonce@1.0.1
       invariant: registry.npmjs.org/invariant@2.2.4
       react: registry.npmjs.org/react@18.2.0
       tslib: registry.npmjs.org/tslib@2.6.2
     dev: false
 
-  registry.npmjs.org/react-textarea-autosize@8.5.2(@types/react@18.2.23)(react@18.2.0):
-    resolution: {integrity: sha512-uOkyjkEl0ByEK21eCJMHDGBAAd/BoFQBawYK5XItjAmCTeSbjxghd8qnt7nzsLYzidjnoObu6M26xts0YGKsGg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/react-textarea-autosize/-/react-textarea-autosize-8.5.2.tgz}
-    id: registry.npmjs.org/react-textarea-autosize/8.5.2
+  registry.npmjs.org/react-textarea-autosize@8.5.3(@types/react@18.2.24)(react@18.2.0):
+    resolution: {integrity: sha512-XT1024o2pqCuZSuBt9FwHlaDeNtVrtCXu0Rnz88t1jUGheCLa3PhjE1GH8Ctm2axEtvdCl5SUHYschyQ0L5QHQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/react-textarea-autosize/-/react-textarea-autosize-8.5.3.tgz}
+    id: registry.npmjs.org/react-textarea-autosize/8.5.3
     name: react-textarea-autosize
-    version: 8.5.2
+    version: 8.5.3
     engines: {node: '>=10'}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
@@ -9823,7 +9769,7 @@ packages:
       '@babel/runtime': registry.npmjs.org/@babel/runtime@7.23.1
       react: registry.npmjs.org/react@18.2.0
       use-composed-ref: registry.npmjs.org/use-composed-ref@1.3.0(react@18.2.0)
-      use-latest: registry.npmjs.org/use-latest@1.2.1(@types/react@18.2.23)(react@18.2.0)
+      use-latest: registry.npmjs.org/use-latest@1.2.1(@types/react@18.2.24)(react@18.2.0)
     transitivePeerDependencies:
       - '@types/react'
     dev: false
@@ -10010,12 +9956,6 @@ packages:
     resolution: {integrity: sha512-7pXIJqJOq5tFgG1A2Zxti3Ht8jJF337m4sowbuHsW30ZnkQFnDzy9qBNhgzX8ZLW4+UBcXiiR7SwR6pokHsxiA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/remove-accents/-/remove-accents-0.4.2.tgz}
     name: remove-accents
     version: 0.4.2
-    dev: false
-
-  registry.npmjs.org/requires-port@1.0.0:
-    resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/requires-port/-/requires-port-1.0.0.tgz}
-    name: requires-port
-    version: 1.0.0
     dev: false
 
   registry.npmjs.org/resolve-from@4.0.0:
@@ -10664,33 +10604,6 @@ packages:
     version: 3.2.0
     dev: false
 
-  registry.npmjs.org/svix-fetch@3.0.0(encoding@0.1.13):
-    resolution: {integrity: sha512-rcADxEFhSqHbraZIsjyZNh4TF6V+koloX1OzZ+AQuObX9mZ2LIMhm1buZeuc5BIZPftZpJCMBsSiBaeszo9tRw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/svix-fetch/-/svix-fetch-3.0.0.tgz}
-    id: registry.npmjs.org/svix-fetch/3.0.0
-    name: svix-fetch
-    version: 3.0.0
-    dependencies:
-      node-fetch: registry.npmjs.org/node-fetch@2.7.0(encoding@0.1.13)
-      whatwg-fetch: registry.npmjs.org/whatwg-fetch@3.6.19
-    transitivePeerDependencies:
-      - encoding
-    dev: false
-
-  registry.npmjs.org/svix@1.12.0(encoding@0.1.13):
-    resolution: {integrity: sha512-6iIYxR/BoVEBDokTcvApcqq4M2szpFOwV8NwuYyvf4cRpz7JEV1KFQDMkNxEi9aR1idkhK4bSmeQYIx1HyGiJw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/svix/-/svix-1.12.0.tgz}
-    id: registry.npmjs.org/svix/1.12.0
-    name: svix
-    version: 1.12.0
-    dependencies:
-      '@stablelib/base64': registry.npmjs.org/@stablelib/base64@1.0.1
-      es6-promise: registry.npmjs.org/es6-promise@4.2.8
-      fast-sha256: registry.npmjs.org/fast-sha256@1.3.0
-      svix-fetch: registry.npmjs.org/svix-fetch@3.0.0(encoding@0.1.13)
-      url-parse: registry.npmjs.org/url-parse@1.5.10
-    transitivePeerDependencies:
-      - encoding
-    dev: false
-
   registry.npmjs.org/swap-case@1.1.2:
     resolution: {integrity: sha512-BAmWG6/bx8syfc6qXPprof3Mn5vQgf5dwdUNJhsNqU9WdPt5P+ES/wQ5bxfijy8zwZgZZHslC3iAsxsuQMCzJQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/swap-case/-/swap-case-1.1.2.tgz}
     name: swap-case
@@ -10844,7 +10757,7 @@ packages:
       typescript: registry.npmjs.org/typescript@5.2.2
     dev: false
 
-  registry.npmjs.org/ts-node@10.9.1(@types/node@20.8.0)(typescript@5.2.2):
+  registry.npmjs.org/ts-node@10.9.1(@types/node@20.8.2)(typescript@5.2.2):
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/ts-node/-/ts-node-10.9.1.tgz}
     id: registry.npmjs.org/ts-node/10.9.1
     name: ts-node
@@ -10866,7 +10779,7 @@ packages:
       '@tsconfig/node12': registry.npmjs.org/@tsconfig/node12@1.0.11
       '@tsconfig/node14': registry.npmjs.org/@tsconfig/node14@1.0.3
       '@tsconfig/node16': registry.npmjs.org/@tsconfig/node16@1.0.4
-      '@types/node': registry.npmjs.org/@types/node@20.8.0
+      '@types/node': registry.npmjs.org/@types/node@20.8.2
       acorn: registry.npmjs.org/acorn@8.10.0
       acorn-walk: registry.npmjs.org/acorn-walk@8.2.0
       arg: registry.npmjs.org/arg@4.1.3
@@ -11219,16 +11132,7 @@ packages:
       prepend-http: registry.npmjs.org/prepend-http@2.0.0
     dev: true
 
-  registry.npmjs.org/url-parse@1.5.10:
-    resolution: {integrity: sha512-WypcfiRhfeUP9vvF0j6rw0J3hrWrw6iZv3+22h6iRMJ/8z1Tj6XfLP4DsUix5MhMPnXpiHDoKyoZ/bdCkwBCiQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/url-parse/-/url-parse-1.5.10.tgz}
-    name: url-parse
-    version: 1.5.10
-    dependencies:
-      querystringify: registry.npmjs.org/querystringify@2.2.0
-      requires-port: registry.npmjs.org/requires-port@1.0.0
-    dev: false
-
-  registry.npmjs.org/use-callback-ref@1.3.0(@types/react@18.2.23)(react@18.2.0):
+  registry.npmjs.org/use-callback-ref@1.3.0(@types/react@18.2.24)(react@18.2.0):
     resolution: {integrity: sha512-3FT9PRuRdbB9HfXhEq35u4oZkvpJ5kuYbpqhCfmiZyReuRgpnhDlbr2ZEnnuS0RrJAPn6l23xjFg9kpDM+Ms7w==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/use-callback-ref/-/use-callback-ref-1.3.0.tgz}
     id: registry.npmjs.org/use-callback-ref/1.3.0
     name: use-callback-ref
@@ -11241,7 +11145,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': registry.npmjs.org/@types/react@18.2.23
+      '@types/react': registry.npmjs.org/@types/react@18.2.24
       react: registry.npmjs.org/react@18.2.0
       tslib: registry.npmjs.org/tslib@2.6.2
     dev: false
@@ -11257,7 +11161,7 @@ packages:
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  registry.npmjs.org/use-isomorphic-layout-effect@1.1.2(@types/react@18.2.23)(react@18.2.0):
+  registry.npmjs.org/use-isomorphic-layout-effect@1.1.2(@types/react@18.2.24)(react@18.2.0):
     resolution: {integrity: sha512-49L8yCO3iGT/ZF9QttjwLF/ZD9Iwto5LnH5LmEdk/6cFmXddqi2ulF0edxTwjj+7mqvpVVGQWvbXZdn32wRSHA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/use-isomorphic-layout-effect/-/use-isomorphic-layout-effect-1.1.2.tgz}
     id: registry.npmjs.org/use-isomorphic-layout-effect/1.1.2
     name: use-isomorphic-layout-effect
@@ -11269,11 +11173,11 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': registry.npmjs.org/@types/react@18.2.23
+      '@types/react': registry.npmjs.org/@types/react@18.2.24
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  registry.npmjs.org/use-latest@1.2.1(@types/react@18.2.23)(react@18.2.0):
+  registry.npmjs.org/use-latest@1.2.1(@types/react@18.2.24)(react@18.2.0):
     resolution: {integrity: sha512-xA+AVm/Wlg3e2P/JiItTziwS7FK92LWrDB0p+hgXloIMuVCeJJ8v6f0eeHyPZaJrM+usM1FkFfbNCrJGs8A/zw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/use-latest/-/use-latest-1.2.1.tgz}
     id: registry.npmjs.org/use-latest/1.2.1
     name: use-latest
@@ -11285,12 +11189,12 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': registry.npmjs.org/@types/react@18.2.23
+      '@types/react': registry.npmjs.org/@types/react@18.2.24
       react: registry.npmjs.org/react@18.2.0
-      use-isomorphic-layout-effect: registry.npmjs.org/use-isomorphic-layout-effect@1.1.2(@types/react@18.2.23)(react@18.2.0)
+      use-isomorphic-layout-effect: registry.npmjs.org/use-isomorphic-layout-effect@1.1.2(@types/react@18.2.24)(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/use-sidecar@1.1.2(@types/react@18.2.23)(react@18.2.0):
+  registry.npmjs.org/use-sidecar@1.1.2(@types/react@18.2.24)(react@18.2.0):
     resolution: {integrity: sha512-epTbsLuzZ7lPClpz2TyryBfztm7m+28DlEv2ZCQ3MDr5ssiwyOwGH/e5F9CkfWjJ1t4clvI58yF822/GUkjjhw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/use-sidecar/-/use-sidecar-1.1.2.tgz}
     id: registry.npmjs.org/use-sidecar/1.1.2
     name: use-sidecar
@@ -11303,7 +11207,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': registry.npmjs.org/@types/react@18.2.23
+      '@types/react': registry.npmjs.org/@types/react@18.2.24
       detect-node-es: registry.npmjs.org/detect-node-es@1.1.0
       react: registry.npmjs.org/react@18.2.0
       tslib: registry.npmjs.org/tslib@2.6.2
@@ -11428,12 +11332,6 @@ packages:
       yaeti: registry.npmjs.org/yaeti@0.0.6
     transitivePeerDependencies:
       - supports-color
-    dev: false
-
-  registry.npmjs.org/whatwg-fetch@3.6.19:
-    resolution: {integrity: sha512-d67JP4dHSbm2TrpFj8AbO8DnL1JXL5J9u0Kq2xW6d0TFDbCA3Muhdt8orXC22utleTVj7Prqt82baN6RBvnEgw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/whatwg-fetch/-/whatwg-fetch-3.6.19.tgz}
-    name: whatwg-fetch
-    version: 3.6.19
     dev: false
 
   registry.npmjs.org/whatwg-url@5.0.0:
@@ -11615,22 +11513,16 @@ packages:
     version: 0.1.0
     engines: {node: '>=10'}
 
-  registry.npmjs.org/zod@3.21.4:
-    resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/zod/-/zod-3.21.4.tgz}
-    name: zod
-    version: 3.21.4
-    dev: false
-
   registry.npmjs.org/zod@3.22.2:
     resolution: {integrity: sha512-wvWkphh5WQsJbVk1tbx1l1Ly4yg+XecD+Mq280uBGt9wa5BKSWf4Mhp6GmrkPixhMxmabYY7RbzlwVP32pbGCg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/zod/-/zod-3.22.2.tgz}
     name: zod
     version: 3.22.2
 
-  registry.npmjs.org/zustand@4.4.1(@types/react@18.2.23)(react@18.2.0):
-    resolution: {integrity: sha512-QCPfstAS4EBiTQzlaGP1gmorkh/UL1Leaj2tdj+zZCZ/9bm0WS7sI2wnfD5lpOszFqWJ1DcPnGoY8RDL61uokw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/zustand/-/zustand-4.4.1.tgz}
-    id: registry.npmjs.org/zustand/4.4.1
+  registry.npmjs.org/zustand@4.4.2(@types/react@18.2.24)(react@18.2.0):
+    resolution: {integrity: sha512-qF3/vZHCrjPUX5DvPE3DPDZlh+FiAWRKlP9PI7SlW1MCk8q4vUCDqyWsbF8K41ne0Yx8eeeb0m1cypn1LqUMYQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/zustand/-/zustand-4.4.2.tgz}
+    id: registry.npmjs.org/zustand/4.4.2
     name: zustand
-    version: 4.4.1
+    version: 4.4.2
     engines: {node: '>=12.7.0'}
     peerDependencies:
       '@types/react': '>=16.8'
@@ -11644,7 +11536,7 @@ packages:
       react:
         optional: true
     dependencies:
-      '@types/react': registry.npmjs.org/@types/react@18.2.23
+      '@types/react': registry.npmjs.org/@types/react@18.2.24
       react: registry.npmjs.org/react@18.2.0
       use-sync-external-store: registry.npmjs.org/use-sync-external-store@1.2.0(react@18.2.0)
     dev: false
