@@ -32,10 +32,10 @@ export default function EditVoter({
   voter: {
     id: string;
     email: string;
-    account_status: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
   };
   voter_fields: VoterField[];
 }) {
+  const context = api.useContext();
   const [opened, { open, close }] = useDisclosure(false);
 
   const form = useForm<{
@@ -52,7 +52,8 @@ export default function EditVoter({
 
   const { mutate, isLoading, isError, error, reset } =
     api.election.editVoter.useMutation({
-      onSuccess: () => {
+      onSuccess: async () => {
+        await context.election.getVotersByElectionId.invalidate();
         notifications.show({
           title: "Success",
           message: "Successfully updated voter!",
@@ -105,7 +106,6 @@ export default function EditVoter({
               id: voter.id,
               election_id,
               email: values.email,
-              account_status: voter.account_status,
             });
           })}
         >
@@ -117,9 +117,8 @@ export default function EditVoter({
               withAsterisk
               {...form.getInputProps("email")}
               leftSection={<IconAt size="1rem" />}
-              disabled={voter.account_status !== "ADDED" || isLoading}
+              disabled={isLoading}
               description={
-                voter.account_status !== "ADDED" &&
                 "You can only edit the email address of a voter if they have not yet accepted their invitation."
               }
             />

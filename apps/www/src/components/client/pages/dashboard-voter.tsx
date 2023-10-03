@@ -37,8 +37,6 @@ export default function DashboardVoter({
   election: Election & { voter_fields: VoterField[] };
   voters: RouterOutputs["election"]["getVotersByElectionId"];
 }) {
-  const context = api.useContext();
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const votersQuery = api.election.getVotersByElectionId.useQuery(
     {
       election_id: election.id,
@@ -59,15 +57,6 @@ export default function DashboardVoter({
         accessorKey: "field." + voter_field.name,
         header: voter_field.name,
       })) ?? []) as MRT_ColumnDef<(typeof votersQuery.data)[number]>[]),
-      {
-        accessorKey: "account_status",
-        header: "Status",
-        size: 75,
-        enableClickToCopy: false,
-        Cell: ({ cell }) =>
-          cell.getValue<string>().charAt(0) +
-          cell.getValue<string>().slice(1).toLowerCase(),
-      },
       {
         accessorKey: "has_voted",
         header: "Voted?",
@@ -160,14 +149,10 @@ export default function DashboardVoter({
                 <div>
                   <ActionIcon
                     variant="light"
-                    onClick={async () => {
-                      setIsRefreshing(true);
-                      await context.election.getVotersByElectionId.invalidate();
-                      setIsRefreshing(false);
-                    }}
+                    onClick={async () => await votersQuery.refetch()}
                     size="lg"
-                    loading={isRefreshing}
-                    visibleFrom="sm"
+                    loading={votersQuery.isRefetching}
+                    hiddenFrom="sm"
                     loaderProps={{
                       width: 18,
                     }}
@@ -176,14 +161,10 @@ export default function DashboardVoter({
                   </ActionIcon>
                   <Button
                     variant="light"
-                    onClick={async () => {
-                      setIsRefreshing(true);
-                      await context.election.getVotersByElectionId.invalidate();
-                      setIsRefreshing(false);
-                    }}
-                    loading={isRefreshing}
+                    onClick={async () => await votersQuery.refetch()}
+                    loading={votersQuery.isRefetching}
                     leftSection={<IconRefresh size="1.25rem" />}
-                    hiddenFrom="sm"
+                    visibleFrom="sm"
                     loaderProps={{
                       width: 20,
                     }}
@@ -200,7 +181,6 @@ export default function DashboardVoter({
                     .map((voter) => ({
                       id: voter.id,
                       email: voter.email,
-                      isVoter: voter.account_status === "ACCEPTED",
                     }))}
                   election_id={election.id}
                   isDisabled={Object.keys(rowSelection).length === 0}
@@ -222,9 +202,6 @@ export default function DashboardVoter({
                   voter={{
                     id: row.id,
                     email: row.getValue<string>("email"),
-                    account_status: row.getValue<
-                      "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED"
-                    >("account_status"),
                   }}
                 />
               </Tooltip>
@@ -234,9 +211,6 @@ export default function DashboardVoter({
                   voter={{
                     id: row.id,
                     email: row.getValue<string>("email"),
-                    account_status: row.getValue<
-                      "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED"
-                    >("account_status"),
                   }}
                   election_id={election.id}
                 />

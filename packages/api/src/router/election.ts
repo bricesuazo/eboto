@@ -25,7 +25,6 @@ import {
   voters,
 } from "@eboto-mo/db/schema";
 
-import { account_status_type_with_accepted } from "../../../../apps/www/src/utils/zod-schema";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const electionRouter = createTRPCRouter({
@@ -413,9 +412,8 @@ export const electionRouter = createTRPCRouter({
       return voters.map((voter) => ({
         id: voter.id,
         email: voter.email,
-        account_status: "ACCEPTED",
         created_at: voter.created_at,
-        has_voted: voter.votes.length > 0,
+        has_voted: !!voter.votes.length,
       }));
     }),
   createElection: protectedProcedure
@@ -1177,7 +1175,6 @@ export const electionRouter = createTRPCRouter({
         id: z.string().min(1),
         email: z.string().min(1),
         election_id: z.string().min(1),
-        account_status: z.enum(account_status_type_with_accepted),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -1221,7 +1218,6 @@ export const electionRouter = createTRPCRouter({
       z.object({
         id: z.string().min(1),
         election_id: z.string().min(1),
-        is_invited_voter: z.boolean(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -1250,30 +1246,25 @@ export const electionRouter = createTRPCRouter({
           message: "Unauthorized",
         });
 
-      if (!input.is_invited_voter) {
-        const voter = await ctx.db.query.voters.findFirst({
-          where: (voter, { eq, and }) =>
-            and(
-              eq(voter.id, input.id),
-              eq(voter.election_id, input.election_id),
-            ),
+      const voter = await ctx.db.query.voters.findFirst({
+        where: (voter, { eq, and }) =>
+          and(eq(voter.id, input.id), eq(voter.election_id, input.election_id)),
+      });
+
+      if (!voter)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Voter not found",
         });
 
-        if (!voter)
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Voter not found",
-          });
-
-        await ctx.db
-          .delete(voters)
-          .where(
-            and(
-              eq(voters.id, input.id),
-              eq(voters.election_id, input.election_id),
-            ),
-          );
-      }
+      await ctx.db
+        .delete(voters)
+        .where(
+          and(
+            eq(voters.id, input.id),
+            eq(voters.election_id, input.election_id),
+          ),
+        );
     }),
   deleteBulkVoter: protectedProcedure
     .input(
@@ -1283,16 +1274,13 @@ export const electionRouter = createTRPCRouter({
           z.object({
             id: z.string().min(1),
             email: z.string().min(1),
-            isVoter: z.boolean(),
           }),
         ),
       }),
     )
     .mutation(async ({ input, ctx }) => {
       // TODO: Validate commissioner
-      const votersIds = input.voters
-        .filter((voter) => voter.isVoter)
-        .map((voter) => voter.id);
+      const votersIds = input.voters.map((voter) => voter.id);
 
       if (votersIds.length)
         await ctx.db

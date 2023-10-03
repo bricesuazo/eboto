@@ -22,15 +22,16 @@ export default function DeleteVoter({
   voter: {
     id: string;
     email: string;
-    account_status: "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED";
   };
   election_id: string;
 }) {
+  const context = api.useContext();
   const [opened, { open, close }] = useDisclosure(false);
 
   const { mutate, isLoading, isError, error, reset } =
     api.election.deleteSingleVoter.useMutation({
-      onSuccess: () => {
+      onSuccess: async () => {
+        await context.election.getVotersByElectionId.invalidate();
         notifications.show({
           title: "Success!",
           message: `Successfully deleted ${voter.email}`,
@@ -96,7 +97,6 @@ export default function DeleteVoter({
                 mutate({
                   election_id,
                   id: voter.id,
-                  is_invited_voter: voter.account_status !== "ACCEPTED",
                 })
               }
             >

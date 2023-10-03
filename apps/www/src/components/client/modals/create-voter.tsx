@@ -22,10 +22,12 @@ import {
 } from "@tabler/icons-react";
 
 export default function CreateVoter({ election_id }: { election_id: string }) {
+  const context = api.useContext();
   const [opened, { open, close }] = useDisclosure(false);
 
   const createSingleVoterMutation = api.election.createSingleVoter.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
+      await context.election.getVotersByElectionId.invalidate();
       notifications.show({
         title: `${form.values.email} added!`,
         message: "Successfully added voter",

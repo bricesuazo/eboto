@@ -24,17 +24,18 @@ export default function DeleteBulkVoter({
   voters: {
     id: string;
     email: string;
-    isVoter: boolean;
   }[];
   election_id: string;
   isDisabled: boolean;
   onSuccess?: () => void;
 }) {
+  const context = api.useContext();
   const [opened, { open, close }] = useDisclosure();
 
   const { mutate, isLoading, isError, error } =
     api.election.deleteBulkVoter.useMutation({
-      onSuccess: ({ count }) => {
+      onSuccess: async ({ count }) => {
+        await context.election.getVotersByElectionId.invalidate();
         notifications.show({
           title: `${count} voter(s) successfully deleted!`,
           message: `Successfully deleted voters`,
