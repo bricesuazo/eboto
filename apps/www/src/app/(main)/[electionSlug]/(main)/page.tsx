@@ -32,6 +32,7 @@ import { env } from "env.mjs";
 import moment from "moment";
 import Balancer from "react-wrap-balancer";
 
+import { auth } from "@eboto-mo/auth";
 import { isElectionOngoing } from "@eboto-mo/constants";
 import { db } from "@eboto-mo/db";
 
@@ -82,6 +83,7 @@ export default async function ElectionPage({
 }: {
   params: { electionSlug: string };
 }) {
+  const session = await auth();
   const election = await db.query.elections.findFirst({
     where: (election, { eq, and, isNull }) =>
       and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
@@ -107,6 +109,15 @@ export default async function ElectionPage({
       },
     },
     orderBy: (positions, { asc }) => [asc(positions.order)],
+  });
+
+  const isImVoter = await db.query.voters.findFirst({
+    where: (voter, { eq, and, isNull }) =>
+      and(
+        eq(voter.election_id, election.id),
+        eq(voter.user_id, session?.user.id ?? ""),
+        isNull(voter.deleted_at),
+      ),
   });
 
   return (
@@ -156,7 +167,7 @@ export default async function ElectionPage({
                 {election.publicity.charAt(0) +
                   election.publicity.slice(1).toLowerCase()}{" "}
               </Text>
-              <HoverCard width={180} shadow="md">
+              <HoverCard width={180} shadow="md" openDelay={500}>
                 <HoverCardTarget>
                   <ActionIcon
                     size="xs"
@@ -214,15 +225,17 @@ export default async function ElectionPage({
                 ) : !isOngoing ? (
                   <Text c="red">Voting is not yet open</Text>
                 ) : (
-                  <Button
-                    radius="xl"
-                    size="md"
-                    leftSection={<IconFingerprint />}
-                    component={Link}
-                    href={`/${election.slug}/vote`}
-                  >
-                    Vote now!
-                  </Button>
+                  isImVoter && (
+                    <Button
+                      radius="xl"
+                      size="md"
+                      leftSection={<IconFingerprint />}
+                      component={Link}
+                      href={`/${election.slug}/vote`}
+                    >
+                      Vote now!
+                    </Button>
+                  )
                 )
               }
               <ElectionShowQRCode election={election} />
