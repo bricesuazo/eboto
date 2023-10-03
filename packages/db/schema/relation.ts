@@ -78,10 +78,10 @@ export const invited_commissionersRelations = relations(
 );
 
 export const votersRelations = relations(voters, ({ one, many }) => ({
-  user: one(users, {
-    fields: [voters.user_id],
-    references: [users.id],
-  }),
+  // user: one(users, {
+  //   fields: [voters.user_id],
+  //   references: [users.id],
+  // }),
   election: one(elections, {
     fields: [voters.election_id],
     references: [elections.id],

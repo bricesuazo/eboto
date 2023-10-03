@@ -94,10 +94,10 @@ export const voters = mysqlTable("voter", {
   created_at,
 
   email: text("email").notNull(),
+  field: text("field"),
 
   deleted_at,
 
-  user_id,
   election_id,
 });
 

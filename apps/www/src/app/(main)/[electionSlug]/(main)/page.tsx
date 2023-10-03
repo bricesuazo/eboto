@@ -115,7 +115,7 @@ export default async function ElectionPage({
     where: (voter, { eq, and, isNull }) =>
       and(
         eq(voter.election_id, election.id),
-        eq(voter.user_id, session?.user.id ?? ""),
+        eq(voter.email, session?.user.email ?? ""),
         isNull(voter.deleted_at),
       ),
   });

@@ -27,7 +27,7 @@ export default async function Page() {
   });
 
   const electionsAsVoter = await db.query.voters.findMany({
-    where: (voters, { eq }) => eq(voters.user_id, session.user.id),
+    where: (voters, { eq }) => eq(voters.email, session.user.email ?? ""),
     with: {
       election: {
         with: {

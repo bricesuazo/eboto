@@ -34,13 +34,14 @@ export default async function ElectionLayout(
     if (!commissioner) notFound();
   } else if (election.publicity === "VOTER") {
     const callbackUrl = `/sign-in?callbackUrl=https://eboto-mo.com/${props.params.electionSlug}`;
+
     if (!session) redirect(callbackUrl);
 
     const voter = await db.query.voters.findFirst({
       where: (voter, { eq, and }) =>
         and(
           eq(voter.election_id, election.id),
-          eq(voter.user_id, session.user.id),
+          eq(voter.email, session.user.email ?? ""),
         ),
     });
 

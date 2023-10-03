@@ -60,7 +60,7 @@ export default async function VotePage({
     const isVoter = await db.query.voters.findFirst({
       where: (voter, { eq, and, isNull }) =>
         and(
-          eq(voter.user_id, session.user.id),
+          eq(voter.email, session.user.email ?? ""),
           eq(voter.election_id, election.id),
           isNull(voter.deleted_at),
         ),
@@ -90,7 +90,7 @@ export default async function VotePage({
     const isVoter = await db.query.voters.findFirst({
       where: (voter, { eq, and, isNull }) =>
         and(
-          eq(voter.user_id, session.user.id),
+          eq(voter.email, session.user.email ?? ""),
           eq(voter.election_id, election.id),
           isNull(voter.deleted_at),
         ),

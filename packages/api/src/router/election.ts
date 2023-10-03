@@ -404,7 +404,6 @@ export const electionRouter = createTRPCRouter({
         where: (voters, { eq }) => eq(voters.election_id, input.election_id),
 
         with: {
-          user: true,
           votes: {
             limit: 1,
           },
@@ -413,7 +412,7 @@ export const electionRouter = createTRPCRouter({
 
       return voters.map((voter) => ({
         id: voter.id,
-        email: voter.user.email,
+        email: voter.email,
         account_status: "ACCEPTED",
         created_at: voter.created_at,
         has_voted: voter.votes.length > 0,
@@ -1076,34 +1075,6 @@ export const electionRouter = createTRPCRouter({
         }
       });
     }),
-  inviteAllInvitedVoters: protectedProcedure
-    .input(
-      z.object({
-        election_id: z.string().min(1),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      // TODO: Validate commissioner
-      const isElectionExists = await ctx.db.query.elections.findFirst({
-        where: (elections, { eq }) => eq(elections.id, input.election_id),
-        with: {
-          commissioners: {
-            where: (commissioners, { eq }) =>
-              eq(commissioners.user_id, ctx.session.user.id),
-          },
-        },
-      });
-      if (!isElectionExists) throw new Error("Election does not exists");
-      if (isElectionExists.commissioners.length === 0)
-        throw new Error("Unauthorized");
-      // const invitedVoters = await ctx.db.query.invited_voters.findMany({
-      //   where: (invited_voters, { eq }) =>
-      //     eq(invited_voters.election_id, input.election_id),
-      // });
-      // const invitedVotersIds = invitedVoters.map(
-      //   (invitedVoter) => invitedVoter.id,
-      // );
-    }),
   createSingleVoter: protectedProcedure
     .input(
       z.object({
@@ -1134,32 +1105,27 @@ export const electionRouter = createTRPCRouter({
           message: "Unauthorized",
         });
 
-      const votersFromDb = await ctx.db.query.voters.findMany({
-        where: (voter, { eq }) => eq(voter.election_id, input.election_id),
-        with: {
-          user: true,
-        },
+      const votersFromDb = await ctx.db.query.voters.findFirst({
+        where: (voter, { eq, and }) =>
+          and(
+            eq(voter.election_id, input.election_id),
+            eq(voter.email, input.email),
+          ),
       });
 
-      const isVoterEmailExists = votersFromDb.some(
-        (voter) => voter.user.email === input.email,
-      );
-
-      if (isVoterEmailExists)
+      if (votersFromDb)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Email is already a voter",
         });
 
-      // TODO: Implement adding of voters
-
-      // await ctx.db.transaction(async (db) => {
-      //   await db.insert(voters).values({
-      //     id: nanoid(),
-      //     email: input.email,
-      //     election_id: input.election_id,
-      //   });
-      // });
+      await ctx.db.transaction(async (db) => {
+        await db.insert(voters).values({
+          id: nanoid(),
+          email: input.email,
+          election_id: isElectionExists.id,
+        });
+      });
     }),
   updateVoterField: protectedProcedure
     .input(
