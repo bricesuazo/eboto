@@ -81,10 +81,7 @@ export default function DashboardVoter({
         <Flex gap="xs" direction={{ base: "column", sm: "row" }}>
           <Group gap="xs">
             <CreateVoter election_id={election.id} />
-            <UploadBulkVoter
-              election_id={election.id}
-              voter_fields={election.voter_fields}
-            />
+            <UploadBulkVoter election_id={election.id} />
           </Group>
           <Tooltip
             label={

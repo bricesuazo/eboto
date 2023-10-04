@@ -6,6 +6,7 @@ import {
   ActionIcon,
   Alert,
   Button,
+  Flex,
   Group,
   Modal,
   rem,
@@ -31,17 +32,13 @@ import {
   IconUpload,
   IconX,
 } from "@tabler/icons-react";
-import Balancer from "react-wrap-balancer";
+import readXlsxFile from "read-excel-file";
 import * as XLSX from "xlsx";
-
-import type { VoterField } from "@eboto-mo/db/schema";
 
 export default function UploadBulkVoter({
   election_id,
-  voter_fields,
 }: {
   election_id: string;
-  voter_fields: VoterField[];
 }) {
   const [opened, { open, close }] = useDisclosure();
 
@@ -87,6 +84,7 @@ export default function UploadBulkVoter({
         onClick={open}
         leftSection={<IconUpload size="1rem" />}
         variant="light"
+        disabled
         // style={(theme) => ({
         //   [theme.fn.smallerThan("xs")]: {
         //     width: "100%",
@@ -139,9 +137,9 @@ export default function UploadBulkVoter({
                       <thead>
                         <tr>
                           <th>Email</th>
-                          {voter_fields.map((field) => (
+                          {/* {voter_fields.map((field) => (
                             <th key={field.name}>{field.name}</th>
-                          ))}
+                          ))} */}
                           <th />
                         </tr>
                       </thead>
@@ -193,6 +191,7 @@ export default function UploadBulkVoter({
           <Dropzone
             openRef={openRef}
             hidden={!!selectedFiles.length}
+            accept={MS_EXCEL_MIME_TYPE}
             onDrop={(files) => {
               if (
                 selectedFiles.find((sf) =>
@@ -202,86 +201,88 @@ export default function UploadBulkVoter({
                 return;
               }
 
-              // TODO: Fix this
-              // Array.from(files).forEach((file) => {
-              //   void (async () =>
-              //     await readXlsxFile(file).then((rows) => {
-              //       if (rows.length < 1) {
-              //         return;
-              //       }
+              Array.from(files).forEach((file) => {
+                void (async () =>
+                  await readXlsxFile(file).then((rows) => {
+                    if (rows.length < 1) {
+                      return;
+                    }
 
-              //       if (
-              //         rows[0] &&
-              //         rows[0][0] !== "Email" &&
-              //         !voter_fields.some(
-              //           (val, i) => rows[0] && val.name === rows[0][i + 1],
-              //         )
-              //       ) {
-              //         return;
-              //       }
+                    if (
+                      rows[0] &&
+                      rows[0][0] !== "Email"
+                      // &&
+                      // !voter_fields.some(
+                      //   (val, i) => rows[0] && val.name === rows[0][i + 1],
+                      // )
+                    ) {
+                      return;
+                    }
 
-              //       if (selectedFiles.find((f) => f.fileName === file.name)) {
-              //         return;
-              //       }
+                    if (selectedFiles.find((f) => f.fileName === file.name)) {
+                      return;
+                    }
 
-              //       setSelectedFiles((prev) => [
-              //         ...prev,
-              //         {
-              //           fileName: file.name,
-              //           voters: rows.slice(1).map((row) => {
-              //             return {
-              //               email: row[0]?.toString() ?? "",
-              //               field: voter_fields.reduce(
-              //                 (acc, val, i) => {
-              //                   acc[val.name] = row[i + 1]?.toString() ?? "";
+                    setSelectedFiles((prev) => [
+                      ...prev,
+                      {
+                        fileName: file.name,
+                        voters: rows.slice(1).map((row) => {
+                          return {
+                            email: row[0]?.toString() ?? "",
+                            // field: voter_fields.reduce(
+                            //   (acc, val, i) => {
+                            //     acc[val.name] = row[i + 1]?.toString() ?? "";
 
-              //                   return acc;
-              //                 },
-              //                 {} as Record<string, string>,
-              //               ),
-              //             };
-              //           }),
-              //         },
-              //       ]);
-              //     }))();
-              // });
+                            //     return acc;
+                            //   },
+                            //   {} as Record<string, string>,
+                            // ),
+                          };
+                        }),
+                      },
+                    ]);
+                  }))();
+              });
             }}
-            accept={MS_EXCEL_MIME_TYPE}
           >
-            <Group
-              // direction="column"
+            <Flex
+              direction={{ base: "column", md: "row" }}
               align="center"
               justify="center"
-              gap="md"
+              gap={{
+                base: 0,
+                md: "md",
+              }}
               style={{ minHeight: rem(140), pointerEvents: "none" }}
             >
-              <DropzoneAccept>
-                <IconUpload
-                  size="3.2rem"
-                  stroke={1.5}
-                  // color={
-                  //   theme.colors.green[theme.colorScheme === "dark" ? 4 : 6]
-                  // }
-                />
-              </DropzoneAccept>
-              <DropzoneReject>
-                <IconX
-                  size="3.2rem"
-                  stroke={1.5}
-                  // color={theme.colors.red[theme.colorScheme === "dark" ? 4 : 6]}
-                />
-              </DropzoneReject>
-              <DropzoneIdle>
-                <IconFileSpreadsheet size="3.2rem" stroke={1.5} />
-              </DropzoneIdle>
               <div>
-                <Balancer>
-                  <Text size="xl" ta="center">
-                    Drag excel file here or click to select files
-                  </Text>
-                </Balancer>
+                <DropzoneAccept>
+                  <IconUpload
+                    size="3.2rem"
+                    stroke={1.5}
+                    // color={
+                    //   theme.colors.green[theme.colorScheme === "dark" ? 4 : 6]
+                    // }
+                  />
+                </DropzoneAccept>
+                <DropzoneReject>
+                  <IconX
+                    size="3.2rem"
+                    stroke={1.5}
+                    // color={theme.colors.red[theme.colorScheme === "dark" ? 4 : 6]}
+                  />
+                </DropzoneReject>
+                <DropzoneIdle>
+                  <IconFileSpreadsheet size="3.2rem" stroke={1.5} />
+                </DropzoneIdle>
               </div>
-            </Group>
+              <div>
+                <Text size="xl" ta={{ base: "center", md: "left" }} maw={240}>
+                  Drag excel file here or click to select files.
+                </Text>
+              </div>
+            </Flex>
           </Dropzone>
 
           {uploadBulkVoterMutation.isError && (
@@ -302,21 +303,21 @@ export default function UploadBulkVoter({
               const worksheet = XLSX.utils.json_to_sheet([
                 {
                   Email: "juan.delacruz@cvsu.edu.ph",
-                  ...voter_fields.reduce((prev, curr) => {
-                    return {
-                      ...prev,
-                      [curr.name]: "",
-                    };
-                  }, {}),
+                  // ...voter_fields.reduce((prev, curr) => {
+                  //   return {
+                  //     ...prev,
+                  //     [curr.name]: "",
+                  //   };
+                  // }, {}),
                 },
                 {
                   Email: "pedro.penduko@cvsu.edu.ph",
-                  ...voter_fields.reduce((prev, curr) => {
-                    return {
-                      ...prev,
-                      [curr.name]: "",
-                    };
-                  }, {}),
+                  // ...voter_fields.reduce((prev, curr) => {
+                  //   return {
+                  //     ...prev,
+                  //     [curr.name]: "",
+                  //   };
+                  // }, {}),
                 },
               ]);
               const workbook = XLSX.utils.book_new();

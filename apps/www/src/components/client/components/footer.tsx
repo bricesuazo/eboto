@@ -1,5 +1,8 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import {
   ActionIcon,
   Container,
@@ -13,9 +16,6 @@ import {
   IconBrandTwitter,
   IconBrandYoutube,
 } from "@tabler/icons-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useParams } from "next/navigation";
 
 export default function Footer() {
   const params = useParams();
