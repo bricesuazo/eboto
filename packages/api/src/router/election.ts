@@ -1125,6 +1125,43 @@ export const electionRouter = createTRPCRouter({
         });
       });
     }),
+  getAllVoterField: protectedProcedure
+    .input(
+      z.object({
+        election_id: z.string().min(1),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const isElectionExists = await ctx.db.query.elections.findFirst({
+        where: (election, { eq }) => eq(election.id, input.election_id),
+      });
+
+      if (!isElectionExists)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election does not exists",
+        });
+
+      const isElectionCommissionerExists =
+        await ctx.db.query.commissioners.findFirst({
+          where: (commissioner, { eq, and }) =>
+            and(
+              eq(commissioner.election_id, input.election_id),
+              eq(commissioner.user_id, ctx.session.user.id),
+            ),
+        });
+
+      if (!isElectionCommissionerExists)
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Unauthorized",
+        });
+
+      return await ctx.db.query.voter_fields.findMany({
+        where: (voter_fields, { eq }) =>
+          eq(voter_fields.election_id, input.election_id),
+      });
+    }),
   updateVoterField: protectedProcedure
     .input(
       z.object({

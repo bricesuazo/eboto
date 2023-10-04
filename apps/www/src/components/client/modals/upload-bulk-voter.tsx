@@ -45,18 +45,17 @@ export default function UploadBulkVoter({
 }) {
   const [opened, { open, close }] = useDisclosure();
 
-  const { mutate, isLoading, isError, error, reset } =
-    api.election.uploadBulkVoter.useMutation({
-      onSuccess: ({ count }) => {
-        notifications.show({
-          title: `${count} voter(s) added!`,
-          message: "Successfully added voters",
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-        close();
-      },
-    });
+  const uploadBulkVoterMutation = api.election.uploadBulkVoter.useMutation({
+    onSuccess: ({ count }) => {
+      notifications.show({
+        title: `${count} voter(s) added!`,
+        message: "Successfully added voters",
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
+      });
+      close();
+    },
+  });
 
   const [selectedFiles, setSelectedFiles] = useState<
     {
@@ -72,13 +71,13 @@ export default function UploadBulkVoter({
   useEffect(() => {
     if (opened) {
       setSelectedFiles([]);
-      reset();
+      uploadBulkVoterMutation.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
 
   useEffect(() => {
-    reset();
+    uploadBulkVoterMutation.reset();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFiles]);
 
@@ -285,13 +284,13 @@ export default function UploadBulkVoter({
             </Group>
           </Dropzone>
 
-          {isError && (
+          {uploadBulkVoterMutation.isError && (
             <Alert
               icon={<IconAlertCircle size="1rem" />}
               color="red"
               title="Error"
             >
-              {error.message}
+              {uploadBulkVoterMutation.error.message}
             </Alert>
           )}
 
@@ -342,15 +341,19 @@ export default function UploadBulkVoter({
               <IconTrash size="1.25rem" />
             </ActionIcon>
             <Group justify="right" gap="xs">
-              <Button variant="default" onClick={close} disabled={isLoading}>
+              <Button
+                variant="default"
+                onClick={close}
+                disabled={uploadBulkVoterMutation.isLoading}
+              >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={selectedFiles.length === 0}
-                loading={isLoading}
+                loading={uploadBulkVoterMutation.isLoading}
                 onClick={() =>
-                  mutate({
+                  uploadBulkVoterMutation.mutate({
                     election_id,
                     voters: selectedFiles.flatMap((file) => file.voters),
                   })

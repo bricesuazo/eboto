@@ -37,42 +37,45 @@ interface FormType {
 
 export default function UpdateVoterField({
   election,
-  // voters,
   isDisabled,
 }: {
   election: Election & { voter_fields: VoterField[] };
-  voters: {
-    id: string;
-    email: string;
-  }[];
   isDisabled: boolean;
 }) {
+  const getAllVoterFieldQuery = api.election.getAllVoterField.useQuery(
+    {
+      election_id: election.id,
+    },
+    {
+      initialData: election.voter_fields,
+    },
+  );
   const [opened, { open, close }] = useDisclosure(false);
 
-  const { mutate, isLoading, isError, error, reset } =
-    api.election.updateVoterField.useMutation({
-      onSuccess: () => {
-        notifications.show({
-          title: ``,
-          message: "Successfully deleted partylist",
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-        close();
-      },
-      onError: (error) => {
-        notifications.show({
-          title: "Error",
-          message: error.message,
-          color: "red",
-          autoClose: 3000,
-        });
-      },
-    });
+  const updateVoterFieldMutation = api.election.updateVoterField.useMutation({
+    onSuccess: async () => {
+      notifications.show({
+        title: ``,
+        message: "Voter field updated successfully",
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
+      });
+      close();
+      await getAllVoterFieldQuery.refetch();
+    },
+    onError: (error) => {
+      notifications.show({
+        title: "Error",
+        message: error.message,
+        color: "red",
+        autoClose: 3000,
+      });
+    },
+  });
 
   const form = useForm<FormType>({
     initialValues: {
-      field: election.voter_fields.map((field) => ({
+      field: getAllVoterFieldQuery.data.map((field) => ({
         type: "fromDb",
         id: field.id,
         name: field.name,
@@ -90,7 +93,7 @@ export default function UpdateVoterField({
 
   useEffect(() => {
     if (opened) {
-      reset();
+      updateVoterFieldMutation.reset();
       const data: typeof form.values.field = election.voter_fields.map(
         (field) => ({
           id: field.id,
@@ -111,7 +114,7 @@ export default function UpdateVoterField({
         variant="light"
         leftSection={<IconUsersGroup size="1rem" />}
         onClick={open}
-        disabled={isDisabled}
+        disabled={isDisabled || true}
         // style={(theme) => ({
         //   [theme.fn.smallerThan("xs")]: {
         //     width: "100%",
@@ -122,13 +125,13 @@ export default function UpdateVoterField({
       </Button>
 
       <Modal
-        opened={opened || isLoading}
+        opened={opened || updateVoterFieldMutation.isLoading}
         onClose={close}
         title={<Text fw={600}>Voter Field</Text>}
       >
         <form
           onSubmit={form.onSubmit((values) => {
-            mutate({
+            updateVoterFieldMutation.mutate({
               election_id: election.id,
               fields: values.field,
             });
@@ -173,24 +176,28 @@ export default function UpdateVoterField({
               Add voter field
             </Button>
 
-            {isError && (
+            {updateVoterFieldMutation.isError && (
               <Alert
                 icon={<IconAlertCircle size="1rem" />}
                 color="red"
                 title="Error"
                 variant="filled"
               >
-                {error.message}
+                {updateVoterFieldMutation.error.message}
               </Alert>
             )}
 
             <Group justify="right" gap="xs">
-              <Button variant="default" onClick={close} disabled={isLoading}>
+              <Button
+                variant="default"
+                onClick={close}
+                disabled={updateVoterFieldMutation.isLoading}
+              >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                loading={isLoading}
+                loading={updateVoterFieldMutation.isLoading}
                 disabled={!(form.isValid() && form.isDirty())}
               >
                 Update
@@ -212,8 +219,14 @@ function VoterFieldInput({
   field: Field;
   election_id: string;
 }) {
-  const { mutate, isLoading } =
-    api.election.deleteSingleVoterField.useMutation();
+  const context = api.useContext();
+  const { mutate, isLoading } = api.election.deleteSingleVoterField.useMutation(
+    {
+      onSuccess: async () => {
+        await context.election.getAllVoterField.invalidate();
+      },
+    },
+  );
 
   return (
     <Flex gap="xs" align="end">

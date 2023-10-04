@@ -53,7 +53,7 @@ export default function DeleteBulkVoter({
         onClick={open}
         size="lg"
         variant="outline"
-        visibleFrom="sm"
+        hiddenFrom="md"
         disabled={isDisabled}
       >
         <IconUserMinus size="1.25rem" />
@@ -63,7 +63,7 @@ export default function DeleteBulkVoter({
         variant="outline"
         onClick={open}
         leftSection={<IconUserMinus size="1.25rem" />}
-        hiddenFrom="sm"
+        visibleFrom="md"
         disabled={isDisabled}
       >
         Delete selected

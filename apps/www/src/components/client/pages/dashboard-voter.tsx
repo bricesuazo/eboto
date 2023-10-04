@@ -86,28 +86,19 @@ export default function DashboardVoter({
               voter_fields={election.voter_fields}
             />
           </Group>
-          <Group gap="xs">
-            <Tooltip
-              label={
-                <Text>
-                  You can&apos;t change the voter&apos;s group once the <br />
-                  election is ongoing and if there&apos;s already a voter
-                </Text>
-              }
-            >
-              <UpdateVoterField
-                election={election}
-                voters={votersQuery.data.map((voter) => ({
-                  id: voter.id,
-                  email: voter.email,
-                }))}
-                isDisabled={
-                  isElectionOngoing({ election }) ||
-                  votersQuery.data.length !== 0
-                }
-              />
-            </Tooltip>
-          </Group>
+          <Tooltip
+            label={
+              <Text>
+                You can&apos;t change the voter&apos;s group once the <br />
+                election is ongoing and if there&apos;s already a voter
+              </Text>
+            }
+          >
+            <UpdateVoterField
+              election={election}
+              isDisabled={isElectionOngoing({ election })}
+            />
+          </Tooltip>
         </Flex>
 
         <MantineReactTable
