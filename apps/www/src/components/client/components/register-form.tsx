@@ -1,28 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Button,
-  Divider,
-  Group,
-  Paper,
-  PasswordInput,
-  Stack,
-  TextInput,
-} from "@mantine/core";
-import {
-  hasLength,
-  isEmail,
-  isNotEmpty,
-  matchesField,
-  useForm,
-} from "@mantine/form";
-import {
-  IconAt,
-  IconBrandGoogle,
-  IconLetterCase,
-  IconLock,
-} from "@tabler/icons-react";
+import { Button, Paper, Stack } from "@mantine/core";
+import { IconBrandGoogle } from "@tabler/icons-react";
 import { signIn } from "next-auth/react";
 
 export default function RegisterForm() {
@@ -34,30 +14,30 @@ export default function RegisterForm() {
     credential: false,
   });
 
-  const form = useForm({
-    initialValues: {
-      email: "",
-      firstName: "",
-      lastName: "",
-      password: "",
-      confirmPassword: "",
-    },
-    validateInputOnBlur: true,
-    validate: {
-      firstName: hasLength(
-        { min: 2 },
-        "First name must be at least 2 characters",
-      ),
-      lastName: hasLength(
-        { min: 2 },
-        "Last name must be at least 2 characters",
-      ),
-      email: isEmail("Invalid email") || isNotEmpty("Email is required"),
-      password: hasLength({ min: 8 }, "Password must be at least 8 characters"),
+  // const form = useForm({
+  //   initialValues: {
+  //     email: "",
+  //     firstName: "",
+  //     lastName: "",
+  //     password: "",
+  //     confirmPassword: "",
+  //   },
+  //   validateInputOnBlur: true,
+  //   validate: {
+  //     firstName: hasLength(
+  //       { min: 2 },
+  //       "First name must be at least 2 characters",
+  //     ),
+  //     lastName: hasLength(
+  //       { min: 2 },
+  //       "Last name must be at least 2 characters",
+  //     ),
+  //     email: isEmail("Invalid email") || isNotEmpty("Email is required"),
+  //     password: hasLength({ min: 8 }, "Password must be at least 8 characters"),
 
-      confirmPassword: matchesField("password", "Passwords do not match"),
-    },
-  });
+  //     confirmPassword: matchesField("password", "Passwords do not match"),
+  //   },
+  // });
 
   return (
     <Paper withBorder shadow="md" p="md" radius="md">
@@ -76,7 +56,7 @@ export default function RegisterForm() {
           Sign up with Google
         </Button>
 
-        <Divider label="Or continue with email" labelPosition="center" />
+        {/* <Divider label="Or continue with email" labelPosition="center" />
         <form
           onSubmit={form.onSubmit(() => {
             // if (!isSignUpLoaded) return;
@@ -155,7 +135,7 @@ export default function RegisterForm() {
               leftSection={<IconLock size="1rem" />}
             />
 
-            {/* {signUpMutation.isError && (
+         {signUpMutation.isError && (
                     <Alert
                       leftSection={<IconAlertCircle size="1rem" />}
                       title="Error"
@@ -163,13 +143,13 @@ export default function RegisterForm() {
                     > 
                       {signUpMutation.error.message}
                     </Alert>
-                  )} */}
+                  )} 
 
             <Button type="submit" loading={loadings.credential} disabled>
               Sign up
             </Button>
           </Stack>
-        </form>
+        </form> */}
       </Stack>
     </Paper>
   );
