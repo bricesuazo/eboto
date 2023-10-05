@@ -120,6 +120,14 @@ export default async function ElectionPage({
       ),
   });
 
+  const hasVoted = await db.query.votes.findFirst({
+    where: (votes, { eq, and }) =>
+      and(
+        eq(votes.voter_id, session?.user.id ?? ""),
+        eq(votes.election_id, election.id),
+      ),
+  });
+
   return (
     <>
       <ScrollToTopButton />
@@ -210,34 +218,31 @@ export default async function ElectionPage({
             )}
 
             <Flex justify="center" gap="sm" mt={8} align="center">
-              {
-                // hasVoted ||
-                election.end_date < new Date() ? (
+              {hasVoted ?? election.end_date < new Date() ? (
+                <Button
+                  radius="xl"
+                  size="md"
+                  component={Link}
+                  leftSection={<IconClock />}
+                  href={`/${election.slug}/realtime`}
+                >
+                  Realtime count
+                </Button>
+              ) : !isOngoing ? (
+                <Text c="red">Voting is not yet open</Text>
+              ) : (
+                isImVoter && (
                   <Button
                     radius="xl"
                     size="md"
+                    leftSection={<IconFingerprint />}
                     component={Link}
-                    leftSection={<IconClock />}
-                    href={`/${election.slug}/realtime`}
+                    href={`/${election.slug}/vote`}
                   >
-                    Realtime count
+                    Vote now!
                   </Button>
-                ) : !isOngoing ? (
-                  <Text c="red">Voting is not yet open</Text>
-                ) : (
-                  isImVoter && (
-                    <Button
-                      radius="xl"
-                      size="md"
-                      leftSection={<IconFingerprint />}
-                      component={Link}
-                      href={`/${election.slug}/vote`}
-                    >
-                      Vote now!
-                    </Button>
-                  )
                 )
-              }
+              )}
               <ElectionShowQRCode election={election} />
             </Flex>
           </Box>
