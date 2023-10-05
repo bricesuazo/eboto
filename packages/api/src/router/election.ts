@@ -29,6 +29,52 @@ import {
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const electionRouter = createTRPCRouter({
+  getCandidatePageData: publicProcedure
+    .input(
+      z.object({
+        election_slug: z.string().min(1),
+        candidate_slug: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const election = await ctx.db.query.elections.findFirst({
+        where: (election, { eq, and, isNull }) =>
+          and(
+            eq(election.slug, input.election_slug),
+            isNull(election.deleted_at),
+          ),
+      });
+
+      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const candidate = await ctx.db.query.candidates.findFirst({
+        where: (candidate, { eq, and, isNull }) =>
+          and(
+            eq(candidate.election_id, election.id),
+            eq(candidate.slug, input.candidate_slug),
+            isNull(candidate.deleted_at),
+          ),
+        with: {
+          partylist: true,
+          position: true,
+          platforms: true,
+          credential: {
+            with: {
+              achievements: true,
+              affiliations: true,
+              events_attended: true,
+            },
+          },
+        },
+      });
+
+      if (!candidate) throw new TRPCError({ code: "NOT_FOUND" });
+
+      return {
+        election,
+        candidate,
+      };
+    }),
   getElectionPage: publicProcedure
     .input(
       z.object({
