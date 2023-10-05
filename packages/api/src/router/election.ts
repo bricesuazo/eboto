@@ -29,6 +29,71 @@ import {
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const electionRouter = createTRPCRouter({
+  getElectionPage: publicProcedure
+    .input(
+      z.object({
+        election_slug: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const election = await ctx.db.query.elections.findFirst({
+        where: (election, { eq, and, isNull }) =>
+          and(
+            eq(election.slug, input.election_slug),
+            isNull(election.deleted_at),
+          ),
+      });
+
+      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const isOngoing = isElectionOngoing({ election });
+
+      const positions = await ctx.db.query.positions.findMany({
+        where: (position, { eq, and, isNull }) =>
+          and(
+            eq(position.election_id, election.id),
+            isNull(position.deleted_at),
+          ),
+        with: {
+          candidates: {
+            where: (candidate, { eq, and, isNull }) =>
+              and(
+                eq(candidate.election_id, election.id),
+                isNull(candidate.deleted_at),
+              ),
+            with: {
+              partylist: true,
+            },
+          },
+        },
+        orderBy: (positions, { asc }) => [asc(positions.order)],
+      });
+
+      const isImVoter = await ctx.db.query.voters.findFirst({
+        where: (voter, { eq, and, isNull }) =>
+          and(
+            eq(voter.election_id, election.id),
+            eq(voter.email, ctx.session?.user.email ?? ""),
+            isNull(voter.deleted_at),
+          ),
+      });
+
+      const hasVoted = await ctx.db.query.votes.findFirst({
+        where: (votes, { eq, and }) =>
+          and(
+            eq(votes.voter_id, ctx.session?.user.id ?? ""),
+            eq(votes.election_id, election.id),
+          ),
+      });
+
+      return {
+        election,
+        positions,
+        isOngoing,
+        isImVoter: !!isImVoter,
+        hasVoted: !!hasVoted,
+      };
+    }),
   vote: protectedProcedure
     .input(
       z.object({
