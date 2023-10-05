@@ -66,7 +66,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
       close();
 
       form.resetDirty(form.values);
-      await context.election.getAllPartylistsWithoutINDByElectionId.invalidate();
+      await context.election.getDashboardPartylistData.invalidate();
     },
     onError: (error) => {
       notifications.show({

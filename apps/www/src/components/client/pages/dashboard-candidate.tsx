@@ -31,10 +31,10 @@ export default function DashboardCandidate({
   positionsWithCandidates,
 }: {
   election: Election;
-  positionsWithCandidates: RouterOutputs["election"]["getAllPositionsWithCandidatesByElectionId"];
+  positionsWithCandidates: RouterOutputs["election"]["getDashboardCandidateData"];
 }) {
   const positionsWithCandidatesQuery =
-    api.election.getAllPositionsWithCandidatesByElectionId.useQuery(
+    api.election.getDashboardCandidateData.useQuery(
       { election_id: election.id },
       { initialData: positionsWithCandidates },
     );

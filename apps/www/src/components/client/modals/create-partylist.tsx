@@ -63,7 +63,7 @@ export default function CreatePartylist({
       });
       close();
 
-      await context.election.getAllPartylistsWithoutINDByElectionId.invalidate();
+      await context.election.getDashboardPartylistData.invalidate();
     },
   });
 

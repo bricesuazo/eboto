@@ -85,13 +85,13 @@ export default function EditCandidate({
   const partylistsQuery = api.election.getAllPartylistsByElectionId.useQuery({
     election_id: election.id,
   });
-  const positionsQuery = api.election.getAllPositionsByElectionId.useQuery({
+  const positionsQuery = api.election.getDashboardPositionData.useQuery({
     election_id: election.id,
   });
 
   const editCandidateMutation = api.election.editCandidate.useMutation({
     onSuccess: async () => {
-      await context.election.getAllPositionsWithCandidatesByElectionId.invalidate();
+      await context.election.getDashboardCandidateData.invalidate();
       notifications.show({
         title: `${form.values.first_name}${
           form.values.middle_name && ` ${form.values.middle_name}`

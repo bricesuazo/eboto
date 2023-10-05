@@ -27,10 +27,9 @@ export default async function Page({
 
   if (!election) notFound();
 
-  const partylists =
-    await api.election.getAllPartylistsWithoutINDByElectionId.query({
-      election_id: election.id,
-    });
+  const partylists = await api.election.getDashboardPartylistData.query({
+    election_id: election.id,
+  });
 
   return (
     <DashboardPartylist

@@ -41,7 +41,7 @@ export default function CreatePosition({
         });
         close();
 
-        await context.election.getAllPositionsByElectionId.invalidate();
+        await context.election.getDashboardPositionData.invalidate();
       },
     });
 

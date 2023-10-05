@@ -54,7 +54,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
   const partylistsQuery = api.election.getAllPartylistsByElectionId.useQuery({
     election_id: position.election_id,
   });
-  const positionsQuery = api.election.getAllPositionsByElectionId.useQuery({
+  const positionsQuery = api.election.getDashboardPositionData.useQuery({
     election_id: position.election_id,
   });
 
@@ -78,7 +78,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
           });
         }
 
-        await context.election.getAllPositionsWithCandidatesByElectionId.invalidate();
+        await context.election.getDashboardCandidateData.invalidate();
         notifications.show({
           title: `${form.values.first_name} ${form.values.last_name} created!`,
           message: "Successfully created position",

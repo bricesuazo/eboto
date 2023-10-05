@@ -192,7 +192,36 @@ export const electionRouter = createTRPCRouter({
 
       return partylists;
     }),
-  getAllPositionsByElectionId: protectedProcedure
+  getDashboardOverviewData: protectedProcedure
+    .input(
+      z.object({
+        election_slug: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const election = await ctx.db.query.elections.findFirst({
+        where: (elections, { eq }) => eq(elections.slug, input.election_slug),
+        with: {
+          positions: true,
+          partylists: {
+            where: (partylist, { eq, not }) =>
+              not(eq(partylist.acronym, "IND")),
+          },
+          voters: {
+            with: {
+              votes: true,
+            },
+          },
+          generated_election_results: true,
+          candidates: true,
+        },
+      });
+
+      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+
+      return election;
+    }),
+  getDashboardPositionData: protectedProcedure
     .input(
       z.object({
         election_id: z.string().min(1),
@@ -210,7 +239,7 @@ export const electionRouter = createTRPCRouter({
 
       return positions;
     }),
-  getAllPositionsWithCandidatesByElectionId: protectedProcedure
+  getDashboardCandidateData: protectedProcedure
     .input(
       z.object({
         election_id: z.string().min(1),
@@ -277,7 +306,7 @@ export const electionRouter = createTRPCRouter({
 
       return positionsWithCandidates;
     }),
-  getAllPartylistsWithoutINDByElectionId: protectedProcedure
+  getDashboardPartylistData: protectedProcedure
     .input(
       z.object({
         election_id: z.string().min(1),
@@ -420,7 +449,7 @@ export const electionRouter = createTRPCRouter({
       },
     });
   }),
-  // getAllPartylistsWithoutINDByElectionId: protectedProcedure
+  // getDashboardPartylistData: protectedProcedure
   //   .input(
   //     z.object({
   //       election_id: z.string().min(1),
@@ -451,7 +480,7 @@ export const electionRouter = createTRPCRouter({
   //       orderBy: (partylists, { asc }) => asc(partylists.created_at),
   //     });
   //   }),
-  // getAllPositionsByElectionId: protectedProcedure
+  // getDashboardPositionData: protectedProcedure
   //   .input(
   //     z.object({
   //       election_id: z.string().min(1),

@@ -23,7 +23,7 @@ export default function DeletePosition({ position }: { position: Position }) {
           autoClose: 5000,
         });
         close();
-        await context.election.getAllPositionsByElectionId.invalidate();
+        await context.election.getDashboardPositionData.invalidate();
       },
       onError: (error) => {
         notifications.show({

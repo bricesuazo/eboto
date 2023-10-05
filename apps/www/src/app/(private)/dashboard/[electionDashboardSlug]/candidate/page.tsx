@@ -25,7 +25,7 @@ export default async function Page({
   if (!election) notFound();
 
   const positionsWithCandidates =
-    await api.election.getAllPositionsWithCandidatesByElectionId.query({
+    await api.election.getDashboardCandidateData.query({
       election_id: election.id,
     });
 

@@ -25,7 +25,7 @@ export default function DeletePartylist({
           autoClose: 5000,
         });
 
-        await context.election.getAllPartylistsWithoutINDByElectionId.invalidate();
+        await context.election.getDashboardPartylistData.invalidate();
       },
       onError: (error) => {
         notifications.show({

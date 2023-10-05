@@ -16,15 +16,14 @@ export default function DashboardPartylist({
   partylists,
 }: {
   election: Election;
-  partylists: RouterOutputs["election"]["getAllPartylistsWithoutINDByElectionId"];
+  partylists: RouterOutputs["election"]["getDashboardPartylistData"];
 }) {
-  const partylistsQuery =
-    api.election.getAllPartylistsWithoutINDByElectionId.useQuery(
-      {
-        election_id: election.id,
-      },
-      { initialData: partylists },
-    );
+  const partylistsQuery = api.election.getDashboardPartylistData.useQuery(
+    {
+      election_id: election.id,
+    },
+    { initialData: partylists },
+  );
 
   return (
     <Stack>
