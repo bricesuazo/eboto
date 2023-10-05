@@ -26,6 +26,7 @@ import {
   Group,
   InputBase,
   InputPlaceholder,
+  ScrollAreaAutosize,
   Stack,
   Text,
   useCombobox,
@@ -40,7 +41,6 @@ export default function DashboardElection({
 }: React.PropsWithChildren<{
   userId?: string;
 }>) {
-  // const { data } = useSession();
   const router = useRouter();
   const params = useParams();
 
@@ -121,6 +121,7 @@ export default function DashboardElection({
                     pointer
                     rightSection={<ComboboxChevron />}
                     onClick={() => combobox.toggleDropdown()}
+                    disabled={!elections}
                   >
                     {currentElection?.name ? (
                       <Text truncate size="sm">
@@ -138,66 +139,68 @@ export default function DashboardElection({
 
                 <ComboboxDropdown>
                   <ComboboxOptions>
-                    {elections &&
-                      [
-                        {
-                          group: "Ongoing",
-                          elections: elections
-                            .filter(
-                              ({ election }) =>
-                                election.start_date < new Date() &&
-                                election.end_date > new Date(),
-                            )
-                            .sort(
-                              (a, b) =>
-                                b.election.updated_at.getTime() -
-                                a.election.updated_at.getTime(),
-                            ),
-                        },
-                        {
-                          group: "Upcoming",
-                          elections: elections
-                            .filter(
-                              ({ election }) =>
-                                election.start_date > new Date(),
-                            )
-                            .sort(
-                              (a, b) =>
-                                b.election.updated_at.getTime() -
-                                a.election.updated_at.getTime(),
-                            ),
-                        },
-                        {
-                          group: "Completed",
-                          elections: elections
-                            .filter(
-                              ({ election }) => election.end_date < new Date(),
-                            )
-                            .sort(
-                              (a, b) =>
-                                b.election.updated_at.getTime() -
-                                a.election.updated_at.getTime(),
-                            ),
-                        },
-                      ].map(({ group, elections }) => (
-                        <ComboboxGroup key={group} label={group}>
-                          {elections.map(({ election }) => (
-                            <ComboboxOption
-                              key={election.id}
-                              value={election.slug}
-                              active={currentElection?.slug === election.slug}
-                              selected={currentElection?.slug === election.slug}
-                            >
-                              <Group gap="xs">
-                                {currentElection?.slug === election.slug && (
-                                  <CheckIcon size={12} />
-                                )}
-                                <span>{election.name}</span>
-                              </Group>
-                            </ComboboxOption>
-                          ))}
-                        </ComboboxGroup>
-                      ))}
+                    <ScrollAreaAutosize mah={200}>
+                      {elections &&
+                        [
+                          {
+                            group: "Ongoing",
+                            elections: elections
+                              .filter(
+                                ({ election }) =>
+                                  election.start_date < new Date() &&
+                                  election.end_date > new Date(),
+                              )
+                              .sort(
+                                (a, b) =>
+                                  b.election.updated_at.getTime() -
+                                  a.election.updated_at.getTime(),
+                              ),
+                          },
+                          {
+                            group: "Upcoming",
+                            elections: elections
+                              .filter(
+                                ({ election }) =>
+                                  election.start_date > new Date(),
+                              )
+                              .sort(
+                                (a, b) =>
+                                  b.election.updated_at.getTime() -
+                                  a.election.updated_at.getTime(),
+                              ),
+                          },
+                          {
+                            group: "Completed",
+                            elections: elections
+                              .filter(
+                                ({ election }) =>
+                                  election.end_date < new Date(),
+                              )
+                              .sort(
+                                (a, b) =>
+                                  b.election.updated_at.getTime() -
+                                  a.election.updated_at.getTime(),
+                              ),
+                          },
+                        ].map(({ group, elections }) => (
+                          <ComboboxGroup key={group} label={group}>
+                            {elections.map(({ election }) => (
+                              <ComboboxOption
+                                key={election.id}
+                                value={election.slug}
+                                active={currentElection?.slug === election.slug}
+                              >
+                                <Group gap="xs">
+                                  {currentElection?.slug === election.slug && (
+                                    <CheckIcon size={12} />
+                                  )}
+                                  <span>{election.name}</span>
+                                </Group>
+                              </ComboboxOption>
+                            ))}
+                          </ComboboxGroup>
+                        ))}
+                    </ScrollAreaAutosize>
                   </ComboboxOptions>
                 </ComboboxDropdown>
               </Combobox>

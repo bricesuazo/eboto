@@ -23,11 +23,77 @@ import {
   reported_problems,
   voter_fields,
   voters,
+  votes,
 } from "@eboto-mo/db/schema";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const electionRouter = createTRPCRouter({
+  vote: protectedProcedure
+    .input(
+      z.object({
+        election_id: z.string(),
+        votes: z.array(
+          z.object({
+            position_id: z.string(),
+            votes: z.array(z.string()),
+          }),
+        ),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const election = await ctx.db.query.elections.findFirst({
+        where: (elections, { eq }) => eq(elections.id, input.election_id),
+      });
+
+      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+
+      if (!isElectionOngoing({ election }))
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Election is not ongoing",
+        });
+
+      const existingVotes = await ctx.db.query.votes.findMany({
+        where: (votes, { eq, and }) =>
+          and(
+            eq(votes.voter_id, ctx.session.user.id),
+            eq(votes.election_id, election.id),
+          ),
+      });
+
+      if (existingVotes.length > 0)
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You have already voted in this election",
+        });
+
+      await ctx.db.insert(votes).values(
+        input.votes
+          .map((vote) =>
+            vote.votes.map((candidate_id) =>
+              candidate_id === "abstain"
+                ? {
+                    position_id: vote.position_id,
+                    voter_id: ctx.session.user.id,
+                    election_id: input.election_id,
+                  }
+                : {
+                    candidate_id,
+                    voter_id: ctx.session.user.id,
+                    election_id: input.election_id,
+                  },
+            ),
+          )
+          .flat(),
+      );
+
+      // await sendEmailTransport({
+      //   email: ctx.session.user.email,
+      //   subject: `Resibo: You have successfully casted your vote in ${election.name}`,
+      //   html: render(<VoteCasted election={election} votes={votes} />),
+      // });
+    }),
   getElectionBySlug: publicProcedure
     .input(
       z.object({

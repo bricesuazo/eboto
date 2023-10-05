@@ -45,6 +45,16 @@ export default async function VotePage({
 
   if (!isElectionOngoing({ election })) redirect(`/${election.slug}`);
 
+  const hasVoted = await db.query.votes.findFirst({
+    where: (votes, { eq, and }) =>
+      and(
+        eq(votes.voter_id, session.user.id),
+        eq(votes.election_id, election.id),
+      ),
+  });
+
+  if (hasVoted) redirect(`/${election.slug}/realtime`);
+
   if (election.publicity === "PRIVATE") {
     const commissioner = await db.query.commissioners.findFirst({
       where: (commissioner, { eq, and, isNull }) =>
@@ -113,7 +123,7 @@ export default async function VotePage({
             <Balancer>Select your candidates for each position.</Balancer>
           </Text>
         </Box>
-        <VoteForm positions={positions} />
+        <VoteForm election={election} positions={positions} />
       </Stack>
     </Container>
   );

@@ -1,8 +1,13 @@
 "use client";
 
+import { useRef } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { api } from "@/trpc/client";
+import { useConfetti } from "@/utils/confetti";
 import toWords from "@/utils/toWords";
-import type { Candidate, Partylist, Position } from "@eboto-mo/db/schema";
 import {
+  Alert,
   Box,
   Button,
   Center,
@@ -18,23 +23,36 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useColorScheme, useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import {
+  IconAlertCircle,
+  IconCheck,
   IconFingerprint,
   IconUser,
   IconUserQuestion,
+  IconX,
 } from "@tabler/icons-react";
-import Image from "next/image";
-import { useRef } from "react";
+
+import type {
+  Candidate,
+  Election,
+  Partylist,
+  Position,
+} from "@eboto-mo/db/schema";
 
 export default function VoteForm({
   positions,
+  election,
 }: {
+  election: Election;
   positions: (Position & {
     candidates: (Candidate & {
       partylist: Partylist;
     })[];
   })[];
 }) {
+  const router = useRouter();
+  const { fireConfetti } = useConfetti();
   const form = useForm<
     Record<
       string,
@@ -61,6 +79,28 @@ export default function VoteForm({
 
   const [opened, { open, close }] = useDisclosure(false);
 
+  const voteMutation = api.election.vote.useMutation({
+    onSuccess: async () => {
+      router.push(`/${election.slug}/realtime`);
+      notifications.show({
+        title: "Vote casted successfully!",
+        message: "You can now view the realtime results",
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
+      });
+      await fireConfetti();
+    },
+    onError: () => {
+      notifications.show({
+        title: "Error casting vote",
+        message: voteMutation.error?.message,
+        icon: <IconX size="1.1rem" />,
+        color: "red",
+        autoClose: 5000,
+      });
+    },
+  });
+
   return (
     <>
       <Modal
@@ -70,17 +110,13 @@ export default function VoteForm({
       >
         <form
           onSubmit={form.onSubmit((values) => {
-            console.log(
-              "🚀 ~ file: vote-form.tsx:60 ~ onSubmit={form.onSubmit ~ values:",
-              values,
-            );
-            // voteMutation.mutate({
-            //   electionId: election.id,
-            //   votes: Object.entries(values).map(([key, value]) => ({
-            //     positionId: key,
-            //     votes: value.votes,
-            //   })),
-            // });
+            voteMutation.mutate({
+              election_id: election.id,
+              votes: Object.entries(values).map(([key, value]) => ({
+                position_id: key,
+                votes: value.votes,
+              })),
+            });
           })}
         >
           <Stack>
@@ -130,7 +166,7 @@ export default function VoteForm({
               );
             })}
 
-            {/* {voteMutation.isError && (
+            {voteMutation.isError && (
               <Alert
                 icon={<IconAlertCircle size="1rem" />}
                 title="Error"
@@ -147,19 +183,10 @@ export default function VoteForm({
               >
                 Cancel
               </Button>
-              <Button
-                loading={voteMutation.isLoading}
-                // onClick={() => {
-                //   voteMutation.mutate({
-                //     electionId: election.id,
-                //     votes:
-                //   });
-                // }}
-                type="submit"
-              >
+              <Button loading={voteMutation.isLoading} type="submit">
                 Confirm
               </Button>
-            </Group> */}
+            </Group>
           </Stack>
         </form>
       </Modal>

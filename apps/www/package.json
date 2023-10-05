@@ -18,6 +18,7 @@
     "@eboto-mo/eslint-config": "workspace:*",
     "@emotion/react": "^11.11.1",
     "@mantine/carousel": "7.1.1",
+    "@mantine/code-highlight": "^7.1.1",
     "@mantine/core": "7.1.1",
     "@mantine/dates": "7.1.1",
     "@mantine/dropzone": "7.1.1",
