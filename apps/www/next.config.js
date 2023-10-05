@@ -9,7 +9,7 @@ module.exports = {
     // swcPlugins: [["next-superjson-plugin", {}]],
   },
   images: {
-    unoptimized: true,
+    // unoptimized: true,
     domains: ["lh3.googleusercontent.com", "ocozashcaobsffletnyj.supabase.co"],
   },
 };
