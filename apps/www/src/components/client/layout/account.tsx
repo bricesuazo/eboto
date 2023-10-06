@@ -1,0 +1,117 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  Box,
+  Button,
+  Combobox,
+  ComboboxDropdown,
+  ComboboxOption,
+  ComboboxOptions,
+  ComboboxTarget,
+  Container,
+  Divider,
+  Flex,
+  InputBase,
+  InputPlaceholder,
+  Stack,
+  Text,
+  useCombobox,
+} from "@mantine/core";
+import { IconLock, IconUser } from "@tabler/icons-react";
+
+export default function AccountPageLayoutClient({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const combobox = useCombobox();
+
+  const options = [
+    {
+      id: 0,
+      label: "Account",
+      value: "",
+      icon: IconUser,
+    },
+    {
+      id: 1,
+      label: "Password",
+      value: "change-password",
+      icon: IconLock,
+    },
+  ];
+
+  return (
+    <Container h="100%" p={0}>
+      <Flex h="100%">
+        <Stack
+          gap={4}
+          p="md"
+          w={{ base: "12rem", sm: "16rem" }}
+          visibleFrom="xs"
+        >
+          {options.map((option) => (
+            <Button
+              key={option.id}
+              component={Link}
+              href={`/account/${option.value}`}
+              variant={
+                pathname?.split("/account")[1] === option.value
+                  ? "light"
+                  : "subtle"
+              }
+              size="md"
+              justify="left"
+              leftSection={<option.icon size="1.25rem" />}
+            >
+              <Text size="sm">{option.label}</Text>
+            </Button>
+          ))}
+        </Stack>
+        <Divider orientation="vertical" hiddenFrom="xs" />
+        <Box style={{ flex: 1 }} p="md">
+          <Combobox
+            store={combobox}
+            onOptionSubmit={(val) => {
+              router.push(`/account/${val}`);
+              combobox.closeDropdown();
+            }}
+          >
+            <ComboboxTarget>
+              <InputBase
+                component="button"
+                pointer
+                rightSection={<Combobox.Chevron />}
+                onClick={() => combobox.toggleDropdown()}
+                // value={
+                //   options.find(
+                //     (option) => option.value === pathname?.split("/account")[1],
+                //   )?.label ?? "Account"
+                // }
+                hiddenFrom="xs"
+                mb="md"
+              >
+                <InputPlaceholder>Pick value</InputPlaceholder>
+              </InputBase>
+            </ComboboxTarget>
+
+            <ComboboxDropdown>
+              <ComboboxOptions>
+                {options.map((option) => (
+                  <ComboboxOption value={option.value} key={option.id}>
+                    {option.label}
+                  </ComboboxOption>
+                ))}
+              </ComboboxOptions>
+            </ComboboxDropdown>
+          </Combobox>
+          {children}
+        </Box>
+      </Flex>
+    </Container>
+  );
+}
