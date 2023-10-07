@@ -304,7 +304,7 @@ export default function AccountPageClient({
                               fill
                               sizes="100%"
                               priority
-                              objectFit="cover"
+                              style={{ objectFit: "cover" }}
                             />
                           </Box>
                           <Text>Current image</Text>

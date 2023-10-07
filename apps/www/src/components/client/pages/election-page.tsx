@@ -217,7 +217,7 @@ export default function ElectionPage({
                                 alt="Candidate's image"
                                 fill
                                 sizes="100%"
-                                objectFit="cover"
+                                style={{ objectFit: "cover" }}
                                 priority
                               />
                             ) : (
