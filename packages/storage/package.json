@@ -1,0 +1,14 @@
+{
+  "name": "@eboto-mo/storage",
+  "main": "./index.ts",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@eboto-mo/auth": "workspace:*",
+    "@uploadthing/react": "^5.6.2",
+    "uploadthing": "^5.7.1"
+  },
+  "devDependencies": {}
+}
