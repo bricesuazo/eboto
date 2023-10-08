@@ -13,6 +13,7 @@
     "@eboto-mo/auth": "workspace:*",
     "@eboto-mo/constants": "workspace:*",
     "@eboto-mo/db": "workspace:*",
+    "@eboto-mo/storage": "workspace:*",
     "@t3-oss/env-nextjs": "^0.6.1",
     "@trpc/client": "^10.38.5",
     "@trpc/server": "^10.38.5",

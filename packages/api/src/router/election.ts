@@ -736,6 +736,18 @@ export const electionRouter = createTRPCRouter({
           message: "Unauthorized",
         });
 
+      // if (input.newLogo) {
+      //   const blob = new Blob([input.newLogo]);
+      //   image = await ctx.utapi.uploadFiles(
+      //     new File(
+      //       [blob],
+      //       input.id + "_logo" + blob.type.replace("image/", "."),
+      //     ),
+      //   );
+
+      //   if (input.oldLogo) await ctx.utapi.deleteFiles(input.oldLogo);
+      // }
+
       await ctx.db
         .update(elections)
         .set({

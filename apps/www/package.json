@@ -44,6 +44,7 @@
     "@trpc/next": "^10.38.4",
     "@trpc/react-query": "^10.38.4",
     "@trpc/server": "^10.38.4",
+    "@uploadthing/react": "^5.6.2",
     "@upstash/qstash": "^0.3.6",
     "@vercel/analytics": "^1.0.2",
     "bcryptjs": "^2.4.3",

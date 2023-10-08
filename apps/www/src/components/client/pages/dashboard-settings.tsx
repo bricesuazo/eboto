@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { api } from "@/trpc/client";
+import { uploadFiles } from "@/utils/uploadthing";
 import {
   Alert,
   Box,
@@ -19,7 +20,6 @@ import {
 } from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
 import { Dropzone, DropzoneReject, IMAGE_MIME_TYPE } from "@mantine/dropzone";
-import type { FileWithPath } from "@mantine/dropzone";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -49,6 +49,7 @@ export default function DashboardSettings({
       initialData: election,
     },
   );
+  const [isUpdating, setIsUpdating] = useState(false);
   const router = useRouter();
   const openRef = useRef<() => void>(null);
   const editElectionMutation = api.election.editElection.useMutation({
@@ -65,6 +66,9 @@ export default function DashboardSettings({
       });
 
       form.resetDirty();
+      form.setValues({
+        newLogo: null,
+      });
 
       await getElectionBySlugQuery.refetch();
     },
@@ -87,17 +91,19 @@ export default function DashboardSettings({
     start_date: Date;
     end_date: Date;
     publicity: Publicity;
-    logo: string | null | FileWithPath;
+    oldLogo: string | null;
+    newLogo: File | null;
   }>({
     initialValues: {
-      name: election.name,
-      newSlug: election.slug,
-      description: election.description ?? "",
+      name: getElectionBySlugQuery.data.name,
+      newSlug: getElectionBySlugQuery.data.slug,
+      description: getElectionBySlugQuery.data.description ?? "",
       // voter_domain: null,
-      start_date: election.start_date,
-      end_date: election.end_date,
-      publicity: election.publicity,
-      logo: election.logo,
+      start_date: getElectionBySlugQuery.data.start_date,
+      end_date: getElectionBySlugQuery.data.end_date,
+      publicity: getElectionBySlugQuery.data.publicity,
+      oldLogo: getElectionBySlugQuery.data.logo,
+      newLogo: null,
     },
     validateInputOnBlur: true,
     clearInputErrorOnChange: true,
@@ -264,60 +270,44 @@ export default function DashboardSettings({
       </Modal>
 
       <form
-        onSubmit={form.onSubmit((values) => {
-          void (() =>
-            editElectionMutation.mutate({
-              id: election.id,
-              name: values.name,
-              newSlug: values.newSlug,
-              description: values.description,
-              oldSlug: election.slug,
-              // voter_domain: values.voter_domain,
-              start_date: values.start_date,
-              end_date: values.end_date,
-              publicity: values.publicity,
-              logo: null,
-              // logo:
-              //   typeof values.logo === "string" || values.logo === null
-              //     ? values.logo
-              //     : await uploadImage({
-              //         path:
-              //           "elections/" +
-              //           election.id +
-              //           "/logo/" +
-              //           Date.now().toString(),
-              //         image: values.logo,
-              //       }),
-            }))();
-
-          // await updateElectionMutation.mutateAsync({
-          //   id: value.id,
-          //   name: value.name,
-          //   slug: value.slug,
-          //   description: value.description,
-          //   // voter_domain: value.voter_domain,
-          //   start_date:
-          //     value.date[0] ||
-          //     new Date(new Date().setDate(new Date().getDate() + 1)),
-          //   end_date:
-          //     value.date[1] ||
-          //     new Date(new Date().setDate(new Date().getDate() + 8)),
-          //   voting_start: parseInt(value.voting_start),
-          //   voting_end: parseInt(value.voting_end),
-          //   publicity: value.publicity,
-          //   logo:
-          //     typeof value.logo === "string" || value.logo === null
-          //       ? value.logo
-          //       : await uploadImage({
-          //           path:
-          //             "/elections/" +
-          //             value.id +
-          //             "/logo/" +
-          //             Date.now().toString(),
-          //           image: value.logo,
-          //         }),
-          // });
-        })}
+        onSubmit={form.onSubmit(
+          (values) =>
+            void (async () => {
+              setIsUpdating(true);
+              await editElectionMutation.mutateAsync({
+                id: election.id,
+                name: values.name,
+                newSlug: values.newSlug,
+                description: values.description,
+                oldSlug: election.slug,
+                // voter_domain: values.voter_domain,
+                start_date: values.start_date,
+                end_date: values.end_date,
+                publicity: values.publicity,
+                // logo: null,
+                logo: values.newLogo
+                  ? (
+                      await uploadFiles({
+                        endpoint: "electionLogoUploader",
+                        files: [
+                          new File(
+                            [values.newLogo],
+                            election.id + "_logo_" + values.newLogo.name,
+                            {
+                              type: values.newLogo.type,
+                            },
+                          ),
+                        ],
+                        input: {
+                          election_id: election.id,
+                        },
+                      })
+                    )?.[0]?.url ?? null
+                  : values.oldLogo,
+              });
+              setIsUpdating(false);
+            })(),
+        )}
       >
         <Stack gap="sm">
           <TextInput
@@ -327,7 +317,7 @@ export default function DashboardSettings({
             placeholder="Enter election name"
             {...form.getInputProps("name")}
             leftSection={<IconLetterCase size="1rem" />}
-            disabled={editElectionMutation.isLoading}
+            disabled={isUpdating}
           />
 
           <TextInput
@@ -349,7 +339,7 @@ export default function DashboardSettings({
               (editElectionMutation.error?.data?.code === "CONFLICT" &&
                 editElectionMutation.error?.message)
             }
-            disabled={editElectionMutation.isLoading}
+            disabled={isUpdating}
           />
 
           <Textarea
@@ -366,7 +356,7 @@ export default function DashboardSettings({
               (editElectionMutation.error?.data?.code === "CONFLICT" &&
                 editElectionMutation.error?.message)
             }
-            disabled={editElectionMutation.isLoading}
+            disabled={isUpdating}
           />
 
           {/* <TextInput
@@ -407,7 +397,7 @@ export default function DashboardSettings({
             {...form.getInputProps("start_date")}
             leftSection={<IconCalendar size="1rem" />}
             disabled={
-              editElectionMutation.isLoading ||
+              isUpdating ||
               isElectionOngoing({
                 election: getElectionBySlugQuery.data,
               })
@@ -433,7 +423,7 @@ export default function DashboardSettings({
             {...form.getInputProps("end_date")}
             leftSection={<IconCalendar size="1rem" />}
             disabled={
-              editElectionMutation.isLoading ||
+              isUpdating ||
               isElectionOngoing({
                 election: getElectionBySlugQuery.data,
               })
@@ -453,7 +443,7 @@ export default function DashboardSettings({
               value: p,
               label: p.charAt(0) + p.slice(1).toLowerCase(),
             }))}
-            disabled={editElectionMutation.isLoading}
+            disabled={isUpdating}
           />
 
           <Box>
@@ -465,77 +455,66 @@ export default function DashboardSettings({
                 id="logo"
                 onDrop={(files) => {
                   if (!files[0]) return;
-                  form.setFieldValue("logo", files[0]);
+                  form.setFieldValue("newLogo", files[0]);
                 }}
                 openRef={openRef}
                 maxSize={5 * 1024 ** 2}
                 accept={IMAGE_MIME_TYPE}
                 multiple={false}
-                loading={editElectionMutation.isLoading}
+                loading={isUpdating}
               >
                 <Group
                   justify="center"
                   gap="xl"
                   style={{ minHeight: rem(140), pointerEvents: "none" }}
                 >
-                  {form.values.logo ? (
-                    typeof form.values.logo !== "string" && form.values.logo ? (
-                      <Group>
-                        <Box
-                          pos="relative"
-                          style={() => ({
-                            width: rem(120),
-                            height: rem(120),
+                  {form.values.newLogo ? (
+                    <Box
+                      pos="relative"
+                      style={() => ({
+                        width: rem(120),
+                        height: rem(120),
 
-                            // [theme.fn.smallerThan("sm")]: {
-                            //   width: rem(180),
-                            //   height: rem(180),
-                            // },
-                          })}
-                        >
-                          <Image
-                            src={
-                              typeof form.values.logo === "string"
-                                ? form.values.logo
-                                : URL.createObjectURL(form.values.logo)
-                            }
-                            alt="Logo"
-                            fill
-                            sizes="100%"
-                            priority
-                            style={{ objectFit: "cover" }}
-                          />
-                        </Box>
-                        <Text>{form.values.logo.name}</Text>
-                      </Group>
-                    ) : (
-                      election.logo && (
-                        <Group>
-                          <Box
-                            pos="relative"
-                            style={() => ({
-                              width: rem(120),
-                              height: rem(120),
+                        // [theme.fn.smallerThan("sm")]: {
+                        //   width: rem(180),
+                        //   height: rem(180),
+                        // },
+                      })}
+                    >
+                      <Image
+                        src={URL.createObjectURL(form.values.newLogo)}
+                        alt="Logo"
+                        fill
+                        sizes="100%"
+                        priority
+                        style={{ objectFit: "cover" }}
+                      />
+                    </Box>
+                  ) : form.values.oldLogo ? (
+                    <Group>
+                      <Box
+                        pos="relative"
+                        style={() => ({
+                          width: rem(120),
+                          height: rem(120),
 
-                              // [theme.fn.smallerThan("sm")]: {
-                              //   width: rem(180),
-                              //   height: rem(180),
-                              // },
-                            })}
-                          >
-                            <Image
-                              src={election.logo}
-                              alt="Logo"
-                              fill
-                              sizes="100%"
-                              priority
-                              style={{ objectFit: "cover" }}
-                            />
-                          </Box>
-                          <Text>Current logo</Text>
-                        </Group>
-                      )
-                    )
+                          // [theme.fn.smallerThan("sm")]: {
+                          //   width: rem(180),
+                          //   height: rem(180),
+                          // },
+                        })}
+                      >
+                        <Image
+                          src={form.values.oldLogo}
+                          alt="Logo"
+                          fill
+                          sizes="100%"
+                          priority
+                          style={{ objectFit: "cover" }}
+                        />
+                      </Box>
+                      <Text>Current logo</Text>
+                    </Group>
                   ) : (
                     <Box>
                       <Text size="xl" inline ta="center">
@@ -557,13 +536,12 @@ export default function DashboardSettings({
                   onClick={() => {
                     form.setValues({
                       ...form.values,
-                      logo: election.logo,
+                      oldLogo: election.logo,
+                      newLogo: null,
                     });
                   }}
                   disabled={
-                    typeof form.values.logo === "string" ||
-                    !election.logo ||
-                    editElectionMutation.isLoading
+                    form.values.oldLogo !== form.values.newLogo || isUpdating
                   }
                 >
                   Reset logo
@@ -572,9 +550,12 @@ export default function DashboardSettings({
                   color="red"
                   variant="light"
                   onClick={() => {
-                    form.setFieldValue("logo", null);
+                    form.setFieldValue("oldLogo", null);
+                    form.setFieldValue("newLogo", null);
                   }}
-                  disabled={!form.values.logo || editElectionMutation.isLoading}
+                  disabled={
+                    (!form.values.oldLogo && !form.values.newLogo) || isUpdating
+                  }
                 >
                   Delete logo
                 </Button>
@@ -595,7 +576,7 @@ export default function DashboardSettings({
           <Group justify="space-between">
             <Button
               type="submit"
-              loading={editElectionMutation.isLoading}
+              loading={isUpdating}
               disabled={!form.isDirty() || !form.isValid()}
               hiddenFrom="sm"
             >
@@ -603,7 +584,7 @@ export default function DashboardSettings({
             </Button>
             <Button
               type="submit"
-              loading={editElectionMutation.isLoading}
+              loading={isUpdating}
               disabled={!form.isDirty() || !form.isValid()}
               visibleFrom="sm"
             >
@@ -613,7 +594,7 @@ export default function DashboardSettings({
               variant="outline"
               color="red"
               onClick={open}
-              disabled={editElectionMutation.isLoading}
+              disabled={isUpdating}
               // style={(theme) => ({
               //   [theme.fn.smallerThan("xs")]: {
               //     display: "none",

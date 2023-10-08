@@ -1,5 +1,5 @@
-import { generateReactHelpers } from "@eboto-mo/storage";
-import type { OurFileRouter } from "@eboto-mo/storage";
+import { generateReactHelpers } from "@uploadthing/react/hooks";
 
-export const { useUploadThing, uploadFiles } =
-  generateReactHelpers<OurFileRouter>();
+import type { MainFileRouter } from "@eboto-mo/storage";
+
+export const { uploadFiles } = generateReactHelpers<MainFileRouter>();

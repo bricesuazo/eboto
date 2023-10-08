@@ -5,14 +5,17 @@ import { ZodError } from "zod";
 import { auth } from "@eboto-mo/auth";
 import type { Session } from "@eboto-mo/auth";
 import { db } from "@eboto-mo/db";
+import { utapi } from "@eboto-mo/storage";
 
 interface CreateContextOptions {
   session: Session | null;
+  utapi: typeof utapi;
 }
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     db,
+    utapi: opts.utapi,
   };
 };
 
@@ -21,12 +24,14 @@ export async function createTRPCContext(opts: {
   session: Session | null;
 }) {
   const session = opts.session ?? (await auth());
+
   // const source = opts.req?.headers.get("x-trpc-source") ?? "unknown";
 
   // console.log(">>> tRPC Request from", source, "by", session?.user);
 
   return createInnerTRPCContext({
     session,
+    utapi,
   });
 }
 

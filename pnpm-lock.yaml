@@ -128,6 +128,9 @@ importers:
       '@trpc/server':
         specifier: ^10.38.4
         version: registry.npmjs.org/@trpc/server@10.38.5
+      '@uploadthing/react':
+        specifier: ^5.6.2
+        version: registry.npmjs.org/@uploadthing/react@5.6.2(next@13.5.4)(react@18.2.0)(uploadthing@5.7.1)(zod@3.22.2)
       '@upstash/qstash':
         specifier: ^0.3.6
         version: registry.npmjs.org/@upstash/qstash@0.3.6
@@ -246,6 +249,9 @@ importers:
       '@eboto-mo/db':
         specifier: workspace:*
         version: link:../db
+      '@eboto-mo/storage':
+        specifier: workspace:*
+        version: link:../storage
       '@t3-oss/env-nextjs':
         specifier: ^0.6.1
         version: registry.npmjs.org/@t3-oss/env-nextjs@0.6.1(typescript@5.2.2)(zod@3.22.2)
@@ -428,12 +434,18 @@ importers:
       '@eboto-mo/db':
         specifier: workspace:*
         version: link:../db
+      '@t3-oss/env-nextjs':
+        specifier: ^0.6.1
+        version: registry.npmjs.org/@t3-oss/env-nextjs@0.6.1(typescript@5.2.2)(zod@3.22.4)
       '@uploadthing/react':
         specifier: ^5.6.2
         version: registry.npmjs.org/@uploadthing/react@5.6.2(react@18.2.0)(uploadthing@5.7.1)(zod@3.22.4)
       uploadthing:
         specifier: ^5.7.1
         version: registry.npmjs.org/uploadthing@5.7.1(zod@3.22.4)
+      zod:
+        specifier: ^3.22.2
+        version: registry.npmjs.org/zod@3.22.4
 
   tooling/eslint:
     dependencies:
@@ -3518,6 +3530,19 @@ packages:
       zod: registry.npmjs.org/zod@3.22.2
     dev: false
 
+  registry.npmjs.org/@t3-oss/env-core@0.6.1(typescript@5.2.2)(zod@3.22.4):
+    resolution: {integrity: sha512-KQD7qEDJtkWIWWmTVjNvk0wnHpkvAQ6CRbUxbWMFNG/fiosBQDQvtRpBNu6USxBscJCoC4z6y7P9MN52/mLOzw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@t3-oss/env-core/-/env-core-0.6.1.tgz}
+    id: registry.npmjs.org/@t3-oss/env-core/0.6.1
+    name: '@t3-oss/env-core'
+    version: 0.6.1
+    peerDependencies:
+      typescript: '>=4.7.2'
+      zod: ^3.0.0
+    dependencies:
+      typescript: registry.npmjs.org/typescript@5.2.2
+      zod: registry.npmjs.org/zod@3.22.4
+    dev: false
+
   registry.npmjs.org/@t3-oss/env-nextjs@0.6.1(typescript@5.2.2)(zod@3.22.2):
     resolution: {integrity: sha512-z1dIC++Vxj9kmzX5nSPfcrCSkszy3dTEPC4Ssx7Ap5AqR3c2Qa7S0xf8axn6coy7D/vCXDAAnHYnCMDhtcY3SQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@t3-oss/env-nextjs/-/env-nextjs-0.6.1.tgz}
     id: registry.npmjs.org/@t3-oss/env-nextjs/0.6.1
@@ -3530,6 +3555,20 @@ packages:
       '@t3-oss/env-core': registry.npmjs.org/@t3-oss/env-core@0.6.1(typescript@5.2.2)(zod@3.22.2)
       typescript: registry.npmjs.org/typescript@5.2.2
       zod: registry.npmjs.org/zod@3.22.2
+    dev: false
+
+  registry.npmjs.org/@t3-oss/env-nextjs@0.6.1(typescript@5.2.2)(zod@3.22.4):
+    resolution: {integrity: sha512-z1dIC++Vxj9kmzX5nSPfcrCSkszy3dTEPC4Ssx7Ap5AqR3c2Qa7S0xf8axn6coy7D/vCXDAAnHYnCMDhtcY3SQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@t3-oss/env-nextjs/-/env-nextjs-0.6.1.tgz}
+    id: registry.npmjs.org/@t3-oss/env-nextjs/0.6.1
+    name: '@t3-oss/env-nextjs'
+    version: 0.6.1
+    peerDependencies:
+      typescript: '>=4.7.2'
+      zod: ^3.0.0
+    dependencies:
+      '@t3-oss/env-core': registry.npmjs.org/@t3-oss/env-core@0.6.1(typescript@5.2.2)(zod@3.22.4)
+      typescript: registry.npmjs.org/typescript@5.2.2
+      zod: registry.npmjs.org/zod@3.22.4
     dev: false
 
   registry.npmjs.org/@tabler/icons-react@2.38.0(react@18.2.0):
@@ -4469,6 +4508,31 @@ packages:
     version: 0.2.1
     dev: false
 
+  registry.npmjs.org/@uploadthing/react@5.6.2(next@13.5.4)(react@18.2.0)(uploadthing@5.7.1)(zod@3.22.2):
+    resolution: {integrity: sha512-zW++ZJiIthEjcn0ZD5cYfQ+NR8Ez4P47gm7VNsAOeMmFz66JzdllHJ4AXQ9bnWl31M8L7mqxUrNlEc3jSd7CMg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@uploadthing/react/-/react-5.6.2.tgz}
+    id: registry.npmjs.org/@uploadthing/react/5.6.2
+    name: '@uploadthing/react'
+    version: 5.6.2
+    peerDependencies:
+      next: '*'
+      react: ^17.0.2 || ^18.0.0
+      uploadthing: ^5.0.0
+    peerDependenciesMeta:
+      next:
+        optional: true
+    dependencies:
+      '@uploadthing/shared': registry.npmjs.org/@uploadthing/shared@5.2.4(@uploadthing/mime-types@0.2.1)(zod@3.22.2)
+      attr-accept: registry.npmjs.org/attr-accept@2.2.2
+      file-selector: registry.npmjs.org/file-selector@0.6.0
+      next: registry.npmjs.org/next@13.5.4(react-dom@18.2.0)(react@18.2.0)
+      react: registry.npmjs.org/react@18.2.0
+      tailwind-merge: registry.npmjs.org/tailwind-merge@1.14.0
+      uploadthing: registry.npmjs.org/uploadthing@5.7.1(zod@3.22.2)
+    transitivePeerDependencies:
+      - '@uploadthing/mime-types'
+      - zod
+    dev: false
+
   registry.npmjs.org/@uploadthing/react@5.6.2(react@18.2.0)(uploadthing@5.7.1)(zod@3.22.4):
     resolution: {integrity: sha512-zW++ZJiIthEjcn0ZD5cYfQ+NR8Ez4P47gm7VNsAOeMmFz66JzdllHJ4AXQ9bnWl31M8L7mqxUrNlEc3jSd7CMg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@uploadthing/react/-/react-5.6.2.tgz}
     id: registry.npmjs.org/@uploadthing/react/5.6.2
@@ -4491,6 +4555,22 @@ packages:
     transitivePeerDependencies:
       - '@uploadthing/mime-types'
       - zod
+    dev: false
+
+  registry.npmjs.org/@uploadthing/shared@5.2.4(@uploadthing/mime-types@0.2.1)(zod@3.22.2):
+    resolution: {integrity: sha512-eWDqys/+jDhilvwAP5Ss5ph6Gw1opwZHfuHAXX1dDDsDNrBSOcZH8cKLFTBOaQ7896HWerpendMbRAA0EWaMeg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@uploadthing/shared/-/shared-5.2.4.tgz}
+    id: registry.npmjs.org/@uploadthing/shared/5.2.4
+    name: '@uploadthing/shared'
+    version: 5.2.4
+    peerDependencies:
+      '@uploadthing/mime-types': ^0.2.0
+      zod: ^3.22.3
+    peerDependenciesMeta:
+      '@uploadthing/mime-types':
+        optional: true
+    dependencies:
+      '@uploadthing/mime-types': registry.npmjs.org/@uploadthing/mime-types@0.2.1
+      zod: registry.npmjs.org/zod@3.22.2
     dev: false
 
   registry.npmjs.org/@uploadthing/shared@5.2.4(@uploadthing/mime-types@0.2.1)(zod@3.22.4):
@@ -5832,7 +5912,7 @@ packages:
       hanji: registry.npmjs.org/hanji@0.0.5
       json-diff: registry.npmjs.org/json-diff@0.9.0
       minimatch: registry.npmjs.org/minimatch@7.4.6
-      zod: registry.npmjs.org/zod@3.22.2
+      zod: registry.npmjs.org/zod@3.22.4
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -11038,6 +11118,19 @@ packages:
       registry-url: registry.npmjs.org/registry-url@3.1.0
     dev: true
 
+  registry.npmjs.org/uploadthing@5.7.1(zod@3.22.2):
+    resolution: {integrity: sha512-oPrW3avxIEJd1rVBuOnQ6sV3sDmKPSqMnk02aXZSPrVxZPbYzJDOWkbL3iqT9qYMliaP44nGCt3UK7we4d2HCg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/uploadthing/-/uploadthing-5.7.1.tgz}
+    id: registry.npmjs.org/uploadthing/5.7.1
+    name: uploadthing
+    version: 5.7.1
+    engines: {node: '>=18.13.0'}
+    dependencies:
+      '@uploadthing/mime-types': registry.npmjs.org/@uploadthing/mime-types@0.2.1
+      '@uploadthing/shared': registry.npmjs.org/@uploadthing/shared@5.2.4(@uploadthing/mime-types@0.2.1)(zod@3.22.2)
+    transitivePeerDependencies:
+      - zod
+    dev: false
+
   registry.npmjs.org/uploadthing@5.7.1(zod@3.22.4):
     resolution: {integrity: sha512-oPrW3avxIEJd1rVBuOnQ6sV3sDmKPSqMnk02aXZSPrVxZPbYzJDOWkbL3iqT9qYMliaP44nGCt3UK7we4d2HCg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/uploadthing/-/uploadthing-5.7.1.tgz}
     id: registry.npmjs.org/uploadthing/5.7.1
@@ -11433,12 +11526,12 @@ packages:
     resolution: {integrity: sha512-wvWkphh5WQsJbVk1tbx1l1Ly4yg+XecD+Mq280uBGt9wa5BKSWf4Mhp6GmrkPixhMxmabYY7RbzlwVP32pbGCg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/zod/-/zod-3.22.2.tgz}
     name: zod
     version: 3.22.2
+    dev: false
 
   registry.npmjs.org/zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/zod/-/zod-3.22.4.tgz}
     name: zod
     version: 3.22.4
-    dev: false
 
   registry.npmjs.org/zustand@4.4.2(@types/react@18.2.24)(react@18.2.0):
     resolution: {integrity: sha512-qF3/vZHCrjPUX5DvPE3DPDZlh+FiAWRKlP9PI7SlW1MCk8q4vUCDqyWsbF8K41ne0Yx8eeeb0m1cypn1LqUMYQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/zustand/-/zustand-4.4.2.tgz}

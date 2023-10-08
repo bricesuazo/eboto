@@ -9,6 +9,7 @@ import { appRouter } from "@eboto-mo/api";
 import type { AppRouter } from "@eboto-mo/api";
 import { auth } from "@eboto-mo/auth";
 import { db } from "@eboto-mo/db";
+import { utapi } from "@eboto-mo/storage";
 
 import { endingLink } from "./shared";
 
@@ -31,6 +32,7 @@ export const api = createTRPCNextAppDirServer<AppRouter>({
           router: appRouter,
           async createContext() {
             return {
+              utapi,
               session: await auth(),
               db,
               headers: {
