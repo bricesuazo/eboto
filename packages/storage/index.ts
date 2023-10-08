@@ -21,6 +21,11 @@ export const mainFileRouter = {
       // If you throw, the user will not be able to upload
       if (!session) throw new Error("Unauthorized");
 
+      if (session.user.image && !!session.user.image.length)
+        await utapi.deleteFiles(
+          session.user.image.split("https://utfs.io/f/")[1] ?? "",
+        );
+
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
       return { user_id: session.user.id };
     })

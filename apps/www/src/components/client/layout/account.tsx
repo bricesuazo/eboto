@@ -16,7 +16,6 @@ import {
   InputBase,
   InputPlaceholder,
   Stack,
-  Text,
   useCombobox,
 } from "@mantine/core";
 import { IconLock, IconUser } from "@tabler/icons-react";
@@ -42,6 +41,7 @@ export default function AccountPageLayoutClient({
       label: "Password",
       value: "change-password",
       icon: IconLock,
+      isDisabled: true,
     },
   ];
 
@@ -54,23 +54,46 @@ export default function AccountPageLayoutClient({
           w={{ base: "12rem", sm: "16rem" }}
           visibleFrom="xs"
         >
-          {options.map((option) => (
-            <Button
-              key={option.id}
-              component={Link}
-              href={`/account/${option.value}`}
-              variant={
-                pathname?.split("/account")[1] === option.value
-                  ? "light"
-                  : "subtle"
-              }
-              size="md"
-              justify="left"
-              leftSection={<option.icon size="1.25rem" />}
-            >
-              <Text size="sm">{option.label}</Text>
-            </Button>
-          ))}
+          {options.map((option) => {
+            if (option.isDisabled)
+              return (
+                <Button
+                  key={option.id}
+                  disabled
+                  variant={
+                    pathname?.split("/account")[1] === option.value
+                      ? "light"
+                      : "subtle"
+                  }
+                  size="md"
+                  justify="left"
+                  leftSection={<option.icon size="1.25rem" />}
+                  fw="normal"
+                  fz="sm"
+                >
+                  {option.label}
+                </Button>
+              );
+            return (
+              <Button
+                key={option.id}
+                component={Link}
+                href={`/account/${option.value}`}
+                variant={
+                  pathname?.split("/account")[1] === option.value
+                    ? "light"
+                    : "subtle"
+                }
+                size="md"
+                justify="left"
+                leftSection={<option.icon size="1.25rem" />}
+                fw="normal"
+                fz="sm"
+              >
+                {option.label}
+              </Button>
+            );
+          })}
         </Stack>
         <Divider orientation="vertical" hiddenFrom="xs" />
         <Box style={{ flex: 1 }} p="md">
@@ -102,7 +125,11 @@ export default function AccountPageLayoutClient({
             <ComboboxDropdown>
               <ComboboxOptions>
                 {options.map((option) => (
-                  <ComboboxOption value={option.value} key={option.id}>
+                  <ComboboxOption
+                    value={option.value}
+                    key={option.id}
+                    disabled={option.isDisabled}
+                  >
                     {option.label}
                   </ComboboxOption>
                 ))}

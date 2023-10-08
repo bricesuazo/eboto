@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
 import { api } from "@/trpc/client";
+import { uploadFiles } from "@/utils/uploadthing";
 import {
   Box,
   Button,
@@ -15,7 +15,6 @@ import {
   TextInput,
 } from "@mantine/core";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
-import type { FileWithPath } from "@mantine/dropzone";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconLetterCase, IconLock, IconX } from "@tabler/icons-react";
@@ -29,9 +28,12 @@ export default function AccountPageClient({
 }) {
   const openRef = useRef<() => void>(null);
   const [loading, setLoading] = useState(false);
-  const pathname = usePathname();
   const [opened, { open, close }] = useDisclosure(false);
   const [page, setPage] = useState<number>(0);
+
+  const sessionQuery = api.auth.getSession.useQuery(undefined, {
+    initialData: session,
+  });
 
   // const confirmPasswordMutation = api.user.checkPassword.useMutation({
   //   onSuccess: () => setPage(1),
@@ -50,14 +52,16 @@ export default function AccountPageClient({
     // middleName: string;
     // lastName: string;
     name: string | null;
-    image: FileWithPath | null | string;
+    oldImage: null | string;
+    newImage: File | null;
   }>({
     initialValues: {
       //   firstName: "",
       //   middleName: "",
       //   lastName: "",
-      name: session.user.name ?? null,
-      image: session.user.image ?? null,
+      name: sessionQuery.data.user.name ?? null,
+      oldImage: sessionQuery.data.user.image ?? null,
+      newImage: null,
     },
     validateInputOnBlur: true,
     // validate: {
@@ -82,17 +86,19 @@ export default function AccountPageClient({
   });
 
   const updateProfileMutation = api.user.updateProfile.useMutation({
-    onSuccess: (data) => {
+    onSuccess: () => {
       const dataFormatted = {
         // firstName: data.first_name,
         // middleName: data.middle_name ?? "",
         // lastName: data.last_name,
-        name: data.name,
-        image: data.image,
+        name: sessionQuery.data.user.name,
+        image: sessionQuery.data.user.image,
       };
 
       accountForm.setValues(dataFormatted);
-      accountForm.resetDirty(dataFormatted);
+      // accountForm.resetDirty(dataFormatted);
+
+      accountForm.setFieldValue("newImage", null);
     },
   });
 
@@ -112,19 +118,19 @@ export default function AccountPageClient({
   //     // eslint-disable-next-line react-hooks/exhaustive-deps
   //   }, [confirmationForm.values.password]);
 
-  useEffect(() => {
-    const data = {
-      //   firstName: session.user.firstName,
-      //   middleName: session.user.middleName ?? "",
-      //   lastName: session.user.lastName,
-      name: session.user.name ?? null,
-      image: session.user.image ?? null,
-    };
+  // useEffect(() => {
+  //   const data = {
+  //     //   firstName: session.user.firstName,
+  //     //   middleName: session.user.middleName ?? "",
+  //     //   lastName: session.user.lastName,
+  //     name: sessionQuery.data.user.name ?? null,
+  //     image: sessionQuery.data.user.image ?? null,
+  //   };
 
-    accountForm.setValues(data);
-    accountForm.resetDirty(data);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+  //   accountForm.setValues(data);
+  //   // accountForm.resetDirty(data);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [pathname]);
 
   return (
     <>
@@ -205,38 +211,28 @@ export default function AccountPageClient({
           void (async () => {
             setLoading(true);
 
-            // const image =
-            //   typeof values.image === "string" || values.image === null
-            //     ? values.image
-            //     : session.data &&
-            //       (await uploadImage({
-            //         path:
-            //           "/users/" +
-            //           session.data.user.id +
-            //           "/image/" +
-            //           Date.now().toString(),
-            //         image: values.image,
-            //       }));
-
             await updateProfileMutation.mutateAsync({
               // firstName: values.firstName,
               // middleName: values.middleName || null,
               // lastName: values.lastName,
               name: values.name ?? "",
-              image: null,
+              image: values.newImage
+                ? (
+                    await uploadFiles({
+                      endpoint: "profilePictureUploader",
+                      files: [
+                        new File(
+                          [values.newImage],
+                          session.user.id + "_image_" + values.newImage.name,
+                          {
+                            type: values.newImage.type,
+                          },
+                        ),
+                      ],
+                    })
+                  )?.[0]?.url ?? null
+                : values.oldImage,
             });
-            //   .then(async (data) => {
-            //     await update({
-            //       user: {
-            //         id: data.id,
-            //         image: data.image,
-            //         name: data.name,
-            //         //   firstName: data.first_name,
-            //         //   lastName: data.last_name,
-            //         //   middleName: data.middle_name,
-            //       },
-            //     });
-            //   });
 
             setLoading(false);
           })();
@@ -261,7 +257,7 @@ export default function AccountPageClient({
                 id="image"
                 onDrop={(files) => {
                   if (!files[0]) return;
-                  accountForm.setFieldValue("image", files[0]);
+                  accountForm.setFieldValue("newImage", files[0]);
                 }}
                 openRef={openRef}
                 maxSize={5 * 1024 ** 2}
@@ -274,43 +270,34 @@ export default function AccountPageClient({
                   gap="xl"
                   style={{ minHeight: rem(140), pointerEvents: "none" }}
                 >
-                  {accountForm.values.image ? (
-                    typeof accountForm.values.image !== "string" &&
-                    accountForm.values.image ? (
-                      <Group>
-                        <Box pos="relative" w={rem(120)} h={rem(120)}>
-                          <Image
-                            src={
-                              typeof accountForm.values.image === "string"
-                                ? accountForm.values.image
-                                : URL.createObjectURL(accountForm.values.image)
-                            }
-                            alt="image"
-                            fill
-                            sizes="100%"
-                            priority
-                            style={{ objectFit: "cover" }}
-                          />
-                        </Box>
-                        <Text>{accountForm.values.image.name}</Text>
-                      </Group>
-                    ) : (
-                      session.user.image && (
-                        <Group>
-                          <Box pos="relative" w={rem(120)} h={rem(120)}>
-                            <Image
-                              src={session.user.image}
-                              alt="image"
-                              fill
-                              sizes="100%"
-                              priority
-                              style={{ objectFit: "cover" }}
-                            />
-                          </Box>
-                          <Text>Current image</Text>
-                        </Group>
-                      )
-                    )
+                  {accountForm.values.newImage ? (
+                    <Group>
+                      <Box pos="relative" w={rem(120)} h={rem(120)}>
+                        <Image
+                          src={URL.createObjectURL(accountForm.values.newImage)}
+                          alt="image"
+                          fill
+                          sizes="100%"
+                          priority
+                          style={{ objectFit: "cover" }}
+                        />
+                      </Box>
+                      <Text>{accountForm.values.newImage.name}</Text>
+                    </Group>
+                  ) : accountForm.values.oldImage ? (
+                    <Group>
+                      <Box pos="relative" w={rem(120)} h={rem(120)}>
+                        <Image
+                          src={accountForm.values.oldImage}
+                          alt="image"
+                          fill
+                          sizes="100%"
+                          priority
+                          style={{ objectFit: "cover" }}
+                        />
+                      </Box>
+                      <Text>Current image</Text>
+                    </Group>
                   ) : (
                     <Box>
                       <Text size="xl" inline ta="center">
@@ -332,13 +319,13 @@ export default function AccountPageClient({
                   onClick={() => {
                     accountForm.setValues({
                       ...accountForm.values,
-                      image: session.user.image,
+                      oldImage: session.user.image,
+                      newImage: null,
                     });
                   }}
                   disabled={
-                    !!accountForm.values.image ||
-                    typeof accountForm.values.image === "string" ||
-                    loading
+                    accountForm.values.oldImage !==
+                      accountForm.values.newImage || loading
                   }
                 >
                   Reset image
@@ -347,9 +334,13 @@ export default function AccountPageClient({
                   color="red"
                   variant="light"
                   onClick={() => {
-                    accountForm.setFieldValue("image", null);
+                    accountForm.setValues({ oldImage: null, newImage: null });
                   }}
-                  disabled={!accountForm.values.image || loading}
+                  disabled={
+                    (!accountForm.values.oldImage &&
+                      !accountForm.values.newImage) ||
+                    loading
+                  }
                 >
                   Delete image
                 </Button>
@@ -380,6 +371,7 @@ export default function AccountPageClient({
               color="red"
               w="fit-content"
               onClick={open}
+              disabled
             >
               Delete Account
             </Button>

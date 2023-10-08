@@ -550,8 +550,7 @@ export default function DashboardSettings({
                   color="red"
                   variant="light"
                   onClick={() => {
-                    form.setFieldValue("oldLogo", null);
-                    form.setFieldValue("newLogo", null);
+                    form.setValues({ oldLogo: null, newLogo: null });
                   }}
                   disabled={
                     (!form.values.oldLogo && !form.values.newLogo) || isUpdating

@@ -1,4 +1,4 @@
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const authRouter = createTRPCRouter({
   getUser: publicProcedure.query(async ({ ctx }) => {
@@ -8,7 +8,5 @@ export const authRouter = createTRPCRouter({
       })) ?? null
     );
   }),
-  getSession: publicProcedure.query(({ ctx }) => ctx.session),
-  getTest: publicProcedure.query(() => "test"),
-  test: publicProcedure.mutation(() => ""),
+  getSession: protectedProcedure.query(({ ctx }) => ctx.session),
 });

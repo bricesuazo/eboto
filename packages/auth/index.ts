@@ -23,6 +23,7 @@ declare module "next-auth" {
 
 export const {
   handlers: { GET, POST },
+  update,
   auth,
 } = NextAuth({
   adapter: DrizzleAdapter(db),

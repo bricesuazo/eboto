@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import { update } from "@eboto-mo/auth";
 import { eq } from "@eboto-mo/db";
 import { users } from "@eboto-mo/db/schema";
 
@@ -35,7 +36,13 @@ export const userRouter = createTRPCRouter({
         })
         .where(eq(users.id, ctx.session.user.id));
 
-      return user;
+      await update({
+        user: {
+          ...ctx.session.user,
+          name: input.name,
+          image: input.image,
+        },
+      });
     }),
 
   deleteAccount: protectedProcedure.mutation(async ({ ctx }) => {
