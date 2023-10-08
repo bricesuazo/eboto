@@ -1,7 +1,6 @@
 // import { db } from "@eboto-mo/db";
 // import { verification_tokens } from "@eboto-mo/db/schema";
-import type { FileWithPath } from "@mantine/dropzone";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+// import type { FileWithPath } from "@mantine/dropzone";
 
 import type { TokenType } from "@eboto-mo/db/schema";
 
@@ -42,22 +41,20 @@ export const sendEmail = ({
   // }
 };
 
-export const uploadImage = async ({
-  path,
-  image,
-}: {
-  path: string;
-  image: FileWithPath;
-}): Promise<string> => {
-  const supabase = createClientComponentClient();
+// export const uploadImage = async ({
+//   path,
+//   image,
+// }: {
+//   path: string;
+//   image: FileWithPath;
+// }): Promise<string> => {
+//   await supabase.storage.from("eboto-mo").upload(path, image, {
+//     contentType: "image/png",
+//   });
 
-  await supabase.storage.from("eboto-mo").upload(path, image, {
-    contentType: "image/png",
-  });
+//   const {
+//     data: { publicUrl },
+//   } = supabase.storage.from("eboto-mo").getPublicUrl(path);
 
-  const {
-    data: { publicUrl },
-  } = supabase.storage.from("eboto-mo").getPublicUrl(path);
-
-  return publicUrl;
-};
+//   return publicUrl;
+// };

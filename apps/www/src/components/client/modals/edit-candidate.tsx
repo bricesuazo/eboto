@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { api } from "@/trpc/client";
-import { uploadImage } from "@/utils";
 import {
   ActionIcon,
   Alert,
@@ -310,7 +309,7 @@ export default function EditCandidate({
       >
         <form
           onSubmit={form.onSubmit((values) => {
-            void (async () => {
+            void (() => {
               editCandidateMutation.mutate({
                 id: candidate.id,
                 first_name: values.first_name,
@@ -321,16 +320,17 @@ export default function EditCandidate({
                 partylist_id: values.partylist_id,
                 election_id: election.id,
                 position_id: values.position_id,
-                image_link: !values.image
-                  ? null
-                  : typeof values.image === "string"
-                  ? values.image
-                  : await uploadImage({
-                      path: `elections/${candidate.election_id}/candidates/${
-                        candidate.id
-                      }/image/${Date.now().toString()}`,
-                      image: values.image,
-                    }),
+                image_link: null,
+                // image_link: !values.image
+                //   ? null
+                //   : typeof values.image === "string"
+                //   ? values.image
+                //   : await uploadImage({
+                //       path: `elections/${candidate.election_id}/candidates/${
+                //         candidate.id
+                //       }/image/${Date.now().toString()}`,
+                //       image: values.image,
+                //     }),
 
                 credential_id: candidate.credential_id,
                 platforms: values.platforms,

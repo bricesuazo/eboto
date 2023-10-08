@@ -10,6 +10,6 @@ module.exports = {
   },
   images: {
     // unoptimized: true,
-    domains: ["lh3.googleusercontent.com", "ocozashcaobsffletnyj.supabase.co"],
+    domains: ["lh3.googleusercontent.com"],
   },
 };

@@ -4,7 +4,6 @@ import { useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { api } from "@/trpc/client";
-import { uploadImage } from "@/utils";
 import {
   Alert,
   Box,
@@ -266,7 +265,7 @@ export default function DashboardSettings({
 
       <form
         onSubmit={form.onSubmit((values) => {
-          void (async () =>
+          void (() =>
             editElectionMutation.mutate({
               id: election.id,
               name: values.name,
@@ -277,17 +276,18 @@ export default function DashboardSettings({
               start_date: values.start_date,
               end_date: values.end_date,
               publicity: values.publicity,
-              logo:
-                typeof values.logo === "string" || values.logo === null
-                  ? values.logo
-                  : await uploadImage({
-                      path:
-                        "elections/" +
-                        election.id +
-                        "/logo/" +
-                        Date.now().toString(),
-                      image: values.logo,
-                    }),
+              logo: null,
+              // logo:
+              //   typeof values.logo === "string" || values.logo === null
+              //     ? values.logo
+              //     : await uploadImage({
+              //         path:
+              //           "elections/" +
+              //           election.id +
+              //           "/logo/" +
+              //           Date.now().toString(),
+              //         image: values.logo,
+              //       }),
             }))();
 
           // await updateElectionMutation.mutateAsync({

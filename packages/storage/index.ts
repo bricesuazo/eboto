@@ -1,6 +1,8 @@
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 
 import { auth } from "@eboto-mo/auth";
+import { db, eq } from "@eboto-mo/db";
+import { users } from "@eboto-mo/db/schema";
 
 const f = createUploadthing();
 
@@ -21,9 +23,10 @@ export const mainFileRouter = {
     })
     .onUploadComplete(async ({ metadata, file }) => {
       // This code RUNS ON YOUR SERVER after upload
-      console.log("Upload complete for userId:", metadata.user_id);
-
-      console.log("file url", file.url);
+      await db
+        .update(users)
+        .set({ image: file.url })
+        .where(eq(users.id, metadata.user_id));
     }),
 } satisfies FileRouter;
 
@@ -31,3 +34,4 @@ export type OurFileRouter = typeof mainFileRouter;
 
 export * from "uploadthing/next";
 export * from "@uploadthing/react";
+export * from "@uploadthing/react/hooks";
