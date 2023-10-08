@@ -1,0 +1,23 @@
+.candidate-card {
+  padding: var(--mantine-spacing-md);
+  display: flex;
+  gap: var(--mantine-spacing-xs);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  height: 260px;
+
+  @media (max-width: $mantine-breakpoint-xs) {
+    width: 100%;
+    height: 240px;
+  }
+
+  background-color: light-dark(
+    var(--mantine-color-gray-0),
+    var(--mantine-color-gray-9)
+  );
+  border-radius: var(--mantine-radius-md);
+  border: 1px solid
+    light-dark(var(--mantine-color-gray-2), var(--mantine-color-gray-8));
+}

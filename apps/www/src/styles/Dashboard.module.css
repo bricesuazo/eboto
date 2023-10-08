@@ -1,0 +1,80 @@
+.card-container {
+  position: relative;
+  border-radius: var(--mantine-radius-md);
+  transition: all 100ms ease-in-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-xs);
+  background-color: light-dark(
+    var(--mantine-color-gray-0),
+    var(--mantine-color-dark-6)
+  );
+  border: 1px solid
+    light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+
+  @mixin hover {
+    background-color: light-dark(
+      var(--mantine-color-gray-1),
+      var(--mantine-color-dark-5)
+    );
+  }
+}
+
+.navbar-navbar {
+  /* background-color:
+      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white, */
+}
+
+.navbar-link {
+  /* ...theme.fn.focusStyles(), */
+  width: "100%";
+  display: "flex";
+  align-items: "center";
+  text-decoration: "none";
+  font-size: var(--mantine-font-size-sm);
+  /* color:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[1]
+        : theme.colors.gray[7], */
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-sm);
+  font-weight: 500;
+
+  /* "&:hover" {
+      backgroundColor:
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[6]
+          : theme.colors.gray[0]; */
+  /* color: theme.colorScheme === "dark" ? theme.white : theme.black; */
+
+  /* [`& .${getStylesRef("icon")}`] {
+        color: theme.colorScheme === "dark" ? theme.white : theme.black,
+      },
+    }, */
+}
+
+.navbar-linkIcon {
+  /* ref: getStylesRef("icon"); */
+  width: "1.25rem";
+  /* color:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[2]
+        : theme.colors.gray[6], */
+  margin-right: var(--mantine-spacing-sm);
+}
+
+.navbar-linkActive {
+  /* "&, &:hover" {
+      backgroundColor: theme.fn.variant({
+        variant: "light";
+        color: theme.primaryColor;
+      }).background,
+      color: theme.fn.variant({ variant: "light", color: theme.primaryColor })
+        .color,
+      [`& .${getStylesRef("icon")}`]: {
+        color: theme.fn.variant({ variant: "light", color: theme.primaryColor })
+          .color,
+      },
+    }, */
+}

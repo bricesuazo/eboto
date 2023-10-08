@@ -1,10 +1,8 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "target": "ESNext",
     "lib": ["dom", "dom.iterable", "esnext"],
-    "paths": {
-      "@/*": ["./src/*"]
-    },
     "allowJs": true,
     "checkJs": true,
     "skipLibCheck": true,
@@ -20,5 +18,5 @@
     "incremental": true,
     "noUncheckedIndexedAccess": true
   },
-  "include": [".eslintrc.js", ".prettierrc.js"]
+  "exclude": ["node_modules", "build", "dist", ".next", ".expo"]
 }

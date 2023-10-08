@@ -1,0 +1,37 @@
+{
+  "name": "@eboto-mo/auth",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "license": "MIT",
+  "scripts": {
+    "clean": "rm -rf .turbo node_modules",
+    "lint": "eslint .",
+    "format": "prettier --check \"**/*.{mjs,ts,md,json}\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@eboto-mo/db": "workspace:*",
+    "@auth/core": "^0.16.0",
+    "@auth/drizzle-adapter": "^0.3.2",
+    "@t3-oss/env-nextjs": "^0.6.1",
+    "next-auth": "0.0.0-manual.c885ac1d",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "zod": "^3.22.2"
+  },
+  "devDependencies": {
+    "@eboto-mo/eslint-config": "workspace:*",
+    "@eboto-mo/prettier-config": "workspace:*",
+    "@eboto-mo/tsconfig": "workspace:*",
+    "eslint": "^8.50.0",
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2"
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@eboto-mo/eslint-config/base"
+    ]
+  },
+  "prettier": "@eboto-mo/prettier-config"
+}

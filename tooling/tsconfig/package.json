@@ -1,0 +1,7 @@
+{
+  "name": "@eboto-mo/tsconfig",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

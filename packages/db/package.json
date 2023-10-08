@@ -1,0 +1,35 @@
+{
+  "name": "@eboto-mo/db",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "db:push": "pnpm with-env drizzle-kit push:mysql -- --verbose",
+    "db:studio": "pnpm with-env drizzle-kit studio --port 3001 --verbose",
+    "db:generate": "pnpm drizzle-kit generate:mysql",
+    "clean": "rm -rf .turbo node_modules",
+    "with-env": "dotenv -e ../../.env --"
+  },
+  "dependencies": {
+    "@auth/core": "^0.16.0",
+    "@planetscale/database": "^1.11.0",
+    "drizzle-orm": "0.28.6",
+    "mysql2": "^3.6.1",
+    "nanoid": "^5.0.1"
+  },
+  "devDependencies": {
+    "@eboto-mo/eslint-config": "workspace:*",
+    "@eboto-mo/prettier-config": "workspace:*",
+    "@eboto-mo/tsconfig": "workspace:*",
+    "@types/node": "^20.8.2",
+    "dotenv-cli": "^7.3.0",
+    "drizzle-kit": "0.19.13",
+    "typescript": "^5.2.2"
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@eboto-mo/eslint-config/base"
+    ]
+  },
+  "prettier": "@eboto-mo/prettier-config"
+}

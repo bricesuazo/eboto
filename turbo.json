@@ -1,0 +1,39 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local", "**/.env"],
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "lint": {},
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "start": {},
+    "db:push": {},
+    "db:studio": {},
+    "db:generate": {},
+    "email:dev": {}
+  },
+  "globalEnv": [
+    "CI",
+    "EXPO_ROUTER_APP_ROOT",
+    "NODE_ENV",
+    "SKIP_ENV_VALIDATION",
+    "VERCEL",
+    "VERCEL_URL",
+    "VERCEL_ENV",
+    "DATABASE_URL",
+    "PORT",
+    "NEXTAUTH_SECRET",
+    "NEXTAUTH_URL",
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
+    "QSTASH_CURRENT_SIGNING_KEY",
+    "QSTASH_NEXT_SIGNING_KEY",
+    "UPLOADTHING_SECRET",
+    "UPLOADTHING_APP_ID"
+  ]
+}
