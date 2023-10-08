@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 // import { useParams } from "next/navigation";
-import { Button, Paper, Stack } from "@mantine/core";
+import { Button, Paper, Stack, Text } from "@mantine/core";
 import { IconBrandGoogle } from "@tabler/icons-react";
 import { signIn } from "next-auth/react";
 
@@ -32,20 +32,26 @@ export default function SigninForm() {
     <>
       <Paper withBorder shadow="md" mt={30} radius="md" p="md">
         <Stack>
-          <Button
-            onClick={() => {
-              setLoadings((loadings) => ({ ...loadings, google: true }));
-              void (async () => {
-                await signIn("google");
-              })();
-            }}
-            leftSection={<IconBrandGoogle size={18} />}
-            variant="outline"
-            disabled={loadings.credential}
-            loading={loadings.google}
-          >
-            Sign in with Google
-          </Button>
+          {process.env.NODE_ENV === "production" ? (
+            <Text>
+              This website is currently in development. Please check back later.
+            </Text>
+          ) : (
+            <Button
+              onClick={() => {
+                setLoadings((loadings) => ({ ...loadings, google: true }));
+                void (async () => {
+                  await signIn("google");
+                })();
+              }}
+              leftSection={<IconBrandGoogle size={18} />}
+              variant="outline"
+              disabled={loadings.credential}
+              loading={loadings.google}
+            >
+              Sign in with Google
+            </Button>
+          )}
           {/* <Divider label="Or continue with email" labelPosition="center" />
           <form
             onSubmit={form.onSubmit(() => {

@@ -234,18 +234,21 @@ export default function Header({ userId }: { userId?: string }) {
                         // },
                       }}
                     >
-                      {session.status === "authenticated" &&
-                      session.data?.user.image ? (
-                        <Image
-                          src={session.data?.user.image}
-                          alt="Profile picture"
-                          fill
-                          sizes="100%"
-                          priority
-                          style={{
-                            objectFit: "cover",
-                          }}
-                        />
+                      {session.status === "authenticated" ? (
+                        session.data?.user.image ? (
+                          <Image
+                            src={session.data?.user.image}
+                            alt="Profile picture"
+                            fill
+                            sizes="100%"
+                            priority
+                            style={{
+                              objectFit: "cover",
+                            }}
+                          />
+                        ) : (
+                          <IconUserCircle />
+                        )
                       ) : (
                         <Skeleton w={24} h={24} />
                       )}
