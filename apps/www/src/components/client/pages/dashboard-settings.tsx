@@ -541,7 +541,9 @@ export default function DashboardSettings({
                     });
                   }}
                   disabled={
-                    form.values.oldLogo !== form.values.newLogo || isUpdating
+                    (form.values.oldLogo === election.logo &&
+                      form.values.newLogo === null) ||
+                    isUpdating
                   }
                 >
                   Reset logo

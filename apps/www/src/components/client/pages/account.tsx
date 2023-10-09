@@ -324,8 +324,9 @@ export default function AccountPageClient({
                     });
                   }}
                   disabled={
-                    accountForm.values.oldImage !==
-                      accountForm.values.newImage || loading
+                    (accountForm.values.oldImage === session.user.image &&
+                      accountForm.values.newImage === null) ||
+                    loading
                   }
                 >
                   Reset image
