@@ -7,7 +7,7 @@
     "db:studio": "pnpm with-env drizzle-kit studio --port 3001 --verbose",
     "db:generate": "pnpm drizzle-kit generate:mysql",
     "clean": "rm -rf .turbo node_modules",
-    "with-env": "dotenv -e ../../.env --"
+    "with-env": "dotenv -e ../../.env.local --"
   },
   "dependencies": {
     "@auth/core": "^0.16.0",
