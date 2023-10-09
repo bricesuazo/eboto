@@ -87,16 +87,16 @@ export default function AccountPageClient({
 
   const updateProfileMutation = api.user.updateProfile.useMutation({
     onSuccess: () => {
-      const dataFormatted = {
-        // firstName: data.first_name,
-        // middleName: data.middle_name ?? "",
-        // lastName: data.last_name,
-        name: sessionQuery.data.user.name,
-        image: sessionQuery.data.user.image,
-      };
+      // const dataFormatted = {
+      //   // firstName: data.first_name,
+      //   // middleName: data.middle_name ?? "",
+      //   // lastName: data.last_name,
+      //   name: sessionQuery.data.user.name,
+      //   image: sessionQuery.data.user.image,
+      // };
 
-      accountForm.setValues(dataFormatted);
-      // accountForm.resetDirty(dataFormatted);
+      accountForm.resetDirty();
+      // accountForm.setValues(dataFormatted);
 
       accountForm.setFieldValue("newImage", null);
     },

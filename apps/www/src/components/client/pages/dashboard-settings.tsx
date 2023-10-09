@@ -49,6 +49,7 @@ export default function DashboardSettings({
       initialData: election,
     },
   );
+  const context = api.useContext();
   const [isUpdating, setIsUpdating] = useState(false);
   const router = useRouter();
   const openRef = useRef<() => void>(null);
@@ -56,6 +57,9 @@ export default function DashboardSettings({
     onSuccess: async () => {
       if (form.values.newSlug !== election.slug) {
         router.push(`/dashboard/${form.values.newSlug}/settings`);
+      }
+      if (form.values.name !== election.name) {
+        await context.election.getAllMyElections.invalidate();
       }
 
       notifications.show({

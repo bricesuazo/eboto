@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   Box,
   Button,
+  CheckIcon,
   Combobox,
   ComboboxDropdown,
   ComboboxOption,
@@ -13,6 +14,7 @@ import {
   Container,
   Divider,
   Flex,
+  Group,
   InputBase,
   InputPlaceholder,
   Stack,
@@ -46,14 +48,9 @@ export default function AccountPageLayoutClient({
   ];
 
   return (
-    <Container h="100%" p={0}>
-      <Flex h="100%">
-        <Stack
-          gap={4}
-          p="md"
-          w={{ base: "12rem", sm: "16rem" }}
-          visibleFrom="xs"
-        >
+    <Container h="100%" p="md">
+      <Flex h="100%" gap="md">
+        <Stack gap="xs" w={{ base: "12rem", sm: "16rem" }} visibleFrom="xs">
           {options.map((option) => {
             if (option.isDisabled)
               return (
@@ -95,8 +92,8 @@ export default function AccountPageLayoutClient({
             );
           })}
         </Stack>
-        <Divider orientation="vertical" hiddenFrom="xs" />
-        <Box style={{ flex: 1 }} p="md">
+        <Divider orientation="vertical" visibleFrom="xs" />
+        <Box style={{ flex: 1 }}>
           <Combobox
             store={combobox}
             onOptionSubmit={(val) => {
@@ -110,27 +107,36 @@ export default function AccountPageLayoutClient({
                 pointer
                 rightSection={<Combobox.Chevron />}
                 onClick={() => combobox.toggleDropdown()}
-                // value={
-                //   options.find(
-                //     (option) => option.value === pathname?.split("/account")[1],
-                //   )?.label ?? "Account"
-                // }
-                hiddenFrom="xs"
                 mb="md"
+                hiddenFrom="xs"
               >
-                <InputPlaceholder>Pick value</InputPlaceholder>
+                {options.find(
+                  (option) => option.value === pathname?.split("/account")[1],
+                )?.label ?? <InputPlaceholder>Select page</InputPlaceholder>}
               </InputBase>
             </ComboboxTarget>
 
-            <ComboboxDropdown>
+            <ComboboxDropdown hiddenFrom="xs">
               <ComboboxOptions>
                 {options.map((option) => (
                   <ComboboxOption
                     value={option.value}
                     key={option.id}
                     disabled={option.isDisabled}
+                    active={
+                      options.find(
+                        (option) =>
+                          option.value === pathname?.split("/account")[1],
+                      )?.value === option.value
+                    }
                   >
-                    {option.label}
+                    <Group gap="xs">
+                      {options.find(
+                        (option) =>
+                          option.value === pathname?.split("/account")[1],
+                      )?.value === option.value && <CheckIcon size={12} />}
+                      <span>{option.label}</span>
+                    </Group>
                   </ComboboxOption>
                 ))}
               </ComboboxOptions>
