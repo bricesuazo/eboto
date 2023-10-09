@@ -959,37 +959,6 @@ export const electionRouter = createTRPCRouter({
           ),
         );
     }),
-  uploadImage: protectedProcedure
-    .input(z.object({ candidate_id: z.string(), file: z.string() }))
-    .mutation(async ({ input, ctx }) => {
-      const candidate = await ctx.db.query.candidates.findFirst({
-        where: (candidate, { eq }) => eq(candidate.id, input.candidate_id),
-        with: {
-          election: {
-            with: {
-              commissioners: true,
-            },
-          },
-        },
-      });
-
-      if (
-        !candidate?.election.commissioners.some(
-          (commissioner) => commissioner.user_id === ctx.session.user.id,
-        )
-      )
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Unauthorized",
-        });
-
-      return ctx.db
-        .update(candidates)
-        .set({
-          image_link: input.file,
-        })
-        .where(eq(candidates.id, input.candidate_id));
-    }),
   createSingleCandidate: protectedProcedure
     .input(
       z.object({
@@ -1000,6 +969,7 @@ export const electionRouter = createTRPCRouter({
         election_id: z.string().min(1),
         position_id: z.string().min(1),
         partylist_id: z.string().min(1),
+        image_link: z.string().nullable(),
 
         platforms: z.array(
           z.object({
@@ -1056,6 +1026,7 @@ export const electionRouter = createTRPCRouter({
           position_id: input.position_id,
           partylist_id: input.partylist_id,
           credential_id: credentialId,
+          image_link: input.image_link,
         });
 
         await db.insert(credentials).values({

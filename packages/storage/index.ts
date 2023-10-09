@@ -73,6 +73,43 @@ export const mainFileRouter = {
         .set({ logo: file.url })
         .where(eq(elections.id, metadata.election_id));
     }),
+  candidatePictureUploader: f({ image: { maxFileSize: "4MB" } })
+    .input(z.object({ election_id: z.string(), candidate_id: z.string() }))
+    .middleware(async ({ input }) => {
+      const session = await auth();
+
+      if (!session) throw new Error("Unauthorized");
+
+      const isCommissioner = await db.query.commissioners.findFirst({
+        where: (commissioner, { and, eq }) =>
+          and(
+            eq(commissioner.election_id, input.election_id),
+            eq(commissioner.user_id, session.user.id),
+          ),
+      });
+
+      if (!isCommissioner) throw new Error("Unauthorized");
+
+      const election = await db.query.elections.findFirst({
+        where: eq(elections.id, input.election_id),
+      });
+
+      if (!election) throw new Error("Election not found");
+
+      if (election.logo && !!election.logo.length)
+        await utapi.deleteFiles(
+          election.logo.split("https://utfs.io/f/")[1] ?? "",
+        );
+
+      return input;
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("🚀 ~ file: index.ts:65 ~ .onUploadComplete ~ file:", file);
+      await db
+        .update(elections)
+        .set({ logo: file.url })
+        .where(eq(elections.id, metadata.election_id));
+    }),
 } satisfies FileRouter;
 
 export type MainFileRouter = typeof mainFileRouter;

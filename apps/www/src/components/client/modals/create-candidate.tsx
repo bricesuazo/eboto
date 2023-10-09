@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import classes from "@/styles/Candidate.module.css";
 import { api } from "@/trpc/client";
+import { uploadFiles } from "@/utils/uploadthing";
 import {
   Alert,
   Box,
@@ -60,23 +61,9 @@ export default function CreateCandidate({ position }: { position: Position }) {
   const params = useParams();
   const openRef = useRef<() => void>(null);
 
-  // const uploadImageMutation = api.election.uploadImage.useMutation();
-
   const createCandidateMutation =
     api.election.createSingleCandidate.useMutation({
       onSuccess: async () => {
-        // if (form.values.image && typeof form.values.image !== "string") {
-        //   await uploadImageMutation.mutateAsync({
-        //     candidate_id: data.candidate_id,
-        //     file: await uploadImage({
-        //       path: `elections/${position.election_id}/candidates/${
-        //         data.candidate_id
-        //       }/image/${Date.now().toString()}`,
-        //       image: form.values.image,
-        //     }),
-        //   });
-        // }
-
         await context.election.getDashboardCandidateData.invalidate();
         notifications.show({
           title: `${form.values.first_name} ${form.values.last_name} created!`,
@@ -204,54 +191,56 @@ export default function CreateCandidate({ position }: { position: Position }) {
         closeOnClickOutside={false}
       >
         <form
-        // onSubmit={form.onSubmit((value) => {
-        //   void (async () => {
-        //     const { candidate_id } =
-        //       await createCandidateMutation.mutateAsync({
-        //         first_name: value.first_name,
-        //         last_name: value.last_name,
-        //         slug: value.slug,
-        //         partylist_id: value.partylist_id,
-        //         position_id: value.position_id,
-        //         middle_name: value.middle_name,
-        //         election_id: position.election_id,
+          onSubmit={form.onSubmit((values) => {
+            void (async () => {
+              await createCandidateMutation.mutateAsync({
+                first_name: values.first_name,
+                last_name: values.last_name,
+                slug: values.slug,
+                partylist_id: values.partylist_id,
+                position_id: values.position_id,
+                middle_name: values.middle_name,
+                election_id: position.election_id,
+                image_link: values.image
+                  ? (
+                      await uploadFiles({
+                        endpoint: "candidatePictureUploader",
+                        files: [
+                          new File(
+                            [values.image],
+                            // candidate_id +
+                            "candidate_image_" + values.image.name,
+                            {
+                              type: values.image.type,
+                            },
+                          ),
+                        ],
+                      })
+                    )?.[0]?.url ?? null
+                  : null,
 
-        //         platforms: value.platforms.map((p) => ({
-        //           title: p.title,
-        //           description: p.description,
-        //         })),
+                platforms: values.platforms.map((p) => ({
+                  title: p.title,
+                  description: p.description,
+                })),
 
-        //         achievements: value.achievements.map((a) => ({
-        //           name: a.name,
-        //           year: new Date(a.year?.toDateString() ?? ""),
-        //         })),
-        //         affiliations: value.affiliations.map((a) => ({
-        //           org_name: a.org_name,
-        //           org_position: a.org_position,
-        //           start_year: new Date(a.start_year?.toDateString() ?? ""),
-        //           end_year: new Date(a.end_year?.toDateString() ?? ""),
-        //         })),
-        //         eventsAttended: value.eventsAttended.map((a) => ({
-        //           name: a.name,
-        //           year: new Date(a.year?.toDateString() ?? ""),
-        //         })),
-        //       });
-
-        //     if (value.image && typeof value.image !== "string") {
-        //       const image_link = await uploadImage({
-        //         path: `elections/${
-        //           position.election_id
-        //         }/candidates/${candidate_id}/image/${Date.now().toString()}`,
-        //         image: value.image,
-        //       });
-
-        //       await uploadImageMutation.mutateAsync({
-        //         candidate_id,
-        //         file: image_link,
-        //       });
-        //     }
-        //   })();
-        // })}
+                achievements: values.achievements.map((a) => ({
+                  name: a.name,
+                  year: new Date(a.year?.toDateString() ?? ""),
+                })),
+                affiliations: values.affiliations.map((a) => ({
+                  org_name: a.org_name,
+                  org_position: a.org_position,
+                  start_year: new Date(a.start_year?.toDateString() ?? ""),
+                  end_year: new Date(a.end_year?.toDateString() ?? ""),
+                })),
+                eventsAttended: values.eventsAttended.map((a) => ({
+                  name: a.name,
+                  year: new Date(a.year?.toDateString() ?? ""),
+                })),
+              });
+            })();
+          })}
         >
           <Tabs radius="xs" defaultValue="basic-info">
             <TabsList grow>
