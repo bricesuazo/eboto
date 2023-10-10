@@ -4,8 +4,8 @@ import { UTApi } from "uploadthing/server";
 import { z } from "zod";
 
 import { auth } from "@eboto-mo/auth";
-import { db, eq } from "@eboto-mo/db";
-import { elections, users } from "@eboto-mo/db/schema";
+import { and, db, eq } from "@eboto-mo/db";
+import { candidates, elections, users } from "@eboto-mo/db/schema";
 
 const f = createUploadthing();
 
@@ -90,25 +90,33 @@ export const mainFileRouter = {
 
       if (!isCommissioner) throw new Error("Unauthorized");
 
-      const election = await db.query.elections.findFirst({
-        where: eq(elections.id, input.election_id),
+      const candidateFromDB = await db.query.candidates.findFirst({
+        where: (candidate, { eq, and }) =>
+          and(
+            eq(candidate.id, input.candidate_id),
+            eq(candidate.election_id, input.election_id),
+          ),
       });
 
-      if (!election) throw new Error("Election not found");
+      if (!candidateFromDB) throw new Error("Candidate not found");
 
-      if (election.logo && !!election.logo.length)
+      if (candidateFromDB.image_link && !!candidateFromDB.image_link.length)
         await utapi.deleteFiles(
-          election.logo.split("https://utfs.io/f/")[1] ?? "",
+          candidateFromDB.image_link.split("https://utfs.io/f/")[1] ?? "",
         );
 
       return input;
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log("🚀 ~ file: index.ts:65 ~ .onUploadComplete ~ file:", file);
       await db
-        .update(elections)
-        .set({ logo: file.url })
-        .where(eq(elections.id, metadata.election_id));
+        .update(candidates)
+        .set({ image_link: file.url })
+        .where(
+          and(
+            eq(candidates.id, metadata.candidate_id),
+            eq(candidates.election_id, metadata.election_id),
+          ),
+        );
     }),
 } satisfies FileRouter;
 
