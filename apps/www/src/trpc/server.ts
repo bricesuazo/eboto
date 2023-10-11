@@ -4,12 +4,12 @@ import { experimental_nextCacheLink as nextCacheLink } from "@trpc/next/app-dir/
 import { experimental_createTRPCNextAppDirServer as createTRPCNextAppDirServer } from "@trpc/next/app-dir/server";
 // import { experimental_nextHttpLink as nextHttpLink } from "@trpc/next/app-dir/links/nextHttp";
 import superjson from "superjson";
+import { UTApi } from "uploadthing/server";
 
 import { appRouter } from "@eboto-mo/api";
 import type { AppRouter } from "@eboto-mo/api";
 import { auth } from "@eboto-mo/auth";
 import { db } from "@eboto-mo/db";
-import { utapi } from "@eboto-mo/storage";
 
 import { endingLink } from "./shared";
 
@@ -32,7 +32,7 @@ export const api = createTRPCNextAppDirServer<AppRouter>({
           router: appRouter,
           async createContext() {
             return {
-              utapi,
+              utapi: new UTApi(),
               session: await auth(),
               db,
               headers: {

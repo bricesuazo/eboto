@@ -1,15 +1,15 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
+import { UTApi } from "uploadthing/server";
 import { ZodError } from "zod";
 
 import { auth } from "@eboto-mo/auth";
 import type { Session } from "@eboto-mo/auth";
 import { db } from "@eboto-mo/db";
-import { utapi } from "@eboto-mo/storage";
 
 interface CreateContextOptions {
   session: Session | null;
-  utapi: typeof utapi;
+  utapi: UTApi;
 }
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
@@ -23,15 +23,13 @@ export async function createTRPCContext(opts: {
   req?: Request;
   session: Session | null;
 }) {
-  const session = opts.session ?? (await auth());
-
   // const source = opts.req?.headers.get("x-trpc-source") ?? "unknown";
 
   // console.log(">>> tRPC Request from", source, "by", session?.user);
 
   return createInnerTRPCContext({
-    session,
-    utapi,
+    session: opts.session ?? (await auth()),
+    utapi: new UTApi(),
   });
 }
 

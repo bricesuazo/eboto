@@ -21,10 +21,10 @@ export const mainFileRouter = {
       // If you throw, the user will not be able to upload
       if (!session) throw new Error("Unauthorized");
 
-      if (session.user.image && !!session.user.image.length)
-        await utapi.deleteFiles(
-          session.user.image.split("https://utfs.io/f/")[1] ?? "",
-        );
+      // if (session.user.image && !!session.user.image.length)
+      // await utapi.deleteFiles(
+      //   session.user.image.split("https://utfs.io/f/")[1] ?? "",
+      // );
 
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
       return { user_id: session.user.id };
@@ -59,10 +59,10 @@ export const mainFileRouter = {
 
       if (!election) throw new Error("Election not found");
 
-      if (election.logo && !!election.logo.length)
-        await utapi.deleteFiles(
-          election.logo.split("https://utfs.io/f/")[1] ?? "",
-        );
+      // if (election.logo && !!election.logo.length)
+      // await utapi.deleteFiles(
+      //   election.logo.split("https://utfs.io/f/")[1] ?? "",
+      // );
 
       return input;
     })
@@ -100,10 +100,10 @@ export const mainFileRouter = {
 
       if (!candidateFromDB) throw new Error("Candidate not found");
 
-      if (candidateFromDB.image_link && !!candidateFromDB.image_link.length)
-        await utapi.deleteFiles(
-          candidateFromDB.image_link.split("https://utfs.io/f/")[1] ?? "",
-        );
+      // if (candidateFromDB.image_link && !!candidateFromDB.image_link.length)
+      //   await utapi.deleteFiles(
+      //     candidateFromDB.image_link.split("https://utfs.io/f/")[1] ?? "",
+      //   );
 
       return input;
     })
@@ -123,7 +123,3 @@ export const mainFileRouter = {
 export type MainFileRouter = typeof mainFileRouter;
 
 export * from "uploadthing/next";
-
-export const utapi = new UTApi({
-  apiKey: env.UPLOADTHING_SECRET,
-});
