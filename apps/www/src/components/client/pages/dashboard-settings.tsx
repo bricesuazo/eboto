@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { api } from "@/trpc/client";
-import { uploadFiles } from "@/utils/uploadthing";
+import { transformUploadImage } from "@/utils";
 import {
   Alert,
   Box,
@@ -70,9 +70,6 @@ export default function DashboardSettings({
       });
 
       form.resetDirty();
-      form.setValues({
-        newLogo: null,
-      });
 
       await getElectionBySlugQuery.refetch();
     },
@@ -95,8 +92,7 @@ export default function DashboardSettings({
     start_date: Date;
     end_date: Date;
     publicity: Publicity;
-    oldLogo: string | null;
-    newLogo: File | null;
+    logo: File | string | null;
   }>({
     initialValues: {
       name: getElectionBySlugQuery.data.name,
@@ -106,8 +102,7 @@ export default function DashboardSettings({
       start_date: getElectionBySlugQuery.data.start_date,
       end_date: getElectionBySlugQuery.data.end_date,
       publicity: getElectionBySlugQuery.data.publicity,
-      oldLogo: getElectionBySlugQuery.data.logo,
-      newLogo: null,
+      logo: getElectionBySlugQuery.data.logo?.url ?? null,
     },
     validateInputOnBlur: true,
     clearInputErrorOnChange: true,
@@ -288,26 +283,12 @@ export default function DashboardSettings({
                 start_date: values.start_date,
                 end_date: values.end_date,
                 publicity: values.publicity,
-                // logo: null,
-                logo: values.newLogo
-                  ? (
-                      await uploadFiles({
-                        endpoint: "electionLogoUploader",
-                        files: [
-                          new File(
-                            [values.newLogo],
-                            election.id + "_logo_" + values.newLogo.name,
-                            {
-                              type: values.newLogo.type,
-                            },
-                          ),
-                        ],
-                        input: {
-                          election_id: election.id,
-                        },
-                      })
-                    )?.[0]?.url ?? null
-                  : values.oldLogo,
+                logo:
+                  typeof values.logo !== "string"
+                    ? values.logo !== null
+                      ? transformUploadImage(values.logo)
+                      : null
+                    : undefined,
               });
               setIsUpdating(false);
             })(),
@@ -472,7 +453,8 @@ export default function DashboardSettings({
                   gap="xl"
                   style={{ minHeight: rem(140), pointerEvents: "none" }}
                 >
-                  {form.values.newLogo ? (
+                  {typeof form.values.logo !== "string" &&
+                  form.values.logo !== null ? (
                     <Box
                       pos="relative"
                       style={() => ({
@@ -486,7 +468,7 @@ export default function DashboardSettings({
                       })}
                     >
                       <Image
-                        src={URL.createObjectURL(form.values.newLogo)}
+                        src={URL.createObjectURL(form.values.logo)}
                         alt="Logo"
                         fill
                         sizes="100%"
@@ -494,7 +476,7 @@ export default function DashboardSettings({
                         style={{ objectFit: "cover" }}
                       />
                     </Box>
-                  ) : form.values.oldLogo ? (
+                  ) : typeof form.values.logo === "string" ? (
                     <Group>
                       <Box
                         pos="relative"
@@ -509,7 +491,7 @@ export default function DashboardSettings({
                         })}
                       >
                         <Image
-                          src={form.values.oldLogo}
+                          src={form.values.logo}
                           alt="Logo"
                           fill
                           sizes="100%"
@@ -540,14 +522,11 @@ export default function DashboardSettings({
                   onClick={() => {
                     form.setValues({
                       ...form.values,
-                      oldLogo: election.logo,
-                      newLogo: null,
+                      logo: election.logo?.url,
                     });
                   }}
                   disabled={
-                    (form.values.oldLogo === election.logo &&
-                      form.values.newLogo === null) ||
-                    isUpdating
+                    form.values.logo === election.logo?.url || isUpdating
                   }
                 >
                   Reset logo
@@ -556,11 +535,9 @@ export default function DashboardSettings({
                   color="red"
                   variant="light"
                   onClick={() => {
-                    form.setValues({ oldLogo: null, newLogo: null });
+                    form.setValues({ logo: null });
                   }}
-                  disabled={
-                    (!form.values.oldLogo && !form.values.newLogo) || isUpdating
-                  }
+                  disabled={!form.values.logo || isUpdating}
                 >
                   Delete logo
                 </Button>

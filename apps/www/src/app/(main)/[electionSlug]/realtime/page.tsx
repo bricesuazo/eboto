@@ -56,7 +56,7 @@ export async function generateMetadata({
           }/api/og?type=election&election_name=${encodeURIComponent(
             election.name,
           )}&election_logo=${encodeURIComponent(
-            election.logo ?? "",
+            election.logo?.url ?? "",
           )}&election_date=${encodeURIComponent(
             moment(election.start_date).format("MMMM D, YYYY hA") +
               " - " +
@@ -177,7 +177,7 @@ export default async function RelatimePage({
               <Group justify="center" mb={8}>
                 {election.logo ? (
                   <Image
-                    src={election.logo}
+                    src={election.logo.url}
                     alt="Logo"
                     width={92}
                     height={92}

@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import classes from "@/styles/Candidate.module.css";
 import { api } from "@/trpc/client";
-import { uploadFiles } from "@/utils/uploadthing";
+import { transformUploadImage } from "@/utils";
 import {
   Alert,
   Box,
@@ -203,26 +203,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                 position_id: values.position_id,
                 middle_name: values.middle_name,
                 election_id: position.election_id,
-                image_link: values.image
-                  ? (
-                      await uploadFiles({
-                        endpoint: "candidatePictureUploader",
-                        // input: {
-                        //   election_id: position.election_id,
-                        // },
-                        files: [
-                          new File(
-                            [values.image],
-                            // candidate_id +
-                            "candidate_image_" + values.image.name,
-                            {
-                              type: values.image.type,
-                            },
-                          ),
-                        ],
-                      })
-                    )?.[0]?.url ?? null
-                  : null,
+                image: values.image ? transformUploadImage(values.image) : null,
 
                 platforms: values.platforms.map((p) => ({
                   title: p.title,

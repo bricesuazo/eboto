@@ -426,9 +426,9 @@ function VoteCard({
           <Box>
             <IconUserQuestion size={80} style={{ padding: 8 }} />
           </Box>
-        ) : candidate.image_link ? (
+        ) : candidate.image ? (
           <Image
-            src={candidate.image_link}
+            src={candidate.image.url}
             alt=""
             width={80}
             height={80}

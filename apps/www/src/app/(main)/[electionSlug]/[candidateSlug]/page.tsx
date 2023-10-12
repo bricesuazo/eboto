@@ -58,7 +58,7 @@ export async function generateMetadata({
             candidate.last_name,
           )}&candidate_position=${encodeURIComponent(
             candidate.position.name,
-          )}&candidate_img=${encodeURIComponent(candidate.image_link ?? "")}`,
+          )}&candidate_img=${encodeURIComponent(candidate.image?.url ?? "")}`,
           width: 1200,
           height: 630,
           alt: election.name,

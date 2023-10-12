@@ -58,3 +58,20 @@ export const sendEmail = ({
 
 //   return publicUrl;
 // };
+
+export function transformUploadImage(file: File) {
+  let base64: string | undefined;
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = () => {
+    base64 = reader.result as string;
+  };
+
+  if (!base64) return null;
+
+  return {
+    name: file.name,
+    type: file.type,
+    base64,
+  };
+}

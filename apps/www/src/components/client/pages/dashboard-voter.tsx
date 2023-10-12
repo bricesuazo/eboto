@@ -17,7 +17,7 @@ import {
 } from "@mantine/core";
 import { IconRefresh } from "@tabler/icons-react";
 import type { MRT_ColumnDef, MRT_RowSelectionState } from "mantine-react-table";
-import { MantineReactTable } from "mantine-react-table";
+import { MantineReactTable, useMantineReactTable } from "mantine-react-table";
 import moment from "moment";
 
 import type { RouterOutputs } from "@eboto-mo/api";
@@ -45,6 +45,7 @@ export default function DashboardVoter({
       initialData: voters,
     },
   );
+
   const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
 
   const columns = useMemo<MRT_ColumnDef<(typeof votersQuery.data)[number]>[]>(
@@ -53,10 +54,10 @@ export default function DashboardVoter({
         accessorKey: "email",
         header: "Email",
       },
-      ...((election.voter_fields.map((voter_field) => ({
-        accessorKey: "field." + voter_field.name,
-        header: voter_field.name,
-      })) ?? []) as MRT_ColumnDef<(typeof votersQuery.data)[number]>[]),
+      // ...((election.voter_fields.map((voter_field) => ({
+      //   accessorKey: "field." + voter_field.name,
+      //   header: voter_field.name,
+      // })) ?? []) as MRT_ColumnDef<(typeof votersQuery.data)[number]>[]),
       {
         accessorKey: "has_voted",
         header: "Voted?",
@@ -74,6 +75,112 @@ export default function DashboardVoter({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [election.voter_fields],
   );
+  const table = useMantineReactTable({
+    columns,
+    data: votersQuery.data,
+    enableRowSelection: true,
+    enableFullScreenToggle: false,
+    enableDensityToggle: false,
+    enableColumnOrdering: true,
+    onRowSelectionChange: setRowSelection,
+    getRowId: (row) => row.id,
+    enableStickyHeader: true,
+    mantinePaperProps: {
+      shadow: "none",
+    },
+    state: {
+      density: "xs",
+      pagination: { pageSize: 15, pageIndex: 0 },
+      isLoading: votersQuery.isLoading,
+      showAlertBanner: votersQuery.isError,
+      rowSelection,
+    },
+    enableClickToCopy: true,
+    // mantineTableContainerProps: {
+    //   style: { maxHeight: "70vh" },
+    //   width: "100%",
+    // },
+    // mantineProgressProps: ({ isTopToolbar }) => ({
+    //     sx: {
+    //       display: isTopToolbar ? "block" : "none",
+    //     },
+    // }),
+    positionToolbarAlertBanner: "bottom",
+    enableRowActions: true,
+    positionActionsColumn: "last",
+    renderTopToolbar: () => (
+      <Group gap="xs">
+        <Tooltip withArrow label="Refresh">
+          <div>
+            <ActionIcon
+              variant="light"
+              onClick={async () => await votersQuery.refetch()}
+              size="lg"
+              loading={votersQuery.isRefetching}
+              hiddenFrom="sm"
+              loaderProps={{
+                width: 18,
+              }}
+            >
+              <IconRefresh size="1.25rem" />
+            </ActionIcon>
+            <Button
+              variant="light"
+              onClick={async () => await votersQuery.refetch()}
+              loading={votersQuery.isRefetching}
+              leftSection={<IconRefresh size="1.25rem" />}
+              visibleFrom="sm"
+              loaderProps={{
+                width: 20,
+              }}
+            >
+              Refresh
+            </Button>
+          </div>
+        </Tooltip>
+
+        <Tooltip withArrow label="Delete selected">
+          <DeleteBulkVoter
+            voters={votersQuery.data
+              .filter((voter) => rowSelection[voter.id])
+              .map((voter) => ({
+                id: voter.id,
+                email: voter.email,
+              }))}
+            election_id={election.id}
+            isDisabled={Object.keys(rowSelection).length === 0}
+            onSuccess={() => {
+              setRowSelection({});
+            }}
+          />
+        </Tooltip>
+      </Group>
+    ),
+    renderRowActions: ({ row }) => (
+      <Flex style={{ gap: "16px" }}>
+        <Tooltip withArrow label="Edit">
+          <EditVoter
+            voter_fields={election.voter_fields}
+            election_id={election.id}
+            voter={{
+              id: row.id,
+              email: row.getValue<string>("email"),
+            }}
+          />
+        </Tooltip>
+
+        <Tooltip withArrow label="Delete">
+          <DeleteVoter
+            voter={{
+              id: row.id,
+              email: row.getValue<string>("email"),
+            }}
+            election_id={election.id}
+          />
+        </Tooltip>
+      </Flex>
+    ),
+  });
 
   return (
     <Box>
@@ -98,114 +205,7 @@ export default function DashboardVoter({
           </Tooltip>
         </Flex>
 
-        <MantineReactTable
-          columns={columns}
-          data={votersQuery.data}
-          enableFullScreenToggle={false}
-          enableDensityToggle={false}
-          enableRowSelection
-          enableColumnOrdering
-          onRowSelectionChange={setRowSelection}
-          getRowId={(row) => row.id}
-          enableStickyHeader
-          mantinePaperProps={{
-            shadow: "none",
-          }}
-          initialState={{
-            density: "xs",
-            pagination: { pageSize: 15, pageIndex: 0 },
-          }}
-          state={{
-            isLoading: votersQuery.isLoading,
-            showAlertBanner: votersQuery.isError,
-            rowSelection,
-          }}
-          enableClickToCopy={true}
-          mantineTableContainerProps={{
-            style: { maxHeight: "70vh" },
-            width: "100%",
-          }}
-          // mantineProgressProps={({ isTopToolbar }) => ({
-          //   sx: {
-          //     display: isTopToolbar ? "block" : "none",
-          //   },
-          // })}
-          positionToolbarAlertBanner="bottom"
-          renderTopToolbarCustomActions={() => (
-            <Group gap="xs">
-              <Tooltip withArrow label="Refresh">
-                <div>
-                  <ActionIcon
-                    variant="light"
-                    onClick={async () => await votersQuery.refetch()}
-                    size="lg"
-                    loading={votersQuery.isRefetching}
-                    hiddenFrom="sm"
-                    loaderProps={{
-                      width: 18,
-                    }}
-                  >
-                    <IconRefresh size="1.25rem" />
-                  </ActionIcon>
-                  <Button
-                    variant="light"
-                    onClick={async () => await votersQuery.refetch()}
-                    loading={votersQuery.isRefetching}
-                    leftSection={<IconRefresh size="1.25rem" />}
-                    visibleFrom="sm"
-                    loaderProps={{
-                      width: 20,
-                    }}
-                  >
-                    Refresh
-                  </Button>
-                </div>
-              </Tooltip>
-
-              <Tooltip withArrow label="Delete selected">
-                <DeleteBulkVoter
-                  voters={votersQuery.data
-                    .filter((voter) => rowSelection[voter.id])
-                    .map((voter) => ({
-                      id: voter.id,
-                      email: voter.email,
-                    }))}
-                  election_id={election.id}
-                  isDisabled={Object.keys(rowSelection).length === 0}
-                  onSuccess={() => {
-                    setRowSelection({});
-                  }}
-                />
-              </Tooltip>
-            </Group>
-          )}
-          enableRowActions
-          positionActionsColumn="last"
-          renderRowActions={({ row }) => (
-            <Flex style={{ gap: "16px" }}>
-              <Tooltip withArrow label="Edit">
-                <EditVoter
-                  voter_fields={election.voter_fields}
-                  election_id={election.id}
-                  voter={{
-                    id: row.id,
-                    email: row.getValue<string>("email"),
-                  }}
-                />
-              </Tooltip>
-
-              <Tooltip withArrow label="Delete">
-                <DeleteVoter
-                  voter={{
-                    id: row.id,
-                    email: row.getValue<string>("email"),
-                  }}
-                  election_id={election.id}
-                />
-              </Tooltip>
-            </Flex>
-          )}
-        />
+        <MantineReactTable table={table} />
       </Stack>
     </Box>
   );

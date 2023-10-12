@@ -34,7 +34,7 @@ export async function generateMetadata({
           }/api/og?type=election&election_name=${encodeURIComponent(
             election.name,
           )}&election_logo=${encodeURIComponent(
-            election.logo ?? "",
+            election.logo?.url ?? "",
           )}&election_date=${encodeURIComponent(
             moment(election.start_date).format("MMMM D, YYYY hA") +
               " - " +

@@ -14,6 +14,7 @@ import {
   varchar,
 } from "drizzle-orm/mysql-core";
 import { nanoid } from "nanoid";
+import type { UploadFileResponse } from "uploadthing/client";
 
 const id = varchar("id", { length: 256 })
   .primaryKey()
@@ -43,6 +44,7 @@ export const token_type = [
 export type TokenType = (typeof token_type)[number];
 export const account_status_type = ["ADDED", "INVITED", "DECLINED"] as const;
 export type AccountStatusType = (typeof account_status_type)[number];
+type File = Pick<UploadFileResponse, "key" | "name" | "size" | "url">;
 
 export const elections = mysqlTable("election", {
   id,
@@ -52,7 +54,7 @@ export const elections = mysqlTable("election", {
   start_date: timestamp("start_date").notNull(),
   end_date: timestamp("end_date").notNull(),
   publicity: mysqlEnum("publicity", publicity).default("PRIVATE").notNull(),
-  logo: longtext("logo"),
+  logo: json("logo").$type<File>(),
   voter_domain: text("voter_domain"),
   deleted_at,
 
@@ -139,7 +141,7 @@ export const candidates = mysqlTable("candidate", {
   first_name: text("first_name").notNull(),
   middle_name: text("middle_name"),
   last_name: text("last_name").notNull(),
-  image_link: longtext("image_link"),
+  image: json("image").$type<File>(),
 
   created_at,
   updated_at,
@@ -239,27 +241,6 @@ export const reported_problems = mysqlTable("reported_problem", {
   user_id,
 });
 
-export type Election = typeof elections.$inferSelect;
-export type User = typeof users.$inferSelect;
-export type Vote = typeof votes.$inferSelect;
-export type Commissioner = typeof commissioners.$inferSelect;
-export type InvitedCommissioner = typeof invited_commissioners.$inferSelect;
-export type Voter = typeof voters.$inferSelect;
-export type Partylist = typeof partylists.$inferSelect;
-export type Position = typeof positions.$inferSelect;
-export type Candidate = typeof candidates.$inferSelect;
-export type Credential = typeof credentials.$inferSelect;
-export type Platform = typeof platforms.$inferSelect;
-export type Affiliation = typeof affiliations.$inferSelect;
-export type Achievement = typeof achievements.$inferSelect;
-export type EventAttended = typeof events_attended.$inferSelect;
-export type VerificationToken = typeof verification_tokens.$inferSelect;
-export type GeneratedElectionResult =
-  typeof generated_election_results.$inferSelect;
-export type VoterField = typeof voter_fields.$inferSelect;
-
-export type ReportedProblem = typeof reported_problems.$inferSelect;
-
 export const users = mysqlTable("user", {
   id: varchar("id", { length: 255 }).notNull().primaryKey(),
   name: varchar("name", { length: 255 }),
@@ -328,3 +309,23 @@ export const sessions = mysqlTable(
 
 //   invited_commissioner_id: varchar("invited_commissioner_id", { length: 256 }),
 // });
+
+export type Election = typeof elections.$inferSelect;
+export type User = typeof users.$inferSelect;
+export type Vote = typeof votes.$inferSelect;
+export type Commissioner = typeof commissioners.$inferSelect;
+export type InvitedCommissioner = typeof invited_commissioners.$inferSelect;
+export type Voter = typeof voters.$inferSelect;
+export type Partylist = typeof partylists.$inferSelect;
+export type Position = typeof positions.$inferSelect;
+export type Candidate = typeof candidates.$inferSelect;
+export type Credential = typeof credentials.$inferSelect;
+export type Platform = typeof platforms.$inferSelect;
+export type Affiliation = typeof affiliations.$inferSelect;
+export type Achievement = typeof achievements.$inferSelect;
+export type EventAttended = typeof events_attended.$inferSelect;
+export type VerificationToken = typeof verification_tokens.$inferSelect;
+export type GeneratedElectionResult =
+  typeof generated_election_results.$inferSelect;
+export type VoterField = typeof voter_fields.$inferSelect;
+export type ReportedProblem = typeof reported_problems.$inferSelect;

@@ -38,20 +38,19 @@ export default function CreateElection({
   const { fireConfetti } = useConfetti();
   const [opened, { open, close }] = useDisclosure(false);
 
-  const { mutate, isLoading, isError, error } =
-    api.election.createElection.useMutation({
-      onSuccess: async () => {
-        router.push(`/dashboard/${form.values.slug}`);
-        close();
-        notifications.show({
-          title: "Election created!",
-          message: "Successfully created election",
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-        await fireConfetti();
-      },
-    });
+  const createElectionMutation = api.election.createElection.useMutation({
+    onSuccess: async () => {
+      router.push(`/dashboard/${form.values.slug}`);
+      close();
+      notifications.show({
+        title: "Election created!",
+        message: "Successfully created election",
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
+      });
+      await fireConfetti();
+    },
+  });
 
   const form = useForm<{
     name: string;
@@ -155,7 +154,7 @@ export default function CreateElection({
         <form
           onSubmit={form.onSubmit((value) => {
             const now = new Date();
-            mutate({
+            createElectionMutation.mutate({
               ...value,
               name: value.name.trim(),
               slug: value.slug.trim(),
@@ -176,7 +175,7 @@ export default function CreateElection({
               placeholder="Enter election name"
               {...form.getInputProps("name")}
               leftSection={<IconLetterCase size="1rem" />}
-              disabled={isLoading}
+              disabled={createElectionMutation.isLoading}
             />
 
             <TextInput
@@ -188,13 +187,16 @@ export default function CreateElection({
                   eboto-mo.com/{form.values.slug || "election-slug"}
                 </>
               }
-              disabled={isLoading}
+              disabled={createElectionMutation.isLoading}
               withAsterisk
               required
               placeholder="Enter election slug"
               {...form.getInputProps("slug")}
               leftSection={<IconLetterCase size="1rem" />}
-              error={error?.data?.code === "CONFLICT" && error?.message}
+              error={
+                createElectionMutation.error?.data?.code === "CONFLICT" &&
+                createElectionMutation.error?.message
+              }
             />
 
             <DateTimePicker
@@ -213,7 +215,7 @@ export default function CreateElection({
               firstDayOfWeek={0}
               {...form.getInputProps("start_date")}
               leftSection={<IconCalendar size="1rem" />}
-              disabled={isLoading}
+              disabled={createElectionMutation.isLoading}
             />
             <DateTimePicker
               valueFormat="MMMM DD, YYYY (dddd) hh:mm A"
@@ -234,7 +236,7 @@ export default function CreateElection({
               firstDayOfWeek={0}
               {...form.getInputProps("end_date")}
               leftSection={<IconCalendar size="1rem" />}
-              disabled={isLoading}
+              disabled={createElectionMutation.isLoading}
             />
 
             <Select
@@ -258,16 +260,16 @@ export default function CreateElection({
               nothingFoundMessage="No position template found"
               leftSection={<IconTemplate size="1rem" />}
               searchable
-              disabled={isLoading}
+              disabled={createElectionMutation.isLoading}
             />
 
-            {isError && (
+            {createElectionMutation.isError && (
               <Alert
                 icon={<IconAlertCircle size="1rem" />}
                 title="Error"
                 color="red"
               >
-                {error.message}
+                {createElectionMutation.error.message}
               </Alert>
             )}
 
@@ -276,14 +278,14 @@ export default function CreateElection({
                 variant="default"
                 mr={2}
                 onClick={close}
-                disabled={isLoading}
+                disabled={createElectionMutation.isLoading}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isValid()}
-                loading={isLoading}
+                loading={createElectionMutation.isLoading}
               >
                 Create
               </Button>

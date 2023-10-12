@@ -1,7 +1,8 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import classes from "@/styles/Dashboard.module.css";
-import type { Election } from "@eboto-mo/db/schema";
 import {
   ActionIcon,
   Box,
@@ -23,8 +24,8 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import moment from "moment";
-import Image from "next/image";
-import Link from "next/link";
+
+import type { Election } from "@eboto-mo/db/schema";
 
 export default function DashboardCard({
   election,
@@ -81,7 +82,7 @@ export default function DashboardCard({
           }}
         >
           <Image
-            src={election.logo}
+            src={election.logo.url}
             alt={election.name + " logo"}
             fill
             sizes="100%"
@@ -89,7 +90,7 @@ export default function DashboardCard({
               objectFit: "cover",
             }}
             priority
-            blurDataURL={election.logo}
+            blurDataURL={election.logo.url}
           />
           <Flex
             gap="xs"

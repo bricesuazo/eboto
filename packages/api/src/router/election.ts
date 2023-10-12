@@ -32,8 +32,8 @@ export const electionRouter = createTRPCRouter({
   getCandidatePageData: publicProcedure
     .input(
       z.object({
-        election_slug: z.string().min(1),
-        candidate_slug: z.string().min(1),
+        election_slug: z.string().nonempty(),
+        candidate_slug: z.string().nonempty(),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -78,7 +78,7 @@ export const electionRouter = createTRPCRouter({
   getElectionPage: publicProcedure
     .input(
       z.object({
-        election_slug: z.string().min(1),
+        election_slug: z.string().nonempty(),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -208,7 +208,7 @@ export const electionRouter = createTRPCRouter({
   getElectionBySlug: publicProcedure
     .input(
       z.object({
-        slug: z.string().min(1),
+        slug: z.string().nonempty(),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -223,7 +223,7 @@ export const electionRouter = createTRPCRouter({
   getAllPartylistsByElectionId: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.string().nonempty(),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -241,7 +241,7 @@ export const electionRouter = createTRPCRouter({
   getDashboardOverviewData: protectedProcedure
     .input(
       z.object({
-        election_slug: z.string().min(1),
+        election_slug: z.string().nonempty(),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -270,7 +270,7 @@ export const electionRouter = createTRPCRouter({
   getDashboardPositionData: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.string().nonempty(),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -288,7 +288,7 @@ export const electionRouter = createTRPCRouter({
   getDashboardCandidateData: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.string().nonempty(),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -355,7 +355,7 @@ export const electionRouter = createTRPCRouter({
   getDashboardPartylistData: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.string().nonempty(),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -374,9 +374,9 @@ export const electionRouter = createTRPCRouter({
   reportAProblem: protectedProcedure
     .input(
       z.object({
-        subject: z.string().min(1),
-        description: z.string().min(1),
-        election_id: z.string().min(1),
+        subject: z.string().nonempty(),
+        description: z.string().nonempty(),
+        election_id: z.string().nonempty(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -477,7 +477,7 @@ export const electionRouter = createTRPCRouter({
   // getElectionBySlug: publicProcedure
   //   .input(
   //     z.object({
-  //       slug: z.string().min(1),
+  //       slug: z.string().nonempty(),
   //     }),
   //   )
   //   .query(async ({ input }) => {
@@ -498,7 +498,7 @@ export const electionRouter = createTRPCRouter({
   // getDashboardPartylistData: protectedProcedure
   //   .input(
   //     z.object({
-  //       election_id: z.string().min(1),
+  //       election_id: z.string().nonempty(),
   //     }),
   //   )
   //   .query(async ({ ctx, input }) => {
@@ -515,7 +515,7 @@ export const electionRouter = createTRPCRouter({
   // getAllPartylistsByElectionId: protectedProcedure
   //   .input(
   //     z.object({
-  //       election_id: z.string().min(1),
+  //       election_id: z.string().nonempty(),
   //     }),
   //   )
   //   .query(async ({ ctx, input }) => {
@@ -529,7 +529,7 @@ export const electionRouter = createTRPCRouter({
   // getDashboardPositionData: protectedProcedure
   //   .input(
   //     z.object({
-  //       election_id: z.string().min(1),
+  //       election_id: z.string().nonempty(),
   //     }),
   //   )
   //   .query(async ({ ctx, input }) => {
@@ -543,7 +543,7 @@ export const electionRouter = createTRPCRouter({
   // getAllCandidatesByElectionId: protectedProcedure
   //   .input(
   //     z.object({
-  //       election_id: z.string().min(1),
+  //       election_id: z.string().nonempty(),
   //     }),
   //   )
   //   .query(async ({ ctx, input }) => {
@@ -601,7 +601,7 @@ export const electionRouter = createTRPCRouter({
   getVotersByElectionId: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.string().nonempty(),
       }),
     )
     .query(async ({ input, ctx }) => {
@@ -625,8 +625,8 @@ export const electionRouter = createTRPCRouter({
   createElection: protectedProcedure
     .input(
       z.object({
-        name: z.string().min(1),
-        slug: z.string().min(1).trim().toLowerCase(),
+        name: z.string().nonempty(),
+        slug: z.string().nonempty().trim().toLowerCase(),
         start_date: z.date(),
         end_date: z.date(),
         template: z.string(),
@@ -688,15 +688,21 @@ export const electionRouter = createTRPCRouter({
   editElection: protectedProcedure
     .input(
       z.object({
-        id: z.string().min(1),
-        name: z.string().min(1),
+        id: z.string().nonempty(),
+        name: z.string().nonempty(),
         description: z.string().nullable(),
         oldSlug: z.string().trim().toLowerCase(),
-        newSlug: z.string().min(1).trim().toLowerCase(),
+        newSlug: z.string().nonempty().trim().toLowerCase(),
         start_date: z.date(),
         end_date: z.date(),
         publicity: z.enum(publicity),
-        logo: z.string().nullable(),
+        logo: z
+          .object({
+            name: z.string().nonempty(),
+            type: z.string().nonempty(),
+            base64: z.string().nonempty(),
+          })
+          .nullish(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -720,53 +726,61 @@ export const electionRouter = createTRPCRouter({
           });
       }
 
-      const isElectionCommissionerExists =
-        await ctx.db.query.elections.findFirst({
-          with: {
-            commissioners: {
-              where: (commissioners, { eq }) =>
-                eq(commissioners.user_id, ctx.session.user.id),
+      await ctx.db.transaction(async (db) => {
+        const isElectionCommissionerExists = await db.query.elections.findFirst(
+          {
+            with: {
+              commissioners: {
+                where: (commissioners, { eq }) =>
+                  eq(commissioners.user_id, ctx.session.user.id),
+              },
             },
           },
-        });
+        );
 
-      if (!isElectionCommissionerExists)
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Unauthorized",
-        });
+        if (!isElectionCommissionerExists)
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Unauthorized",
+          });
 
-      // if (input.newLogo) {
-      //   const blob = new Blob([input.newLogo]);
-      //   image = await ctx.utapi.uploadFiles(
-      //     new File(
-      //       [blob],
-      //       input.id + "_logo" + blob.type.replace("image/", "."),
-      //     ),
-      //   );
-
-      //   if (input.oldLogo) await ctx.utapi.deleteFiles(input.oldLogo);
-      // }
-
-      await ctx.db
-        .update(elections)
-        .set({
-          name: input.name,
-          slug: input.newSlug,
-          description: input.description,
-          publicity: input.publicity,
-          start_date: input.start_date,
-          end_date: input.end_date,
-          logo: input.logo,
-        })
-        .where(eq(elections.id, input.id));
+        await db
+          .update(elections)
+          .set({
+            name: input.name,
+            slug: input.newSlug,
+            description: input.description,
+            publicity: input.publicity,
+            start_date: input.start_date,
+            end_date: input.end_date,
+            logo:
+              input.logo &&
+              (await fetch(input.logo.base64)
+                .then((res) => res.blob())
+                .then(
+                  async (blob) =>
+                    (
+                      await ctx.utapi.uploadFiles(
+                        new File(
+                          [blob],
+                          `election_logo_${input.id}_${input.logo!.name}`,
+                          {
+                            type: input.logo!.type,
+                          },
+                        ),
+                      )
+                    ).data,
+                )),
+          })
+          .where(eq(elections.id, input.id));
+      });
     }),
   createPartylist: protectedProcedure
     .input(
       z.object({
-        name: z.string().min(1),
-        acronym: z.string().min(1),
-        election_id: z.string().min(1),
+        name: z.string().nonempty(),
+        acronym: z.string().nonempty(),
+        election_id: z.string().nonempty(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -791,11 +805,11 @@ export const electionRouter = createTRPCRouter({
   editPartylist: protectedProcedure
     .input(
       z.object({
-        id: z.string().min(1),
-        name: z.string().min(1),
+        id: z.string().nonempty(),
+        name: z.string().nonempty(),
         oldAcronym: z.string().optional(),
-        newAcronym: z.string().min(1),
-        election_id: z.string().min(1),
+        newAcronym: z.string().nonempty(),
+        election_id: z.string().nonempty(),
         description: z.string().nullable(),
         logo_link: z.string().nullable(),
       }),
@@ -837,8 +851,8 @@ export const electionRouter = createTRPCRouter({
   deletePartylist: protectedProcedure
     .input(
       z.object({
-        partylist_id: z.string().min(1),
-        election_id: z.string().min(1),
+        partylist_id: z.string().nonempty(),
+        election_id: z.string().nonempty(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -858,8 +872,8 @@ export const electionRouter = createTRPCRouter({
   deleteCandidate: protectedProcedure
     .input(
       z.object({
-        candidate_id: z.string().min(1),
-        election_id: z.string().min(1),
+        candidate_id: z.string().nonempty(),
+        election_id: z.string().nonempty(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -877,10 +891,10 @@ export const electionRouter = createTRPCRouter({
   createPosition: protectedProcedure
     .input(
       z.object({
-        name: z.string().min(1),
+        name: z.string().nonempty(),
         min: z.number().nonnegative().optional(),
         max: z.number().nonnegative().optional(),
-        election_id: z.string().min(1),
+        election_id: z.string().nonempty(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -905,8 +919,8 @@ export const electionRouter = createTRPCRouter({
   deletePosition: protectedProcedure
     .input(
       z.object({
-        position_id: z.string().min(1),
-        election_id: z.string().min(1),
+        position_id: z.string().nonempty(),
+        election_id: z.string().nonempty(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -926,12 +940,12 @@ export const electionRouter = createTRPCRouter({
   editPosition: protectedProcedure
     .input(
       z.object({
-        id: z.string().min(1),
-        name: z.string().min(1),
+        id: z.string().nonempty(),
+        name: z.string().nonempty(),
         description: z.string().optional(),
         min: z.number().nonnegative().optional(),
         max: z.number().nonnegative().optional(),
-        election_id: z.string().min(1),
+        election_id: z.string().nonempty(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -962,39 +976,45 @@ export const electionRouter = createTRPCRouter({
   createSingleCandidate: protectedProcedure
     .input(
       z.object({
-        slug: z.string().min(1).trim().toLowerCase(),
-        first_name: z.string().min(1),
+        slug: z.string().nonempty().trim().toLowerCase(),
+        first_name: z.string().nonempty(),
         middle_name: z.string().nullable(),
-        last_name: z.string().min(1),
-        election_id: z.string().min(1),
-        position_id: z.string().min(1),
-        partylist_id: z.string().min(1),
-        image_link: z.string().nullable(),
+        last_name: z.string().nonempty(),
+        election_id: z.string().nonempty(),
+        position_id: z.string().nonempty(),
+        partylist_id: z.string().nonempty(),
+        image: z
+          .object({
+            name: z.string().nonempty(),
+            type: z.string().nonempty(),
+            base64: z.string().nonempty(),
+          })
+          .nullable(),
 
         platforms: z.array(
           z.object({
-            title: z.string().min(1),
-            description: z.string().min(1),
+            title: z.string().nonempty(),
+            description: z.string().nonempty(),
           }),
         ),
 
         achievements: z.array(
           z.object({
-            name: z.string().min(1),
+            name: z.string().nonempty(),
             year: z.date(),
           }),
         ),
         affiliations: z.array(
           z.object({
-            org_name: z.string().min(1),
-            org_position: z.string().min(1),
+            org_name: z.string().nonempty(),
+            org_position: z.string().nonempty(),
             start_year: z.date(),
             end_year: z.date(),
           }),
         ),
         eventsAttended: z.array(
           z.object({
-            name: z.string().min(1),
+            name: z.string().nonempty(),
             year: z.date(),
           }),
         ),
@@ -1026,7 +1046,24 @@ export const electionRouter = createTRPCRouter({
           position_id: input.position_id,
           partylist_id: input.partylist_id,
           credential_id: credentialId,
-          image_link: input.image_link,
+          image:
+            input.image &&
+            (await fetch(input.image.base64)
+              .then((res) => res.blob())
+              .then(
+                async (blob) =>
+                  (
+                    await ctx.utapi.uploadFiles(
+                      new File(
+                        [blob],
+                        `candidate_image_${candidateId}_${input.image!.name}`,
+                        {
+                          type: input.image!.type,
+                        },
+                      ),
+                    )
+                  ).data,
+              )),
         });
 
         await db.insert(credentials).values({
@@ -1102,39 +1139,45 @@ export const electionRouter = createTRPCRouter({
   editCandidate: protectedProcedure
     .input(
       z.object({
-        id: z.string().min(1),
-        old_slug: z.string().min(1).trim(),
-        new_slug: z.string().min(1).trim(),
-        first_name: z.string().min(1),
+        id: z.string().nonempty(),
+        old_slug: z.string().nonempty().trim(),
+        new_slug: z.string().nonempty().trim(),
+        first_name: z.string().nonempty(),
         middle_name: z.string().nullable(),
-        last_name: z.string().min(1),
-        election_id: z.string().min(1),
-        position_id: z.string().min(1),
-        partylist_id: z.string().min(1),
-        image_link: z.string().nullable(),
+        last_name: z.string().nonempty(),
+        election_id: z.string().nonempty(),
+        position_id: z.string().nonempty(),
+        partylist_id: z.string().nonempty(),
+        image: z
+          .object({
+            name: z.string().nonempty(),
+            type: z.string().nonempty(),
+            base64: z.string().nonempty(),
+          })
+          .nullish(),
 
-        credential_id: z.string().min(1),
+        credential_id: z.string().nonempty(),
 
         platforms: z.array(
           z.object({
             id: z.string(),
-            title: z.string().min(1),
-            description: z.string().min(1),
+            title: z.string().nonempty(),
+            description: z.string().nonempty(),
           }),
         ),
 
         achievements: z.array(
           z.object({
             id: z.string(),
-            name: z.string().min(1),
+            name: z.string().nonempty(),
             year: z.date(),
           }),
         ),
         affiliations: z.array(
           z.object({
             id: z.string(),
-            org_name: z.string().min(1),
-            org_position: z.string().min(1),
+            org_name: z.string().nonempty(),
+            org_position: z.string().nonempty(),
             start_year: z.date(),
             end_year: z.date(),
           }),
@@ -1142,7 +1185,7 @@ export const electionRouter = createTRPCRouter({
         eventsAttended: z.array(
           z.object({
             id: z.string(),
-            name: z.string().min(1),
+            name: z.string().nonempty(),
             year: z.date(),
           }),
         ),
@@ -1168,6 +1211,20 @@ export const electionRouter = createTRPCRouter({
       }
 
       await ctx.db.transaction(async (db) => {
+        const candidate = await db.query.candidates.findFirst({
+          where: (candidates, { eq, and }) =>
+            and(
+              eq(candidates.slug, input.old_slug),
+              eq(candidates.election_id, input.election_id),
+            ),
+        });
+
+        if (!candidate)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Candidate not found",
+          });
+
         await db
           .update(candidates)
           .set({
@@ -1177,7 +1234,26 @@ export const electionRouter = createTRPCRouter({
             last_name: input.last_name,
             position_id: input.position_id,
             partylist_id: input.partylist_id,
-            image_link: input.image_link,
+            image: input.image
+              ? await fetch(input.image.base64)
+                  .then((res) => res.blob())
+                  .then(
+                    async (blob) =>
+                      (
+                        await ctx.utapi.uploadFiles(
+                          new File(
+                            [blob],
+                            `candidate_image_${input.id}_${input.image!.name}`,
+                            {
+                              type: input.image!.type,
+                            },
+                          ),
+                        )
+                      ).data,
+                  )
+              : input.image === null
+              ? null
+              : undefined,
           })
           .where(
             and(
@@ -1185,6 +1261,10 @@ export const electionRouter = createTRPCRouter({
               eq(candidates.election_id, input.election_id),
             ),
           );
+
+        if (input.image && candidate.image) {
+          await ctx.utapi.deleteFiles(candidate.image.key);
+        }
 
         for (const platform of input.platforms) {
           await db
@@ -1265,8 +1345,8 @@ export const electionRouter = createTRPCRouter({
   createSingleVoter: protectedProcedure
     .input(
       z.object({
-        email: z.string().min(1),
-        election_id: z.string().min(1),
+        email: z.string().nonempty(),
+        election_id: z.string().nonempty(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -1317,7 +1397,7 @@ export const electionRouter = createTRPCRouter({
   getAllVoterField: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.string().nonempty(),
       }),
     )
     .query(async ({ input, ctx }) => {
@@ -1356,12 +1436,12 @@ export const electionRouter = createTRPCRouter({
       z.object({
         fields: z.array(
           z.object({
-            id: z.string().min(1),
-            name: z.string().min(1),
+            id: z.string().nonempty(),
+            name: z.string().nonempty(),
             type: z.enum(["fromDb", "fromInput"]),
           }),
         ),
-        election_id: z.string().min(1),
+        election_id: z.string().nonempty(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -1381,8 +1461,8 @@ export const electionRouter = createTRPCRouter({
   deleteSingleVoterField: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
-        field_id: z.string().min(1),
+        election_id: z.string().nonempty(),
+        field_id: z.string().nonempty(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -1398,9 +1478,9 @@ export const electionRouter = createTRPCRouter({
   editVoter: protectedProcedure
     .input(
       z.object({
-        id: z.string().min(1),
-        email: z.string().min(1),
-        election_id: z.string().min(1),
+        id: z.string().nonempty(),
+        email: z.string().nonempty(),
+        election_id: z.string().nonempty(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -1442,8 +1522,8 @@ export const electionRouter = createTRPCRouter({
   deleteSingleVoter: protectedProcedure
     .input(
       z.object({
-        id: z.string().min(1),
-        election_id: z.string().min(1),
+        id: z.string().nonempty(),
+        election_id: z.string().nonempty(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -1495,11 +1575,11 @@ export const electionRouter = createTRPCRouter({
   deleteBulkVoter: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.string().nonempty(),
         voters: z.array(
           z.object({
-            id: z.string().min(1),
-            email: z.string().min(1),
+            id: z.string().nonempty(),
+            email: z.string().nonempty(),
           }),
         ),
       }),
@@ -1525,10 +1605,10 @@ export const electionRouter = createTRPCRouter({
   uploadBulkVoter: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.string().nonempty(),
         voters: z.array(
           z.object({
-            email: z.string().min(1),
+            email: z.string().nonempty(),
           }),
         ),
       }),
@@ -1566,7 +1646,7 @@ export const electionRouter = createTRPCRouter({
   deleteElection: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.string().nonempty(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
