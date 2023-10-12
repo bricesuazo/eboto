@@ -4,9 +4,14 @@ import { z } from "zod";
 import { eq } from "@eboto-mo/db";
 import { users } from "@eboto-mo/db/schema";
 
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { env } from "../env.mjs";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
+  isPasswordCorrect: publicProcedure.input(z.string()).mutation(({ input }) => {
+    return input === env.ADMIN_PASSWORD;
+  }),
+
   updateProfile: protectedProcedure
     .input(
       z.object({
