@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { api } from "@/trpc/client";
-import { uploadFiles } from "@/utils/uploadthing";
+import { transformUploadImage } from "@/utils";
 import {
   Box,
   Button,
@@ -52,16 +52,14 @@ export default function AccountPageClient({
     // middleName: string;
     // lastName: string;
     name: string | null;
-    oldImage: null | string;
-    newImage: File | null;
+    image: File | null | string;
   }>({
     initialValues: {
       //   firstName: "",
       //   middleName: "",
       //   lastName: "",
       name: sessionQuery.data.user.name ?? null,
-      oldImage: sessionQuery.data.user.image ?? null,
-      newImage: null,
+      image: sessionQuery.data.user.image ?? null,
     },
     validateInputOnBlur: true,
     // validate: {
@@ -216,22 +214,12 @@ export default function AccountPageClient({
               // middleName: values.middleName || null,
               // lastName: values.lastName,
               name: values.name ?? "",
-              image: values.newImage
-                ? (
-                    await uploadFiles({
-                      endpoint: "profilePictureUploader",
-                      files: [
-                        new File(
-                          [values.newImage],
-                          session.user.id + "_image_" + values.newImage.name,
-                          {
-                            type: values.newImage.type,
-                          },
-                        ),
-                      ],
-                    })
-                  )?.[0]?.url ?? null
-                : values.oldImage,
+              image:
+                typeof values.image !== "string"
+                  ? values.image !== null
+                    ? transformUploadImage(values.image)
+                    : null
+                  : undefined,
             });
 
             setLoading(false);
@@ -270,25 +258,54 @@ export default function AccountPageClient({
                   gap="xl"
                   style={{ minHeight: rem(140), pointerEvents: "none" }}
                 >
-                  {accountForm.values.newImage ? (
+                  {accountForm.values.image ? (
+                    typeof accountForm.values.image !== "string" ? (
+                      <Group>
+                        <Box pos="relative" w={rem(120)} h={rem(120)}>
+                          <Image
+                            src={URL.createObjectURL(accountForm.values.image)}
+                            alt="image"
+                            fill
+                            sizes="100%"
+                            priority
+                            style={{ objectFit: "cover" }}
+                          />
+                        </Box>
+                        <Text>{accountForm.values.name}</Text>
+                      </Group>
+                    ) : (
+                      session.user.image && (
+                        <Group>
+                          <Box
+                            pos="relative"
+                            style={() => ({
+                              width: rem(120),
+                              height: rem(120),
+
+                              // [theme.fn.smallerThan("sm")]: {
+                              //   width: rem(180),
+                              //   height: rem(180),
+                              // },
+                            })}
+                          >
+                            <Image
+                              src={session.user.image}
+                              alt="image"
+                              fill
+                              sizes="100%"
+                              priority
+                              style={{ objectFit: "cover" }}
+                            />
+                          </Box>
+                          <Text>Current image</Text>
+                        </Group>
+                      )
+                    )
+                  ) : accountForm.values.image ? (
                     <Group>
                       <Box pos="relative" w={rem(120)} h={rem(120)}>
                         <Image
-                          src={URL.createObjectURL(accountForm.values.newImage)}
-                          alt="image"
-                          fill
-                          sizes="100%"
-                          priority
-                          style={{ objectFit: "cover" }}
-                        />
-                      </Box>
-                      <Text>{accountForm.values.newImage.name}</Text>
-                    </Group>
-                  ) : accountForm.values.oldImage ? (
-                    <Group>
-                      <Box pos="relative" w={rem(120)} h={rem(120)}>
-                        <Image
-                          src={accountForm.values.oldImage}
+                          src={accountForm.values.image}
                           alt="image"
                           fill
                           sizes="100%"
@@ -319,14 +336,11 @@ export default function AccountPageClient({
                   onClick={() => {
                     accountForm.setValues({
                       ...accountForm.values,
-                      oldImage: session.user.image,
-                      newImage: null,
+                      image: session.user.image,
                     });
                   }}
                   disabled={
-                    (accountForm.values.oldImage === session.user.image &&
-                      accountForm.values.newImage === null) ||
-                    loading
+                    accountForm.values.image === session.user.image || loading
                   }
                 >
                   Reset image
@@ -335,13 +349,9 @@ export default function AccountPageClient({
                   color="red"
                   variant="light"
                   onClick={() => {
-                    accountForm.setValues({ oldImage: null, newImage: null });
+                    accountForm.setValues({ image: null });
                   }}
-                  disabled={
-                    (!accountForm.values.oldImage &&
-                      !accountForm.values.newImage) ||
-                    loading
-                  }
+                  disabled={!accountForm.values.image || loading}
                 >
                   Delete image
                 </Button>

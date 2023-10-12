@@ -107,9 +107,9 @@ export default function DashboardCandidate({
                           <HoverCard openDelay={500} width={256} offset={60}>
                             <HoverCardTarget>
                               <Stack align="center" justify="center" gap="xs">
-                                {candidate.image_link ? (
+                                {candidate.image ? (
                                   <Image
-                                    src={candidate.image_link}
+                                    src={candidate.image.url}
                                     width={100}
                                     height={100}
                                     alt={

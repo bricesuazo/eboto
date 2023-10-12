@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { api } from "@/trpc/client";
+import { transformUploadImage } from "@/utils";
 import {
   ActionIcon,
   Alert,
@@ -25,7 +26,6 @@ import {
   TextInput,
 } from "@mantine/core";
 import { YearPickerInput } from "@mantine/dates";
-import type { FileWithPath } from "@mantine/dropzone";
 import { Dropzone, DropzoneReject, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
@@ -113,7 +113,7 @@ export default function EditCandidate({
     new_slug: string;
     partylist_id: string;
     position_id: string;
-    image: FileWithPath | null | string;
+    image: File | null | string;
 
     platforms: {
       id: string;
@@ -148,7 +148,7 @@ export default function EditCandidate({
       partylist_id: candidate.partylist_id,
 
       position_id: candidate.position_id,
-      image: candidate.image_link,
+      image: candidate.image?.url ?? null,
 
       platforms: candidate.platforms ?? [],
 
@@ -320,17 +320,12 @@ export default function EditCandidate({
                 partylist_id: values.partylist_id,
                 election_id: election.id,
                 position_id: values.position_id,
-                image_link: null,
-                // image_link: !values.image
-                //   ? null
-                //   : typeof values.image === "string"
-                //   ? values.image
-                //   : await uploadImage({
-                //       path: `elections/${candidate.election_id}/candidates/${
-                //         candidate.id
-                //       }/image/${Date.now().toString()}`,
-                //       image: values.image,
-                //     }),
+                image:
+                  typeof values.image !== "string"
+                    ? values.image !== null
+                      ? transformUploadImage(values.image)
+                      : null
+                    : undefined,
 
                 credential_id: candidate.credential_id,
                 platforms: values.platforms,
@@ -486,8 +481,7 @@ export default function EditCandidate({
                       style={{ minHeight: rem(140), pointerEvents: "none" }}
                     >
                       {form.values.image ? (
-                        typeof form.values.image !== "string" &&
-                        form.values.image ? (
+                        typeof form.values.image !== "string" ? (
                           <Group justify="center">
                             <Box
                               pos="relative"
@@ -517,7 +511,7 @@ export default function EditCandidate({
                             <Text>{form.values.image.name}</Text>
                           </Group>
                         ) : (
-                          candidate.image_link && (
+                          candidate.image && (
                             <Group>
                               <Box
                                 pos="relative"
@@ -532,7 +526,7 @@ export default function EditCandidate({
                                 })}
                               >
                                 <Image
-                                  src={candidate.image_link}
+                                  src={candidate.image.url}
                                   alt="image"
                                   fill
                                   sizes="100%"
@@ -565,11 +559,11 @@ export default function EditCandidate({
                       onClick={() => {
                         form.setValues({
                           ...form.values,
-                          image: candidate.image_link,
+                          image: candidate.image?.url,
                         });
                       }}
                       disabled={
-                        !candidate.image_link ||
+                        !candidate.image ||
                         typeof form.values.image === "string" ||
                         editCandidateMutation.isLoading
                       }

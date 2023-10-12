@@ -61,7 +61,7 @@ export default function ElectionPage({
             <Flex justify="center" mb={8}>
               {election.logo ? (
                 <Image
-                  src={election.logo}
+                  src={election.logo.url}
                   alt="Logo"
                   width={128}
                   height={128}
@@ -211,9 +211,9 @@ export default function ElectionPage({
                               // width: "100%",
                             }}
                           >
-                            {candidate.image_link ? (
+                            {candidate.image ? (
                               <Image
-                                src={candidate.image_link}
+                                src={candidate.image.url}
                                 alt="Candidate's image"
                                 fill
                                 sizes="100%"

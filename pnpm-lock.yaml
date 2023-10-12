@@ -194,6 +194,9 @@ importers:
       to-words:
         specifier: ^3.6.1
         version: registry.npmjs.org/to-words@3.6.1
+      uploadthing:
+        specifier: ^5.7.1
+        version: registry.npmjs.org/uploadthing@5.7.1(zod@3.22.2)
       xlsx:
         specifier: ^0.18.5
         version: registry.npmjs.org/xlsx@0.18.5

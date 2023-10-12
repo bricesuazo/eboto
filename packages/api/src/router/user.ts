@@ -1,7 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { update } from "@eboto-mo/auth";
 import { eq } from "@eboto-mo/db";
 import { users } from "@eboto-mo/db/schema";
 
@@ -15,7 +14,13 @@ export const userRouter = createTRPCRouter({
         // firstName: z.string(),
         // middleName: z.string().nullable(),
         // lastName: z.string(),
-        image: z.string().nullable(),
+        image: z
+          .object({
+            name: z.string().nonempty(),
+            type: z.string().nonempty(),
+            base64: z.string().nonempty(),
+          })
+          .nullish(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -32,17 +37,30 @@ export const userRouter = createTRPCRouter({
           //   middle_name: input.middleName,
           //   last_name: input.lastName,
           name: input.name,
-          image: input.image,
+          image: input.image
+            ? await fetch(input.image.base64)
+                .then((res) => res.blob())
+                .then(
+                  async (blob) =>
+                    (
+                      await ctx.utapi.uploadFiles(
+                        new File([blob], `user_image_${ctx.session.user.id}`, {
+                          type: input.image!.type,
+                        }),
+                      )
+                    ).data,
+                )
+            : input.image,
         })
         .where(eq(users.id, ctx.session.user.id));
 
-      await update({
-        user: {
-          ...ctx.session.user,
-          name: input.name,
-          image: input.image,
-        },
-      });
+      // await update({
+      //   user: {
+      //     ...ctx.session.user,
+      //     name: input.name,
+      //     image: input.image,
+      //   },
+      // });
     }),
 
   deleteAccount: protectedProcedure.mutation(async ({ ctx }) => {

@@ -64,9 +64,9 @@ export default function ElectionCandidate({
               w={{ base: "100%", xs: 200, sm: 280 }}
               style={{ aspectRatio: "1/1" }}
             >
-              {candidate.image_link ? (
+              {candidate.image ? (
                 <Image
-                  src={candidate.image_link}
+                  src={candidate.image.url}
                   alt={candidate.first_name + " " + candidate.last_name}
                   fill
                   sizes="100%"
