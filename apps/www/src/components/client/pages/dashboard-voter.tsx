@@ -96,10 +96,10 @@ export default function DashboardVoter({
       rowSelection,
     },
     enableClickToCopy: true,
-    // mantineTableContainerProps: {
-    //   style: { maxHeight: "70vh" },
-    //   width: "100%",
-    // },
+    mantineTableContainerProps: {
+      style: { maxHeight: "70vh" },
+      width: "100%",
+    },
     // mantineProgressProps: ({ isTopToolbar }) => ({
     //     sx: {
     //       display: isTopToolbar ? "block" : "none",
@@ -109,7 +109,7 @@ export default function DashboardVoter({
     enableRowActions: true,
     positionActionsColumn: "last",
     renderTopToolbar: () => (
-      <Group gap="xs">
+      <Group gap="xs" p="sm" pb="xs">
         <Tooltip withArrow label="Refresh">
           <div>
             <ActionIcon
@@ -157,7 +157,7 @@ export default function DashboardVoter({
       </Group>
     ),
     renderRowActions: ({ row }) => (
-      <Flex style={{ gap: "16px" }}>
+      <Flex gap="sm">
         <Tooltip withArrow label="Edit">
           <EditVoter
             voter_fields={election.voter_fields}

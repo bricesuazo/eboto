@@ -52,7 +52,7 @@
     "dayjs": "^1.11.10",
     "dotenv-cli": "^7.3.0",
     "embla-carousel-react": "8.0.0-rc14",
-    "mantine-react-table": "^2.0.0-alpha.1",
+    "mantine-react-table": "^2.0.0-alpha.2",
     "moment": "^2.29.4",
     "next": "13.5.4",
     "next-auth": "0.0.0-manual.c885ac1d",

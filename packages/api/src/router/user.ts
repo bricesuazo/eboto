@@ -30,6 +30,7 @@ export const userRouter = createTRPCRouter({
 
       if (!user) throw new TRPCError({ code: "NOT_FOUND" });
 
+      // TODO: Fix image and image_file
       await ctx.db
         .update(users)
         .set({
@@ -37,7 +38,7 @@ export const userRouter = createTRPCRouter({
           //   middle_name: input.middleName,
           //   last_name: input.lastName,
           name: input.name,
-          image: input.image
+          image_file: input.image
             ? await fetch(input.image.base64)
                 .then((res) => res.blob())
                 .then(

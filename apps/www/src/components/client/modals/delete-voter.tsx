@@ -59,12 +59,13 @@ export default function DeleteVoter({
   return (
     <>
       <ActionIcon
+        variant="outline"
         color="red"
         onClick={() => {
           open();
         }}
       >
-        <IconTrash size="1.25rem" />
+        <IconTrash size="1rem" />
       </ActionIcon>
       <Modal
         opened={opened || isLoading}

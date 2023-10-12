@@ -55,7 +55,7 @@ importers:
         version: registry.npmjs.org/@mantine/carousel@7.1.2(@mantine/core@7.1.2)(@mantine/hooks@7.1.2)(embla-carousel-react@8.0.0-rc14)(react@18.2.0)
       '@mantine/code-highlight':
         specifier: ^7.1.2
-        version: registry.npmjs.org/@mantine/code-highlight@7.1.2(@mantine/core@7.1.2)(@mantine/hooks@7.1.2)(react-dom@18.2.0)(react@18.2.0)
+        version: registry.npmjs.org/@mantine/code-highlight@7.1.3(@mantine/core@7.1.2)(@mantine/hooks@7.1.2)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/core':
         specifier: 7.1.2
         version: registry.npmjs.org/@mantine/core@7.1.2(@mantine/hooks@7.1.2)(@types/react@18.2.24)(react-dom@18.2.0)(react@18.2.0)
@@ -153,8 +153,8 @@ importers:
         specifier: 8.0.0-rc14
         version: registry.npmjs.org/embla-carousel-react@8.0.0-rc14(react@18.2.0)
       mantine-react-table:
-        specifier: ^2.0.0-alpha.1
-        version: registry.npmjs.org/mantine-react-table@2.0.0-alpha.1(@mantine/core@7.1.2)(@mantine/dates@7.1.2)(@mantine/hooks@7.1.2)(@tabler/icons-react@2.38.0)(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^2.0.0-alpha.2
+        version: registry.npmjs.org/mantine-react-table@2.0.0-alpha.2(@mantine/core@7.1.2)(@mantine/dates@7.1.2)(@mantine/hooks@7.1.2)(@tabler/icons-react@2.38.0)(react-dom@18.2.0)(react@18.2.0)
       moment:
         specifier: ^2.29.4
         version: registry.npmjs.org/moment@2.29.4
@@ -2222,14 +2222,14 @@ packages:
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  registry.npmjs.org/@mantine/code-highlight@7.1.2(@mantine/core@7.1.2)(@mantine/hooks@7.1.2)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-pP0cOdyEoM0aIRmm7T+KAdq6V2N4gQEzcvRx0gd6UhGbPS4f8iLwraIST0jnyS7tAfereP25VqNeedWepHsK/A==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/code-highlight/-/code-highlight-7.1.2.tgz}
-    id: registry.npmjs.org/@mantine/code-highlight/7.1.2
+  registry.npmjs.org/@mantine/code-highlight@7.1.3(@mantine/core@7.1.2)(@mantine/hooks@7.1.2)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-Z+E++yrOcqoKpgf34dw13y6M9K/qtqEnLftKiwwE2RL6C8+0gI8iVYU7Y7yuvFPgntZ1DOnSs+d2OEsxuECoiw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/code-highlight/-/code-highlight-7.1.3.tgz}
+    id: registry.npmjs.org/@mantine/code-highlight/7.1.3
     name: '@mantine/code-highlight'
-    version: 7.1.2
+    version: 7.1.3
     peerDependencies:
-      '@mantine/core': 7.1.2
-      '@mantine/hooks': 7.1.2
+      '@mantine/core': 7.1.3
+      '@mantine/hooks': 7.1.3
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
@@ -8337,11 +8337,11 @@ packages:
     name: make-error
     version: 1.3.6
 
-  registry.npmjs.org/mantine-react-table@2.0.0-alpha.1(@mantine/core@7.1.2)(@mantine/dates@7.1.2)(@mantine/hooks@7.1.2)(@tabler/icons-react@2.38.0)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-9lmZu7/1jGQEXQbRXyPTLhZQz1f5Y3HlJImDR6n5xRbbOkyP4XcacBP9KF7fW1HHctUh8Cc5q3mQnaeM/Hvssg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/mantine-react-table/-/mantine-react-table-2.0.0-alpha.1.tgz}
-    id: registry.npmjs.org/mantine-react-table/2.0.0-alpha.1
+  registry.npmjs.org/mantine-react-table@2.0.0-alpha.2(@mantine/core@7.1.2)(@mantine/dates@7.1.2)(@mantine/hooks@7.1.2)(@tabler/icons-react@2.38.0)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-3jjwICubrduq/EnrdoHMSQmnWIT8bmmDGeCQIozbHcZAKMuvadpUKM6L8hCfpn9/rKC3bQKXkk/EfN/atwL5NQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/mantine-react-table/-/mantine-react-table-2.0.0-alpha.2.tgz}
+    id: registry.npmjs.org/mantine-react-table/2.0.0-alpha.2
     name: mantine-react-table
-    version: 2.0.0-alpha.1
+    version: 2.0.0-alpha.2
     engines: {node: '>=14'}
     peerDependencies:
       '@mantine/core': ^7.1

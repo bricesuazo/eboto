@@ -81,6 +81,7 @@ export default function EditVoter({
   return (
     <>
       <ActionIcon
+        variant="outline"
         onClick={() => {
           //   setVoterToEdit({
           //     id: row.id,
@@ -93,7 +94,7 @@ export default function EditVoter({
           open();
         }}
       >
-        <IconEdit size="1.25rem" />
+        <IconEdit size="1rem" />
       </ActionIcon>
       <Modal
         opened={opened || isLoading}
