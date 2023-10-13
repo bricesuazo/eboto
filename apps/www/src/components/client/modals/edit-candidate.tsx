@@ -88,6 +88,24 @@ export default function EditCandidate({
     election_id: election.id,
   });
 
+  const initialValues = {
+    first_name: candidate.first_name,
+    middle_name: candidate.middle_name,
+    last_name: candidate.last_name,
+    old_slug: candidate.slug,
+    new_slug: candidate.slug,
+    partylist_id: candidate.partylist_id,
+
+    position_id: candidate.position_id,
+    image: candidate.image?.url ?? null,
+
+    platforms: candidate.platforms ?? [],
+
+    achievements: candidate.credential?.achievements ?? [],
+    affiliations: candidate.credential?.affiliations ?? [],
+    events_attended: candidate.credential?.events_attended ?? [],
+  };
+
   const editCandidateMutation = api.election.editCandidate.useMutation({
     onSuccess: async () => {
       await context.election.getDashboardCandidateData.invalidate();
@@ -139,23 +157,7 @@ export default function EditCandidate({
       year: Date;
     }[];
   }>({
-    initialValues: {
-      first_name: candidate.first_name,
-      middle_name: candidate.middle_name,
-      last_name: candidate.last_name,
-      old_slug: candidate.slug,
-      new_slug: candidate.slug,
-      partylist_id: candidate.partylist_id,
-
-      position_id: candidate.position_id,
-      image: candidate.image?.url ?? null,
-
-      platforms: candidate.platforms ?? [],
-
-      achievements: candidate.credential?.achievements ?? [],
-      affiliations: candidate.credential?.affiliations ?? [],
-      events_attended: candidate.credential?.events_attended ?? [],
-    },
+    initialValues,
     validateInputOnBlur: true,
     validate: {
       first_name: hasLength(
@@ -192,25 +194,8 @@ export default function EditCandidate({
 
   useEffect(() => {
     if (opened) {
-      const data = {
-        first_name: candidate.first_name,
-        middle_name: candidate.middle_name,
-        last_name: candidate.last_name,
-        old_slug: candidate.slug,
-        new_slug: candidate.slug,
-        partylist_id: candidate.partylist_id,
-
-        position_id: candidate.position_id,
-        image: candidate.image?.url ?? null,
-
-        platforms: candidate.platforms ?? [],
-
-        achievements: candidate.credential?.achievements ?? [],
-        affiliations: candidate.credential?.affiliations ?? [],
-        events_attended: candidate.credential?.events_attended ?? [],
-      };
-      form.setValues(data);
-      form.resetDirty(data);
+      form.setValues(initialValues);
+      form.resetDirty(initialValues);
       editCandidateMutation.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
