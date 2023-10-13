@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import classes from "@/styles/Candidate.module.css";
@@ -49,7 +49,6 @@ import {
 import type { Position } from "@eboto-mo/db/schema";
 
 export default function CreateCandidate({ position }: { position: Position }) {
-  const [createCandidateLoading, setCreateCandidateLoading] = useState(false);
   const context = api.useContext();
   const [opened, { open, close }] = useDisclosure(false);
   const partylistsQuery = api.election.getAllPartylistsByElectionId.useQuery({
@@ -186,14 +185,13 @@ export default function CreateCandidate({ position }: { position: Position }) {
       </UnstyledButton>
 
       <Modal
-        opened={opened || createCandidateLoading}
+        opened={opened || createCandidateMutation.isLoading}
         onClose={close}
         title={<Text fw={600}>Create candidate</Text>}
         closeOnClickOutside={false}
       >
         <form
           onSubmit={form.onSubmit((values) => {
-            setCreateCandidateLoading(true);
             void (async () => {
               await createCandidateMutation.mutateAsync({
                 first_name: values.first_name,
@@ -228,7 +226,6 @@ export default function CreateCandidate({ position }: { position: Position }) {
                 })),
               });
             })();
-            setCreateCandidateLoading(false);
           })}
         >
           <Tabs radius="xs" defaultValue="basic-info">
@@ -343,7 +340,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                     maxSize={5 * 1024 ** 2}
                     accept={IMAGE_MIME_TYPE}
                     multiple={false}
-                    loading={createCandidateLoading}
+                    loading={createCandidateMutation.isLoading}
                   >
                     <Group
                       justify="center"
@@ -399,7 +396,9 @@ export default function CreateCandidate({ position }: { position: Position }) {
                     onClick={() => {
                       form.setFieldValue("image", null);
                     }}
-                    disabled={!form.values.image || createCandidateLoading}
+                    disabled={
+                      !form.values.image || createCandidateMutation.isLoading
+                    }
                   >
                     Delete image
                   </Button>
@@ -858,14 +857,16 @@ export default function CreateCandidate({ position }: { position: Position }) {
                 <Button
                   variant="default"
                   onClick={close}
-                  disabled={createCandidateLoading}
+                  disabled={createCandidateMutation.isLoading}
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
-                  disabled={!form.isValid() || createCandidateLoading}
-                  loading={createCandidateLoading}
+                  disabled={
+                    !form.isValid() || createCandidateMutation.isLoading
+                  }
+                  loading={createCandidateMutation.isLoading}
                 >
                   Create
                 </Button>

@@ -745,8 +745,8 @@ export const electionRouter = createTRPCRouter({
           });
 
         if (
-          (!!isElectionCommissionerExists.logo && input.logo === null) ||
-          (!!isElectionCommissionerExists.logo && !!input.logo)
+          !!isElectionCommissionerExists.logo &&
+          (input.logo === null || !!input.logo)
         ) {
           await ctx.utapi.deleteFiles(isElectionCommissionerExists.logo.key);
         }
@@ -1234,6 +1234,10 @@ export const electionRouter = createTRPCRouter({
             message: "Candidate not found",
           });
 
+        if (!!candidate.image && (input.image === null || !!input.image)) {
+          await ctx.utapi.deleteFiles(candidate.image.key);
+        }
+
         await db
           .update(candidates)
           .set({
@@ -1270,10 +1274,6 @@ export const electionRouter = createTRPCRouter({
               eq(candidates.election_id, input.election_id),
             ),
           );
-
-        if (input.image && candidate.image) {
-          await ctx.utapi.deleteFiles(candidate.image.key);
-        }
 
         for (const platform of input.platforms) {
           await db

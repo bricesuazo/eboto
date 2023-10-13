@@ -192,7 +192,25 @@ export default function EditCandidate({
 
   useEffect(() => {
     if (opened) {
-      form.resetDirty();
+      const data = {
+        first_name: candidate.first_name,
+        middle_name: candidate.middle_name,
+        last_name: candidate.last_name,
+        old_slug: candidate.slug,
+        new_slug: candidate.slug,
+        partylist_id: candidate.partylist_id,
+
+        position_id: candidate.position_id,
+        image: candidate.image?.url ?? null,
+
+        platforms: candidate.platforms ?? [],
+
+        achievements: candidate.credential?.achievements ?? [],
+        affiliations: candidate.credential?.affiliations ?? [],
+        events_attended: candidate.credential?.events_attended ?? [],
+      };
+      form.setValues(data);
+      form.resetDirty(data);
       editCandidateMutation.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -472,8 +490,7 @@ export default function EditCandidate({
                     maxSize={5 * 1024 ** 2}
                     accept={IMAGE_MIME_TYPE}
                     multiple={false}
-                    // loading={isLoading}
-                    // disabled={isLoading}
+                    loading={editCandidateMutation.isLoading}
                   >
                     <Group
                       justify="center"
@@ -559,12 +576,11 @@ export default function EditCandidate({
                       onClick={() => {
                         form.setValues({
                           ...form.values,
-                          image: candidate.image?.url,
+                          image: candidate.image?.url ?? null,
                         });
                       }}
                       disabled={
-                        !candidate.image ||
-                        typeof form.values.image === "string" ||
+                        form.values.image === (candidate.image?.url ?? null) ||
                         editCandidateMutation.isLoading
                       }
                       style={{ flex: 1 }}

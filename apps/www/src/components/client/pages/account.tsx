@@ -96,7 +96,7 @@ export default function AccountPageClient({
       accountForm.resetDirty();
       // accountForm.setValues(dataFormatted);
 
-      accountForm.setFieldValue("newImage", null);
+      accountForm.setFieldValue("image", null);
     },
   });
 
