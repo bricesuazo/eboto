@@ -744,6 +744,13 @@ export const electionRouter = createTRPCRouter({
             message: "Unauthorized",
           });
 
+        if (
+          (!!isElectionCommissionerExists.logo && input.logo === null) ||
+          (!!isElectionCommissionerExists.logo && !!input.logo)
+        ) {
+          await ctx.utapi.deleteFiles(isElectionCommissionerExists.logo.key);
+        }
+
         await db
           .update(elections)
           .set({
@@ -753,24 +760,26 @@ export const electionRouter = createTRPCRouter({
             publicity: input.publicity,
             start_date: input.start_date,
             end_date: input.end_date,
-            logo:
-              input.logo &&
-              (await fetch(input.logo.base64)
-                .then((res) => res.blob())
-                .then(
-                  async (blob) =>
-                    (
-                      await ctx.utapi.uploadFiles(
-                        new File(
-                          [blob],
-                          `election_logo_${input.id}_${input.logo!.name}`,
-                          {
-                            type: input.logo!.type,
-                          },
-                        ),
-                      )
-                    ).data,
-                )),
+            logo: input.logo
+              ? await fetch(input.logo.base64)
+                  .then((res) => res.blob())
+                  .then(
+                    async (blob) =>
+                      (
+                        await ctx.utapi.uploadFiles(
+                          new File(
+                            [blob],
+                            `election_logo_${input.id}_${input.logo!.name}`,
+                            {
+                              type: input.logo!.type,
+                            },
+                          ),
+                        )
+                      ).data,
+                  )
+              : input.logo === null
+              ? null
+              : undefined,
           })
           .where(eq(elections.id, input.id));
       });

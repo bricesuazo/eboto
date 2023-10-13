@@ -217,7 +217,7 @@ export default function AccountPageClient({
               image:
                 typeof values.image !== "string"
                   ? values.image !== null
-                    ? transformUploadImage(values.image)
+                    ? await transformUploadImage(values.image)
                     : null
                   : undefined,
             });
@@ -245,7 +245,7 @@ export default function AccountPageClient({
                 id="image"
                 onDrop={(files) => {
                   if (!files[0]) return;
-                  accountForm.setFieldValue("newImage", files[0]);
+                  accountForm.setFieldValue("image", files[0]);
                 }}
                 openRef={openRef}
                 maxSize={5 * 1024 ** 2}

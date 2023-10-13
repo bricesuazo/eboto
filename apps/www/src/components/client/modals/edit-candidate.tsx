@@ -309,8 +309,8 @@ export default function EditCandidate({
       >
         <form
           onSubmit={form.onSubmit((values) => {
-            void (() => {
-              editCandidateMutation.mutate({
+            void (async () => {
+              await editCandidateMutation.mutateAsync({
                 id: candidate.id,
                 first_name: values.first_name,
                 middle_name: values.middle_name,
@@ -323,7 +323,7 @@ export default function EditCandidate({
                 image:
                   typeof values.image !== "string"
                     ? values.image !== null
-                      ? transformUploadImage(values.image)
+                      ? await transformUploadImage(values.image)
                       : null
                     : undefined,
 

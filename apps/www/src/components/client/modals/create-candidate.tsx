@@ -203,7 +203,9 @@ export default function CreateCandidate({ position }: { position: Position }) {
                 position_id: values.position_id,
                 middle_name: values.middle_name,
                 election_id: position.election_id,
-                image: values.image ? transformUploadImage(values.image) : null,
+                image: values.image
+                  ? await transformUploadImage(values.image)
+                  : null,
 
                 platforms: values.platforms.map((p) => ({
                   title: p.title,

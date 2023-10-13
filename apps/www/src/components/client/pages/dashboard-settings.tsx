@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { api } from "@/trpc/client";
@@ -50,7 +50,6 @@ export default function DashboardSettings({
     },
   );
   const context = api.useContext();
-  const [isUpdating, setIsUpdating] = useState(false);
   const router = useRouter();
   const openRef = useRef<() => void>(null);
   const editElectionMutation = api.election.editElection.useMutation({
@@ -69,9 +68,16 @@ export default function DashboardSettings({
         autoClose: 3000,
       });
 
-      form.resetDirty();
+      const refetchedElection = await getElectionBySlugQuery.refetch();
 
-      await getElectionBySlugQuery.refetch();
+      form.setValues({
+        ...form.values,
+        logo: refetchedElection.data?.logo?.url ?? null,
+      });
+      form.resetDirty({
+        ...form.values,
+        logo: refetchedElection.data?.logo?.url ?? null,
+      });
     },
     onError: (error) => {
       notifications.show({
@@ -272,7 +278,6 @@ export default function DashboardSettings({
         onSubmit={form.onSubmit(
           (values) =>
             void (async () => {
-              setIsUpdating(true);
               await editElectionMutation.mutateAsync({
                 id: election.id,
                 name: values.name,
@@ -286,11 +291,10 @@ export default function DashboardSettings({
                 logo:
                   typeof values.logo !== "string"
                     ? values.logo !== null
-                      ? transformUploadImage(values.logo)
+                      ? await transformUploadImage(values.logo)
                       : null
                     : undefined,
               });
-              setIsUpdating(false);
             })(),
         )}
       >
@@ -302,7 +306,7 @@ export default function DashboardSettings({
             placeholder="Enter election name"
             {...form.getInputProps("name")}
             leftSection={<IconLetterCase size="1rem" />}
-            disabled={isUpdating}
+            disabled={editElectionMutation.isLoading}
           />
 
           <TextInput
@@ -324,7 +328,7 @@ export default function DashboardSettings({
               (editElectionMutation.error?.data?.code === "CONFLICT" &&
                 editElectionMutation.error?.message)
             }
-            disabled={isUpdating}
+            disabled={editElectionMutation.isLoading}
           />
 
           <Textarea
@@ -341,7 +345,7 @@ export default function DashboardSettings({
               (editElectionMutation.error?.data?.code === "CONFLICT" &&
                 editElectionMutation.error?.message)
             }
-            disabled={isUpdating}
+            disabled={editElectionMutation.isLoading}
           />
 
           {/* <TextInput
@@ -382,7 +386,7 @@ export default function DashboardSettings({
             {...form.getInputProps("start_date")}
             leftSection={<IconCalendar size="1rem" />}
             disabled={
-              isUpdating ||
+              editElectionMutation.isLoading ||
               isElectionOngoing({
                 election: getElectionBySlugQuery.data,
               })
@@ -408,7 +412,7 @@ export default function DashboardSettings({
             {...form.getInputProps("end_date")}
             leftSection={<IconCalendar size="1rem" />}
             disabled={
-              isUpdating ||
+              editElectionMutation.isLoading ||
               isElectionOngoing({
                 election: getElectionBySlugQuery.data,
               })
@@ -428,7 +432,7 @@ export default function DashboardSettings({
               value: p,
               label: p.charAt(0) + p.slice(1).toLowerCase(),
             }))}
-            disabled={isUpdating}
+            disabled={editElectionMutation.isLoading}
           />
 
           <Box>
@@ -440,21 +444,20 @@ export default function DashboardSettings({
                 id="logo"
                 onDrop={(files) => {
                   if (!files[0]) return;
-                  form.setFieldValue("newLogo", files[0]);
+                  form.setFieldValue("logo", files[0]);
                 }}
                 openRef={openRef}
                 maxSize={5 * 1024 ** 2}
                 accept={IMAGE_MIME_TYPE}
                 multiple={false}
-                loading={isUpdating}
+                loading={editElectionMutation.isLoading}
               >
                 <Group
                   justify="center"
                   gap="xl"
                   style={{ minHeight: rem(140), pointerEvents: "none" }}
                 >
-                  {typeof form.values.logo !== "string" &&
-                  form.values.logo !== null ? (
+                  {form.values.logo && typeof form.values.logo !== "string" ? (
                     <Box
                       pos="relative"
                       style={() => ({
@@ -522,11 +525,13 @@ export default function DashboardSettings({
                   onClick={() => {
                     form.setValues({
                       ...form.values,
-                      logo: election.logo?.url,
+                      logo: getElectionBySlugQuery.data.logo?.url ?? null,
                     });
                   }}
                   disabled={
-                    form.values.logo === election.logo?.url || isUpdating
+                    form.values.logo ===
+                      (getElectionBySlugQuery.data.logo?.url ?? null) ||
+                    editElectionMutation.isLoading
                   }
                 >
                   Reset logo
@@ -537,7 +542,7 @@ export default function DashboardSettings({
                   onClick={() => {
                     form.setValues({ logo: null });
                   }}
-                  disabled={!form.values.logo || isUpdating}
+                  disabled={!form.values.logo || editElectionMutation.isLoading}
                 >
                   Delete logo
                 </Button>
@@ -558,7 +563,7 @@ export default function DashboardSettings({
           <Group justify="space-between">
             <Button
               type="submit"
-              loading={isUpdating}
+              loading={editElectionMutation.isLoading}
               disabled={!form.isDirty() || !form.isValid()}
               hiddenFrom="sm"
             >
@@ -566,7 +571,7 @@ export default function DashboardSettings({
             </Button>
             <Button
               type="submit"
-              loading={isUpdating}
+              loading={editElectionMutation.isLoading}
               disabled={!form.isDirty() || !form.isValid()}
               visibleFrom="sm"
             >
@@ -576,7 +581,7 @@ export default function DashboardSettings({
               variant="outline"
               color="red"
               onClick={open}
-              disabled={isUpdating}
+              disabled={editElectionMutation.isLoading}
               // style={(theme) => ({
               //   [theme.fn.smallerThan("xs")]: {
               //     display: "none",
