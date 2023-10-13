@@ -14,12 +14,11 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    DATABASE_URL: z.string().min(1),
+    DATABASE_URL: z.string().nonempty(),
     NODE_ENV: z.enum(["development", "test", "production"]),
-    QSTASH_CURRENT_SIGNING_KEY: z.string().min(1),
-    QSTASH_NEXT_SIGNING_KEY: z.string().min(1),
-    UPLOADTHING_SECRET: z.string().min(1),
-    UPLOADTHING_APP_ID: z.string().min(1),
+    QSTASH_CURRENT_SIGNING_KEY: z.string().nonempty(),
+    QSTASH_NEXT_SIGNING_KEY: z.string().nonempty(),
+    UPLOADTHING_SECRET: z.string().nonempty(),
   },
 
   /**
@@ -41,6 +40,5 @@ export const env = createEnv({
     QSTASH_CURRENT_SIGNING_KEY: process.env.QSTASH_CURRENT_SIGNING_KEY,
     QSTASH_NEXT_SIGNING_KEY: process.env.QSTASH_NEXT_SIGNING_KEY,
     UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
-    UPLOADTHING_APP_ID: process.env.UPLOADTHING_APP_ID,
   },
 });
