@@ -25,16 +25,17 @@ import type { Partylist } from "@eboto-mo/db/schema";
 export default function EditPartylist({ partylist }: { partylist: Partylist }) {
   const [opened, { open, close }] = useDisclosure(false);
   const context = api.useContext();
+  const initialValues = {
+    id: partylist.id,
+    election_id: partylist.election_id,
+    name: partylist.name,
+    oldAcronym: partylist.acronym,
+    newAcronym: partylist.acronym,
+    description: partylist.description,
+    logo_link: partylist.logo_link,
+  };
   const form = useForm({
-    initialValues: {
-      id: partylist.id,
-      election_id: partylist.election_id,
-      name: partylist.name,
-      oldAcronym: partylist.acronym,
-      newAcronym: partylist.acronym,
-      description: partylist.description,
-      logo_link: partylist.logo_link,
-    },
+    initialValues,
     validateInputOnBlur: true,
 
     validate: {
@@ -80,7 +81,8 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
 
   useEffect(() => {
     if (opened) {
-      form.resetDirty();
+      form.setValues(initialValues);
+      form.resetDirty(initialValues);
       editPartylistMutation.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

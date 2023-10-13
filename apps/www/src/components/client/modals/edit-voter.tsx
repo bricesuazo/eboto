@@ -38,42 +38,38 @@ export default function EditVoter({
   const context = api.useContext();
   const [opened, { open, close }] = useDisclosure(false);
 
+  const initialValues = {
+    email: voter.email,
+  };
+
   const form = useForm<{
     email: string;
   }>({
-    initialValues: {
-      email: voter.email,
-    },
+    initialValues,
     validateInputOnBlur: true,
     validate: {
       email: isEmail("Please enter a valid email address"),
     },
   });
 
-  const { mutate, isLoading, isError, error, reset } =
-    api.election.editVoter.useMutation({
-      onSuccess: async () => {
-        await context.election.getVotersByElectionId.invalidate();
-        notifications.show({
-          title: "Success",
-          message: "Successfully updated voter!",
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-        close();
-      },
-    });
+  const editVoterMutation = api.election.editVoter.useMutation({
+    onSuccess: async () => {
+      await context.election.getVotersByElectionId.invalidate();
+      notifications.show({
+        title: "Success",
+        message: "Successfully updated voter!",
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
+      });
+      close();
+    },
+  });
 
   useEffect(() => {
     if (opened) {
-      reset();
-
-      const dataForForm: typeof form.values = {
-        email: voter.email,
-      };
-
-      form.setValues(dataForForm);
-      form.resetDirty(dataForForm);
+      form.setValues(initialValues);
+      form.resetDirty(initialValues);
+      editVoterMutation.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
@@ -97,13 +93,13 @@ export default function EditVoter({
         <IconEdit size="1rem" />
       </ActionIcon>
       <Modal
-        opened={opened || isLoading}
+        opened={opened || editVoterMutation.isLoading}
         onClose={close}
         title={<Text fw={600}>Edit voter - {voter.email}</Text>}
       >
         <form
           onSubmit={form.onSubmit((values) => {
-            mutate({
+            editVoterMutation.mutate({
               id: voter.id,
               election_id,
               email: values.email,
@@ -118,29 +114,33 @@ export default function EditVoter({
               withAsterisk
               {...form.getInputProps("email")}
               leftSection={<IconAt size="1rem" />}
-              disabled={isLoading}
+              disabled={editVoterMutation.isLoading}
               description={
                 "You can only edit the email address of a voter if they have not yet accepted their invitation."
               }
             />
 
-            {isError && (
+            {editVoterMutation.isError && (
               <Alert
                 icon={<IconAlertCircle size="1rem" />}
                 title="Error"
                 color="red"
               >
-                {error.message}
+                {editVoterMutation.error.message}
               </Alert>
             )}
             <Group justify="right" gap="xs">
-              <Button variant="default" onClick={close} disabled={isLoading}>
+              <Button
+                variant="default"
+                onClick={close}
+                disabled={editVoterMutation.isLoading}
+              >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isValid() || !form.isDirty()}
-                loading={isLoading}
+                loading={editVoterMutation.isLoading}
               >
                 Update
               </Button>

@@ -208,10 +208,19 @@ export default function EditCandidate({
     type: "PLATFORM" | "ACHIEVEMENT" | "AFFILIATION" | "EVENTATTENDED";
     id: string;
   }) => {
+    const context = api.useContext();
     const deleteCredentialMutation =
-      api.election.deleteSingleCredential.useMutation();
+      api.election.deleteSingleCredential.useMutation({
+        onSuccess: async () => {
+          await context.election.getDashboardCandidateData.invalidate();
+        },
+      });
     const deletePlatformMutation =
-      api.election.deleteSinglePlatform.useMutation();
+      api.election.deleteSinglePlatform.useMutation({
+        onSuccess: async () => {
+          await context.election.getDashboardCandidateData.invalidate();
+        },
+      });
     return (
       <Button
         variant="outline"
