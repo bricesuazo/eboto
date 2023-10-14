@@ -7,7 +7,7 @@ import { auth } from "@eboto-mo/auth";
 import type { Session } from "@eboto-mo/auth";
 import { db } from "@eboto-mo/db";
 
-import { env } from "./env.mjs";
+// import { env } from "./env.mjs";
 
 interface CreateContextOptions {
   session: Session | null;
@@ -32,8 +32,8 @@ export async function createTRPCContext(opts: {
   return createInnerTRPCContext({
     session: opts.session ?? (await auth()),
     utapi: new UTApi({
-      fetch: globalThis.fetch,
-      apiKey: env.UPLOADTHING_SECRET,
+      // fetch: globalThis.fetch,
+      // apiKey: env.UPLOADTHING_SECRET,
     }),
   });
 }

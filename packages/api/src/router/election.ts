@@ -1,4 +1,6 @@
 import { TRPCError } from "@trpc/server";
+// TODO: Remove import { File } from "@web-std/file"; when Vercel supports Node.js 20
+import { File } from "@web-std/file";
 import { nanoid } from "nanoid";
 import { z } from "zod";
 
