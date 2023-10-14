@@ -24,7 +24,7 @@ export default async function Page({
 
   if (!election) notFound();
 
-  const positions = await api.election.getDashboardPositionData.query({
+  const positions = await api.position.getDashboardData.query({
     election_id: election.id,
   });
 

@@ -16,9 +16,9 @@ export default function DashboardPosition({
   positions,
 }: {
   election: Election;
-  positions: RouterOutputs["election"]["getDashboardPositionData"];
+  positions: RouterOutputs["position"]["getDashboardData"];
 }) {
-  const positionsQuery = api.election.getDashboardPositionData.useQuery(
+  const positionsQuery = api.position.getDashboardData.useQuery(
     {
       election_id: election.id,
     },

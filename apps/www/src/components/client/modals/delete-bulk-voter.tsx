@@ -33,7 +33,7 @@ export default function DeleteBulkVoter({
   const [opened, { open, close }] = useDisclosure();
 
   const { mutate, isLoading, isError, error } =
-    api.election.deleteBulkVoter.useMutation({
+    api.voter.deleteBulk.useMutation({
       onSuccess: async ({ count }) => {
         await context.election.getVotersByElectionId.invalidate();
         notifications.show({

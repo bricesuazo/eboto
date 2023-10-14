@@ -81,7 +81,7 @@ export default function EditPosition({ position }: { position: Position }) {
     },
   });
 
-  const editPositionMutation = api.election.editPosition.useMutation({
+  const editPositionMutation = api.position.edit.useMutation({
     onSuccess: async () => {
       notifications.show({
         title: `${form.values.name} updated!`,
@@ -90,7 +90,7 @@ export default function EditPosition({ position }: { position: Position }) {
         autoClose: 5000,
       });
       close();
-      await context.election.getDashboardPositionData.invalidate();
+      await context.position.getDashboardData.invalidate();
     },
     onError: (error) => {
       notifications.show({

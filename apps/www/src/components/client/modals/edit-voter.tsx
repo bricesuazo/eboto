@@ -52,7 +52,7 @@ export default function EditVoter({
     },
   });
 
-  const editVoterMutation = api.election.editVoter.useMutation({
+  const editVoterMutation = api.voter.edit.useMutation({
     onSuccess: async () => {
       await context.election.getVotersByElectionId.invalidate();
       notifications.show({

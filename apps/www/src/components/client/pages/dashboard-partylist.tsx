@@ -16,9 +16,9 @@ export default function DashboardPartylist({
   partylists,
 }: {
   election: Election;
-  partylists: RouterOutputs["election"]["getDashboardPartylistData"];
+  partylists: RouterOutputs["partylist"]["getDashboardData"];
 }) {
-  const partylistsQuery = api.election.getDashboardPartylistData.useQuery(
+  const partylistsQuery = api.partylist.getDashboardData.useQuery(
     {
       election_id: election.id,
     },

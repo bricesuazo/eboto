@@ -42,7 +42,7 @@ export default function UploadBulkVoter({
 }) {
   const [opened, { open, close }] = useDisclosure();
 
-  const uploadBulkVoterMutation = api.election.uploadBulkVoter.useMutation({
+  const uploadBulkVoterMutation = api.voter.uploadBulk.useMutation({
     onSuccess: ({ count }) => {
       notifications.show({
         title: `${count} voter(s) added!`,

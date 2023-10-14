@@ -14,7 +14,7 @@ export default function DeletePosition({ position }: { position: Position }) {
   const context = api.useContext();
 
   const { mutate, isLoading, isError, error, reset } =
-    api.election.deletePosition.useMutation({
+    api.position.delete.useMutation({
       onSuccess: async () => {
         notifications.show({
           title: `${position.name} deleted!`,
@@ -23,7 +23,7 @@ export default function DeletePosition({ position }: { position: Position }) {
           autoClose: 5000,
         });
         close();
-        await context.election.getDashboardPositionData.invalidate();
+        await context.position.getDashboardData.invalidate();
       },
       onError: (error) => {
         notifications.show({

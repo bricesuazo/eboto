@@ -16,9 +16,9 @@ export default function DeleteCandidate({
 }) {
   const context = api.useContext();
   const [opened, { open, close }] = useDisclosure(false);
-  const deleteCandidateMutation = api.election.deleteCandidate.useMutation({
+  const deleteCandidateMutation = api.candidate.delete.useMutation({
     onSuccess: async () => {
-      await context.election.getDashboardCandidateData.invalidate();
+      await context.candidate.getDashboardData.invalidate();
       notifications.show({
         title: `${candidate.first_name}${
           candidate.middle_name && ` ${candidate.middle_name}`

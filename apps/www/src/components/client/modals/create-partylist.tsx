@@ -53,7 +53,7 @@ export default function CreatePartylist({
     },
   });
 
-  const createPartylistMutation = api.election.createPartylist.useMutation({
+  const createPartylistMutation = api.partylist.create.useMutation({
     onSuccess: async () => {
       notifications.show({
         title: `${form.values.name} (${form.values.acronym}) created!`,
@@ -63,7 +63,7 @@ export default function CreatePartylist({
       });
       close();
 
-      await context.election.getDashboardPartylistData.invalidate();
+      await context.candidate.getDashboardData.invalidate();
     },
   });
 

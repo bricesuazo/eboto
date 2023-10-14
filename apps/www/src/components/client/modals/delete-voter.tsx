@@ -28,31 +28,30 @@ export default function DeleteVoter({
   const context = api.useContext();
   const [opened, { open, close }] = useDisclosure(false);
 
-  const { mutate, isLoading, isError, error, reset } =
-    api.election.deleteSingleVoter.useMutation({
-      onSuccess: async () => {
-        await context.election.getVotersByElectionId.invalidate();
-        notifications.show({
-          title: "Success!",
-          message: `Successfully deleted ${voter.email}`,
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-        close();
-      },
-      onError: (error) => {
-        notifications.show({
-          title: "Error",
-          message: error.message,
-          color: "red",
-          autoClose: 3000,
-        });
-      },
-    });
+  const deleteVoterMutation = api.voter.delete.useMutation({
+    onSuccess: async () => {
+      await context.election.getVotersByElectionId.invalidate();
+      notifications.show({
+        title: "Success!",
+        message: `Successfully deleted ${voter.email}`,
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
+      });
+      close();
+    },
+    onError: (error) => {
+      notifications.show({
+        title: "Error",
+        message: error.message,
+        color: "red",
+        autoClose: 3000,
+      });
+    },
+  });
 
   useEffect(() => {
     if (opened) {
-      reset();
+      deleteVoterMutation.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
@@ -68,7 +67,7 @@ export default function DeleteVoter({
         <IconTrash size="1rem" />
       </ActionIcon>
       <Modal
-        opened={opened || isLoading}
+        opened={opened || deleteVoterMutation.isLoading}
         onClose={close}
         title={<Text fw={600}>Confirm Delete Voter - {voter.email}</Text>}
       >
@@ -77,25 +76,29 @@ export default function DeleteVoter({
             <Text>Are you sure you want to delete this voter?</Text>
             <Text>This action cannot be undone.</Text>
           </Stack>
-          {isError && (
+          {deleteVoterMutation.isError && (
             <Alert
               icon={<IconAlertCircle size="1rem" />}
               color="red"
               title="Error"
               variant="filled"
             >
-              {error.message}
+              {deleteVoterMutation.error.message}
             </Alert>
           )}
           <Group justify="right" gap="xs">
-            <Button variant="default" onClick={close} disabled={isLoading}>
+            <Button
+              variant="default"
+              onClick={close}
+              disabled={deleteVoterMutation.isLoading}
+            >
               Cancel
             </Button>
             <Button
               color="red"
-              loading={isLoading}
+              loading={deleteVoterMutation.isLoading}
               onClick={() =>
-                mutate({
+                deleteVoterMutation.mutate({
                   election_id,
                   id: voter.id,
                 })

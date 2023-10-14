@@ -75,7 +75,7 @@ export default async function CandidatePage({
 }: {
   params: { electionSlug: string; candidateSlug: string };
 }) {
-  const data = await api.election.getCandidatePageData.query({
+  const data = await api.candidate.getPageData.query({
     candidate_slug: candidateSlug,
     election_slug: electionSlug,
   });

@@ -31,7 +31,7 @@ export default function CreatePosition({
 }) {
   const context = api.useContext();
   const { mutate, isLoading, isError, error, reset } =
-    api.election.createPosition.useMutation({
+    api.position.create.useMutation({
       onSuccess: async () => {
         notifications.show({
           title: `${form.values.name} created!`,
@@ -41,7 +41,7 @@ export default function CreatePosition({
         });
         close();
 
-        await context.election.getDashboardPositionData.invalidate();
+        await context.position.getDashboardData.invalidate();
       },
     });
 

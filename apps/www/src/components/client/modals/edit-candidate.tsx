@@ -81,10 +81,10 @@ export default function EditCandidate({
   const context = api.useContext();
   const [opened, { open, close }] = useDisclosure(false);
   const openRef = useRef<() => void>(null);
-  const partylistsQuery = api.election.getAllPartylistsByElectionId.useQuery({
+  const partylistsQuery = api.partylist.getAllPartylistsByElectionId.useQuery({
     election_id: election.id,
   });
-  const positionsQuery = api.election.getDashboardPositionData.useQuery({
+  const positionsQuery = api.position.getDashboardData.useQuery({
     election_id: election.id,
   });
 
@@ -106,9 +106,9 @@ export default function EditCandidate({
     events_attended: candidate.credential?.events_attended ?? [],
   };
 
-  const editCandidateMutation = api.election.editCandidate.useMutation({
+  const editCandidateMutation = api.candidate.edit.useMutation({
     onSuccess: async () => {
-      await context.election.getDashboardCandidateData.invalidate();
+      await context.candidate.getDashboardData.invalidate();
       notifications.show({
         title: `${form.values.first_name}${
           form.values.middle_name && ` ${form.values.middle_name}`
@@ -210,15 +210,15 @@ export default function EditCandidate({
   }) => {
     const context = api.useContext();
     const deleteCredentialMutation =
-      api.election.deleteSingleCredential.useMutation({
+      api.candidate.deleteSingleCredential.useMutation({
         onSuccess: async () => {
-          await context.election.getDashboardCandidateData.invalidate();
+          await context.candidate.getDashboardData.invalidate();
         },
       });
     const deletePlatformMutation =
-      api.election.deleteSinglePlatform.useMutation({
+      api.candidate.deleteSinglePlatform.useMutation({
         onSuccess: async () => {
-          await context.election.getDashboardCandidateData.invalidate();
+          await context.candidate.getDashboardData.invalidate();
         },
       });
     return (

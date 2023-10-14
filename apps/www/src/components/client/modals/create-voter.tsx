@@ -25,7 +25,7 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
   const context = api.useContext();
   const [opened, { open, close }] = useDisclosure(false);
 
-  const createSingleVoterMutation = api.election.createSingleVoter.useMutation({
+  const createSingleVoterMutation = api.voter.createSingle.useMutation({
     onSuccess: async () => {
       await context.election.getVotersByElectionId.invalidate();
       notifications.show({

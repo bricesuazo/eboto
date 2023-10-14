@@ -56,7 +56,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
     },
   });
 
-  const editPartylistMutation = api.election.editPartylist.useMutation({
+  const editPartylistMutation = api.partylist.edit.useMutation({
     onSuccess: async () => {
       notifications.show({
         title: `${form.values.name} (${form.values.newAcronym}) updated.`,
@@ -67,7 +67,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
       close();
 
       form.resetDirty(form.values);
-      await context.election.getDashboardPartylistData.invalidate();
+      await context.candidate.getDashboardData.invalidate();
     },
     onError: (error) => {
       notifications.show({

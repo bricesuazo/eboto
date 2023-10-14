@@ -52,7 +52,7 @@ export default function DashboardSettings({
   const context = api.useContext();
   const router = useRouter();
   const openRef = useRef<() => void>(null);
-  const editElectionMutation = api.election.editElection.useMutation({
+  const editElectionMutation = api.election.edit.useMutation({
     onSuccess: async () => {
       if (form.values.newSlug !== election.slug) {
         router.push(`/dashboard/${form.values.newSlug}/settings`);
@@ -193,7 +193,7 @@ export default function DashboardSettings({
     },
   });
 
-  const deleteElectionMutation = api.election.deleteElection.useMutation({
+  const deleteElectionMutation = api.election.delete.useMutation({
     onSuccess: () => {
       router.push("/dashboard");
       notifications.show({

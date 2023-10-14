@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { api } from "@/trpc/client";
 import {
   Anchor,
@@ -26,21 +25,19 @@ export default function ElectionCandidate({
   candidate_slug,
   election_slug,
 }: {
-  data: RouterOutputs["election"]["getCandidatePageData"];
+  data: RouterOutputs["candidate"]["getPageData"];
   candidate_slug: string;
   election_slug: string;
 }) {
   const {
     data: { candidate, election },
-  } = api.election.getCandidatePageData.useQuery(
+  } = api.candidate.getPageData.useQuery(
     {
       candidate_slug: candidate_slug,
       election_slug: election_slug,
     },
     { initialData: data },
   );
-
-  if (!election || !candidate) notFound();
 
   return (
     <Container py="xl" size="md">

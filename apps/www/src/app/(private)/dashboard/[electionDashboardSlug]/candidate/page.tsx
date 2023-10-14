@@ -24,10 +24,9 @@ export default async function Page({
 
   if (!election) notFound();
 
-  const positionsWithCandidates =
-    await api.election.getDashboardCandidateData.query({
-      election_id: election.id,
-    });
+  const positionsWithCandidates = await api.candidate.getDashboardData.query({
+    election_id: election.id,
+  });
 
   return (
     <DashboardCandidate

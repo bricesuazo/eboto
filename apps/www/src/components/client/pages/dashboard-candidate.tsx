@@ -31,13 +31,12 @@ export default function DashboardCandidate({
   positionsWithCandidates,
 }: {
   election: Election;
-  positionsWithCandidates: RouterOutputs["election"]["getDashboardCandidateData"];
+  positionsWithCandidates: RouterOutputs["candidate"]["getDashboardData"];
 }) {
-  const positionsWithCandidatesQuery =
-    api.election.getDashboardCandidateData.useQuery(
-      { election_id: election.id },
-      { initialData: positionsWithCandidates },
-    );
+  const positionsWithCandidatesQuery = api.candidate.getDashboardData.useQuery(
+    { election_id: election.id },
+    { initialData: positionsWithCandidates },
+  );
 
   if (!election) notFound();
 

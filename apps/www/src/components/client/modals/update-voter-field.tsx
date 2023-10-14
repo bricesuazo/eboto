@@ -42,7 +42,7 @@ export default function UpdateVoterField({
   election: Election & { voter_fields: VoterField[] };
   isDisabled: boolean;
 }) {
-  const getAllVoterFieldQuery = api.election.getAllVoterField.useQuery(
+  const getAllVoterFieldQuery = api.voter.getAllVoterField.useQuery(
     {
       election_id: election.id,
     },
@@ -52,7 +52,7 @@ export default function UpdateVoterField({
   );
   const [opened, { open, close }] = useDisclosure(false);
 
-  const updateVoterFieldMutation = api.election.updateVoterField.useMutation({
+  const updateVoterFieldMutation = api.voter.updateVoterField.useMutation({
     onSuccess: async () => {
       notifications.show({
         title: ``,
@@ -220,13 +220,11 @@ function VoterFieldInput({
   election_id: string;
 }) {
   const context = api.useContext();
-  const { mutate, isLoading } = api.election.deleteSingleVoterField.useMutation(
-    {
-      onSuccess: async () => {
-        await context.election.getAllVoterField.invalidate();
-      },
+  const { mutate, isLoading } = api.voter.deleteSingleVoterField.useMutation({
+    onSuccess: async () => {
+      await context.voter.getAllVoterField.invalidate();
     },
-  );
+  });
 
   return (
     <Flex gap="xs" align="end">

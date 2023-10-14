@@ -38,7 +38,7 @@ export default function CreateElection({
   const { fireConfetti } = useConfetti();
   const [opened, { open, close }] = useDisclosure(false);
 
-  const createElectionMutation = api.election.createElection.useMutation({
+  const createElectionMutation = api.election.create.useMutation({
     onSuccess: async () => {
       router.push(`/dashboard/${form.values.slug}`);
       close();

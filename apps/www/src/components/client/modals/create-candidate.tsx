@@ -51,38 +51,37 @@ import type { Position } from "@eboto-mo/db/schema";
 export default function CreateCandidate({ position }: { position: Position }) {
   const context = api.useContext();
   const [opened, { open, close }] = useDisclosure(false);
-  const partylistsQuery = api.election.getAllPartylistsByElectionId.useQuery({
+  const partylistsQuery = api.partylist.getAllPartylistsByElectionId.useQuery({
     election_id: position.election_id,
   });
-  const positionsQuery = api.election.getDashboardPositionData.useQuery({
+  const positionsQuery = api.position.getDashboardData.useQuery({
     election_id: position.election_id,
   });
 
   const params = useParams();
   const openRef = useRef<() => void>(null);
 
-  const createCandidateMutation =
-    api.election.createSingleCandidate.useMutation({
-      onSuccess: async () => {
-        await context.election.getDashboardCandidateData.invalidate();
-        notifications.show({
-          title: `${form.values.first_name} ${form.values.last_name} created!`,
-          message: "Successfully created position",
-          icon: <IconCheck size="1.1rem" />,
-          autoClose: 5000,
-        });
-        close();
-      },
-      onError: (error) => {
-        notifications.show({
-          title: "Error creating candidate",
-          message: error.message,
-          icon: <IconAlertCircle size="1.1rem" />,
-          color: "red",
-          autoClose: 5000,
-        });
-      },
-    });
+  const createCandidateMutation = api.candidate.createSingle.useMutation({
+    onSuccess: async () => {
+      await context.candidate.getDashboardData.invalidate();
+      notifications.show({
+        title: `${form.values.first_name} ${form.values.last_name} created!`,
+        message: "Successfully created position",
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
+      });
+      close();
+    },
+    onError: (error) => {
+      notifications.show({
+        title: "Error creating candidate",
+        message: error.message,
+        icon: <IconAlertCircle size="1.1rem" />,
+        color: "red",
+        autoClose: 5000,
+      });
+    },
+  });
 
   const form = useForm<{
     first_name: string;
