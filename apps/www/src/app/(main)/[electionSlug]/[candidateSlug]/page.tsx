@@ -12,16 +12,18 @@ export async function generateMetadata({
   params: { electionSlug: string; candidateSlug: string };
 }): Promise<Metadata> {
   const election = await db.query.elections.findFirst({
-    where: (election, { eq }) => eq(election.slug, electionSlug),
+    where: (election, { eq, and, isNull }) =>
+      and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
   });
 
   if (!election) notFound();
 
   const candidate = await db.query.candidates.findFirst({
-    where: (candidates, { eq, and }) =>
+    where: (candidates, { eq, and, isNull }) =>
       and(
         eq(candidates.election_id, election.id),
         eq(candidates.slug, candidateSlug),
+        isNull(candidates.deleted_at),
       ),
     with: {
       position: {

@@ -889,7 +889,10 @@ export const electionRouter = createTRPCRouter({
       // TODO: Validate commissioner
 
       await ctx.db
-        .delete(candidates)
+        .update(candidates)
+        .set({
+          deleted_at: new Date(),
+        })
         .where(
           and(
             eq(candidates.id, input.candidate_id),
@@ -1659,7 +1662,10 @@ export const electionRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       await ctx.db.transaction(async (db) => {
         await db
-          .delete(commissioners)
+          .update(commissioners)
+          .set({
+            deleted_at: new Date(),
+          })
           .where(eq(commissioners.election_id, input.election_id));
         await db
           .update(elections)

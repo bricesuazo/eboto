@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { api } from "@/trpc/client";
 import {
   Anchor,
@@ -38,6 +39,9 @@ export default function ElectionCandidate({
     },
     { initialData: data },
   );
+
+  if (!election || !candidate) notFound();
+
   return (
     <Container py="xl" size="md">
       <Stack>

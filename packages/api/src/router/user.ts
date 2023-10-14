@@ -1,6 +1,9 @@
 import { TRPCError } from "@trpc/server";
+// TODO: Remove import { File } from "@web-std/file"; when Vercel supports Node.js 20
+import { File } from "@web-std/file";
 import { z } from "zod";
 
+import { update } from "@eboto-mo/auth";
 import { eq } from "@eboto-mo/db";
 import { users } from "@eboto-mo/db/schema";
 
@@ -35,38 +38,50 @@ export const userRouter = createTRPCRouter({
 
       if (!user) throw new TRPCError({ code: "NOT_FOUND" });
 
-      // TODO: Fix image and image_file
-      await ctx.db
-        .update(users)
-        .set({
-          //   first_name: input.firstName,
-          //   middle_name: input.middleName,
-          //   last_name: input.lastName,
-          name: input.name,
-          image_file: input.image
-            ? await fetch(input.image.base64)
-                .then((res) => res.blob())
-                .then(
-                  async (blob) =>
-                    (
-                      await ctx.utapi.uploadFiles(
-                        new File([blob], `user_image_${ctx.session.user.id}`, {
-                          type: input.image!.type,
-                        }),
-                      )
-                    ).data,
-                )
-            : input.image,
-        })
-        .where(eq(users.id, ctx.session.user.id));
+      await ctx.db.transaction(async (db) => {
+        if (
+          user.image_file &&
+          user.image &&
+          (input.image === null || !!input.image)
+        ) {
+          await ctx.utapi.deleteFiles(user.image_file.key);
+        }
 
-      // await update({
-      //   user: {
-      //     ...ctx.session.user,
-      //     name: input.name,
-      //     image: input.image,
-      //   },
-      // });
+        const image_file = input.image
+          ? await fetch(input.image.base64)
+              .then((res) => res.blob())
+              .then(
+                async (blob) =>
+                  (
+                    await ctx.utapi.uploadFiles(
+                      new File([blob], `user_image_${ctx.session.user.id}`, {
+                        type: input.image!.type,
+                      }),
+                    )
+                  ).data,
+              )
+          : input.image;
+
+        await db
+          .update(users)
+          .set({
+            //   first_name: input.firstName,
+            //   middle_name: input.middleName,
+            //   last_name: input.lastName,
+            name: input.name,
+            image_file,
+            image: image_file?.url,
+          })
+          .where(eq(users.id, ctx.session.user.id));
+
+        await update({
+          user: {
+            ...ctx.session.user,
+            name: input.name,
+            image: image_file?.url,
+          },
+        });
+      });
     }),
 
   deleteAccount: protectedProcedure.mutation(async ({ ctx }) => {
