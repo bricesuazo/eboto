@@ -11,19 +11,19 @@
   },
   "dependencies": {
     "@eboto-mo/db": "workspace:*",
-    "@auth/core": "^0.16.0",
-    "@auth/drizzle-adapter": "^0.3.2",
-    "@t3-oss/env-nextjs": "^0.6.1",
-    "next-auth": "0.0.0-manual.c885ac1d",
+    "@auth/core": "^0.17.0",
+    "@auth/drizzle-adapter": "^0.3.4",
+    "@t3-oss/env-nextjs": "^0.7.1",
+    "next-auth": "0.0.0-manual.dacbe24d",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "zod": "^3.22.2"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@eboto-mo/eslint-config": "workspace:*",
     "@eboto-mo/prettier-config": "workspace:*",
     "@eboto-mo/tsconfig": "workspace:*",
-    "eslint": "^8.50.0",
+    "eslint": "^8.51.0",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2"
   },

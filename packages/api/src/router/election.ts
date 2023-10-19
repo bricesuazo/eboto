@@ -465,7 +465,8 @@ export const electionRouter = createTRPCRouter({
       }
 
       const isElectionSlugExists = await ctx.db.query.elections.findFirst({
-        where: (elections, { eq }) => eq(elections.slug, input.slug),
+        where: (elections, { eq, and, isNull }) =>
+          and(eq(elections.slug, input.slug), isNull(elections.deleted_at)),
       });
 
       if (isElectionSlugExists) {

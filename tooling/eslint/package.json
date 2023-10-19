@@ -8,12 +8,12 @@
     "./react.js"
   ],
   "dependencies": {
-    "@next/eslint-plugin-next": "^13.5.3",
-    "@types/eslint": "^8.44.3",
-    "@typescript-eslint/eslint-plugin": "^6.7.3",
-    "@typescript-eslint/parser": "^6.7.3",
+    "@next/eslint-plugin-next": "^13.5.6",
+    "@types/eslint": "^8.44.6",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^6.8.0",
     "eslint-config-prettier": "^9.0.0",
-    "eslint-config-turbo": "^1.10.14",
+    "eslint-config-turbo": "^1.10.15",
     "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-react": "^7.33.2",
@@ -22,7 +22,7 @@
   "devDependencies": {
     "@eboto-mo/prettier-config": "workspace:*",
     "@eboto-mo/tsconfig": "workspace:*",
-    "eslint": "^8.50.0",
+    "eslint": "^8.51.0",
     "typescript": "^5.2.2"
   },
   "prettier": "@eboto-mo/prettier-config"

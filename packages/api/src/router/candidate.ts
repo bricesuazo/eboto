@@ -294,10 +294,11 @@ export const candidateRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       // TODO: Validate commissioner
       const isCandidateSlugExists = await ctx.db.query.candidates.findFirst({
-        where: (candidate, { eq, and }) =>
+        where: (candidate, { eq, and, isNull }) =>
           and(
             eq(candidate.slug, input.slug),
             eq(candidate.election_id, input.election_id),
+            isNull(candidate.deleted_at),
           ),
       });
 
