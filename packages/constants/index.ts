@@ -3,13 +3,18 @@ import {
   IconLayoutDashboard,
   IconReplace,
   IconSettings,
-  IconUserSearch,
   IconUsers,
+  IconUserSearch,
 } from "@tabler/icons-react";
 import type { TablerIconsProps } from "@tabler/icons-react";
 import { z } from "zod";
+
 import type { Election } from "@eboto-mo/db/schema";
 
+export const baseUrl =
+  process.env.NODE_ENV === "production"
+    ? "https://eboto-mo.com"
+    : "http://localhost:3000";
 
 export const isElectionEnded = ({
   election,
@@ -26,7 +31,6 @@ export const isElectionEnded = ({
         new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
     : end_date.getTime() <= now.getTime();
 };
-
 
 export const isElectionOngoing = ({ election }: { election: Election }) => {
   const end = new Date(election.end_date);

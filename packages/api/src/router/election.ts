@@ -9,7 +9,6 @@ import {
   positionTemplate,
   takenSlugs,
 } from "@eboto-mo/constants";
-import { eq } from "@eboto-mo/db";
 import {
   commissioners,
   elections,
@@ -19,6 +18,7 @@ import {
   reported_problems,
   votes,
 } from "@eboto-mo/db/schema";
+import { sendEmail } from "@eboto-mo/email";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
@@ -101,57 +101,93 @@ export const electionRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const election = await ctx.db.query.elections.findFirst({
-        where: (elections, { eq }) => eq(elections.id, input.election_id),
-      });
-
-      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
-
-      if (!isElectionOngoing({ election }))
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Election is not ongoing",
+      await ctx.db.transaction(async (db) => {
+        const election = await db.query.elections.findFirst({
+          where: (elections, { eq }) => eq(elections.id, input.election_id),
         });
 
-      const existingVotes = await ctx.db.query.votes.findMany({
-        where: (votes, { eq, and }) =>
-          and(
-            eq(votes.voter_id, ctx.session.user.id),
-            eq(votes.election_id, election.id),
-          ),
-      });
+        if (!election) throw new TRPCError({ code: "NOT_FOUND" });
 
-      if (existingVotes.length > 0)
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "You have already voted in this election",
-        });
+        if (!isElectionOngoing({ election }))
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Election is not ongoing",
+          });
 
-      await ctx.db.insert(votes).values(
-        input.votes
-          .map((vote) =>
-            vote.votes.map((candidate_id) =>
-              candidate_id === "abstain"
-                ? {
-                    position_id: vote.position_id,
-                    voter_id: ctx.session.user.id,
-                    election_id: input.election_id,
-                  }
-                : {
-                    candidate_id,
-                    voter_id: ctx.session.user.id,
-                    election_id: input.election_id,
-                  },
+        const existingVotes = await db.query.votes.findFirst({
+          where: (votes, { eq, and }) =>
+            and(
+              eq(votes.voter_id, ctx.session.user.id),
+              eq(votes.election_id, election.id),
             ),
-          )
-          .flat(),
-      );
+        });
 
-      // await sendEmailTransport({
-      //   email: ctx.session.user.email,
-      //   subject: `Resibo: You have successfully casted your vote in ${election.name}`,
-      //   html: render(<VoteCasted election={election} votes={votes} />),
-      // });
+        if (existingVotes)
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "You have already voted in this election",
+          });
+
+        await db.insert(votes).values(
+          input.votes
+            .map((vote) =>
+              vote.votes.map((candidate_id) =>
+                candidate_id === "abstain"
+                  ? {
+                      position_id: vote.position_id,
+                      voter_id: ctx.session.user.id,
+                      election_id: input.election_id,
+                    }
+                  : {
+                      candidate_id,
+                      voter_id: ctx.session.user.id,
+                      election_id: input.election_id,
+                    },
+              ),
+            )
+            .flat(),
+        );
+
+        const votesCasted = await db.query.votes.findMany({
+          where: (votes, { eq, and }) =>
+            and(
+              eq(votes.voter_id, ctx.session.user.id),
+              eq(votes.election_id, input.election_id),
+            ),
+          with: {
+            candidate: true,
+            position: true,
+          },
+        });
+
+        const parsedOutputForEmail = {
+          election,
+          votes: votesCasted,
+        };
+
+        // await sendEmailTransport({
+        //   email: ctx.session.user.email,
+        //   subject: `Resibo: You have successfully casted your vote in ${election.name}`,
+        //   html: render(<VoteCasted election={election} votes={votes} />),
+        // });
+        await sendEmail({
+          Destination: {
+            ToAddresses: [ctx.session.user.email ?? ""],
+          },
+          Message: {
+            Body: {
+              Html: {
+                Charset: "UTF-8",
+                Data: voteCastedHtml,
+              },
+            },
+            Subject: {
+              Charset: "UTF-8",
+              Data: "hello world",
+            },
+          },
+        });
+      });
     }),
   getElectionBySlug: publicProcedure
     .input(
