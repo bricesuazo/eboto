@@ -3,24 +3,15 @@
   "main": "./index.tsx",
   "version": "0.0.0",
   "scripts": {
-    "email:dev": "email dev --port 3002"
+    "email:dev": "email dev --port 3002",
+    "export": "email export"
   },
   "dependencies": {
-    "@eboto-mo/constants": "workspace:*",
     "@aws-sdk/client-ses": "^3.431.0",
-    "@react-email/body": "^0.0.3",
-    "@react-email/button": "0.0.10",
-    "@react-email/container": "^0.0.8",
-    "@react-email/head": "^0.0.5",
-    "@react-email/heading": "^0.0.9",
-    "@react-email/hr": "^0.0.5",
-    "@react-email/html": "0.0.4",
-    "@react-email/img": "^0.0.5",
-    "@react-email/link": "^0.0.5",
-    "@react-email/preview": "^0.0.6",
-    "@react-email/render": "^0.0.7",
-    "@react-email/section": "^0.0.9",
-    "@react-email/text": "^0.0.5",
+    "@eboto-mo/constants": "workspace:*",
+    "@react-email/components": "0.0.7",
+    "autoprefixer": "^10.4.16",
+    "next": "13.5.6",
     "react": "^18.2.0",
     "react-email": "1.9.5"
   },

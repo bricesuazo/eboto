@@ -9,6 +9,7 @@ import {
   positionTemplate,
   takenSlugs,
 } from "@eboto-mo/constants";
+import { eq } from "@eboto-mo/db";
 import {
   commissioners,
   elections,
@@ -18,7 +19,7 @@ import {
   reported_problems,
   votes,
 } from "@eboto-mo/db/schema";
-import { sendEmail } from "@eboto-mo/email";
+import { sendVoteCasted } from "@eboto-mo/email/emails/vote-casted";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
@@ -148,45 +149,40 @@ export const electionRouter = createTRPCRouter({
             .flat(),
         );
 
-        const votesCasted = await db.query.votes.findMany({
-          where: (votes, { eq, and }) =>
-            and(
-              eq(votes.voter_id, ctx.session.user.id),
-              eq(votes.election_id, input.election_id),
-            ),
-          with: {
-            candidate: true,
-            position: true,
-          },
-        });
+        if (ctx.session.user.email) {
+          const positions = await db.query.positions.findMany({
+            where: (positions, { eq, and }) =>
+              and(eq(positions.election_id, input.election_id)),
+            orderBy: (positions, { asc }) => asc(positions.order),
+          });
 
-        const parsedOutputForEmail = {
-          election,
-          votes: votesCasted,
-        };
+          const votesCasted = await db.query.votes.findMany({
+            where: (votes, { eq, and }) =>
+              and(
+                eq(votes.voter_id, ctx.session.user.id),
+                eq(votes.election_id, input.election_id),
+              ),
+            with: {
+              candidate: true,
+              position: true,
+            },
+          });
 
-        // await sendEmailTransport({
-        //   email: ctx.session.user.email,
-        //   subject: `Resibo: You have successfully casted your vote in ${election.name}`,
-        //   html: render(<VoteCasted election={election} votes={votes} />),
-        // });
-        await sendEmail({
-          Destination: {
-            ToAddresses: [ctx.session.user.email ?? ""],
-          },
-          Message: {
-            Body: {
-              Html: {
-                Charset: "UTF-8",
-                Data: voteCastedHtml,
-              },
-            },
-            Subject: {
-              Charset: "UTF-8",
-              Data: "hello world",
-            },
-          },
-        });
+          const votesCastedByPosition = {
+            ...election,
+            positions: positions.map((position) => ({
+              ...position,
+              votes: votesCasted.filter(
+                (vote) => vote.position_id === position.id,
+              ),
+            })),
+          };
+
+          await sendVoteCasted({
+            email: ctx.session.user.email,
+            election: votesCastedByPosition,
+          });
+        }
       });
     }),
   getElectionBySlug: publicProcedure

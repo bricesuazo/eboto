@@ -1,15 +1,21 @@
 import { SES } from "@aws-sdk/client-ses";
 import type { SendEmailCommandInput } from "@aws-sdk/client-ses";
 
-const ses = new SES({ region: process.env.AWS_SES_REGION });
+// if (!process.env.AWS_SES_REGION)
+//   throw new Error("AWS_SES_REGION is not defined");
+// if (!process.env.AWS_ACCESS_KEY_ID)
+//   throw new Error("AWS_ACCESS_KEY_ID is not defined");
+// if (!process.env.AWS_SECRET_ACCESS_KEY)
+//   throw new Error("AWS_SECRET_ACCESS_KEY is not defined");
 
-export async function sendEmail(args: SendEmailCommandInput) {
-  await ses.sendEmail({
-    ...args,
+export const ses = new SES({
+  region: process.env.AWS_SES_REGION,
 
-    Source: process.env.EMAIL_FROM,
-  });
-}
+  // credentials: {
+  //   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  //   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  // },
+});
 
 // {
 //     Source: "you@example.com",
