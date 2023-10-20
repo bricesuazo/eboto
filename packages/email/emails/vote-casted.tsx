@@ -10,9 +10,9 @@ import {
   Link,
   Preview,
   render,
+  Row,
   Section,
   Tailwind,
-  Text,
 } from "@react-email/components";
 
 import { baseUrl } from "@eboto-mo/constants";
@@ -99,7 +99,7 @@ export default function VoteCasted({ election }: VoteCastedProps) {
             }}
           >
             <Img
-              src={`https://raw.githubusercontent.com/bricesuazo/eboto-mo/main/public/images/eboto-mo-logo.png`}
+              src={`https://raw.githubusercontent.com/bricesuazo/eboto-mo/main/apps/www/public/images/logo.png`}
               width="42"
               height="42"
               alt="eBoto Mo"
@@ -135,18 +135,18 @@ export default function VoteCasted({ election }: VoteCastedProps) {
               Your votes:
             </Heading>
             <Section>
-              {/* {election.positions.map((position) => (
-              <Text
-                style={{
-                  fontSize: "15px",
-                  lineHeight: "1.5",
-                  color: "#484848",
-                  padding: "12px 0 0",
-                }}
-              >
-                {position.name}: {vote.candidate?.name}
-              </Text>
-            ))} */}
+              {election.positions.map((position) => (
+                <Section key={position.id}>
+                  <Heading>{position.name}</Heading>
+                  {position.votes.map((vote) => (
+                    <Row key={vote.id}>
+                      {vote.candidate || !vote.position
+                        ? `${vote.candidate?.first_name} ${vote.candidate?.last_name}`
+                        : "Abstain"}
+                    </Row>
+                  ))}
+                </Section>
+              ))}
             </Section>
             <Section
               style={{

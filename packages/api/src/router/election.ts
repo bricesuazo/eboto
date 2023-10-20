@@ -150,6 +150,7 @@ export const electionRouter = createTRPCRouter({
         );
 
         if (ctx.session.user.email) {
+          // send email
           const positions = await db.query.positions.findMany({
             where: (positions, { eq, and }) =>
               and(eq(positions.election_id, input.election_id)),
