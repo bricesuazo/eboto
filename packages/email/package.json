@@ -18,8 +18,13 @@
     "@eboto-mo/prettier-config": "workspace:*",
     "@eboto-mo/tsconfig": "workspace:*",
     "@types/node": "^20.8.7",
-    "eslint": "^8.51.0",
     "typescript": "^5.2.2"
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@eboto-mo/eslint-config/base"
+    ]
   },
   "prettier": "@eboto-mo/prettier-config"
 }

@@ -96,7 +96,16 @@ export const electionRouter = createTRPCRouter({
         votes: z.array(
           z.object({
             position_id: z.string(),
-            votes: z.array(z.string()),
+            votes: z
+              .object({
+                isAbstain: z.literal(true),
+              })
+              .or(
+                z.object({
+                  isAbstain: z.literal(false),
+                  candidates: z.array(z.string()),
+                }),
+              ),
           }),
         ),
       }),
@@ -132,56 +141,65 @@ export const electionRouter = createTRPCRouter({
         await db.insert(votes).values(
           input.votes
             .map((vote) =>
-              vote.votes.map((candidate_id) =>
-                candidate_id === "abstain"
-                  ? {
-                      position_id: vote.position_id,
-                      voter_id: ctx.session.user.id,
-                      election_id: input.election_id,
-                    }
-                  : {
-                      candidate_id,
-                      voter_id: ctx.session.user.id,
-                      election_id: input.election_id,
-                    },
-              ),
+              vote.votes.isAbstain
+                ? {
+                    position_id: vote.position_id,
+                    voter_id: ctx.session.user.id,
+                    election_id: input.election_id,
+                  }
+                : vote.votes.candidates.map((candidate_id) => ({
+                    candidate_id,
+                    voter_id: ctx.session.user.id,
+                    election_id: input.election_id,
+                  })),
             )
             .flat(),
         );
 
         if (ctx.session.user.email) {
-          // send email
           const positions = await db.query.positions.findMany({
             where: (positions, { eq, and }) =>
               and(eq(positions.election_id, input.election_id)),
             orderBy: (positions, { asc }) => asc(positions.order),
           });
 
-          const votesCasted = await db.query.votes.findMany({
-            where: (votes, { eq, and }) =>
-              and(
-                eq(votes.voter_id, ctx.session.user.id),
-                eq(votes.election_id, input.election_id),
-              ),
-            with: {
-              candidate: true,
-              position: true,
-            },
+          const candidates = await db.query.candidates.findMany({
+            where: (candidates, { eq, and }) =>
+              and(eq(candidates.election_id, input.election_id)),
           });
-
-          const votesCastedByPosition = {
-            ...election,
-            positions: positions.map((position) => ({
-              ...position,
-              votes: votesCasted.filter(
-                (vote) => vote.position_id === position.id,
-              ),
-            })),
-          };
 
           await sendVoteCasted({
             email: ctx.session.user.email,
-            election: votesCastedByPosition,
+            election: {
+              name: election.name,
+              slug: election.slug,
+
+              positions: input.votes.map((vote) => ({
+                id: vote.position_id,
+                name:
+                  positions.find((position) => position.id === vote.position_id)
+                    ?.name ?? "",
+                vote: !vote.votes.isAbstain
+                  ? {
+                      isAbstain: false,
+                      candidates: vote.votes.candidates.map((candidate_id) => {
+                        const candidate = candidates.find(
+                          (candidate) => candidate.id === candidate_id,
+                        );
+
+                        return {
+                          id: candidate?.id ?? "",
+                          name: `${candidate?.first_name} ${
+                            candidate?.middle_name
+                              ? candidate?.middle_name + " "
+                              : ""
+                          }${candidate?.last_name}`,
+                        };
+                      }),
+                    }
+                  : { isAbstain: true },
+              })),
+            },
           });
         }
       });

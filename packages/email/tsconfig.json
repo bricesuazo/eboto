@@ -1,4 +1,4 @@
 {
-  "extends": "../../tsconfig.json",
-  "include": ["emails"]
+  "extends": "@eboto-mo/tsconfig/base.json"
+  // "include": ["emails"]
 }

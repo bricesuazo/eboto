@@ -1,5 +1,4 @@
 import { SES } from "@aws-sdk/client-ses";
-import type { SendEmailCommandInput } from "@aws-sdk/client-ses";
 
 // if (!process.env.AWS_SES_REGION)
 //   throw new Error("AWS_SES_REGION is not defined");

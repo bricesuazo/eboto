@@ -428,9 +428,6 @@ importers:
       '@types/node':
         specifier: ^20.8.7
         version: registry.npmjs.org/@types/node@20.8.7
-      eslint:
-        specifier: ^8.51.0
-        version: registry.npmjs.org/eslint@8.51.0
       typescript:
         specifier: ^5.2.2
         version: registry.npmjs.org/typescript@5.2.2

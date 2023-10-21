@@ -13,22 +13,33 @@ import {
   Row,
   Section,
   Tailwind,
+  Text,
 } from "@react-email/components";
 
 import { baseUrl } from "@eboto-mo/constants";
-import type { Candidate, Election, Position, Vote } from "@eboto-mo/db/schema";
 
 import { ses } from "../index";
 
 interface VoteCastedProps {
   email: string;
-  election: Election & {
-    positions: (Position & {
-      votes: (Vote & {
-        candidate: Candidate | null;
-        position: Position | null;
-      })[];
-    })[];
+  election: {
+    name: string;
+    slug: string;
+    positions: {
+      id: string;
+      name: string;
+      vote:
+        | {
+            isAbstain: true;
+          }
+        | {
+            isAbstain: false;
+            candidates: {
+              id: string;
+              name: string;
+            }[];
+          };
+    }[];
   };
 }
 
@@ -134,20 +145,21 @@ export default function VoteCasted({ election }: VoteCastedProps) {
             >
               Your votes:
             </Heading>
-            <Section>
+            <Row>
               {election.positions.map((position) => (
                 <Section key={position.id}>
-                  <Heading>{position.name}</Heading>
-                  {position.votes.map((vote) => (
-                    <Row key={vote.id}>
-                      {vote.candidate || !vote.position
-                        ? `${vote.candidate?.first_name} ${vote.candidate?.last_name}`
-                        : "Abstain"}
-                    </Row>
-                  ))}
+                  <Heading as="h3">{position.name}:</Heading>
+
+                  {!position.vote.isAbstain ? (
+                    position.vote.candidates.map((candidate) => (
+                      <Text key={candidate.id}>- {candidate.name}</Text>
+                    ))
+                  ) : (
+                    <Text>Abstain</Text>
+                  )}
                 </Section>
               ))}
-            </Section>
+            </Row>
             <Section
               style={{
                 padding: "27px 0 27px",

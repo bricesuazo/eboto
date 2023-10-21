@@ -104,17 +104,30 @@ export default function VoteForm({
   return (
     <>
       <Modal
-        opened={opened}
+        opened={opened || voteMutation.isLoading}
         onClose={close}
         title={<Text fw={600}>Confirm Vote</Text>}
       >
         <form
           onSubmit={form.onSubmit((values) => {
+            // console.log({
+            //   election_id: election.id,
+            //   votes: Object.entries(values).map(([key, value]) => ({
+            //     position_id: key,
+            //     votes: value.votes,
+            //   })),
+            // });
             voteMutation.mutate({
               election_id: election.id,
               votes: Object.entries(values).map(([key, value]) => ({
                 position_id: key,
-                votes: value.votes,
+                votes:
+                  value.votes[0] === "abstain"
+                    ? { isAbstain: true }
+                    : {
+                        isAbstain: false,
+                        candidates: value.votes,
+                      },
               })),
             });
           })}
