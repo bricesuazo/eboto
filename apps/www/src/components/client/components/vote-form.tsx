@@ -110,13 +110,6 @@ export default function VoteForm({
       >
         <form
           onSubmit={form.onSubmit((values) => {
-            // console.log({
-            //   election_id: election.id,
-            //   votes: Object.entries(values).map(([key, value]) => ({
-            //     position_id: key,
-            //     votes: value.votes,
-            //   })),
-            // });
             voteMutation.mutate({
               election_id: election.id,
               votes: Object.entries(values).map(([key, value]) => ({

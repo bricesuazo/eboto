@@ -9,6 +9,7 @@ import { verifySignature } from "@upstash/qstash/nextjs";
 // import { generated_election_results } from "@eboto-mo/db/schema";
 
 function handler(req: NextApiRequest, res: NextApiResponse) {
+  console.log("Cron Job Triggered", new Date());
   // const now = new Date();
 
   // const start_date = new Date(now);

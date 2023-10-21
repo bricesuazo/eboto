@@ -147,8 +147,8 @@ importers:
         specifier: 8.0.0-rc14
         version: registry.npmjs.org/embla-carousel-react@8.0.0-rc14(react@18.2.0)
       mantine-react-table:
-        specifier: ^2.0.0-alpha.2
-        version: registry.npmjs.org/mantine-react-table@2.0.0-alpha.2(@mantine/core@7.1.5)(@mantine/dates@7.1.5)(@mantine/hooks@7.1.5)(@tabler/icons-react@2.39.0)(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^2.0.0-alpha.4
+        version: registry.npmjs.org/mantine-react-table@2.0.0-alpha.4(@mantine/core@7.1.5)(@mantine/dates@7.1.5)(@mantine/hooks@7.1.5)(@tabler/icons-react@2.39.0)(react-dom@18.2.0)(react@18.2.0)
       moment:
         specifier: ^2.29.4
         version: registry.npmjs.org/moment@2.29.4
@@ -3820,44 +3820,44 @@ packages:
       use-sync-external-store: registry.npmjs.org/use-sync-external-store@1.2.0(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/@tanstack/react-table@8.10.6(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-D0VEfkIYnIKdy6SHiBNEaMc4SxO+MV7ojaPhRu8jP933/gbMi367+Wul2LxkdovJ5cq6awm0L1+jgxdS/unzIg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tanstack/react-table/-/react-table-8.10.6.tgz}
-    id: registry.npmjs.org/@tanstack/react-table/8.10.6
+  registry.npmjs.org/@tanstack/react-table@8.10.7(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-bXhjA7xsTcsW8JPTTYlUg/FuBpn8MNjiEPhkNhIGCUR6iRQM2+WEco4OBpvDeVcR9SE+bmWLzdfiY7bCbCSVuA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tanstack/react-table/-/react-table-8.10.7.tgz}
+    id: registry.npmjs.org/@tanstack/react-table/8.10.7
     name: '@tanstack/react-table'
-    version: 8.10.6
+    version: 8.10.7
     engines: {node: '>=12'}
     peerDependencies:
       react: '>=16'
       react-dom: '>=16'
     dependencies:
-      '@tanstack/table-core': registry.npmjs.org/@tanstack/table-core@8.10.6
+      '@tanstack/table-core': registry.npmjs.org/@tanstack/table-core@8.10.7
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/@tanstack/react-virtual@3.0.0-beta.65(react@18.2.0):
-    resolution: {integrity: sha512-Q21cUoE0C8Oyzy3RAMV+u4BuB+RwIf2/oQRCWksmIBp1PqLEtvXhAldh7v/wUt7WKEkislKDICZAvbYYs7EAyQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tanstack/react-virtual/-/react-virtual-3.0.0-beta.65.tgz}
-    id: registry.npmjs.org/@tanstack/react-virtual/3.0.0-beta.65
+  registry.npmjs.org/@tanstack/react-virtual@3.0.0-beta.66(react@18.2.0):
+    resolution: {integrity: sha512-zZF6HskgTvNQppUr7KZgdLFOEXkcn2fhUlNvcBCSc7cnD36GpZBrObDYnyZjMdy7r+GGUfGviMtdz+q/kFn7Qg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tanstack/react-virtual/-/react-virtual-3.0.0-beta.66.tgz}
+    id: registry.npmjs.org/@tanstack/react-virtual/3.0.0-beta.66
     name: '@tanstack/react-virtual'
-    version: 3.0.0-beta.65
+    version: 3.0.0-beta.66
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
-      '@tanstack/virtual-core': registry.npmjs.org/@tanstack/virtual-core@3.0.0-beta.65
+      '@tanstack/virtual-core': registry.npmjs.org/@tanstack/virtual-core@3.0.0-beta.66
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  registry.npmjs.org/@tanstack/table-core@8.10.6:
-    resolution: {integrity: sha512-9t8brthhAmCBIjzk7fCDa/kPKoLQTtA31l9Ir76jYxciTlHU61r/6gYm69XF9cbg9n88gVL5y7rNpeJ2dc1AFA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tanstack/table-core/-/table-core-8.10.6.tgz}
+  registry.npmjs.org/@tanstack/table-core@8.10.7:
+    resolution: {integrity: sha512-KQk5OMg5OH6rmbHZxuNROvdI+hKDIUxANaHlV+dPlNN7ED3qYQ/WkpY2qlXww1SIdeMlkIhpN/2L00rof0fXFw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tanstack/table-core/-/table-core-8.10.7.tgz}
     name: '@tanstack/table-core'
-    version: 8.10.6
+    version: 8.10.7
     engines: {node: '>=12'}
     dev: false
 
-  registry.npmjs.org/@tanstack/virtual-core@3.0.0-beta.65:
-    resolution: {integrity: sha512-ObP2pvXBdbivinr7BWDbGqYt4TK8wNzYsOWio+qBkDx5AJFuvqcdJxcCCYnv4dzVTe5ELA1MT4tkt8NB/tnEdA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tanstack/virtual-core/-/virtual-core-3.0.0-beta.65.tgz}
+  registry.npmjs.org/@tanstack/virtual-core@3.0.0-beta.66:
+    resolution: {integrity: sha512-rsNvvfmLU6vI1BenZp8p2082ep8Eg4xr56VylZMNUQH5V7Bm+zWHaOgDgvziThWrK6jC7aXyHrIIUrXhaNzH6w==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tanstack/virtual-core/-/virtual-core-3.0.0-beta.66.tgz}
     name: '@tanstack/virtual-core'
-    version: 3.0.0-beta.65
+    version: 3.0.0-beta.66
     dev: false
 
   registry.npmjs.org/@tiptap/core@2.1.12(@tiptap/pm@2.1.12):
@@ -8618,11 +8618,11 @@ packages:
     name: make-error
     version: 1.3.6
 
-  registry.npmjs.org/mantine-react-table@2.0.0-alpha.2(@mantine/core@7.1.5)(@mantine/dates@7.1.5)(@mantine/hooks@7.1.5)(@tabler/icons-react@2.39.0)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-3jjwICubrduq/EnrdoHMSQmnWIT8bmmDGeCQIozbHcZAKMuvadpUKM6L8hCfpn9/rKC3bQKXkk/EfN/atwL5NQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/mantine-react-table/-/mantine-react-table-2.0.0-alpha.2.tgz}
-    id: registry.npmjs.org/mantine-react-table/2.0.0-alpha.2
+  registry.npmjs.org/mantine-react-table@2.0.0-alpha.4(@mantine/core@7.1.5)(@mantine/dates@7.1.5)(@mantine/hooks@7.1.5)(@tabler/icons-react@2.39.0)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-sQwS2Qu8cUGxgvRXjmzIZY1MbHR+xG+qCFcTZwYJDCeIei+dOBIj5uivT8Iu5JtlvdW49XmPwrY52YFn4e9yFQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/mantine-react-table/-/mantine-react-table-2.0.0-alpha.4.tgz}
+    id: registry.npmjs.org/mantine-react-table/2.0.0-alpha.4
     name: mantine-react-table
-    version: 2.0.0-alpha.2
+    version: 2.0.0-alpha.4
     engines: {node: '>=14'}
     peerDependencies:
       '@mantine/core': ^7.1
@@ -8637,8 +8637,8 @@ packages:
       '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.5(react@18.2.0)
       '@tabler/icons-react': registry.npmjs.org/@tabler/icons-react@2.39.0(react@18.2.0)
       '@tanstack/match-sorter-utils': registry.npmjs.org/@tanstack/match-sorter-utils@8.8.4
-      '@tanstack/react-table': registry.npmjs.org/@tanstack/react-table@8.10.6(react-dom@18.2.0)(react@18.2.0)
-      '@tanstack/react-virtual': registry.npmjs.org/@tanstack/react-virtual@3.0.0-beta.65(react@18.2.0)
+      '@tanstack/react-table': registry.npmjs.org/@tanstack/react-table@8.10.7(react-dom@18.2.0)(react@18.2.0)
+      '@tanstack/react-virtual': registry.npmjs.org/@tanstack/react-virtual@3.0.0-beta.66(react@18.2.0)
       clsx: registry.npmjs.org/clsx@2.0.0
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)

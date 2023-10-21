@@ -28,8 +28,6 @@ import DeleteBulkVoter from "../modals/delete-bulk-voter";
 import DeleteVoter from "../modals/delete-voter";
 import EditVoter from "../modals/edit-voter";
 
-// TODO: Fix MantineReactTable or update when fixed in Mantine v7
-
 export default function DashboardVoter({
   election,
   voters,
