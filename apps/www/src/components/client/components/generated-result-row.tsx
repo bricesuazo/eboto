@@ -41,7 +41,7 @@ export default function GenerateResultRow({
       })}
     >
       <Box>
-        <Text>{result.name}</Text>
+        <Text>{result.file.name}</Text>
         <Text size="sm" c="dimmed">
           Generated {moment(result.created_at).fromNow()} (
           {moment(result.created_at).format("MMMM DD, YYYY hh:mmA")})

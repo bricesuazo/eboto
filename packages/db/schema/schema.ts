@@ -213,8 +213,7 @@ export const generated_election_results = mysqlTable(
   "generated_election_result",
   {
     id,
-    name: text("name").notNull(),
-    link: longtext("link"),
+    file: json("file").notNull().$type<File>(),
 
     created_at,
 
