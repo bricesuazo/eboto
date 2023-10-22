@@ -19,6 +19,7 @@ import {
 import { baseUrl } from "@eboto-mo/constants";
 
 import { ses } from "../index";
+import { config } from "../tailwind.config";
 
 interface VoteCastedProps {
   email: string;
@@ -71,29 +72,7 @@ export default function VoteCasted(props: VoteCastedProps) {
       <Preview>
         Resibo: You have successfully casted your vote in {props.election.name}
       </Preview>
-      <Tailwind
-        config={{
-          theme: {
-            extend: {
-              accentColor: {
-                50: "#E5FEEE",
-                100: "#D2F9E0",
-                200: "#A8F1C0",
-                300: "#7AEA9F",
-                400: "#53E383",
-                500: "#3BDF70",
-                600: "#2BDD66",
-                700: "#1AC455",
-                800: "#0CAF49",
-                900: "#00963C",
-              },
-              colors: {
-                brand: "#2BDD66",
-              },
-            },
-          },
-        }}
-      >
+      <Tailwind config={config}>
         <Body
           className="bg-white"
           style={{

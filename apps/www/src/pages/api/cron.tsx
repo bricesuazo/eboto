@@ -8,6 +8,7 @@ import { UTApi } from "uploadthing/server";
 import { db } from "@eboto-mo/db";
 import { generated_election_results } from "@eboto-mo/db/schema";
 import { sendElectionResult } from "@eboto-mo/email/emails/election-result";
+import { sendElectionStart } from "@eboto-mo/email/emails/election-start";
 
 const utapi = new UTApi();
 
@@ -21,32 +22,40 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     const electionsStart = await trx.query.elections.findMany({
       where: (election, { eq, and, isNull }) =>
         and(eq(election.start_date, start_date), isNull(election.deleted_at)),
+      with: {
+        commissioners: {
+          with: {
+            user: true,
+          },
+        },
+        voters: true,
+      },
     });
 
     for (const election of electionsStart) {
-      // send to commissioners and inform them that they can now invite voters to vote
-      const commissioners = await trx.query.commissioners.findMany({
-        where: (commissioner, { eq }) =>
-          eq(commissioner.election_id, election.id),
+      await sendElectionStart({
+        isForCommissioner: false,
+        election: {
+          name: election.name,
+          slug: election.slug,
+          start_date: election.start_date,
+          end_date: election.end_date,
+        },
+        emails: election.voters.map((voter) => voter.email),
       });
-      console.log(
-        "🚀 ~ file: cron.tsx:28 ~ handler ~ commissioners:",
-        commissioners,
-      );
-      // for (const commissioner of commissioners) {
-      //   await sendEmailTransport({
-      //     email: voter.email,
-      //     subject: `You have been invited to vote in ${election.name}`,
-      //     html: render(
-      //       <ElectionInvitation
-      //         type="VOTER"
-      //         token={token.id}
-      //         electionName={election.name}
-      //         electionEndDate={expiresAtPHT}
-      //       />,
-      //     ),
-      //   });
-      // }
+      await sendElectionStart({
+        isForCommissioner: true,
+        election: {
+          name: election.name,
+          slug: election.slug,
+          start_date: election.start_date,
+          end_date: election.end_date,
+        },
+        emails: election.commissioners.map(
+          (commissioner) => commissioner.user.email,
+        ),
+      });
+      console.log("Email start sent to", election.name);
     }
 
     const end_date = new Date(start_date);
@@ -134,6 +143,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           })),
         },
       });
+      console.log("Email result sent to", election.name);
     }
   });
 
