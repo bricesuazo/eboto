@@ -20,57 +20,55 @@ import { baseUrl } from "@eboto-mo/constants";
 
 import { ses } from "../index";
 
-interface VoteCastedProps {
-  email: string;
+interface ElectionResultProps {
+  emails: string[];
   election: {
     name: string;
     slug: string;
+    start_date: Date;
+    end_date: Date;
     positions: {
       id: string;
       name: string;
-      vote:
-        | {
-            isAbstain: true;
-          }
-        | {
-            isAbstain: false;
-            candidates: {
-              id: string;
-              name: string;
-            }[];
-          };
+      abstain_count: number;
+
+      candidates: {
+        id: string;
+        first_name: string;
+        middle_name: string | null;
+        last_name: string;
+        vote_count: number;
+      }[];
     }[];
   };
 }
 
-export async function sendVoteCasted(props: VoteCastedProps) {
+export async function sendElectionResult(props: ElectionResultProps) {
   await ses.sendEmail({
     Source: process.env.EMAIL_FROM!,
     Destination: {
-      ToAddresses: [props.email],
+      BccAddresses: props.emails,
     },
     Message: {
       Subject: {
         Charset: "UTF-8",
-        Data: `eResibo: You have successfully casted your vote in ${props.election.name}`,
+        Data: `eBoto Mo: Election Result for ${props.election.name}`,
       },
       Body: {
         Html: {
           Charset: "UTF-8",
-          Data: render(<VoteCasted {...props} />),
+          Data: render(<ElectionResult {...props} />),
         },
       },
     },
   });
 }
 
-export default function VoteCasted(props: VoteCastedProps) {
+export default function ElectionResult(props: ElectionResultProps) {
   return (
     <Html>
       <Head />
-      <Preview>
-        Resibo: You have successfully casted your vote in {props.election.name}
-      </Preview>
+      <Preview>eBoto Mo: Election Result for ${props.election.name}</Preview>
       <Tailwind
         config={{
           theme: {
@@ -130,7 +128,7 @@ export default function VoteCasted(props: VoteCastedProps) {
                 padding: "17px 0 0",
               }}
             >
-              eResibo: You have successfully casted your vote in{" "}
+              Election Result for ${props.election.name}
               {props.election.name}
             </Heading>
             <Heading
@@ -144,20 +142,21 @@ export default function VoteCasted(props: VoteCastedProps) {
                 padding: "12px 0 0",
               }}
             >
-              Your votes:
+              Result
             </Heading>
             <Row>
               {props.election.positions.map((position) => (
                 <Section key={position.id}>
                   <Heading as="h3">{position.name}:</Heading>
 
-                  {!position.vote.isAbstain ? (
-                    position.vote.candidates.map((candidate) => (
-                      <Text key={candidate.id}>- {candidate.name}</Text>
-                    ))
-                  ) : (
-                    <Text>Abstain</Text>
-                  )}
+                  {position.candidates.map((candidate) => (
+                    <Text key={candidate.id}>
+                      {candidate.first_name}{" "}
+                      {candidate.middle_name ? candidate.middle_name + " " : ""}{" "}
+                      {candidate.last_name} - ({candidate.vote_count} votes)
+                    </Text>
+                  ))}
+                  <Text>Abstain - ({position.abstain_count} votes)</Text>
                 </Section>
               ))}
             </Row>

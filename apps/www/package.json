@@ -15,6 +15,7 @@
     "@eboto-mo/auth": "workspace:*",
     "@eboto-mo/constants": "workspace:*",
     "@eboto-mo/db": "workspace:*",
+    "@eboto-mo/email": "workspace:*",
     "@eboto-mo/eslint-config": "workspace:*",
     "@emotion/react": "^11.11.1",
     "@mantine/carousel": "7.1.5",

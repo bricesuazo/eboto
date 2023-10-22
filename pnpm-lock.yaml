@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -41,6 +41,9 @@ importers:
       '@eboto-mo/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@eboto-mo/email':
+        specifier: workspace:*
+        version: link:../../packages/email
       '@eboto-mo/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint

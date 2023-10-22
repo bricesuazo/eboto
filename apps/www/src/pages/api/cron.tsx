@@ -7,6 +7,7 @@ import { UTApi } from "uploadthing/server";
 
 import { db } from "@eboto-mo/db";
 import { generated_election_results } from "@eboto-mo/db/schema";
+import { sendElectionResult } from "@eboto-mo/email/emails/election-result";
 
 const utapi = new UTApi();
 
@@ -55,6 +56,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       where: (election, { eq, and, isNull }) =>
         and(eq(election.end_date, end_date), isNull(election.deleted_at)),
       with: {
+        voters: true,
         positions: {
           with: {
             candidates: {
@@ -108,6 +110,29 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       await db.insert(generated_election_results).values({
         election_id: election.id,
         file: file.data,
+      });
+
+      await sendElectionResult({
+        emails: election.voters.map((voter) => voter.email),
+        election: {
+          name: election.name,
+          slug: election.slug,
+          start_date: election.start_date,
+          end_date: election.end_date,
+          positions: election.positions.map((position) => ({
+            id: position.id,
+            name: position.name,
+            abstain_count: position.votes.filter((vote) => vote.position_id)
+              .length,
+            candidates: position.candidates.map((candidate) => ({
+              id: candidate.id,
+              first_name: candidate.first_name,
+              middle_name: candidate.middle_name,
+              last_name: candidate.last_name,
+              vote_count: candidate.votes.length,
+            })),
+          })),
+        },
       });
     }
   });
