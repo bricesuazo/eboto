@@ -6,7 +6,7 @@ import { verifySignature } from "@upstash/qstash/nextjs";
 import { UTApi } from "uploadthing/server";
 
 import { db } from "@eboto-mo/db";
-import { generated_election_results } from "@eboto-mo/db/schema";
+import { elections, generated_election_results } from "@eboto-mo/db/schema";
 import { sendElectionResult } from "@eboto-mo/email/emails/election-result";
 import { sendElectionStart } from "@eboto-mo/email/emails/election-start";
 
@@ -55,6 +55,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           (commissioner) => commissioner.user.email,
         ),
       });
+
+      if (election.publicity === "PRIVATE") {
+        await trx.update(elections).set({
+          publicity: "VOTER",
+        });
+      }
       console.log("Email start sent to", election.name);
     }
 

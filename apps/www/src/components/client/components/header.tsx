@@ -22,6 +22,7 @@ import {
   MenuItem,
   MenuTarget,
   Modal,
+  Pill,
   Select,
   Skeleton,
   Stack,
@@ -35,12 +36,14 @@ import {
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
+import { spotlight } from "@mantine/spotlight";
 import {
   IconAlertCircle,
   IconChartBar,
   IconChevronDown,
   IconLogout,
   IconMoon,
+  IconSearch,
   IconSun,
   IconUserCircle,
 } from "@tabler/icons-react";
@@ -210,144 +213,169 @@ export default function Header({ userId }: { userId?: string }) {
           </Flex>
 
           {userId ? (
-            <Menu
-              position="bottom-end"
-              opened={openedMenu}
-              onChange={toggle}
-              withinPortal
-              width={200}
-            >
-              <MenuTarget>
-                <UnstyledButton h="100%">
-                  <Flex gap="xs" align="center">
-                    <Box
-                      style={{
-                        position: "relative",
-                        borderRadius: "50%",
-                        overflow: "hidden",
-                        width: 24,
-                        height: 24,
-
-                        // [theme.fn.largerThan("sm")]: {
-                        //   width: 32,
-                        //   height: 32,
-                        // },
-                      }}
-                    >
-                      {session.status === "authenticated" ? (
-                        session.data?.user.image ? (
-                          <Image
-                            src={session.data?.user.image}
-                            alt="Profile picture"
-                            fill
-                            sizes="100%"
-                            priority
-                            style={{
-                              objectFit: "cover",
-                            }}
-                          />
-                        ) : (
-                          <IconUserCircle />
-                        )
-                      ) : (
-                        <Skeleton w={24} h={24} />
-                      )}
-                    </Box>
-
-                    <Box w={{ base: 100, sm: 140 }}>
-                      {session.status === "authenticated" ? (
-                        <>
-                          <Text size="xs" truncate fw="bold">
-                            {session.data.user.name}
-                          </Text>
-                          <Text size="xs" truncate>
-                            {session.data.user.email}
-                          </Text>
-                        </>
-                      ) : (
-                        <>
-                          <Skeleton h={12} my={4} />
-                          <Skeleton h={12} my={4} />
-                        </>
-                      )}
-                    </Box>
-
-                    <IconChevronDown
-                      size={16}
-                      style={{
-                        rotate: openedMenu ? "-180deg" : "0deg",
-                        transition: "all 0.25s",
-                      }}
-                    />
-                  </Flex>
-                </UnstyledButton>
-              </MenuTarget>
-
-              <MenuDropdown>
-                <MenuItem
-                  // component={Link}
-                  // href="/dashboard"
-                  onClick={() => router.push("/dashboard")}
-                  leftSection={<IconChartBar size={16} />}
-                >
-                  Dashboard
-                </MenuItem>
-
-                <MenuItem
-                  component={Link}
-                  href="/account"
-                  leftSection={<IconUserCircle size={16} />}
-                >
-                  Account settings
-                </MenuItem>
-
-                <MenuItem
-                  leftSection={
-                    computedColorScheme === "light" ? (
-                      <IconMoon size={16} />
-                    ) : (
-                      <IconSun size={16} />
-                    )
-                  }
-                  onClick={() =>
-                    setColorScheme(
-                      computedColorScheme === "light" ? "dark" : "light",
-                    )
-                  }
-                  closeMenuOnClick={false}
-                >
-                  {computedColorScheme === "light" ? "Dark mode" : "Light mode"}
-                </MenuItem>
-                <MenuItem
-                  leftSection={<IconAlertCircle size={16} />}
-                  onClick={openReportAProblem}
-                >
-                  Report a problem
-                </MenuItem>
-                <MenuItem
-                  onClick={async () => {
-                    setLogoutLoading(true);
-                    await signOut();
-                  }}
-                  closeMenuOnClick={false}
-                  leftSection={
-                    logoutLoading ? (
-                      <Loader size={16} m={0} />
-                    ) : (
-                      <IconLogout
+            <Group>
+              <TextInput
+                onClick={spotlight.open}
+                leftSection={<IconSearch size="1.25rem" />}
+                radius="xl"
+                w={140}
+                readOnly
+                placeholder="Search"
+                hiddenFrom="sm"
+                visibleFrom="xs"
+              />
+              <TextInput
+                onClick={spotlight.open}
+                leftSection={<IconSearch size="1.25rem" />}
+                rightSection={<Pill>Ctrl + K</Pill>}
+                radius="xl"
+                w={200}
+                readOnly
+                rightSectionWidth={80}
+                placeholder="Search"
+                visibleFrom="sm"
+              />
+              <Menu
+                position="bottom-end"
+                opened={openedMenu}
+                onChange={toggle}
+                withinPortal
+                width={200}
+              >
+                <MenuTarget>
+                  <UnstyledButton h="100%">
+                    <Flex gap="xs" align="center">
+                      <Box
                         style={{
-                          transform: "translateX(2px)",
+                          position: "relative",
+                          borderRadius: "50%",
+                          overflow: "hidden",
+                          width: 24,
+                          height: 24,
+
+                          // [theme.fn.largerThan("sm")]: {
+                          //   width: 32,
+                          //   height: 32,
+                          // },
                         }}
+                      >
+                        {session.status === "authenticated" ? (
+                          session.data?.user.image ? (
+                            <Image
+                              src={session.data?.user.image}
+                              alt="Profile picture"
+                              fill
+                              sizes="100%"
+                              priority
+                              style={{
+                                objectFit: "cover",
+                              }}
+                            />
+                          ) : (
+                            <IconUserCircle />
+                          )
+                        ) : (
+                          <Skeleton w={24} h={24} />
+                        )}
+                      </Box>
+
+                      <Box w={{ base: 100, sm: 140 }}>
+                        {session.status === "authenticated" ? (
+                          <>
+                            <Text size="xs" truncate fw="bold">
+                              {session.data.user.name}
+                            </Text>
+                            <Text size="xs" truncate>
+                              {session.data.user.email}
+                            </Text>
+                          </>
+                        ) : (
+                          <>
+                            <Skeleton h={12} my={4} />
+                            <Skeleton h={12} my={4} />
+                          </>
+                        )}
+                      </Box>
+
+                      <IconChevronDown
                         size={16}
+                        style={{
+                          rotate: openedMenu ? "-180deg" : "0deg",
+                          transition: "all 0.25s",
+                        }}
                       />
-                    )
-                  }
-                  disabled={logoutLoading}
-                >
-                  Log out
-                </MenuItem>
-              </MenuDropdown>
-            </Menu>
+                    </Flex>
+                  </UnstyledButton>
+                </MenuTarget>
+
+                <MenuDropdown>
+                  <MenuItem
+                    // component={Link}
+                    // href="/dashboard"
+                    onClick={() => router.push("/dashboard")}
+                    leftSection={<IconChartBar size={16} />}
+                  >
+                    Dashboard
+                  </MenuItem>
+
+                  <MenuItem
+                    component={Link}
+                    href="/account"
+                    leftSection={<IconUserCircle size={16} />}
+                  >
+                    Account settings
+                  </MenuItem>
+
+                  <MenuItem
+                    leftSection={
+                      computedColorScheme === "light" ? (
+                        <IconMoon size={16} />
+                      ) : (
+                        <IconSun size={16} />
+                      )
+                    }
+                    onClick={() =>
+                      setColorScheme(
+                        computedColorScheme === "light" ? "dark" : "light",
+                      )
+                    }
+                    closeMenuOnClick={false}
+                  >
+                    {computedColorScheme === "light"
+                      ? "Dark mode"
+                      : "Light mode"}
+                  </MenuItem>
+                  <MenuItem
+                    leftSection={<IconAlertCircle size={16} />}
+                    onClick={openReportAProblem}
+                  >
+                    Report a problem
+                  </MenuItem>
+                  <MenuItem
+                    onClick={async () => {
+                      setLogoutLoading(true);
+                      await signOut();
+                    }}
+                    closeMenuOnClick={false}
+                    leftSection={
+                      logoutLoading ? (
+                        <Loader size={16} m={0} />
+                      ) : (
+                        <IconLogout
+                          style={{
+                            transform: "translateX(2px)",
+                          }}
+                          size={16}
+                        />
+                      )
+                    }
+                    disabled={logoutLoading}
+                  >
+                    Log out
+                  </MenuItem>
+                </MenuDropdown>
+              </Menu>
+            </Group>
           ) : (
             <Group gap="xs">
               <ActionIcon
