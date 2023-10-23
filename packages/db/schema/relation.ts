@@ -7,6 +7,8 @@ import {
   candidates,
   commissioners,
   credentials,
+  deleted_accounts,
+  deleted_users,
   elections,
   events_attended,
   generated_election_results,
@@ -213,10 +215,21 @@ export const events_attendedRelations = relations(
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
 }));
-
+export const deletedUsersRelations = relations(deleted_users, ({ many }) => ({
+  accounts: many(deleted_accounts),
+}));
 export const accountsRelations = relations(accounts, ({ one }) => ({
   user: one(users, { fields: [accounts.userId], references: [users.id] }),
 }));
+export const deletedAccountsRelations = relations(
+  deleted_accounts,
+  ({ one }) => ({
+    user: one(deleted_users, {
+      fields: [deleted_accounts.deletedUserId],
+      references: [deleted_users.id],
+    }),
+  }),
+);
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
 }));

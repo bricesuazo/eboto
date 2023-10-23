@@ -180,8 +180,7 @@ export default function AccountPageClient({
                 variant="default"
                 onClick={close}
                 disabled={
-                  // confirmPasswordMutation.isLoading
-                  //     ||
+                  // confirmPasswordMutation.isLoading ||
                   deleteAccountMutation.isLoading
                 }
               >
@@ -382,7 +381,6 @@ export default function AccountPageClient({
               color="red"
               w="fit-content"
               onClick={open}
-              disabled
             >
               Delete Account
             </Button>

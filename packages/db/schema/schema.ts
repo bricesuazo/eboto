@@ -252,6 +252,18 @@ export const users = mysqlTable("user", {
   image: text("image"),
 });
 
+export const deleted_users = mysqlTable("deleted_user", {
+  id: varchar("id", { length: 255 }).notNull().primaryKey(),
+  name: varchar("name", { length: 255 }),
+  email: varchar("email", { length: 255 }).notNull(),
+  emailVerified: timestamp("emailVerified", {
+    mode: "date",
+    fsp: 3,
+  }).default(sql`CURRENT_TIMESTAMP(3)`),
+  image_file: json("image_file").$type<File>(),
+  image: text("image"),
+});
+
 export const verification_tokens = mysqlTable(
   "verification_token",
   {
@@ -284,6 +296,28 @@ export const accounts = mysqlTable(
   (account) => ({
     compoundKey: primaryKey(account.provider, account.providerAccountId),
     userIdIdx: index("userId_idx").on(account.userId),
+  }),
+);
+export const deleted_accounts = mysqlTable(
+  "deleted_account",
+  {
+    deletedUserId: varchar("deletedUserId", { length: 255 }).notNull(),
+    type: varchar("type", { length: 255 })
+      .$type<AdapterAccount["type"]>()
+      .notNull(),
+    provider: varchar("provider", { length: 255 }).notNull(),
+    providerAccountId: varchar("providerAccountId", { length: 255 }).notNull(),
+    refresh_token: varchar("refresh_token", { length: 255 }),
+    access_token: varchar("access_token", { length: 255 }),
+    expires_at: int("expires_at"),
+    token_type: varchar("token_type", { length: 255 }),
+    scope: varchar("scope", { length: 255 }),
+    id_token: text("id_token"),
+    session_state: varchar("session_state", { length: 255 }),
+  },
+  (account) => ({
+    compoundKey: primaryKey(account.provider, account.providerAccountId),
+    userIdIdx: index("deletedUserId_idx").on(account.deletedUserId),
   }),
 );
 export const sessions = mysqlTable(

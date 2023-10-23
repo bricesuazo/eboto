@@ -5,7 +5,12 @@ import { z } from "zod";
 
 import { update } from "@eboto-mo/auth";
 import { eq } from "@eboto-mo/db";
-import { users } from "@eboto-mo/db/schema";
+import {
+  accounts,
+  deleted_accounts,
+  deleted_users,
+  users,
+} from "@eboto-mo/db/schema";
 
 import { env } from "../env.mjs";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
@@ -85,13 +90,28 @@ export const userRouter = createTRPCRouter({
     }),
 
   deleteAccount: protectedProcedure.mutation(async ({ ctx }) => {
-    const user = await ctx.db.query.users.findFirst({
-      where: (users, { eq }) => eq(users.id, ctx.session.user.id),
+    await ctx.db.transaction(async (db) => {
+      const user = await db.query.users.findFirst({
+        where: (users, { eq }) => eq(users.id, ctx.session.user.id),
+      });
+
+      if (!user) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const account = await db.query.accounts.findFirst({
+        where: (accounts, { eq }) => eq(accounts.userId, ctx.session.user.id),
+      });
+
+      if (!account) throw new TRPCError({ code: "NOT_FOUND" });
+
+      await db.insert(deleted_users).values(user);
+      await db.insert(deleted_accounts).values({
+        ...account,
+        deletedUserId: user.id,
+      });
+
+      await db.delete(users).where(eq(users.id, ctx.session.user.id));
+      await db.delete(accounts).where(eq(accounts.userId, ctx.session.user.id));
     });
-
-    if (!user) throw new TRPCError({ code: "NOT_FOUND" });
-
-    await ctx.db.delete(users).where(eq(users.id, ctx.session.user.id));
 
     return true;
   }),
