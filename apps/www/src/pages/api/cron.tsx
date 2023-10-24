@@ -88,6 +88,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     });
 
     for (const election of electionsEnd) {
+      console.log(
+        "🚀 ~ file: cron.tsx:91 ~ awaitdb.transaction ~ election:",
+        election,
+      );
       const result = {
         id: election.id,
         name: election.name,
@@ -114,11 +118,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       const name = `${nowForName.getTime().toString()} - ${
         election.name
       } (Result) (${nowForName.toDateString()}).pdf`;
-      const path = `elections/${election.id}/results/${name}`;
 
       const file = await utapi.uploadFiles(
-        await ReactPDF.render(<GenerateResult result={result} />, path),
-        path,
+        await ReactPDF.pdf(<GenerateResult result={result} />).toBlob(),
+        name,
       );
 
       if (file.error) throw file.error;
