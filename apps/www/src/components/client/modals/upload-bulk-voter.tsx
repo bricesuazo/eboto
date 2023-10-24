@@ -46,10 +46,12 @@ export default function UploadBulkVoter({
 }: {
   election_id: string;
 }) {
+  const context = api.useContext();
   const [opened, { open, close }] = useDisclosure();
 
   const uploadBulkVoterMutation = api.voter.uploadBulk.useMutation({
-    onSuccess: ({ count }) => {
+    onSuccess: async ({ count }) => {
+      await context.election.getVotersByElectionId.invalidate();
       notifications.show({
         title: `${count} voter(s) added!`,
         message: "Successfully added voters",

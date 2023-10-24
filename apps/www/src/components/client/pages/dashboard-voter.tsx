@@ -143,7 +143,11 @@ export default function DashboardVoter({
                 email: voter.email,
               }))}
             election_id={election.id}
-            isDisabled={Object.keys(rowSelection).length === 0}
+            isDisabled={
+              votersQuery.data.length === 0 ||
+              Object.keys(rowSelection).length === 0 ||
+              Object.values(rowSelection).every((isSelected) => !isSelected)
+            }
             onSuccess={() => {
               setRowSelection({});
             }}

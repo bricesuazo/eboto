@@ -230,7 +230,10 @@ export const voterRouter = createTRPCRouter({
         });
 
       await ctx.db
-        .delete(voters)
+        .update(voters)
+        .set({
+          deleted_at: new Date(),
+        })
         .where(
           and(
             eq(voters.id, input.id),
@@ -252,20 +255,24 @@ export const voterRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       // TODO: Validate commissioner
-      const votersIds = input.voters.map((voter) => voter.id);
 
-      if (votersIds.length)
-        await ctx.db
-          .delete(voters)
-          .where(
-            and(
-              eq(voters.election_id, input.election_id),
-              inArray(voters.id, votersIds),
+      await ctx.db
+        .update(voters)
+        .set({
+          deleted_at: new Date(),
+        })
+        .where(
+          and(
+            eq(voters.election_id, input.election_id),
+            inArray(
+              voters.id,
+              input.voters.map((voter) => voter.id),
             ),
-          );
+          ),
+        );
 
       return {
-        count: votersIds.length,
+        count: input.voters.map((voter) => voter.id).length,
       };
     }),
   uploadBulk: protectedProcedure
@@ -281,29 +288,44 @@ export const voterRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       // TODO: Validate commissioner
-      const isElectionExists = await ctx.db.query.elections.findFirst({
-        where: (elections, { eq }) => eq(elections.id, input.election_id),
-        with: {
-          commissioners: {
-            where: (commissioners, { eq }) =>
-              eq(commissioners.user_id, ctx.session.user.id),
+      await ctx.db.transaction(async (db) => {
+        const isElectionExists = await ctx.db.query.elections.findFirst({
+          where: (elections, { eq }) => eq(elections.id, input.election_id),
+          with: {
+            commissioners: {
+              where: (commissioners, { eq }) =>
+                eq(commissioners.user_id, ctx.session.user.id),
+            },
           },
-        },
+        });
+
+        if (!isElectionExists) throw new Error("Election does not exists");
+
+        if (isElectionExists.commissioners.length === 0)
+          throw new Error("Unauthorized");
+
+        const votersFromDb = await db.query.voters.findMany({
+          where: (voter, { eq, and, isNull }) =>
+            and(
+              eq(voter.election_id, input.election_id),
+              isNull(voter.deleted_at),
+            ),
+        });
+
+        const uniqueVoters = input.voters.filter(
+          (voter) =>
+            !votersFromDb.some(
+              (voterFromDb) => voterFromDb.email === voter.email,
+            ),
+        );
+
+        await db.insert(voters).values(
+          uniqueVoters.map((voter) => ({
+            election_id: isElectionExists.id,
+            email: voter.email,
+          })),
+        );
       });
-
-      if (!isElectionExists) throw new Error("Election does not exists");
-
-      if (isElectionExists.commissioners.length === 0)
-        throw new Error("Unauthorized");
-
-      // await Promise.all(
-      //   input.voters.map(async (voter) => {
-      //     await isVoterOrInvitedVoterExists({
-      //       election_id: input.election_id,
-      //       email: voter.email,
-      //     });
-      //   }),
-      // );
 
       return {
         count: input.voters.length,

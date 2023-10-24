@@ -483,7 +483,11 @@ export const electionRouter = createTRPCRouter({
     )
     .query(async ({ input, ctx }) => {
       const voters = await ctx.db.query.voters.findMany({
-        where: (voters, { eq }) => eq(voters.election_id, input.election_id),
+        where: (voters, { eq, and, isNull }) =>
+          and(
+            eq(voters.election_id, input.election_id),
+            isNull(voters.deleted_at),
+          ),
 
         with: {
           votes: {
