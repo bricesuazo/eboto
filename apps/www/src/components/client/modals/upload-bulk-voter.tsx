@@ -12,6 +12,12 @@ import {
   rem,
   Stack,
   Table,
+  TableScrollContainer,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
   Text,
 } from "@mantine/core";
 import {
@@ -132,56 +138,58 @@ export default function UploadBulkVoter({
                         <IconTrash size="1.25rem" />
                       </ActionIcon>
                     </Group>
-                    <Table>
-                      <thead>
-                        <tr>
-                          <th>Email</th>
-                          {/* {voter_fields.map((field) => (
+                    <TableScrollContainer minWidth={0}>
+                      <Table>
+                        <TableThead>
+                          <TableTr>
+                            <TableTh>Email</TableTh>
+                            {/* {voter_fields.map((field) => (
                             <th key={field.name}>{field.name}</th>
                           ))} */}
-                          <th />
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {file.voters.map((voter) => (
-                          <tr key={voter.email}>
-                            <td>
-                              <Text truncate>{voter.email}</Text>
-                            </td>
+                            <th />
+                          </TableTr>
+                        </TableThead>
+                        <TableTbody>
+                          {file.voters.map((voter) => (
+                            <TableTr key={voter.email}>
+                              <TableTd>
+                                <Text truncate>{voter.email}</Text>
+                              </TableTd>
 
-                            <td>
-                              <ActionIcon
-                                title="Remove voter"
-                                aria-label="Remove voter"
-                                onClick={() => {
-                                  setSelectedFiles((prev) => {
-                                    return prev
-                                      .map((f) => {
-                                        if (f.fileName === file.fileName) {
-                                          return {
-                                            ...f,
+                              <TableTd>
+                                <ActionIcon
+                                  title="Remove voter"
+                                  aria-label="Remove voter"
+                                  onClick={() => {
+                                    setSelectedFiles((prev) => {
+                                      return prev
+                                        .map((f) => {
+                                          if (f.fileName === file.fileName) {
+                                            return {
+                                              ...f,
 
-                                            voters: f.voters.filter(
-                                              (v) => v.email !== voter.email,
-                                            ),
-                                          };
-                                        } else {
-                                          return f;
-                                        }
-                                      })
-                                      .filter((f) => f.voters.length > 0);
-                                  });
-                                }}
-                                disabled={selectedFiles.length === 0}
-                                color="red"
-                              >
-                                <IconTrash size="1.25rem" />
-                              </ActionIcon>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </Table>
+                                              voters: f.voters.filter(
+                                                (v) => v.email !== voter.email,
+                                              ),
+                                            };
+                                          } else {
+                                            return f;
+                                          }
+                                        })
+                                        .filter((f) => f.voters.length > 0);
+                                    });
+                                  }}
+                                  disabled={selectedFiles.length === 0}
+                                  color="red"
+                                >
+                                  <IconTrash size="1.25rem" />
+                                </ActionIcon>
+                              </TableTd>
+                            </TableTr>
+                          ))}
+                        </TableTbody>
+                      </Table>
+                    </TableScrollContainer>
                   </Stack>
                 ))}
               </Stack>
@@ -326,7 +334,7 @@ export default function UploadBulkVoter({
           >
             Download sample excel file
           </Button>
-          <Group justify="space-between" align="center">
+          <Flex justify="space-between" gap="md" align="center">
             <ActionIcon
               title="Clear all"
               aria-label="Clear all"
@@ -362,7 +370,7 @@ export default function UploadBulkVoter({
                 Upload
               </Button>
             </Group>
-          </Group>
+          </Flex>
         </Stack>
       </Modal>
     </>
