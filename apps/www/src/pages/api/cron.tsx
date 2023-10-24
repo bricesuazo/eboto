@@ -120,7 +120,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       } (Result) (${nowForName.toDateString()}).pdf`;
 
       const file = await utapi.uploadFiles(
-        await ReactPDF.pdf(<GenerateResult result={result} />).toBlob(),
+        await ReactPDF.renderToFile(<GenerateResult result={result} />, name),
         name,
       );
 

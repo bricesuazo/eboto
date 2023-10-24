@@ -63,7 +63,12 @@ export default function GenerateResult({ result }: { result: ResultType }) {
           <View style={{ display: "flex", alignItems: "center" }}>
             <PdfImage
               src="https://raw.githubusercontent.com/bricesuazo/eboto-mo/main/public/images/eboto-mo-logo.png"
-              style={{ width: 32, height: 32 }}
+              style={{
+                width: 32,
+                height: 32,
+                aspectRatio: 1,
+                objectFit: "contain",
+              }}
             />
             <Text
               style={{

@@ -69,7 +69,7 @@ export default function ElectionResult(props: ElectionResultProps) {
   return (
     <Html>
       <Head />
-      <Preview>eBoto Mo: Election Result for ${props.election.name}</Preview>
+      <Preview>eBoto Mo: Election Result for {props.election.name}</Preview>
       <Tailwind config={config}>
         <Body
           className="bg-white"
