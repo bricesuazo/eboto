@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import CreateVoter from "@/components/client/modals/create-voter";
-import UpdateVoterField from "@/components/client/modals/update-voter-field";
 import UploadBulkVoter from "@/components/client/modals/upload-bulk-voter";
 import { api } from "@/trpc/client";
 import {
@@ -12,7 +11,6 @@ import {
   Flex,
   Group,
   Stack,
-  Text,
   Tooltip,
 } from "@mantine/core";
 import { IconRefresh } from "@tabler/icons-react";
@@ -21,7 +19,6 @@ import { MantineReactTable, useMantineReactTable } from "mantine-react-table";
 import moment from "moment";
 
 import type { RouterOutputs } from "@eboto-mo/api";
-import { isElectionOngoing } from "@eboto-mo/constants";
 import type { Election, VoterField } from "@eboto-mo/db/schema";
 
 import DeleteBulkVoter from "../modals/delete-bulk-voter";
@@ -188,7 +185,7 @@ export default function DashboardVoter({
             <CreateVoter election_id={election.id} />
             <UploadBulkVoter election_id={election.id} />
           </Group>
-          <Tooltip
+          {/* <Tooltip
             label={
               <Text>
                 You can&apos;t change the voter&apos;s group once the <br />
@@ -200,7 +197,7 @@ export default function DashboardVoter({
               election={election}
               isDisabled={isElectionOngoing({ election })}
             />
-          </Tooltip>
+          </Tooltip> */}
         </Flex>
 
         <MantineReactTable table={table} />

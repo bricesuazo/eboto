@@ -84,7 +84,6 @@ export default function UploadBulkVoter({
         onClick={open}
         leftSection={<IconUpload size="1rem" />}
         variant="light"
-        disabled
         // style={(theme) => ({
         //   [theme.fn.smallerThan("xs")]: {
         //     width: "100%",

@@ -40,9 +40,7 @@ export default function AccountPageClient({
   // });
   const deleteAccountMutation = api.user.deleteAccount.useMutation({
     onSuccess: async () => {
-      await signOut({
-        callbackUrl: "/signin",
-      });
+      await signOut();
       close();
     },
   });

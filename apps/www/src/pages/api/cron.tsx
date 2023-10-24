@@ -17,6 +17,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     const start_date = new Date();
     console.log("🚀 ~ file: cron.tsx:13 ~ handler ~ start_date:", start_date);
     start_date.setSeconds(0);
+    start_date.setMilliseconds(0);
     console.log("🚀 ~ file: cron.tsx:15 ~ handler ~ start_date:", start_date);
 
     const electionsStart = await trx.query.elections.findMany({
