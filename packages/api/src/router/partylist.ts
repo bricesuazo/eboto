@@ -10,7 +10,7 @@ export const partylistRouter = createTRPCRouter({
   getAllPartylistsByElectionId: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().nonempty(),
+        election_id: z.string().min(1),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -28,7 +28,7 @@ export const partylistRouter = createTRPCRouter({
   getDashboardData: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().nonempty(),
+        election_id: z.string().min(1),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -47,9 +47,9 @@ export const partylistRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
-        name: z.string().nonempty(),
-        acronym: z.string().nonempty(),
-        election_id: z.string().nonempty(),
+        name: z.string().min(1),
+        acronym: z.string().min(1),
+        election_id: z.string().min(1),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -74,11 +74,11 @@ export const partylistRouter = createTRPCRouter({
   edit: protectedProcedure
     .input(
       z.object({
-        id: z.string().nonempty(),
-        name: z.string().nonempty(),
+        id: z.string().min(1),
+        name: z.string().min(1),
         oldAcronym: z.string().optional(),
-        newAcronym: z.string().nonempty(),
-        election_id: z.string().nonempty(),
+        newAcronym: z.string().min(1),
+        election_id: z.string().min(1),
         description: z.string().nullable(),
         logo_link: z.string().nullable(),
       }),
@@ -120,8 +120,8 @@ export const partylistRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(
       z.object({
-        partylist_id: z.string().nonempty(),
-        election_id: z.string().nonempty(),
+        partylist_id: z.string().min(1),
+        election_id: z.string().min(1),
       }),
     )
     .mutation(async ({ input, ctx }) => {

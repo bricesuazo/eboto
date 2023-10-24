@@ -49,15 +49,15 @@ export default function AccountPageClient({
     // firstName: string;
     // middleName: string;
     // lastName: string;
-    name: string | null;
-    image: File | null | string;
+    name?: string | null;
+    image?: File | null | string;
   }>({
     initialValues: {
       //   firstName: "",
       //   middleName: "",
       //   lastName: "",
-      name: sessionQuery.data.user.name ?? null,
-      image: sessionQuery.data.user.image ?? null,
+      name: sessionQuery.data.user.name,
+      image: sessionQuery.data.user.image,
     },
     validateInputOnBlur: true,
     // validate: {
@@ -82,19 +82,19 @@ export default function AccountPageClient({
   });
 
   const updateProfileMutation = api.user.updateProfile.useMutation({
-    onSuccess: () => {
-      // const dataFormatted = {
-      //   // firstName: data.first_name,
-      //   // middleName: data.middle_name ?? "",
-      //   // lastName: data.last_name,
-      //   name: sessionQuery.data.user.name,
-      //   image: sessionQuery.data.user.image,
-      // };
+    onSuccess: async () => {
+      const test = await sessionQuery.refetch();
 
-      accountForm.resetDirty();
-      // accountForm.setValues(dataFormatted);
+      const dataFormatted = {
+        // firstName: data.first_name,
+        // middleName: data.middle_name ?? "",
+        // lastName: data.last_name,
+        name: test.data?.user.name,
+        image: test.data?.user.image,
+      };
 
-      accountForm.setFieldValue("image", null);
+      accountForm.setValues(dataFormatted);
+      accountForm.resetDirty(dataFormatted);
     },
   });
 
@@ -212,11 +212,11 @@ export default function AccountPageClient({
               // lastName: values.lastName,
               name: values.name ?? "",
               image:
-                typeof values.image !== "string"
-                  ? values.image !== null
+                values.image !== null && typeof values.image !== "string"
+                  ? values.image
                     ? await transformUploadImage(values.image)
-                    : null
-                  : undefined,
+                    : undefined
+                  : null,
             });
 
             setLoading(false);

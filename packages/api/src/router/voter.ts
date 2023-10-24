@@ -11,8 +11,8 @@ export const voterRouter = createTRPCRouter({
   createSingle: protectedProcedure
     .input(
       z.object({
-        email: z.string().nonempty(),
-        election_id: z.string().nonempty(),
+        email: z.string().min(1),
+        election_id: z.string().min(1),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -63,7 +63,7 @@ export const voterRouter = createTRPCRouter({
   getAllVoterField: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().nonempty(),
+        election_id: z.string().min(1),
       }),
     )
     .query(async ({ input, ctx }) => {
@@ -102,12 +102,12 @@ export const voterRouter = createTRPCRouter({
       z.object({
         fields: z.array(
           z.object({
-            id: z.string().nonempty(),
-            name: z.string().nonempty(),
+            id: z.string().min(1),
+            name: z.string().min(1),
             type: z.enum(["fromDb", "fromInput"]),
           }),
         ),
-        election_id: z.string().nonempty(),
+        election_id: z.string().min(1),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -127,8 +127,8 @@ export const voterRouter = createTRPCRouter({
   deleteSingleVoterField: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().nonempty(),
-        field_id: z.string().nonempty(),
+        election_id: z.string().min(1),
+        field_id: z.string().min(1),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -144,9 +144,9 @@ export const voterRouter = createTRPCRouter({
   edit: protectedProcedure
     .input(
       z.object({
-        id: z.string().nonempty(),
-        email: z.string().nonempty(),
-        election_id: z.string().nonempty(),
+        id: z.string().min(1),
+        email: z.string().min(1),
+        election_id: z.string().min(1),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -188,8 +188,8 @@ export const voterRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(
       z.object({
-        id: z.string().nonempty(),
-        election_id: z.string().nonempty(),
+        id: z.string().min(1),
+        election_id: z.string().min(1),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -244,11 +244,11 @@ export const voterRouter = createTRPCRouter({
   deleteBulk: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().nonempty(),
+        election_id: z.string().min(1),
         voters: z.array(
           z.object({
-            id: z.string().nonempty(),
-            email: z.string().nonempty(),
+            id: z.string().min(1),
+            email: z.string().min(1),
           }),
         ),
       }),
@@ -278,10 +278,10 @@ export const voterRouter = createTRPCRouter({
   uploadBulk: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().nonempty(),
+        election_id: z.string().min(1),
         voters: z.array(
           z.object({
-            email: z.string().nonempty(),
+            email: z.string().min(1),
           }),
         ),
       }),

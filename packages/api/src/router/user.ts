@@ -29,14 +29,15 @@ export const userRouter = createTRPCRouter({
         // lastName: z.string(),
         image: z
           .object({
-            name: z.string().nonempty(),
-            type: z.string().nonempty(),
-            base64: z.string().nonempty(),
+            name: z.string().min(1),
+            type: z.string().min(1),
+            base64: z.string().min(1),
           })
           .nullish(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
+      console.log(input);
       const user = await ctx.db.query.users.findFirst({
         where: (users, { eq }) => eq(users.id, ctx.session.user.id),
       });
@@ -44,14 +45,6 @@ export const userRouter = createTRPCRouter({
       if (!user) throw new TRPCError({ code: "NOT_FOUND" });
 
       await ctx.db.transaction(async (db) => {
-        if (
-          user.image_file &&
-          user.image &&
-          (input.image === null || !!input.image)
-        ) {
-          await ctx.utapi.deleteFiles(user.image_file.key);
-        }
-
         const image_file = input.image
           ? await fetch(input.image.base64)
               .then((res) => res.blob())
@@ -67,6 +60,9 @@ export const userRouter = createTRPCRouter({
               )
           : input.image;
 
+        if (user.image_file && !image_file && !input.image)
+          await ctx.utapi.deleteFiles(user.image_file.key);
+
         await db
           .update(users)
           .set({
@@ -74,8 +70,16 @@ export const userRouter = createTRPCRouter({
             //   middle_name: input.middleName,
             //   last_name: input.lastName,
             name: input.name,
-            image_file,
-            image: image_file?.url,
+            image_file: image_file
+              ? image_file
+              : input.image
+              ? user.image_file
+              : null,
+            image: image_file
+              ? image_file.url
+              : input.image
+              ? user.image
+              : null,
           })
           .where(eq(users.id, ctx.session.user.id));
 
@@ -83,7 +87,11 @@ export const userRouter = createTRPCRouter({
           user: {
             ...ctx.session.user,
             name: input.name,
-            image: image_file?.url,
+            image: image_file
+              ? image_file.url
+              : input.image
+              ? user.image
+              : null,
           },
         });
       });

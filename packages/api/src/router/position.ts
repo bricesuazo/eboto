@@ -9,7 +9,7 @@ export const positionRouter = createTRPCRouter({
   getDashboardData: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().nonempty(),
+        election_id: z.string().min(1),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -27,10 +27,10 @@ export const positionRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
-        name: z.string().nonempty(),
+        name: z.string().min(1),
         min: z.number().nonnegative().optional(),
         max: z.number().nonnegative().optional(),
-        election_id: z.string().nonempty(),
+        election_id: z.string().min(1),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -55,8 +55,8 @@ export const positionRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(
       z.object({
-        position_id: z.string().nonempty(),
-        election_id: z.string().nonempty(),
+        position_id: z.string().min(1),
+        election_id: z.string().min(1),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -76,12 +76,12 @@ export const positionRouter = createTRPCRouter({
   edit: protectedProcedure
     .input(
       z.object({
-        id: z.string().nonempty(),
-        name: z.string().nonempty(),
+        id: z.string().min(1),
+        name: z.string().min(1),
         description: z.string().optional(),
         min: z.number().nonnegative().optional(),
         max: z.number().nonnegative().optional(),
-        election_id: z.string().nonempty(),
+        election_id: z.string().min(1),
       }),
     )
     .mutation(async ({ input, ctx }) => {

@@ -14,11 +14,11 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    DATABASE_URL: z.string().nonempty(),
+    DATABASE_URL: z.string().min(1),
     NODE_ENV: z.enum(["development", "test", "production"]),
-    QSTASH_CURRENT_SIGNING_KEY: z.string().nonempty(),
-    QSTASH_NEXT_SIGNING_KEY: z.string().nonempty(),
-    UPLOADTHING_SECRET: z.string().nonempty(),
+    QSTASH_CURRENT_SIGNING_KEY: z.string().min(1),
+    QSTASH_NEXT_SIGNING_KEY: z.string().min(1),
+    UPLOADTHING_SECRET: z.string().min(1),
   },
 
   /**

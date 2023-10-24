@@ -4,8 +4,8 @@ import * as z from "zod";
 export const env = createEnv({
   shared: {},
   server: {
-    ADMIN_PASSWORD: z.string().nonempty(),
-    UPLOADTHING_SECRET: z.string().nonempty(),
+    ADMIN_PASSWORD: z.string().min(1),
+    UPLOADTHING_SECRET: z.string().min(1),
   },
   client: {},
   // Client side variables gets destructured here due to Next.js static analysis
