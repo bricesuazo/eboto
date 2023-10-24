@@ -213,11 +213,22 @@ export const generated_election_results = mysqlTable(
   "generated_election_result",
   {
     id,
-    file: json("file").notNull().$type<File>(),
 
     created_at,
 
     election_id,
+    election: json("election")
+      .$type<
+        Election & {
+          positions: (Position & {
+            abstain_count: number;
+            candidates: (Candidate & {
+              vote_count: number;
+            })[];
+          })[];
+        }
+      >()
+      .notNull(),
   },
 );
 export const voter_fields = mysqlTable("voter_field", {

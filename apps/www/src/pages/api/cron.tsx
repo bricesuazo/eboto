@@ -1,16 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import GenerateResult from "@/pdf/generate-result";
-import type { ResultType } from "@/pdf/generate-result";
-import ReactPDF from "@react-pdf/renderer";
 import { verifySignature } from "@upstash/qstash/nextjs";
-import { UTApi } from "uploadthing/server";
 
 import { db } from "@eboto-mo/db";
+import type { GeneratedElectionResult } from "@eboto-mo/db/schema";
 import { elections, generated_election_results } from "@eboto-mo/db/schema";
 import { sendElectionResult } from "@eboto-mo/email/emails/election-result";
 import { sendElectionStart } from "@eboto-mo/email/emails/election-start";
-
-const utapi = new UTApi();
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   await db.transaction(async (trx) => {
@@ -93,65 +88,25 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         election,
       );
       const result = {
-        id: election.id,
-        name: election.name,
-        slug: election.slug,
-        start_date: election.start_date,
-        end_date: election.end_date,
-        logo: election.logo?.url ?? null,
+        ...election,
         positions: election.positions.map((position) => ({
-          id: position.id,
-          name: position.name,
-          votes: position.votes.length,
+          ...position,
+          abstain_count: position.votes.length,
           candidates: position.candidates.map((candidate) => ({
-            id: candidate.id,
-            name: `${candidate.last_name}, ${candidate.first_name}${
-              candidate.middle_name
-                ? " " + candidate.middle_name.charAt(0) + "."
-                : ""
-            } (${candidate.partylist.acronym})`,
-            votes: candidate.votes.length,
+            ...candidate,
+            vote_count: candidate.votes.length,
           })),
         })),
-      } satisfies ResultType;
-      const nowForName = new Date();
-      const name = `${nowForName.getTime().toString()} - ${
-        election.name
-      } (Result) (${nowForName.toDateString()}).pdf`;
-
-      const file = await utapi.uploadFiles(
-        await ReactPDF.renderToFile(<GenerateResult result={result} />, name),
-        name,
-      );
-
-      if (file.error) throw file.error;
+      } satisfies Pick<GeneratedElectionResult, "election">["election"];
 
       await db.insert(generated_election_results).values({
         election_id: election.id,
-        file: file.data,
+        election: result,
       });
 
       await sendElectionResult({
         emails: election.voters.map((voter) => voter.email),
-        election: {
-          name: election.name,
-          slug: election.slug,
-          start_date: election.start_date,
-          end_date: election.end_date,
-          positions: election.positions.map((position) => ({
-            id: position.id,
-            name: position.name,
-            abstain_count: position.votes.filter((vote) => vote.position_id)
-              .length,
-            candidates: position.candidates.map((candidate) => ({
-              id: candidate.id,
-              first_name: candidate.first_name,
-              middle_name: candidate.middle_name,
-              last_name: candidate.last_name,
-              vote_count: candidate.votes.length,
-            })),
-          })),
-        },
+        election: result,
       });
       console.log("Email result sent to", election.name);
     }

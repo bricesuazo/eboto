@@ -6,26 +6,13 @@ import {
   View,
 } from "@react-pdf/renderer";
 
-export interface ResultType {
-  id: string;
-  name: string;
-  slug: string;
-  logo: string | null;
-  start_date: Date;
-  end_date: Date;
-  positions: {
-    id: string;
-    name: string;
-    votes: number;
-    candidates: {
-      id: string;
-      name: string;
-      votes: number;
-    }[];
-  }[];
-}
+import type { GeneratedElectionResult } from "@eboto-mo/db/schema";
 
-export default function GenerateResult({ result }: { result: ResultType }) {
+export default function GenerateResult({
+  result,
+}: {
+  result: Pick<GeneratedElectionResult, "election">["election"];
+}) {
   return (
     <Document>
       <Page
@@ -91,7 +78,7 @@ export default function GenerateResult({ result }: { result: ResultType }) {
           >
             {result.logo && (
               <PdfImage
-                src={result.logo}
+                src={result.logo.url}
                 style={{
                   display: "flex",
                   width: 80,
@@ -164,13 +151,13 @@ export default function GenerateResult({ result }: { result: ResultType }) {
                         textAlign: "center",
                       }}
                     >
-                      Abstain Count - {position.votes}
+                      Abstain Count - {position.abstain_count}
                     </Text>
                   </View>
 
                   <View>
                     {position.candidates
-                      .sort((a, b) => b.votes - a.votes)
+                      .sort((a, b) => b.vote_count - a.vote_count)
                       .map((candidate, idx) => {
                         return (
                           <View
@@ -182,16 +169,19 @@ export default function GenerateResult({ result }: { result: ResultType }) {
                               padding: 8,
                             }}
                           >
-                            <Text>{candidate.name}</Text>
+                            <Text>
+                              {candidate.last_name}, {candidate.first_name}{" "}
+                              {candidate.middle_name}
+                            </Text>
                             <Text>
                               <Text
                                 style={{
                                   fontFamily: "Helvetica-Bold",
                                 }}
                               >
-                                {candidate.votes}
+                                {candidate.vote_count}
                               </Text>{" "}
-                              vote{candidate.votes > 1 && "s"}
+                              vote{candidate.vote_count > 1 && "s"}
                             </Text>
                           </View>
                         );
