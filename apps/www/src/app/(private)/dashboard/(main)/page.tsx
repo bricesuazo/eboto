@@ -18,16 +18,53 @@ export default async function Page() {
 
   if (!session) redirect("/sign-in");
 
+  const electionsThatICanManage = await db.query.elections.findMany({
+    where: (elections, { and, isNull }) => and(isNull(elections.deleted_at)),
+    with: {
+      commissioners: {
+        where: (commissioners, { eq }) =>
+          eq(commissioners.user_id, session.user.id),
+      },
+    },
+  });
+
   const electionsAsCommissioner = await db.query.commissioners.findMany({
-    where: (commissioners, { eq }) =>
-      eq(commissioners.user_id, session.user.id),
+    where: (commissioners, { eq, and, inArray }) =>
+      and(
+        eq(commissioners.user_id, session.user.id),
+        electionsThatICanManage.length
+          ? inArray(
+              commissioners.election_id,
+              electionsThatICanManage.map((election) => election.id),
+            )
+          : undefined,
+      ),
     with: {
       election: true,
     },
   });
 
+  const electionsThatICanVoteIn = await db.query.elections.findMany({
+    where: (elections, { and, lt, gte, isNull, ne }) =>
+      and(
+        isNull(elections.deleted_at),
+        ne(elections.publicity, "PRIVATE"),
+        lt(elections.start_date, new Date()),
+        gte(elections.end_date, new Date()),
+      ),
+  });
+
   const electionsAsVoter = await db.query.voters.findMany({
-    where: (voters, { eq }) => eq(voters.email, session.user.email ?? ""),
+    where: (voters, { eq, ne, and, inArray }) =>
+      and(
+        eq(voters.email, session.user.email ?? ""),
+        electionsThatICanVoteIn.length
+          ? inArray(
+              voters.election_id,
+              electionsThatICanVoteIn.map((election) => election.id),
+            )
+          : ne(voters.email, session.user.email ?? ""),
+      ),
     with: {
       election: {
         with: {

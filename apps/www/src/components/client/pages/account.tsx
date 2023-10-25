@@ -18,14 +18,10 @@ import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconLetterCase, IconLock, IconX } from "@tabler/icons-react";
-import type { AuthSession } from "next-auth";
+import type { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 
-export default function AccountPageClient({
-  session,
-}: {
-  session: AuthSession;
-}) {
+export default function AccountPageClient({ session }: { session: Session }) {
   const openRef = useRef<() => void>(null);
   const [loading, setLoading] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
