@@ -45,10 +45,19 @@ export default async function VotePage({
 
   if (!isElectionOngoing({ election })) redirect(`/${election.slug}`);
 
+  const isVoter = await db.query.voters.findFirst({
+    where: (voter, { eq, and, isNull }) =>
+      and(
+        eq(voter.email, session.user.email ?? ""),
+        eq(voter.election_id, election.id),
+        isNull(voter.deleted_at),
+      ),
+  });
+
   const hasVoted = await db.query.votes.findFirst({
     where: (votes, { eq, and }) =>
       and(
-        eq(votes.voter_id, session.user.id),
+        eq(votes.voter_id, isVoter?.id ?? ""),
         eq(votes.election_id, election.id),
       ),
   });
@@ -66,15 +75,6 @@ export default async function VotePage({
     });
 
     if (!commissioner) notFound();
-
-    const isVoter = await db.query.voters.findFirst({
-      where: (voter, { eq, and, isNull }) =>
-        and(
-          eq(voter.email, session.user.email ?? ""),
-          eq(voter.election_id, election.id),
-          isNull(voter.deleted_at),
-        ),
-    });
 
     if (!isVoter) redirect(`/${election.slug}/realtime`);
   } else if (
@@ -94,15 +94,6 @@ export default async function VotePage({
         and(
           eq(commissioner.user_id, session.user.id),
           eq(commissioner.election_id, election.id),
-        ),
-    });
-
-    const isVoter = await db.query.voters.findFirst({
-      where: (voter, { eq, and, isNull }) =>
-        and(
-          eq(voter.email, session.user.email ?? ""),
-          eq(voter.election_id, election.id),
-          isNull(voter.deleted_at),
         ),
     });
 

@@ -88,6 +88,10 @@ export const votersRelations = relations(voters, ({ one, many }) => ({
     fields: [voters.election_id],
     references: [elections.id],
   }),
+  // user: one(users, {
+  //   fields: [voters.user_id],
+  //   references: [users.id],
+  // }),
 
   votes: many(votes),
 }));

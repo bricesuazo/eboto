@@ -54,6 +54,14 @@ export default async function Page() {
       ),
   });
 
+  const voter = await db.query.voters.findFirst({
+    where: (voters, { eq, and, isNull }) =>
+      and(
+        eq(voters.email, session.user.email ?? ""),
+        isNull(voters.deleted_at),
+      ),
+  });
+
   const electionsAsVoter = await db.query.voters.findMany({
     where: (voters, { eq, ne, and, inArray }) =>
       and(
@@ -69,7 +77,7 @@ export default async function Page() {
       election: {
         with: {
           votes: {
-            where: (votes, { eq }) => eq(votes.voter_id, session.user.id),
+            where: (votes, { eq }) => eq(votes.voter_id, voter?.id ?? ""),
           },
         },
       },

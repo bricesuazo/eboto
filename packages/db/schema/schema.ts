@@ -105,6 +105,7 @@ export const voters = mysqlTable("voter", {
 
   email: text("email").notNull(),
   field: json("field").$type<Record<string, string>>(),
+  // user_id,
 
   deleted_at,
 

@@ -118,7 +118,7 @@ export default async function RelatimePage({
       where: (vote, { eq, and }) =>
         and(
           eq(vote.election_id, election.id),
-          eq(vote.voter_id, isCommissioner.user_id),
+          eq(vote.voter_id, isVoter?.id ?? ""),
         ),
     });
 
@@ -129,20 +129,20 @@ export default async function RelatimePage({
         `/sign-in?callbackUrl=https://eboto-mo.com/${election.slug}/realtime`,
       );
 
-    const vote = await db.query.votes.findFirst({
-      where: (votes, { eq, and }) =>
-        and(
-          eq(votes.election_id, election.id),
-          eq(votes.voter_id, session.user.id),
-        ),
-    });
-
     const isVoter = await db.query.voters.findFirst({
       where: (voter, { eq, and, isNull }) =>
         and(
           eq(voter.election_id, election.id),
           eq(voter.email, session.user.email ?? ""),
           isNull(voter.deleted_at),
+        ),
+    });
+
+    const vote = await db.query.votes.findFirst({
+      where: (votes, { eq, and }) =>
+        and(
+          eq(votes.election_id, election.id),
+          eq(votes.voter_id, isVoter?.id ?? ""),
         ),
     });
 

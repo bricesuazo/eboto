@@ -76,7 +76,7 @@ export const electionRouter = createTRPCRouter({
       const hasVoted = await ctx.db.query.votes.findFirst({
         where: (votes, { eq, and }) =>
           and(
-            eq(votes.voter_id, ctx.session?.user.id ?? ""),
+            eq(votes.voter_id, isImVoter?.id ?? ""),
             eq(votes.election_id, election.id),
           ),
       });
