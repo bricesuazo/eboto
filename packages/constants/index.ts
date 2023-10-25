@@ -126,7 +126,7 @@ export const positionTemplate: PositionTemplate = [
           "Vice President for External Affairs",
           "Vice President for Records and Documentation",
           "Vice President for Finance and Budget Management",
-          "Vice President for Audit Planning and Risk Assesstment",
+          "Vice President for Audit Planning and Risk Assessment",
           "Vice President for Operations and Implementation",
           "Vice President for Public Relations",
           "Vice President for Business Affairs and Procurement",

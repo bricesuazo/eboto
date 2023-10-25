@@ -32,7 +32,7 @@ import {
 } from "@tabler/icons-react";
 
 import type { RouterOutputs } from "@eboto-mo/api";
-import { isElectionOngoing } from "@eboto-mo/constants";
+import { isElectionEnded, isElectionOngoing } from "@eboto-mo/constants";
 import type { Publicity } from "@eboto-mo/db/schema";
 import { publicity } from "@eboto-mo/db/schema";
 
@@ -389,6 +389,9 @@ export default function DashboardSettings({
               editElectionMutation.isLoading ||
               isElectionOngoing({
                 election: getElectionBySlugQuery.data,
+              }) ||
+              isElectionEnded({
+                election: getElectionBySlugQuery.data,
               })
             }
           />
@@ -414,6 +417,9 @@ export default function DashboardSettings({
             disabled={
               editElectionMutation.isLoading ||
               isElectionOngoing({
+                election: getElectionBySlugQuery.data,
+              }) ||
+              isElectionEnded({
                 election: getElectionBySlugQuery.data,
               })
             }

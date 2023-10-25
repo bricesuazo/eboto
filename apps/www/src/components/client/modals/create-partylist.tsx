@@ -63,7 +63,7 @@ export default function CreatePartylist({
       });
       close();
 
-      await context.candidate.getDashboardData.invalidate();
+      await context.partylist.getDashboardData.invalidate();
     },
   });
 
