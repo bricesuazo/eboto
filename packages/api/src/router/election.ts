@@ -138,18 +138,32 @@ export const electionRouter = createTRPCRouter({
             message: "You have already voted in this election",
           });
 
+        const isVoterExists = await db.query.voters.findFirst({
+          where: (voters, { eq, and }) =>
+            and(
+              eq(voters.election_id, election.id),
+              eq(voters.email, ctx.session.user.email ?? ""),
+            ),
+        });
+
+        if (!isVoterExists)
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "You are not a voter in this election",
+          });
+
         await db.insert(votes).values(
           input.votes
             .map((vote) =>
               vote.votes.isAbstain
                 ? {
                     position_id: vote.position_id,
-                    voter_id: ctx.session.user.id,
+                    voter_id: isVoterExists.id,
                     election_id: input.election_id,
                   }
                 : vote.votes.candidates.map((candidate_id) => ({
                     candidate_id,
-                    voter_id: ctx.session.user.id,
+                    voter_id: isVoterExists.id,
                     election_id: input.election_id,
                   })),
             )
@@ -482,7 +496,7 @@ export const electionRouter = createTRPCRouter({
       }),
     )
     .query(async ({ input, ctx }) => {
-      const voters = await ctx.db.query.voters.findMany({
+      const votersFromDb = await ctx.db.query.voters.findMany({
         where: (voters, { eq, and, isNull }) =>
           and(
             eq(voters.election_id, input.election_id),
@@ -496,7 +510,7 @@ export const electionRouter = createTRPCRouter({
         },
       });
 
-      return voters.map((voter) => ({
+      return votersFromDb.map((voter) => ({
         id: voter.id,
         email: voter.email,
         created_at: voter.created_at,
