@@ -46,21 +46,28 @@ export const account_status_type = ["ADDED", "INVITED", "DECLINED"] as const;
 export type AccountStatusType = (typeof account_status_type)[number];
 type File = Pick<UploadFileResponse, "key" | "name" | "size" | "url">;
 
-export const elections = mysqlTable("election", {
-  id,
-  slug: varchar("slug", { length: 256 }).notNull().unique(),
-  name: text("name").notNull(),
-  description: longtext("description"),
-  start_date: timestamp("start_date").notNull(),
-  end_date: timestamp("end_date").notNull(),
-  publicity: mysqlEnum("publicity", publicity).default("PRIVATE").notNull(),
-  logo: json("logo").$type<File>(),
-  voter_domain: text("voter_domain"),
-  deleted_at,
+export const elections = mysqlTable(
+  "election",
+  {
+    id,
+    slug: varchar("slug", { length: 256 }).notNull().unique(),
+    name: text("name").notNull(),
+    description: longtext("description"),
+    start_date: timestamp("start_date").notNull(),
+    end_date: timestamp("end_date").notNull(),
+    publicity: mysqlEnum("publicity", publicity).default("PRIVATE").notNull(),
+    logo: json("logo").$type<File>(),
+    voter_domain: text("voter_domain"),
+    deleted_at,
 
-  created_at,
-  updated_at,
-});
+    created_at,
+    updated_at,
+  },
+  (election) => ({
+    electionIdIdx: index("electionId_idx").on(election.id),
+    electionSlugIdx: index("electionSlug_idx").on(election.slug),
+  }),
+);
 
 export const votes = mysqlTable("vote", {
   id,
@@ -104,110 +111,159 @@ export const voters = mysqlTable("voter", {
   election_id,
 });
 
-export const partylists = mysqlTable("partylist", {
-  id,
-  name: text("name").notNull(),
-  acronym: text("acronym").notNull(),
-  description: longtext("description"),
-  logo_link: longtext("logo_link"),
+export const partylists = mysqlTable(
+  "partylist",
+  {
+    id,
+    name: text("name").notNull(),
+    acronym: text("acronym").notNull(),
+    description: longtext("description"),
+    logo_link: longtext("logo_link"),
 
-  created_at,
-  updated_at,
+    created_at,
+    updated_at,
 
-  deleted_at,
+    deleted_at,
 
-  election_id,
-});
+    election_id,
+  },
+  (partylist) => ({
+    partylistIdIdx: index("partylistId_idx").on(partylist.id),
+  }),
+);
 
-export const positions = mysqlTable("position", {
-  id,
-  name: text("name").notNull(),
-  description: longtext("description"),
-  order: int("order").notNull(),
-  min: int("min").default(0).notNull(),
-  max: int("max").default(1).notNull(),
+export const positions = mysqlTable(
+  "position",
+  {
+    id,
+    name: text("name").notNull(),
+    description: longtext("description"),
+    order: int("order").notNull(),
+    min: int("min").default(0).notNull(),
+    max: int("max").default(1).notNull(),
 
-  created_at,
-  updated_at,
+    created_at,
+    updated_at,
 
-  deleted_at,
+    deleted_at,
 
-  election_id,
-});
+    election_id,
+  },
+  (position) => ({
+    positionIdIdx: index("positionId_idx").on(position.id),
+  }),
+);
 
-export const candidates = mysqlTable("candidate", {
-  id,
-  slug: varchar("slug", { length: 256 }).notNull(),
-  first_name: text("first_name").notNull(),
-  middle_name: text("middle_name"),
-  last_name: text("last_name").notNull(),
-  image: json("image").$type<File>(),
+export const candidates = mysqlTable(
+  "candidate",
+  {
+    id,
+    slug: varchar("slug", { length: 256 }).notNull(),
+    first_name: text("first_name").notNull(),
+    middle_name: text("middle_name"),
+    last_name: text("last_name").notNull(),
+    image: json("image").$type<File>(),
 
-  created_at,
-  updated_at,
+    created_at,
+    updated_at,
 
-  deleted_at,
+    deleted_at,
 
-  election_id,
-  credential_id: varchar("credential_id", { length: 256 }).notNull(),
-  position_id: varchar("position_id", { length: 256 }).notNull(),
-  partylist_id: varchar("partylist_id", { length: 256 }).notNull(),
-});
+    election_id,
+    credential_id: varchar("credential_id", { length: 256 }).notNull(),
+    position_id: varchar("position_id", { length: 256 }).notNull(),
+    partylist_id: varchar("partylist_id", { length: 256 }).notNull(),
+  },
+  (candidate) => ({
+    candidateIdIdx: index("candidateId_idx").on(candidate.id),
+    candidateSlugIdx: index("candidateSlug_idx").on(candidate.slug),
+  }),
+);
 
-export const credentials = mysqlTable("credential", {
-  id,
+export const credentials = mysqlTable(
+  "credential",
+  {
+    id,
 
-  created_at,
-  updated_at,
+    created_at,
+    updated_at,
 
-  candidate_id: varchar("candidate_id", { length: 256 }).notNull(),
-});
+    candidate_id: varchar("candidate_id", { length: 256 }).notNull(),
+  },
+  (credential) => ({
+    credentialIdIdx: index("credentialId_idx").on(credential.id),
+  }),
+);
 
-export const platforms = mysqlTable("platform", {
-  id,
-  title: text("title").notNull(),
-  description: longtext("description").notNull(),
+export const platforms = mysqlTable(
+  "platform",
+  {
+    id,
+    title: text("title").notNull(),
+    description: longtext("description").notNull(),
 
-  created_at,
-  updated_at,
+    created_at,
+    updated_at,
 
-  candidate_id: varchar("candidate_id", { length: 256 }).notNull(),
-});
+    candidate_id: varchar("candidate_id", { length: 256 }).notNull(),
+  },
+  (platform) => ({
+    platformIdIdx: index("platformId_idx").on(platform.id),
+  }),
+);
 
-export const affiliations = mysqlTable("affiliation", {
-  id,
-  org_name: text("org_name").notNull(),
-  org_position: text("org_position").notNull(),
-  start_year: date("start_year").notNull(),
-  end_year: date("end_year").notNull(),
+export const affiliations = mysqlTable(
+  "affiliation",
+  {
+    id,
+    org_name: text("org_name").notNull(),
+    org_position: text("org_position").notNull(),
+    start_year: date("start_year").notNull(),
+    end_year: date("end_year").notNull(),
 
-  created_at,
-  updated_at,
+    created_at,
+    updated_at,
 
-  credential_id: varchar("credential_id", { length: 256 }).notNull(),
-});
+    credential_id: varchar("credential_id", { length: 256 }).notNull(),
+  },
+  (affiliation) => ({
+    affiliationIdIdx: index("affiliationId_idx").on(affiliation.id),
+  }),
+);
 
-export const achievements = mysqlTable("achievement", {
-  id,
-  name: text("name").notNull(),
-  year: date("year").notNull(),
+export const achievements = mysqlTable(
+  "achievement",
+  {
+    id,
+    name: text("name").notNull(),
+    year: date("year").notNull(),
 
-  created_at,
-  updated_at,
+    created_at,
+    updated_at,
 
-  credential_id: varchar("credential_id", { length: 256 }).notNull(),
-});
+    credential_id: varchar("credential_id", { length: 256 }).notNull(),
+  },
+  (achievement) => ({
+    achievementIdIdx: index("achievementId_idx").on(achievement.id),
+  }),
+);
 
-export const events_attended = mysqlTable("event_attended", {
-  id,
-  name: text("name").notNull(),
-  year: date("year").notNull(),
+export const events_attended = mysqlTable(
+  "event_attended",
+  {
+    id,
+    name: text("name").notNull(),
+    year: date("year").notNull(),
 
-  created_at,
-  updated_at,
+    created_at,
+    updated_at,
 
-  credential_id: varchar("credential_id", { length: 256 }).notNull(),
-});
+    credential_id: varchar("credential_id", { length: 256 }).notNull(),
+  },
+  (event_attended) => ({
+    eventAttendedIdIdx: index("eventAttendedId_idx").on(event_attended.id),
+  }),
+);
 
 export const generated_election_results = mysqlTable(
   "generated_election_result",
@@ -251,17 +307,23 @@ export const reported_problems = mysqlTable("reported_problem", {
   user_id,
 });
 
-export const users = mysqlTable("user", {
-  id: varchar("id", { length: 255 }).notNull().primaryKey(),
-  name: varchar("name", { length: 255 }),
-  email: varchar("email", { length: 255 }).notNull(),
-  emailVerified: timestamp("emailVerified", {
-    mode: "date",
-    fsp: 3,
-  }).default(sql`CURRENT_TIMESTAMP(3)`),
-  image_file: json("image_file").$type<File>(),
-  image: text("image"),
-});
+export const users = mysqlTable(
+  "user",
+  {
+    id: varchar("id", { length: 255 }).notNull().primaryKey(),
+    name: varchar("name", { length: 255 }),
+    email: varchar("email", { length: 255 }).notNull(),
+    emailVerified: timestamp("emailVerified", {
+      mode: "date",
+      fsp: 3,
+    }).default(sql`CURRENT_TIMESTAMP(3)`),
+    image_file: json("image_file").$type<File>(),
+    image: text("image"),
+  },
+  (user) => ({
+    emailIdx: index("email_idx").on(user.email),
+  }),
+);
 
 export const deleted_users = mysqlTable("deleted_user", {
   id: varchar("id", { length: 255 }).notNull().primaryKey(),
