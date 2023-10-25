@@ -3,6 +3,14 @@
 module.exports = {
   reactStrictMode: true,
   transpilePackages: ["@eboto-mo/db", "@eboto-mo/auth", "@eboto-mo/api"],
+  // TODO: remove this
+  webpack: (config, { webpack, isServer, nextRuntime }) => {
+    if (isServer && nextRuntime === "nodejs")
+      config.plugins.push(
+        new webpack.IgnorePlugin({ resourceRegExp: /^aws-crt$/ }),
+      );
+    return config;
+  },
   experimental: {
     serverActions: true,
     // forceSwcTransforms: true,
