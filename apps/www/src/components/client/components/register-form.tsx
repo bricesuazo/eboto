@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Paper, Stack, Text } from "@mantine/core";
+import { Button, Paper, Stack } from "@mantine/core";
 import { IconBrandGoogle } from "@tabler/icons-react";
 import { signIn } from "next-auth/react";
 
@@ -42,25 +42,19 @@ export default function RegisterForm() {
   return (
     <Paper withBorder shadow="md" p="md" radius="md">
       <Stack>
-        {process.env.NODE_ENV === "production" ? (
-          <Text>
-            This website is currently in development. Please check back later.
-          </Text>
-        ) : (
-          <Button
-            onClick={async () => {
-              setLoadings((loadings) => ({ ...loadings, google: true }));
+        <Button
+          onClick={async () => {
+            setLoadings((loadings) => ({ ...loadings, google: true }));
 
-              await signIn("google");
-            }}
-            loading={loadings.google}
-            disabled={loadings.credential}
-            leftSection={<IconBrandGoogle size={18} />}
-            variant="outline"
-          >
-            Sign up with Google
-          </Button>
-        )}
+            await signIn("google");
+          }}
+          loading={loadings.google}
+          disabled={loadings.credential}
+          leftSection={<IconBrandGoogle size={18} />}
+          variant="outline"
+        >
+          Sign up with Google
+        </Button>
 
         {/* <Divider label="Or continue with email" labelPosition="center" />
         <form

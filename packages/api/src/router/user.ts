@@ -13,13 +13,9 @@ import {
 } from "@eboto-mo/db/schema";
 
 import { env } from "../env.mjs";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
-  isPasswordCorrect: publicProcedure.input(z.string()).mutation(({ input }) => {
-    return input === env.ADMIN_PASSWORD;
-  }),
-
   updateProfile: protectedProcedure
     .input(
       z.object({
