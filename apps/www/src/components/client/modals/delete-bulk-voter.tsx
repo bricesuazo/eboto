@@ -29,7 +29,7 @@ export default function DeleteBulkVoter({
   isDisabled: boolean;
   onSuccess?: () => void;
 }) {
-  const context = api.useContext();
+  const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure();
 
   const { mutate, isLoading, isError, error } =

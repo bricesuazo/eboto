@@ -49,7 +49,7 @@ import {
 import type { Position } from "@eboto-mo/db/schema";
 
 export default function CreateCandidate({ position }: { position: Position }) {
-  const context = api.useContext();
+  const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure(false);
   const partylistsQuery = api.partylist.getAllPartylistsByElectionId.useQuery({
     election_id: position.election_id,

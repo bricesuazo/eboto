@@ -24,7 +24,7 @@ import type { Partylist } from "@eboto-mo/db/schema";
 
 export default function EditPartylist({ partylist }: { partylist: Partylist }) {
   const [opened, { open, close }] = useDisclosure(false);
-  const context = api.useContext();
+  const context = api.useUtils();
   const initialValues = {
     id: partylist.id,
     election_id: partylist.election_id,

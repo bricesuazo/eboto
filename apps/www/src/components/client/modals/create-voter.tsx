@@ -22,7 +22,7 @@ import {
 } from "@tabler/icons-react";
 
 export default function CreateVoter({ election_id }: { election_id: string }) {
-  const context = api.useContext();
+  const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure(false);
 
   const createSingleVoterMutation = api.voter.createSingle.useMutation({

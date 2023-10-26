@@ -49,7 +49,7 @@ export default function DashboardSettings({
       initialData: election,
     },
   );
-  const context = api.useContext();
+  const context = api.useUtils();
   const router = useRouter();
   const openRef = useRef<() => void>(null);
   const editElectionMutation = api.election.edit.useMutation({

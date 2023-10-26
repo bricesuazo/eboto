@@ -26,7 +26,7 @@ export default function CreatePartylist({
 }: {
   election_id: string;
 }) {
-  const context = api.useContext();
+  const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure(false);
 
   const form = useForm({

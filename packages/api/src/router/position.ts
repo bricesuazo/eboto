@@ -85,20 +85,19 @@ export const positionRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const positionsInDB = await ctx.db.query.positions.findMany({
-        where: (position, { eq }) =>
-          eq(position.election_id, input.election_id),
-        columns: {
-          id: true,
-        },
-      });
+      // const positionsInDB = await ctx.db.query.positions.findMany({
+      //   where: (position, { eq }) =>
+      //     eq(position.election_id, input.election_id),
+      //   columns: {
+      //     id: true,
+      //   },
+      // });
 
       await ctx.db
         .update(positions)
         .set({
           name: input.name,
           description: input.description,
-          order: positionsInDB.length,
           min: input.min,
           max: input.max,
         })

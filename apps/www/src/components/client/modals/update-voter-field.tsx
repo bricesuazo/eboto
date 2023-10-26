@@ -219,7 +219,7 @@ function VoterFieldInput({
   field: Field;
   election_id: string;
 }) {
-  const context = api.useContext();
+  const context = api.useUtils();
   const { mutate, isLoading } = api.voter.deleteSingleVoterField.useMutation({
     onSuccess: async () => {
       await context.voter.getAllVoterField.invalidate();

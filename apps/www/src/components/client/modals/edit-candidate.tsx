@@ -78,7 +78,7 @@ export default function EditCandidate({
     }[];
   };
 }) {
-  const context = api.useContext();
+  const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure(false);
   const openRef = useRef<() => void>(null);
   const partylistsQuery = api.partylist.getAllPartylistsByElectionId.useQuery({
@@ -208,7 +208,7 @@ export default function EditCandidate({
     type: "PLATFORM" | "ACHIEVEMENT" | "AFFILIATION" | "EVENTATTENDED";
     id: string;
   }) => {
-    const context = api.useContext();
+    const context = api.useUtils();
     const deleteCredentialMutation =
       api.candidate.deleteSingleCredential.useMutation({
         onSuccess: async () => {

@@ -35,7 +35,7 @@ export default function EditVoter({
   };
   voter_fields: VoterField[];
 }) {
-  const context = api.useContext();
+  const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure(false);
 
   const initialValues = {

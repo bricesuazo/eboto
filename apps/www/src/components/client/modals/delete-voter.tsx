@@ -25,7 +25,7 @@ export default function DeleteVoter({
   };
   election_id: string;
 }) {
-  const context = api.useContext();
+  const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure(false);
 
   const deleteVoterMutation = api.voter.delete.useMutation({

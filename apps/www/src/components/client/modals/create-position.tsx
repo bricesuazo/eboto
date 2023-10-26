@@ -29,7 +29,7 @@ export default function CreatePosition({
 }: {
   election_id: string;
 }) {
-  const context = api.useContext();
+  const context = api.useUtils();
   const { mutate, isLoading, isError, error, reset } =
     api.position.create.useMutation({
       onSuccess: async () => {

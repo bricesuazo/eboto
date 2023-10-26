@@ -51,6 +51,9 @@ export default function VoteForm({
     })[];
   })[];
 }) {
+  const positionsQuery = api.election.getElectionVoting.useQuery(election.id, {
+    initialData: positions,
+  });
   const router = useRouter();
   const { fireConfetti } = useConfetti();
   const form = useForm<
@@ -65,7 +68,7 @@ export default function VoteForm({
     >
   >({
     initialValues: Object.fromEntries(
-      positions.map((position) => [
+      positionsQuery.data.map((position) => [
         position.id,
         {
           votes: [],
@@ -126,7 +129,7 @@ export default function VoteForm({
           })}
         >
           <Stack>
-            {positions.map((position) => {
+            {positionsQuery.data.map((position) => {
               return (
                 <Box key={position.id}>
                   <Text lineClamp={1}>{position.name}</Text>
@@ -198,7 +201,7 @@ export default function VoteForm({
       </Modal>
       <form>
         <Stack>
-          {positions.map((position) => {
+          {positionsQuery.data.map((position) => {
             return (
               <Box key={position.id}>
                 <Text size="xl">{position.name}</Text>

@@ -14,7 +14,7 @@ export default function DeleteCandidate({
 }: {
   candidate: Candidate;
 }) {
-  const context = api.useContext();
+  const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure(false);
   const deleteCandidateMutation = api.candidate.delete.useMutation({
     onSuccess: async () => {

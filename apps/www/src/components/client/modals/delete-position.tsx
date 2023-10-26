@@ -11,7 +11,7 @@ import type { Position } from "@eboto-mo/db/schema";
 
 export default function DeletePosition({ position }: { position: Position }) {
   const [opened, { open, close }] = useDisclosure(false);
-  const context = api.useContext();
+  const context = api.useUtils();
 
   const { mutate, isLoading, isError, error, reset } =
     api.position.delete.useMutation({

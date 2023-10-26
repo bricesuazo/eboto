@@ -46,7 +46,7 @@ export default function UploadBulkVoter({
 }: {
   election_id: string;
 }) {
-  const context = api.useContext();
+  const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure();
 
   const uploadBulkVoterMutation = api.voter.uploadBulk.useMutation({

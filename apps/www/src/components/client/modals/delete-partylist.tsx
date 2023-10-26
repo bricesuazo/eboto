@@ -14,7 +14,7 @@ export default function DeletePartylist({
 }: {
   partylist: Partylist;
 }) {
-  const context = api.useContext();
+  const context = api.useUtils();
   const { mutate, isLoading, isError, error, reset } =
     api.partylist.delete.useMutation({
       onSuccess: async () => {

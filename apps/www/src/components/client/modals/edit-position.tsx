@@ -27,7 +27,7 @@ import type { Position } from "@eboto-mo/db/schema";
 
 export default function EditPosition({ position }: { position: Position }) {
   const [opened, { open, close }] = useDisclosure(false);
-  const context = api.useContext();
+  const context = api.useUtils();
 
   const initialValues = {
     name: position.name,
