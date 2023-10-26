@@ -12,7 +12,6 @@ import {
   users,
 } from "@eboto-mo/db/schema";
 
-import { env } from "../env.mjs";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
@@ -40,7 +39,7 @@ export const userRouter = createTRPCRouter({
 
       if (!user) throw new TRPCError({ code: "NOT_FOUND" });
 
-      await ctx.db.transaction(async (db) => {
+      return await ctx.db.transaction(async (db) => {
         const image_file = input.image
           ? await fetch(input.image.base64)
               .then((res) => res.blob())
@@ -79,7 +78,7 @@ export const userRouter = createTRPCRouter({
           })
           .where(eq(users.id, ctx.session.user.id));
 
-        await update({
+        return update({
           user: {
             ...ctx.session.user,
             name: input.name,

@@ -22,12 +22,13 @@ import type { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 
 export default function AccountPageClient({ session }: { session: Session }) {
+  const context = api.useUtils();
   const openRef = useRef<() => void>(null);
   const [loading, setLoading] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
   const [page, setPage] = useState<number>(0);
 
-  const sessionQuery = api.auth.getSession.useQuery(undefined, {
+  const sessionQuery = api.auth.getSessionProtected.useQuery(undefined, {
     initialData: session,
   });
 
@@ -78,15 +79,15 @@ export default function AccountPageClient({ session }: { session: Session }) {
   });
 
   const updateProfileMutation = api.user.updateProfile.useMutation({
-    onSuccess: async () => {
-      const test = await sessionQuery.refetch();
+    onSuccess: async (session) => {
+      await context.auth.getSession.invalidate();
 
       const dataFormatted = {
         // firstName: data.first_name,
         // middleName: data.middle_name ?? "",
         // lastName: data.last_name,
-        name: test.data?.user.name,
-        image: test.data?.user.image,
+        name: session?.user.name,
+        image: session?.user.image,
       };
 
       accountForm.setValues(dataFormatted);

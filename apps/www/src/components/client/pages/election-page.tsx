@@ -33,6 +33,7 @@ import moment from "moment";
 import Balancer from "react-wrap-balancer";
 
 import type { RouterOutputs } from "@eboto-mo/api";
+import { isElectionEnded } from "@eboto-mo/constants";
 
 export default function ElectionPage({
   data,
@@ -141,7 +142,7 @@ export default function ElectionPage({
             )}
 
             <Flex justify="center" gap="sm" mt={8} align="center">
-              {hasVoted ?? election.end_date < new Date() ? (
+              {hasVoted || election.end_date < new Date() ? (
                 <Button
                   radius="xl"
                   size="md"
@@ -153,6 +154,8 @@ export default function ElectionPage({
                 </Button>
               ) : !isOngoing ? (
                 <Text c="red">Voting is not yet open</Text>
+              ) : isElectionEnded({ election }) ? (
+                <Text c="red">Voting has already ended</Text>
               ) : (
                 isImVoter && (
                   <Button

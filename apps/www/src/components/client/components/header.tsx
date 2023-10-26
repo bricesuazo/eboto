@@ -47,11 +47,11 @@ import {
   IconSun,
   IconUserCircle,
 } from "@tabler/icons-react";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 
 export default function Header({ userId }: { userId?: string }) {
   const router = useRouter();
-  const session = useSession();
+  const session = api.auth.getSession.useQuery();
   const params = useParams();
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [reportAProblemLoading, setReportAProblemLoading] = useState(false);
@@ -259,10 +259,10 @@ export default function Header({ userId }: { userId?: string }) {
                           // },
                         }}
                       >
-                        {session.status === "authenticated" ? (
+                        {!session.isLoading ? (
                           session.data?.user.image ? (
                             <Image
-                              src={session.data?.user.image}
+                              src={session.data.user.image}
                               alt="Profile picture"
                               fill
                               sizes="100%"
@@ -280,7 +280,7 @@ export default function Header({ userId }: { userId?: string }) {
                       </Box>
 
                       <Box w={{ base: 100, sm: 140 }}>
-                        {session.status === "authenticated" ? (
+                        {session.data ? (
                           <>
                             <Text size="xs" truncate fw="bold">
                               {session.data.user.name}
