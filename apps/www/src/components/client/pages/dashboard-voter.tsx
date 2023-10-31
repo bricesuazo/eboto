@@ -49,7 +49,7 @@ export default function DashboardVoter({
         accessorKey: "email",
         header: "Email",
       },
-      ...((data.election.voter_fields.map((voter_field) => ({
+      ...((votersQuery.data.election.voter_fields.map((voter_field) => ({
         accessorKey: "field." + voter_field.name,
         header: voter_field.name,
       })) ?? []) as MRT_ColumnDef<
@@ -69,7 +69,7 @@ export default function DashboardVoter({
         Cell: ({ cell }) => moment(cell.getValue<Date>()).fromNow(),
       },
     ],
-    [data.election.voter_fields],
+    [votersQuery.data.election.voter_fields],
   );
   const table = useMantineReactTable({
     columns,
@@ -199,7 +199,7 @@ export default function DashboardVoter({
             }
           >
             <UpdateVoterField
-              election={data.election}
+              election={votersQuery.data.election}
               isDisabled={
                 isElectionOngoing({ election: data.election }) ||
                 isElectionEnded({ election: data.election })

@@ -55,6 +55,8 @@ export default function UpdateVoterField({
 
   const updateVoterFieldMutation = api.voter.updateVoterField.useMutation({
     onSuccess: async () => {
+      await getAllVoterFieldQuery.refetch();
+      await context.election.getVotersByElectionSlug.invalidate();
       notifications.show({
         title: ``,
         message: "Voter field updated successfully",
@@ -62,8 +64,6 @@ export default function UpdateVoterField({
         autoClose: 5000,
       });
       close();
-      await getAllVoterFieldQuery.refetch();
-      await context.election.getVotersByElectionSlug.invalidate();
     },
     onError: (error) => {
       notifications.show({
@@ -156,6 +156,15 @@ export default function UpdateVoterField({
                 form={form}
                 field={field}
                 election_id={election.id}
+                onDelete={() => {
+                  form.setFieldValue(
+                    "field",
+                    form.values.field.filter((f) => f.id !== field.id),
+                  );
+                  form.resetDirty({
+                    field: form.values.field.filter((f) => f.id !== field.id),
+                  });
+                }}
               />
             ))}
 
@@ -216,15 +225,19 @@ function VoterFieldInput({
   form,
   field,
   election_id,
+  onDelete,
 }: {
   form: UseFormReturnType<FormType, (values: FormType) => FormType>;
   field: Field;
   election_id: string;
+  onDelete: () => void;
 }) {
   const context = api.useUtils();
-  const { mutate, isLoading } = api.voter.deleteSingleVoterField.useMutation({
+  const deleteSingleVoterField = api.voter.deleteSingleVoterField.useMutation({
     onSuccess: async () => {
       await context.voter.getAllVoterField.invalidate();
+      await context.election.getVotersByElectionSlug.invalidate();
+      onDelete();
     },
   });
 
@@ -255,13 +268,13 @@ function VoterFieldInput({
         color="red"
         variant="outline"
         size="2.25rem"
-        loading={isLoading}
+        loading={deleteSingleVoterField.isLoading}
         loaderProps={{
           w: 18,
         }}
         onClick={() => {
           if (field.type === "fromDb") {
-            mutate({
+            deleteSingleVoterField.mutate({
               election_id,
               field_id: field.id,
             });
