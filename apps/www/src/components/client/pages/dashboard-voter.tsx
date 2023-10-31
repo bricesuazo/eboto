@@ -186,7 +186,7 @@ export default function DashboardVoter({
     <Box>
       <Stack>
         <Flex gap="xs" direction={{ base: "column", sm: "row" }}>
-          <Group gap="xs" grow>
+          <Group gap="xs" grow preventGrowOverflow={false}>
             <CreateVoter election_id={data.election.id} />
             <UploadBulkVoter election_id={data.election.id} />
           </Group>

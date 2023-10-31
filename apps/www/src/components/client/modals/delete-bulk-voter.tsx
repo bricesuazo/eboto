@@ -35,7 +35,7 @@ export default function DeleteBulkVoter({
   const { mutate, isLoading, isError, error } =
     api.voter.deleteBulk.useMutation({
       onSuccess: async ({ count }) => {
-        await context.election.getVotersByElectionId.invalidate();
+        await context.election.getVotersByElectionSlug.invalidate();
         notifications.show({
           title: `${count} voter(s) successfully deleted!`,
           message: `Successfully deleted voters`,

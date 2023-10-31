@@ -54,7 +54,7 @@ export default function EditVoter({
 
   const editVoterMutation = api.voter.edit.useMutation({
     onSuccess: async () => {
-      await context.election.getVotersByElectionId.invalidate();
+      await context.election.getVotersByElectionSlug.invalidate();
       notifications.show({
         title: "Success",
         message: "Successfully updated voter!",

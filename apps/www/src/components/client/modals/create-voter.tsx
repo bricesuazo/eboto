@@ -27,7 +27,7 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
 
   const createSingleVoterMutation = api.voter.createSingle.useMutation({
     onSuccess: async () => {
-      await context.election.getVotersByElectionId.invalidate();
+      await context.election.getVotersByElectionSlug.invalidate();
       notifications.show({
         title: `${form.values.email} added!`,
         message: "Successfully added voter",

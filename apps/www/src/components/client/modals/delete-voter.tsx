@@ -30,7 +30,7 @@ export default function DeleteVoter({
 
   const deleteVoterMutation = api.voter.delete.useMutation({
     onSuccess: async () => {
-      await context.election.getVotersByElectionId.invalidate();
+      await context.election.getVotersByElectionSlug.invalidate();
       notifications.show({
         title: "Success!",
         message: `Successfully deleted ${voter.email}`,
