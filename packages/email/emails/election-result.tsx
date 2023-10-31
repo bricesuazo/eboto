@@ -9,12 +9,12 @@ import {
   Img,
   Link,
   Preview,
-  render,
   Row,
   Section,
   Tailwind,
   Text,
 } from "@react-email/components";
+import { render } from "@react-email/render";
 
 import { baseUrl } from "@eboto-mo/constants";
 
@@ -58,7 +58,7 @@ export async function sendElectionResult(props: ElectionResultProps) {
       Body: {
         Html: {
           Charset: "UTF-8",
-          Data: render(<ElectionResult {...props} />),
+          Data: await render(<ElectionResult {...props} />),
         },
       },
     },
