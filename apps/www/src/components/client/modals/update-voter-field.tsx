@@ -42,6 +42,7 @@ export default function UpdateVoterField({
   election: Election & { voter_fields: VoterField[] };
   isDisabled: boolean;
 }) {
+  const context = api.useUtils();
   const getAllVoterFieldQuery = api.voter.getAllVoterField.useQuery(
     {
       election_id: election.id,
@@ -62,6 +63,7 @@ export default function UpdateVoterField({
       });
       close();
       await getAllVoterFieldQuery.refetch();
+      await context.election.getVotersByElectionSlug.invalidate();
     },
     onError: (error) => {
       notifications.show({
@@ -101,8 +103,8 @@ export default function UpdateVoterField({
           type: "fromDb",
         }),
       );
-      form.setValues({ field: data });
 
+      form.setValues({ field: data });
       form.resetDirty({ field: data });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -114,7 +116,7 @@ export default function UpdateVoterField({
         variant="light"
         leftSection={<IconUsersGroup size="1rem" />}
         onClick={open}
-        disabled={isDisabled || true}
+        disabled={isDisabled}
         // style={(theme) => ({
         //   [theme.fn.smallerThan("xs")]: {
         //     width: "100%",

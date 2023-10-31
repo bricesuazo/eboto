@@ -489,19 +489,32 @@ export const electionRouter = createTRPCRouter({
   //       },
   //     });
   //   }),
-  getVotersByElectionId: protectedProcedure
+  getVotersByElectionSlug: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_slug: z.string().min(1),
       }),
     )
     .query(async ({ input, ctx }) => {
+      const election = await ctx.db.query.elections.findFirst({
+        where: (election, { eq, and, isNull }) =>
+          and(
+            eq(election.slug, input.election_slug),
+            isNull(election.deleted_at),
+          ),
+        with: {
+          voter_fields: true,
+        },
+      });
+
+      if (!election)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+        });
+
       const votersFromDb = await ctx.db.query.voters.findMany({
         where: (voters, { eq, and, isNull }) =>
-          and(
-            eq(voters.election_id, input.election_id),
-            isNull(voters.deleted_at),
-          ),
+          and(eq(voters.election_id, election.id), isNull(voters.deleted_at)),
 
         with: {
           votes: {
@@ -510,12 +523,15 @@ export const electionRouter = createTRPCRouter({
         },
       });
 
-      return votersFromDb.map((voter) => ({
-        id: voter.id,
-        email: voter.email,
-        created_at: voter.created_at,
-        has_voted: !!voter.votes.length,
-      }));
+      return {
+        election,
+        voters: votersFromDb.map((voter) => ({
+          id: voter.id,
+          email: voter.email,
+          created_at: voter.created_at,
+          has_voted: !!voter.votes.length,
+        })),
+      };
     }),
   create: protectedProcedure
     .input(

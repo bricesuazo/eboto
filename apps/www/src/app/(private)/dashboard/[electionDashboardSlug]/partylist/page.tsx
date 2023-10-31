@@ -31,11 +31,5 @@ export default async function Page({
     election_id: election.id,
   });
 
-  return (
-    <DashboardPartylist
-      election={election}
-      partylists={partylists}
-      data-superjson
-    />
-  );
+  return <DashboardPartylist election={election} partylists={partylists} />;
 }

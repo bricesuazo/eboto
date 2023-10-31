@@ -48,8 +48,8 @@ export default function DashboardPosition({
               </Box>
 
               <Flex gap="xs">
-                <EditPosition position={position} data-superjson />
-                <DeletePosition position={position} data-superjson />
+                <EditPosition position={position} />
+                <DeletePosition position={position} />
               </Flex>
             </Stack>
           ))

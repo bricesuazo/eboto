@@ -70,7 +70,7 @@ export default function DashboardCandidate({
             <ScrollArea scrollbarSize={10} offsetScrollbars="x">
               <Flex gap="md">
                 <Box>
-                  <CreateCandidate position={position} data-superjson />
+                  <CreateCandidate position={position} />
                 </Box>
 
                 <Flex
@@ -138,12 +138,8 @@ export default function DashboardCandidate({
                               <EditCandidate
                                 candidate={candidate}
                                 election={election}
-                                data-superjson
                               />
-                              <DeleteCandidate
-                                candidate={candidate}
-                                data-superjson
-                              />
+                              <DeleteCandidate candidate={candidate} />
                             </Flex>
                             <HoverCardDropdown>{title}</HoverCardDropdown>
                           </HoverCard>

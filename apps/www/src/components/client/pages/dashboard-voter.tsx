@@ -11,6 +11,7 @@ import {
   Flex,
   Group,
   Stack,
+  Text,
   Tooltip,
 } from "@mantine/core";
 import { IconRefresh } from "@tabler/icons-react";
@@ -19,40 +20,41 @@ import { MantineReactTable, useMantineReactTable } from "mantine-react-table";
 import moment from "moment";
 
 import type { RouterOutputs } from "@eboto-mo/api";
-import type { Election, VoterField } from "@eboto-mo/db/schema";
+import { isElectionEnded, isElectionOngoing } from "@eboto-mo/constants";
 
 import DeleteBulkVoter from "../modals/delete-bulk-voter";
 import DeleteVoter from "../modals/delete-voter";
 import EditVoter from "../modals/edit-voter";
+import UpdateVoterField from "../modals/update-voter-field";
 
 export default function DashboardVoter({
-  election,
-  voters,
+  data,
 }: {
-  election: Election & { voter_fields: VoterField[] };
-  voters: RouterOutputs["election"]["getVotersByElectionId"];
+  data: RouterOutputs["election"]["getVotersByElectionSlug"];
 }) {
-  const votersQuery = api.election.getVotersByElectionId.useQuery(
-    {
-      election_id: election.id,
-    },
-    {
-      initialData: voters,
-    },
+  const votersQuery = api.election.getVotersByElectionSlug.useQuery(
+    { election_slug: data.election.slug },
+    { initialData: data },
   );
 
   const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
 
-  const columns = useMemo<MRT_ColumnDef<(typeof votersQuery.data)[number]>[]>(
+  const columns = useMemo<
+    MRT_ColumnDef<
+      RouterOutputs["election"]["getVotersByElectionSlug"]["voters"][number]
+    >[]
+  >(
     () => [
       {
         accessorKey: "email",
         header: "Email",
       },
-      // ...((election.voter_fields.map((voter_field) => ({
-      //   accessorKey: "field." + voter_field.name,
-      //   header: voter_field.name,
-      // })) ?? []) as MRT_ColumnDef<(typeof votersQuery.data)[number]>[]),
+      ...((data.election.voter_fields.map((voter_field) => ({
+        accessorKey: "field." + voter_field.name,
+        header: voter_field.name,
+      })) ?? []) as MRT_ColumnDef<
+        RouterOutputs["election"]["getVotersByElectionSlug"]["voters"][number]
+      >[]),
       {
         accessorKey: "has_voted",
         header: "Voted?",
@@ -67,12 +69,11 @@ export default function DashboardVoter({
         Cell: ({ cell }) => moment(cell.getValue<Date>()).fromNow(),
       },
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [election.voter_fields],
+    [data.election.voter_fields],
   );
   const table = useMantineReactTable({
     columns,
-    data: votersQuery.data,
+    data: votersQuery.data.voters,
     enableRowSelection: true,
     enableFullScreenToggle: false,
     enableDensityToggle: false,
@@ -136,15 +137,15 @@ export default function DashboardVoter({
 
         <Tooltip withArrow label="Delete selected">
           <DeleteBulkVoter
-            voters={votersQuery.data
+            voters={votersQuery.data.voters
               .filter((voter) => rowSelection[voter.id])
               .map((voter) => ({
                 id: voter.id,
                 email: voter.email,
               }))}
-            election_id={election.id}
+            election_id={data.election.id}
             isDisabled={
-              votersQuery.data.length === 0 ||
+              votersQuery.data.voters.length === 0 ||
               Object.keys(rowSelection).length === 0 ||
               Object.values(rowSelection).every((isSelected) => !isSelected)
             }
@@ -159,8 +160,8 @@ export default function DashboardVoter({
       <Flex gap="sm">
         <Tooltip withArrow label="Edit">
           <EditVoter
-            voter_fields={election.voter_fields}
-            election_id={election.id}
+            voter_fields={data.election.voter_fields}
+            election_id={data.election.id}
             voter={{
               id: row.id,
               email: row.getValue<string>("email"),
@@ -174,7 +175,7 @@ export default function DashboardVoter({
               id: row.id,
               email: row.getValue<string>("email"),
             }}
-            election_id={election.id}
+            election_id={data.election.id}
           />
         </Tooltip>
       </Flex>
@@ -185,11 +186,11 @@ export default function DashboardVoter({
     <Box>
       <Stack>
         <Flex gap="xs" direction={{ base: "column", sm: "row" }}>
-          <Group gap="xs">
-            <CreateVoter election_id={election.id} />
-            <UploadBulkVoter election_id={election.id} />
+          <Group gap="xs" grow>
+            <CreateVoter election_id={data.election.id} />
+            <UploadBulkVoter election_id={data.election.id} />
           </Group>
-          {/* <Tooltip
+          <Tooltip
             label={
               <Text>
                 You can&apos;t change the voter&apos;s group once the <br />
@@ -198,10 +199,13 @@ export default function DashboardVoter({
             }
           >
             <UpdateVoterField
-              election={election}
-              isDisabled={isElectionOngoing({ election })}
+              election={data.election}
+              isDisabled={
+                isElectionOngoing({ election: data.election }) ||
+                isElectionEnded({ election: data.election })
+              }
             />
-          </Tooltip> */}
+          </Tooltip>
         </Flex>
 
         <MantineReactTable table={table} />
