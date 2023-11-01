@@ -14,7 +14,7 @@ import {
   Tailwind,
   Text,
 } from "@react-email/components";
-import { render } from "@react-email/render";
+import { renderAsync } from "@react-email/render";
 
 import { baseUrl } from "@eboto-mo/constants";
 
@@ -58,7 +58,7 @@ export async function sendElectionResult(props: ElectionResultProps) {
       Body: {
         Html: {
           Charset: "UTF-8",
-          Data: await render(<ElectionResult {...props} />),
+          Data: await renderAsync(<ElectionResult {...props} />),
         },
       },
     },
@@ -144,9 +144,8 @@ export default function ElectionResult(props: ElectionResultProps) {
               }}
             >
               <Button
-                pY={11}
-                pX={23}
                 style={{
+                  padding: "11px 23px",
                   backgroundColor: "#5e6ad2",
                   borderRadius: "3px",
                   fontWeight: "600",

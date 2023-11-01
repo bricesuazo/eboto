@@ -37,6 +37,9 @@ export const electionRouter = createTRPCRouter({
             eq(election.slug, input.election_slug),
             isNull(election.deleted_at),
           ),
+        with: {
+          voter_fields: true,
+        },
       });
 
       if (!election) throw new TRPCError({ code: "NOT_FOUND" });
@@ -64,7 +67,7 @@ export const electionRouter = createTRPCRouter({
         orderBy: (positions, { asc }) => [asc(positions.order)],
       });
 
-      const isImVoter = await ctx.db.query.voters.findFirst({
+      const myVoterData = await ctx.db.query.voters.findFirst({
         where: (voter, { eq, and, isNull }) =>
           and(
             eq(voter.election_id, election.id),
@@ -76,7 +79,7 @@ export const electionRouter = createTRPCRouter({
       const hasVoted = await ctx.db.query.votes.findFirst({
         where: (votes, { eq, and }) =>
           and(
-            eq(votes.voter_id, isImVoter?.id ?? ""),
+            eq(votes.voter_id, myVoterData?.id ?? ""),
             eq(votes.election_id, election.id),
           ),
       });
@@ -85,7 +88,7 @@ export const electionRouter = createTRPCRouter({
         election,
         positions,
         isOngoing,
-        isImVoter: !!isImVoter,
+        myVoterData,
         hasVoted: !!hasVoted,
       };
     }),

@@ -34,7 +34,7 @@ export const api = createTRPCNextAppDirServer<AppRouter>({
           async createContext() {
             return {
               utapi: new UTApi({
-                // fetch: globalThis.fetch,
+                fetch: globalThis.fetch,
                 // apiKey: env.UPLOADTHING_SECRET,
               }),
               session: await auth(),

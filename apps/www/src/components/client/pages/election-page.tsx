@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import ScrollToTopButton from "@/components/client/components/scroll-to-top";
@@ -17,12 +18,16 @@ import {
   HoverCard,
   HoverCardDropdown,
   HoverCardTarget,
+  Modal,
   Spoiler,
   Stack,
   Text,
+  TextInput,
   Title,
   UnstyledButton,
 } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { useDisclosure } from "@mantine/hooks";
 import {
   IconClock,
   IconFingerprint,
@@ -42,8 +47,10 @@ export default function ElectionPage({
   data: RouterOutputs["election"]["getElectionPage"];
   election_slug: string;
 }) {
+  const [opened, { open, close }] = useDisclosure(false);
+
   const {
-    data: { election, positions, hasVoted, isImVoter, isOngoing },
+    data: { election, positions, hasVoted, myVoterData, isOngoing },
   } = api.election.getElectionPage.useQuery(
     {
       election_slug,
@@ -52,9 +59,66 @@ export default function ElectionPage({
       initialData: data,
     },
   );
+
+  const form = useForm<{
+    email: string;
+  }>({
+    initialValues: {
+      email: "",
+    },
+    validateInputOnBlur: true,
+    validate: {},
+  });
+  useEffect(() => {
+    if (opened) {
+      form.reset();
+      // createSingleVoterMutation.reset();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [opened]);
   return (
     <>
       <ScrollToTopButton />
+      <Modal
+        opened={opened}
+        onClose={close}
+        title="Fill up this form first before voting."
+        closeOnClickOutside={false}
+      >
+        <form
+          onSubmit={form.onSubmit((value) => {
+            console.log("🚀 ~ file: election-page.tsx:88 ~ value:", value);
+          })}
+        >
+          <Stack gap="sm">
+            <TextInput
+              placeholder="Enter voter's email"
+              label="Email address"
+              required
+              // disabled={createSingleVoterMutation.isLoading}
+              withAsterisk
+              {...form.getInputProps("email")}
+              // leftSection={<IconAt size="1rem" />}
+            />
+            <Group justify="right" gap="xs">
+              <Button
+                variant="default"
+                onClick={close}
+                // disabled={createSingleVoterMutation.isLoading}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={!form.isValid()}
+                // loading={createSingleVoterMutation.isLoading}
+              >
+                Create
+              </Button>
+            </Group>
+          </Stack>
+        </form>
+      </Modal>
 
       <Container pt={40} pb={80} size="md">
         <Stack align="center" gap="xl">
@@ -157,16 +221,29 @@ export default function ElectionPage({
               ) : isElectionEnded({ election }) ? (
                 <Text c="red">Voting has already ended</Text>
               ) : (
-                isImVoter && (
-                  <Button
-                    radius="xl"
-                    size="md"
-                    leftSection={<IconFingerprint />}
-                    component={Link}
-                    href={`/${election.slug}/vote`}
-                  >
-                    Vote now!
-                  </Button>
+                !!myVoterData && (
+                  <>
+                    {!!election.voter_fields.length && !myVoterData.field ? (
+                      <Button
+                        onClick={open}
+                        radius="xl"
+                        size="md"
+                        leftSection={<IconFingerprint />}
+                      >
+                        Vote now!
+                      </Button>
+                    ) : (
+                      <Button
+                        radius="xl"
+                        size="md"
+                        leftSection={<IconFingerprint />}
+                        component={Link}
+                        href={`/${election.slug}/vote`}
+                      >
+                        Vote now!
+                      </Button>
+                    )}
+                  </>
                 )
               )}
               <ElectionShowQRCode election={election} />

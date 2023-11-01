@@ -12,7 +12,7 @@ module.exports = {
     return config;
   },
   experimental: {
-    // webpackBuildWorker: true,
+    webpackBuildWorker: true,
     // forceSwcTransforms: true,
     // swcPlugins: [["next-superjson-plugin", {}]],
   },

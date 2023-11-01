@@ -13,7 +13,7 @@ import {
   Tailwind,
   Text,
 } from "@react-email/components";
-import { render } from "@react-email/render";
+import { renderAsync } from "@react-email/render";
 
 import { baseUrl } from "@eboto-mo/constants";
 
@@ -46,7 +46,7 @@ export async function sendElectionStart(props: ElectionStartProps) {
       Body: {
         Html: {
           Charset: "UTF-8",
-          Data: await render(<ElectionStart {...props} />),
+          Data: await renderAsync(<ElectionStart {...props} />),
         },
       },
     },
@@ -88,9 +88,8 @@ export default function ElectionStart(props: ElectionStartProps) {
             )}
             <Section className="py-5">
               <Button
-                pY={11}
-                pX={23}
                 style={{
+                  padding: "11px 23px",
                   backgroundColor: "#5e6ad2",
                   borderRadius: "3px",
                   fontWeight: "600",
