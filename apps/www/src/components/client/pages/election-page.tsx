@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import ScrollToTopButton from "@/components/client/components/scroll-to-top";
 import ElectionShowQRCode from "@/components/client/modals/election-show-qr-code";
 import classes from "@/styles/Election.module.css";
@@ -47,8 +48,16 @@ export default function ElectionPage({
   data: RouterOutputs["election"]["getElectionPage"];
   election_slug: string;
 }) {
+  const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
 
+  const addVoterFieldToVoterMutation =
+    api.voter.addVoterFieldToVoter.useMutation({
+      onSuccess: () => {
+        router.push(`/${election_slug}/vote`);
+        close();
+      },
+    });
   const {
     data: { election, positions, hasVoted, myVoterData, isOngoing },
   } = api.election.getElectionPage.useQuery(
@@ -60,19 +69,25 @@ export default function ElectionPage({
     },
   );
 
-  const form = useForm<{
-    email: string;
-  }>({
-    initialValues: {
-      email: "",
-    },
+  const form = useForm<Record<string, string>>({
+    initialValues: Object.fromEntries(
+      election.voter_fields.map((field) => [field.id, ""]),
+    ),
     validateInputOnBlur: true,
-    validate: {},
+    validate: (values) => {
+      const errors: Record<string, string> = {};
+      election.voter_fields.forEach((field) => {
+        if (!values[field.id]) {
+          errors[field.id] = `${field.name} is required`;
+        }
+      });
+      return errors;
+    },
   });
   useEffect(() => {
     if (opened) {
       form.reset();
-      // createSingleVoterMutation.reset();
+      addVoterFieldToVoterMutation.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
@@ -80,40 +95,54 @@ export default function ElectionPage({
     <>
       <ScrollToTopButton />
       <Modal
-        opened={opened}
+        opened={opened || addVoterFieldToVoterMutation.isLoading}
         onClose={close}
         title="Fill up this form first before voting."
         closeOnClickOutside={false}
+        centered
       >
         <form
           onSubmit={form.onSubmit((value) => {
-            console.log("🚀 ~ file: election-page.tsx:88 ~ value:", value);
+            addVoterFieldToVoterMutation.mutate({
+              election_id: election.id,
+              voter_id: myVoterData?.id ?? "",
+              fields: Object.entries(value).map(([key, value]) => ({
+                id: key,
+                value,
+              })),
+            });
           })}
         >
           <Stack gap="sm">
-            <TextInput
-              placeholder="Enter voter's email"
-              label="Email address"
-              required
-              // disabled={createSingleVoterMutation.isLoading}
-              withAsterisk
-              {...form.getInputProps("email")}
-              // leftSection={<IconAt size="1rem" />}
-            />
+            {Object.entries(form.values).map(([key]) => {
+              const field = election.voter_fields.find(
+                (field) => field.id === key,
+              );
+              if (!field) return null;
+              return (
+                <TextInput
+                  key={key}
+                  required
+                  label={field.name}
+                  placeholder={field.name}
+                  {...form.getInputProps(key)}
+                />
+              );
+            })}
             <Group justify="right" gap="xs">
               <Button
                 variant="default"
                 onClick={close}
-                // disabled={createSingleVoterMutation.isLoading}
+                disabled={addVoterFieldToVoterMutation.isLoading}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isValid()}
-                // loading={createSingleVoterMutation.isLoading}
+                loading={addVoterFieldToVoterMutation.isLoading}
               >
-                Create
+                Vote now!
               </Button>
             </Group>
           </Stack>

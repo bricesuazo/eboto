@@ -50,7 +50,7 @@ export default function DashboardVoter({
         header: "Email",
       },
       ...((votersQuery.data.election.voter_fields.map((voter_field) => ({
-        accessorKey: "field." + voter_field.name,
+        accessorKey: "field." + voter_field.id,
         header: voter_field.name,
       })) ?? []) as MRT_ColumnDef<
         RouterOutputs["election"]["getVotersByElectionSlug"]["voters"][number]

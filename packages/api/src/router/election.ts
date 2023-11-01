@@ -532,6 +532,7 @@ export const electionRouter = createTRPCRouter({
           id: voter.id,
           email: voter.email,
           created_at: voter.created_at,
+          field: voter.field,
           has_voted: !!voter.votes.length,
         })),
       };

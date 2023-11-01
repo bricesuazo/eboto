@@ -331,4 +331,77 @@ export const voterRouter = createTRPCRouter({
         count: input.voters.length,
       };
     }),
+  addVoterFieldToVoter: protectedProcedure
+    .input(
+      z.object({
+        election_id: z.string().min(1),
+        voter_id: z.string().min(1),
+        fields: z.array(
+          z.object({
+            id: z.string().min(1),
+            value: z.string().min(1),
+          }),
+        ),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const isElectionExists = await ctx.db.query.elections.findFirst({
+        where: (election, { eq }) => eq(election.id, input.election_id),
+      });
+
+      if (!isElectionExists)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election does not exists",
+        });
+
+      const isElectionCommissionerExists =
+        await ctx.db.query.commissioners.findFirst({
+          where: (commissioner, { eq, and }) =>
+            and(
+              eq(commissioner.election_id, input.election_id),
+              eq(commissioner.user_id, ctx.session.user.id),
+            ),
+        });
+
+      if (!isElectionCommissionerExists)
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Unauthorized",
+        });
+
+      const isVoterExists = await ctx.db.query.voters.findFirst({
+        where: (voter, { eq, and }) =>
+          and(
+            eq(voter.id, input.voter_id),
+            eq(voter.election_id, input.election_id),
+          ),
+      });
+
+      if (!isVoterExists)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Voter does not exists",
+        });
+
+      await ctx.db.transaction(async (db) => {
+        await db
+          .update(voters)
+          .set({
+            field: input.fields.reduce(
+              (acc, field) => {
+                acc[field.id] = field.value;
+                return acc;
+              },
+              {} as Record<string, string>,
+            ),
+          })
+          .where(
+            and(
+              eq(voters.id, input.voter_id),
+              eq(voters.election_id, input.election_id),
+            ),
+          );
+      });
+    }),
 });
