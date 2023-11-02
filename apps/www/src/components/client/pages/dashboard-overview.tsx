@@ -7,8 +7,17 @@ import { api } from "@/trpc/client";
 import {
   ActionIcon,
   Box,
+  Center,
   Flex,
+  Loader,
+  SimpleGrid,
   Stack,
+  Table,
+  TableTbody,
+  TableTd,
+  TableTh,
+  TableThead,
+  TableTr,
   Text,
   Title,
   UnstyledButton,
@@ -36,6 +45,9 @@ export default function DashboardOverview({
     },
     { initialData: data },
   );
+  const getVoterFieldsStatsQuery = api.election.getVoterFieldsStats.useQuery({
+    election_id: data.id,
+  });
   return (
     <Stack>
       <Box>
@@ -202,75 +214,67 @@ export default function DashboardOverview({
           );
         })}
       </Flex>
-      {/* <Box>
+      <Box>
         <Title
           order={3}
-          style={(theme) => ({
-            [theme.fn.smallerThan("xs")]: {
-              textAlign: "center",
-            },
-          })}
+          // style={(theme) => ({
+          //   [theme.fn.smallerThan("xs")]: {
+          //     textAlign: "center",
+          //   },
+          // })}
         >
           Voter Stats
         </Title>
-        {voterFieldsStats.isLoading ? (
+        {getVoterFieldsStatsQuery.isLoading ? (
           <Center>
             <Loader size="sm" />
           </Center>
-        ) : !voterFieldsStats.data || voterFieldsStats.data.length === 0 ? (
+        ) : !getVoterFieldsStatsQuery.data ||
+          getVoterFieldsStatsQuery.data.length === 0 ? (
           <Text
-            style={(theme) => ({
-              [theme.fn.smallerThan("xs")]: {
-                textAlign: "center",
-              },
-            })}
+          // style={(theme) => ({
+          //   [theme.fn.smallerThan("xs")]: {
+          //     textAlign: "center",
+          //   },
+          // })}
           >
             No voter stats
           </Text>
         ) : (
           <SimpleGrid
-            cols={2}
+            cols={{
+              base: 1,
+              md: 2,
+            }}
             style={{
               alignItems: "start",
             }}
-            breakpoints={[
-              {
-                maxWidth: "md",
-                cols: 1,
-              },
-            ]}
           >
-            {voterFieldsStats.data.map((voterFieldStat) => (
+            {getVoterFieldsStatsQuery.data.map((voterFieldStat) => (
               <Table
-                key={voterFieldStat.fieldName}
-                striped
-                highlightOnHover
-                withBorder
+                key={voterFieldStat.name}
                 withColumnBorders
+                withTableBorder
               >
-                <thead>
-                  <tr>
-                    <th>{voterFieldStat.fieldName}</th>
-                    <th>Voted</th>
-                    <th>Voter (Accepted)</th>
-                    <th>Voter (Invited)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {voterFieldStat.fields.map((field) => (
-                    <tr key={field.fieldValue}>
-                      <td>{field.fieldValue}</td>
-                      <td>{field.voteCount}</td>
-                      <td>{field.allCountAccepted}</td>
-                      <td>{field.allCountInvited}</td>
-                    </tr>
+                <TableThead>
+                  <TableTr>
+                    <TableTh>{voterFieldStat.name}</TableTh>
+                    <TableTh>Voted</TableTh>
+                  </TableTr>
+                </TableThead>
+                <TableTbody>
+                  {voterFieldStat.options.map((option) => (
+                    <TableTr key={option.id}>
+                      <TableTd>{option.name}</TableTd>
+                      <TableTd>{option.count}</TableTd>
+                    </TableTr>
                   ))}
-                </tbody>
+                </TableTbody>
               </Table>
             ))}
           </SimpleGrid>
         )}
-      </Box> */}
+      </Box>
       <Box>
         <Title
           order={3}

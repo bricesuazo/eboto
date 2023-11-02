@@ -355,16 +355,7 @@ export const voterRouter = createTRPCRouter({
           message: "Election does not exists",
         });
 
-      const isElectionCommissionerExists =
-        await ctx.db.query.commissioners.findFirst({
-          where: (commissioner, { eq, and }) =>
-            and(
-              eq(commissioner.election_id, input.election_id),
-              eq(commissioner.user_id, ctx.session.user.id),
-            ),
-        });
-
-      if (!isElectionCommissionerExists)
+      if (isElectionExists.publicity === "PRIVATE")
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Unauthorized",

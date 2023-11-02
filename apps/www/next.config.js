@@ -18,6 +18,15 @@ module.exports = {
   },
   images: {
     // unoptimized: true,
-    domains: ["lh3.googleusercontent.com", "utfs.io"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "utfs.io",
+      },
+    ],
   },
 };
