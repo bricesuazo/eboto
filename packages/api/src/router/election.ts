@@ -738,6 +738,9 @@ export const electionRouter = createTRPCRouter({
 
       const voters = await ctx.db.query.voters.findMany({
         where: (voters, { eq }) => eq(voters.election_id, input.election_id),
+        with: {
+          votes: true,
+        },
       });
 
       const fields = election.voter_fields.map((field) => ({
@@ -755,8 +758,12 @@ export const electionRouter = createTRPCRouter({
               id:
                 election.voter_fields.find((f) => f.id === field.id)?.id ?? "",
               name: option,
-              count: voters.filter((voter) => voter.field![option] === option)
-                .length,
+              count: voters.filter(
+                (voter) =>
+                  voter.field &&
+                  voter.field[field.id] === option &&
+                  voter.votes.length > 0,
+              ).length,
             };
           }),
       }));
