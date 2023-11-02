@@ -263,12 +263,16 @@ export default function DashboardOverview({
                   </TableTr>
                 </TableThead>
                 <TableTbody>
-                  {voterFieldStat.options.map((option) => (
-                    <TableTr key={option.id}>
-                      <TableTd>{option.name}</TableTd>
-                      <TableTd>{option.count}</TableTd>
-                    </TableTr>
-                  ))}
+                  {voterFieldStat.options.map((option) => {
+                    if (!option) return null;
+
+                    return (
+                      <TableTr key={option.id}>
+                        <TableTd>{option.name}</TableTd>
+                        <TableTd>{option.count}</TableTd>
+                      </TableTr>
+                    );
+                  })}
                 </TableTbody>
               </Table>
             ))}

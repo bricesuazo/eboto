@@ -727,36 +727,6 @@ export const electionRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      /**
-       * {
-           id: 'AHBHO4GghB3pWfvt3ZCjH',
-           slug: 'csso-2023',
-           name: 'CSSO 2023',
-           description: '',
-           start_date: 2023-10-03T16:00:00.000Z,
-           end_date: 2023-11-10T16:00:00.000Z,
-           publicity: 'VOTER',
-           logo: null,
-           voter_domain: null,
-           deleted_at: null,
-           created_at: 2023-11-02T02:13:28.000Z,
-           updated_at: 2023-11-02T02:16:01.000Z,
-           voter_fields: [
-             {
-               id: 'GVAFDCcdrP84umTxBAgyT',
-               name: 'College',
-               created_at: 2023-11-02T02:14:43.000Z,        
-               election_id: 'AHBHO4GghB3pWfvt3ZCjH'
-             },
-             {
-               id: 'z41XCnQseMzCvgEbBKHqz',
-               name: 'Program',
-               created_at: 2023-11-02T02:14:43.000Z,        
-               election_id: 'AHBHO4GghB3pWfvt3ZCjH'
-             }
-           ]
-         }
-       */
       const election = await ctx.db.query.elections.findFirst({
         where: (elections, { eq }) => eq(elections.id, input.election_id),
         with: {
@@ -765,80 +735,30 @@ export const electionRouter = createTRPCRouter({
       });
 
       if (!election) throw new TRPCError({ code: "NOT_FOUND" });
-      console.log("🚀 ~ file: election.ts:738 ~ .query ~ election:", election);
 
-      /**
-       * [
-           {
-             id: '6-k92w4K5h2AFXNIh-4rk',
-             created_at: 2023-11-02T02:14:23.000Z,
-             email: 'eboto.cvsu@gmail.com',
-             field: { GVAFDCcdrP84umTxBAgyT: 'CEIT', z41XCnQseMzCvgEbBKHqz: 'CS' },
-             deleted_at: null,
-             election_id: 'AHBHO4GghB3pWfvt3ZCjH'
-           }
-           {
-             id: '6-123123123123123-4rk',
-             created_at: 2023-11-02T02:14:23.000Z,
-             email: 'bricesuazo@gmail.com',
-             field: { 124wds123412eqwd12312: 'CAS', z41XCnQseMzCvgEbBKHqz: 'P' },
-             deleted_at: null,
-             election_id: 'AHBHO4GghB3pWfvt3ZCjH'
-           }
-           {
-             id: '123123123123123-4rk',
-             created_at: 2023-11-02T02:14:23.000Z,
-             email: 'bricebrinesuazo@gmail.com',
-             field: { 124wds123412eqwd12312: 'CEIT', z41XCnQseMzCvgEbBKHqz: 'IT' },
-             deleted_at: null,
-             election_id: 'AHBHO4GghB3pWfvt3ZCjH'
-           }
-         ]
-       * 
-       */
       const voters = await ctx.db.query.voters.findMany({
         where: (voters, { eq }) => eq(voters.election_id, input.election_id),
       });
-
-      /**
-       * transform the data into this
-       * [
-       *  {
-       *   field: "CEIT",
-       *  count: 2
-       *  }
-       * {
-       *  field: "CAS",
-       * count: 1
-       * }
-       * {
-       * field: "P",
-       * count: 1
-       * }
-       * {
-       * field: "IT",
-       * count: 1
-       * }
-       * {
-       * field: "CS",
-       * count: 1
-       * }
-       *
-       * ]
-       */
 
       const fields = election.voter_fields.map((field) => ({
         id: field.id,
         name: field.name,
         options: voters
-          .map((voter) => voter.field![field.id])
+          .map((voter) => {
+            if (!voter.field) return "";
+            return voter.field[field.id];
+          })
           .filter((field) => field !== undefined)
-          .map((option) => ({
-            id: election.voter_fields.find((f) => f.id === field.id)?.id ?? "",
-            name: option,
-            count: voters.filter((voter) => voter.field![option!] === option)
-              .length,
-          })),
+          .map((option) => {
+            if (typeof option !== "string") return;
+            return {
+              id:
+                election.voter_fields.find((f) => f.id === field.id)?.id ?? "",
+              name: option,
+              count: voters.filter((voter) => voter.field![option] === option)
+                .length,
+            };
+          }),
       }));
 
       return fields;
