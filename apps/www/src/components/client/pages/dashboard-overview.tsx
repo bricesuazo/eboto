@@ -263,16 +263,20 @@ export default function DashboardOverview({
                   </TableTr>
                 </TableThead>
                 <TableTbody>
-                  {voterFieldStat.options.map((option) => {
-                    if (!option) return null;
-
-                    return (
+                  {voterFieldStat.options.length ? (
+                    voterFieldStat.options.map((option) => (
                       <TableTr key={option.id}>
                         <TableTd>{option.name}</TableTd>
-                        <TableTd>{option.count}</TableTd>
+                        <TableTd>{option.vote_count}</TableTd>
                       </TableTr>
-                    );
-                  })}
+                    ))
+                  ) : (
+                    <TableTr>
+                      <TableTd>
+                        <Text>No answer yet</Text>
+                      </TableTd>
+                    </TableTr>
+                  )}
                 </TableTbody>
               </Table>
             ))}

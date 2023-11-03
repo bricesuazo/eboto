@@ -733,6 +733,36 @@ export const electionRouter = createTRPCRouter({
           voter_fields: true,
         },
       });
+      /**
+       * {
+           id: 'AHBHO4GghB3pWfvt3ZCjH',
+           slug: 'csso-2023',
+           name: 'CSSO 2023',
+           description: '',
+           start_date: 2023-10-03T16:00:00.000Z,     
+           end_date: 2023-11-10T16:00:00.000Z,       
+           publicity: 'VOTER',
+           logo: null,
+           voter_domain: null,
+           deleted_at: null,
+           created_at: 2023-11-02T02:13:28.000Z,     
+           updated_at: 2023-11-02T02:16:01.000Z,     
+           voter_fields: [
+             {
+               id: 'GVAFDCcdrP84umTxBAgyT',
+               name: 'College',
+               created_at: 2023-11-02T02:14:43.000Z, 
+               election_id: 'AHBHO4GghB3pWfvt3ZCjH'  
+             },
+             {
+               id: 'z41XCnQseMzCvgEbBKHqz',
+               name: 'Program',
+               created_at: 2023-11-02T02:14:43.000Z, 
+               election_id: 'AHBHO4GghB3pWfvt3ZCjH'  
+             }
+           ]
+         }
+       */
 
       if (!election) throw new TRPCError({ code: "NOT_FOUND" });
 
@@ -742,32 +772,80 @@ export const electionRouter = createTRPCRouter({
           votes: true,
         },
       });
+      /**
+       * [
+           {
+             id: '6-k92w4K5h2AFXNIh-4rk',
+             created_at: 2023-11-02T02:14:23.000Z,   
+             email: 'eboto.cvsu@gmail.com',
+             field: { GVAFDCcdrP84umTxBAgyT: 'CEIT', z41XCnQseMzCvgEbBKHqz: 'CS' },
+             deleted_at: null,
+             election_id: 'AHBHO4GghB3pWfvt3ZCjH',   
+             votes: [
+               [Object], [Object],
+               [Object], [Object],
+               [Object], [Object],
+               [Object], [Object],
+               [Object], [Object]
+             ]
+           },
+           {
+             id: 'HR4LhtvI3oM8p2C2pB4yY',
+             created_at: 2023-11-03T13:01:07.000Z,   
+             email: 'bricesuazo@gmail.com',
+             field: { GVAFDCcdrP84umTxBAgyT: 'CAS', z41XCnQseMzCvgEbBKHqz: 'JOURN' },
+             deleted_at: null,
+             election_id: 'AHBHO4GghB3pWfvt3ZCjH',   
+             votes: []
+           }
+         ]
+       */
 
-      const fields = election.voter_fields.map((field) => ({
-        id: field.id,
-        name: field.name,
-        options: voters
-          .map((voter) => {
-            if (!voter.field) return "";
-            return voter.field[field.id];
-          })
-          .filter((field) => field !== undefined)
-          .map((option) => {
-            if (typeof option !== "string") return;
-            return {
-              id:
-                election.voter_fields.find((f) => f.id === field.id)?.id ?? "",
-              name: option,
-              count: voters.filter(
-                (voter) =>
-                  voter.field &&
-                  voter.field[field.id] === option &&
-                  voter.votes.length > 0,
-              ).length,
-            };
-          }),
-      }));
+      const fields = [] as {
+        id: string;
+        name: string;
+        created_at: Date;
+        options: {
+          id: string;
+          name: string;
+          vote_count: number;
+        }[];
+      }[];
 
+      // Iterate through the election's voter_fields
+      for (const field of election.voter_fields) {
+        const fieldOptions = [] as {
+          id: string;
+          name: string;
+          vote_count: number;
+        }[];
+
+        // Iterate through the voters to count votes for each field option
+        for (const voter of voters) {
+          const optionName = voter.field?.[field.id] ?? "";
+          const existingOption = fieldOptions.find(
+            (option) => option.name === optionName,
+          );
+
+          if (existingOption) {
+            existingOption.vote_count = voter.votes.length ? 1 : 0;
+          } else {
+            fieldOptions.push({
+              id: field.id,
+              name: optionName,
+              vote_count: voter.votes.length ? 1 : 0,
+            });
+          }
+        }
+
+        // Add the field with its options to the fields array
+        fields.push({
+          id: field.id,
+          name: field.name,
+          created_at: field.created_at,
+          options: fieldOptions,
+        });
+      }
       return fields;
     }),
 });
