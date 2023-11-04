@@ -215,31 +215,14 @@ export default function DashboardOverview({
         })}
       </Flex>
       <Box>
-        <Title
-          order={3}
-          // style={(theme) => ({
-          //   [theme.fn.smallerThan("xs")]: {
-          //     textAlign: "center",
-          //   },
-          // })}
-        >
-          Voter Stats
-        </Title>
+        <Title order={3}>Voter Stats</Title>
         {getVoterFieldsStatsQuery.isLoading ? (
           <Center>
             <Loader size="sm" />
           </Center>
         ) : !getVoterFieldsStatsQuery.data ||
           getVoterFieldsStatsQuery.data.length === 0 ? (
-          <Text
-          // style={(theme) => ({
-          //   [theme.fn.smallerThan("xs")]: {
-          //     textAlign: "center",
-          //   },
-          // })}
-          >
-            No voter stats
-          </Text>
+          <Text>No voter stats</Text>
         ) : (
           <SimpleGrid
             cols={{
@@ -265,7 +248,7 @@ export default function DashboardOverview({
                 <TableTbody>
                   {voterFieldStat.options.length ? (
                     voterFieldStat.options.map((option) => (
-                      <TableTr key={option.id}>
+                      <TableTr key={option.name}>
                         <TableTd>{option.name}</TableTd>
                         <TableTd>{option.vote_count}</TableTd>
                       </TableTr>

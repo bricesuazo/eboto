@@ -9,10 +9,10 @@ import {
   Container,
   Flex,
   Group,
+  Loader,
   SimpleGrid,
   Stack,
   Table,
-  TableCaption,
   TableTbody,
   TableTd,
   TableTh,
@@ -42,6 +42,10 @@ export default function Realtime({
       initialData: positions,
     },
   );
+  const getVoterFieldsStatsInRealtimeQuery =
+    api.election.getVoterFieldsStatsInRealtime.useQuery({
+      election_id: election.id,
+    });
   const isEnded = isElectionEnded({ election });
   const isOngoing = isElectionOngoing({ election });
   return (
@@ -111,12 +115,13 @@ export default function Realtime({
                   captionSide="bottom"
                   h="fit-content"
                 >
-                  {!isEnded && (
-                    <TableCaption>
-                      As of{" "}
-                      {moment(new Date()).format("MMMM Do YYYY, h:mm:ss A")}
-                    </TableCaption>
-                  )}
+                  {/* TODO: Getting a hydration error */}
+                  {/* <TableCaption>
+                    {!isEnded &&
+                      ` As of ${moment(new Date()).format(
+                        "MMMM Do YYYY, h:mm:ss A",
+                      )}`}
+                  </TableCaption> */}
                   <TableThead>
                     <TableTr>
                       <TableTh>
@@ -146,7 +151,7 @@ export default function Realtime({
                                 : ""
                             } (${candidate.partylist.acronym})`}
                               </Text>
-                              <Text>{candidate.vote}</Text>
+                              <Text>{candidate.vote.toString()}</Text>
                             </Flex>
                           </TableTd>
                         </TableTr>
@@ -163,61 +168,62 @@ export default function Realtime({
                 </Table>
               ))}
             </SimpleGrid>
-            {/* <Stack gap="sm">
+            <Stack gap="sm">
               <Title order={3} ta="center">
                 Voter Stats
               </Title>
-              {voterFieldsStats.isLoading ? (
+              {getVoterFieldsStatsInRealtimeQuery.isLoading ? (
                 <Center>
                   <Loader size="sm" />
                 </Center>
-              ) : !voterFieldsStats.data ||
-                voterFieldsStats.data.length === 0 ? (
-                <Text align="center">No voter stats</Text>
+              ) : !getVoterFieldsStatsInRealtimeQuery.data ||
+                getVoterFieldsStatsInRealtimeQuery.data.length === 0 ? (
+                <Text>No voter stats</Text>
               ) : (
                 <SimpleGrid
-                  cols={2}
+                  cols={{
+                    base: 1,
+                    md: 2,
+                  }}
                   style={{
                     alignItems: "start",
                   }}
-                  breakpoints={[
-                    {
-                      maxWidth: "md",
-                      cols: 1,
-                    },
-                  ]}
                 >
-                  {voterFieldsStats.data.map((voterFieldStat) => (
-                    <Table
-                      key={voterFieldStat.fieldName}
-                      striped
-                      highlightOnHover
-                      withBorder
-                      withColumnBorders
-                    >
-                      <thead>
-                        <tr>
-                          <th>{voterFieldStat.fieldName}</th>
-                          <th>Voted</th>
-                          <th>Voter (Accepted)</th>
-                          <th>Voter (Invited)</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {voterFieldStat.fields.map((field) => (
-                          <tr key={field.fieldValue}>
-                            <td>{field.fieldValue}</td>
-                            <td>{field.voteCount}</td>
-                            <td>{field.allCountAccepted}</td>
-                            <td>{field.allCountInvited}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </Table>
-                  ))}
+                  {getVoterFieldsStatsInRealtimeQuery.data.map(
+                    (voterFieldStat) => (
+                      <Table
+                        key={voterFieldStat.name}
+                        withColumnBorders
+                        withTableBorder
+                      >
+                        <TableThead>
+                          <TableTr>
+                            <TableTh>{voterFieldStat.name}</TableTh>
+                            <TableTh>Voted</TableTh>
+                          </TableTr>
+                        </TableThead>
+                        <TableTbody>
+                          {voterFieldStat.options.length ? (
+                            voterFieldStat.options.map((option) => (
+                              <TableTr key={option.name}>
+                                <TableTd>{option.name}</TableTd>
+                                <TableTd>{option.vote_count}</TableTd>
+                              </TableTr>
+                            ))
+                          ) : (
+                            <TableTr>
+                              <TableTd>
+                                <Text>No answer yet</Text>
+                              </TableTd>
+                            </TableTr>
+                          )}
+                        </TableTbody>
+                      </Table>
+                    ),
+                  )}
                 </SimpleGrid>
               )}
-            </Stack> */}
+            </Stack>
           </Stack>
         </Stack>
       </Container>
