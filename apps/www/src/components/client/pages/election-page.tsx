@@ -315,7 +315,7 @@ export default function ElectionPage({
                           <Center
                             pos="relative"
                             style={{
-                              aspectRatio: "1/1",
+                              aspectRatio: 1,
                               flex: 1,
                               // width: "100%",
                             }}

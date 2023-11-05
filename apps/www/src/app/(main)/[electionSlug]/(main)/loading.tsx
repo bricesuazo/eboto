@@ -1,5 +1,5 @@
-import { Container, Group, Skeleton, Stack } from "@mantine/core";
 import React, { Fragment } from "react";
+import { Container, Group, Skeleton, Stack } from "@mantine/core";
 
 export default function ElectionPageLoading() {
   return (
@@ -16,12 +16,12 @@ export default function ElectionPageLoading() {
           <Skeleton w={172} h={32} radius="lg" />
         </Stack>
 
-        {[...(Array(8) as unknown as number[])].map((_, i) => (
+        {[...(Array(8) as number[])].map((_, i) => (
           <Stack key={i} gap={8} align="center" w="100%">
             <Skeleton w={128} h={28} radius="lg" />
 
             <Group align="center" w="100%" gap={12}>
-              {[...(Array(2) as unknown as number[])].map((_, i) => (
+              {[...(Array(2) as number[])].map((_, i) => (
                 <Fragment key={i}>
                   <Skeleton w={200} h={192} radius="md" hiddenFrom="xs" />
                   <Skeleton w="100%" h={128} radius="md" visibleFrom="xs" />

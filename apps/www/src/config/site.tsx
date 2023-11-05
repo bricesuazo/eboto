@@ -30,10 +30,10 @@ export const SPOTLIGHT_DATA = [
     leftSection: <IconDashboard />,
   },
   {
-    id: "account-settings",
+    id: "account",
     label: "Account Settings",
     description: "Change your account settings",
     leftSection: <IconUserCog />,
-    link: "/account-settings",
+    link: "/account",
   },
 ];
