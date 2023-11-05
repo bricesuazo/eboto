@@ -404,11 +404,11 @@ importers:
         specifier: workspace:*
         version: link:../constants
       '@react-email/components':
-        specifier: 0.0.10
-        version: registry.npmjs.org/@react-email/components@0.0.10(react@18.2.0)
+        specifier: 0.0.11
+        version: registry.npmjs.org/@react-email/components@0.0.11(react@18.2.0)
       '@react-email/render':
-        specifier: 0.0.9-canary.2
-        version: registry.npmjs.org/@react-email/render@0.0.9-canary.2
+        specifier: 0.0.9
+        version: registry.npmjs.org/@react-email/render@0.0.9
       react:
         specifier: ^18.2.0
         version: registry.npmjs.org/react@18.2.0
@@ -2947,11 +2947,11 @@ packages:
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  registry.npmjs.org/@react-email/components@0.0.10(react@18.2.0):
-    resolution: {integrity: sha512-LmBZbN0qx4fq1gGeBniNrBfG32302bRCZJ7j9w0YJHuK3Q9bNFjf0UjKMxCIJn03OVUnAW/7GRzObCPwit9c7Q==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@react-email/components/-/components-0.0.10.tgz}
-    id: registry.npmjs.org/@react-email/components/0.0.10
+  registry.npmjs.org/@react-email/components@0.0.11(react@18.2.0):
+    resolution: {integrity: sha512-wj9Sra/AGQvadb3ZABz44ll9Fb9FvXPEmODXRWbNRSc8pJTFGWorrsm4M/yj8dnewd4HtnbLkV1eDOvuiLAVLA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@react-email/components/-/components-0.0.11.tgz}
+    id: registry.npmjs.org/@react-email/components/0.0.11
     name: '@react-email/components'
-    version: 0.0.10
+    version: 0.0.11
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: 18.2.0
@@ -2968,7 +2968,7 @@ packages:
       '@react-email/img': registry.npmjs.org/@react-email/img@0.0.6(react@18.2.0)
       '@react-email/link': registry.npmjs.org/@react-email/link@0.0.6(react@18.2.0)
       '@react-email/preview': registry.npmjs.org/@react-email/preview@0.0.7(react@18.2.0)
-      '@react-email/render': registry.npmjs.org/@react-email/render@0.0.8
+      '@react-email/render': registry.npmjs.org/@react-email/render@0.0.9
       '@react-email/row': registry.npmjs.org/@react-email/row@0.0.6(react@18.2.0)
       '@react-email/section': registry.npmjs.org/@react-email/section@0.0.10(react@18.2.0)
       '@react-email/tailwind': registry.npmjs.org/@react-email/tailwind@0.0.12(react@18.2.0)
@@ -3098,22 +3098,10 @@ packages:
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/@react-email/render@0.0.8:
-    resolution: {integrity: sha512-DwrCG5t2nXlXYcchZz8h4NOhBYoU5Rpogz54Z18mANUmwMtzl88x6NwRDwzZoAVAlTLOPqvsQbYtWHvfpTfmmA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@react-email/render/-/render-0.0.8.tgz}
+  registry.npmjs.org/@react-email/render@0.0.9:
+    resolution: {integrity: sha512-nrim7wiACnaXsGtL7GF6jp3Qmml8J6vAjAH88jkC8lIbfNZaCyuPQHANjyYIXlvQeAbsWADQJFZgOHUqFqjh/A==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@react-email/render/-/render-0.0.9.tgz}
     name: '@react-email/render'
-    version: 0.0.8
-    engines: {node: '>=18.0.0'}
-    dependencies:
-      html-to-text: registry.npmjs.org/html-to-text@9.0.5
-      pretty: registry.npmjs.org/pretty@2.0.0
-      react: registry.npmjs.org/react@18.2.0
-      react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
-    dev: false
-
-  registry.npmjs.org/@react-email/render@0.0.9-canary.2:
-    resolution: {integrity: sha512-+bMkqkZwT4ZNZ3dp3eRYik53D1ehaPpnbUvVcfE5fZrSJ3VMymqnghGr6RasvnFci3DPObSB4Zk2VTrOuXYvnA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@react-email/render/-/render-0.0.9-canary.2.tgz}
-    name: '@react-email/render'
-    version: 0.0.9-canary.2
+    version: 0.0.9
     engines: {node: '>=18.0.0'}
     dependencies:
       html-to-text: registry.npmjs.org/html-to-text@9.0.5

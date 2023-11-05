@@ -376,6 +376,7 @@ export default function AccountPageClient({ session }: { session: Session }) {
               color="red"
               w="fit-content"
               onClick={open}
+              disabled
             >
               Delete Account
             </Button>
