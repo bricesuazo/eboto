@@ -158,9 +158,6 @@ importers:
       next-auth:
         specifier: 0.0.0-manual.cfb42ae7
         version: registry.npmjs.org/next-auth@0.0.0-manual.cfb42ae7(next@14.0.1)(react@18.2.0)
-      next-superjson-plugin:
-        specifier: ^0.5.9
-        version: registry.npmjs.org/next-superjson-plugin@0.5.9(next@14.0.1)(superjson@1.13.1)
       qrcode.react:
         specifier: ^3.1.0
         version: registry.npmjs.org/qrcode.react@3.1.0(react@18.2.0)
@@ -9190,20 +9187,6 @@ packages:
       '@auth/core': registry.npmjs.org/@auth/core@0.0.0-manual.e9863699
       next: registry.npmjs.org/next@14.0.1(react-dom@18.2.0)(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
-    dev: false
-
-  registry.npmjs.org/next-superjson-plugin@0.5.9(next@14.0.1)(superjson@1.13.1):
-    resolution: {integrity: sha512-xEU+SvrSDk8PGAQ2TrJM/OhkZBcWjWWqSjpUtlxTAI9ovTjKBxxQumcFt7oXzoBLJsRtq0BWTHrcnzL/9izXPQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/next-superjson-plugin/-/next-superjson-plugin-0.5.9.tgz}
-    id: registry.npmjs.org/next-superjson-plugin/0.5.9
-    name: next-superjson-plugin
-    version: 0.5.9
-    peerDependencies:
-      next: ^13
-      superjson: ^1
-    dependencies:
-      hoist-non-react-statics: registry.npmjs.org/hoist-non-react-statics@3.3.2
-      next: registry.npmjs.org/next@14.0.1(react-dom@18.2.0)(react@18.2.0)
-      superjson: registry.npmjs.org/superjson@1.13.1
     dev: false
 
   registry.npmjs.org/next-tick@1.1.0:

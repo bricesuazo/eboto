@@ -25,6 +25,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import {
   IconAlertCircle,
+  IconAt,
   IconCalendar,
   IconCheck,
   IconLetterCase,
@@ -94,7 +95,7 @@ export default function DashboardSettings({
     name: string;
     newSlug: string;
     description: string;
-    // voter_domain: string | null;
+    voter_domain: string | null;
     start_date: Date;
     end_date: Date;
     publicity: Publicity;
@@ -104,7 +105,7 @@ export default function DashboardSettings({
       name: getElectionBySlugQuery.data.name,
       newSlug: getElectionBySlugQuery.data.slug,
       description: getElectionBySlugQuery.data.description ?? "",
-      // voter_domain: null,
+      voter_domain: getElectionBySlugQuery.data.voter_domain,
       start_date: getElectionBySlugQuery.data.start_date,
       end_date: getElectionBySlugQuery.data.end_date,
       publicity: getElectionBySlugQuery.data.publicity,
@@ -157,24 +158,24 @@ export default function DashboardSettings({
           return "Please select an election publicity";
         }
       },
-      // voter_domain: (value) => {
-      //   if (
-      //     value &&
-      //     !/^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/.test(
-      //       value
-      //     )
-      //   ) {
-      //     return "Voter domain must be alphanumeric and can contain dashes";
-      //   }
+      voter_domain: (value) => {
+        if (
+          value &&
+          !/^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/.test(
+            value,
+          )
+        ) {
+          return "Voter domain must be alphanumeric and can contain dashes";
+        }
 
-      //   if (value && value.includes(" ")) {
-      //     return "Voter domain cannot contain spaces";
-      //   }
+        if (value && value.includes(" ")) {
+          return "Voter domain cannot contain spaces";
+        }
 
-      //   if (value && value.includes("gmail.com")) {
-      //     return "Voter domain cannot be gmail.com";
-      //   }
-      // },
+        if (value && value.includes("gmail.com")) {
+          return "Voter domain cannot be gmail.com";
+        }
+      },
     },
   });
 
@@ -284,7 +285,7 @@ export default function DashboardSettings({
                 newSlug: values.newSlug,
                 description: values.description,
                 oldSlug: election.slug,
-                // voter_domain: values.voter_domain,
+                voter_domain: values.voter_domain,
                 start_date: values.start_date,
                 end_date: values.end_date,
                 publicity: values.publicity,
@@ -348,26 +349,19 @@ export default function DashboardSettings({
             disabled={editElectionMutation.isLoading}
           />
 
-          {/* <TextInput
-                    label="Election voter's domain"
-                    description={`This will be used to restrict voters to a specific domain. For example, if you set this to "cvsu.edu.ph", only voters with an email address ending with "cvsu.edu.ph" will be able to vote. This is good for school elections (such as CSG Election).`}
-                    placeholder="cvsu.edu.ph"
-                    {...form.getInputProps("voter_domain")}
-                    leftSection={<IconAt size="1rem" />}
-                    error={
-                      form.errors.voter_domain ||
-                      (updateElectionMutation.error?.data?.code ===
-                        "CONFLICT" &&
-                        updateElectionMutation.error?.message)
-                    }
-                    disabled={
-                      loading ||
-                      isElectionOngoing({
-                        election: election.data,
-                        withTime: false,
-                      })
-                    }
-                  /> */}
+          <TextInput
+            label="Election voter's domain"
+            description={`This will be used to restrict voters to a specific domain. For example, if you set this to "cvsu.edu.ph", only voters with an email address ending with "cvsu.edu.ph" will be able to vote. This is good for school elections (such as CSG Election).`}
+            placeholder="cvsu.edu.ph"
+            {...form.getInputProps("voter_domain")}
+            leftSection={<IconAt size="1rem" />}
+            error={
+              form.errors.voter_domain ??
+              (editElectionMutation.error?.data?.code === "CONFLICT" &&
+                editElectionMutation.error?.message)
+            }
+            disabled={editElectionMutation.isLoading}
+          />
 
           <DateTimePicker
             valueFormat="MMMM DD, YYYY (dddd) hh:mm A"
@@ -588,11 +582,6 @@ export default function DashboardSettings({
               color="red"
               onClick={open}
               disabled={editElectionMutation.isLoading}
-              // style={(theme) => ({
-              //   [theme.fn.smallerThan("xs")]: {
-              //     display: "none",
-              //   },
-              // })}
             >
               Delete election
             </Button>

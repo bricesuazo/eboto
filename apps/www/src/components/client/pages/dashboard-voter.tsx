@@ -185,7 +185,11 @@ export default function DashboardVoter({
   return (
     <Box>
       <Stack>
-        <Flex gap="xs" direction={{ base: "column", sm: "row" }}>
+        <Flex
+          gap="xs"
+          align={{ sm: "center" }}
+          direction={{ base: "column", sm: "row" }}
+        >
           <Group gap="xs" grow preventGrowOverflow={false}>
             <CreateVoter election_id={data.election.id} />
             <UploadBulkVoter election_id={data.election.id} />
@@ -206,6 +210,13 @@ export default function DashboardVoter({
               }
             />
           </Tooltip>
+          {votersQuery.data.election.voter_domain && (
+            <Tooltip label="Voter's email with this domain will be allowed to vote">
+              <Text>
+                Voter Domain: @{votersQuery.data.election.voter_domain}
+              </Text>
+            </Tooltip>
+          )}
         </Flex>
 
         <MantineReactTable table={table} />

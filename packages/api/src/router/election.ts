@@ -382,8 +382,11 @@ export const electionRouter = createTRPCRouter({
   getAllMyElections: protectedProcedure.query(async ({ ctx }) => {
     // TODO: Validate commissioner
     return await ctx.db.query.commissioners.findMany({
-      where: (commissioners, { eq }) =>
-        eq(commissioners.user_id, ctx.session.user.id),
+      where: (commissioners, { eq, isNull, and }) =>
+        and(
+          isNull(commissioners.deleted_at),
+          eq(commissioners.user_id, ctx.session.user.id),
+        ),
       with: {
         election: true,
       },
@@ -612,6 +615,7 @@ export const electionRouter = createTRPCRouter({
         start_date: z.date(),
         end_date: z.date(),
         publicity: z.enum(publicity),
+        voter_domain: z.string().nullable(),
         logo: z
           .object({
             name: z.string().min(1),
@@ -675,6 +679,7 @@ export const electionRouter = createTRPCRouter({
             description: input.description,
             publicity: input.publicity,
             start_date: input.start_date,
+            voter_domain: input.voter_domain,
             end_date: input.end_date,
             logo: input.logo
               ? await fetch(input.logo.base64)

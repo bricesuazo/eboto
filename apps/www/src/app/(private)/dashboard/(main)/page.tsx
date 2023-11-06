@@ -51,6 +51,7 @@ export default async function Page() {
         ne(elections.publicity, "PRIVATE"),
         lt(elections.start_date, new Date()),
         gte(elections.end_date, new Date()),
+        // eq(elections.voter_domain, session.user.email?.split("@")[1] ?? ""),
       ),
   });
 

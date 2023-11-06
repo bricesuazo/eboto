@@ -13,7 +13,6 @@ module.exports = {
   },
   experimental: {
     webpackBuildWorker: true,
-    // forceSwcTransforms: true,
     // swcPlugins: [["next-superjson-plugin", {}]],
   },
   images: {
