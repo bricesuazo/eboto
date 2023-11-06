@@ -3,8 +3,8 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useConfetti } from "@/components/providers";
 import { api } from "@/trpc/client";
-import { useConfetti } from "@/utils/confetti";
 import toWords from "@/utils/toWords";
 import {
   Alert,

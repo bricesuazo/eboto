@@ -10,6 +10,7 @@ import classes from "@/styles/Election.module.css";
 import { api } from "@/trpc/client";
 import {
   ActionIcon,
+  Anchor,
   Box,
   Button,
   Center,
@@ -20,7 +21,6 @@ import {
   HoverCardDropdown,
   HoverCardTarget,
   Modal,
-  Spoiler,
   Stack,
   Text,
   TextInput,
@@ -50,6 +50,8 @@ export default function ElectionPage({
 }) {
   const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
+  const [spoilerOpened, { open: setSpoilerOpen, close: setSpoilerClose }] =
+    useDisclosure(false);
 
   const addVoterFieldToVoterMutation =
     api.voter.addVoterFieldToVoter.useMutation({
@@ -228,9 +230,16 @@ export default function ElectionPage({
             {election.description && (
               <Box maw="40rem" mt="sm" ta="center">
                 <Text>About this election:</Text>
-                <Spoiler maxHeight={50} showLabel="Show more" hideLabel="Hide">
+                <Text lineClamp={spoilerOpened ? undefined : 3}>
                   {election.description}
-                </Spoiler>
+                </Text>
+                {election.description.length > 200 && (
+                  <Anchor
+                    onClick={spoilerOpened ? setSpoilerClose : setSpoilerOpen}
+                  >
+                    {spoilerOpened ? "Show less" : "Show more"}
+                  </Anchor>
+                )}
               </Box>
             )}
 

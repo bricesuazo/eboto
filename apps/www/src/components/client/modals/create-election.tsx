@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useConfetti } from "@/components/providers";
 import { api } from "@/trpc/client";
-import { useConfetti } from "@/utils/confetti";
 import type { MantineStyleProp } from "@mantine/core";
 import {
   Alert,

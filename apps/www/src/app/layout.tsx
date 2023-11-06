@@ -10,9 +10,9 @@ import {
   // Lexend,
   Poppins,
 } from "next/font/google";
+import { Providers } from "@/components/providers";
 import { siteConfig } from "@/config/site";
 import TRPCProvider from "@/trpc/TRPCProvider";
-import { ConfettiProvider } from "@/utils/confetti";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { Analytics } from "@vercel/analytics/react";
@@ -88,7 +88,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           <SessionProvider>
             <TRPCProvider>
               <Notifications />
-              <ConfettiProvider>{children}</ConfettiProvider>
+              <Providers>{children}</Providers>
               <Analytics />
             </TRPCProvider>
           </SessionProvider>

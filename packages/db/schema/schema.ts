@@ -69,48 +69,93 @@ export const elections = mysqlTable(
   }),
 );
 
-export const votes = mysqlTable("vote", {
-  id,
-  created_at,
+export const votes = mysqlTable(
+  "vote",
+  {
+    id,
+    created_at,
 
-  voter_id,
-  candidate_id: varchar("candidate_id", { length: 256 }),
-  position_id: varchar("position_id", { length: 256 }),
-  election_id,
-});
+    voter_id,
+    candidate_id: varchar("candidate_id", { length: 256 }),
+    position_id: varchar("position_id", { length: 256 }),
+    election_id,
+  },
+  (vote) => ({
+    voteIdIdx: index("voteId_idx").on(vote.id),
+    voteVoterIdIdx: index("voteVoterId_idx").on(vote.voter_id),
+    voteCandidateIdIdx: index("voteCandidateId_idx").on(vote.candidate_id),
+    votePositionIdIdx: index("votePositionId_idx").on(vote.position_id),
+    voteElectionIdIdx: index("voteElectionId_idx").on(vote.election_id),
+  }),
+);
 
-export const commissioners = mysqlTable("commissioner", {
-  id,
-  created_at,
+export const commissioners = mysqlTable(
+  "commissioner",
+  {
+    id,
+    created_at,
 
-  deleted_at,
+    deleted_at,
 
-  user_id,
-  election_id,
-});
+    user_id,
+    election_id,
+  },
+  (commissioner) => ({
+    commissionerIdIdx: index("commissionerId_idx").on(commissioner.id),
+    commissionerElectionIdIdx: index("commissionerElectionId_idx").on(
+      commissioner.election_id,
+    ),
+    commissionerUserIdIdx: index("commissionerUserId_idx").on(
+      commissioner.user_id,
+    ),
 
-export const invited_commissioners = mysqlTable("invited_commissioner", {
-  id,
-  email: text("email").notNull(),
-  status: mysqlEnum("status", account_status_type).default("INVITED"),
+    commissionerUserIdElectionIdIdx: index(
+      "commissionerUserIdElectionId_idx",
+    ).on(commissioner.user_id, commissioner.election_id),
+  }),
+);
 
-  created_at,
+export const invited_commissioners = mysqlTable(
+  "invited_commissioner",
+  {
+    id,
+    email: varchar("email", { length: 256 }).notNull(),
+    status: mysqlEnum("status", account_status_type).default("INVITED"),
 
-  election_id,
-});
+    created_at,
 
-export const voters = mysqlTable("voter", {
-  id,
-  created_at,
+    election_id,
+  },
+  (invited_commissioner) => ({
+    invitedCommissionerIdIdx: index("invitedCommissionerId_idx").on(
+      invited_commissioner.id,
+    ),
+    invitedCommissionerEmailIdx: index("invitedCommissionerEmail_idx").on(
+      invited_commissioner.email,
+    ),
+  }),
+);
 
-  email: text("email").notNull(),
-  field: json("field").$type<Record<string, string>>(),
-  // user_id,
+export const voters = mysqlTable(
+  "voter",
+  {
+    id,
+    created_at,
 
-  deleted_at,
+    email: varchar("email", { length: 256 }).notNull(),
+    field: json("field").$type<Record<string, string>>(),
+    // user_id,
 
-  election_id,
-});
+    deleted_at,
+
+    election_id,
+  },
+  (voter) => ({
+    voterIdIdx: index("voterId_idx").on(voter.id),
+    voterEmailIdx: index("voterEmail_idx").on(voter.email),
+    voterElectionIdIdx: index("voterElectionId_idx").on(voter.election_id),
+  }),
+);
 
 export const partylists = mysqlTable(
   "partylist",
@@ -130,6 +175,9 @@ export const partylists = mysqlTable(
   },
   (partylist) => ({
     partylistIdIdx: index("partylistId_idx").on(partylist.id),
+    partylistElectionIdIdx: index("partylistElectionId_idx").on(
+      partylist.election_id,
+    ),
   }),
 );
 
@@ -152,6 +200,9 @@ export const positions = mysqlTable(
   },
   (position) => ({
     positionIdIdx: index("positionId_idx").on(position.id),
+    positionElectionIdIdx: index("positionElectionId_idx").on(
+      position.election_id,
+    ),
   }),
 );
 
@@ -178,6 +229,18 @@ export const candidates = mysqlTable(
   (candidate) => ({
     candidateIdIdx: index("candidateId_idx").on(candidate.id),
     candidateSlugIdx: index("candidateSlug_idx").on(candidate.slug),
+    candidateElectionIdIdx: index("candidateElectionId_idx").on(
+      candidate.election_id,
+    ),
+    candidateCredentialIdIdx: index("candidateCredentialId_idx").on(
+      candidate.credential_id,
+    ),
+    candidatePositionIdIdx: index("candidatePositionId_idx").on(
+      candidate.position_id,
+    ),
+    candidatePartylistIdIdx: index("candidatePartylistId_idx").on(
+      candidate.partylist_id,
+    ),
   }),
 );
 
@@ -193,6 +256,9 @@ export const credentials = mysqlTable(
   },
   (credential) => ({
     credentialIdIdx: index("credentialId_idx").on(credential.id),
+    credentialCandidateIdIdx: index("credentialCandidateId_idx").on(
+      credential.candidate_id,
+    ),
   }),
 );
 
@@ -210,6 +276,9 @@ export const platforms = mysqlTable(
   },
   (platform) => ({
     platformIdIdx: index("platformId_idx").on(platform.id),
+    platformCandidateIdIdx: index("platformCandidateId_idx").on(
+      platform.candidate_id,
+    ),
   }),
 );
 
@@ -229,6 +298,9 @@ export const affiliations = mysqlTable(
   },
   (affiliation) => ({
     affiliationIdIdx: index("affiliationId_idx").on(affiliation.id),
+    affiliationCredentialIdIdx: index("affiliationCredentialId_idx").on(
+      affiliation.credential_id,
+    ),
   }),
 );
 
@@ -246,6 +318,9 @@ export const achievements = mysqlTable(
   },
   (achievement) => ({
     achievementIdIdx: index("achievementId_idx").on(achievement.id),
+    achievementCredentialIdIdx: index("achievementCredentialId_idx").on(
+      achievement.credential_id,
+    ),
   }),
 );
 
@@ -263,6 +338,9 @@ export const events_attended = mysqlTable(
   },
   (event_attended) => ({
     eventAttendedIdIdx: index("eventAttendedId_idx").on(event_attended.id),
+    eventAttendedCredentialIdIdx: index("eventAttendedCredentialId_idx").on(
+      event_attended.credential_id,
+    ),
   }),
 );
 
@@ -287,26 +365,57 @@ export const generated_election_results = mysqlTable(
       >()
       .notNull(),
   },
+  (generated_election_result) => ({
+    generatedElectionResultIdIdx: index("generatedElectionResultId_idx").on(
+      generated_election_result.id,
+    ),
+    generatedElectionResultElectionIdIdx: index(
+      "generatedElectionResultElectionId_idx",
+    ).on(generated_election_result.election_id),
+  }),
 );
-export const voter_fields = mysqlTable("voter_field", {
-  id,
-  name: text("name").notNull(),
+export const voter_fields = mysqlTable(
+  "voter_field",
+  {
+    id,
+    name: text("name").notNull(),
 
-  created_at,
+    created_at,
 
-  election_id,
-});
+    election_id,
+  },
+  (voter_field) => ({
+    voterFieldIdIdx: index("voterFieldId_idx").on(voter_field.id),
+    voterFieldElectionIdIdx: index("voterFieldElectionId_idx").on(
+      voter_field.election_id,
+    ),
+  }),
+);
 
-export const reported_problems = mysqlTable("reported_problem", {
-  id,
-  subject: longtext("subject").notNull(),
-  description: longtext("description").notNull(),
+export const reported_problems = mysqlTable(
+  "reported_problem",
+  {
+    id,
+    subject: longtext("subject").notNull(),
+    description: longtext("description").notNull(),
 
-  created_at,
+    created_at,
 
-  election_id,
-  user_id,
-});
+    election_id,
+    user_id,
+  },
+  (reported_problem) => ({
+    reportedProblemIdIdx: index("reportedProblemId_idx").on(
+      reported_problem.id,
+    ),
+    reportedProblemElectionIdIdx: index("reportedProblemElectionId_idx").on(
+      reported_problem.election_id,
+    ),
+    reportedProblemUserIdIdx: index("reportedProblemUserId_idx").on(
+      reported_problem.user_id,
+    ),
+  }),
+);
 
 export const users = mysqlTable(
   "user",
@@ -322,21 +431,29 @@ export const users = mysqlTable(
     image: text("image"),
   },
   (user) => ({
-    emailIdx: index("email_idx").on(user.email),
+    userIdIdx: index("userId_idx").on(user.id),
+    userEmailIdx: index("userEmail_idx").on(user.email),
   }),
 );
 
-export const deleted_users = mysqlTable("deleted_user", {
-  id: varchar("id", { length: 255 }).notNull().primaryKey(),
-  name: varchar("name", { length: 255 }),
-  email: varchar("email", { length: 255 }).notNull(),
-  emailVerified: timestamp("emailVerified", {
-    mode: "date",
-    fsp: 3,
-  }).default(sql`CURRENT_TIMESTAMP(3)`),
-  image_file: json("image_file").$type<File>(),
-  image: text("image"),
-});
+export const deleted_users = mysqlTable(
+  "deleted_user",
+  {
+    id: varchar("id", { length: 255 }).notNull().primaryKey(),
+    name: varchar("name", { length: 255 }),
+    email: varchar("email", { length: 255 }).notNull(),
+    emailVerified: timestamp("emailVerified", {
+      mode: "date",
+      fsp: 3,
+    }).default(sql`CURRENT_TIMESTAMP(3)`),
+    image_file: json("image_file").$type<File>(),
+    image: text("image"),
+  },
+  (user) => ({
+    deletedUserIdIdx: index("deletedUserId_idx").on(user.id),
+    deletedUserEmailIdx: index("deletedUserEmail_idx").on(user.email),
+  }),
+);
 
 export const verification_tokens = mysqlTable(
   "verification_token",
@@ -369,7 +486,7 @@ export const accounts = mysqlTable(
   },
   (account) => ({
     compoundKey: primaryKey(account.provider, account.providerAccountId),
-    userIdIdx: index("userId_idx").on(account.userId),
+    accountUserIdIdx: index("account_userId_idx").on(account.userId),
   }),
 );
 export const deleted_accounts = mysqlTable(
@@ -389,9 +506,14 @@ export const deleted_accounts = mysqlTable(
     id_token: text("id_token"),
     session_state: varchar("session_state", { length: 255 }),
   },
-  (account) => ({
-    compoundKey: primaryKey(account.provider, account.providerAccountId),
-    userIdIdx: index("deletedUserId_idx").on(account.deletedUserId),
+  (deleted_account) => ({
+    compoundKey: primaryKey(
+      deleted_account.provider,
+      deleted_account.providerAccountId,
+    ),
+    deletedAccountDeletedUserIdIdx: index(
+      "deletedAccount_deletedUserId_idx",
+    ).on(deleted_account.deletedUserId),
   }),
 );
 export const sessions = mysqlTable(
@@ -404,7 +526,7 @@ export const sessions = mysqlTable(
     expires: timestamp("expires", { mode: "date" }).notNull(),
   },
   (session) => ({
-    userIdIdx: index("userId_idx").on(session.userId),
+    sessionUserIdIdx: index("sessionUserId_idx").on(session.userId),
   }),
 );
 // export const verification_tokens = mysqlTable("verification_tokens", {
