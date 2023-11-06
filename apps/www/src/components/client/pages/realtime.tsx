@@ -28,11 +28,7 @@ import moment from "moment";
 import Balancer from "react-wrap-balancer";
 
 import type { RouterOutputs } from "@eboto-mo/api";
-import {
-  isElectionEnded,
-  isElectionOngoing,
-  parseHourTo12HourFormat,
-} from "@eboto-mo/constants";
+import { isElectionEnded, parseHourTo12HourFormat } from "@eboto-mo/constants";
 import type { Election } from "@eboto-mo/db/schema";
 
 export default function Realtime({
@@ -53,7 +49,6 @@ export default function Realtime({
       election_id: election.id,
     });
   const isEnded = isElectionEnded({ election });
-  const isOngoing = isElectionOngoing({ election });
   return (
     <>
       <ScrollToTopButton />
@@ -129,14 +124,13 @@ export default function Realtime({
                 sm: 3,
               }}
               spacing={{
-                base: "md",
-                xs: "sm",
+                base: "lg",
+                xs: "md",
               }}
             >
               {positionsQuery.data.map((position) => (
                 <Table
                   key={position.id}
-                  striped
                   highlightOnHover
                   withTableBorder
                   withColumnBorders
@@ -167,18 +161,7 @@ export default function Realtime({
                         <TableTr key={candidate.id}>
                           <TableTd>
                             <Flex justify="space-between" align="center">
-                              <Text lineClamp={2}>
-                                {isOngoing
-                                  ? candidate.first_name
-                                  : `${candidate.last_name}, ${
-                                      candidate.first_name
-                                    }
-                            ${
-                              candidate.middle_name
-                                ? " " + candidate.middle_name.charAt(0) + "."
-                                : ""
-                            } (${candidate.partylist.acronym})`}
-                              </Text>
+                              <Text lineClamp={2}>{candidate.name}</Text>
                               <Text>{candidate.vote.toString()}</Text>
                             </Flex>
                           </TableTd>

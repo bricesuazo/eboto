@@ -17,7 +17,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const electionsStart = await trx.query.elections.findMany({
       where: (election, { eq, and, isNull }) =>
-        and(eq(election.start_date, start_date), isNull(election.deleted_at)),
+        and(
+          eq(election.start_date, start_date),
+          isNull(election.deleted_at),
+          eq(election.voting_hour_start, start_date.getHours()),
+        ),
       with: {
         commissioners: {
           with: {
@@ -65,7 +69,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const electionsEnd = await db.query.elections.findMany({
       where: (election, { eq, and, isNull }) =>
-        and(eq(election.end_date, end_date), isNull(election.deleted_at)),
+        and(
+          eq(election.end_date, end_date),
+          eq(election.voting_hour_end, end_date.getHours()),
+          isNull(election.deleted_at),
+        ),
       with: {
         voters: true,
         positions: {
