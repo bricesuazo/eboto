@@ -39,6 +39,9 @@ export default async function VotePage({
   const election = await db.query.elections.findFirst({
     where: (election, { eq, and, isNull }) =>
       and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
+    with: {
+      voter_fields: true,
+    },
   });
 
   if (!election) notFound();
@@ -53,6 +56,9 @@ export default async function VotePage({
         isNull(voter.deleted_at),
       ),
   });
+
+  if (election.voter_fields.length && !isVoter?.field)
+    redirect(`/${election.slug}`);
 
   const hasVoted = await db.query.votes.findFirst({
     where: (votes, { eq, and }) =>

@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { nanoid } from "nanoid";
 import { z } from "zod";
 
+import { isElectionEnded, isElectionOngoing } from "@eboto-mo/constants";
 import { and, eq, inArray } from "@eboto-mo/db";
 import { voter_fields, voters } from "@eboto-mo/db/schema";
 
@@ -112,6 +113,28 @@ export const voterRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       await ctx.db.transaction(async (db) => {
+        const election = await db.query.elections.findFirst({
+          where: (election, { eq }) => eq(election.id, input.election_id),
+        });
+
+        if (!election)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Election does not exists",
+          });
+
+        if (isElectionOngoing({ election }))
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Election is ongoing",
+          });
+
+        if (isElectionEnded({ election }))
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Election is ended",
+          });
+
         await db
           .delete(voter_fields)
           .where(eq(voter_fields.election_id, input.election_id));

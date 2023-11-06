@@ -96,7 +96,7 @@ export default function UpdateVoterField({
   useEffect(() => {
     if (opened) {
       updateVoterFieldMutation.reset();
-      const data: typeof form.values.field = election.voter_fields.map(
+      const data: typeof form.values.field = getAllVoterFieldQuery.data.map(
         (field) => ({
           id: field.id,
           name: field.name,
@@ -117,11 +117,6 @@ export default function UpdateVoterField({
         leftSection={<IconUsersGroup size="1rem" />}
         onClick={open}
         disabled={isDisabled}
-        // style={(theme) => ({
-        //   [theme.fn.smallerThan("xs")]: {
-        //     width: "100%",
-        //   },
-        // })}
       >
         Group
       </Button>
@@ -140,16 +135,6 @@ export default function UpdateVoterField({
           })}
         >
           <Stack gap="sm">
-            <Group justify="end">
-              <TextInput
-                value="Email address"
-                w="100%"
-                disabled
-                label="Voter field"
-                withAsterisk
-              />
-            </Group>
-
             {form.values.field.map((field) => (
               <VoterFieldInput
                 key={field.id}

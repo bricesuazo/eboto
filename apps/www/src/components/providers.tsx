@@ -38,8 +38,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <Image
           src={election.logo.url}
           alt={`${election.name} logo`}
-          width={28}
-          height={28}
+          width={24}
+          height={24}
           style={{
             borderRadius: "50%",
           }}
@@ -51,18 +51,30 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }));
 
   const confetti = useProvideConfetti();
-  const actions = [...SPOTLIGHT_DATA, ...(elections ?? [])].map((action) => ({
-    ...action,
-    onClick: () => router.push(action.link),
-  }));
 
   return (
     <>
       <Spotlight
         shortcut={["mod + K", "mod + P", "/"]}
-        actions={actions}
+        actions={[
+          {
+            group: "Pages",
+            actions: SPOTLIGHT_DATA.map((action) => ({
+              ...action,
+              onClick: () => router.push(action.link),
+            })),
+          },
+          {
+            group: "Elections",
+            actions: (elections ?? []).map((action) => ({
+              ...action,
+              onClick: () => router.push(action.link),
+            })),
+          },
+        ]}
         nothingFound="Nothing found..."
         highlightQuery
+        scrollable
         searchProps={{
           leftSection: (
             <IconSearch

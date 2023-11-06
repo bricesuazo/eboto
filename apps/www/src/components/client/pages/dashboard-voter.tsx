@@ -160,7 +160,7 @@ export default function DashboardVoter({
       <Flex gap="sm">
         <Tooltip withArrow label="Edit">
           <EditVoter
-            voter_fields={data.election.voter_fields}
+            voter_fields={votersQuery.data.election.voter_fields}
             election_id={data.election.id}
             voter={{
               id: row.id,
@@ -205,8 +205,8 @@ export default function DashboardVoter({
             <UpdateVoterField
               election={votersQuery.data.election}
               isDisabled={
-                isElectionOngoing({ election: data.election }) ||
-                isElectionEnded({ election: data.election })
+                isElectionOngoing({ election: votersQuery.data.election }) ||
+                isElectionEnded({ election: votersQuery.data.election })
               }
             />
           </Tooltip>
