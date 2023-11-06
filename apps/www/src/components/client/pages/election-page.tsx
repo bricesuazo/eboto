@@ -39,7 +39,7 @@ import moment from "moment";
 import Balancer from "react-wrap-balancer";
 
 import type { RouterOutputs } from "@eboto-mo/api";
-import { isElectionEnded } from "@eboto-mo/constants";
+import { isElectionEnded, parseHourTo12HourFormat } from "@eboto-mo/constants";
 
 export default function ElectionPage({
   data,
@@ -186,6 +186,15 @@ export default function ElectionPage({
                   .local()
                   .format("MMMM DD, YYYY hA (ddd)")}
               </Balancer>
+            </Text>
+            <Text ta="center">
+              Voting hours:{" "}
+              {election.voting_hour_start === 0 &&
+              election.voting_hour_end === 24
+                ? "Whole day"
+                : parseHourTo12HourFormat(election.voting_hour_start) +
+                  " - " +
+                  parseHourTo12HourFormat(election.voting_hour_end)}
             </Text>
 
             <Flex align="center" justify="center" gap="xs">

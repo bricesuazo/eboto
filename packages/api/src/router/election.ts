@@ -548,6 +548,7 @@ export const electionRouter = createTRPCRouter({
         start_date: z.date(),
         end_date: z.date(),
         template: z.string(),
+        voting_hours: z.array(z.number()),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -574,6 +575,8 @@ export const electionRouter = createTRPCRouter({
           slug: input.slug,
           start_date: input.start_date,
           end_date: input.end_date,
+          voting_hour_start: input.voting_hours[0],
+          voting_hour_end: input.voting_hours[1],
         });
         await db.insert(commissioners).values({
           election_id: id,
@@ -616,6 +619,7 @@ export const electionRouter = createTRPCRouter({
         end_date: z.date(),
         publicity: z.enum(publicity),
         voter_domain: z.string().nullable(),
+        voting_hours: z.array(z.number()),
         logo: z
           .object({
             name: z.string().min(1),
@@ -681,6 +685,8 @@ export const electionRouter = createTRPCRouter({
             start_date: input.start_date,
             voter_domain: input.voter_domain,
             end_date: input.end_date,
+            voting_hour_start: input.voting_hours[0],
+            voting_hour_end: input.voting_hours[1],
             logo: input.logo
               ? await fetch(input.logo.base64)
                   .then((res) => res.blob())

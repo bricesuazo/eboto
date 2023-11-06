@@ -31,6 +31,7 @@ import {
 import moment from "moment";
 
 import type { RouterOutputs } from "@eboto-mo/api";
+import { parseHourTo12HourFormat } from "@eboto-mo/constants";
 
 export default function DashboardOverview({
   data,
@@ -75,6 +76,14 @@ export default function DashboardOverview({
             .format("MMMM DD, YYYY hA (dddd)")}
           {" - "}
           {moment(election.end_date).local().format("MMMM DD, YYYY hA (dddd)")}
+        </Text>
+        <Text>
+          Voting hours:{" "}
+          {election.voting_hour_start === 0 && election.voting_hour_end === 24
+            ? "Whole day"
+            : parseHourTo12HourFormat(election.voting_hour_start) +
+              " - " +
+              parseHourTo12HourFormat(election.voting_hour_end)}
         </Text>
         <Text>
           Created:{" "}

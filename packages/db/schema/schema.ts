@@ -55,6 +55,8 @@ export const elections = mysqlTable(
     description: longtext("description"),
     start_date: timestamp("start_date").notNull(),
     end_date: timestamp("end_date").notNull(),
+    voting_hour_start: int("voting_hour_start").notNull().default(7),
+    voting_hour_end: int("voting_hour_end").notNull().default(19),
     publicity: mysqlEnum("publicity", publicity).default("PRIVATE").notNull(),
     logo: json("logo").$type<File>(),
     voter_domain: text("voter_domain"),

@@ -3,10 +3,14 @@ import { notFound, redirect } from "next/navigation";
 import VoteForm from "@/components/client/components/vote-form";
 import { api } from "@/trpc/server";
 import { Box, Container, Stack, Text, Title } from "@mantine/core";
+import moment from "moment";
 import Balancer from "react-wrap-balancer";
 
 import { auth } from "@eboto-mo/auth";
-import { isElectionOngoing } from "@eboto-mo/constants";
+import {
+  isElectionOngoing,
+  parseHourTo12HourFormat,
+} from "@eboto-mo/constants";
 import { db } from "@eboto-mo/db";
 
 export async function generateMetadata({
@@ -118,6 +122,25 @@ export default async function VotePage({
           </Title>
           <Text ta="center">
             <Balancer>Select your candidates for each position.</Balancer>
+          </Text>
+          <Text ta="center">
+            <Balancer>
+              {moment(election.start_date)
+                .local()
+                .format("MMMM DD, YYYY hA (ddd)")}
+              {" - "}
+              {moment(election.end_date)
+                .local()
+                .format("MMMM DD, YYYY hA (ddd)")}
+            </Balancer>
+          </Text>
+          <Text ta="center">
+            Voting hours:{" "}
+            {election.voting_hour_start === 0 && election.voting_hour_end === 24
+              ? "Whole day"
+              : parseHourTo12HourFormat(election.voting_hour_start) +
+                " - " +
+                parseHourTo12HourFormat(election.voting_hour_end)}
           </Text>
         </Box>
         <VoteForm election={election} positions={positions} />

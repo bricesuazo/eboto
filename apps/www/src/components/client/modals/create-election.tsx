@@ -7,9 +7,13 @@ import { api } from "@/trpc/client";
 import type { MantineStyleProp } from "@mantine/core";
 import {
   Alert,
+  Box,
   Button,
   Group,
+  InputDescription,
+  InputLabel,
   Modal,
+  RangeSlider,
   Select,
   Stack,
   TextInput,
@@ -27,7 +31,7 @@ import {
   IconTemplate,
 } from "@tabler/icons-react";
 
-import { positionTemplate } from "@eboto-mo/constants";
+import { parseHourTo12HourFormat, positionTemplate } from "@eboto-mo/constants";
 
 export default function CreateElection({
   style,
@@ -58,6 +62,7 @@ export default function CreateElection({
     start_date: Date | null;
     end_date: Date | null;
     template: string;
+    voting_hours: [number, number];
   }>({
     validateInputOnChange: true,
     initialValues: {
@@ -66,6 +71,7 @@ export default function CreateElection({
       start_date: null,
       end_date: null,
       template: "none",
+      voting_hours: [7, 19],
     },
 
     validateInputOnBlur: true,
@@ -163,6 +169,7 @@ export default function CreateElection({
               end_date:
                 value.end_date ?? new Date(now.setDate(now.getDate() + 5)),
               template: value.template,
+              voting_hours: value.voting_hours,
             });
           })}
         >
@@ -238,6 +245,34 @@ export default function CreateElection({
               leftSection={<IconCalendar size="1rem" />}
               disabled={createElectionMutation.isLoading}
             />
+
+            <Box>
+              <InputLabel required>Voting Hours</InputLabel>
+              <InputDescription>
+                Voters can only vote within the specified hours (
+                {form.values.voting_hours[0] === 0 &&
+                form.values.voting_hours[1] === 24
+                  ? "Whole day"
+                  : parseHourTo12HourFormat(form.values.voting_hours[0]) +
+                    " - " +
+                    parseHourTo12HourFormat(form.values.voting_hours[1])}
+                )
+              </InputDescription>
+              <RangeSlider
+                defaultValue={[7, 19]}
+                step={1}
+                max={24}
+                min={0}
+                minRange={1}
+                maxRange={24}
+                marks={[
+                  { value: 7, label: "7AM" },
+                  { value: 19, label: "7PM" },
+                ]}
+                label={parseHourTo12HourFormat}
+                {...form.getInputProps("voting_hours")}
+              />
+            </Box>
 
             <Select
               label="Election template"

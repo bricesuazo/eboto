@@ -10,7 +10,10 @@ import {
   Box,
   Button,
   Group,
+  InputDescription,
+  InputLabel,
   Modal,
+  RangeSlider,
   rem,
   Select,
   Stack,
@@ -33,7 +36,11 @@ import {
 } from "@tabler/icons-react";
 
 import type { RouterOutputs } from "@eboto-mo/api";
-import { isElectionEnded, isElectionOngoing } from "@eboto-mo/constants";
+import {
+  isElectionEnded,
+  isElectionOngoing,
+  parseHourTo12HourFormat,
+} from "@eboto-mo/constants";
 import type { Publicity } from "@eboto-mo/db/schema";
 import { publicity } from "@eboto-mo/db/schema";
 
@@ -100,6 +107,7 @@ export default function DashboardSettings({
     end_date: Date;
     publicity: Publicity;
     logo: File | string | null;
+    voting_hours: [number, number];
   }>({
     initialValues: {
       name: getElectionBySlugQuery.data.name,
@@ -109,6 +117,10 @@ export default function DashboardSettings({
       start_date: getElectionBySlugQuery.data.start_date,
       end_date: getElectionBySlugQuery.data.end_date,
       publicity: getElectionBySlugQuery.data.publicity,
+      voting_hours: [
+        getElectionBySlugQuery.data.voting_hour_start,
+        getElectionBySlugQuery.data.voting_hour_end,
+      ],
       logo: getElectionBySlugQuery.data.logo?.url ?? null,
     },
     validateInputOnBlur: true,
@@ -289,6 +301,7 @@ export default function DashboardSettings({
                 start_date: values.start_date,
                 end_date: values.end_date,
                 publicity: values.publicity,
+                voting_hours: values.voting_hours,
                 logo:
                   typeof values.logo !== "string"
                     ? values.logo !== null
@@ -418,6 +431,34 @@ export default function DashboardSettings({
               })
             }
           />
+
+          <Box>
+            <InputLabel required>Voting Hours</InputLabel>
+            <InputDescription>
+              Voters can only vote within the specified hours (
+              {form.values.voting_hours[0] === 0 &&
+              form.values.voting_hours[1] === 24
+                ? "Whole day"
+                : parseHourTo12HourFormat(form.values.voting_hours[0]) +
+                  " - " +
+                  parseHourTo12HourFormat(form.values.voting_hours[1])}
+              )
+            </InputDescription>
+            <RangeSlider
+              defaultValue={[7, 19]}
+              step={1}
+              max={24}
+              min={0}
+              minRange={1}
+              maxRange={24}
+              marks={[
+                { value: 7, label: "7AM" },
+                { value: 19, label: "7PM" },
+              ]}
+              label={parseHourTo12HourFormat}
+              {...form.getInputProps("voting_hours")}
+            />
+          </Box>
 
           <Select
             label="Election publicity"

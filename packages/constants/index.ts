@@ -16,6 +16,13 @@ export const baseUrl =
     ? "https://eboto-mo.com"
     : "http://localhost:3000";
 
+export const parseHourTo12HourFormat = (hour: number) => {
+  if (hour === 0 || hour === 24) return "12 AM";
+  else if (hour < 12) return `${hour} AM`;
+  else if (hour === 12) return "12 PM";
+  else return `${hour - 12} PM`;
+};
+
 export const isElectionEnded = ({
   election,
   dateOnly,
@@ -29,13 +36,16 @@ export const isElectionEnded = ({
   return dateOnly
     ? end_date.getTime() <=
         new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
-    : end_date.getTime() <= now.getTime();
+    : end_date.getTime() <= now.getTime() &&
+        now.getHours() >= election.voting_hour_end;
 };
 
 export const isElectionOngoing = ({ election }: { election: Election }) => {
   return (
     new Date(election.start_date).getTime() <= new Date().getTime() &&
-    !isElectionEnded({ election })
+    !isElectionEnded({ election }) &&
+    new Date().getHours() >= election.voting_hour_start &&
+    new Date().getHours() < election.voting_hour_end
   );
 };
 
