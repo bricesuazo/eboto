@@ -94,7 +94,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
 
     platforms: {
       title: string;
-      description: string;
+      description: string | null;
     }[];
 
     achievements: {
@@ -266,6 +266,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                     withAsterisk
                     {...form.getInputProps("first_name")}
                     leftSection={<IconLetterCase size="1rem" />}
+                    disabled={createCandidateMutation.isLoading}
                   />
 
                   <TextInput
@@ -273,6 +274,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                     placeholder="Enter middle name"
                     {...form.getInputProps("middle_name")}
                     leftSection={<IconLetterCase size="1rem" />}
+                    disabled={createCandidateMutation.isLoading}
                   />
                   <TextInput
                     label="Last name"
@@ -281,6 +283,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                     withAsterisk
                     {...form.getInputProps("last_name")}
                     leftSection={<IconLetterCase size="1rem" />}
+                    disabled={createCandidateMutation.isLoading}
                   />
 
                   <TextInput
@@ -298,6 +301,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                     withAsterisk
                     {...form.getInputProps("slug")}
                     leftSection={<IconLetterCase size="1rem" />}
+                    disabled={createCandidateMutation.isLoading}
                   />
 
                   <Select
@@ -311,6 +315,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                         value: partylist.id,
                       };
                     })}
+                    disabled={createCandidateMutation.isLoading}
                   />
 
                   <Select
@@ -324,6 +329,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                         value: position.id,
                       };
                     })}
+                    disabled={createCandidateMutation.isLoading}
                   />
                 </Stack>
               </TabsPanel>
@@ -407,55 +413,58 @@ export default function CreateCandidate({ position }: { position: Position }) {
                 <Stack gap="xs">
                   {form.values.platforms.map((platform, index) => (
                     <Box key={index}>
-                      <TextInput
-                        w="100%"
-                        label="Title"
-                        placeholder="Enter title"
-                        required
-                        value={platform.title}
-                        onChange={(e) => {
-                          form.setValues({
-                            ...form.values,
-                            platforms: form.values.platforms.map((p, i) => {
-                              if (i === index) {
-                                return {
-                                  ...p,
-                                  title: e.target.value,
-                                };
-                              }
-                              return p;
-                            }),
-                          });
-                        }}
-                      />
-                      <Textarea
-                        w="100%"
-                        label="Description"
-                        placeholder="Enter description"
-                        required
-                        value={platform.description}
-                        onChange={(e) => {
-                          form.setValues({
-                            ...form.values,
-                            platforms: form.values.platforms.map((p, i) => {
-                              if (i === index) {
-                                return {
-                                  ...p,
-                                  description: e.target.value,
-                                };
-                              }
-                              return p;
-                            }),
-                          });
-                        }}
-                      />
-
+                      <Stack gap="xs">
+                        <TextInput
+                          w="100%"
+                          label="Title"
+                          placeholder="Enter title"
+                          required
+                          value={platform.title}
+                          disabled={createCandidateMutation.isLoading}
+                          onChange={(e) => {
+                            form.setValues({
+                              ...form.values,
+                              platforms: form.values.platforms.map((p, i) => {
+                                if (i === index) {
+                                  return {
+                                    ...p,
+                                    title: e.target.value,
+                                  };
+                                }
+                                return p;
+                              }),
+                            });
+                          }}
+                        />
+                        <Textarea
+                          w="100%"
+                          label="Description"
+                          placeholder="Enter description"
+                          value={platform.description ?? ""}
+                          disabled={createCandidateMutation.isLoading}
+                          onChange={(e) => {
+                            form.setValues({
+                              ...form.values,
+                              platforms: form.values.platforms.map((p, i) => {
+                                if (i === index) {
+                                  return {
+                                    ...p,
+                                    description: e.target.value,
+                                  };
+                                }
+                                return p;
+                              }),
+                            });
+                          }}
+                        />
+                      </Stack>
                       <Button
                         variant="outline"
                         mt="xs"
                         size="xs"
                         w="100%"
                         color="red"
+                        disabled={createCandidateMutation.isLoading}
                         onClick={() => {
                           form.setValues({
                             ...form.values,
@@ -472,6 +481,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                   ))}
                   <Button
                     leftSection={<IconPlus size="1.25rem" />}
+                    disabled={createCandidateMutation.isLoading}
                     onClick={() => {
                       form.setValues({
                         ...form.values,
@@ -520,6 +530,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                               placeholder="Enter achievement"
                               required
                               value={achievement.name}
+                              disabled={createCandidateMutation.isLoading}
                               onChange={(e) => {
                                 form.setValues({
                                   ...form.values,
@@ -541,6 +552,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                               popoverProps={{
                                 withinPortal: true,
                               }}
+                              disabled={createCandidateMutation.isLoading}
                               value={achievement.year}
                               onChange={(date) => {
                                 form.setValues({
@@ -565,6 +577,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                             size="xs"
                             w="100%"
                             color="red"
+                            disabled={createCandidateMutation.isLoading}
                             onClick={() => {
                               form.setValues({
                                 ...form.values,
@@ -582,6 +595,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
 
                       <Button
                         leftSection={<IconPlus size="1.25rem" />}
+                        disabled={createCandidateMutation.isLoading}
                         onClick={() => {
                           form.setValues({
                             ...form.values,
@@ -610,6 +624,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                             placeholder="Enter organization name"
                             required
                             value={affiliation.org_name}
+                            disabled={createCandidateMutation.isLoading}
                             onChange={(e) => {
                               form.setValues({
                                 ...form.values,
@@ -631,6 +646,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                             placeholder="Enter your position in the organization"
                             required
                             value={affiliation.org_position}
+                            disabled={createCandidateMutation.isLoading}
                             onChange={(e) => {
                               form.setValues({
                                 ...form.values,
@@ -656,6 +672,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                                 withinPortal: true,
                               }}
                               value={affiliation.start_year}
+                              disabled={createCandidateMutation.isLoading}
                               onChange={(date) => {
                                 form.setValues({
                                   ...form.values,
@@ -679,6 +696,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                               popoverProps={{
                                 withinPortal: true,
                               }}
+                              disabled={createCandidateMutation.isLoading}
                               value={affiliation.end_year}
                               onChange={(date) => {
                                 form.setValues({
@@ -703,6 +721,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                             size="xs"
                             w="100%"
                             color="red"
+                            disabled={createCandidateMutation.isLoading}
                             onClick={() => {
                               form.setValues({
                                 ...form.values,
@@ -720,6 +739,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
 
                       <Button
                         leftSection={<IconPlus size="1.25rem" />}
+                        disabled={createCandidateMutation.isLoading}
                         onClick={() => {
                           form.setValues({
                             ...form.values,
@@ -755,6 +775,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                                 placeholder="Enter seminars attended"
                                 required
                                 value={eventAttended.name}
+                                disabled={createCandidateMutation.isLoading}
                                 onChange={(e) => {
                                   form.setValues({
                                     ...form.values,
@@ -778,6 +799,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                                   withinPortal: true,
                                 }}
                                 value={eventAttended.year}
+                                disabled={createCandidateMutation.isLoading}
                                 onChange={(date) => {
                                   form.setValues({
                                     ...form.values,
@@ -802,6 +824,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                               size="xs"
                               w="100%"
                               color="red"
+                              disabled={createCandidateMutation.isLoading}
                               onClick={() => {
                                 form.setValues({
                                   ...form.values,
@@ -821,6 +844,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
 
                       <Button
                         leftSection={<IconPlus size="1.25rem" />}
+                        disabled={createCandidateMutation.isLoading}
                         onClick={() => {
                           form.setValues({
                             ...form.values,

@@ -74,7 +74,7 @@ export default function EditCandidate({
     platforms: {
       id: string;
       title: string;
-      description: string;
+      description: string | null;
     }[];
   };
 }) {
@@ -136,7 +136,7 @@ export default function EditCandidate({
     platforms: {
       id: string;
       title: string;
-      description: string;
+      description: string | null;
     }[];
 
     achievements: {
@@ -204,21 +204,39 @@ export default function EditCandidate({
   const DeleteCredentialButton = ({
     type,
     id,
+    disabled,
   }: {
     type: "PLATFORM" | "ACHIEVEMENT" | "AFFILIATION" | "EVENTATTENDED";
     id: string;
+    disabled?: boolean;
   }) => {
     const context = api.useUtils();
     const deleteCredentialMutation =
       api.candidate.deleteSingleCredential.useMutation({
         onSuccess: async () => {
           await context.candidate.getDashboardData.invalidate();
+          const data = {
+            ...form.values,
+            achievements: form.values.achievements.filter((a) => a.id !== id),
+            affiliations: form.values.affiliations.filter((a) => a.id !== id),
+            events_attended: form.values.events_attended.filter(
+              (a) => a.id !== id,
+            ),
+          };
+          form.setValues(data);
+          form.resetDirty(data);
         },
       });
     const deletePlatformMutation =
       api.candidate.deleteSinglePlatform.useMutation({
         onSuccess: async () => {
           await context.candidate.getDashboardData.invalidate();
+          const data = {
+            ...form.values,
+            platforms: form.values.platforms.filter((a) => a.id !== id),
+          };
+          form.setValues(data);
+          form.resetDirty(data);
         },
       });
     return (
@@ -228,12 +246,11 @@ export default function EditCandidate({
         size="xs"
         w="100%"
         color="red"
+        disabled={disabled}
         onClick={async () => {
           if (type === "PLATFORM") {
             if (candidate.platforms.find((a) => a.id === id)) {
               await deletePlatformMutation.mutateAsync({ id });
-              // await context.candidate.getAll.invalidate();
-              close();
             } else {
               form.setValues({
                 ...form.values,
@@ -243,8 +260,6 @@ export default function EditCandidate({
           } else if (type === "ACHIEVEMENT") {
             if (candidate.credential?.achievements.find((a) => a.id === id)) {
               await deleteCredentialMutation.mutateAsync({ id, type });
-              // await context.candidate.getAll.invalidate();
-              close();
             } else {
               form.setValues({
                 ...form.values,
@@ -256,8 +271,6 @@ export default function EditCandidate({
           } else if (type === "AFFILIATION") {
             if (candidate.credential?.affiliations.find((a) => a.id === id)) {
               await deleteCredentialMutation.mutateAsync({ id, type });
-              // await context.candidate.getAll.invalidate();
-              close();
             } else {
               form.setValues({
                 ...form.values,
@@ -271,8 +284,6 @@ export default function EditCandidate({
               candidate.credential?.events_attended.find((a) => a.id === id)
             ) {
               await deleteCredentialMutation.mutateAsync({ id, type });
-              // await context.candidate.getAll.invalidate();
-              close();
             } else {
               form.setValues({
                 ...form.values,
@@ -408,6 +419,7 @@ export default function EditCandidate({
                     withAsterisk
                     {...form.getInputProps("first_name")}
                     leftSection={<IconLetterCase size="1rem" />}
+                    disabled={editCandidateMutation.isLoading}
                   />
 
                   <TextInput
@@ -415,6 +427,7 @@ export default function EditCandidate({
                     placeholder="Enter middle name"
                     {...form.getInputProps("middle_name")}
                     leftSection={<IconLetterCase size="1rem" />}
+                    disabled={editCandidateMutation.isLoading}
                   />
                   <TextInput
                     label="Last name"
@@ -423,6 +436,7 @@ export default function EditCandidate({
                     withAsterisk
                     {...form.getInputProps("last_name")}
                     leftSection={<IconLetterCase size="1rem" />}
+                    disabled={editCandidateMutation.isLoading}
                   />
 
                   <TextInput
@@ -440,6 +454,7 @@ export default function EditCandidate({
                     withAsterisk
                     {...form.getInputProps("new_slug")}
                     leftSection={<IconLetterCase size="1rem" />}
+                    disabled={editCandidateMutation.isLoading}
                   />
 
                   <Select
@@ -454,13 +469,14 @@ export default function EditCandidate({
                         value: partylist.id,
                       };
                     })}
+                    disabled={editCandidateMutation.isLoading}
                   />
 
                   <Select
-                    // withinPortal
                     placeholder="Select position"
                     label="Position"
                     leftSection={<IconUserSearch size="1rem" />}
+                    disabled={editCandidateMutation.isLoading}
                     {...form.getInputProps("position_id")}
                     data={positionsQuery.data?.map((position) => {
                       return {
@@ -600,57 +616,62 @@ export default function EditCandidate({
                 <Stack gap="xs">
                   {form.values.platforms.map((platform, index) => (
                     <Box key={index}>
-                      <TextInput
-                        w="100%"
-                        label="Title"
-                        placeholder="Enter title"
-                        required
-                        value={platform.title}
-                        onChange={(e) => {
-                          form.setValues({
-                            ...form.values,
-                            platforms: form.values.platforms.map((p, i) => {
-                              if (i === index) {
-                                return {
-                                  ...p,
-                                  title: e.target.value,
-                                };
-                              }
-                              return p;
-                            }),
-                          });
-                        }}
-                      />
-                      <Textarea
-                        w="100%"
-                        label="Description"
-                        placeholder="Enter description"
-                        required
-                        value={platform.description}
-                        onChange={(e) => {
-                          form.setValues({
-                            ...form.values,
-                            platforms: form.values.platforms.map((p, i) => {
-                              if (i === index) {
-                                return {
-                                  ...p,
-                                  description: e.target.value,
-                                };
-                              }
-                              return p;
-                            }),
-                          });
-                        }}
-                      />
+                      <Stack gap="xs">
+                        <TextInput
+                          w="100%"
+                          label="Title"
+                          placeholder="Enter title"
+                          required
+                          value={platform.title}
+                          disabled={editCandidateMutation.isLoading}
+                          onChange={(e) => {
+                            form.setValues({
+                              ...form.values,
+                              platforms: form.values.platforms.map((p, i) => {
+                                if (i === index) {
+                                  return {
+                                    ...p,
+                                    title: e.target.value,
+                                  };
+                                }
+                                return p;
+                              }),
+                            });
+                          }}
+                        />
+                        <Textarea
+                          w="100%"
+                          label="Description"
+                          placeholder="Enter description"
+                          value={platform.description ?? ""}
+                          disabled={editCandidateMutation.isLoading}
+                          onChange={(e) => {
+                            form.setValues({
+                              ...form.values,
+                              platforms: form.values.platforms.map((p, i) => {
+                                if (i === index) {
+                                  return {
+                                    ...p,
+                                    description: e.target.value,
+                                  };
+                                }
+                                return p;
+                              }),
+                            });
+                          }}
+                        />
+                      </Stack>
 
                       <DeleteCredentialButton
                         type="PLATFORM"
                         id={platform.id}
+                        disabled={editCandidateMutation.isLoading}
                       />
                     </Box>
                   ))}
                   <Button
                     leftSection={<IconPlus size="1.25rem" />}
+                    disabled={editCandidateMutation.isLoading}
                     onClick={() => {
                       form.setValues({
                         ...form.values,
@@ -703,6 +724,7 @@ export default function EditCandidate({
                                 placeholder="Enter achievement"
                                 required
                                 value={achievement.name}
+                                disabled={editCandidateMutation.isLoading}
                                 onChange={(e) => {
                                   form.setValues({
                                     ...form.values,
@@ -725,6 +747,7 @@ export default function EditCandidate({
                                   withinPortal: true,
                                 }}
                                 value={achievement.year}
+                                disabled={editCandidateMutation.isLoading}
                                 onChange={(date) => {
                                   form.setValues({
                                     ...form.values,
@@ -747,6 +770,7 @@ export default function EditCandidate({
                             <DeleteCredentialButton
                               type="ACHIEVEMENT"
                               id={achievement.id}
+                              disabled={editCandidateMutation.isLoading}
                             />
                           </Box>
                         );
@@ -754,6 +778,7 @@ export default function EditCandidate({
 
                       <Button
                         leftSection={<IconPlus size="1.25rem" />}
+                        disabled={editCandidateMutation.isLoading}
                         onClick={() => {
                           form.setValues({
                             ...form.values,
@@ -786,6 +811,7 @@ export default function EditCandidate({
                               placeholder="Enter organization name"
                               required
                               value={affiliation.org_name}
+                              disabled={editCandidateMutation.isLoading}
                               onChange={(e) => {
                                 form.setValues({
                                   ...form.values,
@@ -807,6 +833,7 @@ export default function EditCandidate({
                               placeholder="Enter your position in the organization"
                               required
                               value={affiliation.org_position}
+                              disabled={editCandidateMutation.isLoading}
                               onChange={(e) => {
                                 form.setValues({
                                   ...form.values,
@@ -835,6 +862,7 @@ export default function EditCandidate({
                                   form.values.affiliations[index]?.start_year ??
                                   new Date()
                                 }
+                                disabled={editCandidateMutation.isLoading}
                                 onChange={(date) => {
                                   form.setValues({
                                     ...form.values,
@@ -864,6 +892,7 @@ export default function EditCandidate({
                                   form.values.affiliations[index]?.end_year ??
                                   new Date()
                                 }
+                                disabled={editCandidateMutation.isLoading}
                                 onChange={(date) => {
                                   form.setValues({
                                     ...form.values,
@@ -886,6 +915,7 @@ export default function EditCandidate({
                             <DeleteCredentialButton
                               type="AFFILIATION"
                               id={affiliation.id}
+                              disabled={editCandidateMutation.isLoading}
                             />
                           </Box>
                         );
@@ -893,6 +923,7 @@ export default function EditCandidate({
 
                       <Button
                         leftSection={<IconPlus size="1.25rem" />}
+                        disabled={editCandidateMutation.isLoading}
                         onClick={() => {
                           form.setValues({
                             ...form.values,
@@ -935,6 +966,7 @@ export default function EditCandidate({
                                     form.values.events_attended[index]?.name ??
                                     ""
                                   }
+                                  disabled={editCandidateMutation.isLoading}
                                   onChange={(e) => {
                                     form.setValues({
                                       ...form.values,
@@ -952,7 +984,8 @@ export default function EditCandidate({
                                   }}
                                 />
                                 <YearPickerInput
-                                  // label="Year"
+                                  label="Year"
+                                  required
                                   placeholder="Enter year"
                                   popoverProps={{
                                     withinPortal: true,
@@ -961,6 +994,7 @@ export default function EditCandidate({
                                     form.values.events_attended[index]?.year ??
                                     new Date()
                                   }
+                                  disabled={editCandidateMutation.isLoading}
                                   onChange={(date) => {
                                     form.setValues({
                                       ...form.values,
@@ -984,6 +1018,7 @@ export default function EditCandidate({
                               <DeleteCredentialButton
                                 type="EVENTATTENDED"
                                 id={events_attended.id}
+                                disabled={editCandidateMutation.isLoading}
                               />
                             </Box>
                           );
@@ -992,6 +1027,7 @@ export default function EditCandidate({
 
                       <Button
                         leftSection={<IconPlus size="1.25rem" />}
+                        disabled={editCandidateMutation.isLoading}
                         onClick={() => {
                           form.setValues({
                             ...form.values,

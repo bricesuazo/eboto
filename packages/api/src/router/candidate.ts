@@ -66,7 +66,7 @@ export const candidateRouter = createTRPCRouter({
           z.object({
             id: z.string(),
             title: z.string().min(1),
-            description: z.string().min(1),
+            description: z.string().min(1).nullable(),
           }),
         ),
 
@@ -265,7 +265,7 @@ export const candidateRouter = createTRPCRouter({
         platforms: z.array(
           z.object({
             title: z.string().min(1),
-            description: z.string().min(1),
+            description: z.string().min(1).nullable(),
           }),
         ),
 

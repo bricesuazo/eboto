@@ -267,7 +267,7 @@ export const platforms = mysqlTable(
   {
     id,
     title: text("title").notNull(),
-    description: longtext("description").notNull(),
+    description: longtext("description"),
 
     created_at,
     updated_at,

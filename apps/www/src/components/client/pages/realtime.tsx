@@ -1,10 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import ScrollToTopButton from "@/components/client/components/scroll-to-top";
 import { api } from "@/trpc/client";
 import {
   Box,
+  Button,
   Center,
   Container,
   Flex,
@@ -54,43 +56,56 @@ export default function Realtime({
       <Container py="xl" size="md">
         <Stack gap="xl">
           <Center>
-            <Box>
-              <Group justify="center" mb={8}>
-                {election.logo ? (
-                  <Image
-                    src={election.logo.url}
-                    alt="Logo"
-                    width={92}
-                    height={92}
-                    priority
-                  />
-                ) : (
-                  <IconFingerprint size={92} style={{ padding: 8 }} />
-                )}
-              </Group>
-              <Title order={2} style={{ lineClamp: 2 }} ta="center">
-                {election.name} (@{election.slug})
-              </Title>
-              <Text ta="center">
-                {moment(election.start_date).format("MMMM D, YYYY hA")}
-                {" - "}
-                {moment(election.end_date).format("MMMM D, YYYY hA")}
-              </Text>
+            <Stack>
+              <Box>
+                <Group justify="center" mb={8}>
+                  {election.logo ? (
+                    <Image
+                      src={election.logo.url}
+                      alt="Logo"
+                      width={92}
+                      height={92}
+                      priority
+                    />
+                  ) : (
+                    <IconFingerprint size={92} style={{ padding: 8 }} />
+                  )}
+                </Group>
+                <Title order={2} style={{ lineClamp: 2 }} ta="center">
+                  {election.name} (@{election.slug})
+                </Title>
+                <Text ta="center">
+                  {moment(election.start_date).format("MMMM D, YYYY hA")}
+                  {" - "}
+                  {moment(election.end_date).format("MMMM D, YYYY hA")}
+                </Text>
 
-              {!isEnded ? (
-                <Text ta="center" size="xs" c="dimmed">
-                  <Balancer>
-                    Realtime result as of{" "}
+                {!isEnded ? (
+                  <Text ta="center" size="xs" c="dimmed">
+                    <Balancer>
+                      Realtime result as of{" "}
+                      {moment(new Date()).format("MMMM Do YYYY, h:mm:ss A")}
+                    </Balancer>
+                  </Text>
+                ) : (
+                  <Text ta="center" tw="bold">
+                    Official result as of{" "}
                     {moment(new Date()).format("MMMM Do YYYY, h:mm:ss A")}
-                  </Balancer>
-                </Text>
-              ) : (
-                <Text ta="center" tw="bold">
-                  Official result as of{" "}
-                  {moment(new Date()).format("MMMM Do YYYY, h:mm:ss A")}
-                </Text>
-              )}
-            </Box>
+                  </Text>
+                )}
+              </Box>
+              <Center>
+                <Button
+                  component={Link}
+                  href={`/${election.slug}`}
+                  radius="xl"
+                  variant="outline"
+                  size="md"
+                >
+                  Election Page
+                </Button>
+              </Center>
+            </Stack>
           </Center>
 
           <Stack gap="xl">
