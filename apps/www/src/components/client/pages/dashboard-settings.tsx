@@ -125,11 +125,6 @@ export default function DashboardSettings({
     },
     validateInputOnBlur: true,
     clearInputErrorOnChange: true,
-    transformValues: (values) => ({
-      ...values,
-      start_date: new Date(values.start_date.setSeconds(0, 0)),
-      end_date: new Date(values.end_date.setSeconds(0, 0)),
-    }),
     validate: {
       name: hasLength(
         { min: 3 },
@@ -445,7 +440,6 @@ export default function DashboardSettings({
               )
             </InputDescription>
             <RangeSlider
-              defaultValue={[7, 19]}
               step={1}
               max={24}
               min={0}
@@ -456,6 +450,15 @@ export default function DashboardSettings({
                 { value: 19, label: "7PM" },
               ]}
               label={parseHourTo12HourFormat}
+              disabled={
+                editElectionMutation.isLoading ||
+                isElectionOngoing({
+                  election: getElectionBySlugQuery.data,
+                }) ||
+                isElectionEnded({
+                  election: getElectionBySlugQuery.data,
+                })
+              }
               {...form.getInputProps("voting_hours")}
             />
           </Box>

@@ -51,41 +51,41 @@ importers:
         specifier: ^11.11.1
         version: registry.npmjs.org/@emotion/react@11.11.1(@types/react@18.2.31)(react@18.2.0)
       '@mantine/carousel':
-        specifier: 7.1.7
-        version: registry.npmjs.org/@mantine/carousel@7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(embla-carousel-react@8.0.0-rc14)(react@18.2.0)
+        specifier: 7.2.0
+        version: registry.npmjs.org/@mantine/carousel@7.2.0(@mantine/core@7.2.0)(@mantine/hooks@7.2.0)(embla-carousel-react@8.0.0-rc14)(react@18.2.0)
       '@mantine/code-highlight':
-        specifier: ^7.1.7
-        version: registry.npmjs.org/@mantine/code-highlight@7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^7.2.0
+        version: registry.npmjs.org/@mantine/code-highlight@7.2.0(@mantine/core@7.2.0)(@mantine/hooks@7.2.0)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/core':
-        specifier: 7.1.7
-        version: registry.npmjs.org/@mantine/core@7.1.7(@mantine/hooks@7.1.7)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 7.2.0
+        version: registry.npmjs.org/@mantine/core@7.2.0(@mantine/hooks@7.2.0)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/dates':
-        specifier: 7.1.7
-        version: registry.npmjs.org/@mantine/dates@7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(dayjs@1.11.10)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 7.2.0
+        version: registry.npmjs.org/@mantine/dates@7.2.0(@mantine/core@7.2.0)(@mantine/hooks@7.2.0)(dayjs@1.11.10)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/dropzone':
-        specifier: 7.1.7
-        version: registry.npmjs.org/@mantine/dropzone@7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 7.2.0
+        version: registry.npmjs.org/@mantine/dropzone@7.2.0(@mantine/core@7.2.0)(@mantine/hooks@7.2.0)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/form':
-        specifier: 7.1.7
-        version: registry.npmjs.org/@mantine/form@7.1.7(react@18.2.0)
+        specifier: 7.2.0
+        version: registry.npmjs.org/@mantine/form@7.2.0(react@18.2.0)
       '@mantine/hooks':
-        specifier: 7.1.7
-        version: registry.npmjs.org/@mantine/hooks@7.1.7(react@18.2.0)
+        specifier: 7.2.0
+        version: registry.npmjs.org/@mantine/hooks@7.2.0(react@18.2.0)
       '@mantine/modals':
-        specifier: 7.1.7
-        version: registry.npmjs.org/@mantine/modals@7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 7.2.0
+        version: registry.npmjs.org/@mantine/modals@7.2.0(@mantine/core@7.2.0)(@mantine/hooks@7.2.0)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/notifications':
-        specifier: 7.1.7
-        version: registry.npmjs.org/@mantine/notifications@7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 7.2.0
+        version: registry.npmjs.org/@mantine/notifications@7.2.0(@mantine/core@7.2.0)(@mantine/hooks@7.2.0)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/nprogress':
-        specifier: 7.1.7
-        version: registry.npmjs.org/@mantine/nprogress@7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 7.2.0
+        version: registry.npmjs.org/@mantine/nprogress@7.2.0(@mantine/core@7.2.0)(@mantine/hooks@7.2.0)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/spotlight':
-        specifier: 7.1.7
-        version: registry.npmjs.org/@mantine/spotlight@7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 7.2.0
+        version: registry.npmjs.org/@mantine/spotlight@7.2.0(@mantine/core@7.2.0)(@mantine/hooks@7.2.0)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/tiptap':
-        specifier: 7.1.7
-        version: registry.npmjs.org/@mantine/tiptap@7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(@tabler/icons-react@2.40.0)(@tiptap/extension-link@2.1.12)(@tiptap/react@2.1.12)(react-dom@18.2.0)(react@18.2.0)
+        specifier: 7.2.0
+        version: registry.npmjs.org/@mantine/tiptap@7.2.0(@mantine/core@7.2.0)(@mantine/hooks@7.2.0)(@tabler/icons-react@2.40.0)(@tiptap/extension-link@2.1.12)(@tiptap/react@2.1.12)(react-dom@18.2.0)(react@18.2.0)
       '@react-pdf/renderer':
         specifier: ^3.1.13
         version: registry.npmjs.org/@react-pdf/renderer@3.1.13(encoding@0.1.13)(react@18.2.0)
@@ -148,7 +148,7 @@ importers:
         version: registry.npmjs.org/embla-carousel-react@8.0.0-rc14(react@18.2.0)
       mantine-react-table:
         specifier: ^2.0.0-alpha.4
-        version: registry.npmjs.org/mantine-react-table@2.0.0-alpha.4(@mantine/core@7.1.7)(@mantine/dates@7.1.7)(@mantine/hooks@7.1.7)(@tabler/icons-react@2.40.0)(react-dom@18.2.0)(react@18.2.0)
+        version: registry.npmjs.org/mantine-react-table@2.0.0-alpha.4(@mantine/core@7.2.0)(@mantine/dates@7.2.0)(@mantine/hooks@7.2.0)(@tabler/icons-react@2.40.0)(react-dom@18.2.0)(react@18.2.0)
       moment:
         specifier: ^2.29.4
         version: registry.npmjs.org/moment@2.29.4
@@ -223,8 +223,8 @@ importers:
         specifier: ^0.1.13
         version: registry.npmjs.org/encoding@0.1.13
       postcss-preset-mantine:
-        specifier: ^1.9.0
-        version: registry.npmjs.org/postcss-preset-mantine@1.9.0(postcss@8.4.31)
+        specifier: ^1.9.1
+        version: registry.npmjs.org/postcss-preset-mantine@1.9.1(postcss@8.4.31)
       postcss-simple-vars:
         specifier: ^7.0.1
         version: registry.npmjs.org/postcss-simple-vars@7.0.1(postcss@8.4.31)
@@ -2174,54 +2174,54 @@ packages:
       '@jridgewell/sourcemap-codec': registry.npmjs.org/@jridgewell/sourcemap-codec@1.4.15
     dev: true
 
-  registry.npmjs.org/@mantine/carousel@7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(embla-carousel-react@8.0.0-rc14)(react@18.2.0):
-    resolution: {integrity: sha512-ey7lEfOLsByd772O6WuguuW7hlal+YBUy27XQcJRVdZif/aiOKDEpUG2m4qb7wrANZiGXOlA4veTrxeR38fHng==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/carousel/-/carousel-7.1.7.tgz}
-    id: registry.npmjs.org/@mantine/carousel/7.1.7
+  registry.npmjs.org/@mantine/carousel@7.2.0(@mantine/core@7.2.0)(@mantine/hooks@7.2.0)(embla-carousel-react@8.0.0-rc14)(react@18.2.0):
+    resolution: {integrity: sha512-6oRrBG55Lmx+nMWpxqDr/Ti8RdXmLplHf/hlmriYm7qJ1mPGSkPmTFBGxAm1qmaEt3TDQhDW7jwRn9MeLB1xdg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/carousel/-/carousel-7.2.0.tgz}
+    id: registry.npmjs.org/@mantine/carousel/7.2.0
     name: '@mantine/carousel'
-    version: 7.1.7
+    version: 7.2.0
     peerDependencies:
-      '@mantine/core': 7.1.7
-      '@mantine/hooks': 7.1.7
+      '@mantine/core': 7.2.0
+      '@mantine/hooks': 7.2.0
       embla-carousel-react: ^7.0.0
       react: ^18.2.0
     dependencies:
-      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.7(@mantine/hooks@7.1.7)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.7(react@18.2.0)
+      '@mantine/core': registry.npmjs.org/@mantine/core@7.2.0(@mantine/hooks@7.2.0)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.2.0(react@18.2.0)
       embla-carousel-react: registry.npmjs.org/embla-carousel-react@8.0.0-rc14(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  registry.npmjs.org/@mantine/code-highlight@7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-DIKj+ErASZXnZyL5eWzAYehY/tdKQ7Sy6ZrsfxiTGQ3gI+PQvbx62qrW9f9WLDGWORIYMTVPeG9nl1Ec7QMlbA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/code-highlight/-/code-highlight-7.1.7.tgz}
-    id: registry.npmjs.org/@mantine/code-highlight/7.1.7
+  registry.npmjs.org/@mantine/code-highlight@7.2.0(@mantine/core@7.2.0)(@mantine/hooks@7.2.0)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-CUSyDZsyfwvw2Q7VIECibH7tP2UmpJ1E4cS+OaWtDG7XytHSPQ87ekzQyfeOyXlOR9FurMK4UDfxb/gvYGHgNw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/code-highlight/-/code-highlight-7.2.0.tgz}
+    id: registry.npmjs.org/@mantine/code-highlight/7.2.0
     name: '@mantine/code-highlight'
-    version: 7.1.7
+    version: 7.2.0
     peerDependencies:
-      '@mantine/core': 7.1.7
-      '@mantine/hooks': 7.1.7
+      '@mantine/core': 7.2.0
+      '@mantine/hooks': 7.2.0
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.7(@mantine/hooks@7.1.7)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.7(react@18.2.0)
+      '@mantine/core': registry.npmjs.org/@mantine/core@7.2.0(@mantine/hooks@7.2.0)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.2.0(react@18.2.0)
       clsx: registry.npmjs.org/clsx@2.0.0
       highlight.js: registry.npmjs.org/highlight.js@11.8.0
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/@mantine/core@7.1.7(@mantine/hooks@7.1.7)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-xi5zyzGRFDKXUp2WL63sQqzDPKP1Ezz1AIkQXHwpsGGxa4fVvzyn/CzgidnFUK93soWq7ixhVdD4oP1Yeh68Mw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/core/-/core-7.1.7.tgz}
-    id: registry.npmjs.org/@mantine/core/7.1.7
+  registry.npmjs.org/@mantine/core@7.2.0(@mantine/hooks@7.2.0)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-43vJc4yPV5/WczSer45xp8rIjtPQoygEpWRnAuym9YpG1cx9c4HMD6VhcJOFZSoPuGMWfXlb0fodVvSfN3L+xA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/core/-/core-7.2.0.tgz}
+    id: registry.npmjs.org/@mantine/core/7.2.0
     name: '@mantine/core'
-    version: 7.1.7
+    version: 7.2.0
     peerDependencies:
-      '@mantine/hooks': 7.1.7
+      '@mantine/hooks': 7.2.0
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
       '@floating-ui/react': registry.npmjs.org/@floating-ui/react@0.24.8(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.7(react@18.2.0)
+      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.2.0(react@18.2.0)
       clsx: registry.npmjs.org/clsx@2.0.0
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
@@ -2233,49 +2233,49 @@ packages:
       - '@types/react'
     dev: false
 
-  registry.npmjs.org/@mantine/dates@7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(dayjs@1.11.10)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-E18ih1hiEp6n6PWSE2APa22lRJnHMC0RUk73CbPw++/X1/cevuErmSCmV5rgGlGUaTLqcKzW22+jnQALyIPu0w==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/dates/-/dates-7.1.7.tgz}
-    id: registry.npmjs.org/@mantine/dates/7.1.7
+  registry.npmjs.org/@mantine/dates@7.2.0(@mantine/core@7.2.0)(@mantine/hooks@7.2.0)(dayjs@1.11.10)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-rW433jZZKxM9n6wy+F13rJKfREVKojiwxe7ESnuVYX4zxRAqpRsXNTNTUyyXzv+kDqU3EUfTqsb9Qww6oh7cfw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/dates/-/dates-7.2.0.tgz}
+    id: registry.npmjs.org/@mantine/dates/7.2.0
     name: '@mantine/dates'
-    version: 7.1.7
+    version: 7.2.0
     peerDependencies:
-      '@mantine/core': 7.1.7
-      '@mantine/hooks': 7.1.7
+      '@mantine/core': 7.2.0
+      '@mantine/hooks': 7.2.0
       dayjs: ^1.10.5
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.7(@mantine/hooks@7.1.7)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.7(react@18.2.0)
+      '@mantine/core': registry.npmjs.org/@mantine/core@7.2.0(@mantine/hooks@7.2.0)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.2.0(react@18.2.0)
       clsx: registry.npmjs.org/clsx@2.0.0
       dayjs: registry.npmjs.org/dayjs@1.11.10
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/@mantine/dropzone@7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-xBXi8HCVITZkjoxQXJQgWOVNUnHAGy7LxdJM65WgI9D3vdYaGQM6AvGVzETCZSx0EQ8ww6j4pJBSYg6Sz/pCqA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/dropzone/-/dropzone-7.1.7.tgz}
-    id: registry.npmjs.org/@mantine/dropzone/7.1.7
+  registry.npmjs.org/@mantine/dropzone@7.2.0(@mantine/core@7.2.0)(@mantine/hooks@7.2.0)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-Xkjd+4LkcxNpQPGuhUhyry3DmC7vls3KikKDVMYUSuYMcWqUmRViZiFQ4pSoFird9Cp66wYRIfb97c76Bqz84A==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/dropzone/-/dropzone-7.2.0.tgz}
+    id: registry.npmjs.org/@mantine/dropzone/7.2.0
     name: '@mantine/dropzone'
-    version: 7.1.7
+    version: 7.2.0
     peerDependencies:
-      '@mantine/core': 7.1.7
-      '@mantine/hooks': 7.1.7
+      '@mantine/core': 7.2.0
+      '@mantine/hooks': 7.2.0
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.7(@mantine/hooks@7.1.7)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.7(react@18.2.0)
+      '@mantine/core': registry.npmjs.org/@mantine/core@7.2.0(@mantine/hooks@7.2.0)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.2.0(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
       react-dropzone-esm: registry.npmjs.org/react-dropzone-esm@15.0.1(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/@mantine/form@7.1.7(react@18.2.0):
-    resolution: {integrity: sha512-9p88UWydiIYrUde/tGWIj6kThxcHuV8LqA+ZMFeEjRcRrDxClHrHw5OnsupPMiQ8Xqx4u0TcsEThDbLOh4P+ow==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/form/-/form-7.1.7.tgz}
-    id: registry.npmjs.org/@mantine/form/7.1.7
+  registry.npmjs.org/@mantine/form@7.2.0(react@18.2.0):
+    resolution: {integrity: sha512-1Zkesub+PwHPPaHN5ojP7ISOnOUhsYHrV6z3Mp8xKY/MTFFdpemHbXUdHoyBy3eUgWk+2qwMrlgAE2k73EZi4g==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/form/-/form-7.2.0.tgz}
+    id: registry.npmjs.org/@mantine/form/7.2.0
     name: '@mantine/form'
-    version: 7.1.7
+    version: 7.2.0
     peerDependencies:
       react: ^18.2.0
     dependencies:
@@ -2284,116 +2284,116 @@ packages:
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  registry.npmjs.org/@mantine/hooks@7.1.7(react@18.2.0):
-    resolution: {integrity: sha512-OwKK1CtZ++lRXcjqN3G1MiY4Ie0Cd+aGGjrzlSxO2JJnYLkPgAmQqO6HkwK6p7XOwMpRW0eJdh3r1ONkna8pSg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/hooks/-/hooks-7.1.7.tgz}
-    id: registry.npmjs.org/@mantine/hooks/7.1.7
+  registry.npmjs.org/@mantine/hooks@7.2.0(react@18.2.0):
+    resolution: {integrity: sha512-3dDjB+X7JvirIpW1uVFBiGuvG3Tg+cwBWnzbnCaIXYmBkQhvgI6wkCIvdPkLxpG9hmkzd0lgH5OphJt5i2ocHw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/hooks/-/hooks-7.2.0.tgz}
+    id: registry.npmjs.org/@mantine/hooks/7.2.0
     name: '@mantine/hooks'
-    version: 7.1.7
+    version: 7.2.0
     peerDependencies:
       react: ^18.2.0
     dependencies:
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  registry.npmjs.org/@mantine/modals@7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-P0aBB08Zhg2OdzQ/knaE4Hr3k5MF8ixqBe56syrOYSM8sPP0wnrS1U62A7Kgc0sb+9XbOpexJ/xMXmkRdCn4MA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/modals/-/modals-7.1.7.tgz}
-    id: registry.npmjs.org/@mantine/modals/7.1.7
+  registry.npmjs.org/@mantine/modals@7.2.0(@mantine/core@7.2.0)(@mantine/hooks@7.2.0)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-gHb/Dw6JSfy9EdZBtFqT8Ra4XeWZAyHeibu6SnS3/oyeuzfT/trjUz4WGWW4VFBvKlFWJYq0IVf6BMUxr0v4kw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/modals/-/modals-7.2.0.tgz}
+    id: registry.npmjs.org/@mantine/modals/7.2.0
     name: '@mantine/modals'
-    version: 7.1.7
+    version: 7.2.0
     peerDependencies:
-      '@mantine/core': 7.1.7
-      '@mantine/hooks': 7.1.7
+      '@mantine/core': 7.2.0
+      '@mantine/hooks': 7.2.0
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.7(@mantine/hooks@7.1.7)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.7(react@18.2.0)
+      '@mantine/core': registry.npmjs.org/@mantine/core@7.2.0(@mantine/hooks@7.2.0)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.2.0(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/@mantine/notifications@7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-ctzSUuR4/tKYYqKEffARd6KdFvzSfFKREFu4z7J90fevbdz9IjiCSvFNQOJXQVrb+UfOdOXYSy7vaxzNb2fQtw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/notifications/-/notifications-7.1.7.tgz}
-    id: registry.npmjs.org/@mantine/notifications/7.1.7
+  registry.npmjs.org/@mantine/notifications@7.2.0(@mantine/core@7.2.0)(@mantine/hooks@7.2.0)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-OKYy7JcaBS+N5pFiXGu6uMUTPqz3NkEz3inko9p9GTqRY1P/BA4yqLrFrjjUBljesz1np9FfK7CipnG2IMMq1A==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/notifications/-/notifications-7.2.0.tgz}
+    id: registry.npmjs.org/@mantine/notifications/7.2.0
     name: '@mantine/notifications'
-    version: 7.1.7
+    version: 7.2.0
     peerDependencies:
-      '@mantine/core': 7.1.7
-      '@mantine/hooks': 7.1.7
+      '@mantine/core': 7.2.0
+      '@mantine/hooks': 7.2.0
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.7(@mantine/hooks@7.1.7)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.7(react@18.2.0)
-      '@mantine/store': registry.npmjs.org/@mantine/store@7.1.7(react@18.2.0)
+      '@mantine/core': registry.npmjs.org/@mantine/core@7.2.0(@mantine/hooks@7.2.0)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.2.0(react@18.2.0)
+      '@mantine/store': registry.npmjs.org/@mantine/store@7.2.0(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
       react-transition-group: registry.npmjs.org/react-transition-group@4.4.5(react-dom@18.2.0)(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/@mantine/nprogress@7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-54owjdGqIIM4EMaNi5lm6wtxxnnUMAXLwf7BIy81/aBCEc21A/yVhMjnpHgOtacahqvS+3tRaZ8eEGY/PTyrKg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/nprogress/-/nprogress-7.1.7.tgz}
-    id: registry.npmjs.org/@mantine/nprogress/7.1.7
+  registry.npmjs.org/@mantine/nprogress@7.2.0(@mantine/core@7.2.0)(@mantine/hooks@7.2.0)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-Zwqctwv8YKmZSm9r//lqQ4AlutuQOwDWvTNFB7wtkGjoH0OA4LiC7cixKUgtgtAH3wFXN/ezXD9Vmu0lsytyYQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/nprogress/-/nprogress-7.2.0.tgz}
+    id: registry.npmjs.org/@mantine/nprogress/7.2.0
     name: '@mantine/nprogress'
-    version: 7.1.7
+    version: 7.2.0
     peerDependencies:
-      '@mantine/core': 7.1.7
-      '@mantine/hooks': 7.1.7
+      '@mantine/core': 7.2.0
+      '@mantine/hooks': 7.2.0
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.7(@mantine/hooks@7.1.7)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.7(react@18.2.0)
-      '@mantine/store': registry.npmjs.org/@mantine/store@7.1.7(react@18.2.0)
+      '@mantine/core': registry.npmjs.org/@mantine/core@7.2.0(@mantine/hooks@7.2.0)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.2.0(react@18.2.0)
+      '@mantine/store': registry.npmjs.org/@mantine/store@7.2.0(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/@mantine/spotlight@7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-KX2Jzb4QHimq2YI8lMFT3phpHuVD4BjtcVkdkvIgv7b+nXnJ3Yk91eStG+bngssh2x/G95a08fX+VJ5ZEUlIJQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/spotlight/-/spotlight-7.1.7.tgz}
-    id: registry.npmjs.org/@mantine/spotlight/7.1.7
+  registry.npmjs.org/@mantine/spotlight@7.2.0(@mantine/core@7.2.0)(@mantine/hooks@7.2.0)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-jXwQTYBJRHk09ZyxxQCaF2i0r8/f+4CKXZQ5Ztnb1M508rCIEUxAZuncwbigkt4y3Fl16nHf/x/cYbNjwTHAWA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/spotlight/-/spotlight-7.2.0.tgz}
+    id: registry.npmjs.org/@mantine/spotlight/7.2.0
     name: '@mantine/spotlight'
-    version: 7.1.7
+    version: 7.2.0
     peerDependencies:
-      '@mantine/core': 7.1.7
-      '@mantine/hooks': 7.1.7
+      '@mantine/core': 7.2.0
+      '@mantine/hooks': 7.2.0
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.7(@mantine/hooks@7.1.7)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.7(react@18.2.0)
-      '@mantine/store': registry.npmjs.org/@mantine/store@7.1.7(react@18.2.0)
+      '@mantine/core': registry.npmjs.org/@mantine/core@7.2.0(@mantine/hooks@7.2.0)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.2.0(react@18.2.0)
+      '@mantine/store': registry.npmjs.org/@mantine/store@7.2.0(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/@mantine/store@7.1.7(react@18.2.0):
-    resolution: {integrity: sha512-Ew+FDxrMwmiQ9fWeyKWSL9cmdWAJggqHKyErwAhNKmjiUUpayLCOlyhyxqm8dxj6KlSyJhSJX2lPh7a6wjvv3Q==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/store/-/store-7.1.7.tgz}
-    id: registry.npmjs.org/@mantine/store/7.1.7
+  registry.npmjs.org/@mantine/store@7.2.0(react@18.2.0):
+    resolution: {integrity: sha512-fnRTKJY0YtmCXliwaWoDMKr9QBI0tTPmqX69s3dLw7WSNonj6QfzxH9K6vYdFOGu0VxosBB+RrklGkEyQaTk4Q==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/store/-/store-7.2.0.tgz}
+    id: registry.npmjs.org/@mantine/store/7.2.0
     name: '@mantine/store'
-    version: 7.1.7
+    version: 7.2.0
     peerDependencies:
       react: ^18.2.0
     dependencies:
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  registry.npmjs.org/@mantine/tiptap@7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(@tabler/icons-react@2.40.0)(@tiptap/extension-link@2.1.12)(@tiptap/react@2.1.12)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-1+HZdK9CivqpZVjg0dBBZZXuZsP+XHid2Vk3qULhu81PAOPRYglBrAyyyZYEqrYgv8zK6/R7kxYMz5Vh/GLuFQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/tiptap/-/tiptap-7.1.7.tgz}
-    id: registry.npmjs.org/@mantine/tiptap/7.1.7
+  registry.npmjs.org/@mantine/tiptap@7.2.0(@mantine/core@7.2.0)(@mantine/hooks@7.2.0)(@tabler/icons-react@2.40.0)(@tiptap/extension-link@2.1.12)(@tiptap/react@2.1.12)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-yUhDd74158KWVucQR1MbM+01rrQLGciCD1k+7WSrIhDwz1lv9SMgen8Zj8aOF3P48NK8tGqSNZL4WCqTep80mg==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@mantine/tiptap/-/tiptap-7.2.0.tgz}
+    id: registry.npmjs.org/@mantine/tiptap/7.2.0
     name: '@mantine/tiptap'
-    version: 7.1.7
+    version: 7.2.0
     peerDependencies:
-      '@mantine/core': 7.1.7
-      '@mantine/hooks': 7.1.7
+      '@mantine/core': 7.2.0
+      '@mantine/hooks': 7.2.0
       '@tabler/icons-react': ^2.29.0
       '@tiptap/extension-link': ^2.0.4
       '@tiptap/react': ^2.0.4
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.7(@mantine/hooks@7.1.7)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.7(react@18.2.0)
+      '@mantine/core': registry.npmjs.org/@mantine/core@7.2.0(@mantine/hooks@7.2.0)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.2.0(react@18.2.0)
       '@tabler/icons-react': registry.npmjs.org/@tabler/icons-react@2.40.0(react@18.2.0)
       '@tiptap/extension-link': registry.npmjs.org/@tiptap/extension-link@2.1.12(@tiptap/core@2.1.12)(@tiptap/pm@2.1.12)
       '@tiptap/react': registry.npmjs.org/@tiptap/react@2.1.12(@tiptap/core@2.1.12)(@tiptap/pm@2.1.12)(react-dom@18.2.0)(react@18.2.0)
@@ -8883,7 +8883,7 @@ packages:
     name: make-error
     version: 1.3.6
 
-  registry.npmjs.org/mantine-react-table@2.0.0-alpha.4(@mantine/core@7.1.7)(@mantine/dates@7.1.7)(@mantine/hooks@7.1.7)(@tabler/icons-react@2.40.0)(react-dom@18.2.0)(react@18.2.0):
+  registry.npmjs.org/mantine-react-table@2.0.0-alpha.4(@mantine/core@7.2.0)(@mantine/dates@7.2.0)(@mantine/hooks@7.2.0)(@tabler/icons-react@2.40.0)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-sQwS2Qu8cUGxgvRXjmzIZY1MbHR+xG+qCFcTZwYJDCeIei+dOBIj5uivT8Iu5JtlvdW49XmPwrY52YFn4e9yFQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/mantine-react-table/-/mantine-react-table-2.0.0-alpha.4.tgz}
     id: registry.npmjs.org/mantine-react-table/2.0.0-alpha.4
     name: mantine-react-table
@@ -8897,9 +8897,9 @@ packages:
       react: '>=18.0'
       react-dom: '>=18.0'
     dependencies:
-      '@mantine/core': registry.npmjs.org/@mantine/core@7.1.7(@mantine/hooks@7.1.7)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/dates': registry.npmjs.org/@mantine/dates@7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(dayjs@1.11.10)(react-dom@18.2.0)(react@18.2.0)
-      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.1.7(react@18.2.0)
+      '@mantine/core': registry.npmjs.org/@mantine/core@7.2.0(@mantine/hooks@7.2.0)(@types/react@18.2.31)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/dates': registry.npmjs.org/@mantine/dates@7.2.0(@mantine/core@7.2.0)(@mantine/hooks@7.2.0)(dayjs@1.11.10)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/hooks': registry.npmjs.org/@mantine/hooks@7.2.0(react@18.2.0)
       '@tabler/icons-react': registry.npmjs.org/@tabler/icons-react@2.40.0(react@18.2.0)
       '@tanstack/match-sorter-utils': registry.npmjs.org/@tanstack/match-sorter-utils@8.8.4
       '@tanstack/react-table': registry.npmjs.org/@tanstack/react-table@8.10.7(react-dom@18.2.0)(react@18.2.0)
@@ -9927,11 +9927,11 @@ packages:
       postcss: registry.npmjs.org/postcss@8.4.31
       postcss-selector-parser: registry.npmjs.org/postcss-selector-parser@6.0.13
 
-  registry.npmjs.org/postcss-preset-mantine@1.9.0(postcss@8.4.31):
-    resolution: {integrity: sha512-ZurmjL+5UK9FZq4GGKOoksC7UMVFZVXxRMO0WwQAiMeElZ8jPXIXIALnwdQhslyoVDzpezkRuHYtXGo65DwvqA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/postcss-preset-mantine/-/postcss-preset-mantine-1.9.0.tgz}
-    id: registry.npmjs.org/postcss-preset-mantine/1.9.0
+  registry.npmjs.org/postcss-preset-mantine@1.9.1(postcss@8.4.31):
+    resolution: {integrity: sha512-7wyKKsxXvHaAxX9//9FS9tSEWaG96KIXl3/cRlaNf3C/V08JI0gvDV6UifloxPpseZQrPMsuC95/+gPBaTJuWw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/postcss-preset-mantine/-/postcss-preset-mantine-1.9.1.tgz}
+    id: registry.npmjs.org/postcss-preset-mantine/1.9.1
     name: postcss-preset-mantine
-    version: 1.9.0
+    version: 1.9.1
     peerDependencies:
       postcss: '>=8.0.0'
     dependencies:

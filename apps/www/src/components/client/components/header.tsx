@@ -57,7 +57,9 @@ export default function Header({ userId }: { userId?: string }) {
   const [reportAProblemLoading, setReportAProblemLoading] = useState(false);
   const reportAProblemMutation = api.election.reportAProblem.useMutation();
 
-  const electionsQuery = api.election.getAllMyElections.useQuery();
+  const electionsQuery = api.election.getAllMyElections.useQuery(undefined, {
+    enabled: reportAProblemLoading,
+  });
 
   const { setColorScheme } = useMantineColorScheme();
   const [

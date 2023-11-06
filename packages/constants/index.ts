@@ -30,19 +30,18 @@ export const isElectionEnded = ({
   election: Election;
   dateOnly?: boolean;
 }) => {
-  const end_date = new Date(election.end_date);
   const now = new Date();
 
   return dateOnly
-    ? end_date.getTime() <=
+    ? election.end_date.getTime() <=
         new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
-    : end_date.getTime() <= now.getTime() &&
+    : election.end_date.getTime() <= now.getTime() &&
         now.getHours() >= election.voting_hour_end;
 };
 
 export const isElectionOngoing = ({ election }: { election: Election }) => {
   return (
-    new Date(election.start_date).getTime() <= new Date().getTime() &&
+    election.start_date.getTime() <= new Date().getTime() &&
     !isElectionEnded({ election }) &&
     new Date().getHours() >= election.voting_hour_start &&
     new Date().getHours() < election.voting_hour_end
