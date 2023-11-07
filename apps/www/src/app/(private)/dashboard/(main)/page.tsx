@@ -64,8 +64,9 @@ export default async function Page() {
   });
 
   const electionsAsVoter = await db.query.voters.findMany({
-    where: (voters, { eq, ne, and, inArray }) =>
+    where: (voters, { eq, ne, and, inArray, isNull }) =>
       and(
+        isNull(voters.deleted_at),
         eq(voters.email, session.user.email ?? ""),
         electionsThatICanVoteIn.length
           ? inArray(

@@ -613,7 +613,7 @@ export const electionRouter = createTRPCRouter({
         start_date: z.date(),
         end_date: z.date(),
         publicity: z.enum(publicity),
-        voter_domain: z.string().nullable(),
+        // voter_domain: z.string().nullable(),
         voting_hours: z.array(z.number()),
         logo: z
           .object({
@@ -678,7 +678,7 @@ export const electionRouter = createTRPCRouter({
             description: input.description,
             publicity: input.publicity,
             start_date: input.start_date,
-            voter_domain: input.voter_domain,
+            // voter_domain: input.voter_domain,
             end_date: input.end_date,
             voting_hour_start: input.voting_hours[0],
             voting_hour_end: input.voting_hours[1],
