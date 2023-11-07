@@ -13,6 +13,13 @@ export default function GenerateResult({
 }: {
   result: Pick<GeneratedElectionResult, "election">["election"];
 }) {
+  const dateConfig: Intl.DateTimeFormatOptions = {
+    timeZone: "Asia/Manila",
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
   return (
     <Document>
       <Page
@@ -84,6 +91,8 @@ export default function GenerateResult({
                   width: 80,
                   height: 80,
                   alignSelf: "center",
+                  aspectRatio: 1,
+                  objectFit: "contain",
                 }}
               />
             )}
@@ -97,22 +106,14 @@ export default function GenerateResult({
             </Text>
             <Text>https://eboto-mo.com/{result.slug}</Text>
             <Text>
-              {result.start_date.toLocaleString("en-US", {
-                timeZone: "Asia/Manila",
-              })}
+              {new Date(result.start_date).toLocaleString("en-US", dateConfig)}
               {" - "}
-              {result.end_date.toLocaleString("en-US", {
-                timeZone: "Asia/Manila",
-              })}
+              {new Date(result.end_date).toLocaleString("en-US", dateConfig)}
             </Text>
             <View style={{ marginVertical: 8 }}>
               <Text>Generated on:</Text>
 
-              <Text>
-                {new Date().toLocaleString("en-US", {
-                  timeZone: "Asia/Manila",
-                })}
-              </Text>
+              <Text>{new Date().toLocaleString("en-US", dateConfig)}</Text>
             </View>
             <Text style={{ fontFamily: "Helvetica-Bold" }}>Results</Text>
           </View>
