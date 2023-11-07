@@ -19,6 +19,9 @@ export default function GenerateResult({
     year: "numeric",
     month: "long",
     day: "numeric",
+    hour: "numeric",
+    hour12: true,
+    minute: "numeric",
   };
   return (
     <Document>
