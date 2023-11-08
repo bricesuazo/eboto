@@ -1,5 +1,8 @@
+import dynamic from "next/dynamic";
+import Image from "next/image";
+import Link from "next/link";
+import ContactForm from "@/components/client/components/contact-form";
 import classes from "@/styles/Home.module.css";
-import { FAQs } from "@eboto-mo/constants";
 import {
   Accordion,
   AccordionControl,
@@ -14,10 +17,9 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import dynamic from "next/dynamic";
-import Image from "next/image";
-import Link from "next/link";
 import Balancer from "react-wrap-balancer";
+
+import { FAQs } from "@eboto-mo/constants";
 
 const ReactPlayer = dynamic(
   () => import("@/components/client/components/react-player"),
@@ -26,133 +28,138 @@ const ReactPlayer = dynamic(
 
 export default function HomePage() {
   return (
-    <Container size="md" pos="relative">
+    <Container size="md" pos="relative" pb={80}>
       <Dots className={classes.dots} style={{ left: 0, top: 0 }} />
       <Dots className={classes.dots} style={{ left: 60, top: 0 }} />
       <Dots className={classes.dots} style={{ left: 0, top: 140 }} />
       <Dots className={classes.dots} style={{ right: 0, top: 60 }} />
 
-      <Box pos="relative" py={156}>
-        <Title
-          ta={{ base: "left", sm: "center" }}
-          fz={{ base: "2.25rem", sm: "3rem" }}
-          mb="md"
-          lts={-1}
-          className={classes.title}
-        >
-          <Balancer>
-            Your{" "}
-            <Text component="span" className={classes.highlight} inherit>
-              One-Stop
-            </Text>{" "}
-            Online Voting Solution
-          </Balancer>
-        </Title>
-
-        <Container p={0} size="md">
-          <Text
-            fz={{ base: "md", sm: "lg", md: "xl" }}
+      <Stack gap={80}>
+        <Box pos="relative" py={156}>
+          <Title
             ta={{ base: "left", sm: "center" }}
+            fz={{ base: "2.25rem", sm: "3rem" }}
+            mb="md"
+            lts={-1}
+            className={classes.title}
           >
             <Balancer>
-              Empower your elections with eBoto Mo, the versatile and web-based
-              voting platform that offers secure online elections for any type
-              of organization.
+              Your{" "}
+              <Text component="span" className={classes.highlight} inherit>
+                One-Stop
+              </Text>{" "}
+              Online Voting Solution
+            </Balancer>
+          </Title>
+
+          <Container p={0} size="md">
+            <Text
+              fz={{ base: "md", sm: "lg", md: "xl" }}
+              ta={{ base: "left", sm: "center" }}
+            >
+              <Balancer>
+                Empower your elections with eBoto Mo, the versatile and
+                web-based voting platform that offers secure online elections
+                for any type of organization.
+              </Balancer>
+            </Text>
+          </Container>
+
+          <Flex
+            justify="center"
+            mt="lg"
+            gap="sm"
+            direction={{ base: "column", sm: "row" }}
+          >
+            <Button
+              component={Link}
+              href="/sign-in"
+              className={classes.control}
+              size="md"
+              variant="outline"
+            >
+              Sign in
+            </Button>
+            <Button
+              component={Link}
+              href="/register"
+              className={classes.control}
+              size="md"
+            >
+              Get started
+            </Button>
+          </Flex>
+        </Box>
+
+        <Stack gap="xl">
+          <Title order={2} ta="center">
+            <Balancer>Ano ang eBoto Mo? (What is eBoto Mo?)</Balancer>
+          </Title>
+
+          <Box className={classes.playerContainer}>
+            <ReactPlayer
+              url="https://www.youtube.com/watch?v=BKud553RTbk"
+              width="100%"
+              height="100%"
+              controls
+            />
+          </Box>
+        </Stack>
+
+        <SimpleGrid cols={{ base: 1, sm: 2 }} pos="relative">
+          <Box
+            top={60}
+            style={{
+              aspectRatio: "3/2",
+            }}
+            pos={{ base: "inherit", sm: "sticky" }}
+          >
+            <Image
+              src="/images/faq.svg"
+              fill
+              alt="Frequently Asked Questions"
+              style={{
+                userSelect: "none",
+                pointerEvents: "none",
+              }}
+            />
+          </Box>
+
+          <Box>
+            <Title order={2} ta="left" p="md" visibleFrom="sm">
+              Frequently Asked Questions
+            </Title>
+            <Title order={2} ta="center" p="md" hiddenFrom="sm">
+              Frequently Asked Questions
+            </Title>
+
+            <Accordion
+              chevronPosition="right"
+              defaultValue={FAQs[0]?.id ?? ""}
+              variant="separated"
+            >
+              {FAQs.map((item) => (
+                <AccordionItem key={item.id} value={item.id}>
+                  <AccordionControl>{item.question}</AccordionControl>
+                  <AccordionPanel>{item.answer}</AccordionPanel>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </Box>
+        </SimpleGrid>
+
+        <ContactForm />
+
+        <Stack gap="xs" className={classes.cta}>
+          <Title ta="center">
+            <Balancer>Ready to get started?</Balancer>
+          </Title>
+          <Text ta="center" fz="lg">
+            <Balancer>
+              Create your free account today and start voting online in minutes.
             </Balancer>
           </Text>
-        </Container>
-
-        <Flex
-          justify="center"
-          mt="lg"
-          gap="sm"
-          direction={{ base: "column", sm: "row" }}
-        >
-          <Button
-            component={Link}
-            href="/sign-in"
-            className={classes.control}
-            size="md"
-            variant="outline"
-          >
-            Sign in
-          </Button>
-          <Button
-            component={Link}
-            href="/register"
-            className={classes.control}
-            size="md"
-          >
-            Get started
-          </Button>
-        </Flex>
-      </Box>
-
-      <Stack gap="lg" my="xl">
-        <Title order={2} ta="center">
-          <Balancer>Ano ang eBoto Mo? (What is eBoto Mo?)</Balancer>
-        </Title>
-
-        <Box className={classes.playerContainer}>
-          <ReactPlayer
-            url="https://www.youtube.com/watch?v=BKud553RTbk"
-            width="100%"
-            height="100%"
-            controls
-          />
-        </Box>
-      </Stack>
-
-      <SimpleGrid cols={{ base: 1, sm: 2 }} className={classes.grid}>
-        <Box
-          top={60}
-          style={{
-            aspectRatio: "3/2",
-          }}
-          pos={{ base: "inherit", sm: "sticky" }}
-        >
-          <Image
-            src="/images/faq.svg"
-            fill
-            alt="Frequently Asked Questions"
-            style={{
-              userSelect: "none",
-              pointerEvents: "none",
-            }}
-          />
-        </Box>
-
-        <Box>
-          <Title order={2} ta="left" p="md" visibleFrom="sm">
-            Frequently Asked Questions
-          </Title>
-          <Title order={2} ta="center" p="md" hiddenFrom="sm">
-            Frequently Asked Questions
-          </Title>
-
-          <Accordion
-            chevronPosition="right"
-            defaultValue={FAQs[0]?.id ?? ""}
-            variant="separated"
-          >
-            {FAQs.map((item) => (
-              <AccordionItem key={item.id} value={item.id}>
-                <AccordionControl>{item.question}</AccordionControl>
-                <AccordionPanel>{item.answer}</AccordionPanel>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </Box>
-      </SimpleGrid>
-      <Stack gap="xs" className={classes.cta} my={128}>
-        <Title ta="center">
-          <Balancer>Ready to get started?</Balancer>
-        </Title>
-        <Text ta="center" fz="lg">
-          <Balancer>
-            Create your free account today and start voting online in minutes.
-          </Balancer>
-        </Text>
+        </Stack>
       </Stack>
     </Container>
   );

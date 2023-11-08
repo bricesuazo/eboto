@@ -31,11 +31,6 @@
   padding: var(--mantine-spacing-xl);
 }
 
-.grid {
-  margin: var(--mantine-font-size-xl) 0px;
-  position: relative;
-}
-
 .playerContainer {
   aspect-ratio: 16/9;
   background-color: light-dark(
@@ -44,4 +39,84 @@
   );
   border-radius: var(--mantine-radius-md);
   overflow: hidden;
+}
+
+.form {
+  flex: 1;
+  padding: var(--mantine-spacing-xl);
+  border-left: 0;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    padding: var(--mantine-spacing-md);
+  }
+}
+
+.fields {
+  margin-top: rem(-12px);
+}
+
+.fieldInput {
+  flex: 1;
+
+  & + & {
+    margin-left: var(--mantine-spacing-md);
+
+    @media (max-width: $mantine-breakpoint-sm) {
+      margin-left: 0;
+      margin-top: var(--mantine-spacing-md);
+    }
+  }
+}
+
+.fieldsGroup {
+  display: flex;
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    flex-direction: column;
+  }
+}
+
+.contacts {
+  box-sizing: border-box;
+  position: relative;
+  border-radius: var(--mantine-radius-lg);
+  background-size: cover;
+  background-position: center;
+  border: rem(1px) solid transparent;
+  padding: var(--mantine-spacing-xl);
+  flex: 0 0 rem(280px);
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    margin-bottom: var(--mantine-spacing-sm);
+  }
+}
+
+.title-parent {
+  margin-bottom: calc(var(--mantine-spacing-xl) * 1.5);
+  font-family:
+    Greycliff CF,
+    var(--mantine-font-family);
+
+  @media (max-width: $mantine-breakpoint-sm) {
+    margin-bottom: var(--mantine-spacing-xl);
+  }
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  color: var(--mantine-color-white);
+}
+
+.icon {
+  margin-right: var(--mantine-spacing-md);
+  background-color: transparent;
+}
+
+.title-contact {
+  color: var(--mantine-color-blue-0);
+}
+
+.description {
+  color: var(--mantine-color-white);
 }
