@@ -20,7 +20,7 @@ import {
   Stack,
   useCombobox,
 } from "@mantine/core";
-import { IconLock, IconUser } from "@tabler/icons-react";
+import { IconCreditCard, IconUser } from "@tabler/icons-react";
 
 export default function AccountPageLayoutClient({
   children,
@@ -40,9 +40,9 @@ export default function AccountPageLayoutClient({
     },
     {
       id: 1,
-      label: "Password",
-      value: "change-password",
-      icon: IconLock,
+      label: "Billing",
+      value: "billing",
+      icon: IconCreditCard,
       isDisabled: true,
     },
   ];

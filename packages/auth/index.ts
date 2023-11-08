@@ -4,6 +4,8 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import NextAuth from "next-auth";
 import type { Provider } from "next-auth/providers";
 
+// import EmailProvider from "next-auth/providers/email";
+
 import { db } from "@eboto-mo/db";
 
 import { env } from "./env.mjs";
@@ -11,7 +13,7 @@ import { env } from "./env.mjs";
 export type { Session } from "next-auth";
 
 // Update this whenever adding new providers so that the client can
-export const providers = ["google"] as const;
+export const providers = ["google", "email"] as const;
 export type OAuthProviders = (typeof providers)[number];
 
 declare module "next-auth" {
@@ -33,6 +35,19 @@ export const {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     }) as Provider, // TODO: remove this `as`
+
+    // TODO: NodeMailer doesn't work in Edge Runtime for now
+    // EmailProvider({
+    //   server: {
+    //     host: env.SMTP_HOST,
+    //     port: env.SMTP_PORT,
+    //     auth: {
+    //       user: env.SMTP_USER,
+    //       pass: env.SMTP_PASSWORD,
+    //     },
+    //   },
+    //   from: env.EMAIL_FROM,
+    // }) as unknown as Provider, // TODO: remove this `as`,
   ],
   callbacks: {
     session: ({ session, user }) => ({

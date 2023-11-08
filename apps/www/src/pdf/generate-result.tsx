@@ -59,7 +59,7 @@ export default function GenerateResult({
         >
           <View style={{ display: "flex", alignItems: "center" }}>
             <PdfImage
-              src="https://raw.githubusercontent.com/bricesuazo/eboto-mo/main/public/images/eboto-mo-logo.png"
+              src="https://raw.githubusercontent.com/bricesuazo/eboto-mo/main/apps/www/public/images/logo.png"
               style={{
                 width: 32,
                 height: 32,

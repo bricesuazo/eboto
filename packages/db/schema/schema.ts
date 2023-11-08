@@ -422,9 +422,9 @@ export const reported_problems = mysqlTable(
 export const users = mysqlTable(
   "user",
   {
-    id: varchar("id", { length: 255 }).notNull().primaryKey(),
+    id,
     name: varchar("name", { length: 255 }),
-    email: varchar("email", { length: 255 }).notNull(),
+    email: varchar("email", { length: 255 }).notNull().unique(),
     emailVerified: timestamp("emailVerified", {
       mode: "date",
       fsp: 3,
@@ -441,9 +441,9 @@ export const users = mysqlTable(
 export const deleted_users = mysqlTable(
   "deleted_user",
   {
-    id: varchar("id", { length: 255 }).notNull().primaryKey(),
+    id,
     name: varchar("name", { length: 255 }),
-    email: varchar("email", { length: 255 }).notNull(),
+    email: varchar("email", { length: 255 }).notNull().unique(),
     emailVerified: timestamp("emailVerified", {
       mode: "date",
       fsp: 3,
