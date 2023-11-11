@@ -10,6 +10,7 @@ import {
   Center,
   Flex,
   Loader,
+  NumberFormatter,
   SimpleGrid,
   Stack,
   Stepper,
@@ -178,21 +179,21 @@ export default function DashboardOverview({
         {[
           {
             id: 0,
-            count: election.partylists.length.toString(),
+            count: election.partylists.length,
             title: "Partylists",
             icon: IconFlag,
             href: "partylist",
           },
           {
             id: 1,
-            count: election.positions.length.toString(),
+            count: election.positions.length,
             title: "Positions",
             icon: IconReplace,
             href: "position",
           },
           {
             id: 2,
-            count: election.candidates.length.toString(),
+            count: election.candidates.length,
             title: "Candidates",
             icon: IconUserSearch,
             href: "candidate",
@@ -215,7 +216,9 @@ export default function DashboardOverview({
                 <stat.icon size="2rem" />
               </Box>
               <Box>
-                <Title>{stat.count}</Title>
+                <Title>
+                  <NumberFormatter thousandSeparator value={stat.count} />
+                </Title>
                 <Text tt="uppercase" fw={700} c="green">
                   {stat.title}
                 </Text>
@@ -239,36 +242,19 @@ export default function DashboardOverview({
         {[
           {
             id: 0,
-            count: `${
-              election.voters.length === 0
-                ? 0
-                : election.voters.filter((voter) => voter.votes.length > 0)
-                    .length
-            } (${
-              isNaN(
-                (election.voters.filter((voter) => voter.votes.length > 0)
-                  .length /
-                  election.voters.length) *
-                  100,
-              )
-                ? 0
-                : (
-                    (election.voters.filter((voter) => voter.votes.length > 0)
-                      .length /
-                      election.voters.length) *
-                    100
-                  ).toFixed(2)
-            }%)`,
+            count: election.voters.filter((voter) => voter.votes.length > 0)
+              .length,
+            sub_count:
+              election.voters.filter((voter) => voter.votes.length > 0).length /
+              election.voters.length,
             title: "Voted",
-            description: "Voters who already voted",
+            description: "Total number of voters who already voted",
           },
           {
             id: 1,
-            count: election.voters
-              .filter((voter) => voter.votes.length > 0)
-              .length.toString(),
+            count: election.voters.length,
             title: "Voters",
-            description: "Voters",
+            description: "Total number of voters",
           },
         ].map((stat) => {
           return (
@@ -279,7 +265,24 @@ export default function DashboardOverview({
                 flex: 1,
               }}
             >
-              <Title order={2}>{stat.count}</Title>
+              <Title order={2}>
+                <NumberFormatter thousandSeparator value={stat.count} />{" "}
+                {stat.sub_count !== undefined &&
+                  (stat.sub_count > 0 ? (
+                    <>
+                      (
+                      <NumberFormatter
+                        thousandSeparator
+                        decimalScale={2}
+                        value={stat.sub_count}
+                        suffix="%"
+                      />
+                      )
+                    </>
+                  ) : (
+                    "(0%)"
+                  ))}
+              </Title>
               <Text tt="uppercase" fw={700} c="green">
                 {stat.title}
               </Text>
@@ -303,7 +306,10 @@ export default function DashboardOverview({
           <SimpleGrid
             cols={{
               base: 1,
-              md: 2,
+              sm: 2,
+              md: 3,
+              lg: 4,
+              xl: 5,
             }}
             style={{
               alignItems: "start",
@@ -330,7 +336,12 @@ export default function DashboardOverview({
                             ? option.name
                             : "No answer yet..."}
                         </TableTd>
-                        <TableTd>{option.vote_count}</TableTd>
+                        <TableTd>
+                          <NumberFormatter
+                            thousandSeparator
+                            value={option.vote_count}
+                          />
+                        </TableTd>
                       </TableTr>
                     ))
                   ) : (

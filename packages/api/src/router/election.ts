@@ -249,16 +249,19 @@ export const electionRouter = createTRPCRouter({
         with: {
           positions: true,
           partylists: {
-            where: (partylist, { eq, not }) =>
-              not(eq(partylist.acronym, "IND")),
+            where: (partylist, { and, isNull, ne }) =>
+              and(ne(partylist.acronym, "IND"), isNull(partylist.deleted_at)),
           },
           voters: {
+            where: (voters, { isNull }) => isNull(voters.deleted_at),
             with: {
               votes: true,
             },
           },
           generated_election_results: true,
-          candidates: true,
+          candidates: {
+            where: (candidates, { isNull }) => isNull(candidates.deleted_at),
+          },
         },
       });
 

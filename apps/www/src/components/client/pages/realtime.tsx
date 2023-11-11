@@ -12,6 +12,7 @@ import {
   Flex,
   Group,
   Loader,
+  NumberFormatter,
   SimpleGrid,
   Stack,
   Table,
@@ -162,7 +163,12 @@ export default function Realtime({
                           <TableTd>
                             <Flex justify="space-between" align="center">
                               <Text lineClamp={2}>{candidate.name}</Text>
-                              <Text>{candidate.vote.toString()}</Text>
+                              <Text>
+                                <NumberFormatter
+                                  thousandSeparator
+                                  value={candidate.vote}
+                                />
+                              </Text>
                             </Flex>
                           </TableTd>
                         </TableTr>
@@ -171,7 +177,12 @@ export default function Realtime({
                       <TableTd>
                         <Flex justify="space-between" align="center">
                           <Text>Abstain</Text>
-                          <Text>{position.votes}</Text>
+                          <Text>
+                            <NumberFormatter
+                              thousandSeparator
+                              value={position.votes}
+                            />
+                          </Text>
                         </Flex>
                       </TableTd>
                     </TableTr>
@@ -218,7 +229,12 @@ export default function Realtime({
                             voterFieldStat.options.map((option) => (
                               <TableTr key={option.name}>
                                 <TableTd>{option.name}</TableTd>
-                                <TableTd>{option.vote_count}</TableTd>
+                                <TableTd>
+                                  <NumberFormatter
+                                    thousandSeparator
+                                    value={option.vote_count}
+                                  />
+                                </TableTd>
                               </TableTr>
                             ))
                           ) : (
