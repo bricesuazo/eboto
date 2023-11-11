@@ -53,7 +53,7 @@ export default async function ElectionLayout(
         ),
     });
 
-    if (!isOngoing && (!voter || !commissioner)) notFound();
+    if (!isOngoing && !voter && !commissioner) notFound();
 
     if (!voter && !commissioner) redirect(callbackUrl);
   }

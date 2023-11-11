@@ -50,7 +50,7 @@ export default function DashboardSettings({
 }) {
   const getElectionBySlugQuery = api.election.getElectionBySlug.useQuery(
     {
-      slug: election.slug,
+      election_slug: election.slug,
     },
     {
       initialData: election,

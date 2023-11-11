@@ -14,9 +14,6 @@ export default async function Page({
 }: {
   params: { electionDashboardSlug: string };
 }) {
-  // const election = await electionCaller.getElectionBySlug({
-  //   slug: electionDashboardSlug,
-  // });
   const election = await db.query.elections.findFirst({
     where: (elections, { eq, and, isNull }) =>
       and(

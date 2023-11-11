@@ -225,12 +225,16 @@ export const electionRouter = createTRPCRouter({
   getElectionBySlug: publicProcedure
     .input(
       z.object({
-        slug: z.string().min(1),
+        election_slug: z.string().min(1),
       }),
     )
     .query(async ({ ctx, input }) => {
       const election = await ctx.db.query.elections.findFirst({
-        where: (elections, { eq }) => eq(elections.slug, input.slug),
+        where: (elections, { eq, and, isNull }) =>
+          and(
+            eq(elections.slug, input.election_slug),
+            isNull(elections.deleted_at),
+          ),
       });
 
       if (!election) throw new TRPCError({ code: "NOT_FOUND" });
@@ -245,7 +249,11 @@ export const electionRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const election = await ctx.db.query.elections.findFirst({
-        where: (elections, { eq }) => eq(elections.slug, input.election_slug),
+        where: (elections, { eq, and, isNull }) =>
+          and(
+            eq(elections.slug, input.election_slug),
+            isNull(elections.deleted_at),
+          ),
         with: {
           positions: true,
           partylists: {
@@ -367,17 +375,6 @@ export const electionRouter = createTRPCRouter({
           }),
       }));
     }),
-  // getElectionBySlug: publicProcedure
-  //   .input(
-  //     z.object({
-  //       slug: z.string().min(1),
-  //     }),
-  //   )
-  //   .query(async ({ input }) => {
-  //     return await ctx.db.query.elections.findFirst({
-  //       where: (elections, { eq }) => eq(elections.slug, input.slug),
-  //     });
-  //   }),
   getAllMyElections: protectedProcedure.query(({ ctx }) => {
     return ctx.db.query.commissioners.findMany({
       where: (commissioners, { eq, isNull, and }) =>

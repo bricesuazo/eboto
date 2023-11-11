@@ -13,7 +13,7 @@ export default async function Page({
   params: { electionDashboardSlug: string };
 }) {
   const election = await api.election.getElectionBySlug.query({
-    slug: electionDashboardSlug,
+    election_slug: electionDashboardSlug,
   });
 
   if (!election) notFound();
