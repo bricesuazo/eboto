@@ -10,11 +10,11 @@
     "with-env": "dotenv -e ../../.env.local --"
   },
   "dependencies": {
-    "@auth/core": "^0.18.0",
+    "@auth/core": "^0.18.1",
     "@planetscale/database": "^1.11.0",
-    "drizzle-orm": "0.28.6",
-    "mysql2": "^3.6.2",
-    "nanoid": "^5.0.2",
+    "drizzle-orm": "0.29.0",
+    "mysql2": "^3.6.3",
+    "nanoid": "^5.0.3",
     "uploadthing": "^5.7.4"
   },
   "devDependencies": {
@@ -23,7 +23,7 @@
     "@eboto-mo/tsconfig": "workspace:*",
     "@types/node": "^20.9.0",
     "dotenv-cli": "^7.3.0",
-    "drizzle-kit": "0.19.13",
+    "drizzle-kit": "0.20.1",
     "typescript": "^5.2.2"
   },
   "eslintConfig": {

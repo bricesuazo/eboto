@@ -1,28 +1,26 @@
 {
   "name": "@eboto-mo/eslint-config",
-  "version": "0.0.0",
-  "license": "MIT",
   "files": [
     "./base.js",
     "./nextjs.js",
     "./react.js"
   ],
   "dependencies": {
-    "@next/eslint-plugin-next": "^14.0.1",
-    "@types/eslint": "^8.44.6",
-    "@typescript-eslint/eslint-plugin": "^6.9.1",
-    "@typescript-eslint/parser": "^6.9.1",
+    "@next/eslint-plugin-next": "^14.0.2",
+    "@types/eslint": "^8.44.7",
+    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/parser": "^6.10.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-config-turbo": "^1.10.16",
     "eslint-plugin-import": "^2.29.0",
-    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0"
   },
   "devDependencies": {
     "@eboto-mo/prettier-config": "workspace:*",
     "@eboto-mo/tsconfig": "workspace:*",
-    "eslint": "^8.52.0",
+    "eslint": "^8.53.0",
     "typescript": "^5.2.2"
   },
   "prettier": "@eboto-mo/prettier-config"

@@ -2,7 +2,6 @@
   "name": "@eboto-mo/api",
   "main": "./index.ts",
   "types": "./index.ts",
-  "license": "MIT",
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
     "lint": "eslint .",
@@ -18,8 +17,8 @@
     "@trpc/client": "^10.43.3",
     "@trpc/server": "^10.43.3",
     "@web-std/file": "^3.0.3",
-    "nanoid": "^5.0.2",
-    "superjson": "1.13.1",
+    "nanoid": "^5.0.3",
+    "superjson": "^1.13.3",
     "uploadthing": "^5.7.4",
     "zod": "^3.22.4"
   },
@@ -27,7 +26,7 @@
     "@eboto-mo/eslint-config": "workspace:*",
     "@eboto-mo/prettier-config": "workspace:*",
     "@eboto-mo/tsconfig": "workspace:*",
-    "eslint": "^8.52.0",
+    "eslint": "^8.53.0",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2"
   },

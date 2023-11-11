@@ -62,7 +62,7 @@
     "react-wrap-balancer": "^1.1.0",
     "read-excel-file": "^5.7.1",
     "sharp": "^0.32.6",
-    "superjson": "^1.13.1",
+    "superjson": "^1.13.3",
     "to-words": "^3.6.1",
     "uploadthing": "^5.7.4",
     "xlsx": "^0.18.5",

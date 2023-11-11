@@ -1,7 +1,6 @@
 {
   "name": "@eboto-mo/constants",
   "main": "./index.ts",
-  "license": "MIT",
   "publishConfig": {
     "access": "public"
   },

@@ -1,13 +1,12 @@
 {
   "name": "@eboto-mo/email",
   "main": "./index.tsx",
-  "version": "0.0.0",
   "scripts": {
     "email:dev": "email dev --port 3002",
     "export": "email export"
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.438.0",
+    "@aws-sdk/client-ses": "^3.449.0",
     "@eboto-mo/constants": "workspace:*",
     "@react-email/components": "0.0.11",
     "@react-email/render": "0.0.9",
