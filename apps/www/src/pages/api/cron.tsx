@@ -8,19 +8,18 @@ import { sendElectionResult } from "@eboto-mo/email/emails/election-result";
 import { sendElectionStart } from "@eboto-mo/email/emails/election-start";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const today = new Date();
+  console.log("🚀 ~ file: cron.tsx:13 ~ handler ~ today:", today);
+  today.setSeconds(0);
+  today.setMilliseconds(0);
+  console.log("🚀 ~ file: cron.tsx:15 ~ handler ~ today:", today);
   await db.transaction(async (trx) => {
-    const start_date = new Date();
-    console.log("🚀 ~ file: cron.tsx:13 ~ handler ~ start_date:", start_date);
-    start_date.setSeconds(0);
-    start_date.setMilliseconds(0);
-    console.log("🚀 ~ file: cron.tsx:15 ~ handler ~ start_date:", start_date);
-
     const electionsStart = await trx.query.elections.findMany({
       where: (election, { eq, and, isNull }) =>
         and(
-          eq(election.start_date, start_date),
+          eq(election.start_date, today),
           isNull(election.deleted_at),
-          eq(election.voting_hour_start, start_date.getHours()),
+          eq(election.voting_hour_start, today.getHours()),
         ),
       with: {
         commissioners: {
@@ -33,28 +32,30 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     });
 
     for (const election of electionsStart) {
-      await sendElectionStart({
-        isForCommissioner: false,
-        election: {
-          name: election.name,
-          slug: election.slug,
-          start_date: election.start_date,
-          end_date: election.end_date,
-        },
-        emails: election.voters.map((voter) => voter.email),
-      });
-      await sendElectionStart({
-        isForCommissioner: true,
-        election: {
-          name: election.name,
-          slug: election.slug,
-          start_date: election.start_date,
-          end_date: election.end_date,
-        },
-        emails: election.commissioners.map(
-          (commissioner) => commissioner.user.email,
-        ),
-      });
+      await Promise.all([
+        sendElectionStart({
+          isForCommissioner: false,
+          election: {
+            name: election.name,
+            slug: election.slug,
+            start_date: election.start_date,
+            end_date: election.end_date,
+          },
+          emails: election.voters.map((voter) => voter.email),
+        }),
+        sendElectionStart({
+          isForCommissioner: true,
+          election: {
+            name: election.name,
+            slug: election.slug,
+            start_date: election.start_date,
+            end_date: election.end_date,
+          },
+          emails: election.commissioners.map(
+            (commissioner) => commissioner.user.email,
+          ),
+        }),
+      ]);
 
       if (election.publicity === "PRIVATE") {
         await trx.update(elections).set({
@@ -63,15 +64,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       }
       console.log("Email start sent to", election.name);
     }
+  });
 
-    const end_date = new Date(start_date);
-    console.log("🚀 ~ file: cron.tsx:49 ~ handler ~ end_date:", end_date);
-
-    const electionsEnd = await db.query.elections.findMany({
+  await db.transaction(async (trx) => {
+    const electionsEnd = await trx.query.elections.findMany({
       where: (election, { eq, and, isNull }) =>
         and(
-          eq(election.end_date, end_date),
-          eq(election.voting_hour_end, end_date.getHours()),
+          eq(election.end_date, today),
+          eq(election.voting_hour_end, today.getHours()),
           isNull(election.deleted_at),
         ),
       with: {
@@ -107,15 +107,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         })),
       } satisfies Pick<GeneratedElectionResult, "election">["election"];
 
-      await db.insert(generated_election_results).values({
-        election_id: election.id,
-        election: result,
-      });
-
-      await sendElectionResult({
-        emails: election.voters.map((voter) => voter.email),
-        election: result,
-      });
+      await Promise.all([
+        trx.insert(generated_election_results).values({
+          election_id: election.id,
+          election: result,
+        }),
+        sendElectionResult({
+          emails: election.voters.map((voter) => voter.email),
+          election: result,
+        }),
+      ]);
       console.log("Email result sent to", election.name);
     }
   });

@@ -68,6 +68,19 @@ export const elections = mysqlTable(
   (election) => ({
     electionIdIdx: index("electionId_idx").on(election.id),
     electionSlugIdx: index("electionSlug_idx").on(election.slug),
+    electionStartDateIdx: index("electionStartDate_idx").on(
+      election.start_date,
+    ),
+    electionEndDateIdx: index("electionEndDate_idx").on(election.end_date),
+    electionVotingHourStartIdx: index("electionVotingHourStart_idx").on(
+      election.voting_hour_start,
+    ),
+    electionVotingHourEndIdx: index("electionVotingHourEnd_idx").on(
+      election.voting_hour_end,
+    ),
+    electionDeletedAtIdx: index("electionDeletedAt_idx").on(
+      election.deleted_at,
+    ),
   }),
 );
 
@@ -110,7 +123,6 @@ export const commissioners = mysqlTable(
     commissionerUserIdIdx: index("commissionerUserId_idx").on(
       commissioner.user_id,
     ),
-
     commissionerUserIdElectionIdIdx: index(
       "commissionerUserIdElectionId_idx",
     ).on(commissioner.user_id, commissioner.election_id),
