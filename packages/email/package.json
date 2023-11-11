@@ -18,7 +18,7 @@
     "@eboto-mo/db": "workspace:*",
     "@eboto-mo/prettier-config": "workspace:*",
     "@eboto-mo/tsconfig": "workspace:*",
-    "@types/node": "^20.8.10",
+    "@types/node": "^20.9.0",
     "typescript": "^5.2.2"
   },
   "eslintConfig": {
