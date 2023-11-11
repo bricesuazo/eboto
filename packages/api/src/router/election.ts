@@ -5,6 +5,7 @@ import { nanoid } from "nanoid";
 import { z } from "zod";
 
 import {
+  isElectionEnded,
   isElectionOngoing,
   positionTemplate,
   takenSlugs,
@@ -753,5 +754,54 @@ export const electionRouter = createTRPCRouter({
         });
       }
       return fields;
+    }),
+  getElectionProgress: protectedProcedure
+    .input(
+      z.object({
+        election_id: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const election = await ctx.db.query.elections.findFirst({
+        where: (elections, { eq, and, isNull }) =>
+          and(
+            eq(elections.id, input.election_id),
+            isNull(elections.deleted_at),
+          ),
+        with: {
+          voters: {
+            limit: 1,
+            where: (voters, { isNull }) => isNull(voters.deleted_at),
+          },
+          partylists: {
+            limit: 2,
+            where: (partylists, { isNull }) => isNull(partylists.deleted_at),
+          },
+          positions: {
+            limit: 1,
+            where: (positions, { isNull }) => isNull(positions.deleted_at),
+          },
+          candidates: {
+            limit: 1,
+            where: (candidates, { isNull }) => isNull(candidates.deleted_at),
+          },
+        },
+      });
+
+      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+
+      if (isElectionEnded({ election })) return 7;
+
+      if (isElectionOngoing({ election })) return 6;
+
+      if (election.voters.length > 0) return 5;
+
+      if (election.candidates.length > 0) return 4;
+
+      if (election.positions.length > 0) return 3;
+
+      if (election.partylists.length > 1) return 2;
+
+      return 1;
     }),
 });

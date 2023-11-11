@@ -12,6 +12,8 @@ import {
   Loader,
   SimpleGrid,
   Stack,
+  Stepper,
+  StepperStep,
   Table,
   TableTbody,
   TableTd,
@@ -23,10 +25,21 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import {
+  IconCheckbox,
+  IconCircleCheck,
+  IconEdit,
   IconExternalLink,
+  IconFingerprint,
   IconFlag,
+  IconFlagCheck,
+  IconListCheck,
   IconReplace,
+  IconShield,
+  IconShieldCheck,
+  IconUserCheck,
+  IconUsers,
   IconUserSearch,
+  IconUserShield,
 } from "@tabler/icons-react";
 import moment from "moment";
 
@@ -49,8 +62,62 @@ export default function DashboardOverview({
   const getVoterFieldsStatsQuery = api.election.getVoterFieldsStats.useQuery({
     election_id: data.id,
   });
+  const getElectionProgressQuery = api.election.getElectionProgress.useQuery({
+    election_id: data.id,
+  });
   return (
     <Stack>
+      <Stepper active={getElectionProgressQuery.data ?? 0}>
+        <StepperStep
+          icon={<IconEdit />}
+          completedIcon={<IconCheckbox />}
+          label="Step 1"
+          description="Prepare election"
+          loading={getElectionProgressQuery.isLoading}
+        />
+        <StepperStep
+          icon={<IconFlag />}
+          completedIcon={<IconFlagCheck />}
+          label="Step 2"
+          description="Add partylist"
+          loading={getElectionProgressQuery.isLoading}
+        />
+        <StepperStep
+          icon={<IconReplace />}
+          completedIcon={<IconListCheck />}
+          label="Step 3"
+          description="Add positions"
+          loading={getElectionProgressQuery.isLoading}
+        />
+        <StepperStep
+          icon={<IconUserSearch />}
+          completedIcon={<IconUserCheck />}
+          label="Step 4"
+          description="Add candidates"
+          loading={getElectionProgressQuery.isLoading}
+        />
+        <StepperStep
+          icon={<IconUsers />}
+          completedIcon={<IconUserShield />}
+          label="Step 5"
+          description="Add voters"
+          loading={getElectionProgressQuery.isLoading}
+        />
+        <StepperStep
+          icon={<IconCircleCheck />}
+          completedIcon={<IconFingerprint />}
+          label="Step 6"
+          description="Voting period"
+          loading={getElectionProgressQuery.isLoading}
+        />
+        <StepperStep
+          icon={<IconShield />}
+          completedIcon={<IconShieldCheck />}
+          label="Step 7"
+          description="Election results"
+          loading={getElectionProgressQuery.isLoading}
+        />
+      </Stepper>
       <Box>
         <Flex justify="space-between" gap="xs">
           <Flex gap="xs">
@@ -258,7 +325,11 @@ export default function DashboardOverview({
                   {voterFieldStat.options.length ? (
                     voterFieldStat.options.map((option) => (
                       <TableTr key={option.name}>
-                        <TableTd>{option.name}</TableTd>
+                        <TableTd>
+                          {option.name.length
+                            ? option.name
+                            : "No answer yet..."}
+                        </TableTd>
                         <TableTd>{option.vote_count}</TableTd>
                       </TableTr>
                     ))

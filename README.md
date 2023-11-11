@@ -8,7 +8,7 @@ Empower your elections with eBoto Mo, the versatile and web-based voting platfor
 - **Framework**: [Next.js](https://nextjs.org/) + [Typescript](https://www.typescriptlang.org/)
 - **Database**: [PlanetScale](https://planetscale.com/)
 - **ORM**: [Drizzle](https://orm.drizzle.team/)
-- **API**: [tRPC](https://trpc.io/) + [Tanstack Query](https://tanstack.com/query/)
+- **API**: [tRPC](https://trpc.io/) + [TanStack Query](https://tanstack.com/query/)
 - **Authentication**: [NextAuth.js](https://next-auth.js.org/)
 - **Deployment**: [Vercel](https://vercel.com)
 - **Styling**: [Mantine](https://mantine.dev/)
