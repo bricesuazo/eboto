@@ -8,9 +8,7 @@ import { sendElectionResult } from "@eboto-mo/email/emails/election-result";
 import { sendElectionStart } from "@eboto-mo/email/emails/election-start";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const today = new Date(
-    new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" }),
-  );
+  const today = new Date();
   console.log("🚀 ~ file: cron.tsx:13 ~ handler ~ today:", today);
   today.setSeconds(0);
   today.setMilliseconds(0);

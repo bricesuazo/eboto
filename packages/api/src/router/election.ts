@@ -464,8 +464,8 @@ export const electionRouter = createTRPCRouter({
           id,
           name: input.name,
           slug: input.slug,
-          start_date: input.start_date,
-          end_date: input.end_date,
+          start_date: new Date(input.start_date.toISOString()),
+          end_date: new Date(input.end_date.toISOString()),
           voting_hour_start: input.voting_hours[0],
           voting_hour_end: input.voting_hours[1],
         });
@@ -578,9 +578,9 @@ export const electionRouter = createTRPCRouter({
             slug: input.newSlug,
             description: input.description,
             publicity: input.publicity,
-            start_date: input.start_date,
+            start_date: new Date(input.start_date.toISOString()),
+            end_date: new Date(input.end_date.toISOString()),
             // voter_domain: input.voter_domain,
-            end_date: input.end_date,
             voting_hour_start: input.voting_hours[0],
             voting_hour_end: input.voting_hours[1],
             logo: input.logo
