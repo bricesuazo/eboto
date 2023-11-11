@@ -17,9 +17,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   console.log("🚀 ~ file: cron.tsx:15 ~ handler ~ today:", today);
   await db.transaction(async (trx) => {
     const electionsStart = await trx.query.elections.findMany({
-      where: (election, { eq, and, isNull, lte }) =>
+      where: (election, { eq, and, isNull }) =>
         and(
-          lte(election.start_date, today),
+          eq(election.start_date, today),
           isNull(election.deleted_at),
           eq(election.voting_hour_start, today.getHours()),
         ),
@@ -70,9 +70,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   await db.transaction(async (trx) => {
     const electionsEnd = await trx.query.elections.findMany({
-      where: (election, { eq, and, isNull, gte }) =>
+      where: (election, { eq, and, isNull }) =>
         and(
-          gte(election.end_date, today),
+          eq(election.end_date, today),
           eq(election.voting_hour_end, today.getHours()),
           isNull(election.deleted_at),
         ),
