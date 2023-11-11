@@ -8,7 +8,7 @@ if (!process.env.DATABASE_URL) {
 export default {
   driver: "mysql2",
   dbCredentials: {
-    connectionString: process.env.DATABASE_URL,
+    uri: process.env.DATABASE_URL,
   },
   schema: "./schema",
   out: "./generated",
