@@ -8,16 +8,18 @@ import { sendElectionResult } from "@eboto-mo/email/emails/election-result";
 import { sendElectionStart } from "@eboto-mo/email/emails/election-start";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const today = new Date();
+  const today = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "Asia/Manila" }),
+  );
   console.log("🚀 ~ file: cron.tsx:13 ~ handler ~ today:", today);
   today.setSeconds(0);
   today.setMilliseconds(0);
   console.log("🚀 ~ file: cron.tsx:15 ~ handler ~ today:", today);
   await db.transaction(async (trx) => {
     const electionsStart = await trx.query.elections.findMany({
-      where: (election, { eq, and, isNull }) =>
+      where: (election, { eq, and, isNull, lte }) =>
         and(
-          eq(election.start_date, today),
+          lte(election.start_date, today),
           isNull(election.deleted_at),
           eq(election.voting_hour_start, today.getHours()),
         ),
@@ -68,9 +70,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   await db.transaction(async (trx) => {
     const electionsEnd = await trx.query.elections.findMany({
-      where: (election, { eq, and, isNull }) =>
+      where: (election, { eq, and, isNull, gte }) =>
         and(
-          eq(election.end_date, today),
+          gte(election.end_date, today),
           eq(election.voting_hour_end, today.getHours()),
           isNull(election.deleted_at),
         ),
