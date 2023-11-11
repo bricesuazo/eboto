@@ -53,7 +53,24 @@ export const partylistRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      // TODO: Validate commissioner
+      const election = await ctx.db.query.elections.findFirst({
+        where: (election, { eq, and, isNull }) =>
+          and(eq(election.id, input.election_id), isNull(election.deleted_at)),
+      });
+
+      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const commissioner = await ctx.db.query.commissioners.findFirst({
+        where: (commissioner, { eq, and, isNull }) =>
+          and(
+            eq(commissioner.user_id, ctx.session.user.id),
+            eq(commissioner.election_id, election.id),
+            isNull(commissioner.deleted_at),
+          ),
+      });
+
+      if (!commissioner) throw new TRPCError({ code: "UNAUTHORIZED" });
+
       const isAcronymExists = await ctx.db.query.partylists.findFirst({
         where: (partylist, { eq, and, isNull }) =>
           and(
@@ -84,7 +101,24 @@ export const partylistRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      // TODO: Validate commissioner
+      const election = await ctx.db.query.elections.findFirst({
+        where: (election, { eq, and, isNull }) =>
+          and(eq(election.id, input.election_id), isNull(election.deleted_at)),
+      });
+
+      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const commissioner = await ctx.db.query.commissioners.findFirst({
+        where: (commissioner, { eq, and, isNull }) =>
+          and(
+            eq(commissioner.user_id, ctx.session.user.id),
+            eq(commissioner.election_id, election.id),
+            isNull(commissioner.deleted_at),
+          ),
+      });
+
+      if (!commissioner) throw new TRPCError({ code: "UNAUTHORIZED" });
+
       if (input.newAcronym === "IND")
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -125,7 +159,24 @@ export const partylistRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      // TODO: Validate commissioner
+      const election = await ctx.db.query.elections.findFirst({
+        where: (election, { eq, and, isNull }) =>
+          and(eq(election.id, input.election_id), isNull(election.deleted_at)),
+      });
+
+      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const commissioner = await ctx.db.query.commissioners.findFirst({
+        where: (commissioner, { eq, and, isNull }) =>
+          and(
+            eq(commissioner.user_id, ctx.session.user.id),
+            eq(commissioner.election_id, election.id),
+            isNull(commissioner.deleted_at),
+          ),
+      });
+
+      if (!commissioner) throw new TRPCError({ code: "UNAUTHORIZED" });
+
       await ctx.db
         .update(partylists)
         .set({

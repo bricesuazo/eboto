@@ -123,12 +123,32 @@ export const positionTemplate: PositionTemplate = [
   },
   {
     order: 1,
+    id: "general",
+    name: "General Election Template",
+    organizations: [
+      {
+        id: "ssg",
+        name: "Supreme Student Government (SSG)",
+        positions: [
+          "President",
+          "Vice President",
+          "Secretary",
+          "Treasurer",
+          "Auditor",
+          "Public Information Officer",
+          "Peace Officer",
+        ],
+      },
+    ],
+  },
+  {
+    order: 2,
     id: "ceit",
     name: "CEIT - College of Engineering and Information Technology",
     organizations: [
       {
         id: "ceit-sc",
-        name: "CEIT-SC",
+        name: "College of Engineering and Information Technology - SC",
         positions: [
           "President",
           "Vice President for Internal Affairs",
@@ -146,7 +166,7 @@ export const positionTemplate: PositionTemplate = [
       },
       {
         id: "csso",
-        name: "CSSO",
+        name: "Computer Science Student Organization - CSSO",
         positions: [
           "President",
           "Vice President for Internal Affairs",
@@ -162,7 +182,7 @@ export const positionTemplate: PositionTemplate = [
       },
       {
         id: "coess-icpep",
-        name: "CoESS-ICPEP",
+        name: "Computer Engineering Students Society - ICPEP",
         positions: [
           "President",
           "Vice President for Internal Affairs",
@@ -176,8 +196,8 @@ export const positionTemplate: PositionTemplate = [
         ],
       },
       {
-        id: "iiee",
-        name: "IIEE",
+        id: "iiee-csc",
+        name: "Institute of Integrated Electrical Engineers - CSC",
         positions: [
           "President",
           "Vice President for Internal Affairs",
@@ -193,7 +213,7 @@ export const positionTemplate: PositionTemplate = [
       },
       {
         id: "piie",
-        name: "PIIE",
+        name: "Philippine Institute of Industrial Engineers - PIIE",
         positions: [
           "President",
           "Vice President for Internal Affairs",

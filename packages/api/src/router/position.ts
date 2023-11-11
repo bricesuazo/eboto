@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { and, eq } from "@eboto-mo/db";
@@ -34,7 +35,23 @@ export const positionRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      // TODO: Validate commissioner
+      const election = await ctx.db.query.elections.findFirst({
+        where: (election, { eq, and, isNull }) =>
+          and(eq(election.id, input.election_id), isNull(election.deleted_at)),
+      });
+
+      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const commissioner = await ctx.db.query.commissioners.findFirst({
+        where: (commissioner, { eq, and, isNull }) =>
+          and(
+            eq(commissioner.user_id, ctx.session.user.id),
+            eq(commissioner.election_id, election.id),
+            isNull(commissioner.deleted_at),
+          ),
+      });
+
+      if (!commissioner) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       const positionsInDB = await ctx.db.query.positions.findMany({
         where: (positions, { eq }) =>
@@ -60,7 +77,35 @@ export const positionRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      // TODO: Validate commissioner
+      const election = await ctx.db.query.elections.findFirst({
+        where: (election, { eq, and, isNull }) =>
+          and(eq(election.id, input.election_id), isNull(election.deleted_at)),
+      });
+
+      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const commissioner = await ctx.db.query.commissioners.findFirst({
+        where: (commissioner, { eq, and, isNull }) =>
+          and(
+            eq(commissioner.user_id, ctx.session.user.id),
+            eq(commissioner.election_id, election.id),
+            isNull(commissioner.deleted_at),
+          ),
+      });
+
+      if (!commissioner) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      const position = await ctx.db.query.positions.findFirst({
+        where: (position, { eq, and, isNull }) =>
+          and(
+            eq(position.id, input.position_id),
+            eq(position.election_id, input.election_id),
+            isNull(position.deleted_at),
+          ),
+      });
+
+      if (!position) throw new TRPCError({ code: "NOT_FOUND" });
+
       await ctx.db
         .update(positions)
         .set({

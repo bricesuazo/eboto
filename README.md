@@ -5,17 +5,19 @@
 Empower your elections with eBoto Mo, the versatile and web-based voting platform that offers secure online elections for any type of organization.
 
 - **Monorepo**: [TurboRepo](https://turbo.build/)
-- **Framework**: [Next.js + Typescript](https://nextjs.org/)
+- **Framework**: [Next.js](https://nextjs.org/) + [Typescript](https://www.typescriptlang.org/)
 - **Database**: [PlanetScale](https://planetscale.com/)
 - **ORM**: [Drizzle](https://orm.drizzle.team/)
-- **API**: [tRPC](https://trpc.io/)
+- **API**: [tRPC](https://trpc.io/) + [Tanstack Query](https://tanstack.com/query/)
 - **Authentication**: [NextAuth.js](https://next-auth.js.org/)
 - **Deployment**: [Vercel](https://vercel.com)
 - **Styling**: [Mantine](https://mantine.dev/)
-- **Email**: [React Email](https://react.email/)
+- **Email**: [React Email](https://react.email/) + [Amazon SES](https://aws.amazon.com/ses/)
 - **Data Validator**: [Zod](https://zod.dev/)
 
 ## Running Locally
+
+### For the [Web](/apps/www) Version
 
 ```bash
 git clone https://github.com/bricesuazo/eboto-mo.git
@@ -25,6 +27,18 @@ pnpm run dev
 ```
 
 Create a `.env` file similar to [`.env.example`](https://github.com/bricesuazo/eboto-mo/blob/main/.env.example).
+
+### For the [Mobile](/apps/mobile) Version
+
+```bash
+Coming soon...
+```
+
+### For the [Local](/apps/local) Version
+
+```bash
+Coming soon...
+```
 
 ## License
 

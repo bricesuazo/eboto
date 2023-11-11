@@ -173,16 +173,23 @@ export const voterRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      // TODO: Validate commissioner
-      const isElectionExists = await ctx.db.query.elections.findFirst({
-        where: (elections, { eq }) => eq(elections.id, input.election_id),
+      const election = await ctx.db.query.elections.findFirst({
+        where: (election, { eq, and, isNull }) =>
+          and(eq(election.id, input.election_id), isNull(election.deleted_at)),
       });
 
-      if (!isElectionExists)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Election does not exists",
-        });
+      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const commissioner = await ctx.db.query.commissioners.findFirst({
+        where: (commissioner, { eq, and, isNull }) =>
+          and(
+            eq(commissioner.user_id, ctx.session.user.id),
+            eq(commissioner.election_id, election.id),
+            isNull(commissioner.deleted_at),
+          ),
+      });
+
+      if (!commissioner) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       const isElectionCommissionerExists =
         await ctx.db.query.commissioners.findFirst({
@@ -277,7 +284,23 @@ export const voterRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      // TODO: Validate commissioner
+      const election = await ctx.db.query.elections.findFirst({
+        where: (election, { eq, and, isNull }) =>
+          and(eq(election.id, input.election_id), isNull(election.deleted_at)),
+      });
+
+      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const commissioner = await ctx.db.query.commissioners.findFirst({
+        where: (commissioner, { eq, and, isNull }) =>
+          and(
+            eq(commissioner.user_id, ctx.session.user.id),
+            eq(commissioner.election_id, election.id),
+            isNull(commissioner.deleted_at),
+          ),
+      });
+
+      if (!commissioner) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       await ctx.db
         .update(voters)
@@ -310,7 +333,24 @@ export const voterRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      // TODO: Validate commissioner
+      const election = await ctx.db.query.elections.findFirst({
+        where: (election, { eq, and, isNull }) =>
+          and(eq(election.id, input.election_id), isNull(election.deleted_at)),
+      });
+
+      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const commissioner = await ctx.db.query.commissioners.findFirst({
+        where: (commissioner, { eq, and, isNull }) =>
+          and(
+            eq(commissioner.user_id, ctx.session.user.id),
+            eq(commissioner.election_id, election.id),
+            isNull(commissioner.deleted_at),
+          ),
+      });
+
+      if (!commissioner) throw new TRPCError({ code: "UNAUTHORIZED" });
+
       await ctx.db.transaction(async (db) => {
         const isElectionExists = await ctx.db.query.elections.findFirst({
           where: (elections, { eq }) => eq(elections.id, input.election_id),

@@ -1,4 +1,9 @@
-import { IconDashboard, IconHome, IconUserCog } from "@tabler/icons-react";
+import {
+  IconDashboard,
+  IconHome,
+  IconSparkles,
+  IconUserCog,
+} from "@tabler/icons-react";
 
 export const siteConfig = {
   name: "eBoto Mo – Your One-Stop Online Voting Solution",
@@ -35,5 +40,12 @@ export const SPOTLIGHT_DATA = [
     description: "Change your account settings",
     leftSection: <IconUserCog />,
     link: "/account",
+  },
+  {
+    id: "pricing",
+    label: "Pricing",
+    description: "See our pricing plans",
+    leftSection: <IconSparkles />,
+    link: "/pricing",
   },
 ];

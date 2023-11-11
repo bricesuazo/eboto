@@ -374,9 +374,8 @@ export const electionRouter = createTRPCRouter({
   //       where: (elections, { eq }) => eq(elections.slug, input.slug),
   //     });
   //   }),
-  getAllMyElections: protectedProcedure.query(async ({ ctx }) => {
-    // TODO: Validate commissioner
-    return await ctx.db.query.commissioners.findMany({
+  getAllMyElections: protectedProcedure.query(({ ctx }) => {
+    return ctx.db.query.commissioners.findMany({
       where: (commissioners, { eq, isNull, and }) =>
         and(
           isNull(commissioners.deleted_at),
@@ -387,109 +386,6 @@ export const electionRouter = createTRPCRouter({
       },
     });
   }),
-  // getDashboardPartylistData: protectedProcedure
-  //   .input(
-  //     z.object({
-  //       election_id: z.string().min(1),
-  //     }),
-  //   )
-  //   .query(async ({ ctx, input }) => {
-  //     // TODO: Validate commissioner
-  //     return await ctx.db.query.partylists.findMany({
-  //       where: (partylists, { eq, and }) =>
-  //         and(
-  //           eq(partylists.election_id, input.election_id),
-  //           not(eq(partylists.acronym, "IND")),
-  //         ),
-  //       orderBy: (partylists, { desc }) => desc(partylists.updated_at),
-  //     });
-  //   }),
-  // getAllPartylistsByElectionId: protectedProcedure
-  //   .input(
-  //     z.object({
-  //       election_id: z.string().min(1),
-  //     }),
-  //   )
-  //   .query(async ({ ctx, input }) => {
-  //     // TODO: Validate commissioner
-  //     return await ctx.db.query.partylists.findMany({
-  //       where: (partylists, { eq }) =>
-  //         eq(partylists.election_id, input.election_id),
-  //       orderBy: (partylists, { asc }) => asc(partylists.created_at),
-  //     });
-  //   }),
-  // getDashboardData: protectedProcedure
-  //   .input(
-  //     z.object({
-  //       election_id: z.string().min(1),
-  //     }),
-  //   )
-  //   .query(async ({ ctx, input }) => {
-  //     // TODO: Validate commissioner
-  //     return await ctx.db.query.positions.findMany({
-  //       where: (positions, { eq }) =>
-  //         eq(positions.election_id, input.election_id),
-  //       orderBy: (positions, { asc }) => asc(positions.order),
-  //     });
-  //   }),
-  // getAllCandidatesByElectionId: protectedProcedure
-  //   .input(
-  //     z.object({
-  //       election_id: z.string().min(1),
-  //     }),
-  //   )
-  //   .query(async ({ ctx, input }) => {
-  //     // TODO: Validate commissioner
-  //     return await ctx.db.query.positions.findMany({
-  //       where: (positions, { eq }) =>
-  //         eq(positions.election_id, input.election_id),
-  //       orderBy: (positions, { asc }) => asc(positions.order),
-  //       with: {
-  //         candidates: {
-  //           with: {
-  //             partylist: true,
-  //             credential: {
-  //               columns: {
-  //                 id: true,
-  //               },
-  //               with: {
-  //                 affiliations: {
-  //                   columns: {
-  //                     id: true,
-  //                     org_name: true,
-  //                     org_position: true,
-  //                     start_year: true,
-  //                     end_year: true,
-  //                   },
-  //                 },
-  //                 achievements: {
-  //                   columns: {
-  //                     id: true,
-  //                     name: true,
-  //                     year: true,
-  //                   },
-  //                 },
-  //                 events_attended: {
-  //                   columns: {
-  //                     id: true,
-  //                     name: true,
-  //                     year: true,
-  //                   },
-  //                 },
-  //               },
-  //             },
-  //             platforms: {
-  //               columns: {
-  //                 id: true,
-  //                 title: true,
-  //                 description: true,
-  //               },
-  //             },
-  //           },
-  //         },
-  //       },
-  //     });
-  //   }),
   getVotersByElectionSlug: protectedProcedure
     .input(
       z.object({
@@ -547,7 +443,6 @@ export const electionRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      // TODO: Validate commissioner
       if (takenSlugs.includes(input.slug)) {
         throw new Error("Election slug is already exists");
       }
@@ -625,7 +520,6 @@ export const electionRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      // TODO: Validate commissioner
       if (input.newSlug !== input.oldSlug) {
         if (takenSlugs.includes(input.newSlug)) {
           throw new TRPCError({
@@ -658,6 +552,12 @@ export const electionRouter = createTRPCRouter({
         );
 
         if (!isElectionCommissionerExists)
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Unauthorized",
+          });
+
+        if (!isElectionCommissionerExists.commissioners.length)
           throw new TRPCError({
             code: "UNAUTHORIZED",
             message: "Unauthorized",

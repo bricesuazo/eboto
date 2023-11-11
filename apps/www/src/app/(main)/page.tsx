@@ -91,7 +91,7 @@ export default function HomePage() {
           </Flex>
         </Box>
 
-        <Stack gap="xl">
+        <Stack gap="xl" id="what">
           <Title order={2} ta="center">
             <Balancer>Ano ang eBoto Mo? (What is eBoto Mo?)</Balancer>
           </Title>
@@ -106,7 +106,7 @@ export default function HomePage() {
           </Box>
         </Stack>
 
-        <SimpleGrid cols={{ base: 1, sm: 2 }} pos="relative">
+        <SimpleGrid id="faq" cols={{ base: 1, sm: 2 }} pos="relative">
           <Box
             top={60}
             style={{
@@ -148,7 +148,9 @@ export default function HomePage() {
           </Box>
         </SimpleGrid>
 
-        <ContactForm />
+        <Box id="contact">
+          <ContactForm />
+        </Box>
 
         <Stack gap="xs" className={classes.cta}>
           <Title ta="center">

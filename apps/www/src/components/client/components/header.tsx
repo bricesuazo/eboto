@@ -44,6 +44,7 @@ import {
   IconLogout,
   IconMoon,
   IconSearch,
+  IconSparkles,
   IconSun,
   IconUserCircle,
 } from "@tabler/icons-react";
@@ -254,11 +255,6 @@ export default function Header({ userId }: { userId?: string }) {
                           overflow: "hidden",
                           width: 24,
                           height: 24,
-
-                          // [theme.fn.largerThan("sm")]: {
-                          //   width: 32,
-                          //   height: 32,
-                          // },
                         }}
                       >
                         {!session.isLoading ? (
@@ -326,6 +322,14 @@ export default function Header({ userId }: { userId?: string }) {
                     leftSection={<IconUserCircle size={16} />}
                   >
                     Account settings
+                  </MenuItem>
+
+                  <MenuItem
+                    component={Link}
+                    href="/pricing"
+                    leftSection={<IconSparkles size={16} />}
+                  >
+                    Pricing
                   </MenuItem>
 
                   <MenuItem

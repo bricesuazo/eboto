@@ -96,7 +96,23 @@ export const candidateRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      // TODO: Validate commissioner
+      const election = await ctx.db.query.elections.findFirst({
+        where: (election, { eq, and, isNull }) =>
+          and(eq(election.id, input.election_id), isNull(election.deleted_at)),
+      });
+
+      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const commissioner = await ctx.db.query.commissioners.findFirst({
+        where: (commissioner, { eq, and, isNull }) =>
+          and(
+            eq(commissioner.user_id, ctx.session.user.id),
+            eq(commissioner.election_id, election.id),
+            isNull(commissioner.deleted_at),
+          ),
+      });
+
+      if (!commissioner) throw new TRPCError({ code: "NOT_FOUND" });
 
       if (input.old_slug !== input.new_slug) {
         const isCandidateSlugExists = await ctx.db.query.candidates.findFirst({
@@ -292,7 +308,24 @@ export const candidateRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      // TODO: Validate commissioner
+      const election = await ctx.db.query.elections.findFirst({
+        where: (election, { eq, and, isNull }) =>
+          and(eq(election.id, input.election_id), isNull(election.deleted_at)),
+      });
+
+      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const commissioner = await ctx.db.query.commissioners.findFirst({
+        where: (commissioner, { eq, and, isNull }) =>
+          and(
+            eq(commissioner.user_id, ctx.session.user.id),
+            eq(commissioner.election_id, election.id),
+            isNull(commissioner.deleted_at),
+          ),
+      });
+
+      if (!commissioner) throw new TRPCError({ code: "NOT_FOUND" });
+
       const isCandidateSlugExists = await ctx.db.query.candidates.findFirst({
         where: (candidate, { eq, and, isNull }) =>
           and(
@@ -393,7 +426,38 @@ export const candidateRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      // TODO: Validate commissioner
+      const election = await ctx.db.query.elections.findFirst({
+        where: (election, { eq, and, isNull }) =>
+          and(eq(election.id, input.election_id), isNull(election.deleted_at)),
+      });
+
+      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const commissioner = await ctx.db.query.commissioners.findFirst({
+        where: (commissioner, { eq, and, isNull }) =>
+          and(
+            eq(commissioner.user_id, ctx.session.user.id),
+            eq(commissioner.election_id, election.id),
+            isNull(commissioner.deleted_at),
+          ),
+      });
+
+      if (!commissioner) throw new TRPCError({ code: "NOT_FOUND" });
+
+      const candidate = await ctx.db.query.candidates.findFirst({
+        where: (candidates, { eq, and, isNull }) =>
+          and(
+            eq(candidates.id, input.candidate_id),
+            eq(candidates.election_id, input.election_id),
+            isNull(candidates.deleted_at),
+          ),
+      });
+
+      if (!candidate)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Candidate not found",
+        });
 
       await ctx.db
         .update(candidates)
