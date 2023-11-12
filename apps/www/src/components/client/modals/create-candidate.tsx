@@ -127,7 +127,6 @@ export default function CreateCandidate({ position }: { position: Position }) {
       affiliations: [],
       eventsAttended: [],
     },
-    validateInputOnBlur: true,
     validate: {
       first_name: hasLength(
         { min: 1 },
@@ -359,11 +358,6 @@ export default function CreateCandidate({ position }: { position: Position }) {
                             style={() => ({
                               width: rem(120),
                               height: rem(120),
-
-                              // [theme.fn.smallerThan("sm")]: {
-                              //   width: rem(180),
-                              //   height: rem(180),
-                              // },
                             })}
                           >
                             <Image

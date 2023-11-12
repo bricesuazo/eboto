@@ -19,7 +19,7 @@ export default function SigninForm() {
   //     email: "",
   //     password: "",
   //   },
-  //   validateInputOnBlur: true,
+  //   : true,
   //   validate: {
   //     email: isEmail("Invalid email") || isNotEmpty("Email is required"),
   //     password: hasLength({ min: 8 }, "Password must be at least 8 characters"),

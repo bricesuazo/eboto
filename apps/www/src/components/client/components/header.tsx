@@ -85,8 +85,6 @@ export default function Header({ userId }: { userId?: string }) {
       subject: "",
       description: "",
     },
-    validateInputOnBlur: true,
-    validateInputOnChange: true,
     validate: {
       subject: (value) => {
         if (!value.trim() || !value.length) {

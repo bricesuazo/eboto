@@ -28,8 +28,6 @@ export default function ContactForm() {
     subject: string;
     message: string;
   }>({
-    validateInputOnChange: true,
-    validateInputOnBlur: true,
     initialValues: {
       name: "",
       email: "",

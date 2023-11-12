@@ -46,7 +46,6 @@ export default function EditVoter({
     email: string;
   }>({
     initialValues,
-    validateInputOnBlur: true,
     validate: {
       email: isEmail("Please enter a valid email address"),
     },

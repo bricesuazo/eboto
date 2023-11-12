@@ -38,9 +38,6 @@ export default function EditPosition({ position }: { position: Position }) {
 
   const form = useForm({
     initialValues,
-    validateInputOnBlur: true,
-    validateInputOnChange: true,
-    clearInputErrorOnChange: true,
     transformValues: (values) => {
       if (!values.isSingle) {
         return {
@@ -83,6 +80,10 @@ export default function EditPosition({ position }: { position: Position }) {
 
   const editPositionMutation = api.position.edit.useMutation({
     onSuccess: async () => {
+      await Promise.all([
+        context.position.getDashboardData.refetch(),
+        context.candidate.getDashboardData.refetch(),
+      ]);
       notifications.show({
         title: `${form.values.name} updated!`,
         message: "Successfully updated position",
@@ -90,7 +91,6 @@ export default function EditPosition({ position }: { position: Position }) {
         autoClose: 5000,
       });
       close();
-      await context.position.getDashboardData.invalidate();
     },
     onError: (error) => {
       notifications.show({

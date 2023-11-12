@@ -29,7 +29,11 @@ import moment from "moment";
 import Balancer from "react-wrap-balancer";
 
 import type { RouterOutputs } from "@eboto-mo/api";
-import { isElectionEnded, parseHourTo12HourFormat } from "@eboto-mo/constants";
+import {
+  isElectionEnded,
+  isElectionOngoing,
+  parseHourTo12HourFormat,
+} from "@eboto-mo/constants";
 import type { Election } from "@eboto-mo/db/schema";
 
 export default function Realtime({
@@ -43,13 +47,22 @@ export default function Realtime({
     election.slug,
     {
       initialData: positions,
+      enabled:
+        isElectionOngoing({ election }) && !isElectionEnded({ election }),
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
     },
   );
   const getVoterFieldsStatsInRealtimeQuery =
-    api.election.getVoterFieldsStatsInRealtime.useQuery({
-      election_id: election.id,
-    });
-  const isEnded = isElectionEnded({ election });
+    api.election.getVoterFieldsStatsInRealtime.useQuery(
+      {
+        election_id: election.id,
+      },
+      {
+        refetchOnWindowFocus: true,
+        refetchOnReconnect: true,
+      },
+    );
   return (
     <>
       <ScrollToTopButton />
@@ -89,7 +102,7 @@ export default function Realtime({
                       parseHourTo12HourFormat(election.voting_hour_end)}
                 </Text>
 
-                {!isEnded ? (
+                {!isElectionEnded({ election }) ? (
                   <Text ta="center" size="xs" c="dimmed">
                     <Balancer>
                       Realtime result as of{" "}
@@ -98,8 +111,7 @@ export default function Realtime({
                   </Text>
                 ) : (
                   <Text ta="center" tw="bold">
-                    Official result as of{" "}
-                    {moment(new Date()).format("MMMM Do YYYY, h:mm:ss A")}
+                    Official result
                   </Text>
                 )}
               </Box>

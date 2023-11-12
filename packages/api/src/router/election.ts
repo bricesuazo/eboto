@@ -365,11 +365,13 @@ export const electionRouter = createTRPCRouter({
           .map((candidate, index) => {
             return {
               id: candidate.id,
-              name: isElectionOngoing({ election })
-                ? `Candidate ${index + 1}`
-                : `${candidate.last_name}, ${candidate.first_name}${
-                    candidate.middle_name ? " " + candidate.middle_name : ""
-                  } (${candidate.partylist.acronym})`,
+              name:
+                isElectionOngoing({ election }) &&
+                !isElectionEnded({ election })
+                  ? `Candidate ${index + 1}`
+                  : `${candidate.last_name}, ${candidate.first_name}${
+                      candidate.middle_name ? " " + candidate.middle_name : ""
+                    } (${candidate.partylist.acronym})`,
               vote: candidate.votes.length,
             };
           }),

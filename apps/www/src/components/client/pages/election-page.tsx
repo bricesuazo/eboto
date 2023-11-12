@@ -75,7 +75,6 @@ export default function ElectionPage({
     initialValues: Object.fromEntries(
       election.voter_fields.map((field) => [field.id, ""]),
     ),
-    validateInputOnBlur: true,
     validate: (values) => {
       const errors: Record<string, string> = {};
       election.voter_fields.forEach((field) => {

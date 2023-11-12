@@ -34,7 +34,6 @@ export default function CreatePartylist({
       name: "",
       acronym: "",
     },
-    validateInputOnBlur: true,
     validate: {
       name: hasLength(
         {
@@ -81,7 +80,6 @@ export default function CreatePartylist({
         onClick={open}
         style={() => ({
           width: "fit-content",
-          // [theme.fn.smallerThan("xs")]: { width: "100%" },
         })}
         leftSection={<IconFlag size="1rem" />}
       >

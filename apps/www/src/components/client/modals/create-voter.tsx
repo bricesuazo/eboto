@@ -52,7 +52,6 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
     initialValues: {
       email: "",
     },
-    validateInputOnBlur: true,
     validate: {
       email: isEmail("Please enter a valid email address"),
     },

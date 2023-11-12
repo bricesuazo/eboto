@@ -22,7 +22,7 @@ export default function RegisterForm() {
   //     password: "",
   //     confirmPassword: "",
   //   },
-  //   validateInputOnBlur: true,
+  //   : true,
   //   validate: {
   //     firstName: hasLength(
   //       { min: 2 },

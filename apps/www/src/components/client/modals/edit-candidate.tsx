@@ -158,7 +158,6 @@ export default function EditCandidate({
     }[];
   }>({
     initialValues,
-    validateInputOnBlur: true,
     validate: {
       first_name: hasLength(
         { min: 1 },
@@ -515,11 +514,6 @@ export default function EditCandidate({
                               style={() => ({
                                 width: rem(120),
                                 height: rem(120),
-
-                                // [theme.fn.smallerThan("sm")]: {
-                                //   width: rem(180),
-                                //   height: rem(180),
-                                // },
                               })}
                             >
                               <Image
@@ -545,11 +539,6 @@ export default function EditCandidate({
                                 style={() => ({
                                   width: rem(120),
                                   height: rem(120),
-
-                                  // [theme.fn.smallerThan("sm")]: {
-                                  //   width: rem(180),
-                                  //   height: rem(180),
-                                  // },
                                 })}
                               >
                                 <Image

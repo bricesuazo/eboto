@@ -33,6 +33,10 @@ export default function CreatePosition({
   const { mutate, isLoading, isError, error, reset } =
     api.position.create.useMutation({
       onSuccess: async () => {
+        await Promise.all([
+          context.position.getDashboardData.refetch(),
+          context.candidate.getDashboardData.refetch(),
+        ]);
         notifications.show({
           title: `${form.values.name} created!`,
           message: "Successfully created position",
@@ -40,8 +44,6 @@ export default function CreatePosition({
           autoClose: 5000,
         });
         close();
-
-        await context.position.getDashboardData.invalidate();
       },
     });
 
@@ -53,9 +55,6 @@ export default function CreatePosition({
       min: 0,
       max: 1,
     },
-    validateInputOnBlur: true,
-    validateInputOnChange: true,
-    clearInputErrorOnChange: true,
     validate: {
       name: hasLength(
         {
@@ -107,7 +106,6 @@ export default function CreatePosition({
       <Button
         style={() => ({
           width: "fit-content",
-          // [theme.fn.smallerThan("xs")]: { width: "100%" },
         })}
         onClick={open}
         leftSection={<IconReplace size="1rem" />}

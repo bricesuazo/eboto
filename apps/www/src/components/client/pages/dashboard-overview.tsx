@@ -58,14 +58,30 @@ export default function DashboardOverview({
     {
       election_slug,
     },
-    { initialData: data },
+    {
+      initialData: data,
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
+    },
   );
-  const getVoterFieldsStatsQuery = api.election.getVoterFieldsStats.useQuery({
-    election_id: data.id,
-  });
-  const getElectionProgressQuery = api.election.getElectionProgress.useQuery({
-    election_id: data.id,
-  });
+  const getVoterFieldsStatsQuery = api.election.getVoterFieldsStats.useQuery(
+    {
+      election_id: data.id,
+    },
+    {
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
+    },
+  );
+  const getElectionProgressQuery = api.election.getElectionProgress.useQuery(
+    {
+      election_id: data.id,
+    },
+    {
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
+    },
+  );
   return (
     <Stack>
       <Stepper active={getElectionProgressQuery.data ?? 0}>

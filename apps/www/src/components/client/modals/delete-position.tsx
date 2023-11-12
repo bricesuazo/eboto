@@ -16,6 +16,10 @@ export default function DeletePosition({ position }: { position: Position }) {
   const { mutate, isLoading, isError, error, reset } =
     api.position.delete.useMutation({
       onSuccess: async () => {
+        await Promise.all([
+          context.position.getDashboardData.refetch(),
+          context.candidate.getDashboardData.refetch(),
+        ]);
         notifications.show({
           title: `${position.name} deleted!`,
           message: "Successfully deleted position",
@@ -23,7 +27,6 @@ export default function DeletePosition({ position }: { position: Position }) {
           autoClose: 5000,
         });
         close();
-        await context.position.getDashboardData.invalidate();
       },
       onError: (error) => {
         notifications.show({

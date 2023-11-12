@@ -56,7 +56,6 @@ export default function AccountPageClient({ session }: { session: Session }) {
       name: sessionQuery.data.user.name,
       image: sessionQuery.data.user.image,
     },
-    validateInputOnBlur: true,
     // validate: {
     //   firstName: isNotEmpty("First name is required"),
     //   lastName: isNotEmpty("Last name is required"),
@@ -68,8 +67,6 @@ export default function AccountPageClient({ session }: { session: Session }) {
     initialValues: {
       password: "",
     },
-    validateInputOnBlur: true,
-    clearInputErrorOnChange: true,
     validate: {
       password: hasLength(
         { min: 8 },
@@ -275,11 +272,6 @@ export default function AccountPageClient({ session }: { session: Session }) {
                             style={() => ({
                               width: rem(120),
                               height: rem(120),
-
-                              // [theme.fn.smallerThan("sm")]: {
-                              //   width: rem(180),
-                              //   height: rem(180),
-                              // },
                             })}
                           >
                             <Image

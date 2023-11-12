@@ -35,7 +35,9 @@ export default function DashboardCandidate({
 }) {
   const positionsWithCandidatesQuery = api.candidate.getDashboardData.useQuery(
     { election_id: election.id },
-    { initialData: positionsWithCandidates },
+    {
+      initialData: positionsWithCandidates,
+    },
   );
 
   if (!election) notFound();

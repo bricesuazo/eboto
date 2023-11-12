@@ -123,8 +123,6 @@ export default function DashboardSettings({
       ],
       logo: getElectionBySlugQuery.data.logo?.url ?? null,
     },
-    validateInputOnBlur: true,
-    clearInputErrorOnChange: true,
     validate: {
       name: hasLength(
         { min: 3 },
@@ -147,9 +145,6 @@ export default function DashboardSettings({
         }
         if (value[0].getTime() >= value[1].getTime()) {
           return "Start date must be before end date";
-        }
-        if (value[1].getTime() <= value[0].getTime()) {
-          return "End date must be after start date";
         }
       },
       publicity: (value) => {
@@ -182,8 +177,6 @@ export default function DashboardSettings({
     initialValues: {
       name: "",
     },
-    validateInputOnBlur: true,
-    clearInputErrorOnChange: true,
     validate: {
       name: (value) => {
         if (value !== election.name) {
@@ -463,11 +456,6 @@ export default function DashboardSettings({
                       style={() => ({
                         width: rem(120),
                         height: rem(120),
-
-                        // [theme.fn.smallerThan("sm")]: {
-                        //   width: rem(180),
-                        //   height: rem(180),
-                        // },
                       })}
                     >
                       <Image
@@ -486,11 +474,6 @@ export default function DashboardSettings({
                         style={() => ({
                           width: rem(120),
                           height: rem(120),
-
-                          // [theme.fn.smallerThan("sm")]: {
-                          //   width: rem(180),
-                          //   height: rem(180),
-                          // },
                         })}
                       >
                         <Image

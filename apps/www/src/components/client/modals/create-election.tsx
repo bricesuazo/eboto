@@ -63,7 +63,6 @@ export default function CreateElection({
     template: string;
     voting_hours: [number, number];
   }>({
-    validateInputOnChange: true,
     initialValues: {
       name: "",
       slug: "",
@@ -71,8 +70,6 @@ export default function CreateElection({
       template: "none",
       voting_hours: [7, 19],
     },
-
-    validateInputOnBlur: true,
 
     validate: {
       name: hasLength(

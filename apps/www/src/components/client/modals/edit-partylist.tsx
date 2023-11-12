@@ -36,7 +36,6 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
   };
   const form = useForm({
     initialValues,
-    validateInputOnBlur: true,
 
     validate: {
       name: hasLength(
