@@ -210,7 +210,7 @@ export default function DashboardSettings({
   return (
     <Box h="100%">
       <Modal
-        opened={opened || deleteElectionMutation.isLoading}
+        opened={opened || deleteElectionMutation.isPending}
         onClose={close}
         title={<Text fw={600}>Delete election</Text>}
       >
@@ -251,14 +251,14 @@ export default function DashboardSettings({
                 variant="default"
                 mr={2}
                 onClick={close}
-                disabled={deleteElectionMutation.isLoading}
+                disabled={deleteElectionMutation.isPending}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!deleteForm.isValid()}
-                loading={deleteElectionMutation.isLoading}
+                loading={deleteElectionMutation.isPending}
               >
                 Confirm Delete
               </Button>
@@ -299,7 +299,7 @@ export default function DashboardSettings({
             placeholder="Enter election name"
             {...form.getInputProps("name")}
             leftSection={<IconLetterCase size="1rem" />}
-            disabled={editElectionMutation.isLoading}
+            disabled={editElectionMutation.isPending}
           />
 
           <TextInput
@@ -321,7 +321,7 @@ export default function DashboardSettings({
               (editElectionMutation.error?.data?.code === "CONFLICT" &&
                 editElectionMutation.error?.message)
             }
-            disabled={editElectionMutation.isLoading}
+            disabled={editElectionMutation.isPending}
           />
 
           <Textarea
@@ -338,7 +338,7 @@ export default function DashboardSettings({
               (editElectionMutation.error?.data?.code === "CONFLICT" &&
                 editElectionMutation.error?.message)
             }
-            disabled={editElectionMutation.isLoading}
+            disabled={editElectionMutation.isPending}
           />
 
           {/* <TextInput
@@ -352,7 +352,7 @@ export default function DashboardSettings({
               (editElectionMutation.error?.data?.code === "CONFLICT" &&
                 editElectionMutation.error?.message)
             }
-            disabled={editElectionMutation.isLoading}
+            disabled={editElectionMutation.isPending}
           /> */}
 
           <DatePickerInput
@@ -365,7 +365,7 @@ export default function DashboardSettings({
             firstDayOfWeek={0}
             required
             disabled={
-              editElectionMutation.isLoading ||
+              editElectionMutation.isPending ||
               isElectionOngoing({
                 election: getElectionBySlugQuery.data,
               }) ||
@@ -400,7 +400,7 @@ export default function DashboardSettings({
               ]}
               label={parseHourTo12HourFormat}
               disabled={
-                editElectionMutation.isLoading ||
+                editElectionMutation.isPending ||
                 isElectionOngoing({
                   election: getElectionBySlugQuery.data,
                 }) ||
@@ -425,7 +425,7 @@ export default function DashboardSettings({
               value: p,
               label: p.charAt(0) + p.slice(1).toLowerCase(),
             }))}
-            disabled={editElectionMutation.isLoading}
+            disabled={editElectionMutation.isPending}
           />
 
           <Box>
@@ -443,7 +443,7 @@ export default function DashboardSettings({
                 maxSize={5 * 1024 ** 2}
                 accept={IMAGE_MIME_TYPE}
                 multiple={false}
-                loading={editElectionMutation.isLoading}
+                loading={editElectionMutation.isPending}
               >
                 <Group
                   justify="center"
@@ -514,7 +514,7 @@ export default function DashboardSettings({
                   disabled={
                     form.values.logo ===
                       (getElectionBySlugQuery.data.logo?.url ?? null) ||
-                    editElectionMutation.isLoading
+                    editElectionMutation.isPending
                   }
                 >
                   Reset logo
@@ -525,7 +525,7 @@ export default function DashboardSettings({
                   onClick={() => {
                     form.setValues({ logo: null });
                   }}
-                  disabled={!form.values.logo || editElectionMutation.isLoading}
+                  disabled={!form.values.logo || editElectionMutation.isPending}
                 >
                   Delete logo
                 </Button>
@@ -546,7 +546,7 @@ export default function DashboardSettings({
           <Group justify="space-between">
             <Button
               type="submit"
-              loading={editElectionMutation.isLoading}
+              loading={editElectionMutation.isPending}
               disabled={!form.isDirty() || !form.isValid()}
               hiddenFrom="sm"
             >
@@ -554,7 +554,7 @@ export default function DashboardSettings({
             </Button>
             <Button
               type="submit"
-              loading={editElectionMutation.isLoading}
+              loading={editElectionMutation.isPending}
               disabled={!form.isDirty() || !form.isValid()}
               visibleFrom="sm"
             >
@@ -564,7 +564,7 @@ export default function DashboardSettings({
               variant="outline"
               color="red"
               onClick={open}
-              disabled={editElectionMutation.isLoading}
+              disabled={editElectionMutation.isPending}
             >
               Delete election
             </Button>

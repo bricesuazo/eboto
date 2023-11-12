@@ -344,14 +344,14 @@ export default function UploadBulkVoter({
               <Button
                 variant="default"
                 onClick={close}
-                disabled={uploadBulkVoterMutation.isLoading}
+                disabled={uploadBulkVoterMutation.isPending}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={selectedFiles.length === 0}
-                loading={uploadBulkVoterMutation.isLoading}
+                loading={uploadBulkVoterMutation.isPending}
                 onClick={() =>
                   uploadBulkVoterMutation.mutate({
                     election_id,

@@ -70,7 +70,7 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
       <Button
         leftSection={<IconUserPlus size="1rem" />}
         onClick={open}
-        disabled={createSingleVoterMutation.isLoading}
+        disabled={createSingleVoterMutation.isPending}
         // style={(theme) => ({
         //   [theme.fn.smallerThan("xs")]: {
         //     width: "100%",
@@ -81,7 +81,7 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
       </Button>
 
       <Modal
-        opened={opened || createSingleVoterMutation.isLoading}
+        opened={opened || createSingleVoterMutation.isPending}
         onClose={close}
         title={<Text fw={600}>Add voter</Text>}
       >
@@ -98,7 +98,7 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
               placeholder="Enter voter's email"
               label="Email address"
               required
-              disabled={createSingleVoterMutation.isLoading}
+              disabled={createSingleVoterMutation.isPending}
               withAsterisk
               {...form.getInputProps("email")}
               leftSection={<IconAt size="1rem" />}
@@ -117,14 +117,14 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
               <Button
                 variant="default"
                 onClick={close}
-                disabled={createSingleVoterMutation.isLoading}
+                disabled={createSingleVoterMutation.isPending}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isValid()}
-                loading={createSingleVoterMutation.isLoading}
+                loading={createSingleVoterMutation.isPending}
               >
                 Create
               </Button>

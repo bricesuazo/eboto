@@ -1,5 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { verifySignature } from "@upstash/qstash/nextjs";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+import { verifySignatureEdge } from "@upstash/qstash/dist/nextjs";
 
 import { db } from "@eboto-mo/db";
 import type { GeneratedElectionResult } from "@eboto-mo/db/schema";
@@ -7,7 +8,9 @@ import { elections, generated_election_results } from "@eboto-mo/db/schema";
 import { sendElectionResult } from "@eboto-mo/email/emails/election-result";
 import { sendElectionStart } from "@eboto-mo/email/emails/election-start";
 
-async function handler(req: NextApiRequest, res: NextApiResponse) {
+export const runtime = "edge";
+
+async function handler(_req: NextRequest) {
   // TODO: Use toISOString() instead of toLocaleDateString() and toLocaleString()
   const date_today = new Date(
     new Date().toLocaleDateString("en-US", {
@@ -150,13 +153,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     }
   });
 
-  res.status(200).end();
+  return NextResponse.next();
 }
 
-export default verifySignature(handler);
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+export const POST = verifySignatureEdge(handler);

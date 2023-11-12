@@ -92,7 +92,7 @@ export default function EditVoter({
         <IconEdit size="1rem" />
       </ActionIcon>
       <Modal
-        opened={opened || editVoterMutation.isLoading}
+        opened={opened || editVoterMutation.isPending}
         onClose={close}
         title={<Text fw={600}>Edit voter - {voter.email}</Text>}
       >
@@ -113,7 +113,7 @@ export default function EditVoter({
               withAsterisk
               {...form.getInputProps("email")}
               leftSection={<IconAt size="1rem" />}
-              disabled={editVoterMutation.isLoading}
+              disabled={editVoterMutation.isPending}
               description={
                 "You can only edit the email address of a voter if they have not yet accepted their invitation."
               }
@@ -132,14 +132,14 @@ export default function EditVoter({
               <Button
                 variant="default"
                 onClick={close}
-                disabled={editVoterMutation.isLoading}
+                disabled={editVoterMutation.isPending}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isValid() || !form.isDirty()}
-                loading={editVoterMutation.isLoading}
+                loading={editVoterMutation.isPending}
               >
                 Update
               </Button>

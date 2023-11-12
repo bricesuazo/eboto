@@ -13,7 +13,7 @@ export default function DeletePosition({ position }: { position: Position }) {
   const [opened, { open, close }] = useDisclosure(false);
   const context = api.useUtils();
 
-  const { mutate, isLoading, isError, error, reset } =
+  const { mutate, isPending, isError, error, reset } =
     api.position.delete.useMutation({
       onSuccess: async () => {
         await Promise.all([
@@ -51,7 +51,7 @@ export default function DeletePosition({ position }: { position: Position }) {
         Delete
       </Button>
       <Modal
-        opened={opened || isLoading}
+        opened={opened || isPending}
         onClose={close}
         title={<Text fw={600}>Confirm Delete Position - {position.name}</Text>}
       >
@@ -75,12 +75,12 @@ export default function DeletePosition({ position }: { position: Position }) {
             </Alert>
           )}
           <Group justify="right" gap="xs">
-            <Button variant="default" onClick={close} disabled={isLoading}>
+            <Button variant="default" onClick={close} disabled={isPending}>
               Cancel
             </Button>
             <Button
               color="red"
-              loading={isLoading}
+              loading={isPending}
               onClick={() =>
                 mutate({
                   position_id: position.id,

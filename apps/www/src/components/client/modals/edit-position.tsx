@@ -116,7 +116,7 @@ export default function EditPosition({ position }: { position: Position }) {
         Edit
       </Button>
       <Modal
-        opened={opened || editPositionMutation.isLoading}
+        opened={opened || editPositionMutation.isPending}
         onClose={close}
         title={<Text fw={600}>Edit Position - {position.name}</Text>}
       >
@@ -139,14 +139,14 @@ export default function EditPosition({ position }: { position: Position }) {
               withAsterisk
               {...form.getInputProps("name")}
               leftSection={<IconLetterCase size="1rem" />}
-              disabled={editPositionMutation.isLoading}
+              disabled={editPositionMutation.isPending}
             />
 
             <Checkbox
               label="Select multiple candidates?"
               description="If checked, you can select multiple candidates for this position when voting"
               {...form.getInputProps("isSingle", { type: "checkbox" })}
-              disabled={editPositionMutation.isLoading}
+              disabled={editPositionMutation.isPending}
             />
 
             {form.values.isSingle && (
@@ -156,7 +156,7 @@ export default function EditPosition({ position }: { position: Position }) {
                   placeholder="Enter minimum"
                   label="Minimum"
                   withAsterisk
-                  disabled={editPositionMutation.isLoading}
+                  disabled={editPositionMutation.isPending}
                   min={0}
                   required={form.values.isSingle}
                 />
@@ -165,7 +165,7 @@ export default function EditPosition({ position }: { position: Position }) {
                   placeholder="Enter maximum"
                   label="Maximum"
                   withAsterisk
-                  disabled={editPositionMutation.isLoading}
+                  disabled={editPositionMutation.isPending}
                   min={1}
                   required={form.values.isSingle}
                 />
@@ -187,14 +187,14 @@ export default function EditPosition({ position }: { position: Position }) {
               <Button
                 variant="default"
                 onClick={close}
-                disabled={editPositionMutation.isLoading}
+                disabled={editPositionMutation.isPending}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isDirty() || !form.isValid()}
-                loading={editPositionMutation.isLoading}
+                loading={editPositionMutation.isPending}
               >
                 Update
               </Button>

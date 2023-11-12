@@ -57,7 +57,7 @@ export default function DeleteCandidate({
         Delete
       </Button>
       <Modal
-        opened={opened || deleteCandidateMutation.isLoading}
+        opened={opened || deleteCandidateMutation.isPending}
         onClose={close}
         title={
           <Text fw={600}>
@@ -86,13 +86,13 @@ export default function DeleteCandidate({
             <Button
               variant="default"
               onClick={close}
-              disabled={deleteCandidateMutation.isLoading}
+              disabled={deleteCandidateMutation.isPending}
             >
               Cancel
             </Button>
             <Button
               color="red"
-              loading={deleteCandidateMutation.isLoading}
+              loading={deleteCandidateMutation.isPending}
               onClick={() =>
                 deleteCandidateMutation.mutate({
                   candidate_id: candidate.id,

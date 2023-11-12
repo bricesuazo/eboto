@@ -96,7 +96,7 @@ export default function ElectionPage({
     <>
       <ScrollToTopButton />
       <Modal
-        opened={opened || addVoterFieldToVoterMutation.isLoading}
+        opened={opened || addVoterFieldToVoterMutation.isPending}
         onClose={close}
         title="Fill up this form first before voting."
         closeOnClickOutside={false}
@@ -134,14 +134,14 @@ export default function ElectionPage({
               <Button
                 variant="default"
                 onClick={close}
-                disabled={addVoterFieldToVoterMutation.isLoading}
+                disabled={addVoterFieldToVoterMutation.isPending}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isValid()}
-                loading={addVoterFieldToVoterMutation.isLoading}
+                loading={addVoterFieldToVoterMutation.isPending}
               >
                 Vote now!
               </Button>

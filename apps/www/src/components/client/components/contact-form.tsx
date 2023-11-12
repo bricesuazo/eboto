@@ -113,7 +113,7 @@ export default function ContactForm() {
               <TextInput
                 label="Name"
                 placeholder="Your name"
-                disabled={sendMessageMutation.isLoading}
+                disabled={sendMessageMutation.isPending}
                 w="100%"
                 {...form.getInputProps("name")}
               />
@@ -121,7 +121,7 @@ export default function ContactForm() {
                 label="Email Address"
                 placeholder="brice@bricesuazo.com"
                 w="100%"
-                disabled={sendMessageMutation.isLoading}
+                disabled={sendMessageMutation.isPending}
                 required
                 {...form.getInputProps("email")}
               />
@@ -131,7 +131,7 @@ export default function ContactForm() {
               mt="md"
               label="Subject"
               placeholder="Subject"
-              disabled={sendMessageMutation.isLoading}
+              disabled={sendMessageMutation.isPending}
               required
               {...form.getInputProps("subject")}
             />
@@ -144,7 +144,7 @@ export default function ContactForm() {
               autosize
               minRows={2}
               maxRows={5}
-              disabled={sendMessageMutation.isLoading}
+              disabled={sendMessageMutation.isPending}
               {...form.getInputProps("message")}
             />
 
@@ -152,7 +152,7 @@ export default function ContactForm() {
               <Button
                 type="submit"
                 w={{ base: "100%", sm: "fit-content" }}
-                loading={sendMessageMutation.isLoading}
+                loading={sendMessageMutation.isPending}
               >
                 Send message
               </Button>

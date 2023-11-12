@@ -108,7 +108,7 @@ export default function VoteForm({
   return (
     <>
       <Modal
-        opened={opened || voteMutation.isLoading}
+        opened={opened || voteMutation.isPending}
         onClose={close}
         title={<Text fw={600}>Confirm Vote</Text>}
       >
@@ -189,11 +189,11 @@ export default function VoteForm({
               <Button
                 variant="default"
                 onClick={close}
-                disabled={voteMutation.isLoading}
+                disabled={voteMutation.isPending}
               >
                 Cancel
               </Button>
-              <Button loading={voteMutation.isLoading} type="submit">
+              <Button loading={voteMutation.isPending} type="submit">
                 Confirm
               </Button>
             </Group>
@@ -335,7 +335,7 @@ export default function VoteForm({
           <Button
             onClick={open}
             disabled={
-              // voteMutation.isLoading ??
+              // voteMutation.isPending ??
               !Object.values(form.values).every((value) => value?.isValid)
             }
             leftSection={<IconFingerprint />}

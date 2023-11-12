@@ -122,7 +122,7 @@ export default function UpdateVoterField({
       </Button>
 
       <Modal
-        opened={opened || updateVoterFieldMutation.isLoading}
+        opened={opened || updateVoterFieldMutation.isPending}
         onClose={close}
         title={<Text fw={600}>Voter Field</Text>}
       >
@@ -187,13 +187,13 @@ export default function UpdateVoterField({
               <Button
                 variant="default"
                 onClick={close}
-                disabled={updateVoterFieldMutation.isLoading}
+                disabled={updateVoterFieldMutation.isPending}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                loading={updateVoterFieldMutation.isLoading}
+                loading={updateVoterFieldMutation.isPending}
                 disabled={!(form.isValid() && form.isDirty())}
               >
                 Update
@@ -253,7 +253,7 @@ function VoterFieldInput({
         color="red"
         variant="outline"
         size="2.25rem"
-        loading={deleteSingleVoterField.isLoading}
+        loading={deleteSingleVoterField.isPending}
         loaderProps={{
           w: 18,
         }}

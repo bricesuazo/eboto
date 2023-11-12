@@ -294,7 +294,7 @@ export default function EditCandidate({
           }
         }}
         loading={
-          deleteCredentialMutation.isLoading || deletePlatformMutation.isLoading
+          deleteCredentialMutation.isPending || deletePlatformMutation.isPending
         }
       >
         Delete{" "}
@@ -320,7 +320,7 @@ export default function EditCandidate({
         Edit
       </Button>
       <Modal
-        opened={opened || editCandidateMutation.isLoading}
+        opened={opened || editCandidateMutation.isPending}
         onClose={close}
         title={
           <Text fw={600} lineClamp={1}>
@@ -418,7 +418,7 @@ export default function EditCandidate({
                     withAsterisk
                     {...form.getInputProps("first_name")}
                     leftSection={<IconLetterCase size="1rem" />}
-                    disabled={editCandidateMutation.isLoading}
+                    disabled={editCandidateMutation.isPending}
                   />
 
                   <TextInput
@@ -426,7 +426,7 @@ export default function EditCandidate({
                     placeholder="Enter middle name"
                     {...form.getInputProps("middle_name")}
                     leftSection={<IconLetterCase size="1rem" />}
-                    disabled={editCandidateMutation.isLoading}
+                    disabled={editCandidateMutation.isPending}
                   />
                   <TextInput
                     label="Last name"
@@ -435,7 +435,7 @@ export default function EditCandidate({
                     withAsterisk
                     {...form.getInputProps("last_name")}
                     leftSection={<IconLetterCase size="1rem" />}
-                    disabled={editCandidateMutation.isLoading}
+                    disabled={editCandidateMutation.isPending}
                   />
 
                   <TextInput
@@ -453,7 +453,7 @@ export default function EditCandidate({
                     withAsterisk
                     {...form.getInputProps("new_slug")}
                     leftSection={<IconLetterCase size="1rem" />}
-                    disabled={editCandidateMutation.isLoading}
+                    disabled={editCandidateMutation.isPending}
                   />
 
                   <Select
@@ -468,14 +468,14 @@ export default function EditCandidate({
                         value: partylist.id,
                       };
                     })}
-                    disabled={editCandidateMutation.isLoading}
+                    disabled={editCandidateMutation.isPending}
                   />
 
                   <Select
                     placeholder="Select position"
                     label="Position"
                     leftSection={<IconUserSearch size="1rem" />}
-                    disabled={editCandidateMutation.isLoading}
+                    disabled={editCandidateMutation.isPending}
                     {...form.getInputProps("position_id")}
                     data={positionsQuery.data?.map((position) => {
                       return {
@@ -499,7 +499,7 @@ export default function EditCandidate({
                     maxSize={5 * 1024 ** 2}
                     accept={IMAGE_MIME_TYPE}
                     multiple={false}
-                    loading={editCandidateMutation.isLoading}
+                    loading={editCandidateMutation.isPending}
                   >
                     <Group
                       justify="center"
@@ -580,7 +580,7 @@ export default function EditCandidate({
                       }}
                       disabled={
                         form.values.image === (candidate.image?.url ?? null) ||
-                        editCandidateMutation.isLoading
+                        editCandidateMutation.isPending
                       }
                       style={{ flex: 1 }}
                     >
@@ -591,7 +591,7 @@ export default function EditCandidate({
                         form.setFieldValue("image", null);
                       }}
                       disabled={
-                        !form.values.image || editCandidateMutation.isLoading
+                        !form.values.image || editCandidateMutation.isPending
                       }
                       style={{ flex: 1 }}
                     >
@@ -612,7 +612,7 @@ export default function EditCandidate({
                           placeholder="Enter title"
                           required
                           value={platform.title}
-                          disabled={editCandidateMutation.isLoading}
+                          disabled={editCandidateMutation.isPending}
                           onChange={(e) => {
                             form.setValues({
                               ...form.values,
@@ -633,7 +633,7 @@ export default function EditCandidate({
                           label="Description"
                           placeholder="Enter description"
                           value={platform.description ?? ""}
-                          disabled={editCandidateMutation.isLoading}
+                          disabled={editCandidateMutation.isPending}
                           onChange={(e) => {
                             form.setValues({
                               ...form.values,
@@ -654,13 +654,13 @@ export default function EditCandidate({
                       <DeleteCredentialButton
                         type="PLATFORM"
                         id={platform.id}
-                        disabled={editCandidateMutation.isLoading}
+                        disabled={editCandidateMutation.isPending}
                       />
                     </Box>
                   ))}
                   <Button
                     leftSection={<IconPlus size="1.25rem" />}
-                    disabled={editCandidateMutation.isLoading}
+                    disabled={editCandidateMutation.isPending}
                     onClick={() => {
                       form.setValues({
                         ...form.values,
@@ -713,7 +713,7 @@ export default function EditCandidate({
                                 placeholder="Enter achievement"
                                 required
                                 value={achievement.name}
-                                disabled={editCandidateMutation.isLoading}
+                                disabled={editCandidateMutation.isPending}
                                 onChange={(e) => {
                                   form.setValues({
                                     ...form.values,
@@ -736,7 +736,7 @@ export default function EditCandidate({
                                   withinPortal: true,
                                 }}
                                 value={achievement.year}
-                                disabled={editCandidateMutation.isLoading}
+                                disabled={editCandidateMutation.isPending}
                                 onChange={(date) => {
                                   form.setValues({
                                     ...form.values,
@@ -759,7 +759,7 @@ export default function EditCandidate({
                             <DeleteCredentialButton
                               type="ACHIEVEMENT"
                               id={achievement.id}
-                              disabled={editCandidateMutation.isLoading}
+                              disabled={editCandidateMutation.isPending}
                             />
                           </Box>
                         );
@@ -767,7 +767,7 @@ export default function EditCandidate({
 
                       <Button
                         leftSection={<IconPlus size="1.25rem" />}
-                        disabled={editCandidateMutation.isLoading}
+                        disabled={editCandidateMutation.isPending}
                         onClick={() => {
                           form.setValues({
                             ...form.values,
@@ -800,7 +800,7 @@ export default function EditCandidate({
                               placeholder="Enter organization name"
                               required
                               value={affiliation.org_name}
-                              disabled={editCandidateMutation.isLoading}
+                              disabled={editCandidateMutation.isPending}
                               onChange={(e) => {
                                 form.setValues({
                                   ...form.values,
@@ -822,7 +822,7 @@ export default function EditCandidate({
                               placeholder="Enter your position in the organization"
                               required
                               value={affiliation.org_position}
-                              disabled={editCandidateMutation.isLoading}
+                              disabled={editCandidateMutation.isPending}
                               onChange={(e) => {
                                 form.setValues({
                                   ...form.values,
@@ -851,7 +851,7 @@ export default function EditCandidate({
                                   form.values.affiliations[index]?.start_year ??
                                   new Date()
                                 }
-                                disabled={editCandidateMutation.isLoading}
+                                disabled={editCandidateMutation.isPending}
                                 onChange={(date) => {
                                   form.setValues({
                                     ...form.values,
@@ -881,7 +881,7 @@ export default function EditCandidate({
                                   form.values.affiliations[index]?.end_year ??
                                   new Date()
                                 }
-                                disabled={editCandidateMutation.isLoading}
+                                disabled={editCandidateMutation.isPending}
                                 onChange={(date) => {
                                   form.setValues({
                                     ...form.values,
@@ -904,7 +904,7 @@ export default function EditCandidate({
                             <DeleteCredentialButton
                               type="AFFILIATION"
                               id={affiliation.id}
-                              disabled={editCandidateMutation.isLoading}
+                              disabled={editCandidateMutation.isPending}
                             />
                           </Box>
                         );
@@ -912,7 +912,7 @@ export default function EditCandidate({
 
                       <Button
                         leftSection={<IconPlus size="1.25rem" />}
-                        disabled={editCandidateMutation.isLoading}
+                        disabled={editCandidateMutation.isPending}
                         onClick={() => {
                           form.setValues({
                             ...form.values,
@@ -955,7 +955,7 @@ export default function EditCandidate({
                                     form.values.events_attended[index]?.name ??
                                     ""
                                   }
-                                  disabled={editCandidateMutation.isLoading}
+                                  disabled={editCandidateMutation.isPending}
                                   onChange={(e) => {
                                     form.setValues({
                                       ...form.values,
@@ -983,7 +983,7 @@ export default function EditCandidate({
                                     form.values.events_attended[index]?.year ??
                                     new Date()
                                   }
-                                  disabled={editCandidateMutation.isLoading}
+                                  disabled={editCandidateMutation.isPending}
                                   onChange={(date) => {
                                     form.setValues({
                                       ...form.values,
@@ -1007,7 +1007,7 @@ export default function EditCandidate({
                               <DeleteCredentialButton
                                 type="EVENTATTENDED"
                                 id={events_attended.id}
-                                disabled={editCandidateMutation.isLoading}
+                                disabled={editCandidateMutation.isPending}
                               />
                             </Box>
                           );
@@ -1016,7 +1016,7 @@ export default function EditCandidate({
 
                       <Button
                         leftSection={<IconPlus size="1.25rem" />}
-                        disabled={editCandidateMutation.isLoading}
+                        disabled={editCandidateMutation.isPending}
                         onClick={() => {
                           form.setValues({
                             ...form.values,
@@ -1075,14 +1075,14 @@ export default function EditCandidate({
                   <Button
                     variant="default"
                     onClick={close}
-                    disabled={editCandidateMutation.isLoading}
+                    disabled={editCandidateMutation.isPending}
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
                     disabled={!form.isDirty() || !form.isValid()}
-                    loading={editCandidateMutation.isLoading}
+                    loading={editCandidateMutation.isPending}
                   >
                     Update
                   </Button>

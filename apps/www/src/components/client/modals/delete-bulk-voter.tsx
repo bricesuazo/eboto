@@ -32,7 +32,7 @@ export default function DeleteBulkVoter({
   const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure();
 
-  const { mutate, isLoading, isError, error } =
+  const { mutate, isPending, isError, error } =
     api.voter.deleteBulk.useMutation({
       onSuccess: async ({ count }) => {
         await context.election.getVotersByElectionSlug.invalidate();
@@ -72,7 +72,7 @@ export default function DeleteBulkVoter({
       <Modal
         opened={
           opened
-          // || isLoading
+          // ||.isPending
         }
         onClose={close}
         title={<Text fw={600}>Confirm Delete Voter(s)</Text>}
@@ -99,12 +99,12 @@ export default function DeleteBulkVoter({
             </Alert>
           )}
           <Group justify="right" gap="xs">
-            <Button variant="default" onClick={close} disabled={isLoading}>
+            <Button variant="default" onClick={close} disabled={isPending}>
               Cancel
             </Button>
             <Button
               color="red"
-              loading={isLoading}
+              loading={isPending}
               onClick={() =>
                 mutate({
                   election_id,

@@ -255,7 +255,7 @@ export default function Header({ userId }: { userId?: string }) {
                           height: 24,
                         }}
                       >
-                        {!session.isLoading ? (
+                        {!session.isPending ? (
                           session.data?.user.image ? (
                             <Image
                               src={session.data.user.image}

@@ -161,7 +161,7 @@ export default function CreateElection({
               placeholder="Enter election name"
               {...form.getInputProps("name")}
               leftSection={<IconLetterCase size="1rem" />}
-              disabled={createElectionMutation.isLoading}
+              disabled={createElectionMutation.isPending}
             />
 
             <TextInput
@@ -173,7 +173,7 @@ export default function CreateElection({
                   eboto-mo.com/{form.values.slug || "election-slug"}
                 </>
               }
-              disabled={createElectionMutation.isLoading}
+              disabled={createElectionMutation.isPending}
               withAsterisk
               required
               placeholder="Enter election slug"
@@ -194,7 +194,7 @@ export default function CreateElection({
               minDate={new Date(new Date().setDate(new Date().getDate() + 1))}
               firstDayOfWeek={0}
               required
-              disabled={createElectionMutation.isLoading}
+              disabled={createElectionMutation.isPending}
               {...form.getInputProps("date")}
             />
 
@@ -247,7 +247,7 @@ export default function CreateElection({
               nothingFoundMessage="No position template found"
               leftSection={<IconTemplate size="1rem" />}
               searchable
-              disabled={createElectionMutation.isLoading}
+              disabled={createElectionMutation.isPending}
             />
 
             {createElectionMutation.isError && (
@@ -265,14 +265,14 @@ export default function CreateElection({
                 variant="default"
                 mr={2}
                 onClick={close}
-                disabled={createElectionMutation.isLoading}
+                disabled={createElectionMutation.isPending}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isValid()}
-                loading={createElectionMutation.isLoading}
+                loading={createElectionMutation.isPending}
               >
                 Create
               </Button>

@@ -30,7 +30,7 @@ export default function CreatePosition({
   election_id: string;
 }) {
   const context = api.useUtils();
-  const { mutate, isLoading, isError, error, reset } =
+  const { mutate, isPending, isError, error, reset } =
     api.position.create.useMutation({
       onSuccess: async () => {
         await Promise.all([
@@ -113,7 +113,7 @@ export default function CreatePosition({
         Add position
       </Button>
       <Modal
-        opened={opened || isLoading}
+        opened={opened || isPending}
         onClose={close}
         title={<Text fw={600}>Create position</Text>}
       >
@@ -149,7 +149,7 @@ export default function CreatePosition({
                   placeholder="Enter minimum"
                   label="Minimum"
                   withAsterisk
-                  disabled={isLoading}
+                  disabled={isPending}
                   min={0}
                   required={form.values.isSingle}
                 />
@@ -158,7 +158,7 @@ export default function CreatePosition({
                   placeholder="Enter maximum"
                   label="Maximum"
                   withAsterisk
-                  disabled={isLoading}
+                  disabled={isPending}
                   min={1}
                   required={form.values.isSingle}
                 />
@@ -175,13 +175,13 @@ export default function CreatePosition({
               </Alert>
             )}
             <Group justify="right" gap="xs">
-              <Button variant="default" onClick={close} disabled={isLoading}>
+              <Button variant="default" onClick={close} disabled={isPending}>
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isValid()}
-                loading={isLoading}
+                loading={isPending}
               >
                 Create
               </Button>

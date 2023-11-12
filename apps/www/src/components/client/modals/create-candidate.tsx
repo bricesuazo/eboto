@@ -183,7 +183,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
       </UnstyledButton>
 
       <Modal
-        opened={opened || createCandidateMutation.isLoading}
+        opened={opened || createCandidateMutation.isPending}
         onClose={close}
         title={<Text fw={600}>Create candidate</Text>}
         closeOnClickOutside={false}
@@ -265,7 +265,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                     withAsterisk
                     {...form.getInputProps("first_name")}
                     leftSection={<IconLetterCase size="1rem" />}
-                    disabled={createCandidateMutation.isLoading}
+                    disabled={createCandidateMutation.isPending}
                   />
 
                   <TextInput
@@ -273,7 +273,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                     placeholder="Enter middle name"
                     {...form.getInputProps("middle_name")}
                     leftSection={<IconLetterCase size="1rem" />}
-                    disabled={createCandidateMutation.isLoading}
+                    disabled={createCandidateMutation.isPending}
                   />
                   <TextInput
                     label="Last name"
@@ -282,7 +282,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                     withAsterisk
                     {...form.getInputProps("last_name")}
                     leftSection={<IconLetterCase size="1rem" />}
-                    disabled={createCandidateMutation.isLoading}
+                    disabled={createCandidateMutation.isPending}
                   />
 
                   <TextInput
@@ -300,7 +300,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                     withAsterisk
                     {...form.getInputProps("slug")}
                     leftSection={<IconLetterCase size="1rem" />}
-                    disabled={createCandidateMutation.isLoading}
+                    disabled={createCandidateMutation.isPending}
                   />
 
                   <Select
@@ -314,7 +314,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                         value: partylist.id,
                       };
                     })}
-                    disabled={createCandidateMutation.isLoading}
+                    disabled={createCandidateMutation.isPending}
                   />
 
                   <Select
@@ -328,7 +328,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                         value: position.id,
                       };
                     })}
-                    disabled={createCandidateMutation.isLoading}
+                    disabled={createCandidateMutation.isPending}
                   />
                 </Stack>
               </TabsPanel>
@@ -344,7 +344,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                     maxSize={5 * 1024 ** 2}
                     accept={IMAGE_MIME_TYPE}
                     multiple={false}
-                    loading={createCandidateMutation.isLoading}
+                    loading={createCandidateMutation.isPending}
                   >
                     <Group
                       justify="center"
@@ -396,7 +396,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                       form.setFieldValue("image", null);
                     }}
                     disabled={
-                      !form.values.image || createCandidateMutation.isLoading
+                      !form.values.image || createCandidateMutation.isPending
                     }
                   >
                     Delete image
@@ -414,7 +414,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                           placeholder="Enter title"
                           required
                           value={platform.title}
-                          disabled={createCandidateMutation.isLoading}
+                          disabled={createCandidateMutation.isPending}
                           onChange={(e) => {
                             form.setValues({
                               ...form.values,
@@ -435,7 +435,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                           label="Description"
                           placeholder="Enter description"
                           value={platform.description ?? ""}
-                          disabled={createCandidateMutation.isLoading}
+                          disabled={createCandidateMutation.isPending}
                           onChange={(e) => {
                             form.setValues({
                               ...form.values,
@@ -458,7 +458,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                         size="xs"
                         w="100%"
                         color="red"
-                        disabled={createCandidateMutation.isLoading}
+                        disabled={createCandidateMutation.isPending}
                         onClick={() => {
                           form.setValues({
                             ...form.values,
@@ -475,7 +475,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                   ))}
                   <Button
                     leftSection={<IconPlus size="1.25rem" />}
-                    disabled={createCandidateMutation.isLoading}
+                    disabled={createCandidateMutation.isPending}
                     onClick={() => {
                       form.setValues({
                         ...form.values,
@@ -524,7 +524,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                               placeholder="Enter achievement"
                               required
                               value={achievement.name}
-                              disabled={createCandidateMutation.isLoading}
+                              disabled={createCandidateMutation.isPending}
                               onChange={(e) => {
                                 form.setValues({
                                   ...form.values,
@@ -546,7 +546,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                               popoverProps={{
                                 withinPortal: true,
                               }}
-                              disabled={createCandidateMutation.isLoading}
+                              disabled={createCandidateMutation.isPending}
                               value={achievement.year}
                               onChange={(date) => {
                                 form.setValues({
@@ -571,7 +571,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                             size="xs"
                             w="100%"
                             color="red"
-                            disabled={createCandidateMutation.isLoading}
+                            disabled={createCandidateMutation.isPending}
                             onClick={() => {
                               form.setValues({
                                 ...form.values,
@@ -589,7 +589,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
 
                       <Button
                         leftSection={<IconPlus size="1.25rem" />}
-                        disabled={createCandidateMutation.isLoading}
+                        disabled={createCandidateMutation.isPending}
                         onClick={() => {
                           form.setValues({
                             ...form.values,
@@ -618,7 +618,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                             placeholder="Enter organization name"
                             required
                             value={affiliation.org_name}
-                            disabled={createCandidateMutation.isLoading}
+                            disabled={createCandidateMutation.isPending}
                             onChange={(e) => {
                               form.setValues({
                                 ...form.values,
@@ -640,7 +640,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                             placeholder="Enter your position in the organization"
                             required
                             value={affiliation.org_position}
-                            disabled={createCandidateMutation.isLoading}
+                            disabled={createCandidateMutation.isPending}
                             onChange={(e) => {
                               form.setValues({
                                 ...form.values,
@@ -666,7 +666,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                                 withinPortal: true,
                               }}
                               value={affiliation.start_year}
-                              disabled={createCandidateMutation.isLoading}
+                              disabled={createCandidateMutation.isPending}
                               onChange={(date) => {
                                 form.setValues({
                                   ...form.values,
@@ -690,7 +690,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                               popoverProps={{
                                 withinPortal: true,
                               }}
-                              disabled={createCandidateMutation.isLoading}
+                              disabled={createCandidateMutation.isPending}
                               value={affiliation.end_year}
                               onChange={(date) => {
                                 form.setValues({
@@ -715,7 +715,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                             size="xs"
                             w="100%"
                             color="red"
-                            disabled={createCandidateMutation.isLoading}
+                            disabled={createCandidateMutation.isPending}
                             onClick={() => {
                               form.setValues({
                                 ...form.values,
@@ -733,7 +733,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
 
                       <Button
                         leftSection={<IconPlus size="1.25rem" />}
-                        disabled={createCandidateMutation.isLoading}
+                        disabled={createCandidateMutation.isPending}
                         onClick={() => {
                           form.setValues({
                             ...form.values,
@@ -769,7 +769,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                                 placeholder="Enter seminars attended"
                                 required
                                 value={eventAttended.name}
-                                disabled={createCandidateMutation.isLoading}
+                                disabled={createCandidateMutation.isPending}
                                 onChange={(e) => {
                                   form.setValues({
                                     ...form.values,
@@ -793,7 +793,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                                   withinPortal: true,
                                 }}
                                 value={eventAttended.year}
-                                disabled={createCandidateMutation.isLoading}
+                                disabled={createCandidateMutation.isPending}
                                 onChange={(date) => {
                                   form.setValues({
                                     ...form.values,
@@ -818,7 +818,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                               size="xs"
                               w="100%"
                               color="red"
-                              disabled={createCandidateMutation.isLoading}
+                              disabled={createCandidateMutation.isPending}
                               onClick={() => {
                                 form.setValues({
                                   ...form.values,
@@ -838,7 +838,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
 
                       <Button
                         leftSection={<IconPlus size="1.25rem" />}
-                        disabled={createCandidateMutation.isLoading}
+                        disabled={createCandidateMutation.isPending}
                         onClick={() => {
                           form.setValues({
                             ...form.values,
@@ -874,16 +874,16 @@ export default function CreateCandidate({ position }: { position: Position }) {
                 <Button
                   variant="default"
                   onClick={close}
-                  disabled={createCandidateMutation.isLoading}
+                  disabled={createCandidateMutation.isPending}
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   disabled={
-                    !form.isValid() || createCandidateMutation.isLoading
+                    !form.isValid() || createCandidateMutation.isPending
                   }
-                  loading={createCandidateMutation.isLoading}
+                  loading={createCandidateMutation.isPending}
                 >
                   Create
                 </Button>

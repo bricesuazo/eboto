@@ -127,7 +127,7 @@ export default function AccountPageClient({ session }: { session: Session }) {
       <Modal
         opened={
           opened
-          //   || confirmPasswordMutation.isLoading
+          //   || confirmPasswordMutation.isPending
         }
         onClose={close}
         title={<Text fw={600}>Confirm delete</Text>}
@@ -172,8 +172,8 @@ export default function AccountPageClient({ session }: { session: Session }) {
                 variant="default"
                 onClick={close}
                 disabled={
-                  // confirmPasswordMutation.isLoading ||
-                  deleteAccountMutation.isLoading
+                  // confirmPasswordMutation.isPending ||
+                  deleteAccountMutation.isPending
                 }
               >
                 Cancel
@@ -184,8 +184,8 @@ export default function AccountPageClient({ session }: { session: Session }) {
                 variant="outline"
                 disabled={!confirmationForm.isValid()}
                 loading={
-                  //   confirmPasswordMutation.isLoading ||
-                  deleteAccountMutation.isLoading
+                  //   confirmPasswordMutation.isPending ||
+                  deleteAccountMutation.isPending
                 }
               >
                 {page === 0 ? "Confirm" : "Yes, delete my account"}

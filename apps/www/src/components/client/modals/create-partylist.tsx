@@ -86,7 +86,7 @@ export default function CreatePartylist({
         Add partylist
       </Button>
       <Modal
-        opened={opened || createPartylistMutation.isLoading}
+        opened={opened || createPartylistMutation.isPending}
         onClose={close}
         title={<Text fw={600}>Create partylist</Text>}
       >
@@ -105,7 +105,7 @@ export default function CreatePartylist({
               label="Name"
               required
               withAsterisk
-              disabled={createPartylistMutation.isLoading}
+              disabled={createPartylistMutation.isPending}
               {...form.getInputProps("name")}
               leftSection={<IconLetterCase size="1rem" />}
             />
@@ -114,7 +114,7 @@ export default function CreatePartylist({
               placeholder="Enter acronym"
               label="Acronym"
               required
-              disabled={createPartylistMutation.isLoading}
+              disabled={createPartylistMutation.isPending}
               withAsterisk
               {...form.getInputProps("acronym")}
               leftSection={<IconLetterCase size="1rem" />}
@@ -135,14 +135,14 @@ export default function CreatePartylist({
               <Button
                 variant="default"
                 onClick={close}
-                disabled={createPartylistMutation.isLoading}
+                disabled={createPartylistMutation.isPending}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isValid()}
-                loading={createPartylistMutation.isLoading}
+                loading={createPartylistMutation.isPending}
               >
                 Create
               </Button>

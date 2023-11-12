@@ -15,7 +15,7 @@ export default function DeletePartylist({
   partylist: Partylist;
 }) {
   const context = api.useUtils();
-  const { mutate, isLoading, isError, error, reset } =
+  const { mutate, isPending, isError, error, reset } =
     api.partylist.delete.useMutation({
       onSuccess: async () => {
         notifications.show({
@@ -54,10 +54,7 @@ export default function DeletePartylist({
       </Button>
 
       <Modal
-        opened={
-          opened
-          // || isLoading
-        }
+        opened={opened || isPending}
         onClose={close}
         title={
           <Text fw={600}>
@@ -85,12 +82,12 @@ export default function DeletePartylist({
             </Alert>
           )}
           <Group justify="right" gap="xs">
-            <Button variant="default" onClick={close} disabled={isLoading}>
+            <Button variant="default" onClick={close} disabled={isPending}>
               Cancel
             </Button>
             <Button
               color="red"
-              loading={isLoading}
+              loading={isPending}
               onClick={() =>
                 mutate({
                   partylist_id: partylist.id,

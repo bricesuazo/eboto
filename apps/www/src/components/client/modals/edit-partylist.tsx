@@ -95,7 +95,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
       <Modal
         opened={
           opened
-          // || editPartylistMutation.isLoading
+          // || editPartylistMutation.isPending
         }
         onClose={close}
         title={
@@ -123,7 +123,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
               label="Name"
               required
               withAsterisk
-              disabled={editPartylistMutation.isLoading}
+              disabled={editPartylistMutation.isPending}
               {...form.getInputProps("name")}
               leftSection={<IconLetterCase size="1rem" />}
             />
@@ -133,7 +133,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
               label="Acronym"
               required
               withAsterisk
-              disabled={editPartylistMutation.isLoading}
+              disabled={editPartylistMutation.isPending}
               {...form.getInputProps("newAcronym")}
               leftSection={<IconLetterCase size="1rem" />}
             />
@@ -153,14 +153,14 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
               <Button
                 variant="default"
                 onClick={close}
-                disabled={editPartylistMutation.isLoading}
+                disabled={editPartylistMutation.isPending}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={!form.isDirty()}
-                loading={editPartylistMutation.isLoading}
+                loading={editPartylistMutation.isPending}
               >
                 Update
               </Button>

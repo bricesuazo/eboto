@@ -90,49 +90,49 @@ export default function DashboardOverview({
           completedIcon={<IconCheckbox />}
           label="Step 1"
           description="Prepare election"
-          loading={getElectionProgressQuery.isLoading}
+          loading={getElectionProgressQuery.isPending}
         />
         <StepperStep
           icon={<IconFlag />}
           completedIcon={<IconFlagCheck />}
           label="Step 2"
           description="Add partylist"
-          loading={getElectionProgressQuery.isLoading}
+          loading={getElectionProgressQuery.isPending}
         />
         <StepperStep
           icon={<IconReplace />}
           completedIcon={<IconListCheck />}
           label="Step 3"
           description="Add positions"
-          loading={getElectionProgressQuery.isLoading}
+          loading={getElectionProgressQuery.isPending}
         />
         <StepperStep
           icon={<IconUserSearch />}
           completedIcon={<IconUserCheck />}
           label="Step 4"
           description="Add candidates"
-          loading={getElectionProgressQuery.isLoading}
+          loading={getElectionProgressQuery.isPending}
         />
         <StepperStep
           icon={<IconUsers />}
           completedIcon={<IconUserShield />}
           label="Step 5"
           description="Add voters"
-          loading={getElectionProgressQuery.isLoading}
+          loading={getElectionProgressQuery.isPending}
         />
         <StepperStep
           icon={<IconCircleCheck />}
           completedIcon={<IconFingerprint />}
           label="Step 6"
           description="Voting period"
-          loading={getElectionProgressQuery.isLoading}
+          loading={getElectionProgressQuery.isPending}
         />
         <StepperStep
           icon={<IconShield />}
           completedIcon={<IconShieldCheck />}
           label="Step 7"
           description="Election results"
-          loading={getElectionProgressQuery.isLoading}
+          loading={getElectionProgressQuery.isPending}
         />
       </Stepper>
       <Box>
@@ -311,7 +311,7 @@ export default function DashboardOverview({
       </Flex>
       <Box>
         <Title order={3}>Voter Stats</Title>
-        {getVoterFieldsStatsQuery.isLoading ? (
+        {getVoterFieldsStatsQuery.isPending ? (
           <Center>
             <Loader size="sm" />
           </Center>

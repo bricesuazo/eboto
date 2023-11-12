@@ -67,7 +67,7 @@ export default function DeleteVoter({
         <IconTrash size="1rem" />
       </ActionIcon>
       <Modal
-        opened={opened || deleteVoterMutation.isLoading}
+        opened={opened || deleteVoterMutation.isPending}
         onClose={close}
         title={<Text fw={600}>Confirm Delete Voter - {voter.email}</Text>}
       >
@@ -90,13 +90,13 @@ export default function DeleteVoter({
             <Button
               variant="default"
               onClick={close}
-              disabled={deleteVoterMutation.isLoading}
+              disabled={deleteVoterMutation.isPending}
             >
               Cancel
             </Button>
             <Button
               color="red"
-              loading={deleteVoterMutation.isLoading}
+              loading={deleteVoterMutation.isPending}
               onClick={() =>
                 deleteVoterMutation.mutate({
                   election_id,

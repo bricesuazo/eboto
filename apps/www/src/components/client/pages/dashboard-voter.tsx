@@ -87,7 +87,7 @@ export default function DashboardVoter({
     state: {
       density: "xs",
       pagination: { pageSize: 15, pageIndex: 0 },
-      isLoading: votersQuery.isLoading,
+      isLoading: votersQuery.isPending,
       showAlertBanner: votersQuery.isError,
       rowSelection,
     },

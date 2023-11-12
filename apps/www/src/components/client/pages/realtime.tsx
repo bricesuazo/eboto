@@ -207,7 +207,7 @@ export default function Realtime({
               <Title order={3} ta="center">
                 Voter Stats
               </Title>
-              {getVoterFieldsStatsInRealtimeQuery.isLoading ? (
+              {getVoterFieldsStatsInRealtimeQuery.isPending ? (
                 <Center>
                   <Loader size="sm" />
                 </Center>
