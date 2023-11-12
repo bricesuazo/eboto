@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 // import { useParams } from "next/navigation";
-import { Button, Divider, Paper, Stack, Text, TextInput } from "@mantine/core";
+import { Button, Paper, Stack, Text } from "@mantine/core";
 import { signIn } from "next-auth/react";
 import Balancer from "react-wrap-balancer";
 
@@ -76,7 +76,7 @@ export default function SigninForm() {
             Google
           </Button>
         </Stack>
-        <Divider label="Or continue with email" labelPosition="center" />
+        {/* <Divider label="Or continue with email" labelPosition="center" />
         <Stack gap="xs">
           <TextInput
             required
@@ -86,7 +86,7 @@ export default function SigninForm() {
           />
 
           <Button disabled>Send magic link (soon)</Button>
-        </Stack>
+        </Stack> */}
 
         {/* <Divider label="Or continue with email" labelPosition="center" />
           <form

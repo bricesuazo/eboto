@@ -8,6 +8,8 @@ import {
   Anchor,
   Container,
   Group,
+  Menu,
+  MenuTarget,
   Text,
   UnstyledButton,
 } from "@mantine/core";
@@ -37,15 +39,6 @@ export default function Footer() {
         </UnstyledButton>
 
         <Group gap="xs">
-          <Anchor size="sm" component={Link} href="/privacy">
-            Privacy Policy
-          </Anchor>
-          <Anchor size="sm" component={Link} href="/terms">
-            Terms & Conditions
-          </Anchor>
-          <Anchor size="sm" component={Link} href="/cookie">
-            Cookie Policy
-          </Anchor>
           <ActionIcon
             variant="subtle"
             component={Link}
@@ -84,6 +77,22 @@ export default function Footer() {
           >
             <IconBrandGithub size="1.05rem" stroke={1.5} />
           </ActionIcon>
+          <Menu shadow="md" width={200}>
+            <MenuTarget>
+              <Anchor size="sm">Legal</Anchor>
+            </MenuTarget>
+            <Menu.Dropdown>
+              <Menu.Item component={Link} href="/privacy">
+                Privacy Policy
+              </Menu.Item>
+              <Menu.Item component={Link} href="/terms">
+                Terms & Conditions
+              </Menu.Item>
+              <Menu.Item component={Link} href="/cookie">
+                Cookie Policy
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
         </Group>
       </Group>
     </Container>

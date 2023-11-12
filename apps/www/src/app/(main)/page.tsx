@@ -107,7 +107,9 @@ export default function HomePage() {
           </Box>
         </Stack>
 
-        <PublicElections />
+        <Box id="public-elections">
+          <PublicElections />
+        </Box>
 
         <SimpleGrid id="faq" cols={{ base: 1, sm: 2 }} pos="relative">
           <Box
