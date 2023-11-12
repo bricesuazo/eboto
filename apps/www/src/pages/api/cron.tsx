@@ -86,13 +86,18 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         and(
           eq(
             election.end_date,
-            new Date(date_today_end.setDate(date_today_end.getDate() - 1)),
+            new Date(date_today_end.setDate(date_today_end.getDate() + 1)),
           ),
           eq(election.voting_hour_end, today.getHours()),
           isNull(election.deleted_at),
         ),
       with: {
         voters: true,
+        commissioners: {
+          with: {
+            user: true,
+          },
+        },
         positions: {
           with: {
             candidates: {
@@ -130,7 +135,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           election: result,
         }),
         sendElectionResult({
-          emails: election.voters.map((voter) => voter.email),
+          emails: [
+            ...new Set([
+              ...election.voters.map((voter) => voter.email),
+              ...election.commissioners.map(
+                (commissioner) => commissioner.user.email,
+              ),
+            ]),
+          ],
           election: result,
         }),
       ]);
