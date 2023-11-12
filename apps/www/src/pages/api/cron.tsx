@@ -8,14 +8,16 @@ import { sendElectionResult } from "@eboto-mo/email/emails/election-result";
 import { sendElectionStart } from "@eboto-mo/email/emails/election-start";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const today = new Date(new Date().toDateString());
-  console.log("🚀 ~ file: cron.tsx:12 ~ handler ~ today:", today);
+  const date_today = new Date(new Date().toDateString());
+  const today = new Date();
+  console.log("🚀 ~ file: cron.tsx:12 ~ handler ~ today:", date_today);
+  console.log("🚀 ~ file: cron.tsx:19 ~ handler ~ today:", today);
 
   await db.transaction(async (trx) => {
     const electionsStart = await trx.query.elections.findMany({
       where: (election, { eq, and, isNull }) =>
         and(
-          eq(election.start_date, today),
+          eq(election.start_date, date_today),
           isNull(election.deleted_at),
           eq(election.voting_hour_start, today.getHours()),
         ),
@@ -30,6 +32,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     });
 
     for (const election of electionsStart) {
+      console.log(
+        "🚀 ~ file: cron.tsx:35 ~ awaitdb.transaction ~ election:",
+        election,
+      );
       await Promise.all([
         sendElectionStart({
           isForCommissioner: false,
@@ -68,7 +74,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     const electionsEnd = await trx.query.elections.findMany({
       where: (election, { eq, and, isNull }) =>
         and(
-          eq(election.end_date, today),
+          eq(election.end_date, date_today),
           eq(election.voting_hour_end, today.getHours()),
           isNull(election.deleted_at),
         ),
