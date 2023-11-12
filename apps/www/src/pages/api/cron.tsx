@@ -80,10 +80,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   });
 
   await db.transaction(async (trx) => {
+    const date_today_end = new Date(date_today);
     const electionsEnd = await trx.query.elections.findMany({
       where: (election, { eq, and, isNull }) =>
         and(
-          eq(election.end_date, date_today),
+          eq(
+            election.end_date,
+            new Date(date_today_end.setDate(date_today_end.getDate() - 1)),
+          ),
           eq(election.voting_hour_end, today.getHours()),
           isNull(election.deleted_at),
         ),

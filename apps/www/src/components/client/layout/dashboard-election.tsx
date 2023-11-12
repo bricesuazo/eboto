@@ -33,7 +33,11 @@ import {
 } from "@mantine/core";
 import { IconExternalLink, IconLogout } from "@tabler/icons-react";
 
-import { electionDashboardNavbar } from "@eboto-mo/constants";
+import {
+  electionDashboardNavbar,
+  isElectionEnded,
+  isElectionOngoing,
+} from "@eboto-mo/constants";
 
 export default function DashboardElection({
   children,
@@ -149,8 +153,8 @@ export default function DashboardElection({
                             elections: elections
                               .filter(
                                 ({ election }) =>
-                                  election.start_date < new Date() &&
-                                  election.end_date > new Date(),
+                                  isElectionOngoing({ election }) &&
+                                  !isElectionEnded({ election }),
                               )
                               .sort(
                                 (a, b) =>
@@ -174,9 +178,8 @@ export default function DashboardElection({
                           {
                             group: "Completed",
                             elections: elections
-                              .filter(
-                                ({ election }) =>
-                                  election.end_date < new Date(),
+                              .filter(({ election }) =>
+                                isElectionEnded({ election }),
                               )
                               .sort(
                                 (a, b) =>
