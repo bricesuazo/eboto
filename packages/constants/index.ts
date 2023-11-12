@@ -23,28 +23,22 @@ export const parseHourTo12HourFormat = (hour: number) => {
   else return `${hour - 12} PM`;
 };
 
-export const isElectionEnded = ({
-  election,
-  dateOnly,
-}: {
-  election: Election;
-  dateOnly?: boolean;
-}) => {
+export const isElectionEnded = ({ election }: { election: Election }) => {
   const now = new Date();
 
-  return dateOnly
-    ? election.end_date.getTime() <=
-        new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
-    : election.end_date.getTime() <= now.getTime() &&
-        now.getHours() >= election.voting_hour_end;
+  return (
+    election.end_date.getTime() <= now.getTime() &&
+    now.getHours() >= election.voting_hour_end
+  );
 };
 
 export const isElectionOngoing = ({ election }: { election: Election }) => {
+  const now = new Date();
   return (
-    election.start_date.getTime() <= new Date().getTime() &&
-    !isElectionEnded({ election }) &&
-    new Date().getHours() >= election.voting_hour_start &&
-    new Date().getHours() < election.voting_hour_end
+    election.start_date.getTime() <= now.getTime() &&
+    now.getTime() < election.end_date.getTime() &&
+    election.voting_hour_start <= now.getHours() &&
+    now.getHours() < election.voting_hour_end
   );
 };
 

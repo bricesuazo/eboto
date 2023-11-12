@@ -8,6 +8,7 @@ import { sendElectionResult } from "@eboto-mo/email/emails/election-result";
 import { sendElectionStart } from "@eboto-mo/email/emails/election-start";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // TODO: Use toISOString() instead of toLocaleDateString() and toLocaleString()
   const date_today = new Date(
     new Date().toLocaleDateString("en-US", {
       timeZone: "Asia/Manila",
