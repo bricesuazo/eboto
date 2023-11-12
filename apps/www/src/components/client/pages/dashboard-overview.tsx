@@ -152,9 +152,8 @@ export default function DashboardOverview({
               parseHourTo12HourFormat(election.voting_hour_end)}
         </Text>
         <Text>
-          Created:{" "}
-          {moment(election.created_at).local().format("MMMM DD, YYYY hA")} (
-          {moment(election.created_at).fromNow()})
+          Created: {moment(election.created_at).local().format("MMMM DD, YYYY")}{" "}
+          ({moment(election.created_at).fromNow()})
         </Text>
         <Text>
           Publicity:{" "}

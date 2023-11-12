@@ -113,6 +113,8 @@ export default function DashboardElection({
 
                   router.push(`/dashboard/${val}`);
                   combobox.updateSelectedOptionIndex("active");
+
+                  if (store.dashboardMenu) store.toggleDashboardMenu(false);
                 }}
               >
                 <ComboboxTarget targetType="button">

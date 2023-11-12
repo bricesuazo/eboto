@@ -37,9 +37,9 @@ export async function generateMetadata({
           )}&election_logo=${encodeURIComponent(
             election.logo?.url ?? "",
           )}&election_date=${encodeURIComponent(
-            moment(election.start_date).format("MMMM D, YYYY hA") +
+            moment(election.start_date).format("MMMM D, YYYY") +
               " - " +
-              moment(election.end_date).format("MMMM D, YYYY hA"),
+              moment(election.end_date).format("MMMM D, YYYY"),
           )}`,
           width: 1200,
           height: 630,

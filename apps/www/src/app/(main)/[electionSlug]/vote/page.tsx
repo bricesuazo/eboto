@@ -125,13 +125,9 @@ export default async function VotePage({
           </Text>
           <Text ta="center">
             <Balancer>
-              {moment(election.start_date)
-                .local()
-                .format("MMMM DD, YYYY hA (ddd)")}
+              {moment(election.start_date).local().format("MMMM DD, YYYY")}
               {" - "}
-              {moment(election.end_date)
-                .local()
-                .format("MMMM DD, YYYY hA (ddd)")}
+              {moment(election.end_date).local().format("MMMM DD, YYYY")}
             </Balancer>
           </Text>
           <Text ta="center">

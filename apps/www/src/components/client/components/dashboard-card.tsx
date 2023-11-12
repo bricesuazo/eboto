@@ -25,6 +25,7 @@ import {
 } from "@tabler/icons-react";
 import moment from "moment";
 
+import { parseHourTo12HourFormat } from "@eboto-mo/constants";
 import type { Election } from "@eboto-mo/db/schema";
 
 export default function DashboardCard({
@@ -257,9 +258,16 @@ export default function DashboardCard({
             {election.name}
           </Text>
           <Text size="sm" c="GrayText" ta="center">
-            {moment(election.start_date).local().format("MMM DD (hA)")}
+            {moment(election.start_date).local().format("MMM DD, YYYY")}
             {" - "}
-            {moment(election.end_date).local().format("MMM DD (hA)")}
+            {moment(election.end_date).local().format("MMM DD, YYYY")}
+          </Text>
+          <Text size="sm" c="GrayText" ta="center">
+            {election.voting_hour_start === 0 && election.voting_hour_end === 24
+              ? "Whole day"
+              : parseHourTo12HourFormat(election.voting_hour_start) +
+                " - " +
+                parseHourTo12HourFormat(election.voting_hour_end)}
           </Text>
         </Box>
       </Center>

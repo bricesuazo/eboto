@@ -8,11 +8,9 @@ import { sendElectionResult } from "@eboto-mo/email/emails/election-result";
 import { sendElectionStart } from "@eboto-mo/email/emails/election-start";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const today = new Date();
-  console.log("🚀 ~ file: cron.tsx:13 ~ handler ~ today:", today);
-  today.setSeconds(0);
-  today.setMilliseconds(0);
-  console.log("🚀 ~ file: cron.tsx:15 ~ handler ~ today:", today);
+  const today = new Date(new Date().toDateString());
+  console.log("🚀 ~ file: cron.tsx:12 ~ handler ~ today:", today);
+
   await db.transaction(async (trx) => {
     const electionsStart = await trx.query.elections.findMany({
       where: (election, { eq, and, isNull }) =>

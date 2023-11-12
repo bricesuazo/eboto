@@ -75,9 +75,9 @@ export default function Realtime({
                   {election.name} (@{election.slug})
                 </Title>
                 <Text ta="center">
-                  {moment(election.start_date).format("MMMM D, YYYY hA")}
+                  {moment(election.start_date).format("MMMM D, YYYY")}
                   {" - "}
-                  {moment(election.end_date).format("MMMM D, YYYY hA")}
+                  {moment(election.end_date).format("MMMM D, YYYY")}
                 </Text>
                 <Text ta="center">
                   Voting hours:{" "}
