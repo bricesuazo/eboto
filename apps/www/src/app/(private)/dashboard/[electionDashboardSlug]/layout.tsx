@@ -9,17 +9,24 @@ export default async function DashboardLayout(
 ) {
   const session = await auth();
 
-  if (!session) return redirect("/sign-in");
+  if (!session) redirect("/sign-in");
 
   const election = await db.query.elections.findFirst({
-    where: (election, { eq, and, isNull }) =>
+    where: (elections, { eq, and, isNull }) =>
       and(
-        eq(election.slug, props.params.electionDashboardSlug),
-        isNull(election.deleted_at),
+        eq(elections.slug, props.params.electionDashboardSlug),
+        isNull(elections.deleted_at),
       ),
+    with: {
+      commissioners: {
+        where: (commissioners, { eq }) =>
+          eq(commissioners.user_id, session.user.id),
+        limit: 1,
+      },
+    },
   });
 
-  if (!election) notFound();
+  if (!election || election.commissioners.length === 0) notFound();
 
   return (
     <DashboardElection userId={session.user.id}>
