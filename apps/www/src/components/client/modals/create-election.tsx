@@ -18,7 +18,7 @@ import {
   Stack,
   TextInput,
 } from "@mantine/core";
-import { DateTimePicker } from "@mantine/dates";
+import { DatePickerInput } from "@mantine/dates";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -59,8 +59,7 @@ export default function CreateElection({
   const form = useForm<{
     name: string;
     slug: string;
-    start_date: Date | null;
-    end_date: Date | null;
+    date: [Date | null, Date | null];
     template: string;
     voting_hours: [number, number];
   }>({
@@ -68,22 +67,13 @@ export default function CreateElection({
     initialValues: {
       name: "",
       slug: "",
-      start_date: null,
-      end_date: null,
+      date: [null, null],
       template: "none",
       voting_hours: [7, 19],
     },
 
     validateInputOnBlur: true,
-    transformValues: (values) => ({
-      ...values,
-      start_date: values.start_date
-        ? new Date(values.start_date?.setSeconds(0, 0))
-        : null,
-      end_date: values.end_date
-        ? new Date(values.end_date?.setSeconds(0, 0))
-        : null,
-    }),
+
     validate: {
       name: hasLength(
         { min: 3 },
@@ -100,32 +90,21 @@ export default function CreateElection({
           return "Election slug must be between 3 and 24 characters";
         }
       },
-      start_date: (value, values) => {
-        if (!value) {
-          return "Please enter an election start date";
-        }
-        if (values.end_date && value.getTime() >= values.end_date.getTime()) {
+      date: (value) => {
+        if (!value[0] || !value[1])
+          return "Please enter an election start and end date";
+
+        if (value[0].getTime() >= value[1].getTime())
           return "Start date must be before end date";
-        }
 
-        if (value.getTime() <= new Date().getTime()) {
+        if (value[0].getTime() <= new Date().getTime())
           return "Start date must be in the future";
-        }
-      },
-      end_date: (value, values) => {
-        if (!value) {
-          return "Please enter an election end date";
-        }
-        if (
-          values.start_date &&
-          value.getTime() <= values.start_date.getTime()
-        ) {
-          return "End date must be after start date";
-        }
 
-        if (value.getTime() <= new Date().getTime()) {
+        if (value[1].getTime() <= value[0].getTime())
+          return "End date must be after start date";
+
+        if (value[1].getTime() <= new Date().getTime())
           return "End date must be in the future";
-        }
       },
       template: (value) => {
         if (!value) {
@@ -160,14 +139,17 @@ export default function CreateElection({
         <form
           onSubmit={form.onSubmit((value) => {
             const now = new Date();
+            now.setSeconds(0);
+            now.setMilliseconds(0);
+
             createElectionMutation.mutate({
               ...value,
               name: value.name.trim(),
               slug: value.slug.trim(),
-              start_date:
-                value.start_date ?? new Date(now.setDate(now.getDate() + 1)),
-              end_date:
-                value.end_date ?? new Date(now.setDate(now.getDate() + 5)),
+              date: [
+                value.date[0] ?? new Date(now.setDate(now.getDate() + 1)),
+                value.date[1] ?? new Date(now.setDate(now.getDate() + 5)),
+              ],
               template: value.template,
               voting_hours: value.voting_hours,
             });
@@ -206,44 +188,17 @@ export default function CreateElection({
               }
             />
 
-            <DateTimePicker
-              valueFormat="MMMM DD, YYYY (dddd) hh:mm A"
-              label="Election start date"
-              placeholder="Enter election start date"
+            <DatePickerInput
+              type="range"
+              label="Election start and end date"
+              placeholder="Enter election start and end date"
               description="You can't change the election date once the election has started."
-              required
-              withAsterisk
-              clearable
-              popoverProps={{
-                withinPortal: true,
-                position: "bottom",
-              }}
+              leftSection={<IconCalendar size="1rem" />}
               minDate={new Date(new Date().setDate(new Date().getDate() + 1))}
               firstDayOfWeek={0}
-              {...form.getInputProps("start_date")}
-              leftSection={<IconCalendar size="1rem" />}
-              disabled={createElectionMutation.isLoading}
-            />
-            <DateTimePicker
-              valueFormat="MMMM DD, YYYY (dddd) hh:mm A"
-              label="Election end date"
-              placeholder="Enter election end date"
-              description="You can't change the election date once the election has started."
               required
-              withAsterisk
-              clearable
-              popoverProps={{
-                withinPortal: true,
-                position: "bottom",
-              }}
-              minDate={
-                form.values.start_date ??
-                new Date(new Date().setDate(new Date().getDate() + 1))
-              }
-              firstDayOfWeek={0}
-              {...form.getInputProps("end_date")}
-              leftSection={<IconCalendar size="1rem" />}
               disabled={createElectionMutation.isLoading}
+              {...form.getInputProps("date")}
             />
 
             <Box>

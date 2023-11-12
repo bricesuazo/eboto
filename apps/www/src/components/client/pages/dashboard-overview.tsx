@@ -139,11 +139,9 @@ export default function DashboardOverview({
           <DashboardShowQRCode election={election} />
         </Flex>
         <Text>
-          {moment(election.start_date)
-            .local()
-            .format("MMMM DD, YYYY hA (dddd)")}
+          {moment(election.start_date).local().format("MMMM DD, YYYY")}
           {" - "}
-          {moment(election.end_date).local().format("MMMM DD, YYYY hA (dddd)")}
+          {moment(election.end_date).local().format("MMMM DD, YYYY")}
         </Text>
         <Text>
           Voting hours:{" "}

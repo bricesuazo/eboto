@@ -437,15 +437,24 @@ export const electionRouter = createTRPCRouter({
       z.object({
         name: z.string().min(1),
         slug: z.string().min(1).trim().toLowerCase(),
-        start_date: z.date(),
-        end_date: z.date(),
+        date: z.custom<[Date, Date]>(),
         template: z.string(),
         voting_hours: z.array(z.number()),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       if (takenSlugs.includes(input.slug)) {
-        throw new Error("Election slug is already exists");
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Election slug is already exists",
+        });
+      }
+
+      if (!Array.isArray(input.date) || input.date.length !== 2) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Date must be an array of 2",
+        });
       }
 
       const isElectionSlugExists = await ctx.db.query.elections.findFirst({
@@ -454,7 +463,10 @@ export const electionRouter = createTRPCRouter({
       });
 
       if (isElectionSlugExists) {
-        throw new Error("Election slug is already exists");
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Election slug is already exists",
+        });
       }
 
       const id = nanoid();
@@ -464,8 +476,8 @@ export const electionRouter = createTRPCRouter({
           id,
           name: input.name,
           slug: input.slug,
-          start_date: new Date(input.start_date.toISOString()),
-          end_date: new Date(input.end_date.toISOString()),
+          start_date: input.date[0],
+          end_date: input.date[1],
           voting_hour_start: input.voting_hours[0],
           voting_hour_end: input.voting_hours[1],
         });
@@ -506,8 +518,7 @@ export const electionRouter = createTRPCRouter({
         description: z.string().nullable(),
         oldSlug: z.string().trim().toLowerCase(),
         newSlug: z.string().min(1).trim().toLowerCase(),
-        start_date: z.date(),
-        end_date: z.date(),
+        date: z.custom<[Date, Date]>(),
         publicity: z.enum(publicity),
         // voter_domain: z.string().nullable(),
         voting_hours: z.array(z.number()),
@@ -578,8 +589,8 @@ export const electionRouter = createTRPCRouter({
             slug: input.newSlug,
             description: input.description,
             publicity: input.publicity,
-            start_date: new Date(input.start_date.toISOString()),
-            end_date: new Date(input.end_date.toISOString()),
+            start_date: input.date[0],
+            end_date: input.date[1],
             // voter_domain: input.voter_domain,
             voting_hour_start: input.voting_hours[0],
             voting_hour_end: input.voting_hours[1],

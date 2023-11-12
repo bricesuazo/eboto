@@ -21,7 +21,7 @@ import {
   Textarea,
   TextInput,
 } from "@mantine/core";
-import { DateTimePicker } from "@mantine/dates";
+import { DatePickerInput } from "@mantine/dates";
 import { Dropzone, DropzoneReject, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
@@ -102,8 +102,7 @@ export default function DashboardSettings({
     newSlug: string;
     description: string;
     // voter_domain: string | null;
-    start_date: Date;
-    end_date: Date;
+    date: [Date, Date];
     publicity: Publicity;
     logo: File | string | null;
     voting_hours: [number, number];
@@ -113,8 +112,10 @@ export default function DashboardSettings({
       newSlug: getElectionBySlugQuery.data.slug,
       description: getElectionBySlugQuery.data.description ?? "",
       // voter_domain: getElectionBySlugQuery.data.voter_domain,
-      start_date: getElectionBySlugQuery.data.start_date,
-      end_date: getElectionBySlugQuery.data.end_date,
+      date: [
+        getElectionBySlugQuery.data.start_date,
+        getElectionBySlugQuery.data.end_date,
+      ],
       publicity: getElectionBySlugQuery.data.publicity,
       voting_hours: [
         getElectionBySlugQuery.data.voting_hour_start,
@@ -140,22 +141,14 @@ export default function DashboardSettings({
           return "Election slug must be between 3 and 24 characters";
         }
       },
-      start_date: (value, values) => {
-        if (!value) {
-          return "Please enter an election start date";
+      date: (value) => {
+        if (!value[0] || !value[1]) {
+          return "Please enter an election start and end date";
         }
-        if (values.end_date && value.getTime() >= values.end_date.getTime()) {
+        if (value[0].getTime() >= value[1].getTime()) {
           return "Start date must be before end date";
         }
-      },
-      end_date: (value, values) => {
-        if (!value) {
-          return "Please enter an election end date";
-        }
-        if (
-          values.start_date &&
-          value.getTime() <= values.start_date.getTime()
-        ) {
+        if (value[1].getTime() <= value[0].getTime()) {
           return "End date must be after start date";
         }
       },
@@ -292,8 +285,7 @@ export default function DashboardSettings({
                 description: values.description,
                 oldSlug: election.slug,
                 // voter_domain: values.voter_domain,
-                start_date: values.start_date,
-                end_date: values.end_date,
+                date: values.date,
                 publicity: values.publicity,
                 voting_hours: values.voting_hours,
                 logo:
@@ -370,51 +362,15 @@ export default function DashboardSettings({
             disabled={editElectionMutation.isLoading}
           /> */}
 
-          <DateTimePicker
-            valueFormat="MMMM DD, YYYY (dddd) hh:mm A"
-            label="Election start date"
-            placeholder="Enter election start date"
+          <DatePickerInput
+            type="range"
+            label="Election start and end date"
+            placeholder="Enter election start and end date"
             description="You can't change the election date once the election has started."
-            required
-            clearable
-            withAsterisk
-            popoverProps={{
-              withinPortal: true,
-              position: "bottom",
-            }}
+            leftSection={<IconCalendar size="1rem" />}
             minDate={new Date(new Date().setDate(new Date().getDate() + 1))}
             firstDayOfWeek={0}
-            {...form.getInputProps("start_date")}
-            leftSection={<IconCalendar size="1rem" />}
-            disabled={
-              editElectionMutation.isLoading ||
-              isElectionOngoing({
-                election: getElectionBySlugQuery.data,
-              }) ||
-              isElectionEnded({
-                election: getElectionBySlugQuery.data,
-              })
-            }
-          />
-          <DateTimePicker
-            valueFormat="MMMM DD, YYYY (dddd) hh:mm A"
-            label="Election end date"
-            placeholder="Enter election end date"
-            description="You can't change the election date once the election has started."
             required
-            withAsterisk
-            clearable
-            popoverProps={{
-              withinPortal: true,
-              position: "bottom",
-            }}
-            minDate={
-              form.values.start_date ||
-              new Date(new Date().setDate(new Date().getDate() + 1))
-            }
-            firstDayOfWeek={0}
-            {...form.getInputProps("end_date")}
-            leftSection={<IconCalendar size="1rem" />}
             disabled={
               editElectionMutation.isLoading ||
               isElectionOngoing({
@@ -424,6 +380,7 @@ export default function DashboardSettings({
                 election: getElectionBySlugQuery.data,
               })
             }
+            {...form.getInputProps("date")}
           />
 
           <Box>
