@@ -20,9 +20,10 @@ import {
   Stack,
   Text,
   UnstyledButton,
+  useMantineColorScheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useColorScheme, useDisclosure } from "@mantine/hooks";
+import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import {
   IconAlertCircle,
@@ -365,7 +366,7 @@ function VoteCard({
   isSelected: boolean;
 }) {
   const ref = useRef<HTMLInputElement>(null);
-  const colorScheme = useColorScheme();
+  const { colorScheme } = useMantineColorScheme();
   return (
     <>
       {type === "radio" && (
@@ -408,21 +409,16 @@ function VoteCard({
             : colorScheme === "light"
             ? theme.colors.gray[3]
             : theme.colors.gray[7],
-          backgroundColor:
-            colorScheme === "light"
-              ? isSelected
-                ? theme.colors.gray[1]
-                : "transparent"
-              : isSelected
-              ? theme.colors.dark[6]
-              : "transparent",
+          backgroundColor: isSelected
+            ? colorScheme === "light"
+              ? theme.colors.gray[1]
+              : theme.colors.dark[5]
+            : "transparent",
           color: isSelected
             ? colorScheme === "light"
               ? theme.colors.green[6]
               : theme.colors.green[8]
-            : colorScheme === "light"
-            ? theme.colors.gray[7]
-            : theme.colors.gray[3],
+            : theme.colors.gray[6],
           borderRadius: theme.radius.md,
           display: "flex",
           flexDirection: "column",
@@ -451,15 +447,19 @@ function VoteCard({
             <IconUser size={80} style={{ padding: 8 }} />
           </Box>
         )}
-        <Text w="100%" ta={{ base: "left", sm: "center" }} lineClamp={1}>
-          {candidate
-            ? `${candidate.last_name}, ${candidate.first_name}${
-                candidate.middle_name
-                  ? " " + candidate.middle_name.charAt(0) + "."
-                  : ""
-              } (${candidate.partylist.acronym})`
-            : "Abstain"}
-        </Text>
+        {candidate ? (
+          <Text w="100%" ta={{ base: "left", sm: "center" }} lineClamp={1}>
+            {candidate.last_name}, {candidate.first_name}
+            {candidate.middle_name
+              ? " " + candidate.middle_name.charAt(0) + "."
+              : ""}{" "}
+            ({candidate.partylist.acronym})
+          </Text>
+        ) : (
+          <Text w="100%" ta="center" lineClamp={1}>
+            Abstain
+          </Text>
+        )}
       </UnstyledButton>
     </>
   );

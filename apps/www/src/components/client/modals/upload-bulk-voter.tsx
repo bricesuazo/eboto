@@ -267,20 +267,10 @@ export default function UploadBulkVoter({
             >
               <div>
                 <DropzoneAccept>
-                  <IconUpload
-                    size="3.2rem"
-                    stroke={1.5}
-                    // color={
-                    //   theme.colors.green[theme.colorScheme === "dark" ? 4 : 6]
-                    // }
-                  />
+                  <IconUpload size="3.2rem" stroke={1.5} />
                 </DropzoneAccept>
                 <DropzoneReject>
-                  <IconX
-                    size="3.2rem"
-                    stroke={1.5}
-                    // color={theme.colors.red[theme.colorScheme === "dark" ? 4 : 6]}
-                  />
+                  <IconX size="3.2rem" stroke={1.5} />
                 </DropzoneReject>
                 <DropzoneIdle>
                   <IconFileSpreadsheet size="3.2rem" stroke={1.5} />

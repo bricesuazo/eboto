@@ -64,7 +64,7 @@ export default function GenerateResult({
                 width: 32,
                 height: 32,
                 aspectRatio: 1,
-                objectFit: "contain",
+                objectFit: "cover",
               }}
             />
             <Text
@@ -95,7 +95,7 @@ export default function GenerateResult({
                   height: 80,
                   alignSelf: "center",
                   aspectRatio: 1,
-                  objectFit: "contain",
+                  objectFit: "cover",
                 }}
               />
             )}

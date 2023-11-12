@@ -29,13 +29,6 @@ export default function GenerateResultRow({
         borderWidth: 2,
         borderStyle: "solid",
         borderColor: "var(--mantine-color-green-light-hover)",
-
-        // "&:hover": {
-        //   backgroundColor:
-        //     theme.colorScheme === "dark"
-        //       ? theme.colors.dark[5]
-        //       : theme.colors.gray[2],
-        // },
       })}
     >
       <Box>

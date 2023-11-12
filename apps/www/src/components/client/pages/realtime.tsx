@@ -79,6 +79,7 @@ export default function Realtime({
                       width={92}
                       height={92}
                       priority
+                      style={{ objectFit: "cover" }}
                     />
                   ) : (
                     <IconFingerprint size={92} style={{ padding: 8 }} />
