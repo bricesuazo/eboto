@@ -242,8 +242,10 @@ export default function DashboardOverview({
             count: election.voters.filter((voter) => voter.votes.length > 0)
               .length,
             sub_count:
-              election.voters.filter((voter) => voter.votes.length > 0).length /
-              election.voters.length,
+              (election.voters.filter((voter) => voter.votes.length > 0)
+                .length /
+                election.voters.length) *
+              100,
             title: "Voted",
             description: "Total number of voters who already voted",
           },
@@ -271,6 +273,7 @@ export default function DashboardOverview({
                       <NumberFormatter
                         thousandSeparator
                         decimalScale={2}
+                        fixedDecimalScale
                         value={stat.sub_count}
                         suffix="%"
                       />

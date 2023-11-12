@@ -5,7 +5,7 @@ import { api } from "@/trpc/server";
 import moment from "moment";
 
 import { auth } from "@eboto-mo/auth";
-import { isElectionOngoing } from "@eboto-mo/constants";
+import { isElectionEnded, isElectionOngoing } from "@eboto-mo/constants";
 import { db } from "@eboto-mo/db";
 
 export async function generateMetadata({
@@ -64,11 +64,10 @@ export default async function RelatimePage({
 
   if (!election) notFound();
 
+  const callbackUrl = `/sign-in?callbackUrl=https://eboto-mo.com/${election.slug}/realtime`;
+
   if (election.publicity === "PRIVATE") {
-    if (!session)
-      redirect(
-        `/sign-in?callbackUrl=https://eboto-mo.com/${election.slug}/realtime`,
-      );
+    if (!session) redirect(callbackUrl);
 
     const isCommissioner = await db.query.commissioners.findFirst({
       where: (commissioner, { eq, and, isNull }) =>
@@ -103,10 +102,7 @@ export default async function RelatimePage({
 
     if (isVoter && !vote) redirect(`/${election.slug}`);
   } else if (election.publicity === "VOTER") {
-    if (!session)
-      redirect(
-        `/sign-in?callbackUrl=https://eboto-mo.com/${election.slug}/realtime`,
-      );
+    if (!session) redirect(callbackUrl);
 
     const isVoter = await db.query.voters.findFirst({
       where: (voter, { eq, and, isNull }) =>
@@ -137,8 +133,13 @@ export default async function RelatimePage({
     if (!isVoter && !isCommissioner) notFound();
 
     if (
-      (!vote && isVoter) ??
-      (!isElectionOngoing({ election }) && isVoter && !vote)
+      !isElectionEnded({
+        election,
+      }) &&
+      isElectionOngoing({
+        election,
+      }) &&
+      !vote
     )
       redirect(`/${election.slug}`);
   }

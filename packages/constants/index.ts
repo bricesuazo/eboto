@@ -31,7 +31,7 @@ export const isElectionEnded = ({ election }: { election: Election }) => {
   );
 
   return (
-    election.end_date.getTime() <= now.getTime() &&
+    election.end_date.getTime() <= now.getTime() ||
     now.getHours() >= election.voting_hour_end
   );
 };
@@ -43,10 +43,10 @@ export const isElectionOngoing = ({ election }: { election: Election }) => {
     }),
   );
   return (
-    election.start_date.getTime() <= now.getTime() &&
-    now.getTime() < election.end_date.getTime() &&
-    election.voting_hour_start <= now.getHours() &&
-    now.getHours() < election.voting_hour_end
+    (election.start_date.getTime() <= now.getTime() &&
+      now.getTime() < election.end_date.getTime()) ||
+    (election.voting_hour_start <= now.getHours() &&
+      now.getHours() < election.voting_hour_end)
   );
 };
 

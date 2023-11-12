@@ -53,15 +53,21 @@ export default async function Page() {
         gte(elections.end_date, new Date()),
         // eq(elections.voter_domain, session.user.email?.split("@")[1] ?? ""),
       ),
+    with: {
+      voters: {
+        where: (voters, { eq, and, isNull }) =>
+          and(
+            eq(voters.email, session.user.email ?? ""),
+            isNull(voters.deleted_at),
+          ),
+        limit: 1,
+      },
+    },
   });
 
-  const voter = await db.query.voters.findFirst({
-    where: (voters, { eq, and, isNull }) =>
-      and(
-        eq(voters.email, session.user.email ?? ""),
-        isNull(voters.deleted_at),
-      ),
-  });
+  const voter = electionsThatICanVoteIn.find(
+    (election) => election.voters.length > 0,
+  )?.voters[0];
 
   const electionsAsVoter = await db.query.voters.findMany({
     where: (voters, { eq, ne, and, inArray, isNull }) =>

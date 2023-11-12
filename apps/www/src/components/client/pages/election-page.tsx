@@ -249,7 +249,7 @@ export default function ElectionPage({
             )}
 
             <Flex justify="center" gap="sm" mt={8} align="center">
-              {hasVoted || election.end_date < new Date() ? (
+              {hasVoted || isElectionEnded({ election }) ? (
                 <Button
                   radius="xl"
                   size="md"
@@ -261,8 +261,6 @@ export default function ElectionPage({
                 </Button>
               ) : !isOngoing ? (
                 <Text c="red">Voting is not yet open</Text>
-              ) : isElectionEnded({ election }) ? (
-                <Text c="red">Voting has already ended</Text>
               ) : (
                 !!myVoterData && (
                   <>
