@@ -69,7 +69,7 @@ export default function ElectionStart(props: ElectionStartProps) {
               className="aspect-square rounded-full"
             />
             <Heading as="h1" className="text-2xl font-bold text-gray-800">
-              Election has started for ${props.election.name}
+              Election has started for {props.election.name}
             </Heading>
 
             {props.isForCommissioner ? (

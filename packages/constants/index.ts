@@ -24,7 +24,11 @@ export const parseHourTo12HourFormat = (hour: number) => {
 };
 
 export const isElectionEnded = ({ election }: { election: Election }) => {
-  const now = new Date();
+  const now = new Date(
+    new Date().toLocaleString("en-US", {
+      timeZone: "Asia/Manila",
+    }),
+  );
 
   return (
     election.end_date.getTime() <= now.getTime() &&
@@ -33,7 +37,11 @@ export const isElectionEnded = ({ election }: { election: Election }) => {
 };
 
 export const isElectionOngoing = ({ election }: { election: Election }) => {
-  const now = new Date();
+  const now = new Date(
+    new Date().toLocaleString("en-US", {
+      timeZone: "Asia/Manila",
+    }),
+  );
   return (
     election.start_date.getTime() <= now.getTime() &&
     now.getTime() < election.end_date.getTime() &&

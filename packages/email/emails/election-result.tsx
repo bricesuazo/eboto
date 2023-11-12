@@ -107,7 +107,7 @@ export default function ElectionResult(props: ElectionResultProps) {
                 padding: "17px 0 0",
               }}
             >
-              Election Result for ${props.election.name}
+              Election Result for {props.election.name}
             </Heading>
             <Heading
               as="h4"
