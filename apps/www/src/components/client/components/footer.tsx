@@ -91,6 +91,9 @@ export default function Footer() {
               <Menu.Item component={Link} href="/cookie">
                 Cookie Policy
               </Menu.Item>
+              <Menu.Item component={Link} href="/disclaimer">
+                Disclaimer
+              </Menu.Item>
             </Menu.Dropdown>
           </Menu>
         </Group>

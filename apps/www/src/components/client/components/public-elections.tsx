@@ -39,7 +39,6 @@ export default function PublicElections() {
         withIndicators
         slideSize={{ base: "100%", xs: "50%", md: "33.333333%" }}
         height={400}
-        controlSize={40}
         slideGap="md"
         loop
         align="start"
