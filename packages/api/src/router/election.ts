@@ -817,4 +817,11 @@ export const electionRouter = createTRPCRouter({
 
       return 1;
     }),
+  getAllPublicElections: publicProcedure.query(async ({ ctx }) => {
+    return ctx.db.query.elections.findMany({
+      where: (elections, { eq, and, isNull }) =>
+        and(eq(elections.publicity, "PUBLIC"), isNull(elections.deleted_at)),
+      orderBy: (elections, { desc }) => desc(elections.created_at),
+    });
+  }),
 });

@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import ContactForm from "@/components/client/components/contact-form";
+import PublicElections from "@/components/client/components/public-elections";
 import classes from "@/styles/Home.module.css";
 import {
   Accordion,
@@ -105,6 +106,8 @@ export default function HomePage() {
             />
           </Box>
         </Stack>
+
+        <PublicElections />
 
         <SimpleGrid id="faq" cols={{ base: 1, sm: 2 }} pos="relative">
           <Box

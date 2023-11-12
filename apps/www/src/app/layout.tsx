@@ -4,6 +4,7 @@ import "@mantine/dropzone/styles.css";
 import "@mantine/notifications/styles.css";
 import "mantine-react-table/styles.css";
 import "@mantine/spotlight/styles.css";
+import "@mantine/carousel/styles.css";
 
 import type { Metadata } from "next";
 import {

@@ -293,8 +293,10 @@ export default function ElectionPage({
           <Stack gap="xl" w="100%">
             {positions.length === 0 ? (
               <Text ta="center">
-                This election has no positions. Please contact the election
-                commissioner for more information.
+                <Balancer>
+                  This election has no positions. Please contact the election
+                  commissioner for more information.
+                </Balancer>
               </Text>
             ) : (
               positions.map((position) => (
