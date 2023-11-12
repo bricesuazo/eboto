@@ -8,8 +8,16 @@ import { sendElectionResult } from "@eboto-mo/email/emails/election-result";
 import { sendElectionStart } from "@eboto-mo/email/emails/election-start";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const date_today = new Date(new Date().toDateString());
-  const today = new Date();
+  const date_today = new Date(
+    new Date().toLocaleDateString("en-US", {
+      timeZone: "Asia/Manila",
+    }),
+  );
+  const today = new Date(
+    new Date().toLocaleString("en-US", {
+      timeZone: "Asia/Manila",
+    }),
+  );
   console.log("🚀 ~ file: cron.tsx:12 ~ handler ~ today:", date_today);
   console.log("🚀 ~ file: cron.tsx:19 ~ handler ~ today:", today);
 
