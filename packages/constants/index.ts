@@ -249,6 +249,7 @@ export const takenSlugs: TakenSlugs = [
   "logout",
   "forgot-password",
   "reset-password",
+  "register",
   "verify",
   "dashboard",
   "contact",
@@ -261,13 +262,15 @@ export const takenSlugs: TakenSlugs = [
   "admin-user",
   "admin-settings",
   "invitation",
-  "account",
   "facebook",
   "twitter",
   "google",
   "github",
   "linkedin",
   "email",
+  "cookie",
+  "privacy",
+  "terms",
 ];
 
 export const FAQs: { id: string; question: string; answer: string }[] = [

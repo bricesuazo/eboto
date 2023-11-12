@@ -86,6 +86,11 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           theme={{
             primaryColor: "green",
             fontFamily: font.style.fontFamily,
+            defaultGradient: {
+              from: "green",
+              to: "#6BD731",
+              deg: 5,
+            },
           }}
         >
           <SessionProvider>

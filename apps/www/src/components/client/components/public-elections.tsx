@@ -69,7 +69,11 @@ export default function PublicElections() {
                           />
                         ) : (
                           <Paper withBorder>
-                            <IconFlag3 size={192} style={{ padding: 40 }} />
+                            <IconFlag3
+                              size={192}
+                              style={{ padding: 40 }}
+                              color="gray"
+                            />
                           </Paper>
                         )}
                       </Center>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
   ActionIcon,
+  Anchor,
   Container,
   Group,
   Text,
@@ -36,6 +37,15 @@ export default function Footer() {
         </UnstyledButton>
 
         <Group gap="xs">
+          <Anchor size="sm" component={Link} href="/privacy">
+            Privacy Policy
+          </Anchor>
+          <Anchor size="sm" component={Link} href="/terms">
+            Terms & Conditions
+          </Anchor>
+          <Anchor size="sm" component={Link} href="/cookie">
+            Cookie Policy
+          </Anchor>
           <ActionIcon
             variant="subtle"
             component={Link}
