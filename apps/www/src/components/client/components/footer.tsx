@@ -77,6 +77,11 @@ export default function Footer() {
           >
             <IconBrandGithub size="1.05rem" stroke={1.5} />
           </ActionIcon>
+
+          <Anchor size="sm" component={Link} href="/contact" visibleFrom="xs">
+            Contact Us
+          </Anchor>
+
           <Menu shadow="md" width={200}>
             <MenuTarget>
               <Anchor size="sm">Legal</Anchor>
