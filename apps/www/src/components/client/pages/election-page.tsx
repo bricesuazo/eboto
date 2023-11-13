@@ -248,7 +248,9 @@ export default function ElectionPage({
             )}
 
             <Flex justify="center" gap="sm" mt={8} align="center">
-              {hasVoted || isElectionEnded({ election }) ? (
+              {election.publicity === "PUBLIC" ||
+              hasVoted ||
+              isElectionEnded({ election }) ? (
                 <Button
                   radius="xl"
                   size="md"
