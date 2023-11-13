@@ -61,7 +61,7 @@ export default function ContactForm() {
             {[
               {
                 title: "Email",
-                description: "hi@eboto.com",
+                description: "hi@eboto-mo.com",
                 icon: IconAt,
               },
               {
