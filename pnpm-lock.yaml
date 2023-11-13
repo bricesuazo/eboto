@@ -29,6 +29,9 @@ importers:
 
   apps/www:
     dependencies:
+      '@ctrl/react-adsense':
+        specifier: ^1.7.0
+        version: registry.npmjs.org/@ctrl/react-adsense@1.7.0
       '@eboto/api':
         specifier: workspace:*
         version: link:../../packages/api
@@ -1424,6 +1427,14 @@ packages:
     dependencies:
       '@jridgewell/trace-mapping': registry.npmjs.org/@jridgewell/trace-mapping@0.3.9
     dev: true
+
+  registry.npmjs.org/@ctrl/react-adsense@1.7.0:
+    resolution: {integrity: sha512-TrDGbAo8KRPHnX/Jtv9CkMV90vK7M/sz8KNECTQgcsHO4e5GyNZL3jqCY4WA0MCwfT48NH34qzyV9e2SWsceLw==, tarball: https://registry.npmjs.org/@ctrl/react-adsense/-/react-adsense-1.7.0.tgz}
+    name: '@ctrl/react-adsense'
+    version: 1.7.0
+    dependencies:
+      tslib: registry.npmjs.org/tslib@2.6.2
+    dev: false
 
   registry.npmjs.org/@drizzle-team/studio@0.0.27:
     resolution: {integrity: sha512-vkgflb8g/7WCdVCuxWE6tCzjZB0q4lLIK6mwH1aleNRqIGOhEWq/E2I8HmKquz1v0GRDHLFd19ZzrVSITt2Uqg==, tarball: https://registry.npmjs.org/@drizzle-team/studio/-/studio-0.0.27.tgz}

@@ -2,8 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import AdModal from "@/components/client/components/ad-modal";
 import ScrollToTopButton from "@/components/client/components/scroll-to-top";
 import { api } from "@/trpc/client";
+import { Adsense } from "@ctrl/react-adsense";
 import {
   Box,
   Button,
@@ -65,6 +67,7 @@ export default function Realtime({
     );
   return (
     <>
+      <AdModal />
       <ScrollToTopButton />
       <Container py="xl" size="md">
         <Stack gap="xl">
@@ -129,6 +132,16 @@ export default function Realtime({
               </Center>
             </Stack>
           </Center>
+          <Adsense
+            style={{
+              display: "block",
+              width: "100%",
+            }}
+            client="ca-pub-8443325162715161"
+            slot="6949415137"
+            format="auto"
+            responsive="true"
+          />
 
           <Stack gap="xl">
             <SimpleGrid
@@ -203,6 +216,18 @@ export default function Realtime({
                 </Table>
               ))}
             </SimpleGrid>
+
+            <Adsense
+              style={{
+                display: "block",
+                width: "100%",
+              }}
+              client="ca-pub-8443325162715161"
+              slot="6949415137"
+              format="auto"
+              responsive="true"
+            />
+
             <Stack gap="sm">
               <Title order={3} ta="center">
                 Voter Stats

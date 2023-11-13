@@ -11,6 +11,7 @@ import {
   // Lexend,
   Poppins,
 } from "next/font/google";
+import Script from "next/script";
 import { Providers } from "@/components/providers";
 import { siteConfig } from "@/config/site";
 import TRPCProvider from "@/trpc/TRPCProvider";
@@ -80,11 +81,10 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
     <html lang="en">
       <head>
         <ColorSchemeScript />
-        {/* <script
+        <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8443325162715161"
-          crossOrigin="anonymous"
-        ></script> */}
+        />
       </head>
       <body className={font.className}>
         <MantineProvider

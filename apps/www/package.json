@@ -11,6 +11,7 @@
     "with-env": "dotenv -e ../../.env.local --"
   },
   "dependencies": {
+    "@ctrl/react-adsense": "^1.7.0",
     "@eboto/api": "workspace:*",
     "@eboto/auth": "workspace:*",
     "@eboto/constants": "workspace:*",
