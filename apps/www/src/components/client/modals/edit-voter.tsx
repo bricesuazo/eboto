@@ -22,7 +22,7 @@ import {
   IconEdit,
 } from "@tabler/icons-react";
 
-import type { VoterField } from "@eboto-mo/db/schema";
+import type { VoterField } from "@eboto/db/schema";
 
 export default function EditVoter({
   election_id,

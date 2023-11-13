@@ -16,7 +16,7 @@ import {
 } from "@react-email/components";
 import { renderAsync } from "@react-email/render";
 
-import { baseUrl } from "@eboto-mo/constants";
+import { baseUrl } from "@eboto/constants";
 
 import { ses } from "../index";
 import { config } from "../tailwind.config";
@@ -89,10 +89,10 @@ export default function VoteCasted(props: VoteCastedProps) {
             }}
           >
             <Img
-              src={`https://raw.githubusercontent.com/bricesuazo/eboto-mo/main/apps/www/public/images/logo.png`}
+              src={`https://raw.githubusercontent.com/bricesuazo/eboto/main/apps/www/public/images/logo.png`}
               width="42"
               height="42"
-              alt="eBoto Mo"
+              alt="eBoto"
               style={{
                 borderRadius: 21,
                 width: 42,
@@ -175,7 +175,7 @@ export default function VoteCasted(props: VoteCastedProps) {
                 color: "#b4becc",
               }}
             >
-              eBoto Mo
+              eBoto
             </Link>
           </Container>
         </Body>

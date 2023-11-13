@@ -19,7 +19,7 @@ import { IconArrowRight, IconFlag3 } from "@tabler/icons-react";
 import moment from "moment";
 import Balancer from "react-wrap-balancer";
 
-import { parseHourTo12HourFormat } from "@eboto-mo/constants";
+import { parseHourTo12HourFormat } from "@eboto/constants";
 
 export default function PublicElections() {
   const getAllPublicElectionsQuery =

@@ -8,8 +8,8 @@ import { api } from "@/trpc/client";
 import { Box, Flex, Group, Stack, Text, Title } from "@mantine/core";
 import { IconFlag } from "@tabler/icons-react";
 
-import type { RouterOutputs } from "@eboto-mo/api";
-import type { Election } from "@eboto-mo/db/schema";
+import type { RouterOutputs } from "@eboto/api";
+import type { Election } from "@eboto/db/schema";
 
 export default function DashboardPartylist({
   election,

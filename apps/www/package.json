@@ -11,12 +11,12 @@
     "with-env": "dotenv -e ../../.env.local --"
   },
   "dependencies": {
-    "@eboto-mo/api": "workspace:*",
-    "@eboto-mo/auth": "workspace:*",
-    "@eboto-mo/constants": "workspace:*",
-    "@eboto-mo/db": "workspace:*",
-    "@eboto-mo/email": "workspace:*",
-    "@eboto-mo/eslint-config": "workspace:*",
+    "@eboto/api": "workspace:*",
+    "@eboto/auth": "workspace:*",
+    "@eboto/constants": "workspace:*",
+    "@eboto/db": "workspace:*",
+    "@eboto/email": "workspace:*",
+    "@eboto/eslint-config": "workspace:*",
     "@emotion/react": "^11.11.1",
     "@mantine/carousel": "7.2.2",
     "@mantine/code-highlight": "^7.2.2",
@@ -70,9 +70,9 @@
     "zustand": "^4.4.6"
   },
   "devDependencies": {
-    "@eboto-mo/eslint-config": "workspace:*",
-    "@eboto-mo/prettier-config": "workspace:*",
-    "@eboto-mo/tsconfig": "workspace:*",
+    "@eboto/eslint-config": "workspace:*",
+    "@eboto/prettier-config": "workspace:*",
+    "@eboto/tsconfig": "workspace:*",
     "@tanstack/eslint-plugin-query": "^5.8.3",
     "@types/node": "^20.9.0",
     "@types/react": "^18.2.37",
@@ -85,10 +85,10 @@
   "eslintConfig": {
     "root": true,
     "extends": [
-      "@eboto-mo/eslint-config/base",
-      "@eboto-mo/eslint-config/nextjs",
-      "@eboto-mo/eslint-config/react"
+      "@eboto/eslint-config/base",
+      "@eboto/eslint-config/nextjs",
+      "@eboto/eslint-config/react"
     ]
   },
-  "prettier": "@eboto-mo/prettier-config"
+  "prettier": "@eboto/prettier-config"
 }

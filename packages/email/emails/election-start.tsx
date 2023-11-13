@@ -15,7 +15,7 @@ import {
 } from "@react-email/components";
 import { renderAsync } from "@react-email/render";
 
-import { baseUrl } from "@eboto-mo/constants";
+import { baseUrl } from "@eboto/constants";
 
 import { ses } from "../index";
 import { config } from "../tailwind.config";
@@ -41,7 +41,7 @@ export async function sendElectionStart(props: ElectionStartProps) {
     Message: {
       Subject: {
         Charset: "UTF-8",
-        Data: `eBoto Mo: Election has started for ${props.election.name}`,
+        Data: `eBoto: Election has started for ${props.election.name}`,
       },
       Body: {
         Html: {
@@ -57,15 +57,15 @@ export default function ElectionStart(props: ElectionStartProps) {
   return (
     <Html>
       <Head />
-      <Preview>eBoto Mo: Election Result for {props.election.name}</Preview>
+      <Preview>eBoto: Election Result for {props.election.name}</Preview>
       <Tailwind config={config}>
         <Body className="bg-white font-sans">
           <Container className="mx-auto px-12 pt-5">
             <Img
-              src={`https://raw.githubusercontent.com/bricesuazo/eboto-mo/main/apps/www/public/images/logo.png`}
+              src={`https://raw.githubusercontent.com/bricesuazo/eboto/main/apps/www/public/images/logo.png`}
               width="42"
               height="42"
-              alt="eBoto Mo"
+              alt="eBoto"
               className="aspect-square rounded-full"
             />
             <Heading as="h1" className="text-2xl font-bold text-gray-800">
@@ -117,7 +117,7 @@ export default function ElectionStart(props: ElectionStartProps) {
                 color: "#b4becc",
               }}
             >
-              eBoto Mo
+              eBoto
             </Link>
           </Container>
         </Body>

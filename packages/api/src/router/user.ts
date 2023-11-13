@@ -3,14 +3,14 @@ import { TRPCError } from "@trpc/server";
 import { File } from "@web-std/file";
 import { z } from "zod";
 
-import { update } from "@eboto-mo/auth";
-import { eq } from "@eboto-mo/db";
+import { update } from "@eboto/auth";
+import { eq } from "@eboto/db";
 import {
   accounts,
   deleted_accounts,
   deleted_users,
   users,
-} from "@eboto-mo/db/schema";
+} from "@eboto/db/schema";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 

@@ -34,7 +34,7 @@ export default function SigninForm() {
         <Stack gap="xs">
           <Text ta="center">
             <Balancer ratio={0.5} preferNative={false}>
-              Welcome to eBoto Mo, sign in with
+              Welcome to eBoto, sign in with
             </Balancer>
           </Text>
           <Button
@@ -81,7 +81,7 @@ export default function SigninForm() {
           <TextInput
             required
             label="Email"
-            placeholder="brice@eboto-mo.com"
+            placeholder="brice@eboto.com"
             disabled
           />
 

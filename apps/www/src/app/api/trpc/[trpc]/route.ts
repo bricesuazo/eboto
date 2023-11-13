@@ -1,7 +1,7 @@
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 
-import { appRouter, createTRPCContext } from "@eboto-mo/api";
-import { auth } from "@eboto-mo/auth";
+import { appRouter, createTRPCContext } from "@eboto/api";
+import { auth } from "@eboto/auth";
 
 const handler = (req: Request) =>
   fetchRequestHandler({

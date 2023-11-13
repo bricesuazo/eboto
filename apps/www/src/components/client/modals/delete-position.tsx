@@ -7,7 +7,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
 
-import type { Position } from "@eboto-mo/db/schema";
+import type { Position } from "@eboto/db/schema";
 
 export default function DeletePosition({ position }: { position: Position }) {
   const [opened, { open, close }] = useDisclosure(false);

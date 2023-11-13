@@ -7,7 +7,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
 
-import type { Candidate } from "@eboto-mo/db/schema";
+import type { Candidate } from "@eboto/db/schema";
 
 export default function DeleteCandidate({
   candidate,

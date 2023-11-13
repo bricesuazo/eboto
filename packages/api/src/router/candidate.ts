@@ -4,7 +4,7 @@ import { File } from "@web-std/file";
 import { nanoid } from "nanoid";
 import { z } from "zod";
 
-import { and, eq } from "@eboto-mo/db";
+import { and, eq } from "@eboto/db";
 import {
   achievements,
   affiliations,
@@ -12,7 +12,7 @@ import {
   credentials,
   events_attended,
   platforms,
-} from "@eboto-mo/db/schema";
+} from "@eboto/db/schema";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 

@@ -2,11 +2,11 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { verifySignatureEdge } from "@upstash/qstash/dist/nextjs";
 
-import { db } from "@eboto-mo/db";
-import type { GeneratedElectionResult } from "@eboto-mo/db/schema";
-import { elections, generated_election_results } from "@eboto-mo/db/schema";
-import { sendElectionResult } from "@eboto-mo/email/emails/election-result";
-import { sendElectionStart } from "@eboto-mo/email/emails/election-start";
+import { db } from "@eboto/db";
+import type { GeneratedElectionResult } from "@eboto/db/schema";
+import { elections, generated_election_results } from "@eboto/db/schema";
+import { sendElectionResult } from "@eboto/email/emails/election-result";
+import { sendElectionStart } from "@eboto/email/emails/election-start";
 
 export const runtime = "edge";
 

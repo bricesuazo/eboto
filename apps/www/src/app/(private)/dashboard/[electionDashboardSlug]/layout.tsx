@@ -1,8 +1,8 @@
 import { notFound, redirect } from "next/navigation";
 import DashboardElection from "@/components/client/layout/dashboard-election";
 
-import { auth } from "@eboto-mo/auth";
-import { db } from "@eboto-mo/db";
+import { auth } from "@eboto/auth";
+import { db } from "@eboto/db";
 
 export default async function DashboardLayout(
   props: React.PropsWithChildren<{ params: { electionDashboardSlug: string } }>,

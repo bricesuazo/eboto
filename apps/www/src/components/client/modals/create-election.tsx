@@ -31,7 +31,7 @@ import {
   IconTemplate,
 } from "@tabler/icons-react";
 
-import { parseHourTo12HourFormat, positionTemplate } from "@eboto-mo/constants";
+import { parseHourTo12HourFormat, positionTemplate } from "@eboto/constants";
 
 export default function CreateElection({
   style,

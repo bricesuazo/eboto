@@ -4,9 +4,9 @@ import Realtime from "@/components/client/pages/realtime";
 import { api } from "@/trpc/server";
 import moment from "moment";
 
-import { auth } from "@eboto-mo/auth";
-import { isElectionEnded, isElectionOngoing } from "@eboto-mo/constants";
-import { db } from "@eboto-mo/db";
+import { auth } from "@eboto/auth";
+import { isElectionEnded, isElectionOngoing } from "@eboto/constants";
+import { db } from "@eboto/db";
 
 export async function generateMetadata({
   params: { electionSlug },
@@ -22,10 +22,10 @@ export async function generateMetadata({
 
   return {
     title: election.name + " - Realtime Result",
-    description: `See realtime result of ${election.name} | eBoto Mo`,
+    description: `See realtime result of ${election.name} | eBoto`,
     openGraph: {
       title: election.name,
-      description: `See realtime result of ${election.name} | eBoto Mo`,
+      description: `See realtime result of ${election.name} | eBoto`,
       images: [
         {
           url: `${

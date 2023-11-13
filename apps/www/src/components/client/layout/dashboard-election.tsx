@@ -37,7 +37,7 @@ import {
   electionDashboardNavbar,
   isElectionEnded,
   isElectionOngoing,
-} from "@eboto-mo/constants";
+} from "@eboto/constants";
 
 export default function DashboardElection({
   children,

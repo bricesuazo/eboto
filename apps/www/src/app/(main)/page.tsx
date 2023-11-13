@@ -20,7 +20,7 @@ import {
 } from "@mantine/core";
 import Balancer from "react-wrap-balancer";
 
-import { FAQs } from "@eboto-mo/constants";
+import { FAQs } from "@eboto/constants";
 
 const ReactPlayer = dynamic(
   () => import("@/components/client/components/react-player"),
@@ -59,9 +59,9 @@ export default function HomePage() {
               ta={{ base: "left", sm: "center" }}
             >
               <Balancer>
-                Empower your elections with eBoto Mo, the versatile and
-                web-based voting platform that offers secure online elections
-                for any type of organization.
+                Empower your elections with eBoto, the versatile and web-based
+                voting platform that offers secure online elections for any type
+                of organization.
               </Balancer>
             </Text>
           </Container>
@@ -94,7 +94,7 @@ export default function HomePage() {
 
         <Stack gap="xl" id="what">
           <Title order={2} ta="center">
-            <Balancer>Ano ang eBoto Mo? (What is eBoto Mo?)</Balancer>
+            <Balancer>Ano ang eBoto? (What is eBoto?)</Balancer>
           </Title>
 
           <Box className={classes.playerContainer}>

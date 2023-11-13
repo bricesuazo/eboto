@@ -4,7 +4,7 @@ import ElectionCandidate from "@/components/client/pages/election-candidate";
 import { api } from "@/trpc/server";
 import { env } from "env.mjs";
 
-import { db } from "@eboto-mo/db";
+import { db } from "@eboto/db";
 
 export async function generateMetadata({
   params: { electionSlug, candidateSlug },
@@ -40,10 +40,10 @@ export async function generateMetadata({
     title: `${`${candidate.last_name}, ${candidate.first_name}${
       candidate.middle_name ? " " + candidate.middle_name : ""
     }`} – ${election.name}`,
-    description: `See information about ${candidate.first_name} ${candidate.last_name} | eBoto Mo`,
+    description: `See information about ${candidate.first_name} ${candidate.last_name} | eBoto`,
     openGraph: {
       title: election.name,
-      description: `See information about ${candidate.first_name} ${candidate.last_name} | eBoto Mo`,
+      description: `See information about ${candidate.first_name} ${candidate.last_name} | eBoto`,
       images: [
         {
           url: `${

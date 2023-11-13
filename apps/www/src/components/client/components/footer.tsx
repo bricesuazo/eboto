@@ -29,12 +29,12 @@ export default function Footer() {
           <Group gap={4}>
             <Image
               src="/images/logo.png"
-              alt="eBoto Mo Logo"
+              alt="eBoto Logo"
               width={32}
               height={32}
               priority
             />
-            <Text fw={600}>eBoto Mo</Text>
+            <Text fw={600}>eBoto</Text>
           </Group>
         </UnstyledButton>
 
@@ -61,7 +61,7 @@ export default function Footer() {
           <ActionIcon
             variant="subtle"
             component={Link}
-            href="https://www.youtube.com/@eboto-mo"
+            href="https://www.youtube.com/@eboto"
             target="_blank"
             size="lg"
           >

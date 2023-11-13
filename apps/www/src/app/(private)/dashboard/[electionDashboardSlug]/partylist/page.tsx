@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import DashboardPartylist from "@/components/client/pages/dashboard-partylist";
 import { api } from "@/trpc/server";
 
-import { db } from "@eboto-mo/db";
+import { db } from "@eboto/db";
 
 export const metadata: Metadata = {
   title: "Partylists",

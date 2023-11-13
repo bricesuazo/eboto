@@ -20,7 +20,7 @@ import {
   IconLetterCase,
 } from "@tabler/icons-react";
 
-import type { Partylist } from "@eboto-mo/db/schema";
+import type { Partylist } from "@eboto/db/schema";
 
 export default function EditPartylist({ partylist }: { partylist: Partylist }) {
   const [opened, { open, close }] = useDisclosure(false);

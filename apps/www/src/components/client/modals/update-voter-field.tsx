@@ -24,7 +24,7 @@ import {
   IconUsersGroup,
 } from "@tabler/icons-react";
 
-import type { Election, VoterField } from "@eboto-mo/db/schema";
+import type { Election, VoterField } from "@eboto/db/schema";
 
 interface Field {
   id: string;

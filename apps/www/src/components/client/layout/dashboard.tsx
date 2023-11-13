@@ -6,7 +6,7 @@ import {
   AppShellMain,
 } from "@mantine/core";
 
-import { auth } from "@eboto-mo/auth";
+import { auth } from "@eboto/auth";
 
 import Footer from "../components/footer";
 import Header from "../components/header";

@@ -25,8 +25,8 @@ import {
 } from "@tabler/icons-react";
 import moment from "moment";
 
-import { parseHourTo12HourFormat } from "@eboto-mo/constants";
-import type { Election } from "@eboto-mo/db/schema";
+import { parseHourTo12HourFormat } from "@eboto/constants";
+import type { Election } from "@eboto/db/schema";
 
 export default function DashboardCard({
   election,

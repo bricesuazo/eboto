@@ -7,7 +7,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
 
-import type { Partylist } from "@eboto-mo/db/schema";
+import type { Partylist } from "@eboto/db/schema";
 
 export default function DeletePartylist({
   partylist,

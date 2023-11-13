@@ -189,13 +189,13 @@ export default function Header({ userId }: { userId?: string }) {
               <Flex gap="xs" align="center">
                 <Image
                   src="/images/logo.png"
-                  alt="eBoto Mo Logo"
+                  alt="eBoto Logo"
                   width={32}
                   height={32}
                   priority
                 />
                 <Text fw={600} visibleFrom="xs">
-                  eBoto Mo
+                  eBoto
                 </Text>
               </Flex>
             </UnstyledButton>

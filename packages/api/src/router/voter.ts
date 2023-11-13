@@ -2,9 +2,9 @@ import { TRPCError } from "@trpc/server";
 import { nanoid } from "nanoid";
 import { z } from "zod";
 
-import { isElectionEnded, isElectionOngoing } from "@eboto-mo/constants";
-import { and, eq, inArray } from "@eboto-mo/db";
-import { voter_fields, voters } from "@eboto-mo/db/schema";
+import { isElectionEnded, isElectionOngoing } from "@eboto/constants";
+import { and, eq, inArray } from "@eboto/db";
+import { voter_fields, voters } from "@eboto/db/schema";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 

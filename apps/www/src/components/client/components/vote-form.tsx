@@ -39,7 +39,7 @@ import type {
   Election,
   Partylist,
   Position,
-} from "@eboto-mo/db/schema";
+} from "@eboto/db/schema";
 
 export default function VoteForm({
   positions,

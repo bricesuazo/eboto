@@ -2,7 +2,7 @@
 
 module.exports = {
   reactStrictMode: true,
-  transpilePackages: ["@eboto-mo/db", "@eboto-mo/auth", "@eboto-mo/api"],
+  transpilePackages: ["@eboto/db", "@eboto/auth", "@eboto/api"],
   experimental: {
     webpackBuildWorker: true,
     // swcPlugins: [["next-superjson-plugin", {}]],

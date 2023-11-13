@@ -34,14 +34,14 @@ import {
   IconX,
 } from "@tabler/icons-react";
 
-import type { RouterOutputs } from "@eboto-mo/api";
+import type { RouterOutputs } from "@eboto/api";
 import {
   isElectionEnded,
   isElectionOngoing,
   parseHourTo12HourFormat,
-} from "@eboto-mo/constants";
-import type { Publicity } from "@eboto-mo/db/schema";
-import { publicity } from "@eboto-mo/db/schema";
+} from "@eboto/constants";
+import type { Publicity } from "@eboto/db/schema";
+import { publicity } from "@eboto/db/schema";
 
 export default function DashboardSettings({
   election,

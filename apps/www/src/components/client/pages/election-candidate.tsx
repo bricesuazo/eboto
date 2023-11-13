@@ -18,7 +18,7 @@ import {
 import { IconUser } from "@tabler/icons-react";
 import moment from "moment";
 
-import type { RouterOutputs } from "@eboto-mo/api";
+import type { RouterOutputs } from "@eboto/api";
 
 export default function ElectionCandidate({
   data,

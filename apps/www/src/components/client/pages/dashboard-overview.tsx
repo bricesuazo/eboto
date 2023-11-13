@@ -44,8 +44,8 @@ import {
 } from "@tabler/icons-react";
 import moment from "moment";
 
-import type { RouterOutputs } from "@eboto-mo/api";
-import { parseHourTo12HourFormat } from "@eboto-mo/constants";
+import type { RouterOutputs } from "@eboto/api";
+import { parseHourTo12HourFormat } from "@eboto/constants";
 
 export default function DashboardOverview({
   data,

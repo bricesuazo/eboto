@@ -6,7 +6,7 @@ import {
   View,
 } from "@react-pdf/renderer";
 
-import type { GeneratedElectionResult } from "@eboto-mo/db/schema";
+import type { GeneratedElectionResult } from "@eboto/db/schema";
 
 export default function GenerateResult({
   result,
@@ -59,7 +59,7 @@ export default function GenerateResult({
         >
           <View style={{ display: "flex", alignItems: "center" }}>
             <PdfImage
-              src="https://raw.githubusercontent.com/bricesuazo/eboto-mo/main/apps/www/public/images/logo.png"
+              src="https://raw.githubusercontent.com/bricesuazo/eboto/main/apps/www/public/images/logo.png"
               style={{
                 width: 32,
                 height: 32,
@@ -74,7 +74,7 @@ export default function GenerateResult({
                 color: "#2f9e44",
               }}
             >
-              eBoto Mo
+              eBoto
             </Text>
           </View>
         </View>

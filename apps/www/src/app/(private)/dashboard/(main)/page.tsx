@@ -5,12 +5,12 @@ import Dashboard from "@/components/client/layout/dashboard";
 import CreateElection from "@/components/client/modals/create-election";
 import { Box, Container, Flex, Group, Stack, Text, Title } from "@mantine/core";
 
-import { auth } from "@eboto-mo/auth";
-import { db } from "@eboto-mo/db";
+import { auth } from "@eboto/auth";
+import { db } from "@eboto/db";
 
 export const metadata: Metadata = {
   title: "Dashboard",
-  description: "eBoto Mo | Dashboard",
+  description: "eBoto | Dashboard",
 };
 
 export default async function Page() {

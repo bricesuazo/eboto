@@ -45,7 +45,7 @@ export default function RegisterForm() {
         <Stack gap="xs">
           <Text ta="center">
             <Balancer ratio={0.4} preferNative={false}>
-              Welcome to eBoto Mo, register with
+              Welcome to eBoto, register with
             </Balancer>
           </Text>
           <Button
@@ -92,7 +92,7 @@ export default function RegisterForm() {
           <TextInput
             required
             label="Email"
-            placeholder="brice@eboto-mo.com"
+            placeholder="brice@eboto.com"
             disabled
           />
           <Button disabled>Send magic link (soon)</Button>

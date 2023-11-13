@@ -1,5 +1,5 @@
 {
-  "name": "@eboto-mo/api",
+  "name": "@eboto/api",
   "main": "./index.ts",
   "types": "./index.ts",
   "scripts": {
@@ -9,10 +9,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@eboto-mo/auth": "workspace:*",
-    "@eboto-mo/constants": "workspace:*",
-    "@eboto-mo/db": "workspace:*",
-    "@eboto-mo/email": "workspace:*",
+    "@eboto/auth": "workspace:*",
+    "@eboto/constants": "workspace:*",
+    "@eboto/db": "workspace:*",
+    "@eboto/email": "workspace:*",
     "@t3-oss/env-nextjs": "^0.7.1",
     "@trpc/client": "next",
     "@trpc/server": "next",
@@ -23,9 +23,9 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@eboto-mo/eslint-config": "workspace:*",
-    "@eboto-mo/prettier-config": "workspace:*",
-    "@eboto-mo/tsconfig": "workspace:*",
+    "@eboto/eslint-config": "workspace:*",
+    "@eboto/prettier-config": "workspace:*",
+    "@eboto/tsconfig": "workspace:*",
     "eslint": "^8.53.0",
     "prettier": "^3.1.0",
     "typescript": "^5.2.2"
@@ -33,8 +33,8 @@
   "eslintConfig": {
     "root": true,
     "extends": [
-      "@eboto-mo/eslint-config/base"
+      "@eboto/eslint-config/base"
     ]
   },
-  "prettier": "@eboto-mo/prettier-config"
+  "prettier": "@eboto/prettier-config"
 }

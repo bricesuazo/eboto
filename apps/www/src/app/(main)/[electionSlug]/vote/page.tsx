@@ -6,12 +6,12 @@ import { Box, Container, Stack, Text, Title } from "@mantine/core";
 import moment from "moment";
 import Balancer from "react-wrap-balancer";
 
-import { auth } from "@eboto-mo/auth";
+import { auth } from "@eboto/auth";
 import {
   isElectionOngoing,
   parseHourTo12HourFormat,
-} from "@eboto-mo/constants";
-import { db } from "@eboto-mo/db";
+} from "@eboto/constants";
+import { db } from "@eboto/db";
 
 export async function generateMetadata({
   params: { electionSlug },

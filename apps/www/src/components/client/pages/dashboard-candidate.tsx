@@ -23,8 +23,8 @@ import {
 import { IconUser } from "@tabler/icons-react";
 import Balancer from "react-wrap-balancer";
 
-import type { RouterOutputs } from "@eboto-mo/api";
-import type { Election } from "@eboto-mo/db/schema";
+import type { RouterOutputs } from "@eboto/api";
+import type { Election } from "@eboto/db/schema";
 
 export default function DashboardCandidate({
   election,

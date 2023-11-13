@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import classes from "@/styles/Candidate.module.css";
 import { api } from "@/trpc/client";
 import { transformUploadImage } from "@/utils";
+import type { Position } from "@eboto/db/schema";
 import {
   Alert,
   Box,
@@ -45,8 +46,6 @@ import {
   IconUserSearch,
   IconX,
 } from "@tabler/icons-react";
-
-import type { Position } from "@eboto-mo/db/schema";
 
 export default function CreateCandidate({ position }: { position: Position }) {
   const context = api.useUtils();

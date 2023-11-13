@@ -1,5 +1,5 @@
 {
-  "name": "@eboto-mo/db",
+  "name": "@eboto/db",
   "main": "./index.ts",
   "types": "./index.ts",
   "scripts": {
@@ -18,9 +18,9 @@
     "uploadthing": "^5.7.4"
   },
   "devDependencies": {
-    "@eboto-mo/eslint-config": "workspace:*",
-    "@eboto-mo/prettier-config": "workspace:*",
-    "@eboto-mo/tsconfig": "workspace:*",
+    "@eboto/eslint-config": "workspace:*",
+    "@eboto/prettier-config": "workspace:*",
+    "@eboto/tsconfig": "workspace:*",
     "@types/node": "^20.9.0",
     "dotenv-cli": "^7.3.0",
     "drizzle-kit": "0.20.2",
@@ -29,8 +29,8 @@
   "eslintConfig": {
     "root": true,
     "extends": [
-      "@eboto-mo/eslint-config/base"
+      "@eboto/eslint-config/base"
     ]
   },
-  "prettier": "@eboto-mo/prettier-config"
+  "prettier": "@eboto/prettier-config"
 }

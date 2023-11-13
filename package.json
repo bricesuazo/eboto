@@ -1,13 +1,13 @@
 {
-  "name": "eboto-mo",
+  "name": "eboto",
   "scripts": {
     "build": "turbo build",
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "turbo clean",
-    "db:push": "pnpm turbo --filter @eboto-mo/db db:push --no-daemon",
-    "db:studio": "pnpm turbo --filter @eboto-mo/db db:studio --no-daemon",
-    "db:generate": "pnpm turbo --filter @eboto-mo/db db:generate --no-daemon",
-    "email:dev": "pnpm turbo --filter=@eboto-mo/email email:dev --no-daemon",
+    "db:push": "pnpm turbo --filter @eboto/db db:push --no-daemon",
+    "db:studio": "pnpm turbo --filter @eboto/db db:studio --no-daemon",
+    "db:generate": "pnpm turbo --filter @eboto/db db:generate --no-daemon",
+    "email:dev": "pnpm turbo --filter=@eboto/email email:dev --no-daemon",
     "dev": "turbo dev --parallel",
     "start": "turbo start --parallel",
     "format": "turbo format --continue -- --cache --cache-location='node_modules/.cache/.prettiercache'",
@@ -17,12 +17,12 @@
     "typecheck": "turbo typecheck"
   },
   "devDependencies": {
-    "@eboto-mo/prettier-config": "workspace:^",
+    "@eboto/prettier-config": "workspace:^",
     "@manypkg/cli": "^0.21.0",
     "@turbo/gen": "^1.10.16",
     "prettier": "^3.1.0",
     "turbo": "^1.10.16",
     "typescript": "^5.2.2"
   },
-  "prettier": "@eboto-mo/prettier-config"
+  "prettier": "@eboto/prettier-config"
 }

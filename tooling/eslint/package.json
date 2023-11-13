@@ -1,5 +1,5 @@
 {
-  "name": "@eboto-mo/eslint-config",
+  "name": "@eboto/eslint-config",
   "files": [
     "./base.js",
     "./nextjs.js",
@@ -18,10 +18,10 @@
     "eslint-plugin-react-hooks": "^4.6.0"
   },
   "devDependencies": {
-    "@eboto-mo/prettier-config": "workspace:*",
-    "@eboto-mo/tsconfig": "workspace:*",
+    "@eboto/prettier-config": "workspace:*",
+    "@eboto/tsconfig": "workspace:*",
     "eslint": "^8.53.0",
     "typescript": "^5.2.2"
   },
-  "prettier": "@eboto-mo/prettier-config"
+  "prettier": "@eboto/prettier-config"
 }

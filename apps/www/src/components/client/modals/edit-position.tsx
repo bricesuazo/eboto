@@ -23,7 +23,7 @@ import {
   IconLetterCase,
 } from "@tabler/icons-react";
 
-import type { Position } from "@eboto-mo/db/schema";
+import type { Position } from "@eboto/db/schema";
 
 export default function EditPosition({ position }: { position: Position }) {
   const [opened, { open, close }] = useDisclosure(false);

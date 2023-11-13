@@ -7,10 +7,10 @@ import { experimental_createTRPCNextAppDirServer as createTRPCNextAppDirServer }
 import superjson from "superjson";
 import { UTApi } from "uploadthing/server";
 
-import { appRouter } from "@eboto-mo/api";
-import type { AppRouter } from "@eboto-mo/api";
-import { auth } from "@eboto-mo/auth";
-import { db } from "@eboto-mo/db";
+import { appRouter } from "@eboto/api";
+import type { AppRouter } from "@eboto/api";
+import { auth } from "@eboto/auth";
+import { db } from "@eboto/db";
 
 import { endingLink } from "./shared";
 

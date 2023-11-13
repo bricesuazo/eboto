@@ -9,8 +9,8 @@ import {
   isElectionOngoing,
   positionTemplate,
   takenSlugs,
-} from "@eboto-mo/constants";
-import { eq } from "@eboto-mo/db";
+} from "@eboto/constants";
+import { eq } from "@eboto/db";
 import {
   commissioners,
   elections,
@@ -19,8 +19,8 @@ import {
   publicity,
   reported_problems,
   votes,
-} from "@eboto-mo/db/schema";
-import { sendVoteCasted } from "@eboto-mo/email/emails/vote-casted";
+} from "@eboto/db/schema";
+import { sendVoteCasted } from "@eboto/email/emails/vote-casted";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 

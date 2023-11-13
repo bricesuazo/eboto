@@ -43,7 +43,7 @@ import {
   IconX,
 } from "@tabler/icons-react";
 
-import type { Candidate, Election } from "@eboto-mo/db/schema";
+import type { Candidate, Election } from "@eboto/db/schema";
 
 export default function EditCandidate({
   candidate,

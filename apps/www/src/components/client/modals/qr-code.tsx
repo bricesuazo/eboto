@@ -1,6 +1,6 @@
 "use client";
 
-import type { Election } from "@eboto-mo/db/schema";
+import type { Election } from "@eboto/db/schema";
 import { Button, Center, Modal, Stack, Text } from "@mantine/core";
 import { IconDownload } from "@tabler/icons-react";
 import { QRCodeCanvas } from "qrcode.react";

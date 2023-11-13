@@ -1,8 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { and, eq } from "@eboto-mo/db";
-import { positions } from "@eboto-mo/db/schema";
+import { and, eq } from "@eboto/db";
+import { positions } from "@eboto/db/schema";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 

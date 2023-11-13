@@ -19,8 +19,8 @@ import type { MRT_ColumnDef, MRT_RowSelectionState } from "mantine-react-table";
 import { MantineReactTable, useMantineReactTable } from "mantine-react-table";
 import moment from "moment";
 
-import type { RouterOutputs } from "@eboto-mo/api";
-import { isElectionEnded, isElectionOngoing } from "@eboto-mo/constants";
+import type { RouterOutputs } from "@eboto/api";
+import { isElectionEnded, isElectionOngoing } from "@eboto/constants";
 
 import DeleteBulkVoter from "../modals/delete-bulk-voter";
 import DeleteVoter from "../modals/delete-voter";

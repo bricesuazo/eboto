@@ -28,13 +28,13 @@ import { IconFingerprint } from "@tabler/icons-react";
 import moment from "moment";
 import Balancer from "react-wrap-balancer";
 
-import type { RouterOutputs } from "@eboto-mo/api";
+import type { RouterOutputs } from "@eboto/api";
 import {
   isElectionEnded,
   isElectionOngoing,
   parseHourTo12HourFormat,
-} from "@eboto-mo/constants";
-import type { Election } from "@eboto-mo/db/schema";
+} from "@eboto/constants";
+import type { Election } from "@eboto/db/schema";
 
 export default function Realtime({
   positions,

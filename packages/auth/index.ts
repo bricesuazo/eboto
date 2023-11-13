@@ -6,7 +6,7 @@ import type { Provider } from "next-auth/providers";
 
 // import EmailProvider from "next-auth/providers/email";
 
-import { db } from "@eboto-mo/db";
+import { db } from "@eboto/db";
 
 import { env } from "./env.mjs";
 

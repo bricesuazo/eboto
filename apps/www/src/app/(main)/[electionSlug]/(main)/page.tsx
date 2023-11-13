@@ -5,7 +5,7 @@ import { api } from "@/trpc/server";
 import { env } from "env.mjs";
 import moment from "moment";
 
-import { db } from "@eboto-mo/db";
+import { db } from "@eboto/db";
 
 export async function generateMetadata({
   params: { electionSlug },
@@ -21,10 +21,10 @@ export async function generateMetadata({
 
   return {
     title: election.name,
-    description: `See details about ${election.name} | eBoto Mo`,
+    description: `See details about ${election.name} | eBoto`,
     openGraph: {
       title: election.name,
-      description: `See details about ${election.name} | eBoto Mo`,
+      description: `See details about ${election.name} | eBoto`,
       images: [
         {
           url: `${

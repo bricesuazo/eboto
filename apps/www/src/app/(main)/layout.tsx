@@ -7,7 +7,7 @@ import {
   AppShellMain,
 } from "@mantine/core";
 
-import { auth } from "@eboto-mo/auth";
+import { auth } from "@eboto/auth";
 
 export default async function RootLayout({
   children,

@@ -5,16 +5,14 @@ import { fileURLToPath } from "url";
 
 /** @type { PrettierConfig | SortImportsConfig } */
 const config = {
-  plugins: [
-    "@ianvs/prettier-plugin-sort-imports",
-  ],
+  plugins: ["@ianvs/prettier-plugin-sort-imports"],
   importOrder: [
     "^(react/(.*)$)|^(react$)|^(react-native(.*)$)",
     "^(next/(.*)$)|^(next$)",
     "^(expo(.*)$)|^(expo$)",
     "<THIRD_PARTY_MODULES>",
     "",
-    "^@eboto-mo/(.*)$",
+    "^@eboto/(.*)$",
     "",
     "^~/",
     "^[../]",

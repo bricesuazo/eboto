@@ -1,8 +1,8 @@
 import { notFound, redirect } from "next/navigation";
 
-import { auth } from "@eboto-mo/auth";
-import { isElectionOngoing } from "@eboto-mo/constants";
-import { db } from "@eboto-mo/db";
+import { auth } from "@eboto/auth";
+import { isElectionOngoing } from "@eboto/constants";
+import { db } from "@eboto/db";
 
 export default async function ElectionLayout(
   props: React.PropsWithChildren<{ params: { electionSlug: string } }>,

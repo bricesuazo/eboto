@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     template: "%s | " + siteConfig.name,
   },
   description: siteConfig.description,
-  keywords: ["eBoto Mo", "Vote", "Election", "Voting System"],
+  keywords: ["eBoto", "Vote", "Election", "Voting System"],
   authors: [
     {
       name: "Brice Suazo",

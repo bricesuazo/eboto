@@ -6,7 +6,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import { IconDownload } from "@tabler/icons-react";
 import moment from "moment";
 
-import type { GeneratedElectionResult } from "@eboto-mo/db/schema";
+import type { GeneratedElectionResult } from "@eboto/db/schema";
 
 export default function GenerateResultRow({
   result,
