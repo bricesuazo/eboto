@@ -133,7 +133,7 @@ async function handler(_req: NextRequest) {
       } satisfies Pick<GeneratedElectionResult, "election">["election"];
 
       await Promise.all([
-        trx.insert(generated_election_results).values({
+        db.insert(generated_election_results).values({
           election_id: election.id,
           election: result,
         }),

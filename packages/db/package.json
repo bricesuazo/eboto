@@ -23,7 +23,7 @@
     "@eboto-mo/tsconfig": "workspace:*",
     "@types/node": "^20.9.0",
     "dotenv-cli": "^7.3.0",
-    "drizzle-kit": "0.20.1",
+    "drizzle-kit": "0.20.2",
     "typescript": "^5.2.2"
   },
   "eslintConfig": {

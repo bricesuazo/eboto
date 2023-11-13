@@ -20,10 +20,9 @@
     "@eboto-mo/prettier-config": "workspace:^",
     "@manypkg/cli": "^0.21.0",
     "@turbo/gen": "^1.10.16",
-    "prettier": "^3.0.3",
+    "prettier": "^3.1.0",
     "turbo": "^1.10.16",
     "typescript": "^5.2.2"
   },
-  "packageManager": "pnpm@8.7.3",
   "prettier": "@eboto-mo/prettier-config"
 }

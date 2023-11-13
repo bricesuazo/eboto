@@ -271,6 +271,8 @@ export const takenSlugs: TakenSlugs = [
   "cookie",
   "privacy",
   "terms",
+  "disclaimer",
+  "pricing",
 ];
 
 export const FAQs: { id: string; question: string; answer: string }[] = [
