@@ -14,11 +14,12 @@ import {
   rem,
   Slider,
   Stack,
+  Table,
   Text,
   ThemeIcon,
   Title,
 } from "@mantine/core";
-import { IconCircleCheck } from "@tabler/icons-react";
+import { IconCircleCheck, IconCircleX } from "@tabler/icons-react";
 import Balancer from "react-wrap-balancer";
 
 export const dynamic = "force-static";
@@ -281,6 +282,173 @@ export default function PricingPage() {
           </Flex>
         </Flex>
       </Stack>
+
+      <Box mt={128}>
+        <Title ta="center">Compare</Title>
+        <Text ta="center">
+          <Balancer>
+            Compare all features between Free and Boost to see which one is
+            right for you.
+          </Balancer>
+        </Text>
+        <Table.ScrollContainer minWidth={0}>
+          <Table striped verticalSpacing="md">
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th></Table.Th>
+                <Table.Th>
+                  <Title order={3}>Free</Title>
+                  <Text>For a lifetime</Text>
+                </Table.Th>
+                <Table.Th>
+                  <Title order={3}>Boost</Title>
+                  <Text>Per Election</Text>
+                </Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody fz="md">
+              <Table.Tr>
+                <Table.Td>Price</Table.Td>
+                <Table.Td>
+                  <NumberFormatter
+                    prefix="₱ "
+                    value={0}
+                    fixedDecimalScale
+                    decimalScale={2}
+                  />
+                </Table.Td>
+                <Table.Td fw="bold">
+                  {voters_length.find((item) => item.value === value)?.label ===
+                  -1 ? (
+                    "Contact us"
+                  ) : (
+                    <NumberFormatter
+                      prefix="₱ "
+                      value={
+                        499 +
+                        (voters_length.find((item) => item.value === value)
+                          ?.price_added ?? 0)
+                      }
+                      fixedDecimalScale
+                      decimalScale={2}
+                    />
+                  )}
+                </Table.Td>
+              </Table.Tr>
+              <Table.Tr>
+                <Table.Td>Number of Voters</Table.Td>
+                <Table.Td>Up to 500</Table.Td>
+                <Table.Td fw="bold">
+                  {voters_length.find((item) => item.value === value)?.label ===
+                  -1 ? (
+                    "Unlimited"
+                  ) : (
+                    <>
+                      Up to{" "}
+                      <NumberFormatter
+                        value={
+                          voters_length.find((item) => item.value === value)
+                            ?.label
+                        }
+                        thousandSeparator
+                      />
+                    </>
+                  )}
+
+                  <Slider
+                    value={value}
+                    onChange={setValue}
+                    mt="xl"
+                    thumbSize={20}
+                    step={20}
+                    label={(value) =>
+                      voters_length.find((item) => item.value === value)
+                        ?.label === -1 ? (
+                        "Unlimited"
+                      ) : (
+                        <NumberFormatter
+                          value={
+                            voters_length.find((item) => item.value === value)
+                              ?.label
+                          }
+                          thousandSeparator
+                        />
+                      )
+                    }
+                    marks={voters_length.map((item) => ({
+                      value: item.value,
+                      // label: item.label === -1 ? "Unlimited" : item.label,
+                    }))}
+                  />
+                </Table.Td>
+              </Table.Tr>
+              <Table.Tr>
+                <Table.Td>Ad-Free</Table.Td>
+                <Table.Td>
+                  <ThemeIcon variant="default" size={24} radius="xl">
+                    <IconCircleX style={{ width: rem(16), height: rem(16) }} />
+                  </ThemeIcon>
+                </Table.Td>
+                <Table.Td>
+                  <ThemeIcon variant="gradient" size={24} radius="xl">
+                    <IconCircleCheck
+                      style={{ width: rem(16), height: rem(16) }}
+                    />
+                  </ThemeIcon>
+                </Table.Td>
+              </Table.Tr>
+              <Table.Tr>
+                <Table.Td>Result Realtime Update</Table.Td>
+                <Table.Td>Every hour</Table.Td>
+                <Table.Td fw="bold">Every second</Table.Td>
+              </Table.Tr>
+              <Table.Tr>
+                <Table.Td>Watermark</Table.Td>
+                <Table.Td>
+                  <ThemeIcon variant="default" size={24} radius="xl">
+                    <IconCircleX style={{ width: rem(16), height: rem(16) }} />
+                  </ThemeIcon>
+                </Table.Td>
+                <Table.Td>
+                  <ThemeIcon variant="gradient" size={24} radius="xl">
+                    <IconCircleCheck
+                      style={{ width: rem(16), height: rem(16) }}
+                    />
+                  </ThemeIcon>
+                </Table.Td>
+              </Table.Tr>
+            </Table.Tbody>
+            <Table.Tfoot>
+              <Table.Tr
+                styles={{
+                  tr: {
+                    borderBottomWidth: 0,
+                  },
+                }}
+              >
+                <Table.Td></Table.Td>
+                <Table.Td>
+                  <Button
+                    component={Link}
+                    href="/register"
+                    w="100%"
+                    radius="xl"
+                    size="lg"
+                    variant="default"
+                  >
+                    Register
+                  </Button>
+                </Table.Td>
+                <Table.Td>
+                  <Button w="100%" radius="xl" size="lg" variant="gradient">
+                    Get Boost (Soon!)
+                  </Button>
+                </Table.Td>
+              </Table.Tr>
+            </Table.Tfoot>
+          </Table>
+        </Table.ScrollContainer>
+      </Box>
     </Container>
   );
 }
