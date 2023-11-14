@@ -61,7 +61,7 @@ export default function Footer() {
           <ActionIcon
             variant="subtle"
             component={Link}
-            href="https://www.youtube.com/@eboto"
+            href="https://www.youtube.com/@e-boto"
             target="_blank"
             size="lg"
           >

@@ -1,0 +1,19 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  row-gap: var(--mantine-spacing-xl);
+  justify-content: space-between;
+  padding: var(--mantine-spacing-xl);
+  border: 4px solid
+    light-dark(var(--mantine-color-gray-2), var(--mantine-color-gray-9));
+  border-radius: var(--mantine-radius-lg);
+  flex: 4;
+}
+
+.boost {
+  border-color: light-dark(
+    var(--mantine-color-green-5),
+    var(--mantine-color-green-8)
+  );
+  flex: 5;
+}

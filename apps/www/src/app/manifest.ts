@@ -8,8 +8,7 @@ export default function manifest(): MetadataRoute.Manifest {
       "Empower your elections with eBoto, the versatile and web-based voting platform that offers secure online elections for any type of organization.",
     start_url: "/",
     display: "standalone",
-    background_color: "#fff",
-    theme_color: "#fff",
+    lang: "en",
     icons: [
       {
         src: "/favicon.ico",
