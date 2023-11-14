@@ -11,9 +11,9 @@ import {
   // Lexend,
   Poppins,
 } from "next/font/google";
-import Script from "next/script";
 import { Providers } from "@/components/providers";
 import { siteConfig } from "@/config/site";
+import { getBaseUrl } from "@/trpc/shared";
 import TRPCProvider from "@/trpc/TRPCProvider";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
@@ -72,7 +72,7 @@ export const metadata: Metadata = {
     shortcut: "/images/favicon/favicon-16x16.png",
     apple: "/images/favicon/apple-touch-icon.png",
   },
-  manifest: `${siteConfig.url}/site.webmanifest`,
+  manifest: `${getBaseUrl()}/site.webmanifest`,
   metadataBase: new URL(siteConfig.url),
 };
 
@@ -81,7 +81,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
     <html lang="en">
       <head>
         <ColorSchemeScript />
-        <Script
+        <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8443325162715161"
         />

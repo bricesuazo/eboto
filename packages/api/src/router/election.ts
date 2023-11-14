@@ -714,12 +714,6 @@ export const electionRouter = createTRPCRouter({
 
       if (!election) throw new TRPCError({ code: "NOT_FOUND" });
 
-      if (!isElectionOngoing({ election }))
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "Election is not ongoing",
-        });
-
       if (!ctx.session && election.publicity !== "PUBLIC")
         throw new TRPCError({
           code: "UNAUTHORIZED",

@@ -126,6 +126,7 @@ export default function HomePage() {
               style={{
                 userSelect: "none",
                 pointerEvents: "none",
+                zIndex: -1,
               }}
             />
           </Box>
