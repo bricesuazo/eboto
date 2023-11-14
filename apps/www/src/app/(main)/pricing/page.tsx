@@ -15,6 +15,13 @@ import {
   Slider,
   Stack,
   Table,
+  TableScrollContainer,
+  TableTbody,
+  TableTd,
+  TableTfoot,
+  TableTh,
+  TableThead,
+  TableTr,
   Text,
   ThemeIcon,
   Title,
@@ -291,33 +298,33 @@ export default function PricingPage() {
             right for you.
           </Balancer>
         </Text>
-        <Table.ScrollContainer minWidth={0}>
+        <TableScrollContainer minWidth={0}>
           <Table striped verticalSpacing="md">
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th></Table.Th>
-                <Table.Th>
+            <TableThead>
+              <TableTr>
+                <TableTh></TableTh>
+                <TableTh>
                   <Title order={3}>Free</Title>
                   <Text>For a lifetime</Text>
-                </Table.Th>
-                <Table.Th>
+                </TableTh>
+                <TableTh>
                   <Title order={3}>Boost</Title>
                   <Text>Per Election</Text>
-                </Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody fz="md">
-              <Table.Tr>
-                <Table.Td>Price</Table.Td>
-                <Table.Td>
+                </TableTh>
+              </TableTr>
+            </TableThead>
+            <TableTbody fz="md">
+              <TableTr>
+                <TableTd>Price</TableTd>
+                <TableTd>
                   <NumberFormatter
                     prefix="₱ "
                     value={0}
                     fixedDecimalScale
                     decimalScale={2}
                   />
-                </Table.Td>
-                <Table.Td fw="bold">
+                </TableTd>
+                <TableTd fw="bold">
                   {voters_length.find((item) => item.value === value)?.label ===
                   -1 ? (
                     "Contact us"
@@ -333,12 +340,12 @@ export default function PricingPage() {
                       decimalScale={2}
                     />
                   )}
-                </Table.Td>
-              </Table.Tr>
-              <Table.Tr>
-                <Table.Td>Number of Voters</Table.Td>
-                <Table.Td>Up to 500</Table.Td>
-                <Table.Td fw="bold">
+                </TableTd>
+              </TableTr>
+              <TableTr>
+                <TableTd>Number of Voters</TableTd>
+                <TableTd>Up to 500</TableTd>
+                <TableTd fw="bold">
                   {voters_length.find((item) => item.value === value)?.label ===
                   -1 ? (
                     "Unlimited"
@@ -380,54 +387,54 @@ export default function PricingPage() {
                       // label: item.label === -1 ? "Unlimited" : item.label,
                     }))}
                   />
-                </Table.Td>
-              </Table.Tr>
-              <Table.Tr>
-                <Table.Td>Ad-Free</Table.Td>
-                <Table.Td>
+                </TableTd>
+              </TableTr>
+              <TableTr>
+                <TableTd>Ad-Free</TableTd>
+                <TableTd>
                   <ThemeIcon variant="default" size={24} radius="xl">
                     <IconCircleX style={{ width: rem(16), height: rem(16) }} />
                   </ThemeIcon>
-                </Table.Td>
-                <Table.Td>
+                </TableTd>
+                <TableTd>
                   <ThemeIcon variant="gradient" size={24} radius="xl">
                     <IconCircleCheck
                       style={{ width: rem(16), height: rem(16) }}
                     />
                   </ThemeIcon>
-                </Table.Td>
-              </Table.Tr>
-              <Table.Tr>
-                <Table.Td>Result Realtime Update</Table.Td>
-                <Table.Td>Every hour</Table.Td>
-                <Table.Td fw="bold">Every second</Table.Td>
-              </Table.Tr>
-              <Table.Tr>
-                <Table.Td>Watermark</Table.Td>
-                <Table.Td>
+                </TableTd>
+              </TableTr>
+              <TableTr>
+                <TableTd>Result Realtime Update</TableTd>
+                <TableTd>Every hour</TableTd>
+                <TableTd fw="bold">Every second</TableTd>
+              </TableTr>
+              <TableTr>
+                <TableTd>Watermark</TableTd>
+                <TableTd>
                   <ThemeIcon variant="default" size={24} radius="xl">
                     <IconCircleX style={{ width: rem(16), height: rem(16) }} />
                   </ThemeIcon>
-                </Table.Td>
-                <Table.Td>
+                </TableTd>
+                <TableTd>
                   <ThemeIcon variant="gradient" size={24} radius="xl">
                     <IconCircleCheck
                       style={{ width: rem(16), height: rem(16) }}
                     />
                   </ThemeIcon>
-                </Table.Td>
-              </Table.Tr>
-            </Table.Tbody>
-            <Table.Tfoot>
-              <Table.Tr
+                </TableTd>
+              </TableTr>
+            </TableTbody>
+            <TableTfoot>
+              <TableTr
                 styles={{
                   tr: {
                     borderBottomWidth: 0,
                   },
                 }}
               >
-                <Table.Td></Table.Td>
-                <Table.Td>
+                <TableTd></TableTd>
+                <TableTd>
                   <Button
                     component={Link}
                     href="/register"
@@ -438,16 +445,16 @@ export default function PricingPage() {
                   >
                     Register
                   </Button>
-                </Table.Td>
-                <Table.Td>
+                </TableTd>
+                <TableTd>
                   <Button w="100%" radius="xl" size="lg" variant="gradient">
                     Get Boost (Soon!)
                   </Button>
-                </Table.Td>
-              </Table.Tr>
-            </Table.Tfoot>
+                </TableTd>
+              </TableTr>
+            </TableTfoot>
           </Table>
-        </Table.ScrollContainer>
+        </TableScrollContainer>
       </Box>
     </Container>
   );

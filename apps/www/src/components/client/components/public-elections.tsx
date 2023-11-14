@@ -35,95 +35,101 @@ export default function PublicElections() {
         </Text>
       </Box>
 
-      <Carousel
-        withIndicators
-        slideSize={{ base: "100%", xs: "50%", md: "33.333333%" }}
-        height={400}
-        slideGap="md"
-        loop
-        align="start"
-      >
-        {getAllPublicElectionsQuery.isLoading ? (
-          <Skeleton />
-        ) : (
-          <>
-            {getAllPublicElectionsQuery.data?.map((election) => (
-              <CarouselSlide key={election.id}>
-                <Paper withBorder p="lg" h="100%">
-                  <Flex direction="column" justify="space-between" h="100%">
-                    <Stack gap="sm">
-                      <Center>
-                        {election.logo ? (
-                          <Image
-                            src={election.logo.url}
-                            alt={election.name + " logo"}
-                            width={200}
-                            height={200}
-                            style={{
-                              objectFit: "cover",
-                              marginLeft: "auto",
-                              marginRight: "auto",
-                            }}
-                            priority
+      {getAllPublicElectionsQuery.isLoading ? (
+        <Skeleton height={400} />
+      ) : !getAllPublicElectionsQuery.data ||
+        getAllPublicElectionsQuery.data.length === 0 ? (
+        <Text ta="center">
+          <Balancer>
+            There are no public elections at the moment. Please check back
+            later.
+          </Balancer>
+        </Text>
+      ) : (
+        <Carousel
+          withIndicators
+          slideSize={{ base: "100%", xs: "50%", md: "33.333333%" }}
+          height={400}
+          slideGap="md"
+          loop
+          align="start"
+        >
+          {getAllPublicElectionsQuery.data.map((election) => (
+            <CarouselSlide key={election.id}>
+              <Paper withBorder p="lg" h="100%">
+                <Flex direction="column" justify="space-between" h="100%">
+                  <Stack gap="sm">
+                    <Center>
+                      {election.logo ? (
+                        <Image
+                          src={election.logo.url}
+                          alt={election.name + " logo"}
+                          width={200}
+                          height={200}
+                          style={{
+                            objectFit: "cover",
+                            marginLeft: "auto",
+                            marginRight: "auto",
+                          }}
+                          priority
+                        />
+                      ) : (
+                        <Paper withBorder>
+                          <IconFlag3
+                            size={192}
+                            style={{ padding: 40 }}
+                            color="gray"
                           />
-                        ) : (
-                          <Paper withBorder>
-                            <IconFlag3
-                              size={192}
-                              style={{ padding: 40 }}
-                              color="gray"
-                            />
-                          </Paper>
-                        )}
-                      </Center>
-                      <Box>
-                        <Text
-                          fw="bold"
-                          ta="center"
-                          fz="xl"
-                          lineClamp={2}
-                          lh="xs"
-                          w="100%"
-                        >
-                          {election.name}
-                        </Text>
-                        <Text size="sm" c="GrayText" ta="center">
-                          {moment(election.start_date)
-                            .local()
-                            .format("MMM DD, YYYY")}
-                          {" - "}
-                          {moment(election.end_date)
-                            .local()
-                            .format("MMM DD, YYYY")}
-                        </Text>
-                        <Text size="sm" c="GrayText" ta="center">
-                          {election.voting_hour_start === 0 &&
-                          election.voting_hour_end === 24
-                            ? "Whole day"
-                            : parseHourTo12HourFormat(
-                                election.voting_hour_start,
-                              ) +
-                              " - " +
-                              parseHourTo12HourFormat(election.voting_hour_end)}
-                        </Text>
-                      </Box>
-                    </Stack>
-                    <Button
-                      component={Link}
-                      href={`/${election.slug}`}
-                      radius="xl"
-                      variant="default"
-                      rightSection={<IconArrowRight size="1rem" />}
-                    >
-                      Visit Election
-                    </Button>
-                  </Flex>
-                </Paper>
-              </CarouselSlide>
-            ))}
-          </>
-        )}
-      </Carousel>
+                        </Paper>
+                      )}
+                    </Center>
+                    <Box>
+                      <Text
+                        fw="bold"
+                        ta="center"
+                        fz="xl"
+                        lineClamp={2}
+                        lh="xs"
+                        w="100%"
+                      >
+                        {election.name}
+                      </Text>
+                      <Text size="sm" c="GrayText" ta="center">
+                        {moment(election.start_date)
+                          .local()
+                          .format("MMM DD, YYYY")}
+                        {" - "}
+                        {moment(election.end_date)
+                          .local()
+                          .format("MMM DD, YYYY")}
+                      </Text>
+                      <Text size="sm" c="GrayText" ta="center">
+                        {election.voting_hour_start === 0 &&
+                        election.voting_hour_end === 24
+                          ? "Whole day"
+                          : parseHourTo12HourFormat(
+                              election.voting_hour_start,
+                            ) +
+                            " - " +
+                            parseHourTo12HourFormat(election.voting_hour_end)}
+                      </Text>
+                    </Box>
+                  </Stack>
+                  <Button
+                    component={Link}
+                    href={`/${election.slug}`}
+                    radius="xl"
+                    variant="default"
+                    rightSection={<IconArrowRight size="1rem" />}
+                  >
+                    Visit Election
+                  </Button>
+                </Flex>
+              </Paper>
+            </CarouselSlide>
+          ))}
+        </Carousel>
+      )}
     </Stack>
   );
 }
