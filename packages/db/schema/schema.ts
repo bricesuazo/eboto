@@ -44,7 +44,10 @@ export const token_type = [
 export type TokenType = (typeof token_type)[number];
 export const account_status_type = ["ADDED", "INVITED", "DECLINED"] as const;
 export type AccountStatusType = (typeof account_status_type)[number];
-type File = Pick<UploadFileResponse, "key" | "name" | "size" | "url">;
+type File = Pick<
+  UploadFileResponse<undefined>,
+  "key" | "name" | "size" | "url"
+>;
 
 export const elections = mysqlTable(
   "election",

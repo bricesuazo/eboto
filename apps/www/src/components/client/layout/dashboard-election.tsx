@@ -13,7 +13,6 @@ import {
   AppShellHeader,
   AppShellMain,
   AppShellNavbar,
-  Box,
   Button,
   CheckIcon,
   Combobox,
@@ -27,27 +26,20 @@ import {
   Group,
   InputBase,
   InputPlaceholder,
-  List,
-  ListItem,
-  rem,
   ScrollAreaAutosize,
   Stack,
   Text,
-  ThemeIcon,
-  Title,
   useCombobox,
 } from "@mantine/core";
-import {
-  IconCircleCheck,
-  IconExternalLink,
-  IconLogout,
-} from "@tabler/icons-react";
+import { IconExternalLink, IconLogout } from "@tabler/icons-react";
 
 import {
   electionDashboardNavbar,
   isElectionEnded,
   isElectionOngoing,
 } from "@eboto/constants";
+
+import BoostCard from "../components/boost-card";
 
 export default function DashboardElection({
   children,
@@ -116,50 +108,7 @@ export default function DashboardElection({
             {isBoosted ? (
               <CreateElection style={{ width: "100%" }} />
             ) : (
-              <Box
-                p="md"
-                style={{
-                  border: "2px solid #2f9e44",
-                  borderRadius: "0.5rem",
-                }}
-              >
-                <Title order={4}>Boost is available!</Title>
-
-                <List
-                  spacing={4}
-                  mt="xs"
-                  size="sm"
-                  center
-                  icon={
-                    <ThemeIcon variant="gradient" size={24} radius="xl">
-                      <IconCircleCheck
-                        style={{ width: rem(16), height: rem(16) }}
-                      />
-                    </ThemeIcon>
-                  }
-                >
-                  <ListItem>Ad-Free</ListItem>
-                  <ListItem>Result Realtime Update</ListItem>
-                  <Text size="sm" ml={36} mt={4}>
-                    ...and more!
-                  </Text>
-                </List>
-
-                <Button mt="sm" radius="xl" variant="gradient" w="100%">
-                  Get Boost
-                </Button>
-                <Button
-                  component={Link}
-                  href="/pricing"
-                  mt="xs"
-                  size="xs"
-                  radius="xl"
-                  variant="default"
-                  w="100%"
-                >
-                  Learn More
-                </Button>
-              </Box>
+              <BoostCard />
             )}
 
             <Divider />

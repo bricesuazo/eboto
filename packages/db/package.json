@@ -15,7 +15,7 @@
     "drizzle-orm": "0.29.0",
     "mysql2": "^3.6.3",
     "nanoid": "^5.0.3",
-    "uploadthing": "^5.7.4"
+    "uploadthing": "^6.0.0"
   },
   "devDependencies": {
     "@eboto/eslint-config": "workspace:*",
