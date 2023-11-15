@@ -1,0 +1,11 @@
+.git
+.github
+docker
+**/node_modules
+**/.turbo
+.vercel
+.env.*
+.dockerignore
+
+apps/www/Dockerfile
+packages/api/Dockerfile

@@ -1,0 +1,52 @@
+version: '3.9'
+
+services:
+  app:
+    container_name: eboto_app
+    build:
+      context: ../
+      dockerfile: ./apps/www/Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=mysql://root:password@db:3306/eboto
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - eboto_network
+    restart: always
+
+  db:
+    container_name: eboto_db
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=eboto
+      - MYSQL_USER=root
+      - MYSQL_HOST=db
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - eboto_network
+  
+  # nginx:
+  #   image: nginx:latest
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf
+  #   depends_on:
+  #     - app
+volumes:
+  db-data:
+
+networks:
+  eboto_network:
+    external: true
