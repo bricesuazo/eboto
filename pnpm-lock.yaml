@@ -398,7 +398,7 @@ importers:
   packages/email:
     dependencies:
       '@aws-sdk/client-ses':
-        specifier: ^3.454.0
+        specifier: ^3.449.0
         version: registry.npmjs.org/@aws-sdk/client-ses@3.454.0
       '@eboto/constants':
         specifier: workspace:*
@@ -792,7 +792,7 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@aws-sdk/types': registry.npmjs.org/@aws-sdk/types@3.451.0
-      '@smithy/property-provider': registry.npmjs.org/@smithy/property-provider@2.0.13
+      '@smithy/property-provider': registry.npmjs.org/@smithy/property-provider@2.0.14
       '@smithy/types': registry.npmjs.org/@smithy/types@2.5.0
       tslib: registry.npmjs.org/tslib@2.6.2
     dev: false
@@ -808,9 +808,9 @@ packages:
       '@aws-sdk/credential-provider-sso': registry.npmjs.org/@aws-sdk/credential-provider-sso@3.451.0
       '@aws-sdk/credential-provider-web-identity': registry.npmjs.org/@aws-sdk/credential-provider-web-identity@3.451.0
       '@aws-sdk/types': registry.npmjs.org/@aws-sdk/types@3.451.0
-      '@smithy/credential-provider-imds': registry.npmjs.org/@smithy/credential-provider-imds@2.0.18
-      '@smithy/property-provider': registry.npmjs.org/@smithy/property-provider@2.0.13
-      '@smithy/shared-ini-file-loader': registry.npmjs.org/@smithy/shared-ini-file-loader@2.2.2
+      '@smithy/credential-provider-imds': registry.npmjs.org/@smithy/credential-provider-imds@2.1.1
+      '@smithy/property-provider': registry.npmjs.org/@smithy/property-provider@2.0.14
+      '@smithy/shared-ini-file-loader': registry.npmjs.org/@smithy/shared-ini-file-loader@2.2.4
       '@smithy/types': registry.npmjs.org/@smithy/types@2.5.0
       tslib: registry.npmjs.org/tslib@2.6.2
     transitivePeerDependencies:
@@ -829,9 +829,9 @@ packages:
       '@aws-sdk/credential-provider-sso': registry.npmjs.org/@aws-sdk/credential-provider-sso@3.451.0
       '@aws-sdk/credential-provider-web-identity': registry.npmjs.org/@aws-sdk/credential-provider-web-identity@3.451.0
       '@aws-sdk/types': registry.npmjs.org/@aws-sdk/types@3.451.0
-      '@smithy/credential-provider-imds': registry.npmjs.org/@smithy/credential-provider-imds@2.0.18
-      '@smithy/property-provider': registry.npmjs.org/@smithy/property-provider@2.0.13
-      '@smithy/shared-ini-file-loader': registry.npmjs.org/@smithy/shared-ini-file-loader@2.2.2
+      '@smithy/credential-provider-imds': registry.npmjs.org/@smithy/credential-provider-imds@2.1.1
+      '@smithy/property-provider': registry.npmjs.org/@smithy/property-provider@2.0.14
+      '@smithy/shared-ini-file-loader': registry.npmjs.org/@smithy/shared-ini-file-loader@2.2.4
       '@smithy/types': registry.npmjs.org/@smithy/types@2.5.0
       tslib: registry.npmjs.org/tslib@2.6.2
     transitivePeerDependencies:
@@ -845,8 +845,8 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@aws-sdk/types': registry.npmjs.org/@aws-sdk/types@3.451.0
-      '@smithy/property-provider': registry.npmjs.org/@smithy/property-provider@2.0.13
-      '@smithy/shared-ini-file-loader': registry.npmjs.org/@smithy/shared-ini-file-loader@2.2.2
+      '@smithy/property-provider': registry.npmjs.org/@smithy/property-provider@2.0.14
+      '@smithy/shared-ini-file-loader': registry.npmjs.org/@smithy/shared-ini-file-loader@2.2.4
       '@smithy/types': registry.npmjs.org/@smithy/types@2.5.0
       tslib: registry.npmjs.org/tslib@2.6.2
     dev: false
@@ -860,8 +860,8 @@ packages:
       '@aws-sdk/client-sso': registry.npmjs.org/@aws-sdk/client-sso@3.451.0
       '@aws-sdk/token-providers': registry.npmjs.org/@aws-sdk/token-providers@3.451.0
       '@aws-sdk/types': registry.npmjs.org/@aws-sdk/types@3.451.0
-      '@smithy/property-provider': registry.npmjs.org/@smithy/property-provider@2.0.13
-      '@smithy/shared-ini-file-loader': registry.npmjs.org/@smithy/shared-ini-file-loader@2.2.2
+      '@smithy/property-provider': registry.npmjs.org/@smithy/property-provider@2.0.14
+      '@smithy/shared-ini-file-loader': registry.npmjs.org/@smithy/shared-ini-file-loader@2.2.4
       '@smithy/types': registry.npmjs.org/@smithy/types@2.5.0
       tslib: registry.npmjs.org/tslib@2.6.2
     transitivePeerDependencies:
@@ -875,7 +875,7 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@aws-sdk/types': registry.npmjs.org/@aws-sdk/types@3.451.0
-      '@smithy/property-provider': registry.npmjs.org/@smithy/property-provider@2.0.13
+      '@smithy/property-provider': registry.npmjs.org/@smithy/property-provider@2.0.14
       '@smithy/types': registry.npmjs.org/@smithy/types@2.5.0
       tslib: registry.npmjs.org/tslib@2.6.2
     dev: false
@@ -934,7 +934,7 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@aws-sdk/types': registry.npmjs.org/@aws-sdk/types@3.451.0
-      '@smithy/property-provider': registry.npmjs.org/@smithy/property-provider@2.0.13
+      '@smithy/property-provider': registry.npmjs.org/@smithy/property-provider@2.0.14
       '@smithy/protocol-http': registry.npmjs.org/@smithy/protocol-http@3.0.9
       '@smithy/signature-v4': registry.npmjs.org/@smithy/signature-v4@2.0.10
       '@smithy/types': registry.npmjs.org/@smithy/types@2.5.0
@@ -996,9 +996,9 @@ packages:
       '@smithy/middleware-stack': registry.npmjs.org/@smithy/middleware-stack@2.0.7
       '@smithy/node-config-provider': registry.npmjs.org/@smithy/node-config-provider@2.1.5
       '@smithy/node-http-handler': registry.npmjs.org/@smithy/node-http-handler@2.1.9
-      '@smithy/property-provider': registry.npmjs.org/@smithy/property-provider@2.0.13
+      '@smithy/property-provider': registry.npmjs.org/@smithy/property-provider@2.0.14
       '@smithy/protocol-http': registry.npmjs.org/@smithy/protocol-http@3.0.9
-      '@smithy/shared-ini-file-loader': registry.npmjs.org/@smithy/shared-ini-file-loader@2.2.2
+      '@smithy/shared-ini-file-loader': registry.npmjs.org/@smithy/shared-ini-file-loader@2.2.4
       '@smithy/smithy-client': registry.npmjs.org/@smithy/smithy-client@2.1.15
       '@smithy/types': registry.npmjs.org/@smithy/types@2.5.0
       '@smithy/url-parser': registry.npmjs.org/@smithy/url-parser@2.0.13
@@ -3646,19 +3646,6 @@ packages:
       tslib: registry.npmjs.org/tslib@2.6.2
     dev: false
 
-  registry.npmjs.org/@smithy/credential-provider-imds@2.0.18:
-    resolution: {integrity: sha512-QnPBi6D2zj6AHJdUTo5zXmk8vwHJ2bNevhcVned1y+TZz/OI5cizz5DsYNkqFUIDn8tBuEyKNgbmKVNhBbuY3g==, tarball: https://registry.npmjs.org/@smithy/credential-provider-imds/-/credential-provider-imds-2.0.18.tgz}
-    name: '@smithy/credential-provider-imds'
-    version: 2.0.18
-    engines: {node: '>=14.0.0'}
-    dependencies:
-      '@smithy/node-config-provider': registry.npmjs.org/@smithy/node-config-provider@2.1.5
-      '@smithy/property-provider': registry.npmjs.org/@smithy/property-provider@2.0.13
-      '@smithy/types': registry.npmjs.org/@smithy/types@2.5.0
-      '@smithy/url-parser': registry.npmjs.org/@smithy/url-parser@2.0.13
-      tslib: registry.npmjs.org/tslib@2.6.2
-    dev: false
-
   registry.npmjs.org/@smithy/credential-provider-imds@2.1.1:
     resolution: {integrity: sha512-gw5G3FjWC6sNz8zpOJgPpH5HGKrpoVFQpToNAwLwJVyI/LJ2jDJRjSKEsM6XI25aRpYjMSE/Qptxx305gN1vHw==, tarball: https://registry.npmjs.org/@smithy/credential-provider-imds/-/credential-provider-imds-2.1.1.tgz}
     name: '@smithy/credential-provider-imds'
@@ -3812,16 +3799,6 @@ packages:
       tslib: registry.npmjs.org/tslib@2.6.2
     dev: false
 
-  registry.npmjs.org/@smithy/property-provider@2.0.13:
-    resolution: {integrity: sha512-VJqUf2CbsQX6uUiC5dUPuoEATuFjkbkW3lJHbRnpk9EDC9X+iKqhfTK+WP+lve5EQ9TcCI1Q6R7hrg41FyC54w==, tarball: https://registry.npmjs.org/@smithy/property-provider/-/property-provider-2.0.13.tgz}
-    name: '@smithy/property-provider'
-    version: 2.0.13
-    engines: {node: '>=14.0.0'}
-    dependencies:
-      '@smithy/types': registry.npmjs.org/@smithy/types@2.5.0
-      tslib: registry.npmjs.org/tslib@2.6.2
-    dev: false
-
   registry.npmjs.org/@smithy/property-provider@2.0.14:
     resolution: {integrity: sha512-k3D2qp9o6imTrLaXRj6GdLYEJr1sXqS99nLhzq8fYmJjSVOeMg/G+1KVAAc7Oxpu71rlZ2f8SSZxcSxkevuR0A==, tarball: https://registry.npmjs.org/@smithy/property-provider/-/property-provider-2.0.14.tgz}
     name: '@smithy/property-provider'
@@ -3870,16 +3847,6 @@ packages:
     engines: {node: '>=14.0.0'}
     dependencies:
       '@smithy/types': registry.npmjs.org/@smithy/types@2.5.0
-    dev: false
-
-  registry.npmjs.org/@smithy/shared-ini-file-loader@2.2.2:
-    resolution: {integrity: sha512-noyQUPn7b1M8uB0GEXc/Zyxq+5K2b7aaqWnLp+hgJ7+xu/FCvtyWy5eWLDjQEsHnAet2IZhS5QF8872OR69uNg==, tarball: https://registry.npmjs.org/@smithy/shared-ini-file-loader/-/shared-ini-file-loader-2.2.2.tgz}
-    name: '@smithy/shared-ini-file-loader'
-    version: 2.2.2
-    engines: {node: '>=14.0.0'}
-    dependencies:
-      '@smithy/types': registry.npmjs.org/@smithy/types@2.5.0
-      tslib: registry.npmjs.org/tslib@2.6.2
     dev: false
 
   registry.npmjs.org/@smithy/shared-ini-file-loader@2.2.4:
