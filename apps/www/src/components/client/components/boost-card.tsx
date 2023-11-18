@@ -1,14 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import {
   Box,
   Button,
   Center,
+  Flex,
   List,
   ListItem,
   Modal,
+  NumberFormatter,
   rem,
+  Slider,
   Stack,
   Text,
   ThemeIcon,
@@ -17,7 +21,10 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { IconCircleCheck, IconRocket } from "@tabler/icons-react";
 
+import { PRICING } from "@eboto/constants";
+
 export default function BoostCard() {
+  const [value, setValue] = useState(0);
   const [opened, { open, close }] = useDisclosure(false);
   return (
     <>
@@ -27,6 +34,7 @@ export default function BoostCard() {
         radius="lg"
         withCloseButton={false}
         closeOnClickOutside={false}
+        padding="xl"
       >
         <Center mb="lg">
           <ThemeIcon variant="gradient" size={80} radius="50%">
@@ -37,16 +45,135 @@ export default function BoostCard() {
           Boost is available!
         </Title>
 
-        <Center>
-          <Stack align="center" gap="xs">
-            <Button size="lg" radius="xl" variant="gradient">
-              Get Boost
-            </Button>
-            <Button onClick={close} size="xs" radius="xl" variant="subtle">
+        <Box>
+          <Title order={1} ta="center">
+            {PRICING.find((item) => item.value === value)?.label === -1 ? (
+              "Contact us"
+            ) : (
+              <NumberFormatter
+                prefix="₱ "
+                value={
+                  499 +
+                  (PRICING.find((item) => item.value === value)?.price_added ??
+                    0)
+                }
+                fixedDecimalScale
+                decimalScale={2}
+              />
+            )}{" "}
+          </Title>
+          <Slider
+            value={value}
+            onChange={setValue}
+            mt="xl"
+            thumbSize={20}
+            step={20}
+            label={(value) =>
+              PRICING.find((item) => item.value === value)?.label === -1 ? (
+                "Unlimited"
+              ) : (
+                <NumberFormatter
+                  value={PRICING.find((item) => item.value === value)?.label}
+                  thousandSeparator
+                />
+              )
+            }
+            marks={PRICING.map((item) => ({
+              value: item.value,
+              // label: item.label === -1 ? "Unlimited" : item.label,
+            }))}
+          />
+          <Text ta="center" mt="md">
+            with up to{" "}
+            {PRICING.find((item) => item.value === value)?.label === -1 ? (
+              "Unlimited"
+            ) : (
+              <NumberFormatter
+                value={PRICING.find((item) => item.value === value)?.label}
+                thousandSeparator
+              />
+            )}{" "}
+            voters
+          </Text>
+
+          <Text fz="lg" fw={600} mt="lg" mb="xs">
+            Key Features
+          </Text>
+
+          <List
+            spacing="xs"
+            center
+            icon={
+              <ThemeIcon variant="gradient" size={24} radius="xl">
+                <IconCircleCheck style={{ width: rem(16), height: rem(16) }} />
+              </ThemeIcon>
+            }
+          >
+            <ListItem>Ad-Free</ListItem>
+            <ListItem>Realtime Update</ListItem>
+            <ListItem>No Watermark</ListItem>
+            <Text ml={36} mt="xs">
+              ...and more!
+            </Text>
+          </List>
+        </Box>
+
+        <Box mt="xl">
+          <Stack gap="xs">
+            <Flex gap="xs" direction={{ base: "column", xs: "row" }}>
+              {PRICING.find((item) => item.value === value)?.label === -1 ? (
+                <Button
+                  component={Link}
+                  href="/contact"
+                  size="lg"
+                  radius="xl"
+                  variant="gradient"
+                  w="100%"
+                >
+                  Get Boost
+                </Button>
+              ) : (
+                <Button size="lg" radius="xl" variant="gradient" w="100%">
+                  Get Boost
+                </Button>
+              )}
+              <Button
+                hiddenFrom="xs"
+                component={Link}
+                href="/pricing"
+                radius="xl"
+                variant="default"
+                size="sm"
+              >
+                Learn More
+              </Button>
+              <Button
+                visibleFrom="xs"
+                component={Link}
+                href="/pricing"
+                radius="xl"
+                variant="default"
+                size="lg"
+                w="100%"
+              >
+                Learn More
+              </Button>
+            </Flex>
+            <Button
+              onClick={close}
+              size="xs"
+              radius="xl"
+              variant="subtle"
+              style={{
+                width: "fit-content",
+                marginLeft: "auto",
+                marginRight: "auto",
+              }}
+            >
               Maybe Later
             </Button>
           </Stack>
-        </Center>
+        </Box>
       </Modal>
       <Box
         p="md"

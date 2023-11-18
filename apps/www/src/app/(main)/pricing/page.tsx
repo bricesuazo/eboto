@@ -29,41 +29,13 @@ import {
 import { IconCircleCheck, IconCircleX } from "@tabler/icons-react";
 import Balancer from "react-wrap-balancer";
 
+import { PRICING } from "@eboto/constants";
+
 export const dynamic = "force-static";
 
 export default function PricingPage() {
   const [value, setValue] = useState(0);
-  const voters_length = [
-    {
-      value: 0,
-      price_added: 0,
-      label: 1500,
-    },
-    {
-      value: 20,
-      price_added: 200,
-      label: 2500,
-    },
-    {
-      value: 40,
-      price_added: 400,
-      label: 5000,
-    },
-    {
-      value: 60,
-      price_added: 600,
-      label: 7500,
-    },
-    {
-      value: 80,
-      price_added: 800,
-      label: 10000,
-    },
-    {
-      value: 100,
-      label: -1,
-    },
-  ];
+
   return (
     <Container py="xl">
       <Title ta="center">Pricing</Title>
@@ -121,15 +93,14 @@ export default function PricingPage() {
             <Box>
               <Title order={2}>Boost</Title>
               <Title>
-                {voters_length.find((item) => item.value === value)?.label ===
-                -1 ? (
+                {PRICING.find((item) => item.value === value)?.label === -1 ? (
                   "Contact us"
                 ) : (
                   <NumberFormatter
                     prefix="₱ "
                     value={
                       499 +
-                      (voters_length.find((item) => item.value === value)
+                      (PRICING.find((item) => item.value === value)
                         ?.price_added ?? 0)
                     }
                     fixedDecimalScale
@@ -140,14 +111,11 @@ export default function PricingPage() {
               <Text>Per Election</Text>
               <Text>
                 with up to{" "}
-                {voters_length.find((item) => item.value === value)?.label ===
-                -1 ? (
+                {PRICING.find((item) => item.value === value)?.label === -1 ? (
                   "Unlimited"
                 ) : (
                   <NumberFormatter
-                    value={
-                      voters_length.find((item) => item.value === value)?.label
-                    }
+                    value={PRICING.find((item) => item.value === value)?.label}
                     thousandSeparator
                   />
                 )}{" "}
@@ -160,20 +128,18 @@ export default function PricingPage() {
                 thumbSize={20}
                 step={20}
                 label={(value) =>
-                  voters_length.find((item) => item.value === value)?.label ===
-                  -1 ? (
+                  PRICING.find((item) => item.value === value)?.label === -1 ? (
                     "Unlimited"
                   ) : (
                     <NumberFormatter
                       value={
-                        voters_length.find((item) => item.value === value)
-                          ?.label
+                        PRICING.find((item) => item.value === value)?.label
                       }
                       thousandSeparator
                     />
                   )
                 }
-                marks={voters_length.map((item) => ({
+                marks={PRICING.map((item) => ({
                   value: item.value,
                   // label: item.label === -1 ? "Unlimited" : item.label,
                 }))}
@@ -325,7 +291,7 @@ export default function PricingPage() {
                   />
                 </TableTd>
                 <TableTd fw="bold">
-                  {voters_length.find((item) => item.value === value)?.label ===
+                  {PRICING.find((item) => item.value === value)?.label ===
                   -1 ? (
                     "Contact us"
                   ) : (
@@ -333,7 +299,7 @@ export default function PricingPage() {
                       prefix="₱ "
                       value={
                         499 +
-                        (voters_length.find((item) => item.value === value)
+                        (PRICING.find((item) => item.value === value)
                           ?.price_added ?? 0)
                       }
                       fixedDecimalScale
@@ -346,7 +312,7 @@ export default function PricingPage() {
                 <TableTd>Number of Voters</TableTd>
                 <TableTd>Up to 500</TableTd>
                 <TableTd fw="bold">
-                  {voters_length.find((item) => item.value === value)?.label ===
+                  {PRICING.find((item) => item.value === value)?.label ===
                   -1 ? (
                     "Unlimited"
                   ) : (
@@ -354,8 +320,7 @@ export default function PricingPage() {
                       Up to{" "}
                       <NumberFormatter
                         value={
-                          voters_length.find((item) => item.value === value)
-                            ?.label
+                          PRICING.find((item) => item.value === value)?.label
                         }
                         thousandSeparator
                       />
@@ -369,20 +334,19 @@ export default function PricingPage() {
                     thumbSize={20}
                     step={20}
                     label={(value) =>
-                      voters_length.find((item) => item.value === value)
-                        ?.label === -1 ? (
+                      PRICING.find((item) => item.value === value)?.label ===
+                      -1 ? (
                         "Unlimited"
                       ) : (
                         <NumberFormatter
                           value={
-                            voters_length.find((item) => item.value === value)
-                              ?.label
+                            PRICING.find((item) => item.value === value)?.label
                           }
                           thousandSeparator
                         />
                       )
                     }
-                    marks={voters_length.map((item) => ({
+                    marks={PRICING.map((item) => ({
                       value: item.value,
                       // label: item.label === -1 ? "Unlimited" : item.label,
                     }))}

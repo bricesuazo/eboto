@@ -16,6 +16,38 @@ export const baseUrl =
     ? "https://www.eboto-mo.com"
     : "http://localhost:3000";
 
+export const PRICING = [
+  {
+    value: 0,
+    price_added: 0,
+    label: 1500,
+  },
+  {
+    value: 20,
+    price_added: 200,
+    label: 2500,
+  },
+  {
+    value: 40,
+    price_added: 400,
+    label: 5000,
+  },
+  {
+    value: 60,
+    price_added: 600,
+    label: 7500,
+  },
+  {
+    value: 80,
+    price_added: 800,
+    label: 10000,
+  },
+  {
+    value: 100,
+    label: -1,
+  },
+];
+
 export const parseHourTo12HourFormat = (hour: number) => {
   if (hour === 0 || hour === 24) return "12 AM";
   else if (hour < 12) return `${hour} AM`;
