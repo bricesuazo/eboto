@@ -15,15 +15,15 @@
     "drizzle-orm": "0.29.0",
     "mysql2": "^3.6.3",
     "nanoid": "^5.0.3",
-    "uploadthing": "^6.0.0"
+    "uploadthing": "^6.0.1"
   },
   "devDependencies": {
     "@eboto/eslint-config": "workspace:*",
     "@eboto/prettier-config": "workspace:*",
     "@eboto/tsconfig": "workspace:*",
-    "@types/node": "^20.9.0",
+    "@types/node": "^20.9.1",
     "dotenv-cli": "^7.3.0",
-    "drizzle-kit": "0.20.2",
+    "drizzle-kit": "0.20.4",
     "typescript": "^5.2.2"
   },
   "eslintConfig": {
