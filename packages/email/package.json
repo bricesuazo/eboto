@@ -6,7 +6,7 @@
     "export": "email export"
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.449.0",
+    "@aws-sdk/client-ses": "^3.454.0",
     "@eboto/constants": "workspace:*",
     "@react-email/components": "0.0.11",
     "@react-email/render": "0.0.9",

@@ -398,7 +398,7 @@ importers:
   packages/email:
     dependencies:
       '@aws-sdk/client-ses':
-        specifier: ^3.449.0
+        specifier: ^3.454.0
         version: registry.npmjs.org/@aws-sdk/client-ses@3.454.0
       '@eboto/constants':
         specifier: workspace:*
