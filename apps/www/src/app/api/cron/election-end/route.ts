@@ -4,13 +4,13 @@ import { verifySignatureEdge } from "@upstash/qstash/dist/nextjs";
 
 import { db } from "@eboto/db";
 import type { GeneratedElectionResult } from "@eboto/db/schema";
-import { elections, generated_election_results } from "@eboto/db/schema";
+import { generated_election_results } from "@eboto/db/schema";
 import { sendElectionResult } from "@eboto/email/emails/election-result";
-import { sendElectionStart } from "@eboto/email/emails/election-start";
 
 export const runtime = "edge";
 
 async function handler(_req: NextRequest) {
+  console.log("ELECTION START CRON");
   // TODO: Use toISOString() instead of toLocaleDateString() and toLocaleString()
   const date_today = new Date(
     new Date().toLocaleDateString("en-US", {
@@ -22,65 +22,8 @@ async function handler(_req: NextRequest) {
       timeZone: "Asia/Manila",
     }),
   );
-  console.log("🚀 ~ file: cron.tsx:12 ~ handler ~ today:", date_today);
-  console.log("🚀 ~ file: cron.tsx:19 ~ handler ~ today:", today);
-
-  await db.transaction(async (trx) => {
-    const electionsStart = await trx.query.elections.findMany({
-      where: (election, { eq, and, isNull }) =>
-        and(
-          eq(election.start_date, date_today),
-          isNull(election.deleted_at),
-          eq(election.voting_hour_start, today.getHours()),
-        ),
-      with: {
-        commissioners: {
-          with: {
-            user: true,
-          },
-        },
-        voters: true,
-      },
-    });
-
-    for (const election of electionsStart) {
-      console.log(
-        "🚀 ~ file: cron.tsx:35 ~ awaitdb.transaction ~ election:",
-        election,
-      );
-      await Promise.all([
-        sendElectionStart({
-          isForCommissioner: false,
-          election: {
-            name: election.name,
-            slug: election.slug,
-            start_date: election.start_date,
-            end_date: election.end_date,
-          },
-          emails: election.voters.map((voter) => voter.email),
-        }),
-        sendElectionStart({
-          isForCommissioner: true,
-          election: {
-            name: election.name,
-            slug: election.slug,
-            start_date: election.start_date,
-            end_date: election.end_date,
-          },
-          emails: election.commissioners.map(
-            (commissioner) => commissioner.user.email,
-          ),
-        }),
-      ]);
-
-      if (election.publicity === "PRIVATE") {
-        await trx.update(elections).set({
-          publicity: "VOTER",
-        });
-      }
-      console.log("Email start sent to", election.name);
-    }
-  });
+  console.log("END: 🚀 ~ file: cron.tsx:12 ~ handler ~ today:", date_today);
+  console.log("END: 🚀 ~ file: cron.tsx:19 ~ handler ~ today:", today);
 
   await db.transaction(async (trx) => {
     const date_today_end = new Date(date_today);
@@ -117,7 +60,7 @@ async function handler(_req: NextRequest) {
 
     for (const election of electionsEnd) {
       console.log(
-        "🚀 ~ file: cron.tsx:91 ~ awaitdb.transaction ~ election:",
+        "END: 🚀 ~ file: cron.tsx:91 ~ awaitdb.transaction ~ election:",
         election,
       );
       const result = {
