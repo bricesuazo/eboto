@@ -1,13 +1,13 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { verifySignatureEdge } from "@upstash/qstash/dist/nextjs";
+import { verifySignatureAppRouter } from "@upstash/qstash/dist/nextjs";
 
 import { db } from "@eboto/db";
 import type { GeneratedElectionResult } from "@eboto/db/schema";
 import { generated_election_results } from "@eboto/db/schema";
 import { sendElectionResult } from "@eboto/email/emails/election-result";
 
-export const runtime = "edge";
+// export const runtime = "edge";
 
 async function handler(_req: NextRequest) {
   console.log("ELECTION START CRON");
@@ -99,4 +99,4 @@ async function handler(_req: NextRequest) {
   return NextResponse.json({});
 }
 
-export const POST = verifySignatureEdge(handler);
+export const POST = verifySignatureAppRouter(handler);
