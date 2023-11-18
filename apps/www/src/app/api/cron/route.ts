@@ -153,7 +153,7 @@ async function handler(_req: NextRequest) {
     }
   });
 
-  return NextResponse.next();
+  return NextResponse.json({});
 }
 
 export const POST = verifySignatureEdge(handler);
