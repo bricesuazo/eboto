@@ -1,6 +1,4 @@
 import { TRPCError } from "@trpc/server";
-// TODO: Remove import { File } from "@web-std/file"; when Vercel supports Node.js 20
-import { File } from "@web-std/file";
 import { z } from "zod";
 
 import { update } from "@eboto/auth";
@@ -68,13 +66,13 @@ export const userRouter = createTRPCRouter({
             image_file: image_file
               ? image_file
               : input.image
-              ? user.image_file
-              : null,
+                ? user.image_file
+                : null,
             image: image_file
               ? image_file.url
               : input.image
-              ? user.image
-              : null,
+                ? user.image
+                : null,
           })
           .where(eq(users.id, ctx.session.user.id));
 
@@ -85,8 +83,8 @@ export const userRouter = createTRPCRouter({
             image: image_file
               ? image_file.url
               : input.image
-              ? user.image
-              : null,
+                ? user.image
+                : null,
           },
         });
       });

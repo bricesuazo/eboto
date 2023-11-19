@@ -21,7 +21,7 @@
     "@eboto/eslint-config": "workspace:*",
     "@eboto/prettier-config": "workspace:*",
     "@eboto/tsconfig": "workspace:*",
-    "@types/node": "^20.9.1",
+    "@types/node": "^20.9.2",
     "dotenv-cli": "^7.3.0",
     "drizzle-kit": "0.20.4",
     "typescript": "^5.2.2"
