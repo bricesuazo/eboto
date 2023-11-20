@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import Footer from "@/components/client/components/footer";
@@ -8,6 +9,7 @@ import CreateElection from "@/components/client/modals/create-election";
 import { useStore } from "@/store";
 import { api } from "@/trpc/client";
 import {
+  ActionIcon,
   AppShell,
   AppShellFooter,
   AppShellHeader,
@@ -26,12 +28,16 @@ import {
   Group,
   InputBase,
   InputPlaceholder,
+  Loader,
   ScrollAreaAutosize,
   Stack,
   Text,
+  ThemeIcon,
+  Tooltip,
+  TooltipGroup,
   useCombobox,
 } from "@mantine/core";
-import { IconExternalLink, IconLogout } from "@tabler/icons-react";
+import { IconExternalLink, IconLogout, IconPlus } from "@tabler/icons-react";
 
 import {
   electionDashboardNavbar,
@@ -51,6 +57,14 @@ export default function DashboardElection({
   const params = useParams();
 
   const pathname = usePathname();
+
+  const getAllCommissionerByElectionSlugQuery =
+    api.election.getAllCommissionerByElectionSlug.useQuery(
+      { election_slug: params.electionDashboardSlug as string },
+      {
+        enabled: !!params.electionDashboardSlug,
+      },
+    );
 
   const { data: elections } = api.election.getAllMyElections.useQuery();
 
@@ -258,6 +272,63 @@ export default function DashboardElection({
             </Stack>
           </Stack>
 
+          <Stack gap="xs">
+            <Group justify="space-between">
+              <Text size="xs" fw={500}>
+                Commissioners
+              </Text>
+              <ActionIcon
+                size="sm"
+                variant="light"
+                radius="xl"
+                aria-label="Settings"
+              >
+                <IconPlus size={16} />
+              </ActionIcon>
+            </Group>
+            <TooltipGroup openDelay={300} closeDelay={100}>
+              <Group gap={8}>
+                {getAllCommissionerByElectionSlugQuery.isLoading ? (
+                  <ThemeIcon size="lg" variant="default" radius="xl">
+                    <Loader size="xs" />
+                  </ThemeIcon>
+                ) : (
+                  getAllCommissionerByElectionSlugQuery.data?.map(
+                    (commissioner) => (
+                      <Tooltip
+                        key={commissioner.id}
+                        label={
+                          commissioner.user.name ?? commissioner.user.email
+                        }
+                        withArrow
+                      >
+                        {commissioner.user.image_file?.url ??
+                        commissioner.user.image ? (
+                          <ThemeIcon size="lg" variant="default" radius="xl">
+                            <Image
+                              src={
+                                commissioner.user.image ??
+                                commissioner.user.image_file?.url ??
+                                ""
+                              }
+                              alt="Profile picture"
+                              width={24}
+                              height={24}
+                            />
+                          </ThemeIcon>
+                        ) : (
+                          <ThemeIcon size="lg" variant="default" radius="xl">
+                            {commissioner.user.email.slice(0, 2)}
+                          </ThemeIcon>
+                        )}
+                      </Tooltip>
+                    ),
+                  )
+                )}
+              </Group>
+            </TooltipGroup>
+          </Stack>
+
           <Stack hiddenFrom="xs">
             <Divider />
 
@@ -270,6 +341,7 @@ export default function DashboardElection({
               variant="subtle"
               // onClick={() => signOut()}
               leftSection={<IconLogout size="1.25rem" />}
+              mb="xl"
             >
               Logout
             </Button>

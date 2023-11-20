@@ -816,4 +816,28 @@ export const electionRouter = createTRPCRouter({
       orderBy: (elections, { desc }) => desc(elections.created_at),
     });
   }),
+  getAllCommissionerByElectionSlug: protectedProcedure
+    .input(z.object({ election_slug: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const election = await ctx.db.query.elections.findFirst({
+        where: (elections, { eq, and, isNull }) =>
+          and(
+            eq(elections.slug, input.election_slug),
+            isNull(elections.deleted_at),
+          ),
+        with: {
+          commissioners: {
+            where: (commissioners, { isNull }) =>
+              isNull(commissioners.deleted_at),
+            with: {
+              user: true,
+            },
+          },
+        },
+      });
+
+      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+
+      return election.commissioners.map((commissioner) => commissioner);
+    }),
 });
