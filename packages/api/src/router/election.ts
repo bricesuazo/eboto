@@ -376,16 +376,33 @@ export const electionRouter = createTRPCRouter({
       }));
     }),
   getAllMyElections: protectedProcedure.query(({ ctx }) => {
-    return ctx.db.query.commissioners.findMany({
-      where: (commissioners, { eq, isNull, and }) =>
-        and(
-          isNull(commissioners.deleted_at),
-          eq(commissioners.user_id, ctx.session.user.id),
-        ),
-      with: {
-        election: true,
-      },
-    });
+    return ctx.db.query.commissioners
+      .findMany({
+        where: (commissioners, { eq, isNull, and }) =>
+          and(
+            isNull(commissioners.deleted_at),
+            eq(commissioners.user_id, ctx.session.user.id),
+          ),
+        orderBy: (commissioners, { asc }) => asc(commissioners.created_at),
+        with: {
+          election: {
+            with: {
+              commissioners: true,
+            },
+          },
+        },
+      })
+      .then((commissioners) =>
+        commissioners.map((commissioner) => ({
+          ...commissioner,
+          election: {
+            ...commissioner.election,
+            isTheCreator:
+              commissioner.user_id ===
+              commissioner.election.commissioners[0]?.user_id,
+          },
+        })),
+      );
   }),
   getVotersByElectionSlug: protectedProcedure
     .input(

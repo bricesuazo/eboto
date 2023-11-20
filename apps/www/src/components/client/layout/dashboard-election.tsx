@@ -129,6 +129,7 @@ export default function DashboardElection({
   useEffect(() => {
     if (opened) {
       form.reset();
+      addCommissionerMutation.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
@@ -142,32 +143,34 @@ export default function DashboardElection({
         closeOnClickOutside={false}
       >
         <Stack gap="sm">
-          <form
-            onSubmit={form.onSubmit((values) =>
-              addCommissionerMutation.mutate({
-                election_id: currentElection!.id,
-                email: values.email,
-              }),
-            )}
-          >
-            <Flex gap="sm">
-              <TextInput
-                placeholder="bricesuazo@gmail.com"
-                leftSection={<IconAt size="1rem" />}
-                style={{ flex: 1 }}
-                disabled={addCommissionerMutation.isPending}
-                {...form.getInputProps("email")}
-              />
-              <ActionIcon
-                type="submit"
-                variant="light"
-                size={36}
-                loading={addCommissionerMutation.isPending}
-              >
-                <IconUserPlus size="1.5rem" />
-              </ActionIcon>
-            </Flex>
-          </form>
+          {currentElection?.isTheCreator && (
+            <form
+              onSubmit={form.onSubmit((values) =>
+                addCommissionerMutation.mutate({
+                  election_id: currentElection.id,
+                  email: values.email,
+                }),
+              )}
+            >
+              <Flex gap="sm">
+                <TextInput
+                  placeholder="bricesuazo@gmail.com"
+                  leftSection={<IconAt size="1rem" />}
+                  style={{ flex: 1 }}
+                  disabled={addCommissionerMutation.isPending}
+                  {...form.getInputProps("email")}
+                />
+                <ActionIcon
+                  type="submit"
+                  variant="light"
+                  size={36}
+                  loading={addCommissionerMutation.isPending}
+                >
+                  <IconUserPlus size="1.5rem" />
+                </ActionIcon>
+              </Flex>
+            </form>
+          )}
           {addCommissionerMutation.isError && (
             <Alert
               icon={<IconAlertCircle size="1rem" />}
@@ -391,66 +394,77 @@ export default function DashboardElection({
             </Stack>
 
             <Stack gap="xs">
-              <Group justify="space-between">
-                <Text size="xs" fw={500}>
-                  Commissioners
-                </Text>
-                <ActionIcon
-                  onClick={open}
-                  size="sm"
-                  variant="light"
-                  radius="xl"
-                  aria-label="Settings"
-                  disabled={getAllCommissionerByElectionSlugQuery.isLoading}
-                >
-                  <IconPlus size={16} />
-                </ActionIcon>
-              </Group>
-              <TooltipGroup openDelay={300} closeDelay={100}>
-                <Group gap={8}>
-                  {getAllCommissionerByElectionSlugQuery.isLoading ? (
-                    <ThemeIcon size="lg" variant="default" radius="xl">
-                      <Loader size="xs" />
-                    </ThemeIcon>
-                  ) : (
-                    getAllCommissionerByElectionSlugQuery.data?.map(
-                      (commissioner) => (
-                        <Tooltip
-                          key={commissioner.id}
-                          label={
-                            commissioner.user.name ?? commissioner.user.email
-                          }
-                          withArrow
-                        >
-                          {commissioner.user.image_file?.url ??
-                          commissioner.user.image ? (
-                            <ThemeIcon size="lg" variant="default" radius="xl">
-                              <Image
-                                src={
-                                  commissioner.user.image ??
-                                  commissioner.user.image_file?.url ??
-                                  ""
-                                }
-                                alt="Profile picture"
-                                width={24}
-                                height={24}
-                                style={{
-                                  borderRadius: "50%",
-                                  objectFit: "cover",
-                                }}
-                              />
-                            </ThemeIcon>
-                          ) : (
-                            <ThemeIcon size="lg" variant="default" radius="xl">
-                              {commissioner.user.email.slice(0, 2)}
-                            </ThemeIcon>
-                          )}
-                        </Tooltip>
-                      ),
-                    )
-                  )}
+              <Divider />
+              <Stack gap="xs" mb={{ xs: "lg" }}>
+                <Group justify="space-between">
+                  <Text size="xs" fw={500}>
+                    Commissioners
+                  </Text>
+                  <ActionIcon
+                    onClick={open}
+                    size="sm"
+                    variant="light"
+                    radius="xl"
+                    aria-label="Settings"
+                    disabled={getAllCommissionerByElectionSlugQuery.isLoading}
+                  >
+                    <IconPlus size={16} />
+                  </ActionIcon>
                 </Group>
-              </TooltipGroup>
+                <TooltipGroup openDelay={300} closeDelay={100}>
+                  <Group gap={8}>
+                    {getAllCommissionerByElectionSlugQuery.isLoading ? (
+                      <ThemeIcon size="lg" variant="default" radius="xl">
+                        <Loader size="xs" />
+                      </ThemeIcon>
+                    ) : (
+                      getAllCommissionerByElectionSlugQuery.data?.map(
+                        (commissioner) => (
+                          <Tooltip
+                            key={commissioner.id}
+                            label={
+                              commissioner.user.name ?? commissioner.user.email
+                            }
+                            withArrow
+                          >
+                            {commissioner.user.image_file?.url ??
+                            commissioner.user.image ? (
+                              <ThemeIcon
+                                size="lg"
+                                variant="default"
+                                radius="xl"
+                              >
+                                <Image
+                                  src={
+                                    commissioner.user.image ??
+                                    commissioner.user.image_file?.url ??
+                                    ""
+                                  }
+                                  alt="Profile picture"
+                                  width={24}
+                                  height={24}
+                                  style={{
+                                    borderRadius: "50%",
+                                    objectFit: "cover",
+                                  }}
+                                />
+                              </ThemeIcon>
+                            ) : (
+                              <ThemeIcon
+                                size="lg"
+                                variant="default"
+                                radius="xl"
+                              >
+                                {commissioner.user.email.slice(0, 2)}
+                              </ThemeIcon>
+                            )}
+                          </Tooltip>
+                        ),
+                      )
+                    )}
+                  </Group>
+                </TooltipGroup>
+              </Stack>
             </Stack>
 
             <Stack hiddenFrom="xs">
@@ -465,7 +479,7 @@ export default function DashboardElection({
                 variant="subtle"
                 // onClick={() => signOut()}
                 leftSection={<IconLogout size="1.25rem" />}
-                mb="xl"
+                mb="lg"
               >
                 Logout
               </Button>
