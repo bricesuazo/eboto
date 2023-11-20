@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useStore } from "@/store";
 import classes from "@/styles/Header.module.css";
 import { api } from "@/trpc/client";
@@ -51,7 +51,6 @@ import {
 import { signOut } from "next-auth/react";
 
 export default function Header({ userId }: { userId?: string }) {
-  const router = useRouter();
   const session = api.auth.getSession.useQuery();
   const params = useParams();
   const [logoutLoading, setLogoutLoading] = useState(false);
@@ -306,9 +305,9 @@ export default function Header({ userId }: { userId?: string }) {
 
                 <MenuDropdown>
                   <MenuItem
-                    // component={Link}
-                    // href="/dashboard"
-                    onClick={() => router.push("/dashboard")}
+                    component={Link}
+                    href="/dashboard"
+                    // onClick={() => router.push("/dashboard")}
                     leftSection={<IconChartBar size={16} />}
                   >
                     Dashboard

@@ -111,6 +111,7 @@ export default function BoostCard() {
           >
             <ListItem>Ad-Free</ListItem>
             <ListItem>Realtime Update</ListItem>
+            <ListItem>Realtime Chat w/ Voters</ListItem>
             <ListItem>No Watermark</ListItem>
             <Text ml={36} mt="xs">
               ...and more!
@@ -196,6 +197,7 @@ export default function BoostCard() {
           }
         >
           <ListItem>Ad-Free</ListItem>
+          <ListItem>Realtime Chat w/ Voters</ListItem>
           <ListItem>Result Realtime Update</ListItem>
           <Text size="sm" ml={36} mt={4}>
             ...and more!

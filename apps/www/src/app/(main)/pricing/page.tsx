@@ -161,6 +161,7 @@ export default function PricingPage() {
                 }
               >
                 <ListItem>Ad-Free</ListItem>
+                <ListItem>Realtime Chat w/ Voters</ListItem>
                 <ListItem>Realtime Update</ListItem>
                 <ListItem>No Watermark</ListItem>
               </List>
@@ -355,6 +356,21 @@ export default function PricingPage() {
               </TableTr>
               <TableTr>
                 <TableTd>Ad-Free</TableTd>
+                <TableTd>
+                  <ThemeIcon variant="default" size={24} radius="xl">
+                    <IconCircleX style={{ width: rem(16), height: rem(16) }} />
+                  </ThemeIcon>
+                </TableTd>
+                <TableTd>
+                  <ThemeIcon variant="gradient" size={24} radius="xl">
+                    <IconCircleCheck
+                      style={{ width: rem(16), height: rem(16) }}
+                    />
+                  </ThemeIcon>
+                </TableTd>
+              </TableTr>
+              <TableTr>
+                <TableTd>Realtime Chat w/ Voters</TableTd>
                 <TableTd>
                   <ThemeIcon variant="default" size={24} radius="xl">
                     <IconCircleX style={{ width: rem(16), height: rem(16) }} />
