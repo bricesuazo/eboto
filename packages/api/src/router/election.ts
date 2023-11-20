@@ -832,12 +832,85 @@ export const electionRouter = createTRPCRouter({
             with: {
               user: true,
             },
+            orderBy: (commissioners, { asc }) => asc(commissioners.created_at),
           },
         },
       });
 
       if (!election) throw new TRPCError({ code: "NOT_FOUND" });
 
-      return election.commissioners.map((commissioner) => commissioner);
+      return election.commissioners.map((commissioner) => ({
+        ...commissioner,
+        user: {
+          ...commissioner.user,
+          isTheCreator:
+            commissioner.user.id === election.commissioners[0]?.user_id,
+          isMe: commissioner.user.id === ctx.session.user.id,
+        },
+      }));
+    }),
+  addCommissioner: protectedProcedure
+    .input(
+      z.object({
+        election_id: z.string().min(1),
+        email: z.string().email(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (ctx.session.user.email === input.email)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You cannot add yourself as a commissioner",
+        });
+
+      const election = await ctx.db.query.elections.findFirst({
+        where: (elections, { eq, and, isNull }) =>
+          and(
+            eq(elections.id, input.election_id),
+            isNull(elections.deleted_at),
+          ),
+        with: {
+          commissioners: {
+            where: (commissioners, { isNull }) =>
+              isNull(commissioners.deleted_at),
+            with: {
+              user: true,
+            },
+          },
+        },
+      });
+
+      if (!election)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election not found",
+        });
+
+      const user = await ctx.db.query.users.findFirst({
+        where: (users, { eq }) => eq(users.email, input.email),
+      });
+
+      if (!user)
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+
+      const isCommissionerExists = await ctx.db.query.commissioners.findFirst({
+        where: (commissioners, { eq, and, isNull }) =>
+          and(
+            eq(commissioners.election_id, election.id),
+            eq(commissioners.user_id, user.id),
+            isNull(commissioners.deleted_at),
+          ),
+      });
+
+      if (isCommissionerExists)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Commissioner already exists",
+        });
+
+      await ctx.db.insert(commissioners).values({
+        election_id: election.id,
+        user_id: user.id,
+      });
     }),
 });
