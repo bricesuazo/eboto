@@ -35,6 +35,9 @@ import {
   InputPlaceholder,
   Loader,
   Modal,
+  Popover,
+  PopoverDropdown,
+  PopoverTarget,
   ScrollAreaAutosize,
   Stack,
   Text,
@@ -208,21 +211,42 @@ export default function DashboardElection({
                 )}
 
                 {!commissioner.user.isTheCreator && (
-                  <ActionIcon
-                    onClick={() =>
-                      deleteCommissionerMutation.mutate({
-                        election_id: currentElection?.id ?? "",
-                        commissioner_id: commissioner.id,
-                      })
-                    }
-                    loading={deleteCommissionerMutation.isPending}
-                    size="lg"
-                    radius="xl"
-                    variant="light"
-                    color="red"
-                  >
-                    <IconUserMinus size={20} />
-                  </ActionIcon>
+                  <Popover width={200} position="bottom" withArrow shadow="md">
+                    <PopoverTarget>
+                      <ActionIcon
+                        disabled={deleteCommissionerMutation.isPending}
+                        size="lg"
+                        radius="xl"
+                        variant="light"
+                        color="red"
+                      >
+                        <IconUserMinus size={20} />
+                      </ActionIcon>
+                    </PopoverTarget>
+                    <PopoverDropdown w={240}>
+                      <Stack gap="xs">
+                        <Text size="sm">
+                          Are you sure you want to delete this commissioner?
+                        </Text>
+                        <Group justify="end">
+                          <Button
+                            size="compact-sm"
+                            variant="light"
+                            color="red"
+                            onClick={() =>
+                              deleteCommissionerMutation.mutate({
+                                election_id: currentElection?.id ?? "",
+                                commissioner_id: commissioner.id,
+                              })
+                            }
+                            loading={deleteCommissionerMutation.isPending}
+                          >
+                            Remove
+                          </Button>
+                        </Group>
+                      </Stack>
+                    </PopoverDropdown>
+                  </Popover>
                 )}
               </Group>
             ))}

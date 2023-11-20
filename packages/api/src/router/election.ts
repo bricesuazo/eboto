@@ -387,7 +387,12 @@ export const electionRouter = createTRPCRouter({
         with: {
           election: {
             with: {
-              commissioners: true,
+              commissioners: {
+                where: (commissioners, { isNull }) =>
+                  isNull(commissioners.deleted_at),
+                orderBy: (commissioners, { asc }) =>
+                  asc(commissioners.created_at),
+              },
             },
           },
         },
