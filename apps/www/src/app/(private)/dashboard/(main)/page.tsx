@@ -22,14 +22,17 @@ export default async function Page() {
     where: (elections, { and, isNull }) => and(isNull(elections.deleted_at)),
     with: {
       commissioners: {
-        where: (commissioners, { eq }) =>
-          eq(commissioners.user_id, session.user.id),
+        where: (commissioners, { eq, and, isNull }) =>
+          and(
+            eq(commissioners.user_id, session.user.id),
+            isNull(commissioners.deleted_at),
+          ),
       },
     },
   });
 
   const electionsAsCommissioner = await db.query.commissioners.findMany({
-    where: (commissioners, { eq, and, inArray }) =>
+    where: (commissioners, { eq, and, inArray, isNull }) =>
       and(
         eq(commissioners.user_id, session.user.id),
         electionsThatICanManage.length
@@ -38,6 +41,7 @@ export default async function Page() {
               electionsThatICanManage.map((election) => election.id),
             )
           : undefined,
+        isNull(commissioners.deleted_at),
       ),
     with: {
       election: true,

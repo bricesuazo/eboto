@@ -90,6 +90,13 @@ export default function DashboardElection({
       form.reset();
     },
   });
+  const deleteCommissionerMutation =
+    api.election.deleteCommissioner.useMutation({
+      onSuccess: async () => {
+        await getAllCommissionerByElectionSlugQuery.refetch();
+        form.reset();
+      },
+    });
 
   const { data: elections } = api.election.getAllMyElections.useQuery();
 
@@ -201,7 +208,19 @@ export default function DashboardElection({
                 )}
 
                 {!commissioner.user.isTheCreator && (
-                  <ActionIcon size="lg" radius="xl" variant="light" color="red">
+                  <ActionIcon
+                    onClick={() =>
+                      deleteCommissionerMutation.mutate({
+                        election_id: currentElection?.id ?? "",
+                        commissioner_id: commissioner.id,
+                      })
+                    }
+                    loading={deleteCommissionerMutation.isPending}
+                    size="lg"
+                    radius="xl"
+                    variant="light"
+                    color="red"
+                  >
                     <IconUserMinus size={20} />
                   </ActionIcon>
                 )}

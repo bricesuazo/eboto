@@ -19,8 +19,11 @@ export default async function DashboardLayout(
       ),
     with: {
       commissioners: {
-        where: (commissioners, { eq }) =>
-          eq(commissioners.user_id, session.user.id),
+        where: (commissioners, { eq, and, isNull }) =>
+          and(
+            eq(commissioners.user_id, session.user.id),
+            isNull(commissioners.deleted_at),
+          ),
         limit: 1,
       },
     },

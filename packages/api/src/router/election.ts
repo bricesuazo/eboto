@@ -8,7 +8,7 @@ import {
   positionTemplate,
   takenSlugs,
 } from "@eboto/constants";
-import { eq } from "@eboto/db";
+import { and, eq, isNull } from "@eboto/db";
 import {
   commissioners,
   elections,
@@ -380,8 +380,8 @@ export const electionRouter = createTRPCRouter({
       .findMany({
         where: (commissioners, { eq, isNull, and }) =>
           and(
-            isNull(commissioners.deleted_at),
             eq(commissioners.user_id, ctx.session.user.id),
+            isNull(commissioners.deleted_at),
           ),
         orderBy: (commissioners, { asc }) => asc(commissioners.created_at),
         with: {
@@ -573,8 +573,11 @@ export const electionRouter = createTRPCRouter({
           {
             with: {
               commissioners: {
-                where: (commissioners, { eq }) =>
-                  eq(commissioners.user_id, ctx.session.user.id),
+                where: (commissioners, { eq, and, isNull }) =>
+                  and(
+                    eq(commissioners.user_id, ctx.session.user.id),
+                    isNull(commissioners.deleted_at),
+                  ),
               },
             },
           },
@@ -929,5 +932,79 @@ export const electionRouter = createTRPCRouter({
         election_id: election.id,
         user_id: user.id,
       });
+    }),
+  deleteCommissioner: protectedProcedure
+    .input(
+      z.object({
+        election_id: z.string().min(1),
+        commissioner_id: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      // check if the commissioner is the creator of the election
+
+      const election = await ctx.db.query.elections.findFirst({
+        where: (elections, { eq, and, isNull }) =>
+          and(
+            eq(elections.id, input.election_id),
+            isNull(elections.deleted_at),
+          ),
+        with: {
+          commissioners: {
+            where: (commissioners, { isNull }) =>
+              isNull(commissioners.deleted_at),
+            orderBy: (commissioners, { asc }) => asc(commissioners.created_at),
+            with: {
+              user: true,
+            },
+          },
+        },
+      });
+
+      if (!election)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election not found",
+        });
+
+      if (election.commissioners[0]?.user_id === input.commissioner_id)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You cannot remove the creator of the election",
+        });
+
+      if (election.commissioners.length === 1)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You cannot remove the last commissioner of the election",
+        });
+
+      const commissioner = await ctx.db.query.commissioners.findFirst({
+        where: (commissioners, { eq, and, isNull }) =>
+          and(
+            eq(commissioners.election_id, input.election_id),
+            eq(commissioners.id, input.commissioner_id),
+            isNull(commissioners.deleted_at),
+          ),
+      });
+
+      if (!commissioner)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Commissioner not found",
+        });
+
+      await ctx.db
+        .update(commissioners)
+        .set({
+          deleted_at: new Date(),
+        })
+        .where(
+          and(
+            eq(commissioners.election_id, input.election_id),
+            eq(commissioners.id, input.commissioner_id),
+            isNull(commissioners.deleted_at),
+          ),
+        );
     }),
 });
