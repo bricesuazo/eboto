@@ -212,7 +212,7 @@ export default function DashboardVoter({
           </Tooltip>
           {votersQuery.data.election.voter_domain && (
             <Tooltip label="Voter's email with this domain will be allowed to vote">
-              <Text>
+              <Text size="sm">
                 Voter Domain: @{votersQuery.data.election.voter_domain}
               </Text>
             </Tooltip>

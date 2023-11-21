@@ -101,17 +101,18 @@ export default function DashboardSettings({
     name: string;
     newSlug: string;
     description: string;
-    // voter_domain: string | null;
+    voter_domain: string | null;
     date: [Date, Date];
     publicity: Publicity;
     logo: File | string | null;
     voting_hours: [number, number];
   }>({
+    validateInputOnChange: true,
     initialValues: {
       name: getElectionBySlugQuery.data.name,
       newSlug: getElectionBySlugQuery.data.slug,
       description: getElectionBySlugQuery.data.description ?? "",
-      // voter_domain: getElectionBySlugQuery.data.voter_domain,
+      voter_domain: getElectionBySlugQuery.data.voter_domain,
       date: [
         getElectionBySlugQuery.data.start_date,
         getElectionBySlugQuery.data.end_date,
@@ -152,24 +153,24 @@ export default function DashboardSettings({
           return "Please select an election publicity";
         }
       },
-      // voter_domain: (value) => {
-      //   if (
-      //     value &&
-      //     !/^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/.test(
-      //       value,
-      //     )
-      //   ) {
-      //     return "Voter domain must be alphanumeric and can contain dashes";
-      //   }
+      voter_domain: (value) => {
+        if (
+          value &&
+          !/^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/.test(
+            value,
+          )
+        ) {
+          return "Voter domain must be alphanumeric and can contain dashes";
+        }
 
-      //   if (value && value.includes(" ")) {
-      //     return "Voter domain cannot contain spaces";
-      //   }
+        if (value && value.includes(" ")) {
+          return "Voter domain cannot contain spaces";
+        }
 
-      //   if (value && value.includes("gmail.com")) {
-      //     return "Voter domain cannot be gmail.com";
-      //   }
-      // },
+        if (value && value.includes("gmail.com")) {
+          return "Voter domain cannot be gmail.com";
+        }
+      },
     },
   });
 
@@ -277,7 +278,9 @@ export default function DashboardSettings({
                 newSlug: values.newSlug,
                 description: values.description,
                 oldSlug: election.slug,
-                // voter_domain: values.voter_domain,
+                // voter_domain: values.voter_domain?.length
+                //   ? values.voter_domain
+                //   : null,
                 date: values.date,
                 publicity: values.publicity,
                 voting_hours: values.voting_hours,
@@ -343,8 +346,8 @@ export default function DashboardSettings({
 
           {/* <TextInput
             label="Election voter's domain"
-            description={`This will be used to restrict voters to a specific domain. For example, if you set this to "cvsu.edu.ph", only voters with an email address ending with "cvsu.edu.ph" will be able to vote. This is good for school elections (such as CSG Election).`}
-            placeholder="cvsu.edu.ph"
+            description={`This will be used to restrict voters to a specific domain. For example, if you set this to "cvsu.edu.ph", only voters with an email address ending with "cvsu.edu.ph" will be able to vote. This is good for school-wide elections (such as CSG Election).`}
+            placeholder="Domain name (e.g. cvsu.edu.ph)"
             {...form.getInputProps("voter_domain")}
             leftSection={<IconAt size="1rem" />}
             error={
@@ -352,7 +355,15 @@ export default function DashboardSettings({
               (editElectionMutation.error?.data?.code === "CONFLICT" &&
                 editElectionMutation.error?.message)
             }
-            disabled={editElectionMutation.isPending}
+            disabled={
+              editElectionMutation.isPending ||
+              isElectionOngoing({
+                election: getElectionBySlugQuery.data,
+              }) ||
+              isElectionEnded({
+                election: getElectionBySlugQuery.data,
+              })
+            }
           /> */}
 
           <DatePickerInput

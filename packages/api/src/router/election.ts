@@ -562,6 +562,20 @@ export const electionRouter = createTRPCRouter({
           });
         }
 
+        // if (input.voter_domain) {
+        //   if (input.voter_domain === "gmail.com")
+        //     throw new TRPCError({
+        //       code: "BAD_REQUEST",
+        //       message: "Gmail is not allowed",
+        //     });
+
+        //   if (input.voter_domain.includes("@"))
+        //     throw new TRPCError({
+        //       code: "BAD_REQUEST",
+        //       message: "Please enter only the domain name",
+        //     });
+        // }
+
         const isElectionSlugExists = await ctx.db.query.elections.findFirst({
           where: (elections, { eq }) => eq(elections.slug, input.newSlug),
         });
@@ -607,6 +621,14 @@ export const electionRouter = createTRPCRouter({
           await ctx.utapi.deleteFiles(isElectionCommissionerExists.logo.key);
         }
 
+        const isElectionDisabled =
+          !isElectionOngoing({
+            election: isElectionCommissionerExists,
+          }) ||
+          !isElectionEnded({
+            election: isElectionCommissionerExists,
+          });
+
         await db
           .update(elections)
           .set({
@@ -616,9 +638,13 @@ export const electionRouter = createTRPCRouter({
             publicity: input.publicity,
             start_date: input.date[0],
             end_date: input.date[1],
-            // voter_domain: input.voter_domain,
-            voting_hour_start: input.voting_hours[0],
-            voting_hour_end: input.voting_hours[1],
+            // voter_domain: isElectionDisabled ? input.voter_domain : undefined,
+            voting_hour_start: isElectionDisabled
+              ? input.voting_hours[0]
+              : undefined,
+            voting_hour_end: isElectionDisabled
+              ? input.voting_hours[1]
+              : undefined,
             logo: input.logo
               ? await fetch(input.logo.base64)
                   .then((res) => res.blob())

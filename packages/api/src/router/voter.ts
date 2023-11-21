@@ -40,10 +40,11 @@ export const voterRouter = createTRPCRouter({
         });
 
       const votersFromDb = await ctx.db.query.voters.findFirst({
-        where: (voter, { eq, and }) =>
+        where: (voter, { eq, and, isNull }) =>
           and(
             eq(voter.election_id, input.election_id),
             eq(voter.email, input.email),
+            isNull(voter.deleted_at),
           ),
       });
 
