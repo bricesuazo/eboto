@@ -13,10 +13,12 @@ import {
   events_attended,
   generated_election_results,
   invited_commissioners,
+  messages,
   partylists,
   platforms,
   positions,
   reported_problems,
+  rooms,
   sessions,
   users,
   // verification_tokens,
@@ -236,4 +238,17 @@ export const deletedAccountsRelations = relations(
 );
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
+}));
+
+export const messagesRelations = relations(messages, ({ one }) => ({
+  user: one(users, { fields: [messages.user_id], references: [users.id] }),
+  room: one(rooms, { fields: [messages.room_id], references: [rooms.id] }),
+}));
+
+export const roomsRelations = relations(rooms, ({ one, many }) => ({
+  messages: many(messages),
+  election: one(elections, {
+    fields: [rooms.election_id],
+    references: [elections.id],
+  }),
 }));

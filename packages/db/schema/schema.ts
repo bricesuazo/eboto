@@ -557,6 +557,45 @@ export const sessions = mysqlTable(
 //   invited_commissioner_id: varchar("invited_commissioner_id", { length: 256 }),
 // });
 
+export const messages = mysqlTable(
+  "message",
+  {
+    id,
+    message: text("message").notNull(),
+
+    created_at,
+    updated_at,
+    deleted_at,
+
+    room_id: varchar("room_id", { length: 256 }).notNull(),
+    user_id,
+  },
+  (message) => ({
+    messageIdIdx: index("messageId_idx").on(message.id),
+    messageRoomIdIdx: index("messageRoomId_idx").on(message.room_id),
+    messageUserIdIdx: index("messageUserId_idx").on(message.user_id),
+  }),
+);
+
+export const rooms = mysqlTable(
+  "room",
+  {
+    id,
+    name: text("name").notNull(),
+    description: longtext("description"),
+
+    created_at,
+    updated_at,
+    deleted_at,
+
+    election_id,
+  },
+  (room) => ({
+    roomIdIdx: index("roomId_idx").on(room.id),
+    roomElectionIdIdx: index("roomElectionId_idx").on(room.election_id),
+  }),
+);
+
 export type Election = typeof elections.$inferSelect;
 export type User = typeof users.$inferSelect;
 export type Vote = typeof votes.$inferSelect;
