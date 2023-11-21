@@ -211,13 +211,7 @@ export default function DashboardElection({
                 )}
 
                 {!commissioner.user.isTheCreator && (
-                  <Popover
-                    width={200}
-                    position="bottom"
-                    withArrow
-                    shadow="md"
-                    clickOutsideEvents={["mouseup", "touchend"]}
-                  >
+                  <Popover width={200} position="bottom" withArrow shadow="md">
                     <PopoverTarget>
                       <ActionIcon
                         disabled={deleteCommissionerMutation.isPending}
