@@ -557,8 +557,8 @@ export const sessions = mysqlTable(
 //   invited_commissioner_id: varchar("invited_commissioner_id", { length: 256 }),
 // });
 
-export const messages = mysqlTable(
-  "message",
+export const commissioners_voters_messages = mysqlTable(
+  "commissioners_voters_message",
   {
     id,
     message: text("message").notNull(),
@@ -570,15 +570,21 @@ export const messages = mysqlTable(
     room_id: varchar("room_id", { length: 256 }).notNull(),
     user_id,
   },
-  (message) => ({
-    messageIdIdx: index("messageId_idx").on(message.id),
-    messageRoomIdIdx: index("messageRoomId_idx").on(message.room_id),
-    messageUserIdIdx: index("messageUserId_idx").on(message.user_id),
+  (commissioners_voters_message) => ({
+    commissionersVotersMessageIdIdx: index(
+      "commissionersVotersMessageId_idx",
+    ).on(commissioners_voters_message.id),
+    commissionersVotersMessageRoomIdIdx: index(
+      "commissionersVotersMessageRoomId_idx",
+    ).on(commissioners_voters_message.room_id),
+    commissionersVotersMessageUserIdIdx: index(
+      "commissionersVotersMessageUserId_idx",
+    ).on(commissioners_voters_message.user_id),
   }),
 );
 
-export const rooms = mysqlTable(
-  "room",
+export const commissioners_voters_rooms = mysqlTable(
+  "commissioners_voters_room",
   {
     id,
     name: text("name").notNull(),
@@ -590,9 +596,62 @@ export const rooms = mysqlTable(
 
     election_id,
   },
-  (room) => ({
-    roomIdIdx: index("roomId_idx").on(room.id),
-    roomElectionIdIdx: index("roomElectionId_idx").on(room.election_id),
+  (commissioners_voters_room) => ({
+    commissionersVotersRoomIdIdx: index("commissionersVotersRoomId_idx").on(
+      commissioners_voters_room.id,
+    ),
+    commissionersVotersRoomElectionIdIdx: index(
+      "commissionersVotersRoomElectionId_idx",
+    ).on(commissioners_voters_room.election_id),
+  }),
+);
+
+export const admin_commissioners_messages = mysqlTable(
+  "admin_commissioners_message",
+  {
+    id,
+    message: text("message").notNull(),
+
+    created_at,
+    updated_at,
+    deleted_at,
+
+    room_id: varchar("room_id", { length: 256 }).notNull(),
+    user_id,
+  },
+  (admin_commissioners_message) => ({
+    commissionersVotersMessageIdIdx: index(
+      "commissionersVotersMessageId_idx",
+    ).on(admin_commissioners_message.id),
+    commissionersVotersMessageRoomIdIdx: index(
+      "commissionersVotersMessageRoomId_idx",
+    ).on(admin_commissioners_message.room_id),
+    commissionersVotersMessageUserIdIdx: index(
+      "commissionersVotersMessageUserId_idx",
+    ).on(admin_commissioners_message.user_id),
+  }),
+);
+
+export const admin_commissioners_rooms = mysqlTable(
+  "admin_commissioners_room",
+  {
+    id,
+    name: text("name").notNull(),
+    description: longtext("description"),
+
+    created_at,
+    updated_at,
+    deleted_at,
+
+    election_id,
+  },
+  (admin_commissioners_room) => ({
+    commissionersVotersRoomIdIdx: index("commissionersVotersRoomId_idx").on(
+      admin_commissioners_room.id,
+    ),
+    commissionersVotersRoomElectionIdIdx: index(
+      "commissionersVotersRoomElectionId_idx",
+    ).on(admin_commissioners_room.election_id),
   }),
 );
 
@@ -615,3 +674,12 @@ export type GeneratedElectionResult =
   typeof generated_election_results.$inferSelect;
 export type VoterField = typeof voter_fields.$inferSelect;
 export type ReportedProblem = typeof reported_problems.$inferSelect;
+
+export type CommissionersVotersMessage =
+  typeof commissioners_voters_messages.$inferSelect;
+export type CommissionersVotersRoom =
+  typeof commissioners_voters_rooms.$inferSelect;
+export type AdminCommissionersMessage =
+  typeof admin_commissioners_messages.$inferSelect;
+export type AdminCommissionersRoom =
+  typeof admin_commissioners_rooms.$inferSelect;

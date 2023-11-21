@@ -3,9 +3,13 @@ import { relations } from "drizzle-orm";
 import {
   accounts,
   achievements,
+  admin_commissioners_messages,
+  admin_commissioners_rooms,
   affiliations,
   candidates,
   commissioners,
+  commissioners_voters_messages,
+  commissioners_voters_rooms,
   credentials,
   deleted_accounts,
   deleted_users,
@@ -13,12 +17,10 @@ import {
   events_attended,
   generated_election_results,
   invited_commissioners,
-  messages,
   partylists,
   platforms,
   positions,
   reported_problems,
-  rooms,
   sessions,
   users,
   // verification_tokens,
@@ -240,15 +242,52 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
 }));
 
-export const messagesRelations = relations(messages, ({ one }) => ({
-  user: one(users, { fields: [messages.user_id], references: [users.id] }),
-  room: one(rooms, { fields: [messages.room_id], references: [rooms.id] }),
-}));
-
-export const roomsRelations = relations(rooms, ({ one, many }) => ({
-  messages: many(messages),
-  election: one(elections, {
-    fields: [rooms.election_id],
-    references: [elections.id],
+export const commissionersVotersMessagesRelations = relations(
+  commissioners_voters_messages,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [commissioners_voters_messages.user_id],
+      references: [users.id],
+    }),
+    room: one(commissioners_voters_rooms, {
+      fields: [commissioners_voters_messages.room_id],
+      references: [commissioners_voters_rooms.id],
+    }),
   }),
-}));
+);
+
+export const commissionersVotersRoomsRelations = relations(
+  commissioners_voters_rooms,
+  ({ one, many }) => ({
+    messages: many(commissioners_voters_messages),
+    election: one(elections, {
+      fields: [commissioners_voters_rooms.election_id],
+      references: [elections.id],
+    }),
+  }),
+);
+
+export const adminCommissionersMessagesRelations = relations(
+  admin_commissioners_messages,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [admin_commissioners_messages.user_id],
+      references: [users.id],
+    }),
+    room: one(admin_commissioners_rooms, {
+      fields: [admin_commissioners_messages.room_id],
+      references: [admin_commissioners_rooms.id],
+    }),
+  }),
+);
+
+export const adminCommissionersRoomsRelations = relations(
+  admin_commissioners_rooms,
+  ({ one, many }) => ({
+    messages: many(admin_commissioners_messages),
+    election: one(elections, {
+      fields: [admin_commissioners_rooms.election_id],
+      references: [elections.id],
+    }),
+  }),
+);
