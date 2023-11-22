@@ -108,6 +108,7 @@ export default function DashboardSettings({
     voting_hours: [number, number];
   }>({
     validateInputOnChange: true,
+    validateInputOnBlur: true,
     initialValues: {
       name: getElectionBySlugQuery.data.name,
       newSlug: getElectionBySlugQuery.data.slug,
@@ -147,14 +148,8 @@ export default function DashboardSettings({
         if (value[0].getTime() > value[1].getTime())
           return "Start date must be before end date";
 
-        if (value[0].getTime() <= new Date().getTime())
-          return "Start date must be in the future";
-
         if (value[1].getTime() < value[0].getTime())
           return "End date must be after start date";
-
-        if (value[1].getTime() <= new Date().getTime())
-          return "End date must be in the future";
       },
       publicity: (value) => {
         if (!value) {
