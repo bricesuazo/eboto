@@ -588,6 +588,8 @@ export const electionRouter = createTRPCRouter({
       await ctx.db.transaction(async (db) => {
         const isElectionCommissionerExists = await db.query.elections.findFirst(
           {
+            where: (elections, { eq, and, isNull }) =>
+              and(eq(elections.id, input.id), isNull(elections.deleted_at)),
             with: {
               commissioners: {
                 where: (commissioners, { eq, and, isNull }) =>
@@ -600,21 +602,16 @@ export const electionRouter = createTRPCRouter({
           },
         );
 
-        if (!isElectionCommissionerExists)
+        if (!isElectionCommissionerExists?.commissioners?.length) {
           throw new TRPCError({
             code: "UNAUTHORIZED",
             message: "Unauthorized",
           });
-
-        if (!isElectionCommissionerExists.commissioners.length)
-          throw new TRPCError({
-            code: "UNAUTHORIZED",
-            message: "Unauthorized",
-          });
+        }
 
         if (
           isElectionCommissionerExists.logo &&
-          (input.logo === null || !!input.logo)
+          (input.logo === null || input.logo)
         ) {
           await ctx.utapi.deleteFiles(isElectionCommissionerExists.logo.key);
         }
