@@ -141,12 +141,20 @@ export default function DashboardSettings({
         }
       },
       date: (value) => {
-        if (!value[0] || !value[1]) {
+        if (!value[0] || !value[1])
           return "Please enter an election start and end date";
-        }
-        if (value[0].getTime() >= value[1].getTime()) {
+
+        if (value[0].getTime() > value[1].getTime())
           return "Start date must be before end date";
-        }
+
+        if (value[0].getTime() <= new Date().getTime())
+          return "Start date must be in the future";
+
+        if (value[1].getTime() < value[0].getTime())
+          return "End date must be after start date";
+
+        if (value[1].getTime() <= new Date().getTime())
+          return "End date must be in the future";
       },
       publicity: (value) => {
         if (!value) {
@@ -368,6 +376,7 @@ export default function DashboardSettings({
 
           <DatePickerInput
             type="range"
+            allowSingleDateInRange
             label="Election start and end date"
             placeholder="Enter election start and end date"
             description="You can't change the election date once the election has started and ended."

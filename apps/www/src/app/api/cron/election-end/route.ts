@@ -26,13 +26,14 @@ async function handler(_req: NextRequest) {
   console.log("END: 🚀 ~ file: cron.tsx:19 ~ handler ~ today:", today);
 
   await db.transaction(async (trx) => {
-    const date_today_end = new Date(date_today);
+    // const date_today_end = new Date(date_today);
     const electionsEnd = await trx.query.elections.findMany({
       where: (election, { eq, and, isNull }) =>
         and(
           eq(
             election.end_date,
-            new Date(date_today_end.setDate(date_today_end.getDate() + 1)),
+            date_today,
+            // new Date(date_today_end.setDate(date_today_end.getDate() + 1)),
           ),
           eq(election.voting_hour_end, today.getHours()),
           isNull(election.deleted_at),

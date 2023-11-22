@@ -63,6 +63,7 @@ export default function CreateElection({
     template: string;
     voting_hours: [number, number];
   }>({
+    validateInputOnBlur: true,
     initialValues: {
       name: "",
       slug: "",
@@ -91,13 +92,13 @@ export default function CreateElection({
         if (!value[0] || !value[1])
           return "Please enter an election start and end date";
 
-        if (value[0].getTime() >= value[1].getTime())
+        if (value[0].getTime() > value[1].getTime())
           return "Start date must be before end date";
 
         if (value[0].getTime() <= new Date().getTime())
           return "Start date must be in the future";
 
-        if (value[1].getTime() <= value[0].getTime())
+        if (value[1].getTime() < value[0].getTime())
           return "End date must be after start date";
 
         if (value[1].getTime() <= new Date().getTime())
@@ -186,6 +187,7 @@ export default function CreateElection({
             />
 
             <DatePickerInput
+              allowSingleDateInRange
               type="range"
               label="Election start and end date"
               placeholder="Enter election start and end date"
