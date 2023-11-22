@@ -101,7 +101,7 @@ export default function DashboardSettings({
     name: string;
     newSlug: string;
     description: string;
-    voter_domain: string | null;
+    // voter_domain: string | null;
     date: [Date, Date];
     publicity: Publicity;
     logo: File | string | null;
@@ -112,7 +112,7 @@ export default function DashboardSettings({
       name: getElectionBySlugQuery.data.name,
       newSlug: getElectionBySlugQuery.data.slug,
       description: getElectionBySlugQuery.data.description ?? "",
-      voter_domain: getElectionBySlugQuery.data.voter_domain,
+      // voter_domain: getElectionBySlugQuery.data.voter_domain,
       date: [
         getElectionBySlugQuery.data.start_date,
         getElectionBySlugQuery.data.end_date,
@@ -153,24 +153,24 @@ export default function DashboardSettings({
           return "Please select an election publicity";
         }
       },
-      voter_domain: (value) => {
-        if (
-          value &&
-          !/^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/.test(
-            value,
-          )
-        ) {
-          return "Voter domain must be alphanumeric and can contain dashes";
-        }
+      // voter_domain: (value) => {
+      //   if (
+      //     value &&
+      //     !/^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/.test(
+      //       value,
+      //     )
+      //   ) {
+      //     return "Voter domain must be alphanumeric and can contain dashes";
+      //   }
 
-        if (value && value.includes(" ")) {
-          return "Voter domain cannot contain spaces";
-        }
+      //   if (value && value.includes(" ")) {
+      //     return "Voter domain cannot contain spaces";
+      //   }
 
-        if (value && value.includes("gmail.com")) {
-          return "Voter domain cannot be gmail.com";
-        }
-      },
+      //   if (value && value.includes("gmail.com")) {
+      //     return "Voter domain cannot be gmail.com";
+      //   }
+      // },
     },
   });
 
