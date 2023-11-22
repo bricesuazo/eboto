@@ -1,16 +1,20 @@
-import classes from "@/styles/NotFound.module.css";
-import { Button, Container, Group, Text, Title } from "@mantine/core";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
+import classes from "@/styles/NotFound.module.css";
+import { Button, Center, Container, Group, Text, Title } from "@mantine/core";
 import Balancer from "react-wrap-balancer";
 
 export const metadata: Metadata = {
   title: "404 – Page Not Found",
 };
 export default function NotFound() {
-
   return (
     <Container className={classes.root} size="md">
+      <Center mb="xl" style={{ flexDirection: "column" }}>
+        <Image src="/images/logo.png" alt="Logo" width={60} height={60} />
+        <Title>eBoto</Title>
+      </Center>
       <div className={classes.label}>404</div>
       <Title className={classes.title}>
         <Balancer>You have found a secret place.</Balancer>
@@ -22,12 +26,7 @@ export default function NotFound() {
         </Balancer>
       </Text>
       <Group justify="center">
-        <Button
-          variant="subtle"
-          size="md"
-          component={Link}
-          href="/"
-        >
+        <Button variant="subtle" size="md" component={Link} href="/">
           Take me back to home page
         </Button>
       </Group>

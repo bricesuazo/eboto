@@ -1,8 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import classes from "@/styles/NotFound.module.css";
-import { Button, Container, Group, Text, Title } from "@mantine/core";
+import { Button, Center, Container, Group, Text, Title } from "@mantine/core";
 import Balancer from "react-wrap-balancer";
 
 export default function GlobalError({
@@ -14,6 +15,10 @@ export default function GlobalError({
 }) {
   return (
     <Container className={classes.root} size="md">
+      <Center mb="xl" style={{ flexDirection: "column" }}>
+        <Image src="/images/logo.png" alt="Logo" width={60} height={60} />
+        <Title>eBoto</Title>
+      </Center>
       <div className={classes.label}>{error.name}</div>
       <Title className={classes.title}>
         <Balancer>{error.message}</Balancer>
