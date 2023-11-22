@@ -480,8 +480,7 @@ export const electionRouter = createTRPCRouter({
       }
 
       const isElectionSlugExists = await ctx.db.query.elections.findFirst({
-        where: (elections, { eq, and, isNull }) =>
-          and(eq(elections.slug, input.slug), isNull(elections.deleted_at)),
+        where: (elections, { eq }) => eq(elections.slug, input.slug),
       });
 
       if (isElectionSlugExists) {
@@ -491,9 +490,8 @@ export const electionRouter = createTRPCRouter({
         });
       }
 
-      const id = nanoid();
-
       await ctx.db.transaction(async (db) => {
+        const id = nanoid();
         await db.insert(elections).values({
           id,
           name: input.name,
