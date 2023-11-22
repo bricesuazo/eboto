@@ -13,6 +13,7 @@ import {
   ActionIcon,
   Alert,
   AppShell,
+  AppShellAside,
   AppShellFooter,
   AppShellHeader,
   AppShellMain,
@@ -40,6 +41,9 @@ import {
   PopoverTarget,
   ScrollAreaAutosize,
   Stack,
+  Tabs,
+  TabsList,
+  TabsPanel,
   Text,
   TextInput,
   ThemeIcon,
@@ -258,10 +262,18 @@ export default function DashboardElection({
         footer={{ height: 52 }}
         navbar={{
           breakpoint: "xs",
-          width: { base: 200, sm: 300 },
+          width: { base: 250, sm: 300 },
           collapsed: {
             desktop: false,
             mobile: !store.dashboardMenu,
+          },
+        }}
+        aside={{
+          breakpoint: "lg",
+          width: { lg: 300, xl: 400 },
+          collapsed: {
+            desktop: false,
+            mobile: !store.dashboardChatMenu,
           },
         }}
         p="md"
@@ -278,7 +290,8 @@ export default function DashboardElection({
             overflow: "auto",
           }}
         >
-          <Stack justify="space-between" h="100%">
+          {/* <ScrollArea p="md" scrollHideDelay={0}> */}
+          <Stack justify="space-between">
             <Stack>
               {isBoosted ? (
                 <CreateElection style={{ width: "100%" }} />
@@ -528,7 +541,22 @@ export default function DashboardElection({
               </Button>
             </Stack>
           </Stack>
+          {/* </ScrollArea> */}
         </AppShellNavbar>
+
+        <AppShellAside>
+          <Tabs defaultValue="voters">
+            <TabsList grow>
+              <Tabs.Tab value="admin">Message Admin</Tabs.Tab>
+              <Tabs.Tab value="voters">Message from Voters</Tabs.Tab>
+            </TabsList>
+
+            <Box p="md">
+              <TabsPanel value="admin">Message Admin content</TabsPanel>
+              <TabsPanel value="voters">Message from Voters content</TabsPanel>
+            </Box>
+          </Tabs>
+        </AppShellAside>
 
         <AppShellFooter>
           <Footer />

@@ -197,6 +197,7 @@ export default function BoostCard() {
           }
         >
           <ListItem>Ad-Free</ListItem>
+          <ListItem>Live Support</ListItem>
           <ListItem>Realtime Chat w/ Voters</ListItem>
           <ListItem>Result Realtime Update</ListItem>
           <Text size="sm" ml={36} mt={4}>

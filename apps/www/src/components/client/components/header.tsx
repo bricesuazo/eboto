@@ -42,6 +42,7 @@ import {
   IconChartBar,
   IconChevronDown,
   IconLogout,
+  IconMessage,
   IconMoon,
   IconSearch,
   IconSparkles,
@@ -378,6 +379,16 @@ export default function Header({ userId }: { userId?: string }) {
                   </MenuItem>
                 </MenuDropdown>
               </Menu>
+              {params?.electionDashboardSlug && (
+                <ActionIcon
+                  variant={store.dashboardChatMenu ? "light" : "subtle"}
+                  hiddenFrom="lg"
+                  size="lg"
+                  onClick={() => store.toggleDashboardChatMenu()}
+                >
+                  <IconMessage />
+                </ActionIcon>
+              )}
             </Group>
           ) : (
             <Group gap="xs">
