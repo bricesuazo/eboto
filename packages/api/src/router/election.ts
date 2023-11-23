@@ -1033,4 +1033,88 @@ export const electionRouter = createTRPCRouter({
           ),
         );
     }),
+  getMyElectionAsCommissioner: protectedProcedure.query(async ({ ctx }) => {
+    const electionsThatICanManage = await ctx.db.query.elections.findMany({
+      where: (elections, { and, isNull }) => and(isNull(elections.deleted_at)),
+      with: {
+        commissioners: {
+          where: (commissioners, { eq, and, isNull }) =>
+            and(
+              eq(commissioners.user_id, ctx.session.user.id),
+              isNull(commissioners.deleted_at),
+            ),
+        },
+      },
+    });
+
+    const electionsAsCommissioner = await ctx.db.query.commissioners.findMany({
+      where: (commissioners, { eq, and, inArray, isNull }) =>
+        and(
+          eq(commissioners.user_id, ctx.session.user.id),
+          electionsThatICanManage.length
+            ? inArray(
+                commissioners.election_id,
+                electionsThatICanManage.map((election) => election.id),
+              )
+            : undefined,
+          isNull(commissioners.deleted_at),
+        ),
+      with: {
+        election: true,
+      },
+    });
+
+    return electionsAsCommissioner;
+  }),
+  getMyElectionAsVoter: protectedProcedure.query(async ({ ctx }) => {
+    const electionsThatICanVoteIn = await ctx.db.query.elections.findMany({
+      where: (elections, { and, lt, gte, isNull, ne }) =>
+        and(
+          isNull(elections.deleted_at),
+          ne(elections.publicity, "PRIVATE"),
+          lt(elections.start_date, new Date()),
+          gte(elections.end_date, new Date()),
+          // eq(elections.voter_domain, session.user.email?.split("@")[1] ?? ""),
+        ),
+      with: {
+        voters: {
+          where: (voters, { eq, and, isNull }) =>
+            and(
+              eq(voters.email, ctx.session.user.email ?? ""),
+              isNull(voters.deleted_at),
+            ),
+          limit: 1,
+        },
+      },
+    });
+
+    const voter = electionsThatICanVoteIn.find(
+      (election) => election.voters.length > 0,
+    )?.voters[0];
+
+    const electionsAsVoter = await ctx.db.query.voters.findMany({
+      where: (voters, { eq, ne, and, inArray, isNull }) =>
+        and(
+          isNull(voters.deleted_at),
+          eq(voters.email, ctx.session.user.email ?? ""),
+          electionsThatICanVoteIn.length
+            ? inArray(
+                voters.election_id,
+                electionsThatICanVoteIn.map((election) => election.id),
+              )
+            : ne(voters.email, ctx.session.user.email ?? ""),
+        ),
+      with: {
+        election: {
+          with: {
+            votes: {
+              where: (votes, { eq }) => eq(votes.voter_id, voter?.id ?? ""),
+            },
+          },
+        },
+      },
+    });
+
+    return electionsAsVoter;
+  }),
 });

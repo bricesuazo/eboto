@@ -1,12 +1,25 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import DashboardCard from "@/components/client/components/dashboard-card";
+import {
+  MyElectionsAsCommissioner as MyElectionsAsCommissionerClient,
+  MyElectionsAsVoter as MyElectionsAsVoterClient,
+} from "@/components/client/components/my-elections";
 import Dashboard from "@/components/client/layout/dashboard";
 import CreateElection from "@/components/client/modals/create-election";
-import { Box, Container, Flex, Group, Stack, Text, Title } from "@mantine/core";
+import { api } from "@/trpc/server";
+import {
+  Box,
+  Container,
+  Flex,
+  Group,
+  Skeleton,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 
 import { auth } from "@eboto/auth";
-import { db } from "@eboto/db";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -17,84 +30,6 @@ export default async function Page() {
   const session = await auth();
 
   if (!session) redirect("/sign-in");
-
-  const electionsThatICanManage = await db.query.elections.findMany({
-    where: (elections, { and, isNull }) => and(isNull(elections.deleted_at)),
-    with: {
-      commissioners: {
-        where: (commissioners, { eq, and, isNull }) =>
-          and(
-            eq(commissioners.user_id, session.user.id),
-            isNull(commissioners.deleted_at),
-          ),
-      },
-    },
-  });
-
-  const electionsAsCommissioner = await db.query.commissioners.findMany({
-    where: (commissioners, { eq, and, inArray, isNull }) =>
-      and(
-        eq(commissioners.user_id, session.user.id),
-        electionsThatICanManage.length
-          ? inArray(
-              commissioners.election_id,
-              electionsThatICanManage.map((election) => election.id),
-            )
-          : undefined,
-        isNull(commissioners.deleted_at),
-      ),
-    with: {
-      election: true,
-    },
-  });
-
-  const electionsThatICanVoteIn = await db.query.elections.findMany({
-    where: (elections, { and, lt, gte, isNull, ne }) =>
-      and(
-        isNull(elections.deleted_at),
-        ne(elections.publicity, "PRIVATE"),
-        lt(elections.start_date, new Date()),
-        gte(elections.end_date, new Date()),
-        // eq(elections.voter_domain, session.user.email?.split("@")[1] ?? ""),
-      ),
-    with: {
-      voters: {
-        where: (voters, { eq, and, isNull }) =>
-          and(
-            eq(voters.email, session.user.email ?? ""),
-            isNull(voters.deleted_at),
-          ),
-        limit: 1,
-      },
-    },
-  });
-
-  const voter = electionsThatICanVoteIn.find(
-    (election) => election.voters.length > 0,
-  )?.voters[0];
-
-  const electionsAsVoter = await db.query.voters.findMany({
-    where: (voters, { eq, ne, and, inArray, isNull }) =>
-      and(
-        isNull(voters.deleted_at),
-        eq(voters.email, session.user.email ?? ""),
-        electionsThatICanVoteIn.length
-          ? inArray(
-              voters.election_id,
-              electionsThatICanVoteIn.map((election) => election.id),
-            )
-          : ne(voters.email, session.user.email ?? ""),
-      ),
-    with: {
-      election: {
-        with: {
-          votes: {
-            where: (votes, { eq }) => eq(votes.voter_id, voter?.id ?? ""),
-          },
-        },
-      },
-    },
-  });
 
   return (
     <Dashboard>
@@ -115,21 +50,17 @@ export default async function Page() {
               You can manage the elections below.
             </Text>
             <Group>
-              {electionsAsCommissioner.length === 0 ? (
-                <Box h={72}>
-                  <Text>No elections found</Text>
-                </Box>
-              ) : (
-                electionsAsCommissioner
-                  .filter((commissioner) => !commissioner.election.deleted_at)
-                  .map((commissioner) => (
-                    <DashboardCard
-                      key={commissioner.id}
-                      election={commissioner.election}
-                      type="manage"
-                    />
-                  ))
-              )}
+              <Suspense
+                fallback={
+                  <>
+                    {[...Array(3).keys()].map((i) => (
+                      <Skeleton key={i} maw={288} h={400} radius="md" />
+                    ))}
+                  </>
+                }
+              >
+                <MyElectionsAsCommissioner />
+              </Suspense>
             </Group>
           </Box>
 
@@ -142,26 +73,34 @@ export default async function Page() {
             </Text>
 
             <Group>
-              {electionsAsVoter.length === 0 ? (
-                <Box h={72}>
-                  <Text>No vote elections found</Text>
-                </Box>
-              ) : (
-                electionsAsVoter
-                  .filter((voter) => !voter.election.deleted_at)
-                  .map((voter) => (
-                    <DashboardCard
-                      key={voter.id}
-                      election={voter.election}
-                      type="vote"
-                      hasVoted={voter.election.votes.length > 0}
-                    />
-                  ))
-              )}
+              <Suspense
+                fallback={
+                  <>
+                    {[...Array(3).keys()].map((i) => (
+                      <Skeleton key={i} maw={288} h={400} radius="md" />
+                    ))}
+                  </>
+                }
+              >
+                <MyElectionsAsVoter />
+              </Suspense>
             </Group>
           </Box>
         </Stack>
       </Container>
     </Dashboard>
   );
+}
+
+async function MyElectionsAsCommissioner() {
+  const electionsAsCommissioner =
+    await api.election.getMyElectionAsCommissioner.query();
+
+  return (
+    <MyElectionsAsCommissionerClient initialData={electionsAsCommissioner} />
+  );
+}
+async function MyElectionsAsVoter() {
+  const electionsAsVoter = await api.election.getMyElectionAsVoter.query();
+  return <MyElectionsAsVoterClient initialData={electionsAsVoter} />;
 }
