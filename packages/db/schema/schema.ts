@@ -42,8 +42,6 @@ export const token_type = [
   "ELECTION_INVITATION",
 ] as const;
 export type TokenType = (typeof token_type)[number];
-export const account_status_type = ["ADDED", "INVITED", "DECLINED"] as const;
-export type AccountStatusType = (typeof account_status_type)[number];
 type File = Pick<
   UploadFileResponse<undefined>,
   "key" | "name" | "size" | "url"
@@ -131,27 +129,6 @@ export const commissioners = mysqlTable(
     ).on(commissioner.user_id, commissioner.election_id),
     commissionerDeletedAtIdx: index("commissionerDeletedAt_idx").on(
       commissioner.deleted_at,
-    ),
-  }),
-);
-
-export const invited_commissioners = mysqlTable(
-  "invited_commissioner",
-  {
-    id,
-    email: varchar("email", { length: 256 }).notNull(),
-    status: mysqlEnum("status", account_status_type).default("INVITED"),
-
-    created_at,
-
-    election_id,
-  },
-  (invited_commissioner) => ({
-    invitedCommissionerIdIdx: index("invitedCommissionerId_idx").on(
-      invited_commissioner.id,
-    ),
-    invitedCommissionerEmailIdx: index("invitedCommissionerEmail_idx").on(
-      invited_commissioner.email,
     ),
   }),
 );
@@ -550,16 +527,6 @@ export const sessions = mysqlTable(
     sessionTokenIdx: index("sessionToken_idx").on(session.sessionToken),
   }),
 );
-// export const verification_tokens = mysqlTable("verification_tokens", {
-//   id,
-//   type: mysqlEnum("type", token_type).notNull(),
-//   expires_at: timestamp("expires_at").notNull(),
-
-//   created_at,
-//   updated_at,
-
-//   invited_commissioner_id: varchar("invited_commissioner_id", { length: 256 }),
-// });
 
 export const commissioners_voters_messages = mysqlTable(
   "commissioners_voters_message",
@@ -663,7 +630,6 @@ export type Election = typeof elections.$inferSelect;
 export type User = typeof users.$inferSelect;
 export type Vote = typeof votes.$inferSelect;
 export type Commissioner = typeof commissioners.$inferSelect;
-export type InvitedCommissioner = typeof invited_commissioners.$inferSelect;
 export type Voter = typeof voters.$inferSelect;
 export type Partylist = typeof partylists.$inferSelect;
 export type Position = typeof positions.$inferSelect;

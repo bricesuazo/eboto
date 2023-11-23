@@ -16,14 +16,12 @@ import {
   elections,
   events_attended,
   generated_election_results,
-  invited_commissioners,
   partylists,
   platforms,
   positions,
   reported_problems,
   sessions,
   users,
-  // verification_tokens,
   voter_fields,
   voters,
   votes,
@@ -36,7 +34,6 @@ export const electionsRelations = relations(elections, ({ many }) => ({
   candidates: many(candidates),
   commissioners: many(commissioners),
   voters: many(voters),
-  invited_commissioners: many(invited_commissioners),
   generated_election_results: many(generated_election_results),
   voter_fields: many(voter_fields),
   reported_problems: many(reported_problems),
@@ -72,22 +69,7 @@ export const commissionersRelations = relations(commissioners, ({ one }) => ({
   }),
 }));
 
-export const invited_commissionersRelations = relations(
-  invited_commissioners,
-  ({ one }) => ({
-    election: one(elections, {
-      fields: [invited_commissioners.election_id],
-      references: [elections.id],
-    }),
-    // verification_tokens: many(verification_tokens),
-  }),
-);
-
 export const votersRelations = relations(voters, ({ one, many }) => ({
-  // user: one(users, {
-  //   fields: [voters.user_id],
-  //   references: [users.id],
-  // }),
   election: one(elections, {
     fields: [voters.election_id],
     references: [elections.id],
