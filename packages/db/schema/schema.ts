@@ -129,6 +129,9 @@ export const commissioners = mysqlTable(
     commissionerUserIdElectionIdIdx: index(
       "commissionerUserIdElectionId_idx",
     ).on(commissioner.user_id, commissioner.election_id),
+    commissionerDeletedAtIdx: index("commissionerDeletedAt_idx").on(
+      commissioner.deleted_at,
+    ),
   }),
 );
 
@@ -544,6 +547,7 @@ export const sessions = mysqlTable(
   },
   (session) => ({
     sessionUserIdIdx: index("sessionUserId_idx").on(session.userId),
+    sessionTokenIdx: index("sessionToken_idx").on(session.sessionToken),
   }),
 );
 // export const verification_tokens = mysqlTable("verification_tokens", {
