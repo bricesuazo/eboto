@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@eboto/prettier-config": "workspace:^",
-    "@manypkg/cli": "^0.21.0",
+    "@manypkg/cli": "^0.21.1",
     "@turbo/gen": "^1.10.16",
     "prettier": "^3.1.0",
     "turbo": "^1.10.16",

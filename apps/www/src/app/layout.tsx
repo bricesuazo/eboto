@@ -86,6 +86,11 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8443325162715161"
           crossOrigin="anonymous"
         ></script>
+        {/* TODO: Remove this once safari fix auto scale */}
+        <meta
+          name="viewport"
+          content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
+        />
       </head>
       <body className={font.className}>
         <MantineProvider
