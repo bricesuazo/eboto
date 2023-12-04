@@ -69,8 +69,6 @@ import {
   isElectionOngoing,
 } from "@eboto/constants";
 
-import BoostCard from "../components/boost-card";
-
 export default function DashboardElection({
   children,
   userId,
@@ -128,7 +126,7 @@ export default function DashboardElection({
   });
   const store = useStore();
 
-  const isBoosted = false;
+  // const isBoosted = false;
 
   const form = useForm({
     initialValues: {
@@ -293,11 +291,11 @@ export default function DashboardElection({
           {/* <ScrollArea p="md" scrollHideDelay={0}> */}
           <Stack justify="space-between">
             <Stack>
-              {isBoosted ? (
-                <CreateElection style={{ width: "100%" }} />
-              ) : (
+              {/* {isBoosted ? ( */}
+              <CreateElection style={{ width: "100%" }} />
+              {/* ) : (
                 <BoostCard />
-              )}
+              )} */}
 
               <Divider />
 

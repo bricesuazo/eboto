@@ -2,9 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import AdModal from "@/components/client/components/ad-modal";
 import { api } from "@/trpc/client";
-import { Adsense } from "@ctrl/react-adsense";
 import {
   Anchor,
   Box,
@@ -43,7 +41,7 @@ export default function ElectionCandidate({
 
   return (
     <>
-      <AdModal />
+      {/* <AdModal /> */}
       <Container py="xl" size="md">
         <Stack>
           <Breadcrumbs w="100%">
@@ -93,7 +91,7 @@ export default function ElectionCandidate({
               <Text>Running for {candidate.position.name}</Text>
               <Text>{candidate.partylist.name}</Text>
 
-              <Adsense
+              {/* <Adsense
                 style={{
                   display: "block",
                   width: "100%",
@@ -102,7 +100,7 @@ export default function ElectionCandidate({
                 slot="6949415137"
                 format="auto"
                 responsive="true"
-              />
+              /> */}
 
               {candidate.platforms.length ? (
                 <Stack mt="xl" gap="xs">

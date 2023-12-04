@@ -4,12 +4,10 @@ import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import AdModal from "@/components/client/components/ad-modal";
 import ScrollToTopButton from "@/components/client/components/scroll-to-top";
 import ElectionShowQRCode from "@/components/client/modals/election-show-qr-code";
 import classes from "@/styles/Election.module.css";
 import { api } from "@/trpc/client";
-import { Adsense } from "@ctrl/react-adsense";
 import {
   ActionIcon,
   Anchor,
@@ -96,7 +94,7 @@ export default function ElectionPage({
   }, [opened]);
   return (
     <>
-      <AdModal />
+      {/* <AdModal /> */}
       <ScrollToTopButton />
       <Modal
         opened={opened || addVoterFieldToVoterMutation.isPending}
@@ -294,7 +292,7 @@ export default function ElectionPage({
               <ElectionShowQRCode election={election} />
             </Flex>
           </Box>
-          <Adsense
+          {/* <Adsense
             style={{
               display: "block",
               width: "100%",
@@ -303,7 +301,7 @@ export default function ElectionPage({
             slot="6949415137"
             format="auto"
             responsive="true"
-          />
+          /> */}
 
           <Stack gap="xl" w="100%">
             {positions.length === 0 ? (
