@@ -17,7 +17,7 @@
     "@trpc/client": "next",
     "@trpc/server": "next",
     "@web-std/file": "^3.0.3",
-    "nanoid": "^5.0.3",
+    "nanoid": "^5.0.4",
     "superjson": "^2.2.1",
     "uploadthing": "^6.0.3",
     "zod": "^3.22.4"
