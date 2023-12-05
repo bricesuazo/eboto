@@ -84,9 +84,9 @@ export default function DashboardVoter({
     mantinePaperProps: {
       shadow: "none",
     },
+    initialState: { pagination: { pageSize: 15, pageIndex: 0 } },
     state: {
       density: "xs",
-      pagination: { pageSize: 15, pageIndex: 0 },
       isLoading: votersQuery.isPending,
       showAlertBanner: votersQuery.isError,
       rowSelection,

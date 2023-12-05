@@ -41,6 +41,8 @@ import Balancer from "react-wrap-balancer";
 import type { RouterOutputs } from "@eboto/api";
 import { isElectionEnded, parseHourTo12HourFormat } from "@eboto/constants";
 
+import MessageCommissioner from "../modals/message-commissioner";
+
 export default function ElectionPage({
   data,
   election_slug,
@@ -291,6 +293,9 @@ export default function ElectionPage({
               )}
               <ElectionShowQRCode election={election} />
             </Flex>
+            <Center>
+              <MessageCommissioner election_id={election.id} />
+            </Center>
           </Box>
           {/* <Adsense
             style={{

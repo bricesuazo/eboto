@@ -559,7 +559,6 @@ export const commissioners_voters_rooms = mysqlTable(
   {
     id,
     name: text("name").notNull(),
-    description: longtext("description"),
 
     created_at,
     updated_at,
@@ -608,7 +607,6 @@ export const admin_commissioners_rooms = mysqlTable(
   {
     id,
     name: text("name").notNull(),
-    description: longtext("description"),
 
     created_at,
     updated_at,

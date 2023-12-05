@@ -11,6 +11,8 @@ import {
 import { and, eq, isNull } from "@eboto/db";
 import {
   commissioners,
+  commissioners_voters_messages,
+  commissioners_voters_rooms,
   elections,
   partylists,
   positions,
@@ -1117,4 +1119,56 @@ export const electionRouter = createTRPCRouter({
 
     return electionsAsVoter;
   }),
+  messageCommissioner: protectedProcedure
+    .input(
+      z.object({
+        election_id: z.string().min(1),
+        title: z.string().min(1),
+        message: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const election = await ctx.db.query.elections.findFirst({
+        where: (elections, { eq, and, isNull }) =>
+          and(
+            eq(elections.id, input.election_id),
+            isNull(elections.deleted_at),
+          ),
+        with: {
+          commissioners: {
+            where: (commissioners, { isNull }) =>
+              isNull(commissioners.deleted_at),
+            with: {
+              user: true,
+            },
+          },
+        },
+      });
+
+      if (!election)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election not found",
+        });
+
+      if (!election.commissioners.length)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "No commissioners found",
+        });
+
+      await ctx.db.transaction(async (db) => {
+        const id = nanoid();
+        await db.insert(commissioners_voters_rooms).values({
+          id,
+          election_id: input.election_id,
+          name: input.title,
+        });
+        await db.insert(commissioners_voters_messages).values({
+          message: input.message,
+          room_id: id,
+          user_id: ctx.session.user.id,
+        });
+      });
+    }),
 });
