@@ -36,7 +36,9 @@ export async function generateMetadata({
 
   if (
     !election ||
-    (election.publicity === "VOTER" && !election.voters.length) ||
+    (election.publicity === "VOTER" &&
+      !election.voters.length &&
+      !election.commissioners.length) ||
     (election.publicity === "PRIVATE" && !election.commissioners.length)
   )
     notFound();
