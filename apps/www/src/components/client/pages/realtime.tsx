@@ -36,12 +36,16 @@ import {
 } from "@eboto/constants";
 import type { Election } from "@eboto/db/schema";
 
+import MessageCommissioner from "../modals/message-commissioner";
+
 export default function Realtime({
   positions,
   election,
+  isVoterCanMessage,
 }: {
   positions: RouterOutputs["election"]["getElectionRealtime"];
   election: Election;
+  isVoterCanMessage: boolean;
 }) {
   const positionsQuery = api.election.getElectionRealtime.useQuery(
     election.slug,
@@ -128,6 +132,9 @@ export default function Realtime({
                   Election Page
                 </Button>
               </Center>
+              {isVoterCanMessage && (
+                <MessageCommissioner election_id={election.id} />
+              )}
             </Stack>
           </Center>
           {/* <Adsense

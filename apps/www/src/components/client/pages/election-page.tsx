@@ -296,7 +296,7 @@ export default function ElectionPage({
               <ElectionShowQRCode election={election} />
             </Flex>
             {isVoterCanMessage && (
-              <Center>
+              <Center mt="xs">
                 <MessageCommissioner election_id={election.id} />
               </Center>
             )}

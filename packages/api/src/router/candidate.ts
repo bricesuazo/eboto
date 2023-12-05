@@ -550,6 +550,25 @@ export const candidateRouter = createTRPCRouter({
             eq(election.slug, input.election_slug),
             isNull(election.deleted_at),
           ),
+        with: {
+          voters: {
+            where: (voter, { eq, and, isNull }) =>
+              and(
+                eq(voter.email, ctx.session?.user.email ?? ""),
+                isNull(voter.deleted_at),
+              ),
+          },
+          commissioners: {
+            where: (commissioner, { eq, and, isNull }) =>
+              and(
+                eq(commissioner.user_id, ctx.session?.user.id ?? ""),
+                isNull(commissioner.deleted_at),
+              ),
+            with: {
+              user: true,
+            },
+          },
+        },
       });
 
       if (!election) throw new TRPCError({ code: "NOT_FOUND" });
@@ -580,6 +599,15 @@ export const candidateRouter = createTRPCRouter({
       return {
         election,
         candidate,
+        isVoterCanMessage:
+          election.publicity !== "PRIVATE" &&
+          election.voters.some(
+            (voter) => voter.email === ctx.session?.user.email,
+          ) &&
+          !election.commissioners.some(
+            (commissioner) =>
+              commissioner.user.email === ctx.session?.user.email,
+          ),
       };
     }),
 });

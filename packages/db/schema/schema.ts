@@ -535,7 +535,6 @@ export const commissioners_voters_messages = mysqlTable(
     message: text("message").notNull(),
 
     created_at,
-    updated_at,
     deleted_at,
 
     room_id: varchar("room_id", { length: 256 }).notNull(),
@@ -561,7 +560,6 @@ export const commissioners_voters_rooms = mysqlTable(
     name: text("name").notNull(),
 
     created_at,
-    updated_at,
     deleted_at,
 
     election_id,
@@ -583,7 +581,6 @@ export const admin_commissioners_messages = mysqlTable(
     message: text("message").notNull(),
 
     created_at,
-    updated_at,
     deleted_at,
 
     room_id: varchar("room_id", { length: 256 }).notNull(),
@@ -609,7 +606,6 @@ export const admin_commissioners_rooms = mysqlTable(
     name: text("name").notNull(),
 
     created_at,
-    updated_at,
     deleted_at,
 
     election_id,

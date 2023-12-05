@@ -74,7 +74,6 @@ export default function MessageCommissioner({
         onClick={open}
         variant="subtle"
         radius="xl"
-        mt="sm"
       >
         Message commissioners
       </Button>

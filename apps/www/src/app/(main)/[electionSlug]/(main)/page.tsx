@@ -5,6 +5,7 @@ import { api } from "@/trpc/server";
 import { env } from "env.mjs";
 import moment from "moment";
 
+import { auth } from "@eboto/auth";
 import { db } from "@eboto/db";
 
 export async function generateMetadata({
@@ -12,12 +13,34 @@ export async function generateMetadata({
 }: {
   params: { electionSlug: string };
 }): Promise<Metadata> {
+  const session = await auth();
   const election = await db.query.elections.findFirst({
     where: (election, { eq, and, isNull }) =>
       and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
+    with: {
+      voters: {
+        where: (voters, { isNull, and, eq }) =>
+          and(
+            isNull(voters.deleted_at),
+            eq(voters.email, session?.user?.email ?? ""),
+          ),
+      },
+      commissioners: {
+        where: (commissioners, { isNull, and, eq }) =>
+          and(
+            isNull(commissioners.deleted_at),
+            eq(commissioners.user_id, session?.user?.id ?? ""),
+          ),
+      },
+    },
   });
 
-  if (!election) notFound();
+  if (
+    !election ||
+    (election.publicity === "VOTER" && !election.voters.length) ||
+    (election.publicity === "PRIVATE" && !election.commissioners.length)
+  )
+    notFound();
 
   return {
     title: election.name,

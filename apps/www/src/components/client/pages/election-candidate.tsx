@@ -20,6 +20,8 @@ import moment from "moment";
 
 import type { RouterOutputs } from "@eboto/api";
 
+import MessageCommissioner from "../modals/message-commissioner";
+
 export default function ElectionCandidate({
   data,
   candidate_slug,
@@ -30,7 +32,7 @@ export default function ElectionCandidate({
   election_slug: string;
 }) {
   const {
-    data: { candidate, election },
+    data: { candidate, election, isVoterCanMessage },
   } = api.candidate.getPageData.useQuery(
     {
       candidate_slug: candidate_slug,
@@ -90,6 +92,9 @@ export default function ElectionCandidate({
               </Title>
               <Text>Running for {candidate.position.name}</Text>
               <Text>{candidate.partylist.name}</Text>
+              {isVoterCanMessage && (
+                <MessageCommissioner election_id={election.id} />
+              )}
 
               {/* <Adsense
                 style={{

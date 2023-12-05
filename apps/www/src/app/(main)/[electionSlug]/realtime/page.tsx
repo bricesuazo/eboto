@@ -13,12 +13,34 @@ export async function generateMetadata({
 }: {
   params: { electionSlug: string };
 }): Promise<Metadata> {
+  const session = await auth();
   const election = await db.query.elections.findFirst({
     where: (election, { eq, and, isNull }) =>
       and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
+    with: {
+      voters: {
+        where: (voters, { isNull, and, eq }) =>
+          and(
+            isNull(voters.deleted_at),
+            eq(voters.email, session?.user?.email ?? ""),
+          ),
+      },
+      commissioners: {
+        where: (commissioners, { isNull, and, eq }) =>
+          and(
+            isNull(commissioners.deleted_at),
+            eq(commissioners.user_id, session?.user?.id ?? ""),
+          ),
+      },
+    },
   });
 
-  if (!election) return notFound();
+  if (
+    !election ||
+    (election.publicity === "VOTER" && !election.voters.length) ||
+    (election.publicity === "PRIVATE" && !election.commissioners.length)
+  )
+    notFound();
 
   return {
     title: election.name + " - Realtime Result",
@@ -50,7 +72,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function RelatimePage({
+export default async function RealtimePage({
   params: { electionSlug },
 }: {
   params: { electionSlug: string };
@@ -64,9 +86,30 @@ export default async function RelatimePage({
 
   if (!election) notFound();
 
+  const isVoter = await db.query.voters.findFirst({
+    where: (voter, { eq, and, isNull }) =>
+      and(
+        eq(voter.election_id, election.id),
+        eq(voter.email, session?.user.email ?? ""),
+        isNull(voter.deleted_at),
+      ),
+  });
+
+  const isCommissioner = await db.query.commissioners.findFirst({
+    where: (commissioner, { eq, and, isNull }) =>
+      and(
+        eq(commissioner.election_id, election.id),
+        eq(commissioner.user_id, session?.user.id ?? ""),
+        isNull(commissioner.deleted_at),
+      ),
+  });
+
+  let isVoterCanMessage = !!isVoter && !isCommissioner;
+
   const callbackUrl = `/sign-in?callbackUrl=https://eboto-mo.com/${election.slug}/realtime`;
 
   if (election.publicity === "PRIVATE") {
+    isVoterCanMessage = false;
     if (!session) redirect(callbackUrl);
 
     const isCommissioner = await db.query.commissioners.findFirst({
@@ -104,29 +147,11 @@ export default async function RelatimePage({
   } else if (election.publicity === "VOTER") {
     if (!session) redirect(callbackUrl);
 
-    const isVoter = await db.query.voters.findFirst({
-      where: (voter, { eq, and, isNull }) =>
-        and(
-          eq(voter.election_id, election.id),
-          eq(voter.email, session.user.email ?? ""),
-          isNull(voter.deleted_at),
-        ),
-    });
-
     const vote = await db.query.votes.findFirst({
       where: (votes, { eq, and }) =>
         and(
           eq(votes.election_id, election.id),
           eq(votes.voter_id, isVoter?.id ?? ""),
-        ),
-    });
-
-    const isCommissioner = await db.query.commissioners.findFirst({
-      where: (commissioner, { eq, and, isNull }) =>
-        and(
-          eq(commissioner.election_id, election.id),
-          eq(commissioner.user_id, session.user.id),
-          isNull(commissioner.deleted_at),
         ),
     });
 
@@ -143,6 +168,11 @@ export default async function RelatimePage({
     )
       redirect(`/${election.slug}`);
   }
-
-  return <Realtime positions={positions} election={election} />;
+  return (
+    <Realtime
+      positions={positions}
+      election={election}
+      isVoterCanMessage={isVoterCanMessage}
+    />
+  );
 }
