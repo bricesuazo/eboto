@@ -109,7 +109,7 @@ importers:
         version: 5.12.2(@tanstack/react-query@5.12.2)(react@18.2.0)
       '@tanstack/react-query-next-experimental':
         specifier: ^5.12.2
-        version: 5.12.2(@tanstack/react-query@5.12.2)(next@14.0.4-canary.37)(react@18.2.0)
+        version: 5.12.2(@tanstack/react-query@5.12.2)(next@14.0.4-canary.39)(react@18.2.0)
       '@tiptap/extension-link':
         specifier: ^2.1.13
         version: 2.1.13(@tiptap/core@2.1.13)(@tiptap/pm@2.1.13)
@@ -124,7 +124,7 @@ importers:
         version: registry.npmjs.org/@trpc/client@11.0.0-alpha-next-2023-11-21-11-13-12.106(@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106)
       '@trpc/next':
         specifier: next
-        version: registry.npmjs.org/@trpc/next@11.0.0-alpha-next-2023-11-21-11-13-12.106(@tanstack/react-query@5.12.2)(@trpc/client@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/react-query@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106)(next@14.0.4-canary.37)(react-dom@18.2.0)(react@18.2.0)
+        version: registry.npmjs.org/@trpc/next@11.0.0-alpha-next-2023-11-21-11-13-12.106(@tanstack/react-query@5.12.2)(@trpc/client@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/react-query@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106)(next@14.0.4-canary.39)(react-dom@18.2.0)(react@18.2.0)
       '@trpc/react-query':
         specifier: next
         version: registry.npmjs.org/@trpc/react-query@11.0.0-alpha-next-2023-11-21-11-13-12.106(@tanstack/react-query@5.12.2)(@trpc/client@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106)(react-dom@18.2.0)(react@18.2.0)
@@ -149,6 +149,9 @@ importers:
       embla-carousel-react:
         specifier: 8.0.0-rc15
         version: 8.0.0-rc15(react@18.2.0)
+      mantine-form-zod-resolver:
+        specifier: ^1.0.0
+        version: 1.0.0(@mantine/form@7.3.0)(zod@3.22.4)
       mantine-react-table:
         specifier: 2.0.0-alpha.5
         version: registry.npmjs.org/mantine-react-table@2.0.0-alpha.5(@mantine/core@7.3.0)(@mantine/dates@7.3.0)(@mantine/hooks@7.3.0)(@tabler/icons-react@2.42.0)(react-dom@18.2.0)(react@18.2.0)
@@ -156,11 +159,11 @@ importers:
         specifier: ^2.29.4
         version: registry.npmjs.org/moment@2.29.4
       next:
-        specifier: ^14.0.4-canary.37
-        version: 14.0.4-canary.37(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^14.0.4-canary.39
+        version: 14.0.4-canary.39(react-dom@18.2.0)(react@18.2.0)
       next-auth:
         specifier: 5.0.0-beta.3
-        version: registry.npmjs.org/next-auth@5.0.0-beta.3(next@14.0.4-canary.37)(react@18.2.0)
+        version: registry.npmjs.org/next-auth@5.0.0-beta.3(next@14.0.4-canary.39)(react@18.2.0)
       qrcode.react:
         specifier: ^3.1.0
         version: registry.npmjs.org/qrcode.react@3.1.0(react@18.2.0)
@@ -2708,8 +2711,8 @@ packages:
     resolution: {integrity: sha512-7xRqh9nMvP5xrW4/+L0jgRRX+HoNRGnfJpD+5Wq6/13j3dsdzxO3BCXn7D3hMqsDb+vjZnJq+vI7+EtgrYZTeA==, tarball: https://registry.npmjs.org/@next/env/-/env-14.0.3.tgz}
     dev: false
 
-  /@next/env@14.0.4-canary.37:
-    resolution: {integrity: sha512-6vYWslmjO7rYCPS/PlW9x0BXPp7Ku82BFg5UElA4PxWU7mV2rKRkRTI0DZ0Zu8K7ajx2s/zfOMBbs4cTocpoGg==, tarball: https://registry.npmjs.org/@next/env/-/env-14.0.4-canary.37.tgz}
+  /@next/env@14.0.4-canary.39:
+    resolution: {integrity: sha512-ZqegVCldKlCtPCNCfkonnaoXJe5dQ/18bXOMXq+ry2O+2kPYuR6E2a8222hqc2h2PALqiWBx9jupQbti8Qu6SA==, tarball: https://registry.npmjs.org/@next/env/-/env-14.0.4-canary.39.tgz}
     dev: false
 
   /@next/eslint-plugin-next@14.0.3:
@@ -2727,8 +2730,8 @@ packages:
     dev: false
     optional: true
 
-  /@next/swc-darwin-arm64@14.0.4-canary.37:
-    resolution: {integrity: sha512-NHxa5wb0zgATZ74wSHw34aivrtgGDqDaCW78URenWBBqTytfxnBd84qBPE4Upb/bJfKP0vudzg+yu8OyszWSwQ==, tarball: https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-14.0.4-canary.37.tgz}
+  /@next/swc-darwin-arm64@14.0.4-canary.39:
+    resolution: {integrity: sha512-krnVNhQt6G26mFzN9qh7dahTmkUWH9PObU9FajrJjzaUHorLiPQ+FHq9nvsQ2IfzQdI7uzYysCFLM/ey7vpAKw==, tarball: https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-14.0.4-canary.39.tgz}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [darwin]
@@ -2745,8 +2748,8 @@ packages:
     dev: false
     optional: true
 
-  /@next/swc-darwin-x64@14.0.4-canary.37:
-    resolution: {integrity: sha512-iP4+7+SwtkKLA0k1oStZ3iGV6iwGagVlzFD09G6H1QvH5qpZIgtLsAamxWAOqPn5uofBi9BWw1qczyhH6HtOpA==, tarball: https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-14.0.4-canary.37.tgz}
+  /@next/swc-darwin-x64@14.0.4-canary.39:
+    resolution: {integrity: sha512-NxcI8uzH0TEtHebdqjYN2yX7qjkwGJvFHUWYWKBs1cqbTJ7YlBw1bTeZRiInqAzCdqNv68WJmglX30nG7s6Tvw==, tarball: https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-14.0.4-canary.39.tgz}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [darwin]
@@ -2763,8 +2766,8 @@ packages:
     dev: false
     optional: true
 
-  /@next/swc-linux-arm64-gnu@14.0.4-canary.37:
-    resolution: {integrity: sha512-v+l6yuqqh9HNGwUa5Mj/+YuuTd/9U1ef36qMWT7L3pMerencpUsjMH4/wf8/EeEasc1N4OrZ27ffxHQzcmYUIg==, tarball: https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-14.0.4-canary.37.tgz}
+  /@next/swc-linux-arm64-gnu@14.0.4-canary.39:
+    resolution: {integrity: sha512-8bGz2dLVBarTqaDWbe/81tIzcGdV9IZ+btOIcRbDEGpr0zhfeaPxQtlX/Mh8fUByaqHdHePhe13p/lo34yisRg==, tarball: https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-14.0.4-canary.39.tgz}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
@@ -2781,8 +2784,8 @@ packages:
     dev: false
     optional: true
 
-  /@next/swc-linux-arm64-musl@14.0.4-canary.37:
-    resolution: {integrity: sha512-xzaDUGwVK2ObfIYTGXkZdKakk690fdJ6JnwtiAwElGUuhMiv6tAcQpBzPBIIjqEMlleZjwWOVcamL+BhU07vXQ==, tarball: https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-14.0.4-canary.37.tgz}
+  /@next/swc-linux-arm64-musl@14.0.4-canary.39:
+    resolution: {integrity: sha512-le3J4hftNSF6TIsr7YnXK+DP2o66dSSQ+X5Ess9YhIwuouSnnOvp2o2dCXlV4K45R7Qshnn/pqQDfXjnGKcJKg==, tarball: https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-14.0.4-canary.39.tgz}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
@@ -2799,8 +2802,8 @@ packages:
     dev: false
     optional: true
 
-  /@next/swc-linux-x64-gnu@14.0.4-canary.37:
-    resolution: {integrity: sha512-XaCtpxHl1LrvcLMzDA0cb+GJCJd2MowY0l8F340M1vt2ZD4pxjkCdc+4d2Yblz2bzvtmJ7vqshK+ArsKujU1cA==, tarball: https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-14.0.4-canary.37.tgz}
+  /@next/swc-linux-x64-gnu@14.0.4-canary.39:
+    resolution: {integrity: sha512-GEE+y3KP6HxRi5McOjFZzPpnnXiMc3XwrFUO+RIaU6PtTB+83Y5ePlAQNAL0htUTNrqS/IvKPtqxy4Wa4CVm1w==, tarball: https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-14.0.4-canary.39.tgz}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
@@ -2817,8 +2820,8 @@ packages:
     dev: false
     optional: true
 
-  /@next/swc-linux-x64-musl@14.0.4-canary.37:
-    resolution: {integrity: sha512-FCQ8EmRA/rQRDfHFwsWVxtjKdaPffvQcLWNJ4NbcIsgS+6Y7YrfzogllvK4t3jZCvBIft2WZiqnP2TqA8yf0Ag==, tarball: https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-14.0.4-canary.37.tgz}
+  /@next/swc-linux-x64-musl@14.0.4-canary.39:
+    resolution: {integrity: sha512-QtHuF5nCV0f93trF2R1+envIDbXk/94kuOB70B9PeHUcHeNg9wXlAvg90fHQb0I7YPxgnyd3my/thPMMA9+8hQ==, tarball: https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-14.0.4-canary.39.tgz}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
@@ -2835,8 +2838,8 @@ packages:
     dev: false
     optional: true
 
-  /@next/swc-win32-arm64-msvc@14.0.4-canary.37:
-    resolution: {integrity: sha512-VDeCo8uPbDOn+pCuQbG6Vs9OORQgUmcJ8DhFK3OqozBe9uQvYlMidVM6dYZpEAAGZcVOOJDGITkaLoPsDoyuNQ==, tarball: https://registry.npmjs.org/@next/swc-win32-arm64-msvc/-/swc-win32-arm64-msvc-14.0.4-canary.37.tgz}
+  /@next/swc-win32-arm64-msvc@14.0.4-canary.39:
+    resolution: {integrity: sha512-dC0mm++siJwNnJnA0Vzjk5BJ9/INjkS8uJo7XviNaQOKNYB7//WOubiN/UGTgXZlClZ59wIFG+m/X523cgBgsQ==, tarball: https://registry.npmjs.org/@next/swc-win32-arm64-msvc/-/swc-win32-arm64-msvc-14.0.4-canary.39.tgz}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [win32]
@@ -2853,8 +2856,8 @@ packages:
     dev: false
     optional: true
 
-  /@next/swc-win32-ia32-msvc@14.0.4-canary.37:
-    resolution: {integrity: sha512-I9Zrsqqhb+1bEFGsfVddFA8H6f/So2lfI36onoK3tDPN1oCLMrrTxdhMCy8kz3xR5iv6w731NP+V9Df/XQCXrg==, tarball: https://registry.npmjs.org/@next/swc-win32-ia32-msvc/-/swc-win32-ia32-msvc-14.0.4-canary.37.tgz}
+  /@next/swc-win32-ia32-msvc@14.0.4-canary.39:
+    resolution: {integrity: sha512-voDSDBrSlYunkTnqPnugnaP30Y5xC4h0vMKe/ATC5jA7Ho8ADNKJAPJjQ9bestA6EdW7yLNaJ6sE/tKGlPMd9w==, tarball: https://registry.npmjs.org/@next/swc-win32-ia32-msvc/-/swc-win32-ia32-msvc-14.0.4-canary.39.tgz}
     engines: {node: '>= 10'}
     cpu: [ia32]
     os: [win32]
@@ -2871,8 +2874,8 @@ packages:
     dev: false
     optional: true
 
-  /@next/swc-win32-x64-msvc@14.0.4-canary.37:
-    resolution: {integrity: sha512-BJ5JjWEyvF6lgU2q7tFMb4c1tNNTabELGJziZS9jIr2TcHT8kJetdNom7W7KwiPL0dmDc5KYU39SdKRt8IUBsQ==, tarball: https://registry.npmjs.org/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-14.0.4-canary.37.tgz}
+  /@next/swc-win32-x64-msvc@14.0.4-canary.39:
+    resolution: {integrity: sha512-RAopWdU/gv0Hkp+xT83qXwFy1vtNMfYBZcpj8/Fq0AwD01/MlZqXgZVrvyUCg+5SU3hWeUhfm1NIECo1maALKg==, tarball: https://registry.npmjs.org/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-14.0.4-canary.39.tgz}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
@@ -3742,7 +3745,7 @@ packages:
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  /@tanstack/react-query-next-experimental@5.12.2(@tanstack/react-query@5.12.2)(next@14.0.4-canary.37)(react@18.2.0):
+  /@tanstack/react-query-next-experimental@5.12.2(@tanstack/react-query@5.12.2)(next@14.0.4-canary.39)(react@18.2.0):
     resolution: {integrity: sha512-g6i00zLJv34jEVSPeo/08VrF+A0CvBXJd/7DIFurRRchNGbMI+cUFonqPgbe7ZDsBP3qlVLilClplsCTB+dSng==, tarball: https://registry.npmjs.org/@tanstack/react-query-next-experimental/-/react-query-next-experimental-5.12.2.tgz}
     peerDependencies:
       '@tanstack/react-query': ^5.12.2
@@ -3750,7 +3753,7 @@ packages:
       react: ^18.0.0
     dependencies:
       '@tanstack/react-query': 5.12.2(react@18.2.0)
-      next: 14.0.4-canary.37(react-dom@18.2.0)(react@18.2.0)
+      next: 14.0.4-canary.39(react-dom@18.2.0)(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
@@ -4643,10 +4646,6 @@ packages:
     resolution: {integrity: sha512-xlx1yCK2Oc1APsPXDL2LdlNP6+uu8OCDdhOBSVT279M/S+y75O30C2VuD8T2ogdePBBl7PfPF4504tnLgX3zfw==, tarball: https://registry.npmjs.org/camelcase/-/camelcase-7.0.1.tgz}
     engines: {node: '>=14.16'}
     dev: true
-
-  /caniuse-lite@1.0.30001564:
-    resolution: {integrity: sha512-DqAOf+rhof+6GVx1y+xzbFPeOumfQnhYzVnZD6LAXijR77yPtm9mfOcqOnT3mpnJiZVT+kwLAFnRlZcIz+c6bg==, tarball: https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001564.tgz}
-    dev: false
 
   /caniuse-lite@1.0.30001566:
     resolution: {integrity: sha512-ggIhCsTxmITBAMmK8yZjEhCO5/47jKXPu6Dha/wuCS4JePVL+3uiDEBuhu2aIoT+bqTOR8L76Ip1ARL9xYsEJA==, tarball: https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001566.tgz}
@@ -6768,6 +6767,17 @@ packages:
     resolution: {integrity: sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==, tarball: https://registry.npmjs.org/make-error/-/make-error-1.3.6.tgz}
     dev: false
 
+  /mantine-form-zod-resolver@1.0.0(@mantine/form@7.3.0)(zod@3.22.4):
+    resolution: {integrity: sha512-7P7UL/4XHpjRbKVb0M6YqtJ88XhR/ANrze3zoAWxIZPqqIOEnTNAW963ezn6szEmwD3i/r/SUD/e8LPdEv7zqA==, tarball: https://registry.npmjs.org/mantine-form-zod-resolver/-/mantine-form-zod-resolver-1.0.0.tgz}
+    engines: {node: '>=16.6.0'}
+    peerDependencies:
+      '@mantine/form': '>=7.0.0'
+      zod: '>=3.0.0'
+    dependencies:
+      '@mantine/form': 7.3.0(react@18.2.0)
+      zod: registry.npmjs.org/zod@3.22.4
+    dev: false
+
   /map-obj@1.0.1:
     resolution: {integrity: sha512-7N/q3lyZ+LVCp7PzuxrJr4KMbBE2hW7BT7YNia330OFxIf4d3r5zVpicP2650l7CPN6RM9zOJRl3NGpqSiw3Eg==, tarball: https://registry.npmjs.org/map-obj/-/map-obj-1.0.1.tgz}
     engines: {node: '>=0.10.0'}
@@ -7004,8 +7014,8 @@ packages:
       - babel-plugin-macros
     dev: false
 
-  /next@14.0.4-canary.37(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-Yzmv+mzRtSMfrL8+kFBpymI7D0kHba3fNFyLiPNtGBycjjYj1TvMMg5Hx4pqWiQkZU2tWFZGE9IwApXGYDJG1w==, tarball: https://registry.npmjs.org/next/-/next-14.0.4-canary.37.tgz}
+  /next@14.0.4-canary.39(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-OX0eHwddKlJRVs2nHWFu1ClheRRFesg6KF4+IekiEFLKdBu9LePIKOgTrLGNixDizpG4YmSGmIt2YYp0F0CNDg==, tarball: https://registry.npmjs.org/next/-/next-14.0.4-canary.39.tgz}
     engines: {node: '>=18.17.0'}
     hasBin: true
     peerDependencies:
@@ -7019,10 +7029,10 @@ packages:
       sass:
         optional: true
     dependencies:
-      '@next/env': 14.0.4-canary.37
+      '@next/env': 14.0.4-canary.39
       '@swc/helpers': 0.5.2
       busboy: 1.6.0
-      caniuse-lite: 1.0.30001564
+      caniuse-lite: 1.0.30001566
       graceful-fs: 4.2.11
       postcss: 8.4.31
       react: registry.npmjs.org/react@18.2.0
@@ -7030,15 +7040,15 @@ packages:
       styled-jsx: 5.1.1(react@18.2.0)
       watchpack: 2.4.0
     optionalDependencies:
-      '@next/swc-darwin-arm64': 14.0.4-canary.37
-      '@next/swc-darwin-x64': 14.0.4-canary.37
-      '@next/swc-linux-arm64-gnu': 14.0.4-canary.37
-      '@next/swc-linux-arm64-musl': 14.0.4-canary.37
-      '@next/swc-linux-x64-gnu': 14.0.4-canary.37
-      '@next/swc-linux-x64-musl': 14.0.4-canary.37
-      '@next/swc-win32-arm64-msvc': 14.0.4-canary.37
-      '@next/swc-win32-ia32-msvc': 14.0.4-canary.37
-      '@next/swc-win32-x64-msvc': 14.0.4-canary.37
+      '@next/swc-darwin-arm64': 14.0.4-canary.39
+      '@next/swc-darwin-x64': 14.0.4-canary.39
+      '@next/swc-linux-arm64-gnu': 14.0.4-canary.39
+      '@next/swc-linux-arm64-musl': 14.0.4-canary.39
+      '@next/swc-linux-x64-gnu': 14.0.4-canary.39
+      '@next/swc-linux-x64-musl': 14.0.4-canary.39
+      '@next/swc-win32-arm64-msvc': 14.0.4-canary.39
+      '@next/swc-win32-ia32-msvc': 14.0.4-canary.39
+      '@next/swc-win32-x64-msvc': 14.0.4-canary.39
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
@@ -9561,7 +9571,7 @@ packages:
       '@trpc/server': registry.npmjs.org/@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106
     dev: false
 
-  registry.npmjs.org/@trpc/next@11.0.0-alpha-next-2023-11-21-11-13-12.106(@tanstack/react-query@5.12.2)(@trpc/client@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/react-query@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106)(next@14.0.4-canary.37)(react-dom@18.2.0)(react@18.2.0):
+  registry.npmjs.org/@trpc/next@11.0.0-alpha-next-2023-11-21-11-13-12.106(@tanstack/react-query@5.12.2)(@trpc/client@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/react-query@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106)(next@14.0.4-canary.39)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-RcXjvtSYqL241B45ELp1r/k4sFMn2EFxoDL7eT6kC+fIh+gSUNZItDD78Xx/sOMB6KqhAbAjnuYeWP+V8TtBzA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@trpc/next/-/next-11.0.0-alpha-next-2023-11-21-11-13-12.106.tgz}
     id: registry.npmjs.org/@trpc/next/11.0.0-alpha-next-2023-11-21-11-13-12.106
     name: '@trpc/next'
@@ -9579,7 +9589,7 @@ packages:
       '@trpc/client': registry.npmjs.org/@trpc/client@11.0.0-alpha-next-2023-11-21-11-13-12.106(@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106)
       '@trpc/react-query': registry.npmjs.org/@trpc/react-query@11.0.0-alpha-next-2023-11-21-11-13-12.106(@tanstack/react-query@5.12.2)(@trpc/client@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106)(react-dom@18.2.0)(react@18.2.0)
       '@trpc/server': registry.npmjs.org/@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106
-      next: 14.0.4-canary.37(react-dom@18.2.0)(react@18.2.0)
+      next: 14.0.4-canary.39(react-dom@18.2.0)(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
       react-ssr-prepass: registry.npmjs.org/react-ssr-prepass@1.5.0(react@18.2.0)
@@ -11560,7 +11570,7 @@ packages:
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  registry.npmjs.org/next-auth@5.0.0-beta.3(next@14.0.4-canary.37)(react@18.2.0):
+  registry.npmjs.org/next-auth@5.0.0-beta.3(next@14.0.4-canary.39)(react@18.2.0):
     resolution: {integrity: sha512-WOKhATBFGeONV+29HzFmspNmL7NXxrsCWLfaDKmAd/4DD1nqXE0BzNFH8t3SJBx7PUDMnB6F7xB76LM/AaV1MQ==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/next-auth/-/next-auth-5.0.0-beta.3.tgz}
     id: registry.npmjs.org/next-auth/5.0.0-beta.3
     name: next-auth
@@ -11574,7 +11584,7 @@ packages:
         optional: true
     dependencies:
       '@auth/core': 0.0.0-manual.e9863699
-      next: 14.0.4-canary.37(react-dom@18.2.0)(react@18.2.0)
+      next: 14.0.4-canary.39(react-dom@18.2.0)(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
     dev: false
 

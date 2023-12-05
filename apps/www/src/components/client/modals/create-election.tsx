@@ -19,7 +19,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
-import { hasLength, useForm } from "@mantine/form";
+import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import {
@@ -30,6 +30,8 @@ import {
   IconPlus,
   IconTemplate,
 } from "@tabler/icons-react";
+import { zodResolver } from "mantine-form-zod-resolver";
+import { z } from "zod";
 
 import { parseHourTo12HourFormat, positionTemplate } from "@eboto/constants";
 
@@ -71,45 +73,51 @@ export default function CreateElection({
       template: "none",
       voting_hours: [7, 19],
     },
+    validate: zodResolver(
+      z.object({
+        name: z.string().min(3, "Election name must be at least 3 characters"),
+        slug: z
+          .string()
+          .min(3, "Election slug must be at least 3 characters")
+          .max(24, "Election slug must be at most 24 characters")
+          .regex(
+            /^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/,
+            "Election slug must be alphanumeric and can contain dashes",
+          ),
+        date: z
+          .custom<[Date | null, Date | null]>()
+          .refine(
+            (value) =>
+              value[0] && value[1] && value[0].getTime() <= value[1].getTime(),
+            "Start date must be before end date",
+          )
+          .refine(
+            (value) =>
+              value[0] && value[1] && value[1].getTime() >= value[0].getTime(),
+            "End date must be after start date",
+          )
+          .refine(
+            (value) =>
+              value[0] && value[1] && value[1].getTime() > new Date().getTime(),
+            "End date must be in the future",
+          )
+          .refine(
+            (value) => !!value[0] || !!value[1],
+            "Please select an election start and end date",
+          ),
+        template: z.string({
+          required_error: "Please select an election template",
+          invalid_type_error: "Please select an election template",
+        }),
 
-    validate: {
-      name: hasLength(
-        { min: 3 },
-        "Election name must be at least 3 characters",
-      ),
-      slug: (value) => {
-        if (!value) {
-          return "Please enter an election slug";
-        }
-        if (!/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/.test(value)) {
-          return "Election slug must be alphanumeric and can contain dashes";
-        }
-        if (value.length < 3 || value.length > 24) {
-          return "Election slug must be between 3 and 24 characters";
-        }
-      },
-      date: (value) => {
-        if (!value[0] || !value[1])
-          return "Please enter an election start and end date";
-
-        if (value[0].getTime() > value[1].getTime())
-          return "Start date must be before end date";
-
-        if (value[0].getTime() <= new Date().getTime())
-          return "Start date must be in the future";
-
-        if (value[1].getTime() < value[0].getTime())
-          return "End date must be after start date";
-
-        if (value[1].getTime() <= new Date().getTime())
-          return "End date must be in the future";
-      },
-      template: (value) => {
-        if (!value) {
-          return "Please select an election template";
-        }
-      },
-    },
+        voting_hours: z
+          .custom<[number, number]>()
+          .refine(
+            (value) => value[0] < value[1],
+            "Start hour must be before end hour",
+          ),
+      }),
+    ),
     transformValues: (values) => {
       const nowStart = new Date(values.date[0] ?? new Date());
       const nowEnd = new Date(values.date[1] ?? new Date());
@@ -171,9 +179,13 @@ export default function CreateElection({
               withAsterisk
               required
               placeholder="Enter election name"
-              {...form.getInputProps("name")}
               leftSection={<IconLetterCase size="1rem" />}
               disabled={createElectionMutation.isPending}
+              error={
+                createElectionMutation.error?.data?.code === "CONFLICT" &&
+                createElectionMutation.error?.message
+              }
+              {...form.getInputProps("name")}
             />
 
             <TextInput
@@ -189,12 +201,12 @@ export default function CreateElection({
               withAsterisk
               required
               placeholder="Enter election slug"
-              {...form.getInputProps("slug")}
               leftSection={<IconLetterCase size="1rem" />}
               error={
                 createElectionMutation.error?.data?.code === "CONFLICT" &&
                 createElectionMutation.error?.message
               }
+              {...form.getInputProps("slug")}
             />
 
             <DatePickerInput
