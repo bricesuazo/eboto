@@ -40,6 +40,13 @@ export const electionRouter = createTRPCRouter({
           ),
         with: {
           voter_fields: true,
+          commissioners: {
+            where: (commissioners, { isNull }) =>
+              isNull(commissioners.deleted_at),
+            with: {
+              user: true,
+            },
+          },
         },
       });
 
@@ -91,6 +98,13 @@ export const electionRouter = createTRPCRouter({
         isOngoing,
         myVoterData,
         hasVoted: !!hasVoted,
+        isVoterCanMessage:
+          election.publicity !== "PRIVATE" &&
+          !!myVoterData &&
+          !election.commissioners.some(
+            (commissioner) =>
+              commissioner.user.email === ctx.session?.user.email,
+          ),
       };
     }),
   vote: protectedProcedure
@@ -1129,12 +1143,20 @@ export const electionRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const election = await ctx.db.query.elections.findFirst({
-        where: (elections, { eq, and, isNull }) =>
+        where: (elections, { eq, and, isNull, ne }) =>
           and(
             eq(elections.id, input.election_id),
             isNull(elections.deleted_at),
+            ne(elections.publicity, "PRIVATE"),
           ),
         with: {
+          voters: {
+            where: (voters, { and, eq, isNull }) =>
+              and(
+                isNull(voters.deleted_at),
+                eq(voters.email, ctx.session.user.email ?? ""),
+              ),
+          },
           commissioners: {
             where: (commissioners, { isNull }) =>
               isNull(commissioners.deleted_at),
@@ -1155,6 +1177,22 @@ export const electionRouter = createTRPCRouter({
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "No commissioners found",
+        });
+
+      if (election.publicity === "PUBLIC" && !election.voters.length)
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Unauthorized",
+        });
+
+      if (
+        election.commissioners.find(
+          (commissioner) => commissioner.user.email === ctx.session.user.email,
+        )
+      )
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You cannot send a message to yourself",
         });
 
       await ctx.db.transaction(async (db) => {

@@ -63,7 +63,14 @@ export default function ElectionPage({
       },
     });
   const {
-    data: { election, positions, hasVoted, myVoterData, isOngoing },
+    data: {
+      election,
+      positions,
+      hasVoted,
+      myVoterData,
+      isOngoing,
+      isVoterCanMessage,
+    },
   } = api.election.getElectionPage.useQuery(
     {
       election_slug,
@@ -106,7 +113,7 @@ export default function ElectionPage({
         centered
       >
         <form
-          onSubmit={form.onSubmit((value) => {
+          onSubmit={form.onSubmit((value) =>
             addVoterFieldToVoterMutation.mutate({
               election_id: election.id,
               voter_id: myVoterData?.id ?? "",
@@ -114,8 +121,8 @@ export default function ElectionPage({
                 id: key,
                 value,
               })),
-            });
-          })}
+            }),
+          )}
         >
           <Stack gap="sm">
             {Object.entries(form.values).map(([key]) => {
@@ -171,13 +178,11 @@ export default function ElectionPage({
                 <IconFingerprint size={128} style={{ padding: 8 }} />
               )}
             </Flex>
-
             <Title order={1} ta="center" maw={600} mb={4}>
               <Balancer>
                 {election.name} (@{election.slug})
               </Balancer>
             </Title>
-
             <Text ta="center">
               <Balancer>
                 {moment(election.start_date).local().format("MMMM DD, YYYY")}
@@ -194,7 +199,6 @@ export default function ElectionPage({
                   " - " +
                   parseHourTo12HourFormat(election.voting_hour_end)}
             </Text>
-
             <Flex align="center" justify="center" gap="xs">
               <Text ta="center">
                 Publicity:{" "}
@@ -233,7 +237,6 @@ export default function ElectionPage({
                 </HoverCardDropdown>
               </HoverCard>
             </Flex>
-
             {election.description && (
               <Box maw="40rem" mt="sm" ta="center">
                 <Text>About this election:</Text>
@@ -249,7 +252,6 @@ export default function ElectionPage({
                 )}
               </Box>
             )}
-
             <Flex justify="center" gap="sm" mt={8} align="center">
               {election.publicity === "PUBLIC" ||
               hasVoted ||
@@ -293,9 +295,11 @@ export default function ElectionPage({
               )}
               <ElectionShowQRCode election={election} />
             </Flex>
-            <Center>
-              <MessageCommissioner election_id={election.id} />
-            </Center>
+            {isVoterCanMessage && (
+              <Center>
+                <MessageCommissioner election_id={election.id} />
+              </Center>
+            )}
           </Box>
           {/* <Adsense
             style={{
