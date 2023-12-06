@@ -579,13 +579,18 @@ export default function DashboardElection({
                   {!getAllAdminCommissionerRoomsQuery.data ? (
                     [0, 1, 2, 3, 4, 5].map((i) => <Skeleton key={i} h={80} />)
                   ) : getAllAdminCommissionerRoomsQuery.data.length === 0 ? (
-                    <>
+                    <Stack gap="xs" justify="center" align="center" p="xl">
                       <IconMessage2X size="3rem" />
-                      <Text size="sm">No message from admin yet</Text>
+                      <Balancer>
+                        <Text size="sm" ta="center">
+                          Did you find a bug? Feature request? Or just need
+                          help? Message us here.
+                        </Text>
+                      </Balancer>
                       <CreateAdminMessagePopover
                         election_slug={params.electionDashboardSlug as string}
                       />
-                    </>
+                    </Stack>
                   ) : (
                     <>
                       <Card padding="lg" radius="md" withBorder>
@@ -816,6 +821,7 @@ function CreateAdminMessagePopover({
                 size="sm"
                 mt="xs"
                 type="submit"
+                disabled={!form.isValid()}
                 loading={messageAdminMutation.isPending}
               >
                 Send
