@@ -10,6 +10,8 @@ import {
 } from "@eboto/constants";
 import { and, eq, isNull } from "@eboto/db";
 import {
+  admin_commissioners_messages,
+  admin_commissioners_rooms,
   commissioners,
   commissioners_voters_messages,
   commissioners_voters_rooms,
@@ -1209,6 +1211,59 @@ export const electionRouter = createTRPCRouter({
         });
       });
     }),
+  messageAdmin: protectedProcedure
+    .input(
+      z.object({
+        election_slug: z.string().min(1),
+        title: z.string().min(1),
+        message: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const election = await ctx.db.query.elections.findFirst({
+        where: (elections, { eq, and, isNull, ne }) =>
+          and(
+            eq(elections.slug, input.election_slug),
+            isNull(elections.deleted_at),
+            ne(elections.publicity, "PRIVATE"),
+          ),
+        with: {
+          commissioners: {
+            where: (commissioners, { isNull }) =>
+              isNull(commissioners.deleted_at),
+            with: {
+              user: true,
+            },
+          },
+        },
+      });
+
+      if (!election)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election not found",
+        });
+
+      if (!election.commissioners.length)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "No commissioners found",
+        });
+
+      await ctx.db.transaction(async (db) => {
+        const id = nanoid();
+        await db.insert(admin_commissioners_rooms).values({
+          id,
+          election_id: election.id,
+          name: input.title,
+        });
+        await db.insert(admin_commissioners_messages).values({
+          message: input.message,
+          room_id: id,
+          user_id: ctx.session.user.id,
+        });
+      });
+    }),
   getAllCommissionerVoterRooms: protectedProcedure
     .input(
       z.object({
@@ -1250,6 +1305,60 @@ export const electionRouter = createTRPCRouter({
         });
 
       return ctx.db.query.commissioners_voters_rooms.findMany({
+        where: (rooms, { eq, and, isNull }) =>
+          and(eq(rooms.election_id, election.id), isNull(rooms.deleted_at)),
+        with: {
+          messages: {
+            orderBy: (messages, { asc }) => asc(messages.created_at),
+            with: {
+              user: true,
+            },
+            limit: 1,
+          },
+        },
+      });
+    }),
+  getAllAdminCommissionerRooms: protectedProcedure
+    .input(
+      z.object({
+        election_slug: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const election = await ctx.db.query.elections.findFirst({
+        where: (elections, { eq, and, isNull }) =>
+          and(
+            eq(elections.slug, input.election_slug),
+            isNull(elections.deleted_at),
+          ),
+        with: {
+          commissioners: {
+            where: (commissioners, { isNull }) =>
+              isNull(commissioners.deleted_at),
+            with: {
+              user: true,
+            },
+          },
+        },
+      });
+
+      if (!election)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election not found",
+        });
+
+      if (
+        !election.commissioners.find(
+          (commissioner) => commissioner.user.email === ctx.session.user.email,
+        )
+      )
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Unauthorized",
+        });
+
+      return ctx.db.query.admin_commissioners_rooms.findMany({
         where: (rooms, { eq, and, isNull }) =>
           and(eq(rooms.election_id, election.id), isNull(rooms.deleted_at)),
         with: {

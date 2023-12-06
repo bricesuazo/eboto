@@ -21,6 +21,7 @@ import {
   Badge,
   Box,
   Button,
+  Card,
   CheckIcon,
   Combobox,
   ComboboxChevron,
@@ -39,7 +40,6 @@ import {
   Popover,
   PopoverDropdown,
   PopoverTarget,
-  ScrollArea,
   ScrollAreaAutosize,
   Skeleton,
   Stack,
@@ -47,6 +47,7 @@ import {
   TabsList,
   TabsPanel,
   Text,
+  Textarea,
   TextInput,
   ThemeIcon,
   Tooltip,
@@ -56,9 +57,11 @@ import {
 } from "@mantine/core";
 import { isEmail, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import {
   IconAlertCircle,
   IconAt,
+  IconCheck,
   IconExternalLink,
   IconLogout,
   IconMessage2X,
@@ -66,6 +69,9 @@ import {
   IconUserMinus,
   IconUserPlus,
 } from "@tabler/icons-react";
+import { zodResolver } from "mantine-form-zod-resolver";
+import Balancer from "react-wrap-balancer";
+import { z } from "zod";
 
 import {
   electionDashboardNavbar,
@@ -95,6 +101,13 @@ export default function DashboardElection({
     );
   const getAllCommissionerVoterRoomsQuery =
     api.election.getAllCommissionerVoterRooms.useQuery(
+      { election_slug: params.electionDashboardSlug as string },
+      {
+        enabled: !!params.electionDashboardSlug,
+      },
+    );
+  const getAllAdminCommissionerRoomsQuery =
+    api.election.getAllAdminCommissionerRooms.useQuery(
       { election_slug: params.electionDashboardSlug as string },
       {
         enabled: !!params.electionDashboardSlug,
@@ -562,30 +575,80 @@ export default function DashboardElection({
 
             <Box p="sm" h="100%">
               <TabsPanel value="admin">
-                <Stack gap="xs" justify="center" align="center" p="xl">
-                  <IconMessage2X size="3rem" />
-                  <Text size="sm">No message from admin yet</Text>
-                  <Button
-                    variant="light"
-                    size="xs"
-                    radius="xl"
-                    leftSection={<IconPlus size="1rem" />}
-                  >
-                    Create message
-                  </Button>
+                <Stack gap="xs">
+                  {!getAllAdminCommissionerRoomsQuery.data ? (
+                    [0, 1, 2, 3, 4, 5].map((i) => <Skeleton key={i} h={80} />)
+                  ) : getAllAdminCommissionerRoomsQuery.data.length === 0 ? (
+                    <>
+                      <IconMessage2X size="3rem" />
+                      <Text size="sm">No message from admin yet</Text>
+                      <CreateAdminMessagePopover
+                        election_slug={params.electionDashboardSlug as string}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <Card padding="lg" radius="md" withBorder>
+                        <Stack align="center">
+                          <Balancer>
+                            <Text size="sm" ta="center">
+                              Did you find a bug? Feature request? Or just need
+                              help? Message us here.
+                            </Text>
+                          </Balancer>
+                          <CreateAdminMessagePopover
+                            election_slug={
+                              params.electionDashboardSlug as string
+                            }
+                          />
+                        </Stack>
+                      </Card>
+                      {getAllAdminCommissionerRoomsQuery.data.map((room) => (
+                        <UnstyledButton
+                          key={room.id}
+                          p="md"
+                          style={{
+                            border: "1px solid #80808050",
+                            borderRadius: 8,
+                          }}
+                          w="100%"
+                        >
+                          <Text lineClamp={1}>{room.name}</Text>
+                          {room.messages[0] && (
+                            <Flex align="center" gap="sm">
+                              <Image
+                                src={
+                                  room.messages[0].user.image ??
+                                  room.messages[0].user.image_file?.url ??
+                                  ""
+                                }
+                                alt={room.messages[0].user.name + " image."}
+                                width={20}
+                                height={20}
+                                style={{
+                                  borderRadius: "50%",
+                                }}
+                              />
+                              <Text size="sm" lineClamp={1}>
+                                {room.messages[0].message}
+                              </Text>
+                            </Flex>
+                          )}
+                        </UnstyledButton>
+                      ))}
+                    </>
+                  )}
                 </Stack>
               </TabsPanel>
               <TabsPanel value="voters" h="100%">
-                <ScrollArea.Autosize h="100%" type="scroll">
+                <ScrollAreaAutosize h="100%" type="scroll">
                   <Stack gap="xs">
                     {!getAllCommissionerVoterRoomsQuery.data ? (
-                      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
-                        <Skeleton key={i} h={80} />
-                      ))
+                      [0, 1, 2, 3, 4, 5].map((i) => <Skeleton key={i} h={80} />)
                     ) : getAllCommissionerVoterRoomsQuery.data.length === 0 ? (
                       <Stack gap="xs" justify="center" align="center" p="xl">
                         <IconMessage2X size="3rem" />
-                        <Text size="sm">No message from voter yet</Text>
+                        <Text size="sm">No message from voters yet</Text>
                       </Stack>
                     ) : (
                       getAllCommissionerVoterRoomsQuery.data.map((room) => (
@@ -623,7 +686,7 @@ export default function DashboardElection({
                       ))
                     )}
                   </Stack>
-                </ScrollArea.Autosize>
+                </ScrollAreaAutosize>
               </TabsPanel>
             </Box>
           </Tabs>
@@ -634,5 +697,133 @@ export default function DashboardElection({
         </AppShellFooter>
       </AppShell>
     </>
+  );
+}
+
+function CreateAdminMessagePopover({
+  election_slug,
+}: {
+  election_slug: string;
+}) {
+  const context = api.useUtils();
+  const [opened, { close, toggle }] = useDisclosure(false);
+
+  const form = useForm({
+    validateInputOnBlur: true,
+    validateInputOnChange: true,
+    initialValues: {
+      title: "",
+      message: "",
+    },
+    validate: zodResolver(
+      z.object({
+        title: z.string().min(3, "Title must be at least 3 characters"),
+        message: z.string().min(10, "Message must be at least 10 characters"),
+      }),
+    ),
+  });
+
+  const messageAdminMutation = api.election.messageAdmin.useMutation({
+    onSuccess: async () => {
+      await context.election.getAllAdminCommissionerRooms.refetch();
+      notifications.show({
+        title: "Message sent!",
+        message: "Successfully sent message to admin",
+        icon: <IconCheck size="1.1rem" />,
+        autoClose: 5000,
+      });
+      close();
+    },
+  });
+
+  useEffect(() => {
+    if (opened) {
+      form.reset();
+      messageAdminMutation.reset();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [opened]);
+  return (
+    <Popover
+      opened={opened || messageAdminMutation.isPending}
+      onChange={toggle}
+      width={300}
+      trapFocus
+      position="bottom"
+      withArrow
+      shadow="md"
+    >
+      <PopoverTarget>
+        <Button
+          variant="light"
+          size="xs"
+          radius="xl"
+          leftSection={<IconPlus size="1rem" />}
+          onClick={toggle}
+        >
+          Create message
+        </Button>
+      </PopoverTarget>
+      <PopoverDropdown>
+        <form
+          onSubmit={form.onSubmit((value) => {
+            messageAdminMutation.mutate({
+              message: value.message,
+              title: value.title,
+              election_slug,
+            });
+          })}
+        >
+          <Stack gap="sm">
+            <TextInput
+              label="Title"
+              placeholder="Bug found in voting page"
+              required
+              disabled={messageAdminMutation.isPending}
+              {...form.getInputProps("title")}
+            />
+            <Textarea
+              label="Message"
+              placeholder="I found a bug in the voting page. When I click the submit button, it doesn't submit my vote."
+              autosize
+              minRows={3}
+              maxRows={6}
+              required
+              disabled={messageAdminMutation.isPending}
+              {...form.getInputProps("message")}
+            />
+            {messageAdminMutation.isError && (
+              <Alert
+                icon={<IconAlertCircle size="1rem" />}
+                color="red"
+                title="Error"
+                variant="filled"
+              >
+                {messageAdminMutation.error.message}
+              </Alert>
+            )}
+            <Flex gap="xs" justify="end">
+              <Button
+                variant="light"
+                size="sm"
+                mt="xs"
+                onClick={close}
+                disabled={messageAdminMutation.isPending}
+              >
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                mt="xs"
+                type="submit"
+                loading={messageAdminMutation.isPending}
+              >
+                Send
+              </Button>
+            </Flex>
+          </Stack>
+        </form>
+      </PopoverDropdown>
+    </Popover>
   );
 }
