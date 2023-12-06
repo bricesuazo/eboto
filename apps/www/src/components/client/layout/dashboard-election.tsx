@@ -39,7 +39,9 @@ import {
   Popover,
   PopoverDropdown,
   PopoverTarget,
+  ScrollArea,
   ScrollAreaAutosize,
+  Skeleton,
   Stack,
   Tabs,
   TabsList,
@@ -49,6 +51,7 @@ import {
   ThemeIcon,
   Tooltip,
   TooltipGroup,
+  UnstyledButton,
   useCombobox,
 } from "@mantine/core";
 import { isEmail, useForm } from "@mantine/form";
@@ -58,6 +61,7 @@ import {
   IconAt,
   IconExternalLink,
   IconLogout,
+  IconMessage2X,
   IconPlus,
   IconUserMinus,
   IconUserPlus,
@@ -84,6 +88,13 @@ export default function DashboardElection({
 
   const getAllCommissionerByElectionSlugQuery =
     api.election.getAllCommissionerByElectionSlug.useQuery(
+      { election_slug: params.electionDashboardSlug as string },
+      {
+        enabled: !!params.electionDashboardSlug,
+      },
+    );
+  const getAllCommissionerVoterRoomsQuery =
+    api.election.getAllCommissionerVoterRooms.useQuery(
       { election_slug: params.electionDashboardSlug as string },
       {
         enabled: !!params.electionDashboardSlug,
@@ -260,14 +271,14 @@ export default function DashboardElection({
         footer={{ height: 52 }}
         navbar={{
           breakpoint: "xs",
-          width: { base: 250, sm: 300 },
+          width: { base: 250, lg: 300 },
           collapsed: {
             desktop: false,
             mobile: !store.dashboardMenu,
           },
         }}
         aside={{
-          breakpoint: "lg",
+          breakpoint: "md",
           width: { lg: 300, xl: 400 },
           collapsed: {
             desktop: false,
@@ -543,15 +554,77 @@ export default function DashboardElection({
         </AppShellNavbar>
 
         <AppShellAside>
-          <Tabs defaultValue="voters">
+          <Tabs defaultValue="voters" h="96%">
             <TabsList grow>
-              <Tabs.Tab value="admin">Message Admin</Tabs.Tab>
-              <Tabs.Tab value="voters">Message from Voters</Tabs.Tab>
+              <Tabs.Tab value="admin">Chat Admin</Tabs.Tab>
+              <Tabs.Tab value="voters">Chat from Voters</Tabs.Tab>
             </TabsList>
 
-            <Box p="md">
-              <TabsPanel value="admin">Message Admin content</TabsPanel>
-              <TabsPanel value="voters">Message from Voters content</TabsPanel>
+            <Box p="sm" h="100%">
+              <TabsPanel value="admin">
+                <Stack gap="xs" justify="center" align="center" p="xl">
+                  <IconMessage2X size="3rem" />
+                  <Text size="sm">No message from admin yet</Text>
+                  <Button
+                    variant="light"
+                    size="xs"
+                    radius="xl"
+                    leftSection={<IconPlus size="1rem" />}
+                  >
+                    Create message
+                  </Button>
+                </Stack>
+              </TabsPanel>
+              <TabsPanel value="voters" h="100%">
+                <ScrollArea.Autosize h="100%" type="scroll">
+                  <Stack gap="xs">
+                    {!getAllCommissionerVoterRoomsQuery.data ? (
+                      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
+                        <Skeleton key={i} h={80} />
+                      ))
+                    ) : getAllCommissionerVoterRoomsQuery.data.length === 0 ? (
+                      <Stack gap="xs" justify="center" align="center" p="xl">
+                        <IconMessage2X size="3rem" />
+                        <Text size="sm">No message from voter yet</Text>
+                      </Stack>
+                    ) : (
+                      getAllCommissionerVoterRoomsQuery.data.map((room) => (
+                        <UnstyledButton
+                          key={room.id}
+                          p="md"
+                          style={{
+                            border: "1px solid #80808050",
+                            borderRadius: 8,
+                          }}
+                          w="100%"
+                        >
+                          <Text lineClamp={1}>{room.name}</Text>
+                          {room.messages[0] && (
+                            <Flex align="center" gap="sm">
+                              <Image
+                                src={
+                                  room.messages[0].user.image ??
+                                  room.messages[0].user.image_file?.url ??
+                                  ""
+                                }
+                                alt={room.messages[0].user.name + " image."}
+                                width={20}
+                                height={20}
+                                style={{
+                                  borderRadius: "50%",
+                                }}
+                              />
+                              <Text size="sm" lineClamp={1}>
+                                {room.messages[0].message}
+                              </Text>
+                            </Flex>
+                          )}
+                        </UnstyledButton>
+                      ))
+                    )}
+                  </Stack>
+                </ScrollArea.Autosize>
+              </TabsPanel>
             </Box>
           </Tabs>
         </AppShellAside>

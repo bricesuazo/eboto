@@ -214,7 +214,13 @@ export default function Header({ userId }: { userId?: string }) {
           </Flex>
 
           {userId ? (
-            <Group>
+            <Flex
+              align="center"
+              gap={{
+                base: "sm",
+                xs: "lg",
+              }}
+            >
               <TextInput
                 onClick={spotlight.open}
                 leftSection={<IconSearch size="1.25rem" />}
@@ -389,7 +395,7 @@ export default function Header({ userId }: { userId?: string }) {
                   <IconMessage />
                 </ActionIcon>
               )}
-            </Group>
+            </Flex>
           ) : (
             <Group gap="xs">
               <ActionIcon

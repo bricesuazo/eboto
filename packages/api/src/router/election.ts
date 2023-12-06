@@ -1209,4 +1209,58 @@ export const electionRouter = createTRPCRouter({
         });
       });
     }),
+  getAllCommissionerVoterRooms: protectedProcedure
+    .input(
+      z.object({
+        election_slug: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const election = await ctx.db.query.elections.findFirst({
+        where: (elections, { eq, and, isNull }) =>
+          and(
+            eq(elections.slug, input.election_slug),
+            isNull(elections.deleted_at),
+          ),
+        with: {
+          commissioners: {
+            where: (commissioners, { isNull }) =>
+              isNull(commissioners.deleted_at),
+            with: {
+              user: true,
+            },
+          },
+        },
+      });
+
+      if (!election)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election not found",
+        });
+
+      if (
+        !election.commissioners.find(
+          (commissioner) => commissioner.user.email === ctx.session.user.email,
+        )
+      )
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Unauthorized",
+        });
+
+      return ctx.db.query.commissioners_voters_rooms.findMany({
+        where: (rooms, { eq, and, isNull }) =>
+          and(eq(rooms.election_id, election.id), isNull(rooms.deleted_at)),
+        with: {
+          messages: {
+            orderBy: (messages, { asc }) => asc(messages.created_at),
+            with: {
+              user: true,
+            },
+            limit: 1,
+          },
+        },
+      });
+    }),
 });
