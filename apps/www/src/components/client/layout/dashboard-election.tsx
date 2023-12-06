@@ -1,9 +1,14 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import Footer from "@/components/client/components/footer";
 import Header from "@/components/client/components/header";
 import CreateElection from "@/components/client/modals/create-election";
@@ -46,6 +51,7 @@ import {
   Tabs,
   TabsList,
   TabsPanel,
+  TabsTab,
   Text,
   Textarea,
   TextInput,
@@ -79,6 +85,15 @@ import {
   isElectionOngoing,
 } from "@eboto/constants";
 
+import Chat from "../components/chat";
+
+export interface ChatType {
+  type: "admin" | "voters";
+  id: string;
+  name: string;
+  title: string;
+}
+
 export default function DashboardElection({
   children,
   userId,
@@ -87,6 +102,8 @@ export default function DashboardElection({
 }>) {
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
+  const [chat, setChat] = useState<ChatType | null>(null);
 
   const pathname = usePathname();
 
@@ -385,7 +402,8 @@ export default function DashboardElection({
                               elections: elections
                                 .filter(
                                   ({ election }) =>
-                                    election.start_date > new Date(),
+                                    election.start_date.getTime() >
+                                    new Date().getTime(),
                                 )
                                 .sort(
                                   (a, b) =>
@@ -567,134 +585,167 @@ export default function DashboardElection({
         </AppShellNavbar>
 
         <AppShellAside>
-          <Tabs defaultValue="voters" h="96%">
-            <TabsList grow>
-              <Tabs.Tab value="admin">Chat Admin</Tabs.Tab>
-              <Tabs.Tab value="voters">Chat from Voters</Tabs.Tab>
-            </TabsList>
+          {chat ? (
+            <Chat chat={chat} onBack={() => setChat(null)} />
+          ) : (
+            <Tabs
+              value={searchParams.get("t") ?? "voters"}
+              onChange={(value) =>
+                router.push(
+                  value === "voters" ? pathname : `${pathname}?t=admin`,
+                )
+              }
+              variant="outline"
+              defaultValue="voters"
+              h="96%"
+            >
+              <TabsList grow>
+                <TabsTab value="admin">Chat Admin</TabsTab>
+                <TabsTab value="voters">Chat from Voters</TabsTab>
+              </TabsList>
 
-            <Box p="sm" h="100%">
-              <TabsPanel value="admin">
-                <Stack gap="xs">
-                  {!getAllAdminCommissionerRoomsQuery.data ? (
-                    [0, 1, 2, 3, 4, 5].map((i) => <Skeleton key={i} h={80} />)
-                  ) : getAllAdminCommissionerRoomsQuery.data.length === 0 ? (
-                    <Stack gap="xs" justify="center" align="center" p="xl">
-                      <IconMessage2X size="3rem" />
-                      <Balancer>
-                        <Text size="sm" ta="center">
-                          Did you find a bug? Feature request? Or just need
-                          help? Message us here.
-                        </Text>
-                      </Balancer>
-                      <CreateAdminMessagePopover
-                        election_slug={params.electionDashboardSlug as string}
-                      />
-                    </Stack>
-                  ) : (
-                    <>
-                      <Card padding="lg" radius="md" withBorder>
-                        <Stack align="center">
-                          <Balancer>
-                            <Text size="sm" ta="center">
-                              Did you find a bug? Feature request? Or just need
-                              help? Message us here.
-                            </Text>
-                          </Balancer>
-                          <CreateAdminMessagePopover
-                            election_slug={
-                              params.electionDashboardSlug as string
-                            }
-                          />
-                        </Stack>
-                      </Card>
-                      {getAllAdminCommissionerRoomsQuery.data.map((room) => (
-                        <UnstyledButton
-                          key={room.id}
-                          p="md"
-                          style={{
-                            border: "1px solid #80808050",
-                            borderRadius: 8,
-                          }}
-                          w="100%"
-                        >
-                          <Text lineClamp={1}>{room.name}</Text>
-                          {room.messages[0] && (
-                            <Flex align="center" gap="sm">
-                              <Image
-                                src={
-                                  room.messages[0].user.image ??
-                                  room.messages[0].user.image_file?.url ??
-                                  ""
-                                }
-                                alt={room.messages[0].user.name + " image."}
-                                width={20}
-                                height={20}
-                                style={{
-                                  borderRadius: "50%",
-                                }}
-                              />
-                              <Text size="sm" lineClamp={1}>
-                                {room.messages[0].message}
-                              </Text>
-                            </Flex>
-                          )}
-                        </UnstyledButton>
-                      ))}
-                    </>
-                  )}
-                </Stack>
-              </TabsPanel>
-              <TabsPanel value="voters" h="100%">
-                <ScrollAreaAutosize h="100%" type="scroll">
+              <Box p="sm" h="100%">
+                <TabsPanel value="admin">
                   <Stack gap="xs">
-                    {!getAllCommissionerVoterRoomsQuery.data ? (
+                    {!getAllAdminCommissionerRoomsQuery.data ? (
                       [0, 1, 2, 3, 4, 5].map((i) => <Skeleton key={i} h={80} />)
-                    ) : getAllCommissionerVoterRoomsQuery.data.length === 0 ? (
+                    ) : getAllAdminCommissionerRoomsQuery.data.length === 0 ? (
                       <Stack gap="xs" justify="center" align="center" p="xl">
                         <IconMessage2X size="3rem" />
-                        <Text size="sm">No message from voters yet</Text>
+                        <Balancer>
+                          <Text size="sm" ta="center">
+                            Did you find a bug? Feature request? Or just need
+                            help? Message us here.
+                          </Text>
+                        </Balancer>
+                        <CreateAdminMessagePopover
+                          election_slug={params.electionDashboardSlug as string}
+                        />
                       </Stack>
                     ) : (
-                      getAllCommissionerVoterRoomsQuery.data.map((room) => (
-                        <UnstyledButton
-                          key={room.id}
-                          p="md"
-                          style={{
-                            border: "1px solid #80808050",
-                            borderRadius: 8,
-                          }}
-                          w="100%"
-                        >
-                          <Text lineClamp={1}>{room.name}</Text>
-                          {room.messages[0] && (
-                            <Flex align="center" gap="sm">
-                              <Image
-                                src={
-                                  room.messages[0].user.image ??
-                                  room.messages[0].user.image_file?.url ??
-                                  ""
-                                }
-                                alt={room.messages[0].user.name + " image."}
-                                width={20}
-                                height={20}
-                                style={{
-                                  borderRadius: "50%",
-                                }}
-                              />
-                              <Text size="sm" lineClamp={1}>
-                                {room.messages[0].message}
+                      <>
+                        <Card padding="lg" radius="md" withBorder>
+                          <Stack align="center">
+                            <Balancer>
+                              <Text size="sm" ta="center">
+                                Did you find a bug? Feature request? Or just
+                                need help? Message us here.
                               </Text>
-                            </Flex>
-                          )}
-                        </UnstyledButton>
-                      ))
+                            </Balancer>
+                            <CreateAdminMessagePopover
+                              election_slug={
+                                params.electionDashboardSlug as string
+                              }
+                            />
+                          </Stack>
+                        </Card>
+                        {getAllAdminCommissionerRoomsQuery.data.map((room) => (
+                          <UnstyledButton
+                            key={room.id}
+                            p="md"
+                            style={{
+                              border: "1px solid #80808050",
+                              borderRadius: 8,
+                            }}
+                            w="100%"
+                            onClick={() =>
+                              setChat({
+                                type: "admin",
+                                id: room.id,
+                                name: room.messages[0]?.user.name ?? "",
+                                title: room.name,
+                              })
+                            }
+                          >
+                            <Text lineClamp={1}>{room.name}</Text>
+                            {room.messages[0] && (
+                              <Flex align="center" gap="sm">
+                                <Image
+                                  src={
+                                    room.messages[0].user.image ??
+                                    room.messages[0].user.image_file?.url ??
+                                    ""
+                                  }
+                                  alt={room.messages[0].user.name + " image."}
+                                  width={20}
+                                  height={20}
+                                  style={{
+                                    borderRadius: "50%",
+                                  }}
+                                />
+                                <Text size="sm" lineClamp={1}>
+                                  {room.messages[0].message}
+                                </Text>
+                              </Flex>
+                            )}
+                          </UnstyledButton>
+                        ))}
+                      </>
                     )}
                   </Stack>
-                </ScrollAreaAutosize>
-              </TabsPanel>
-            </Box>
-          </Tabs>
+                </TabsPanel>
+                <TabsPanel value="voters" h="100%">
+                  <ScrollAreaAutosize h="100%" type="scroll">
+                    <Stack gap="xs">
+                      {!getAllCommissionerVoterRoomsQuery.data ? (
+                        [0, 1, 2, 3, 4, 5].map((i) => (
+                          <Skeleton key={i} h={80} />
+                        ))
+                      ) : getAllCommissionerVoterRoomsQuery.data.length ===
+                        0 ? (
+                        <Stack gap="xs" justify="center" align="center" p="xl">
+                          <IconMessage2X size="3rem" />
+                          <Text size="sm">No message from voters yet</Text>
+                        </Stack>
+                      ) : (
+                        getAllCommissionerVoterRoomsQuery.data.map((room) => (
+                          <UnstyledButton
+                            key={room.id}
+                            p="md"
+                            style={{
+                              border: "1px solid #80808050",
+                              borderRadius: 8,
+                            }}
+                            w="100%"
+                            onClick={() =>
+                              setChat({
+                                type: "voters",
+                                id: room.id,
+                                name: room.messages[0]?.user.name ?? "",
+                                title: room.name,
+                              })
+                            }
+                          >
+                            <Text lineClamp={1}>{room.name}</Text>
+                            {room.messages[0] && (
+                              <Flex align="center" gap="sm">
+                                <Image
+                                  src={
+                                    room.messages[0].user.image ??
+                                    room.messages[0].user.image_file?.url ??
+                                    ""
+                                  }
+                                  alt={room.messages[0].user.name + " image."}
+                                  width={20}
+                                  height={20}
+                                  style={{
+                                    borderRadius: "50%",
+                                  }}
+                                />
+                                <Text size="sm" lineClamp={1}>
+                                  {room.messages[0].message}
+                                </Text>
+                              </Flex>
+                            )}
+                          </UnstyledButton>
+                        ))
+                      )}
+                    </Stack>
+                  </ScrollAreaAutosize>
+                </TabsPanel>
+              </Box>
+            </Tabs>
+          )}
         </AppShellAside>
 
         <AppShellFooter>
@@ -809,7 +860,7 @@ function CreateAdminMessagePopover({
             )}
             <Flex gap="xs" justify="end">
               <Button
-                variant="light"
+                variant="default"
                 size="sm"
                 mt="xs"
                 onClick={close}
