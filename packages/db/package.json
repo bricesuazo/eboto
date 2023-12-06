@@ -5,7 +5,7 @@
   "scripts": {
     "db:push": "pnpm with-env drizzle-kit push:mysql -- --verbose",
     "db:studio": "pnpm with-env drizzle-kit studio --verbose",
-    "db:generate": "pnpm drizzle-kit generate:mysql",
+    "db:generate": "pnpm with-env drizzle-kit generate:mysql",
     "clean": "rm -rf .turbo node_modules",
     "with-env": "dotenv -e ../../.env.local --"
   },
