@@ -388,7 +388,7 @@ export default function Header({ userId }: { userId?: string }) {
               {params?.electionDashboardSlug && (
                 <ActionIcon
                   variant={store.dashboardChatMenu ? "light" : "subtle"}
-                  hiddenFrom="lg"
+                  hiddenFrom="md"
                   size="lg"
                   onClick={() => store.toggleDashboardChatMenu()}
                 >

@@ -1372,4 +1372,70 @@ export const electionRouter = createTRPCRouter({
         },
       });
     }),
+  getMessages: protectedProcedure
+    .input(
+      z.object({
+        type: z.enum(["admin", "voters"]),
+        room_id: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      if (input.type === "voters") {
+        const commissionerVoterRoom =
+          await ctx.db.query.commissioners_voters_rooms.findFirst({
+            where: (rooms, { eq, and, isNull }) =>
+              and(eq(rooms.id, input.room_id), isNull(rooms.deleted_at)),
+            with: {
+              messages: {
+                orderBy: (messages, { asc }) => asc(messages.created_at),
+                with: {
+                  user: true,
+                },
+              },
+            },
+          });
+
+        if (!commissionerVoterRoom)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Room not found",
+          });
+
+        return commissionerVoterRoom.messages.map((message) => ({
+          ...message,
+          user: {
+            ...message.user,
+            isMe: message.user.id === ctx.session.user.id,
+          },
+        }));
+      } else {
+        const adminCommissionerRoom =
+          await ctx.db.query.admin_commissioners_rooms.findFirst({
+            where: (rooms, { eq, and, isNull }) =>
+              and(eq(rooms.id, input.room_id), isNull(rooms.deleted_at)),
+            with: {
+              messages: {
+                orderBy: (messages, { asc }) => asc(messages.created_at),
+                with: {
+                  user: true,
+                },
+              },
+            },
+          });
+
+        if (!adminCommissionerRoom)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Room not found",
+          });
+
+        return adminCommissionerRoom.messages.map((message) => ({
+          ...message,
+          user: {
+            ...message.user,
+            isMe: message.user.id === ctx.session.user.id,
+          },
+        }));
+      }
+    }),
 });

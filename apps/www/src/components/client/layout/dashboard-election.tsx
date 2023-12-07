@@ -38,6 +38,9 @@ import {
   Divider,
   Flex,
   Group,
+  HoverCard,
+  HoverCardDropdown,
+  HoverCardTarget,
   InputBase,
   InputPlaceholder,
   Loader,
@@ -76,6 +79,7 @@ import {
   IconUserPlus,
 } from "@tabler/icons-react";
 import { zodResolver } from "mantine-form-zod-resolver";
+import moment from "moment";
 import Balancer from "react-wrap-balancer";
 import { z } from "zod";
 
@@ -103,6 +107,7 @@ export default function DashboardElection({
   const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
+  const [tab, setTab] = useState(searchParams.get("t") ?? "voters");
   const [chat, setChat] = useState<ChatType | null>(null);
 
   const pathname = usePathname();
@@ -309,7 +314,7 @@ export default function DashboardElection({
         }}
         aside={{
           breakpoint: "md",
-          width: { lg: 300, xl: 400 },
+          width: { md: 300, xl: 400 },
           collapsed: {
             desktop: false,
             mobile: !store.dashboardChatMenu,
@@ -589,17 +594,18 @@ export default function DashboardElection({
             <Chat chat={chat} onBack={() => setChat(null)} />
           ) : (
             <Tabs
-              value={searchParams.get("t") ?? "voters"}
-              onChange={(value) =>
+              value={tab}
+              onChange={(value) => {
+                setTab(value ?? "");
                 router.push(
                   value === "voters" ? pathname : `${pathname}?t=admin`,
-                )
-              }
+                );
+              }}
               variant="outline"
               defaultValue="voters"
               h="96%"
             >
-              <TabsList grow>
+              <TabsList grow h={40}>
                 <TabsTab value="admin">Chat Admin</TabsTab>
                 <TabsTab value="voters">Chat from Voters</TabsTab>
               </TabsList>
@@ -657,27 +663,53 @@ export default function DashboardElection({
                               })
                             }
                           >
-                            <Text lineClamp={1}>{room.name}</Text>
-                            {room.messages[0] && (
-                              <Flex align="center" gap="sm">
-                                <Image
-                                  src={
-                                    room.messages[0].user.image ??
-                                    room.messages[0].user.image_file?.url ??
-                                    ""
-                                  }
-                                  alt={room.messages[0].user.name + " image."}
-                                  width={20}
-                                  height={20}
-                                  style={{
-                                    borderRadius: "50%",
-                                  }}
-                                />
-                                <Text size="sm" lineClamp={1}>
-                                  {room.messages[0].message}
-                                </Text>
-                              </Flex>
-                            )}
+                            <Flex justify="space-between">
+                              <Box>
+                                <Text lineClamp={1}>{room.name}</Text>
+                                {room.messages[0] && (
+                                  <Flex align="center" gap="sm">
+                                    <Image
+                                      src={
+                                        room.messages[0].user.image ??
+                                        room.messages[0].user.image_file?.url ??
+                                        ""
+                                      }
+                                      alt={
+                                        room.messages[0].user.name + " image."
+                                      }
+                                      width={20}
+                                      height={20}
+                                      style={{
+                                        borderRadius: "50%",
+                                      }}
+                                    />
+                                    <Text size="sm" lineClamp={1}>
+                                      {room.messages[0].message}
+                                    </Text>
+                                  </Flex>
+                                )}
+                              </Box>
+                              <HoverCard openDelay={500}>
+                                <HoverCardTarget>
+                                  <Text
+                                    size="xs"
+                                    c="gray"
+                                    aria-label={moment(room.created_at).format(
+                                      "MMMM D, YYYY hh:mm A",
+                                    )}
+                                  >
+                                    {moment(room.created_at).fromNow()}
+                                  </Text>
+                                </HoverCardTarget>
+                                <HoverCardDropdown>
+                                  <Text size="xs" c="gray">
+                                    {moment(room.created_at).format(
+                                      "MMMM D, YYYY hh:mm A",
+                                    )}
+                                  </Text>
+                                </HoverCardDropdown>
+                              </HoverCard>
+                            </Flex>
                           </UnstyledButton>
                         ))}
                       </>
@@ -716,27 +748,53 @@ export default function DashboardElection({
                               })
                             }
                           >
-                            <Text lineClamp={1}>{room.name}</Text>
-                            {room.messages[0] && (
-                              <Flex align="center" gap="sm">
-                                <Image
-                                  src={
-                                    room.messages[0].user.image ??
-                                    room.messages[0].user.image_file?.url ??
-                                    ""
-                                  }
-                                  alt={room.messages[0].user.name + " image."}
-                                  width={20}
-                                  height={20}
-                                  style={{
-                                    borderRadius: "50%",
-                                  }}
-                                />
-                                <Text size="sm" lineClamp={1}>
-                                  {room.messages[0].message}
-                                </Text>
-                              </Flex>
-                            )}
+                            <Flex justify="space-between">
+                              <Box>
+                                <Text lineClamp={1}>{room.name}</Text>
+                                {room.messages[0] && (
+                                  <Flex align="center" gap="sm">
+                                    <Image
+                                      src={
+                                        room.messages[0].user.image ??
+                                        room.messages[0].user.image_file?.url ??
+                                        ""
+                                      }
+                                      alt={
+                                        room.messages[0].user.name + " image."
+                                      }
+                                      width={20}
+                                      height={20}
+                                      style={{
+                                        borderRadius: "50%",
+                                      }}
+                                    />
+                                    <Text size="sm" lineClamp={1}>
+                                      {room.messages[0].message}
+                                    </Text>
+                                  </Flex>
+                                )}
+                              </Box>
+                              <HoverCard openDelay={500}>
+                                <HoverCardTarget>
+                                  <Text
+                                    size="xs"
+                                    c="gray"
+                                    aria-label={moment(room.created_at).format(
+                                      "MMMM D, YYYY hh:mm A",
+                                    )}
+                                  >
+                                    {moment(room.created_at).fromNow()}
+                                  </Text>
+                                </HoverCardTarget>
+                                <HoverCardDropdown>
+                                  <Text size="xs" c="gray">
+                                    {moment(room.created_at).format(
+                                      "MMMM D, YYYY hh:mm A",
+                                    )}
+                                  </Text>
+                                </HoverCardDropdown>
+                              </HoverCard>
+                            </Flex>
                           </UnstyledButton>
                         ))
                       )}

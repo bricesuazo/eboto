@@ -1,5 +1,24 @@
-import { ActionIcon, Box, Flex, Text } from "@mantine/core";
-import { IconChevronLeft } from "@tabler/icons-react";
+import { api } from "@/trpc/client";
+import {
+  ActionIcon,
+  Alert,
+  Box,
+  Center,
+  Flex,
+  HoverCard,
+  HoverCardDropdown,
+  HoverCardTarget,
+  Loader,
+  Stack,
+  Text,
+  Textarea,
+} from "@mantine/core";
+import {
+  IconAlertTriangle,
+  IconChevronLeft,
+  IconSend,
+} from "@tabler/icons-react";
+import moment from "moment";
 
 import type { ChatType } from "../layout/dashboard-election";
 
@@ -10,8 +29,17 @@ export default function Chat({
   chat: ChatType;
   onBack: () => void;
 }) {
+  const getMessagesQuery = api.election.getMessages.useQuery(
+    {
+      type: chat.type,
+      room_id: chat.id,
+    },
+    {
+      refetchOnMount: true,
+    },
+  );
   return (
-    <Box>
+    <Stack h="100%" gap={0}>
       <Flex justify="space-between" gap="md" p="md" align="center">
         <ActionIcon
           variant="default"
@@ -36,6 +64,77 @@ export default function Chat({
 
         <Box w={34} h={34} />
       </Flex>
-    </Box>
+
+      <Stack gap="xs" justify="flex-end" style={{ flex: 1 }} px="md">
+        {getMessagesQuery.isError ? (
+          <Center h="100%">
+            <Alert
+              variant="light"
+              color="red"
+              title="Error"
+              radius="md"
+              icon={<IconAlertTriangle />}
+            >
+              {getMessagesQuery.error.message}
+            </Alert>
+          </Center>
+        ) : getMessagesQuery.isLoading || !getMessagesQuery.data ? (
+          <Center h="100%">
+            <Loader />
+          </Center>
+        ) : (
+          <Box>
+            {getMessagesQuery.data.map((message) => (
+              <Box
+                key={message.id}
+                ml={message.user.isMe ? "auto" : undefined}
+                mr={!message.user.isMe ? "auto" : undefined}
+                maw={200}
+              >
+                <Box
+                  p="xs"
+                  style={{
+                    border: "1px solid #cccccc25",
+                    borderRadius: 8,
+                  }}
+                >
+                  {message.message}
+                </Box>
+                <HoverCard openDelay={500}>
+                  <HoverCardTarget>
+                    <Text
+                      size="xs"
+                      c="gray"
+                      ta={message.user.isMe ? "right" : undefined}
+                    >
+                      {moment(message.created_at).format("hh:mm A")}
+                    </Text>
+                  </HoverCardTarget>
+                  <HoverCardDropdown>
+                    <Text size="xs" c="gray">
+                      {moment(message.created_at).format(
+                        "MMMM D, YYYY hh:mm A",
+                      )}
+                    </Text>
+                  </HoverCardDropdown>
+                </HoverCard>
+              </Box>
+            ))}
+          </Box>
+        )}
+      </Stack>
+
+      <Flex align="end" p="md" gap="xs">
+        <Textarea
+          autosize
+          placeholder="Type your message here"
+          style={{ flex: 1 }}
+          maxRows={4}
+        />
+        <ActionIcon variant="default" aria-label="Send" size={36}>
+          <IconSend stroke={1} />
+        </ActionIcon>
+      </Flex>
+    </Stack>
   );
 }
