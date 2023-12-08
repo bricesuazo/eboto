@@ -1438,4 +1438,51 @@ export const electionRouter = createTRPCRouter({
         }));
       }
     }),
+  sendMessage: protectedProcedure
+    .input(
+      z.object({
+        type: z.enum(["admin", "voters"]),
+        room_id: z.string().min(1),
+        message: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (input.type === "voters") {
+        const commissionerVoterRoom =
+          await ctx.db.query.commissioners_voters_rooms.findFirst({
+            where: (rooms, { eq, and, isNull }) =>
+              and(eq(rooms.id, input.room_id), isNull(rooms.deleted_at)),
+          });
+
+        if (!commissionerVoterRoom)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Room not found",
+          });
+
+        await ctx.db.insert(commissioners_voters_messages).values({
+          message: input.message,
+          room_id: commissionerVoterRoom.id,
+          user_id: ctx.session.user.id,
+        });
+      } else {
+        const adminCommissionerRoom =
+          await ctx.db.query.admin_commissioners_rooms.findFirst({
+            where: (rooms, { eq, and, isNull }) =>
+              and(eq(rooms.id, input.room_id), isNull(rooms.deleted_at)),
+          });
+
+        if (!adminCommissionerRoom)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Room not found",
+          });
+
+        await ctx.db.insert(admin_commissioners_messages).values({
+          message: input.message,
+          room_id: adminCommissionerRoom.id,
+          user_id: ctx.session.user.id,
+        });
+      }
+    }),
 });

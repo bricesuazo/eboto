@@ -589,7 +589,11 @@ export default function DashboardElection({
           {/* </ScrollArea> */}
         </AppShellNavbar>
 
-        <AppShellAside>
+        <AppShellAside
+        // style={{
+        //   overflow: "auto",
+        // }}
+        >
           {chat ? (
             <Chat chat={chat} onBack={() => setChat(null)} />
           ) : (

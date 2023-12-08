@@ -13,12 +13,15 @@ import {
   Text,
   Textarea,
 } from "@mantine/core";
+import { useForm } from "@mantine/form";
 import {
   IconAlertTriangle,
   IconChevronLeft,
   IconSend,
 } from "@tabler/icons-react";
+import { zodResolver } from "mantine-form-zod-resolver";
 import moment from "moment";
+import { z } from "zod";
 
 import type { ChatType } from "../layout/dashboard-election";
 
@@ -29,6 +32,19 @@ export default function Chat({
   chat: ChatType;
   onBack: () => void;
 }) {
+  const form = useForm({
+    validateInputOnBlur: true,
+    initialValues: {
+      message: "",
+    },
+
+    validate: zodResolver(
+      z.object({
+        message: z.string().min(3, "Message must be at least 3 characters"),
+      }),
+    ),
+  });
+
   const getMessagesQuery = api.election.getMessages.useQuery(
     {
       type: chat.type,
@@ -38,6 +54,14 @@ export default function Chat({
       refetchOnMount: true,
     },
   );
+
+  const sendMessageMutation = api.election.sendMessage.useMutation({
+    onSuccess: async () => {
+      await getMessagesQuery.refetch();
+      form.reset();
+    },
+  });
+
   return (
     <Stack h="100%" gap={0}>
       <Flex justify="space-between" gap="md" p="md" align="center">
@@ -89,7 +113,7 @@ export default function Chat({
                 key={message.id}
                 ml={message.user.isMe ? "auto" : undefined}
                 mr={!message.user.isMe ? "auto" : undefined}
-                maw={200}
+                maw={{ base: "75%", xs: "50%", sm: "40%", md: 200, xl: 300 }}
               >
                 <Box
                   p="xs"
@@ -98,7 +122,13 @@ export default function Chat({
                     borderRadius: 8,
                   }}
                 >
-                  {message.message}
+                  <Text
+                    style={{
+                      wordWrap: "break-word",
+                    }}
+                  >
+                    {message.message}
+                  </Text>
                 </Box>
                 <HoverCard openDelay={500}>
                   <HoverCardTarget>
@@ -124,17 +154,36 @@ export default function Chat({
         )}
       </Stack>
 
-      <Flex align="end" p="md" gap="xs">
-        <Textarea
-          autosize
-          placeholder="Type your message here"
-          style={{ flex: 1 }}
-          maxRows={4}
-        />
-        <ActionIcon variant="default" aria-label="Send" size={36}>
-          <IconSend stroke={1} />
-        </ActionIcon>
-      </Flex>
+      <form
+        onSubmit={form.onSubmit((values) =>
+          sendMessageMutation.mutate({
+            type: chat.type,
+            room_id: chat.id,
+            message: values.message,
+          }),
+        )}
+      >
+        <Flex align="end" p="md" gap="xs">
+          <Textarea
+            autosize
+            placeholder="Type your message here"
+            style={{ flex: 1 }}
+            maxRows={4}
+            {...form.getInputProps("message")}
+            error={!!form.errors.message}
+            disabled={sendMessageMutation.isPending}
+          />
+          <ActionIcon
+            type="submit"
+            variant="default"
+            aria-label="Send"
+            size={36}
+            loading={sendMessageMutation.isPending}
+          >
+            <IconSend stroke={1} />
+          </ActionIcon>
+        </Flex>
+      </form>
     </Stack>
   );
 }
