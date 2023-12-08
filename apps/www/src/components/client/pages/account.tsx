@@ -17,7 +17,7 @@ import {
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { IconLetterCase, IconLock, IconX } from "@tabler/icons-react";
+import { IconAt, IconLetterCase, IconLock, IconX } from "@tabler/icons-react";
 import type { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 
@@ -218,6 +218,14 @@ export default function AccountPageClient({ session }: { session: Session }) {
         })}
       >
         <Stack>
+          <TextInput
+            placeholder="Email"
+            label="Email"
+            value={sessionQuery.data.user.email ?? undefined}
+            leftSection={<IconAt size="1rem" />}
+            readOnly
+            disabled
+          />
           <TextInput
             placeholder="Enter your name"
             withAsterisk

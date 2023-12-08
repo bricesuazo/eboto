@@ -1308,7 +1308,7 @@ export const electionRouter = createTRPCRouter({
           and(eq(rooms.election_id, election.id), isNull(rooms.deleted_at)),
         with: {
           messages: {
-            orderBy: (messages, { asc }) => asc(messages.created_at),
+            orderBy: (messages, { desc }) => desc(messages.created_at),
             with: {
               user: true,
             },
@@ -1362,7 +1362,7 @@ export const electionRouter = createTRPCRouter({
           and(eq(rooms.election_id, election.id), isNull(rooms.deleted_at)),
         with: {
           messages: {
-            orderBy: (messages, { asc }) => asc(messages.created_at),
+            orderBy: (messages, { desc }) => desc(messages.created_at),
             with: {
               user: true,
             },

@@ -669,7 +669,14 @@ export default function DashboardElection({
                           >
                             <Flex justify="space-between">
                               <Box>
-                                <Text lineClamp={1}>{room.name}</Text>
+                                <Text
+                                  lineClamp={1}
+                                  style={{
+                                    wordBreak: "break-all",
+                                  }}
+                                >
+                                  {room.name}
+                                </Text>
                                 {room.messages[0] && (
                                   <Flex align="center" gap="sm">
                                     <Image
@@ -687,7 +694,13 @@ export default function DashboardElection({
                                         borderRadius: "50%",
                                       }}
                                     />
-                                    <Text size="sm" lineClamp={1}>
+                                    <Text
+                                      size="sm"
+                                      lineClamp={1}
+                                      style={{
+                                        wordBreak: "break-all",
+                                      }}
+                                    >
                                       {room.messages[0].message}
                                     </Text>
                                   </Flex>
@@ -701,6 +714,7 @@ export default function DashboardElection({
                                     aria-label={moment(room.created_at).format(
                                       "MMMM D, YYYY hh:mm A",
                                     )}
+                                    miw="fit-content"
                                   >
                                     {moment(room.created_at).fromNow()}
                                   </Text>
@@ -754,7 +768,14 @@ export default function DashboardElection({
                           >
                             <Flex justify="space-between">
                               <Box>
-                                <Text lineClamp={1}>{room.name}</Text>
+                                <Text
+                                  lineClamp={1}
+                                  style={{
+                                    wordBreak: "break-all",
+                                  }}
+                                >
+                                  {room.name}
+                                </Text>
                                 {room.messages[0] && (
                                   <Flex align="center" gap="sm">
                                     <Image
@@ -772,7 +793,13 @@ export default function DashboardElection({
                                         borderRadius: "50%",
                                       }}
                                     />
-                                    <Text size="sm" lineClamp={1}>
+                                    <Text
+                                      size="sm"
+                                      lineClamp={1}
+                                      style={{
+                                        wordBreak: "break-all",
+                                      }}
+                                    >
                                       {room.messages[0].message}
                                     </Text>
                                   </Flex>
@@ -786,6 +813,7 @@ export default function DashboardElection({
                                     aria-label={moment(room.created_at).format(
                                       "MMMM D, YYYY hh:mm A",
                                     )}
+                                    miw="fit-content"
                                   >
                                     {moment(room.created_at).fromNow()}
                                   </Text>
