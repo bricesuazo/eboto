@@ -1221,11 +1221,10 @@ export const electionRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const election = await ctx.db.query.elections.findFirst({
-        where: (elections, { eq, and, isNull, ne }) =>
+        where: (elections, { eq, and, isNull }) =>
           and(
             eq(elections.slug, input.election_slug),
             isNull(elections.deleted_at),
-            ne(elections.publicity, "PRIVATE"),
           ),
         with: {
           commissioners: {
