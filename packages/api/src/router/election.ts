@@ -1211,6 +1211,44 @@ export const electionRouter = createTRPCRouter({
         });
       });
     }),
+  getAllMyMessages: protectedProcedure
+    .input(
+      z.object({
+        election_id: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const election = await ctx.db.query.elections.findFirst({
+        where: (elections, { and, isNull, ne }) =>
+          and(
+            isNull(elections.deleted_at),
+            ne(elections.publicity, "PRIVATE"),
+            eq(elections.id, input.election_id),
+          ),
+      });
+
+      if (!election)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election not found",
+        });
+
+      const rooms = await ctx.db.query.commissioners_voters_rooms.findMany({
+        where: (rooms, { eq, and, isNull }) =>
+          and(eq(rooms.election_id, election.id), isNull(rooms.deleted_at)),
+        with: {
+          messages: {
+            orderBy: (messages, { desc }) => desc(messages.created_at),
+            with: {
+              user: true,
+            },
+            limit: 1,
+          },
+        },
+      });
+
+      return rooms;
+    }),
   messageAdmin: protectedProcedure
     .input(
       z.object({

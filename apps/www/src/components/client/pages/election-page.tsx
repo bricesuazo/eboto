@@ -41,6 +41,7 @@ import Balancer from "react-wrap-balancer";
 import type { RouterOutputs } from "@eboto/api";
 import { isElectionEnded, parseHourTo12HourFormat } from "@eboto/constants";
 
+import MyMessagesElection from "../components/my-messages-election";
 import MessageCommissioner from "../modals/message-commissioner";
 
 export default function ElectionPage({
@@ -105,6 +106,7 @@ export default function ElectionPage({
     <>
       {/* <AdModal /> */}
       <ScrollToTopButton />
+      {isVoterCanMessage && <MyMessagesElection election_id={election.id} />}
       <Modal
         opened={opened || addVoterFieldToVoterMutation.isPending}
         onClose={close}
