@@ -384,7 +384,7 @@ export default function DashboardSettings({
             type="range"
             allowSingleDateInRange
             label="Election start and end date"
-            placeholder="Enter election start and end date"
+            // placeholder="Enter election start and end date"
             description="You can't change the election date once the election has started and ended."
             leftSection={<IconCalendar size="1rem" />}
             minDate={new Date(new Date().setDate(new Date().getDate() + 1))}

@@ -18,8 +18,8 @@ importers:
         specifier: ^1.11.1
         version: 1.11.1(@types/node@20.10.4)(typescript@5.3.3)
       prettier:
-        specifier: ^3.1.0
-        version: registry.npmjs.org/prettier@3.1.0
+        specifier: ^3.1.1
+        version: 3.1.1
       turbo:
         specifier: ^1.11.1
         version: 1.11.1
@@ -52,7 +52,7 @@ importers:
         version: link:../../tooling/eslint
       '@emotion/react':
         specifier: ^11.11.1
-        version: registry.npmjs.org/@emotion/react@11.11.1(@types/react@18.2.42)(react@18.2.0)
+        version: registry.npmjs.org/@emotion/react@11.11.1(@types/react@18.2.43)(react@18.2.0)
       '@mantine/carousel':
         specifier: ^7.3.1
         version: 7.3.1(@mantine/core@7.3.1)(@mantine/hooks@7.3.1)(embla-carousel-react@8.0.0-rc15)(react-dom@18.2.0)(react@18.2.0)
@@ -61,7 +61,7 @@ importers:
         version: 7.3.1(@mantine/core@7.3.1)(@mantine/hooks@7.3.1)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/core':
         specifier: ^7.3.1
-        version: 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.42)(react-dom@18.2.0)(react@18.2.0)
+        version: 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.43)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/dates':
         specifier: ^7.3.1
         version: 7.3.1(@mantine/core@7.3.1)(@mantine/hooks@7.3.1)(dayjs@1.11.10)(react-dom@18.2.0)(react@18.2.0)
@@ -88,7 +88,7 @@ importers:
         version: 7.3.1(@mantine/core@7.3.1)(@mantine/hooks@7.3.1)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/tiptap':
         specifier: ^7.3.1
-        version: 7.3.1(@mantine/core@7.3.1)(@mantine/hooks@7.3.1)(@tabler/icons-react@2.42.0)(@tiptap/extension-link@2.1.13)(react-dom@18.2.0)(react@18.2.0)
+        version: 7.3.1(@mantine/core@7.3.1)(@mantine/hooks@7.3.1)(@tabler/icons-react@2.44.0)(@tiptap/extension-link@2.1.13)(react-dom@18.2.0)(react@18.2.0)
       '@react-pdf/renderer':
         specifier: ^3.1.14
         version: registry.npmjs.org/@react-pdf/renderer@3.1.14(encoding@0.1.13)(react@18.2.0)
@@ -96,20 +96,20 @@ importers:
         specifier: ^0.7.1
         version: registry.npmjs.org/@t3-oss/env-nextjs@0.7.1(typescript@5.3.3)(zod@3.22.4)
       '@tabler/icons-react':
-        specifier: ^2.42.0
-        version: registry.npmjs.org/@tabler/icons-react@2.42.0(react@18.2.0)
+        specifier: ^2.44.0
+        version: 2.44.0(react@18.2.0)
       '@tanstack/query-core':
-        specifier: ^5.12.1
-        version: 5.12.1
+        specifier: ^5.13.4
+        version: 5.13.4
       '@tanstack/react-query':
-        specifier: ^5.12.2
-        version: 5.12.2(react@18.2.0)
+        specifier: ^5.13.4
+        version: 5.13.4(react@18.2.0)
       '@tanstack/react-query-devtools':
-        specifier: ^5.12.2
-        version: 5.12.2(@tanstack/react-query@5.12.2)(react@18.2.0)
+        specifier: ^5.13.5
+        version: 5.13.5(@tanstack/react-query@5.13.4)(react@18.2.0)
       '@tanstack/react-query-next-experimental':
-        specifier: ^5.12.2
-        version: 5.12.2(@tanstack/react-query@5.12.2)(next@14.0.4)(react@18.2.0)
+        specifier: ^5.13.4
+        version: 5.13.4(@tanstack/react-query@5.13.4)(next@14.0.4)(react@18.2.0)
       '@tiptap/extension-link':
         specifier: ^2.1.13
         version: 2.1.13(@tiptap/core@2.1.13)(@tiptap/pm@2.1.13)
@@ -124,10 +124,10 @@ importers:
         version: registry.npmjs.org/@trpc/client@11.0.0-alpha-next-2023-11-21-11-13-12.106(@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106)
       '@trpc/next':
         specifier: next
-        version: registry.npmjs.org/@trpc/next@11.0.0-alpha-next-2023-11-21-11-13-12.106(@tanstack/react-query@5.12.2)(@trpc/client@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/react-query@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106)(next@14.0.4)(react-dom@18.2.0)(react@18.2.0)
+        version: registry.npmjs.org/@trpc/next@11.0.0-alpha-next-2023-11-21-11-13-12.106(@tanstack/react-query@5.13.4)(@trpc/client@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/react-query@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106)(next@14.0.4)(react-dom@18.2.0)(react@18.2.0)
       '@trpc/react-query':
         specifier: next
-        version: registry.npmjs.org/@trpc/react-query@11.0.0-alpha-next-2023-11-21-11-13-12.106(@tanstack/react-query@5.12.2)(@trpc/client@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106)(react-dom@18.2.0)(react@18.2.0)
+        version: registry.npmjs.org/@trpc/react-query@11.0.0-alpha-next-2023-11-21-11-13-12.106(@tanstack/react-query@5.13.4)(@trpc/client@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106)(react-dom@18.2.0)(react@18.2.0)
       '@trpc/server':
         specifier: next
         version: registry.npmjs.org/@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106
@@ -154,7 +154,7 @@ importers:
         version: 1.0.0(@mantine/form@7.3.1)(zod@3.22.4)
       mantine-react-table:
         specifier: 2.0.0-alpha.5
-        version: registry.npmjs.org/mantine-react-table@2.0.0-alpha.5(@mantine/core@7.3.1)(@mantine/dates@7.3.1)(@mantine/hooks@7.3.1)(@tabler/icons-react@2.42.0)(react-dom@18.2.0)(react@18.2.0)
+        version: registry.npmjs.org/mantine-react-table@2.0.0-alpha.5(@mantine/core@7.3.1)(@mantine/dates@7.3.1)(@mantine/hooks@7.3.1)(@tabler/icons-react@2.44.0)(react-dom@18.2.0)(react@18.2.0)
       moment:
         specifier: ^2.29.4
         version: registry.npmjs.org/moment@2.29.4
@@ -205,7 +205,7 @@ importers:
         version: registry.npmjs.org/zod@3.22.4
       zustand:
         specifier: ^4.4.7
-        version: 4.4.7(@types/react@18.2.42)(react@18.2.0)
+        version: 4.4.7(@types/react@18.2.43)(react@18.2.0)
     devDependencies:
       '@eboto/prettier-config':
         specifier: workspace:*
@@ -220,8 +220,8 @@ importers:
         specifier: ^20.10.4
         version: 20.10.4
       '@types/react':
-        specifier: ^18.2.42
-        version: 18.2.42
+        specifier: ^18.2.43
+        version: 18.2.43
       '@types/react-dom':
         specifier: ^18.2.17
         version: registry.npmjs.org/@types/react-dom@18.2.17
@@ -290,8 +290,8 @@ importers:
         specifier: ^8.55.0
         version: 8.55.0
       prettier:
-        specifier: ^3.1.0
-        version: registry.npmjs.org/prettier@3.1.0
+        specifier: ^3.1.1
+        version: 3.1.1
       typescript:
         specifier: ^5.3.3
         version: 5.3.3
@@ -299,11 +299,11 @@ importers:
   packages/auth:
     dependencies:
       '@auth/core':
-        specifier: ^0.18.4
-        version: 0.18.4
+        specifier: ^0.18.5
+        version: 0.18.5
       '@auth/drizzle-adapter':
-        specifier: ^0.3.9
-        version: 0.3.9
+        specifier: ^0.3.10
+        version: 0.3.10
       '@eboto/db':
         specifier: workspace:*
         version: link:../db
@@ -336,8 +336,8 @@ importers:
         specifier: ^8.55.0
         version: 8.55.0
       prettier:
-        specifier: ^3.1.0
-        version: registry.npmjs.org/prettier@3.1.0
+        specifier: ^3.1.1
+        version: 3.1.1
       typescript:
         specifier: ^5.3.3
         version: 5.3.3
@@ -345,8 +345,8 @@ importers:
   packages/constants:
     dependencies:
       '@tabler/icons-react':
-        specifier: ^2.42.0
-        version: registry.npmjs.org/@tabler/icons-react@2.42.0(react@18.2.0)
+        specifier: ^2.44.0
+        version: 2.44.0(react@18.2.0)
       zod:
         specifier: ^3.22.4
         version: registry.npmjs.org/zod@3.22.4
@@ -358,8 +358,8 @@ importers:
   packages/db:
     dependencies:
       '@auth/core':
-        specifier: ^0.18.4
-        version: 0.18.4
+        specifier: ^0.18.5
+        version: 0.18.5
       '@planetscale/database':
         specifier: ^1.11.0
         version: registry.npmjs.org/@planetscale/database@1.11.0
@@ -438,26 +438,26 @@ importers:
   tooling/eslint:
     dependencies:
       '@next/eslint-plugin-next':
-        specifier: ^14.0.3
-        version: 14.0.3
+        specifier: ^14.0.4
+        version: 14.0.4
       '@types/eslint':
         specifier: ^8.44.8
         version: 8.44.8
       '@typescript-eslint/eslint-plugin':
-        specifier: ^6.13.1
-        version: 6.13.1(@typescript-eslint/parser@6.13.1)(eslint@8.55.0)(typescript@5.3.3)
+        specifier: ^6.13.2
+        version: 6.13.2(@typescript-eslint/parser@6.13.2)(eslint@8.55.0)(typescript@5.3.3)
       '@typescript-eslint/parser':
-        specifier: ^6.13.1
-        version: 6.13.1(eslint@8.55.0)(typescript@5.3.3)
+        specifier: ^6.13.2
+        version: 6.13.2(eslint@8.55.0)(typescript@5.3.3)
       eslint-config-prettier:
         specifier: ^9.1.0
         version: 9.1.0(eslint@8.55.0)
       eslint-config-turbo:
-        specifier: ^1.10.16
-        version: 1.10.16(eslint@8.55.0)
+        specifier: ^1.11.1
+        version: 1.11.1(eslint@8.55.0)
       eslint-plugin-import:
         specifier: ^2.29.0
-        version: 2.29.0(@typescript-eslint/parser@6.13.1)(eslint@8.55.0)
+        version: 2.29.0(@typescript-eslint/parser@6.13.2)(eslint@8.55.0)
       eslint-plugin-jsx-a11y:
         specifier: ^6.8.0
         version: 6.8.0(eslint@8.55.0)
@@ -485,10 +485,10 @@ importers:
     dependencies:
       '@ianvs/prettier-plugin-sort-imports':
         specifier: ^4.1.1
-        version: 4.1.1(prettier@3.1.0)
+        version: 4.1.1(prettier@3.1.1)
       prettier:
-        specifier: ^3.1.0
-        version: 3.1.0
+        specifier: ^3.1.1
+        version: 3.1.1
     devDependencies:
       '@eboto/tsconfig':
         specifier: workspace:*
@@ -529,8 +529,8 @@ packages:
       preact-render-to-string: 5.2.3(preact@10.11.3)
     dev: false
 
-  /@auth/core@0.18.4:
-    resolution: {integrity: sha512-GsNhsP1xE/3FoNS3dVkPjqRljLNJ4iyL2OLv3klQGNvw3bMpROFcK4lqhx7+pPHiamnVaYt2vg1xbB+lsNaevg==, tarball: https://registry.npmjs.org/@auth/core/-/core-0.18.4.tgz}
+  /@auth/core@0.18.5:
+    resolution: {integrity: sha512-Ql8YobXp57mbXqHNaaroIAgBopKaxWI+3Tlu1rGcXW5KPzXdfTqijZ4HOuZvWKqmhbMWQ9xS9r8uG4fMonZYwg==, tarball: https://registry.npmjs.org/@auth/core/-/core-0.18.5.tgz}
     peerDependencies:
       nodemailer: ^6.8.0
     peerDependenciesMeta:
@@ -538,6 +538,7 @@ packages:
         optional: true
     dependencies:
       '@panva/hkdf': 1.1.1
+      '@types/cookie': 0.6.0
       cookie: 0.6.0
       jose: 5.1.0
       oauth4webapi: 2.4.0
@@ -545,10 +546,10 @@ packages:
       preact-render-to-string: 5.2.3(preact@10.11.3)
     dev: false
 
-  /@auth/drizzle-adapter@0.3.9:
-    resolution: {integrity: sha512-xDHYofXyxIvqkLqsrxnnRWpNLJVpvPw+2qlFuZxkMYs83+geYHQqMg0GBrB/pAoNx1+1hG1DjGQvCeSr52FPKg==, tarball: https://registry.npmjs.org/@auth/drizzle-adapter/-/drizzle-adapter-0.3.9.tgz}
+  /@auth/drizzle-adapter@0.3.10:
+    resolution: {integrity: sha512-Zs41T+GZBDotkuWdWx8of9jChF9GXJ+EGfm+4tee8oYkOb6pswLh0Pu8a8lK6Ka5HgPVmqO53ZsJjP4e47mHHw==, tarball: https://registry.npmjs.org/@auth/drizzle-adapter/-/drizzle-adapter-0.3.10.tgz}
     dependencies:
-      '@auth/core': 0.18.4
+      '@auth/core': 0.18.5
     transitivePeerDependencies:
       - nodemailer
     dev: false
@@ -2161,7 +2162,7 @@ packages:
       ajv: 6.12.6
       debug: 4.3.4
       espree: 9.6.1
-      globals: 13.23.0
+      globals: 13.24.0
       ignore: 5.3.0
       import-fresh: 3.3.0
       js-yaml: 4.1.0
@@ -2237,7 +2238,7 @@ packages:
   /@humanwhocodes/object-schema@2.0.1:
     resolution: {integrity: sha512-dvuCeX5fC9dXgJn9t+X5atfmgQAzUOWqS1254Gh0m6i8wKd10ebXkfNKiRK+1GWi/yTvvLDHpoxLr0xxxeslWw==, tarball: https://registry.npmjs.org/@humanwhocodes/object-schema/-/object-schema-2.0.1.tgz}
 
-  /@ianvs/prettier-plugin-sort-imports@4.1.1(prettier@3.1.0):
+  /@ianvs/prettier-plugin-sort-imports@4.1.1(prettier@3.1.1):
     resolution: {integrity: sha512-kJhXq63ngpTQ2dxgf5GasbPJWsJA3LgoOdd7WGhpUSzLgLgI4IsIzYkbJf9kmpOHe7Vdm/o3PcRA3jmizXUuAQ==, tarball: https://registry.npmjs.org/@ianvs/prettier-plugin-sort-imports/-/prettier-plugin-sort-imports-4.1.1.tgz}
     peerDependencies:
       '@vue/compiler-sfc': '>=3.0.0'
@@ -2251,7 +2252,7 @@ packages:
       '@babel/parser': 7.23.5
       '@babel/traverse': 7.23.5
       '@babel/types': 7.23.5
-      prettier: 3.1.0
+      prettier: 3.1.1
       semver: 7.5.4
     transitivePeerDependencies:
       - supports-color
@@ -2501,7 +2502,7 @@ packages:
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.42)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/core': 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.43)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/hooks': 7.3.1(react@18.2.0)
       embla-carousel-react: 8.0.0-rc15(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
@@ -2516,7 +2517,7 @@ packages:
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.42)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/core': 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.43)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/hooks': 7.3.1(react@18.2.0)
       clsx: 2.0.0
       highlight.js: 11.9.0
@@ -2524,7 +2525,7 @@ packages:
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
     dev: false
 
-  /@mantine/core@7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.42)(react-dom@18.2.0)(react@18.2.0):
+  /@mantine/core@7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.43)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-WIesapVzK1ERFcALuosaEPuODN/k/FGkryf2d12R7vsDmxmWqX6yNzPUoJDy6j20ueAkyyg4beJZ4PuZfCRW9Q==, tarball: https://registry.npmjs.org/@mantine/core/-/core-7.3.1.tgz}
     peerDependencies:
       '@mantine/hooks': 7.3.1
@@ -2537,8 +2538,8 @@ packages:
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
       react-number-format: 5.3.1(react-dom@18.2.0)(react@18.2.0)
-      react-remove-scroll: 2.5.7(@types/react@18.2.42)(react@18.2.0)
-      react-textarea-autosize: 8.5.3(@types/react@18.2.42)(react@18.2.0)
+      react-remove-scroll: 2.5.7(@types/react@18.2.43)(react@18.2.0)
+      react-textarea-autosize: 8.5.3(@types/react@18.2.43)(react@18.2.0)
       type-fest: 3.13.1
     transitivePeerDependencies:
       - '@types/react'
@@ -2553,7 +2554,7 @@ packages:
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.42)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/core': 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.43)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/hooks': 7.3.1(react@18.2.0)
       clsx: 2.0.0
       dayjs: registry.npmjs.org/dayjs@1.11.10
@@ -2569,7 +2570,7 @@ packages:
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.42)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/core': 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.43)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/hooks': 7.3.1(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
@@ -2602,7 +2603,7 @@ packages:
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.42)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/core': 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.43)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/hooks': 7.3.1(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
@@ -2616,7 +2617,7 @@ packages:
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.42)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/core': 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.43)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/hooks': 7.3.1(react@18.2.0)
       '@mantine/store': 7.3.1(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
@@ -2632,7 +2633,7 @@ packages:
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.42)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/core': 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.43)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/hooks': 7.3.1(react@18.2.0)
       '@mantine/store': 7.3.1(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
@@ -2647,7 +2648,7 @@ packages:
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.42)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/core': 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.43)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/hooks': 7.3.1(react@18.2.0)
       '@mantine/store': 7.3.1(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
@@ -2662,7 +2663,7 @@ packages:
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  /@mantine/tiptap@7.3.1(@mantine/core@7.3.1)(@mantine/hooks@7.3.1)(@tabler/icons-react@2.42.0)(@tiptap/extension-link@2.1.13)(react-dom@18.2.0)(react@18.2.0):
+  /@mantine/tiptap@7.3.1(@mantine/core@7.3.1)(@mantine/hooks@7.3.1)(@tabler/icons-react@2.44.0)(@tiptap/extension-link@2.1.13)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-4ISRkyyo3IcK+G/Fwm+rpX0KaYAF2b0u/HRbx9K0SQkDekhTrJvFqMIbd1wBfeSrEFCxcy42gYCGZ+3tihNxew==, tarball: https://registry.npmjs.org/@mantine/tiptap/-/tiptap-7.3.1.tgz}
     peerDependencies:
       '@mantine/core': 7.3.1
@@ -2672,9 +2673,9 @@ packages:
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@mantine/core': 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.42)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/core': 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.43)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/hooks': 7.3.1(react@18.2.0)
-      '@tabler/icons-react': registry.npmjs.org/@tabler/icons-react@2.42.0(react@18.2.0)
+      '@tabler/icons-react': 2.44.0(react@18.2.0)
       '@tiptap/extension-link': 2.1.13(@tiptap/core@2.1.13)(@tiptap/pm@2.1.13)
       react: registry.npmjs.org/react@18.2.0
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
@@ -2729,8 +2730,8 @@ packages:
     resolution: {integrity: sha512-irQnbMLbUNQpP1wcE5NstJtbuA/69kRfzBrpAD7Gsn8zm/CY6YQYc3HQBz8QPxwISG26tIm5afvvVbu508oBeQ==, tarball: https://registry.npmjs.org/@next/env/-/env-14.0.4.tgz}
     dev: false
 
-  /@next/eslint-plugin-next@14.0.3:
-    resolution: {integrity: sha512-j4K0n+DcmQYCVnSAM+UByTVfIHnYQy2ODozfQP+4RdwtRDfobrIvKq1K4Exb2koJ79HSSa7s6B2SA8T/1YR3RA==, tarball: https://registry.npmjs.org/@next/eslint-plugin-next/-/eslint-plugin-next-14.0.3.tgz}
+  /@next/eslint-plugin-next@14.0.4:
+    resolution: {integrity: sha512-U3qMNHmEZoVmHA0j/57nRfi3AscXNvkOnxDmle/69Jz/G0o/gWjXTDdlgILZdrxQ0Lw/jv2mPW8PGy0EGIHXhQ==, tarball: https://registry.npmjs.org/@next/eslint-plugin-next/-/eslint-plugin-next-14.0.4.tgz}
     dependencies:
       glob: 7.1.7
     dev: false
@@ -3647,6 +3648,20 @@ packages:
       defer-to-connect: 2.0.1
     dev: true
 
+  /@tabler/icons-react@2.44.0(react@18.2.0):
+    resolution: {integrity: sha512-10qwrqJ/QBNgY4YYer9PjWmCwm3wv9aVK8kGAkFKkwu6UJURVLZ2ea+oFh5j6vSXnA1zMtUG+X8anR5fZ67Isw==, tarball: https://registry.npmjs.org/@tabler/icons-react/-/icons-react-2.44.0.tgz}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@tabler/icons': 2.44.0
+      prop-types: 15.8.1
+      react: registry.npmjs.org/react@18.2.0
+    dev: false
+
+  /@tabler/icons@2.44.0:
+    resolution: {integrity: sha512-WPPtihDcAwEm1QZM9MXQw6+r/R2/qx7KMU1eegsi9DsqBLAb0W2kbt6e/syvd6j9c+6XNpRVBW1ziGqSWQAWOg==, tarball: https://registry.npmjs.org/@tabler/icons/-/icons-2.44.0.tgz}
+    dev: false
+
   /@tanstack/eslint-plugin-query@5.12.1(eslint@8.55.0)(typescript@5.3.3):
     resolution: {integrity: sha512-FuG/mN9cUO8KlT7KJzl8Yiw55uyXz1vzxXfoMnBbgiH8vk5WtUbEMdFeDF4ujgO+VSKR10uDdZ1+TIOpHhDUfQ==, tarball: https://registry.npmjs.org/@tanstack/eslint-plugin-query/-/eslint-plugin-query-5.12.1.tgz}
     peerDependencies:
@@ -3659,43 +3674,43 @@ packages:
       - typescript
     dev: true
 
-  /@tanstack/query-core@5.12.1:
-    resolution: {integrity: sha512-WbZztNmKq0t6QjdNmHzezbi/uifYo9j6e2GLJkodsYaYUlzMbAp91RDyeHkIZrm7EfO4wa6Sm5sxJZm5SPlh6w==, tarball: https://registry.npmjs.org/@tanstack/query-core/-/query-core-5.12.1.tgz}
+  /@tanstack/query-core@5.13.4:
+    resolution: {integrity: sha512-8+rJucXvC/xlr4OrxHhEIob/cTlbT4fgmz1VsvB0D12FRStKaXeLORNGcOhSAynRd2NL74SV/Qq0IIb4DedLcA==, tarball: https://registry.npmjs.org/@tanstack/query-core/-/query-core-5.13.4.tgz}
     dev: false
 
-  /@tanstack/query-devtools@5.12.1:
-    resolution: {integrity: sha512-AUWLgdZEYq/ckMZrtKpofOwqxuFiEIdy3gZOh/ouIBVra9ijXVTxYt5cZFSjXJT4q/o0DMii6xMZuIJx2qXZ6g==, tarball: https://registry.npmjs.org/@tanstack/query-devtools/-/query-devtools-5.12.1.tgz}
+  /@tanstack/query-devtools@5.13.5:
+    resolution: {integrity: sha512-effSYz9AWcZ6sNd+c8LCBYFIuDZApoCTXEpRlEYChBZpMz9QUUVMLToThwCyUY49+T5pANL3XxgZf3HV7hwJlg==, tarball: https://registry.npmjs.org/@tanstack/query-devtools/-/query-devtools-5.13.5.tgz}
     dev: false
 
-  /@tanstack/react-query-devtools@5.12.2(@tanstack/react-query@5.12.2)(react@18.2.0):
-    resolution: {integrity: sha512-EpjYxwUBj+CuzAiB++FMeHzNey4TynuudfWVMsZg0uzLrnR5I0j1CWHJkNsTutb/Db9TNG1Ae66n8ywVvPd1gQ==, tarball: https://registry.npmjs.org/@tanstack/react-query-devtools/-/react-query-devtools-5.12.2.tgz}
+  /@tanstack/react-query-devtools@5.13.5(@tanstack/react-query@5.13.4)(react@18.2.0):
+    resolution: {integrity: sha512-FB17B/yPtwnqg+DAdosAM+rFj3t8Pl121MPLiUGgl6jvG0A+U9XN3n39zVbhurbdSFO5jCMkPBlloW4NH5ojrA==, tarball: https://registry.npmjs.org/@tanstack/react-query-devtools/-/react-query-devtools-5.13.5.tgz}
     peerDependencies:
-      '@tanstack/react-query': ^5.12.2
+      '@tanstack/react-query': ^5.13.4
       react: ^18.0.0
     dependencies:
-      '@tanstack/query-devtools': 5.12.1
-      '@tanstack/react-query': 5.12.2(react@18.2.0)
+      '@tanstack/query-devtools': 5.13.5
+      '@tanstack/react-query': 5.13.4(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  /@tanstack/react-query-next-experimental@5.12.2(@tanstack/react-query@5.12.2)(next@14.0.4)(react@18.2.0):
-    resolution: {integrity: sha512-g6i00zLJv34jEVSPeo/08VrF+A0CvBXJd/7DIFurRRchNGbMI+cUFonqPgbe7ZDsBP3qlVLilClplsCTB+dSng==, tarball: https://registry.npmjs.org/@tanstack/react-query-next-experimental/-/react-query-next-experimental-5.12.2.tgz}
+  /@tanstack/react-query-next-experimental@5.13.4(@tanstack/react-query@5.13.4)(next@14.0.4)(react@18.2.0):
+    resolution: {integrity: sha512-y8fwGyyehkZf4shOJGOKvSK+u/tSkki51dHmhwG8HtlynWg7chcaT9yDveC1odRwKcheGHBmlx7Cz7MNn2DhXw==, tarball: https://registry.npmjs.org/@tanstack/react-query-next-experimental/-/react-query-next-experimental-5.13.4.tgz}
     peerDependencies:
-      '@tanstack/react-query': ^5.12.2
+      '@tanstack/react-query': ^5.13.4
       next: ^13 || ^14
       react: ^18.0.0
     dependencies:
-      '@tanstack/react-query': 5.12.2(react@18.2.0)
+      '@tanstack/react-query': 5.13.4(react@18.2.0)
       next: 14.0.4(react-dom@18.2.0)(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  /@tanstack/react-query@5.12.2(react@18.2.0):
-    resolution: {integrity: sha512-BeWZu8zVFH20oRc+S/K9ADPgWjEzP/XQCGBNz5IbApUwPQAdwkQYbXODVL5AyAlWiSxhx+P2xlARPBApj2Yrog==, tarball: https://registry.npmjs.org/@tanstack/react-query/-/react-query-5.12.2.tgz}
+  /@tanstack/react-query@5.13.4(react@18.2.0):
+    resolution: {integrity: sha512-3HjvkFFriEQwffUXtKHPiwkfFXUGbs46YATTzzyK1+Pw6Ekd3kwzS50e45qdamWuEXmXxyo5S1zp534LdFG0Rw==, tarball: https://registry.npmjs.org/@tanstack/react-query/-/react-query-5.13.4.tgz}
     peerDependencies:
       react: ^18.0.0
     dependencies:
-      '@tanstack/query-core': 5.12.1
+      '@tanstack/query-core': 5.13.4
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
@@ -3905,16 +3920,16 @@ packages:
       prosemirror-history: 1.3.2
       prosemirror-inputrules: 1.3.0
       prosemirror-keymap: 1.2.2
-      prosemirror-markdown: 1.11.2
+      prosemirror-markdown: 1.12.0
       prosemirror-menu: 1.2.4
-      prosemirror-model: 1.19.3
+      prosemirror-model: 1.19.4
       prosemirror-schema-basic: 1.2.2
       prosemirror-schema-list: 1.3.0
       prosemirror-state: 1.4.3
       prosemirror-tables: 1.3.5
-      prosemirror-trailing-node: 2.0.7(prosemirror-model@1.19.3)(prosemirror-state@1.4.3)(prosemirror-view@1.32.4)
+      prosemirror-trailing-node: 2.0.7(prosemirror-model@1.19.4)(prosemirror-state@1.4.3)(prosemirror-view@1.32.6)
       prosemirror-transform: 1.8.0
-      prosemirror-view: 1.32.4
+      prosemirror-view: 1.32.6
     dev: false
 
   /@tiptap/react@2.1.13(@tiptap/core@2.1.13)(@tiptap/pm@2.1.13)(react-dom@18.2.0)(react@18.2.0):
@@ -4020,6 +4035,10 @@ packages:
       update-check: 1.5.4
     dev: true
 
+  /@types/cookie@0.6.0:
+    resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==, tarball: https://registry.npmjs.org/@types/cookie/-/cookie-0.6.0.tgz}
+    dev: false
+
   /@types/eslint@8.44.8:
     resolution: {integrity: sha512-4K8GavROwhrYl2QXDXm0Rv9epkA8GBFu0EI+XrrnnuCl7u8CWBRusX7fXJfanhZTDWSAL24gDI/UqXyUM0Injw==, tarball: https://registry.npmjs.org/@types/eslint/-/eslint-8.44.8.tgz}
     dependencies:
@@ -4091,8 +4110,8 @@ packages:
   /@types/prop-types@15.7.11:
     resolution: {integrity: sha512-ga8y9v9uyeiLdpKddhxYQkxNDrfvuPrlFb0N1qnZZByvcElJaXthF1UhvCh9TLWJBEHeNtdnbysW7Y6Uq8CVng==, tarball: https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.11.tgz}
 
-  /@types/react@18.2.42:
-    resolution: {integrity: sha512-c1zEr96MjakLYus/wPnuWDo1/zErfdU9rNsIGmE+NV71nx88FG9Ttgo5dqorXTu/LImX2f63WBP986gJkMPNbA==, tarball: https://registry.npmjs.org/@types/react/-/react-18.2.42.tgz}
+  /@types/react@18.2.43:
+    resolution: {integrity: sha512-nvOV01ZdBdd/KW6FahSbcNplt2jCJfyWdTos61RYHV+FVv5L/g9AOX1bmbVcWcLFL8+KHQfh1zVIQrud6ihyQA==, tarball: https://registry.npmjs.org/@types/react/-/react-18.2.43.tgz}
     dependencies:
       '@types/prop-types': 15.7.11
       '@types/scheduler': 0.16.8
@@ -4122,8 +4141,8 @@ packages:
     resolution: {integrity: sha512-uLJijDHN5E6j5n1qefF9oaeplgszXglWXWTviMoFr/YxgvbyrkFil20yDT7ljhCiTQ/BfCYtxfJS81LdTro5DQ==, tarball: https://registry.npmjs.org/@types/tinycolor2/-/tinycolor2-1.4.5.tgz}
     dev: true
 
-  /@typescript-eslint/eslint-plugin@6.13.1(@typescript-eslint/parser@6.13.1)(eslint@8.55.0)(typescript@5.3.3):
-    resolution: {integrity: sha512-5bQDGkXaxD46bPvQt08BUz9YSaO4S0fB1LB5JHQuXTfkGPI3+UUeS387C/e9jRie5GqT8u5kFTrMvAjtX4O5kA==, tarball: https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-6.13.1.tgz}
+  /@typescript-eslint/eslint-plugin@6.13.2(@typescript-eslint/parser@6.13.2)(eslint@8.55.0)(typescript@5.3.3):
+    resolution: {integrity: sha512-3+9OGAWHhk4O1LlcwLBONbdXsAhLjyCFogJY/cWy2lxdVJ2JrcTF2pTGMaLl2AE7U1l31n8Py4a8bx5DLf/0dQ==, tarball: https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-6.13.2.tgz}
     engines: {node: ^16.0.0 || >=18.0.0}
     peerDependencies:
       '@typescript-eslint/parser': ^6.0.0 || ^6.0.0-alpha
@@ -4134,11 +4153,11 @@ packages:
         optional: true
     dependencies:
       '@eslint-community/regexpp': 4.10.0
-      '@typescript-eslint/parser': 6.13.1(eslint@8.55.0)(typescript@5.3.3)
-      '@typescript-eslint/scope-manager': 6.13.1
-      '@typescript-eslint/type-utils': 6.13.1(eslint@8.55.0)(typescript@5.3.3)
-      '@typescript-eslint/utils': 6.13.1(eslint@8.55.0)(typescript@5.3.3)
-      '@typescript-eslint/visitor-keys': 6.13.1
+      '@typescript-eslint/parser': 6.13.2(eslint@8.55.0)(typescript@5.3.3)
+      '@typescript-eslint/scope-manager': 6.13.2
+      '@typescript-eslint/type-utils': 6.13.2(eslint@8.55.0)(typescript@5.3.3)
+      '@typescript-eslint/utils': 6.13.2(eslint@8.55.0)(typescript@5.3.3)
+      '@typescript-eslint/visitor-keys': 6.13.2
       debug: 4.3.4
       eslint: 8.55.0
       graphemer: 1.4.0
@@ -4151,8 +4170,8 @@ packages:
       - supports-color
     dev: false
 
-  /@typescript-eslint/parser@6.13.1(eslint@8.55.0)(typescript@5.3.3):
-    resolution: {integrity: sha512-fs2XOhWCzRhqMmQf0eicLa/CWSaYss2feXsy7xBD/pLyWke/jCIVc2s1ikEAtSW7ina1HNhv7kONoEfVNEcdDQ==, tarball: https://registry.npmjs.org/@typescript-eslint/parser/-/parser-6.13.1.tgz}
+  /@typescript-eslint/parser@6.13.2(eslint@8.55.0)(typescript@5.3.3):
+    resolution: {integrity: sha512-MUkcC+7Wt/QOGeVlM8aGGJZy1XV5YKjTpq9jK6r6/iLsGXhBVaGP5N0UYvFsu9BFlSpwY9kMretzdBH01rkRXg==, tarball: https://registry.npmjs.org/@typescript-eslint/parser/-/parser-6.13.2.tgz}
     engines: {node: ^16.0.0 || >=18.0.0}
     peerDependencies:
       eslint: ^7.0.0 || ^8.0.0
@@ -4161,10 +4180,10 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@typescript-eslint/scope-manager': 6.13.1
-      '@typescript-eslint/types': 6.13.1
-      '@typescript-eslint/typescript-estree': 6.13.1(typescript@5.3.3)
-      '@typescript-eslint/visitor-keys': 6.13.1
+      '@typescript-eslint/scope-manager': 6.13.2
+      '@typescript-eslint/types': 6.13.2
+      '@typescript-eslint/typescript-estree': 6.13.2(typescript@5.3.3)
+      '@typescript-eslint/visitor-keys': 6.13.2
       debug: 4.3.4
       eslint: 8.55.0
       typescript: 5.3.3
@@ -4180,16 +4199,16 @@ packages:
       '@typescript-eslint/visitor-keys': 5.62.0
     dev: true
 
-  /@typescript-eslint/scope-manager@6.13.1:
-    resolution: {integrity: sha512-BW0kJ7ceiKi56GbT2KKzZzN+nDxzQK2DS6x0PiSMPjciPgd/JRQGMibyaN2cPt2cAvuoH0oNvn2fwonHI+4QUQ==, tarball: https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-6.13.1.tgz}
+  /@typescript-eslint/scope-manager@6.13.2:
+    resolution: {integrity: sha512-CXQA0xo7z6x13FeDYCgBkjWzNqzBn8RXaE3QVQVIUm74fWJLkJkaHmHdKStrxQllGh6Q4eUGyNpMe0b1hMkXFA==, tarball: https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-6.13.2.tgz}
     engines: {node: ^16.0.0 || >=18.0.0}
     dependencies:
-      '@typescript-eslint/types': 6.13.1
-      '@typescript-eslint/visitor-keys': 6.13.1
+      '@typescript-eslint/types': 6.13.2
+      '@typescript-eslint/visitor-keys': 6.13.2
     dev: false
 
-  /@typescript-eslint/type-utils@6.13.1(eslint@8.55.0)(typescript@5.3.3):
-    resolution: {integrity: sha512-A2qPlgpxx2v//3meMqQyB1qqTg1h1dJvzca7TugM3Yc2USDY+fsRBiojAEo92HO7f5hW5mjAUF6qobOPzlBCBQ==, tarball: https://registry.npmjs.org/@typescript-eslint/type-utils/-/type-utils-6.13.1.tgz}
+  /@typescript-eslint/type-utils@6.13.2(eslint@8.55.0)(typescript@5.3.3):
+    resolution: {integrity: sha512-Qr6ssS1GFongzH2qfnWKkAQmMUyZSyOr0W54nZNU1MDfo+U4Mv3XveeLZzadc/yq8iYhQZHYT+eoXJqnACM1tw==, tarball: https://registry.npmjs.org/@typescript-eslint/type-utils/-/type-utils-6.13.2.tgz}
     engines: {node: ^16.0.0 || >=18.0.0}
     peerDependencies:
       eslint: ^7.0.0 || ^8.0.0
@@ -4198,8 +4217,8 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@typescript-eslint/typescript-estree': 6.13.1(typescript@5.3.3)
-      '@typescript-eslint/utils': 6.13.1(eslint@8.55.0)(typescript@5.3.3)
+      '@typescript-eslint/typescript-estree': 6.13.2(typescript@5.3.3)
+      '@typescript-eslint/utils': 6.13.2(eslint@8.55.0)(typescript@5.3.3)
       debug: 4.3.4
       eslint: 8.55.0
       ts-api-utils: 1.0.3(typescript@5.3.3)
@@ -4213,8 +4232,8 @@ packages:
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
 
-  /@typescript-eslint/types@6.13.1:
-    resolution: {integrity: sha512-gjeEskSmiEKKFIbnhDXUyiqVma1gRCQNbVZ1C8q7Zjcxh3WZMbzWVfGE9rHfWd1msQtPS0BVD9Jz9jded44eKg==, tarball: https://registry.npmjs.org/@typescript-eslint/types/-/types-6.13.1.tgz}
+  /@typescript-eslint/types@6.13.2:
+    resolution: {integrity: sha512-7sxbQ+EMRubQc3wTfTsycgYpSujyVbI1xw+3UMRUcrhSy+pN09y/lWzeKDbvhoqcRbHdc+APLs/PWYi/cisLPg==, tarball: https://registry.npmjs.org/@typescript-eslint/types/-/types-6.13.2.tgz}
     engines: {node: ^16.0.0 || >=18.0.0}
     dev: false
 
@@ -4239,8 +4258,8 @@ packages:
       - supports-color
     dev: true
 
-  /@typescript-eslint/typescript-estree@6.13.1(typescript@5.3.3):
-    resolution: {integrity: sha512-sBLQsvOC0Q7LGcUHO5qpG1HxRgePbT6wwqOiGLpR8uOJvPJbfs0mW3jPA3ujsDvfiVwVlWUDESNXv44KtINkUQ==, tarball: https://registry.npmjs.org/@typescript-eslint/typescript-estree/-/typescript-estree-6.13.1.tgz}
+  /@typescript-eslint/typescript-estree@6.13.2(typescript@5.3.3):
+    resolution: {integrity: sha512-SuD8YLQv6WHnOEtKv8D6HZUzOub855cfPnPMKvdM/Bh1plv1f7Q/0iFUDLKKlxHcEstQnaUU4QZskgQq74t+3w==, tarball: https://registry.npmjs.org/@typescript-eslint/typescript-estree/-/typescript-estree-6.13.2.tgz}
     engines: {node: ^16.0.0 || >=18.0.0}
     peerDependencies:
       typescript: '*'
@@ -4248,8 +4267,8 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@typescript-eslint/types': 6.13.1
-      '@typescript-eslint/visitor-keys': 6.13.1
+      '@typescript-eslint/types': 6.13.2
+      '@typescript-eslint/visitor-keys': 6.13.2
       debug: 4.3.4
       globby: 11.1.0
       is-glob: 4.0.3
@@ -4280,8 +4299,8 @@ packages:
       - typescript
     dev: true
 
-  /@typescript-eslint/utils@6.13.1(eslint@8.55.0)(typescript@5.3.3):
-    resolution: {integrity: sha512-ouPn/zVoan92JgAegesTXDB/oUp6BP1v8WpfYcqh649ejNc9Qv+B4FF2Ff626kO1xg0wWwwG48lAJ4JuesgdOw==, tarball: https://registry.npmjs.org/@typescript-eslint/utils/-/utils-6.13.1.tgz}
+  /@typescript-eslint/utils@6.13.2(eslint@8.55.0)(typescript@5.3.3):
+    resolution: {integrity: sha512-b9Ptq4eAZUym4idijCRzl61oPCwwREcfDI8xGk751Vhzig5fFZR9CyzDz4Sp/nxSLBYxUPyh4QdIDqWykFhNmQ==, tarball: https://registry.npmjs.org/@typescript-eslint/utils/-/utils-6.13.2.tgz}
     engines: {node: ^16.0.0 || >=18.0.0}
     peerDependencies:
       eslint: ^7.0.0 || ^8.0.0
@@ -4289,9 +4308,9 @@ packages:
       '@eslint-community/eslint-utils': 4.4.0(eslint@8.55.0)
       '@types/json-schema': 7.0.15
       '@types/semver': 7.5.6
-      '@typescript-eslint/scope-manager': 6.13.1
-      '@typescript-eslint/types': 6.13.1
-      '@typescript-eslint/typescript-estree': 6.13.1(typescript@5.3.3)
+      '@typescript-eslint/scope-manager': 6.13.2
+      '@typescript-eslint/types': 6.13.2
+      '@typescript-eslint/typescript-estree': 6.13.2(typescript@5.3.3)
       eslint: 8.55.0
       semver: 7.5.4
     transitivePeerDependencies:
@@ -4307,11 +4326,11 @@ packages:
       eslint-visitor-keys: 3.4.3
     dev: true
 
-  /@typescript-eslint/visitor-keys@6.13.1:
-    resolution: {integrity: sha512-NDhQUy2tg6XGNBGDRm1XybOHSia8mcXmlbKWoQP+nm1BIIMxa55shyJfZkHpEBN62KNPLrocSM2PdPcaLgDKMQ==, tarball: https://registry.npmjs.org/@typescript-eslint/visitor-keys/-/visitor-keys-6.13.1.tgz}
+  /@typescript-eslint/visitor-keys@6.13.2:
+    resolution: {integrity: sha512-OGznFs0eAQXJsp+xSd6k/O1UbFi/K/L7WjqeRoFE7vadjAF9y0uppXhYNQNEqygjou782maGClOoZwPqF0Drlw==, tarball: https://registry.npmjs.org/@typescript-eslint/visitor-keys/-/visitor-keys-6.13.2.tgz}
     engines: {node: ^16.0.0 || >=18.0.0}
     dependencies:
-      '@typescript-eslint/types': 6.13.1
+      '@typescript-eslint/types': 6.13.2
       eslint-visitor-keys: 3.4.3
     dev: false
 
@@ -5390,11 +5409,6 @@ packages:
     resolution: {integrity: sha512-L18DaJsXSUk2+42pv8mLs5jJT2hqFkFE4j21wOmgbUqsZ2hL72NsUU785g9RXgo3s0ZNgVl42TiHp3ZtOv/Vyg==, tarball: https://registry.npmjs.org/emoji-regex/-/emoji-regex-9.2.2.tgz}
     dev: false
 
-  /entities@3.0.1:
-    resolution: {integrity: sha512-WiyBqoomrwMdFG1e0kqvASYfnlb0lp8M5o5Fw2OFq1hNZxxcNk8Ik0Xm7LxzBhuidnZB/UtBqVCgUz3kBOP51Q==, tarball: https://registry.npmjs.org/entities/-/entities-3.0.1.tgz}
-    engines: {node: '>=0.12'}
-    dev: false
-
   /entities@4.5.0:
     resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==, tarball: https://registry.npmjs.org/entities/-/entities-4.5.0.tgz}
     engines: {node: '>=0.12'}
@@ -5693,13 +5707,13 @@ packages:
       eslint: 8.55.0
     dev: false
 
-  /eslint-config-turbo@1.10.16(eslint@8.55.0):
-    resolution: {integrity: sha512-O3NQI72bQHV7FvSC6lWj66EGx8drJJjuT1kuInn6nbMLOHdMBhSUX/8uhTAlHRQdlxZk2j9HtgFCIzSc93w42g==, tarball: https://registry.npmjs.org/eslint-config-turbo/-/eslint-config-turbo-1.10.16.tgz}
+  /eslint-config-turbo@1.11.1(eslint@8.55.0):
+    resolution: {integrity: sha512-F0w5nusZ3SMSXS+ns/f0GLiRmLyP0+20Nd1xPgRXxJSW3UCsurysuqfCjo4VwSIVK2mfkDSdrn6/+JxV3WZgiw==, tarball: https://registry.npmjs.org/eslint-config-turbo/-/eslint-config-turbo-1.11.1.tgz}
     peerDependencies:
       eslint: '>6.6.0'
     dependencies:
       eslint: 8.55.0
-      eslint-plugin-turbo: 1.10.16(eslint@8.55.0)
+      eslint-plugin-turbo: 1.11.1(eslint@8.55.0)
     dev: false
 
   /eslint-import-resolver-node@0.3.9:
@@ -5712,7 +5726,7 @@ packages:
       - supports-color
     dev: false
 
-  /eslint-module-utils@2.8.0(@typescript-eslint/parser@6.13.1)(eslint-import-resolver-node@0.3.9)(eslint@8.55.0):
+  /eslint-module-utils@2.8.0(@typescript-eslint/parser@6.13.2)(eslint-import-resolver-node@0.3.9)(eslint@8.55.0):
     resolution: {integrity: sha512-aWajIYfsqCKRDgUfjEXNN/JlrzauMuSEy5sbd7WXbtW3EH6A6MpwEh42c7qD+MqQo9QMJ6fWLAeIJynx0g6OAw==, tarball: https://registry.npmjs.org/eslint-module-utils/-/eslint-module-utils-2.8.0.tgz}
     engines: {node: '>=4'}
     peerDependencies:
@@ -5733,7 +5747,7 @@ packages:
       eslint-import-resolver-webpack:
         optional: true
     dependencies:
-      '@typescript-eslint/parser': 6.13.1(eslint@8.55.0)(typescript@5.3.3)
+      '@typescript-eslint/parser': 6.13.2(eslint@8.55.0)(typescript@5.3.3)
       debug: 3.2.7
       eslint: 8.55.0
       eslint-import-resolver-node: 0.3.9
@@ -5741,7 +5755,7 @@ packages:
       - supports-color
     dev: false
 
-  /eslint-plugin-import@2.29.0(@typescript-eslint/parser@6.13.1)(eslint@8.55.0):
+  /eslint-plugin-import@2.29.0(@typescript-eslint/parser@6.13.2)(eslint@8.55.0):
     resolution: {integrity: sha512-QPOO5NO6Odv5lpoTkddtutccQjysJuFxoPS7fAHO+9m9udNHvTCPSAMW9zGAYj8lAIdr40I8yPCdUYrncXtrwg==, tarball: https://registry.npmjs.org/eslint-plugin-import/-/eslint-plugin-import-2.29.0.tgz}
     engines: {node: '>=4'}
     peerDependencies:
@@ -5751,7 +5765,7 @@ packages:
       '@typescript-eslint/parser':
         optional: true
     dependencies:
-      '@typescript-eslint/parser': 6.13.1(eslint@8.55.0)(typescript@5.3.3)
+      '@typescript-eslint/parser': 6.13.2(eslint@8.55.0)(typescript@5.3.3)
       array-includes: 3.1.7
       array.prototype.findlastindex: 1.2.3
       array.prototype.flat: 1.3.2
@@ -5760,7 +5774,7 @@ packages:
       doctrine: 2.1.0
       eslint: 8.55.0
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.8.0(@typescript-eslint/parser@6.13.1)(eslint-import-resolver-node@0.3.9)(eslint@8.55.0)
+      eslint-module-utils: 2.8.0(@typescript-eslint/parser@6.13.2)(eslint-import-resolver-node@0.3.9)(eslint@8.55.0)
       hasown: 2.0.0
       is-core-module: 2.13.1
       is-glob: 4.0.3
@@ -5835,8 +5849,8 @@ packages:
       string.prototype.matchall: 4.0.10
     dev: false
 
-  /eslint-plugin-turbo@1.10.16(eslint@8.55.0):
-    resolution: {integrity: sha512-ZjrR88MTN64PNGufSEcM0tf+V1xFYVbeiMeuIqr0aiABGomxFLo4DBkQ7WI4WzkZtWQSIA2sP+yxqSboEfL9MQ==, tarball: https://registry.npmjs.org/eslint-plugin-turbo/-/eslint-plugin-turbo-1.10.16.tgz}
+  /eslint-plugin-turbo@1.11.1(eslint@8.55.0):
+    resolution: {integrity: sha512-QegEzLp9CIsDVQOSSjvEl6QUUGpb7Hj9IdFdgz7OHBYzhCArY5z+Q3y+LO6jn1MSkzGUteGNjLhrlkjXadePCA==, tarball: https://registry.npmjs.org/eslint-plugin-turbo/-/eslint-plugin-turbo-1.11.1.tgz}
     peerDependencies:
       eslint: '>6.6.0'
     dependencies:
@@ -5891,7 +5905,7 @@ packages:
       file-entry-cache: 6.0.1
       find-up: 5.0.0
       glob-parent: 6.0.2
-      globals: 13.23.0
+      globals: 13.24.0
       graphemer: 1.4.0
       ignore: 5.3.0
       imurmurhash: 0.1.4
@@ -6265,8 +6279,8 @@ packages:
     engines: {node: '>=4'}
     dev: false
 
-  /globals@13.23.0:
-    resolution: {integrity: sha512-XAmF0RjlrjY23MA51q3HltdlGxUpXPvg0GioKiD9X6HD28iMjo2dKC8Vqwm7lne4GNr78+RHTfliktR6ZH09wA==, tarball: https://registry.npmjs.org/globals/-/globals-13.23.0.tgz}
+  /globals@13.24.0:
+    resolution: {integrity: sha512-AhO5QUcj8llrbG09iWhPU2B204J1xnPeL8kQmVorSsy+Sjj1sk8gIyh6cUocGmH4L0UuhAJy+hJMRA4mgA4mFQ==, tarball: https://registry.npmjs.org/globals/-/globals-13.24.0.tgz}
     engines: {node: '>=8'}
     dependencies:
       type-fest: 0.20.2
@@ -7031,10 +7045,10 @@ packages:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==, tarball: https://registry.npmjs.org/lines-and-columns/-/lines-and-columns-1.2.4.tgz}
     dev: false
 
-  /linkify-it@4.0.1:
-    resolution: {integrity: sha512-C7bfi1UZmoj8+PQx22XyeXCuBlokoyWQL5pWSP+EI6nzRylyThouddufc2c1NDIcP9k5agmN9fLpA7VNJfIiqw==, tarball: https://registry.npmjs.org/linkify-it/-/linkify-it-4.0.1.tgz}
+  /linkify-it@5.0.0:
+    resolution: {integrity: sha512-5aHCbzQRADcdP+ATqnDuhhJ/MRIqDkZX5pyjFHRRysS8vZ5AbqGEoFIb6pYHPZ+L/OC2Lc+xT8uHVVR5CAK/wQ==, tarball: https://registry.npmjs.org/linkify-it/-/linkify-it-5.0.0.tgz}
     dependencies:
-      uc.micro: 1.0.6
+      uc.micro: 2.0.0
     dev: false
 
   /linkifyjs@4.1.3:
@@ -7173,19 +7187,20 @@ packages:
     engines: {node: '>=8'}
     dev: false
 
-  /markdown-it@13.0.2:
-    resolution: {integrity: sha512-FtwnEuuK+2yVU7goGn/MJ0WBZMM9ZPgU9spqlFs7/A/pDIUNSOQZhUgOqYCficIuR2QaFnrt8LHqBWsbTAoI5w==, tarball: https://registry.npmjs.org/markdown-it/-/markdown-it-13.0.2.tgz}
+  /markdown-it@14.0.0:
+    resolution: {integrity: sha512-seFjF0FIcPt4P9U39Bq1JYblX0KZCjDLFFQPHpL5AzHpqPEKtosxmdq/LTVZnjfH7tjt9BxStm+wXcDBNuYmzw==, tarball: https://registry.npmjs.org/markdown-it/-/markdown-it-14.0.0.tgz}
     hasBin: true
     dependencies:
       argparse: 2.0.1
-      entities: 3.0.1
-      linkify-it: 4.0.1
-      mdurl: 1.0.1
-      uc.micro: 1.0.6
+      entities: 4.5.0
+      linkify-it: 5.0.0
+      mdurl: 2.0.0
+      punycode.js: 2.3.1
+      uc.micro: 2.0.0
     dev: false
 
-  /mdurl@1.0.1:
-    resolution: {integrity: sha512-/sKlQJCBYVY9Ers9hqzKou4H6V5UWc/M59TH2dvkt+84itfnq7uFOMLpOiOS4ujvHP4etln18fmIxA5R5fll0g==, tarball: https://registry.npmjs.org/mdurl/-/mdurl-1.0.1.tgz}
+  /mdurl@2.0.0:
+    resolution: {integrity: sha512-Lf+9+2r+Tdp5wXDXC4PcIBjTDtq4UKjCPMQhKIuzpJNW0b96kVqSwW0bT7FhRSfmAiFYgP+SCRvdrDozfh0U5w==, tarball: https://registry.npmjs.org/mdurl/-/mdurl-2.0.0.tgz}
     dev: false
 
   /memoizee@0.4.15:
@@ -7901,11 +7916,10 @@ packages:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==, tarball: https://registry.npmjs.org/prelude-ls/-/prelude-ls-1.2.1.tgz}
     engines: {node: '>= 0.8.0'}
 
-  /prettier@3.1.0:
-    resolution: {integrity: sha512-TQLvXjq5IAibjh8EpBIkNKxO749UEWABoiIZehEPiY4GNpVdhaFKqSTu+QrlU6D2dPAfubRmtJTi4K4YkQ5eXw==, tarball: https://registry.npmjs.org/prettier/-/prettier-3.1.0.tgz}
+  /prettier@3.1.1:
+    resolution: {integrity: sha512-22UbSzg8luF4UuZtzgiUOfcGM8s4tjBv6dJRT7j275NXsy2jb4aJa4NNveul5x4eqlF1wuhuR2RElK71RvmVaw==, tarball: https://registry.npmjs.org/prettier/-/prettier-3.1.1.tgz}
     engines: {node: '>=14'}
     hasBin: true
-    dev: false
 
   /pretty-format@3.8.0:
     resolution: {integrity: sha512-WuxUnVtlWL1OfZFQFuqvnvs6MiAGk9UNsBostyBOB0Is9wb5uRESevA6rnl/rkksXaGX3GzZhPup5d6Vp1nFew==, tarball: https://registry.npmjs.org/pretty-format/-/pretty-format-3.8.0.tgz}
@@ -7947,7 +7961,7 @@ packages:
   /prosemirror-commands@1.5.2:
     resolution: {integrity: sha512-hgLcPaakxH8tu6YvVAaILV2tXYsW3rAdDR8WNkeKGcgeMVQg3/TMhPdVoh7iAmfgVjZGtcOSjKiQaoeKjzd2mQ==, tarball: https://registry.npmjs.org/prosemirror-commands/-/prosemirror-commands-1.5.2.tgz}
     dependencies:
-      prosemirror-model: 1.19.3
+      prosemirror-model: 1.19.4
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.8.0
     dev: false
@@ -7957,16 +7971,16 @@ packages:
     dependencies:
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.8.0
-      prosemirror-view: 1.32.4
+      prosemirror-view: 1.32.6
     dev: false
 
   /prosemirror-gapcursor@1.3.2:
     resolution: {integrity: sha512-wtjswVBd2vaQRrnYZaBCbyDqr232Ed4p2QPtRIUK5FuqHYKGWkEwl08oQM4Tw7DOR0FsasARV5uJFvMZWxdNxQ==, tarball: https://registry.npmjs.org/prosemirror-gapcursor/-/prosemirror-gapcursor-1.3.2.tgz}
     dependencies:
       prosemirror-keymap: 1.2.2
-      prosemirror-model: 1.19.3
+      prosemirror-model: 1.19.4
       prosemirror-state: 1.4.3
-      prosemirror-view: 1.32.4
+      prosemirror-view: 1.32.6
     dev: false
 
   /prosemirror-history@1.3.2:
@@ -7974,7 +7988,7 @@ packages:
     dependencies:
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.8.0
-      prosemirror-view: 1.32.4
+      prosemirror-view: 1.32.6
       rope-sequence: 1.3.4
     dev: false
 
@@ -7992,11 +8006,11 @@ packages:
       w3c-keyname: 2.2.8
     dev: false
 
-  /prosemirror-markdown@1.11.2:
-    resolution: {integrity: sha512-Eu5g4WPiCdqDTGhdSsG9N6ZjACQRYrsAkrF9KYfdMaCmjIApH75aVncsWYOJvEk2i1B3i8jZppv3J/tnuHGiUQ==, tarball: https://registry.npmjs.org/prosemirror-markdown/-/prosemirror-markdown-1.11.2.tgz}
+  /prosemirror-markdown@1.12.0:
+    resolution: {integrity: sha512-6F5HS8Z0HDYiS2VQDZzfZP6A0s/I0gbkJy8NCzzDMtcsz3qrfqyroMMeoSjAmOhDITyon11NbXSzztfKi+frSQ==, tarball: https://registry.npmjs.org/prosemirror-markdown/-/prosemirror-markdown-1.12.0.tgz}
     dependencies:
-      markdown-it: 13.0.2
-      prosemirror-model: 1.19.3
+      markdown-it: 14.0.0
+      prosemirror-model: 1.19.4
     dev: false
 
   /prosemirror-menu@1.2.4:
@@ -8008,8 +8022,8 @@ packages:
       prosemirror-state: 1.4.3
     dev: false
 
-  /prosemirror-model@1.19.3:
-    resolution: {integrity: sha512-tgSnwN7BS7/UM0sSARcW+IQryx2vODKX4MI7xpqY2X+iaepJdKBPc7I4aACIsDV/LTaTjt12Z56MhDr9LsyuZQ==, tarball: https://registry.npmjs.org/prosemirror-model/-/prosemirror-model-1.19.3.tgz}
+  /prosemirror-model@1.19.4:
+    resolution: {integrity: sha512-RPmVXxUfOhyFdayHawjuZCxiROsm9L4FCUA6pWI+l7n2yCBsWy9VpdE1hpDHUS8Vad661YLY9AzqfjLhAKQ4iQ==, tarball: https://registry.npmjs.org/prosemirror-model/-/prosemirror-model-1.19.4.tgz}
     dependencies:
       orderedmap: 2.1.1
     dev: false
@@ -8017,13 +8031,13 @@ packages:
   /prosemirror-schema-basic@1.2.2:
     resolution: {integrity: sha512-/dT4JFEGyO7QnNTe9UaKUhjDXbTNkiWTq/N4VpKaF79bBjSExVV2NXmJpcM7z/gD7mbqNjxbmWW5nf1iNSSGnw==, tarball: https://registry.npmjs.org/prosemirror-schema-basic/-/prosemirror-schema-basic-1.2.2.tgz}
     dependencies:
-      prosemirror-model: 1.19.3
+      prosemirror-model: 1.19.4
     dev: false
 
   /prosemirror-schema-list@1.3.0:
     resolution: {integrity: sha512-Hz/7gM4skaaYfRPNgr421CU4GSwotmEwBVvJh5ltGiffUJwm7C8GfN/Bc6DR1EKEp5pDKhODmdXXyi9uIsZl5A==, tarball: https://registry.npmjs.org/prosemirror-schema-list/-/prosemirror-schema-list-1.3.0.tgz}
     dependencies:
-      prosemirror-model: 1.19.3
+      prosemirror-model: 1.19.4
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.8.0
     dev: false
@@ -8031,22 +8045,22 @@ packages:
   /prosemirror-state@1.4.3:
     resolution: {integrity: sha512-goFKORVbvPuAQaXhpbemJFRKJ2aixr+AZMGiquiqKxaucC6hlpHNZHWgz5R7dS4roHiwq9vDctE//CZ++o0W1Q==, tarball: https://registry.npmjs.org/prosemirror-state/-/prosemirror-state-1.4.3.tgz}
     dependencies:
-      prosemirror-model: 1.19.3
+      prosemirror-model: 1.19.4
       prosemirror-transform: 1.8.0
-      prosemirror-view: 1.32.4
+      prosemirror-view: 1.32.6
     dev: false
 
   /prosemirror-tables@1.3.5:
     resolution: {integrity: sha512-JSZ2cCNlApu/ObAhdPyotrjBe2cimniniTpz60YXzbL0kZ+47nEYk2LWbfKU2lKpBkUNquta2PjteoNi4YCluQ==, tarball: https://registry.npmjs.org/prosemirror-tables/-/prosemirror-tables-1.3.5.tgz}
     dependencies:
       prosemirror-keymap: 1.2.2
-      prosemirror-model: 1.19.3
+      prosemirror-model: 1.19.4
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.8.0
-      prosemirror-view: 1.32.4
+      prosemirror-view: 1.32.6
     dev: false
 
-  /prosemirror-trailing-node@2.0.7(prosemirror-model@1.19.3)(prosemirror-state@1.4.3)(prosemirror-view@1.32.4):
+  /prosemirror-trailing-node@2.0.7(prosemirror-model@1.19.4)(prosemirror-state@1.4.3)(prosemirror-view@1.32.6):
     resolution: {integrity: sha512-8zcZORYj/8WEwsGo6yVCRXFMOfBo0Ub3hCUvmoWIZYfMP26WqENU0mpEP27w7mt8buZWuGrydBewr0tOArPb1Q==, tarball: https://registry.npmjs.org/prosemirror-trailing-node/-/prosemirror-trailing-node-2.0.7.tgz}
     peerDependencies:
       prosemirror-model: ^1.19.0
@@ -8056,21 +8070,21 @@ packages:
       '@remirror/core-constants': 2.0.2
       '@remirror/core-helpers': 3.0.0
       escape-string-regexp: 4.0.0
-      prosemirror-model: 1.19.3
+      prosemirror-model: 1.19.4
       prosemirror-state: 1.4.3
-      prosemirror-view: 1.32.4
+      prosemirror-view: 1.32.6
     dev: false
 
   /prosemirror-transform@1.8.0:
     resolution: {integrity: sha512-BaSBsIMv52F1BVVMvOmp1yzD3u65uC3HTzCBQV1WDPqJRQ2LuHKcyfn0jwqodo8sR9vVzMzZyI+Dal5W9E6a9A==, tarball: https://registry.npmjs.org/prosemirror-transform/-/prosemirror-transform-1.8.0.tgz}
     dependencies:
-      prosemirror-model: 1.19.3
+      prosemirror-model: 1.19.4
     dev: false
 
-  /prosemirror-view@1.32.4:
-    resolution: {integrity: sha512-WoT+ZYePp0WQvp5coABAysheZg9WttW3TSEUNgsfDQXmVOJlnjkbFbXicKPvWFLiC0ZjKt1ykbyoVKqhVnCiSQ==, tarball: https://registry.npmjs.org/prosemirror-view/-/prosemirror-view-1.32.4.tgz}
+  /prosemirror-view@1.32.6:
+    resolution: {integrity: sha512-26r5LvyDlPgUNVf7ZdNdGrMJnylwjJtUJTfDuYOANIVx9lqWD1WCBlGg283weYQGKUC64DXR25LeAmliB9CrFQ==, tarball: https://registry.npmjs.org/prosemirror-view/-/prosemirror-view-1.32.6.tgz}
     dependencies:
-      prosemirror-model: 1.19.3
+      prosemirror-model: 1.19.4
       prosemirror-state: 1.4.3
       prosemirror-transform: 1.8.0
     dev: false
@@ -8101,6 +8115,11 @@ packages:
   /pseudomap@1.0.2:
     resolution: {integrity: sha512-b/YwNhb8lk1Zz2+bXXpS/LK9OisiZZ1SNsSLxN1x2OXVEhW2Ckr/7mWE5vrC1ZTiJlD9g19jWszTmJsB+oEpFQ==, tarball: https://registry.npmjs.org/pseudomap/-/pseudomap-1.0.2.tgz}
     dev: true
+
+  /punycode.js@2.3.1:
+    resolution: {integrity: sha512-uxFIHU0YlHYhDQtV4R9J6a52SLx28BCjT+4ieh7IGbgwVJWO+km431c4yRlREUAsAmt/uMjQUyQHNEPf0M39CA==, tarball: https://registry.npmjs.org/punycode.js/-/punycode.js-2.3.1.tgz}
+    engines: {node: '>=6'}
+    dev: false
 
   /punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==, tarball: https://registry.npmjs.org/punycode/-/punycode-2.3.1.tgz}
@@ -8189,7 +8208,7 @@ packages:
       react-dom: registry.npmjs.org/react-dom@18.2.0(react@18.2.0)
     dev: false
 
-  /react-remove-scroll-bar@2.3.4(@types/react@18.2.42)(react@18.2.0):
+  /react-remove-scroll-bar@2.3.4(@types/react@18.2.43)(react@18.2.0):
     resolution: {integrity: sha512-63C4YQBUt0m6ALadE9XV56hV8BgJWDmmTPY758iIJjfQKt2nYwoUrPk0LXRXcB/yIj82T1/Ixfdpdk68LwIB0A==, tarball: https://registry.npmjs.org/react-remove-scroll-bar/-/react-remove-scroll-bar-2.3.4.tgz}
     engines: {node: '>=10'}
     peerDependencies:
@@ -8199,13 +8218,13 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': 18.2.42
+      '@types/react': 18.2.43
       react: registry.npmjs.org/react@18.2.0
-      react-style-singleton: 2.2.1(@types/react@18.2.42)(react@18.2.0)
+      react-style-singleton: 2.2.1(@types/react@18.2.43)(react@18.2.0)
       tslib: 2.6.2
     dev: false
 
-  /react-remove-scroll@2.5.7(@types/react@18.2.42)(react@18.2.0):
+  /react-remove-scroll@2.5.7(@types/react@18.2.43)(react@18.2.0):
     resolution: {integrity: sha512-FnrTWO4L7/Bhhf3CYBNArEG/yROV0tKmTv7/3h9QCFvH6sndeFf1wPqOcbFVu5VAulS5dV1wGT3GZZ/1GawqiA==, tarball: https://registry.npmjs.org/react-remove-scroll/-/react-remove-scroll-2.5.7.tgz}
     engines: {node: '>=10'}
     peerDependencies:
@@ -8215,16 +8234,16 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': 18.2.42
+      '@types/react': 18.2.43
       react: registry.npmjs.org/react@18.2.0
-      react-remove-scroll-bar: 2.3.4(@types/react@18.2.42)(react@18.2.0)
-      react-style-singleton: 2.2.1(@types/react@18.2.42)(react@18.2.0)
+      react-remove-scroll-bar: 2.3.4(@types/react@18.2.43)(react@18.2.0)
+      react-style-singleton: 2.2.1(@types/react@18.2.43)(react@18.2.0)
       tslib: 2.6.2
-      use-callback-ref: 1.3.0(@types/react@18.2.42)(react@18.2.0)
-      use-sidecar: 1.1.2(@types/react@18.2.42)(react@18.2.0)
+      use-callback-ref: 1.3.0(@types/react@18.2.43)(react@18.2.0)
+      use-sidecar: 1.1.2(@types/react@18.2.43)(react@18.2.0)
     dev: false
 
-  /react-style-singleton@2.2.1(@types/react@18.2.42)(react@18.2.0):
+  /react-style-singleton@2.2.1(@types/react@18.2.43)(react@18.2.0):
     resolution: {integrity: sha512-ZWj0fHEMyWkHzKYUr2Bs/4zU6XLmq9HsgBURm7g5pAVfyn49DgUiNgY2d4lXRlYSiCif9YBGpQleewkcqddc7g==, tarball: https://registry.npmjs.org/react-style-singleton/-/react-style-singleton-2.2.1.tgz}
     engines: {node: '>=10'}
     peerDependencies:
@@ -8234,14 +8253,14 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': 18.2.42
+      '@types/react': 18.2.43
       get-nonce: 1.0.1
       invariant: 2.2.4
       react: registry.npmjs.org/react@18.2.0
       tslib: 2.6.2
     dev: false
 
-  /react-textarea-autosize@8.5.3(@types/react@18.2.42)(react@18.2.0):
+  /react-textarea-autosize@8.5.3(@types/react@18.2.43)(react@18.2.0):
     resolution: {integrity: sha512-XT1024o2pqCuZSuBt9FwHlaDeNtVrtCXu0Rnz88t1jUGheCLa3PhjE1GH8Ctm2axEtvdCl5SUHYschyQ0L5QHQ==, tarball: https://registry.npmjs.org/react-textarea-autosize/-/react-textarea-autosize-8.5.3.tgz}
     engines: {node: '>=10'}
     peerDependencies:
@@ -8250,7 +8269,7 @@ packages:
       '@babel/runtime': 7.23.5
       react: registry.npmjs.org/react@18.2.0
       use-composed-ref: 1.3.0(react@18.2.0)
-      use-latest: 1.2.1(@types/react@18.2.42)(react@18.2.0)
+      use-latest: 1.2.1(@types/react@18.2.43)(react@18.2.0)
     transitivePeerDependencies:
       - '@types/react'
     dev: false
@@ -9256,8 +9275,8 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  /uc.micro@1.0.6:
-    resolution: {integrity: sha512-8Y75pvTYkLJW2hWQHXxoqRgV7qb9B+9vFEtidML+7koHUFapnVJAZ6cKs+Qjz5Aw3aZWHMC6u0wJE3At+nSGwA==, tarball: https://registry.npmjs.org/uc.micro/-/uc.micro-1.0.6.tgz}
+  /uc.micro@2.0.0:
+    resolution: {integrity: sha512-DffL94LsNOccVn4hyfRe5rdKa273swqeA5DJpMOeFmEn1wCDc7nAbbB0gXlgBCL7TNzeTv6G7XVWzan7iJtfig==, tarball: https://registry.npmjs.org/uc.micro/-/uc.micro-2.0.0.tgz}
     dev: false
 
   /uglify-js@3.17.4:
@@ -9341,7 +9360,7 @@ packages:
     dependencies:
       punycode: 2.3.1
 
-  /use-callback-ref@1.3.0(@types/react@18.2.42)(react@18.2.0):
+  /use-callback-ref@1.3.0(@types/react@18.2.43)(react@18.2.0):
     resolution: {integrity: sha512-3FT9PRuRdbB9HfXhEq35u4oZkvpJ5kuYbpqhCfmiZyReuRgpnhDlbr2ZEnnuS0RrJAPn6l23xjFg9kpDM+Ms7w==, tarball: https://registry.npmjs.org/use-callback-ref/-/use-callback-ref-1.3.0.tgz}
     engines: {node: '>=10'}
     peerDependencies:
@@ -9351,7 +9370,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': 18.2.42
+      '@types/react': 18.2.43
       react: registry.npmjs.org/react@18.2.0
       tslib: 2.6.2
     dev: false
@@ -9364,7 +9383,7 @@ packages:
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  /use-isomorphic-layout-effect@1.1.2(@types/react@18.2.42)(react@18.2.0):
+  /use-isomorphic-layout-effect@1.1.2(@types/react@18.2.43)(react@18.2.0):
     resolution: {integrity: sha512-49L8yCO3iGT/ZF9QttjwLF/ZD9Iwto5LnH5LmEdk/6cFmXddqi2ulF0edxTwjj+7mqvpVVGQWvbXZdn32wRSHA==, tarball: https://registry.npmjs.org/use-isomorphic-layout-effect/-/use-isomorphic-layout-effect-1.1.2.tgz}
     peerDependencies:
       '@types/react': '*'
@@ -9373,11 +9392,11 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': 18.2.42
+      '@types/react': 18.2.43
       react: registry.npmjs.org/react@18.2.0
     dev: false
 
-  /use-latest@1.2.1(@types/react@18.2.42)(react@18.2.0):
+  /use-latest@1.2.1(@types/react@18.2.43)(react@18.2.0):
     resolution: {integrity: sha512-xA+AVm/Wlg3e2P/JiItTziwS7FK92LWrDB0p+hgXloIMuVCeJJ8v6f0eeHyPZaJrM+usM1FkFfbNCrJGs8A/zw==, tarball: https://registry.npmjs.org/use-latest/-/use-latest-1.2.1.tgz}
     peerDependencies:
       '@types/react': '*'
@@ -9386,12 +9405,12 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': 18.2.42
+      '@types/react': 18.2.43
       react: registry.npmjs.org/react@18.2.0
-      use-isomorphic-layout-effect: 1.1.2(@types/react@18.2.42)(react@18.2.0)
+      use-isomorphic-layout-effect: 1.1.2(@types/react@18.2.43)(react@18.2.0)
     dev: false
 
-  /use-sidecar@1.1.2(@types/react@18.2.42)(react@18.2.0):
+  /use-sidecar@1.1.2(@types/react@18.2.43)(react@18.2.0):
     resolution: {integrity: sha512-epTbsLuzZ7lPClpz2TyryBfztm7m+28DlEv2ZCQ3MDr5ssiwyOwGH/e5F9CkfWjJ1t4clvI58yF822/GUkjjhw==, tarball: https://registry.npmjs.org/use-sidecar/-/use-sidecar-1.1.2.tgz}
     engines: {node: '>=10'}
     peerDependencies:
@@ -9401,7 +9420,7 @@ packages:
       '@types/react':
         optional: true
     dependencies:
-      '@types/react': 18.2.42
+      '@types/react': 18.2.43
       detect-node-es: 1.1.0
       react: registry.npmjs.org/react@18.2.0
       tslib: 2.6.2
@@ -9668,7 +9687,7 @@ packages:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==, tarball: https://registry.npmjs.org/zod/-/zod-3.22.4.tgz}
     dev: true
 
-  /zustand@4.4.7(@types/react@18.2.42)(react@18.2.0):
+  /zustand@4.4.7(@types/react@18.2.43)(react@18.2.0):
     resolution: {integrity: sha512-QFJWJMdlETcI69paJwhSMJz7PPWjVP8Sjhclxmxmxv/RYI7ZOvR5BHX+ktH0we9gTWQMxcne8q1OY8xxz604gw==, tarball: https://registry.npmjs.org/zustand/-/zustand-4.4.7.tgz}
     engines: {node: '>=12.7.0'}
     peerDependencies:
@@ -9683,7 +9702,7 @@ packages:
       react:
         optional: true
     dependencies:
-      '@types/react': 18.2.42
+      '@types/react': 18.2.43
       react: registry.npmjs.org/react@18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
@@ -9802,7 +9821,7 @@ packages:
     version: 0.8.1
     dev: false
 
-  registry.npmjs.org/@emotion/react@11.11.1(@types/react@18.2.42)(react@18.2.0):
+  registry.npmjs.org/@emotion/react@11.11.1(@types/react@18.2.43)(react@18.2.0):
     resolution: {integrity: sha512-5mlW1DquU5HaxjLkfkGN1GA/fvVGdyHURRiX/0FHl2cfIfRxSOfmxEH5YS43edp0OldZrZ+dkBKbngxcNCdZvA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@emotion/react/-/react-11.11.1.tgz}
     id: registry.npmjs.org/@emotion/react/11.11.1
     name: '@emotion/react'
@@ -9821,7 +9840,7 @@ packages:
       '@emotion/use-insertion-effect-with-fallbacks': registry.npmjs.org/@emotion/use-insertion-effect-with-fallbacks@1.0.1(react@18.2.0)
       '@emotion/utils': registry.npmjs.org/@emotion/utils@1.2.1
       '@emotion/weak-memoize': registry.npmjs.org/@emotion/weak-memoize@0.3.1
-      '@types/react': 18.2.42
+      '@types/react': 18.2.43
       hoist-non-react-statics: registry.npmjs.org/hoist-non-react-statics@3.3.2
       react: registry.npmjs.org/react@18.2.0
     dev: false
@@ -10079,25 +10098,6 @@ packages:
       zod: registry.npmjs.org/zod@3.22.4
     dev: false
 
-  registry.npmjs.org/@tabler/icons-react@2.42.0(react@18.2.0):
-    resolution: {integrity: sha512-2APr++u24P2mx9vJymJQJORRpu2Qej0rPrtAvgXu8YomHjLXVP+O1VtToSGyoSPH1ysA569XbxrwzOau9Ne12A==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tabler/icons-react/-/icons-react-2.42.0.tgz}
-    id: registry.npmjs.org/@tabler/icons-react/2.42.0
-    name: '@tabler/icons-react'
-    version: 2.42.0
-    peerDependencies:
-      react: ^16.5.1 || ^17.0.0 || ^18.0.0
-    dependencies:
-      '@tabler/icons': registry.npmjs.org/@tabler/icons@2.42.0
-      prop-types: registry.npmjs.org/prop-types@15.8.1
-      react: registry.npmjs.org/react@18.2.0
-    dev: false
-
-  registry.npmjs.org/@tabler/icons@2.42.0:
-    resolution: {integrity: sha512-ynV4iaC1c1mUhuAr9HRaoq8KrWYmZ0bJEpOh7qTBE+OfdDsdvQUe+0S7FW+DHkJ4RuxQMdO8djrZK7HrUw9YMA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tabler/icons/-/icons-2.42.0.tgz}
-    name: '@tabler/icons'
-    version: 2.42.0
-    dev: false
-
   registry.npmjs.org/@tanstack/match-sorter-utils@8.8.4:
     resolution: {integrity: sha512-rKH8LjZiszWEvmi01NR72QWZ8m4xmXre0OOwlRGnjU01Eqz/QnN+cqpty2PJ0efHblq09+KilvyR7lsbzmXVEw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@tanstack/match-sorter-utils/-/match-sorter-utils-8.8.4.tgz}
     name: '@tanstack/match-sorter-utils'
@@ -10160,7 +10160,7 @@ packages:
       '@trpc/server': registry.npmjs.org/@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106
     dev: false
 
-  registry.npmjs.org/@trpc/next@11.0.0-alpha-next-2023-11-21-11-13-12.106(@tanstack/react-query@5.12.2)(@trpc/client@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/react-query@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106)(next@14.0.4)(react-dom@18.2.0)(react@18.2.0):
+  registry.npmjs.org/@trpc/next@11.0.0-alpha-next-2023-11-21-11-13-12.106(@tanstack/react-query@5.13.4)(@trpc/client@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/react-query@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106)(next@14.0.4)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-RcXjvtSYqL241B45ELp1r/k4sFMn2EFxoDL7eT6kC+fIh+gSUNZItDD78Xx/sOMB6KqhAbAjnuYeWP+V8TtBzA==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@trpc/next/-/next-11.0.0-alpha-next-2023-11-21-11-13-12.106.tgz}
     id: registry.npmjs.org/@trpc/next/11.0.0-alpha-next-2023-11-21-11-13-12.106
     name: '@trpc/next'
@@ -10174,9 +10174,9 @@ packages:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
-      '@tanstack/react-query': 5.12.2(react@18.2.0)
+      '@tanstack/react-query': 5.13.4(react@18.2.0)
       '@trpc/client': registry.npmjs.org/@trpc/client@11.0.0-alpha-next-2023-11-21-11-13-12.106(@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106)
-      '@trpc/react-query': registry.npmjs.org/@trpc/react-query@11.0.0-alpha-next-2023-11-21-11-13-12.106(@tanstack/react-query@5.12.2)(@trpc/client@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106)(react-dom@18.2.0)(react@18.2.0)
+      '@trpc/react-query': registry.npmjs.org/@trpc/react-query@11.0.0-alpha-next-2023-11-21-11-13-12.106(@tanstack/react-query@5.13.4)(@trpc/client@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106)(react-dom@18.2.0)(react@18.2.0)
       '@trpc/server': registry.npmjs.org/@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106
       next: 14.0.4(react-dom@18.2.0)(react@18.2.0)
       react: registry.npmjs.org/react@18.2.0
@@ -10184,7 +10184,7 @@ packages:
       react-ssr-prepass: registry.npmjs.org/react-ssr-prepass@1.5.0(react@18.2.0)
     dev: false
 
-  registry.npmjs.org/@trpc/react-query@11.0.0-alpha-next-2023-11-21-11-13-12.106(@tanstack/react-query@5.12.2)(@trpc/client@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106)(react-dom@18.2.0)(react@18.2.0):
+  registry.npmjs.org/@trpc/react-query@11.0.0-alpha-next-2023-11-21-11-13-12.106(@tanstack/react-query@5.13.4)(@trpc/client@11.0.0-alpha-next-2023-11-21-11-13-12.106)(@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-5oJmgYykcgFwRYEWTm+dzrbK90qxMcT0jvsNyfwJF+Bv47dsZ+MhrvHYhLPzEbiFF594lsgrarAE2ljYj8Im2A==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/@trpc/react-query/-/react-query-11.0.0-alpha-next-2023-11-21-11-13-12.106.tgz}
     id: registry.npmjs.org/@trpc/react-query/11.0.0-alpha-next-2023-11-21-11-13-12.106
     name: '@trpc/react-query'
@@ -10196,7 +10196,7 @@ packages:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
     dependencies:
-      '@tanstack/react-query': 5.12.2(react@18.2.0)
+      '@tanstack/react-query': 5.13.4(react@18.2.0)
       '@trpc/client': registry.npmjs.org/@trpc/client@11.0.0-alpha-next-2023-11-21-11-13-12.106(@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106)
       '@trpc/server': registry.npmjs.org/@trpc/server@11.0.0-alpha-next-2023-11-21-11-13-12.106
       react: registry.npmjs.org/react@18.2.0
@@ -10227,7 +10227,7 @@ packages:
     name: '@types/react-dom'
     version: 18.2.17
     dependencies:
-      '@types/react': 18.2.42
+      '@types/react': 18.2.43
     dev: true
 
   registry.npmjs.org/@upstash/qstash@2.3.0:
@@ -11002,7 +11002,7 @@ packages:
     engines: {node: '>=16.14'}
     dev: false
 
-  registry.npmjs.org/mantine-react-table@2.0.0-alpha.5(@mantine/core@7.3.1)(@mantine/dates@7.3.1)(@mantine/hooks@7.3.1)(@tabler/icons-react@2.42.0)(react-dom@18.2.0)(react@18.2.0):
+  registry.npmjs.org/mantine-react-table@2.0.0-alpha.5(@mantine/core@7.3.1)(@mantine/dates@7.3.1)(@mantine/hooks@7.3.1)(@tabler/icons-react@2.44.0)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-Nz31uPB0e6gZE2taUk1w4OEkpKpeCvvAj7PKV+vyl6ynhS9S4Gfj6UKJTlmXW8E7HJMbCx3sBcoCW3GZHc2Mfw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/mantine-react-table/-/mantine-react-table-2.0.0-alpha.5.tgz}
     id: registry.npmjs.org/mantine-react-table/2.0.0-alpha.5
     name: mantine-react-table
@@ -11016,10 +11016,10 @@ packages:
       react: '>=18.0'
       react-dom: '>=18.0'
     dependencies:
-      '@mantine/core': 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.42)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/core': 7.3.1(@mantine/hooks@7.3.1)(@types/react@18.2.43)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/dates': 7.3.1(@mantine/core@7.3.1)(@mantine/hooks@7.3.1)(dayjs@1.11.10)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/hooks': 7.3.1(react@18.2.0)
-      '@tabler/icons-react': registry.npmjs.org/@tabler/icons-react@2.42.0(react@18.2.0)
+      '@tabler/icons-react': 2.44.0(react@18.2.0)
       '@tanstack/match-sorter-utils': registry.npmjs.org/@tanstack/match-sorter-utils@8.8.4
       '@tanstack/react-table': registry.npmjs.org/@tanstack/react-table@8.10.7(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-virtual': registry.npmjs.org/@tanstack/react-virtual@3.0.0-beta.68(react-dom@18.2.0)(react@18.2.0)
@@ -11232,14 +11232,6 @@ packages:
     name: postcss-value-parser
     version: 4.2.0
     dev: false
-
-  registry.npmjs.org/prettier@3.1.0:
-    resolution: {integrity: sha512-TQLvXjq5IAibjh8EpBIkNKxO749UEWABoiIZehEPiY4GNpVdhaFKqSTu+QrlU6D2dPAfubRmtJTi4K4YkQ5eXw==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/prettier/-/prettier-3.1.0.tgz}
-    name: prettier
-    version: 3.1.0
-    engines: {node: '>=14'}
-    hasBin: true
-    dev: true
 
   registry.npmjs.org/process-nextick-args@2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==, registry: http://registry.npmjs.com/, tarball: https://registry.npmjs.org/process-nextick-args/-/process-nextick-args-2.0.1.tgz}

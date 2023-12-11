@@ -10,7 +10,7 @@
     "with-env": "dotenv -e ../../.env.local --"
   },
   "dependencies": {
-    "@auth/core": "^0.18.4",
+    "@auth/core": "^0.18.5",
     "@planetscale/database": "^1.11.0",
     "drizzle-orm": "0.29.1",
     "mysql2": "^3.6.5",

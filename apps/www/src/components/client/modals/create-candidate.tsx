@@ -6,7 +6,6 @@ import { useParams } from "next/navigation";
 import classes from "@/styles/Candidate.module.css";
 import { api } from "@/trpc/client";
 import { transformUploadImage } from "@/utils";
-import type { Position } from "@eboto/db/schema";
 import {
   Alert,
   Box,
@@ -46,6 +45,8 @@ import {
   IconUserSearch,
   IconX,
 } from "@tabler/icons-react";
+
+import type { Position } from "@eboto/db/schema";
 
 export default function CreateCandidate({ position }: { position: Position }) {
   const context = api.useUtils();
@@ -541,7 +542,8 @@ export default function CreateCandidate({ position }: { position: Position }) {
                             />
                             <YearPickerInput
                               label="Year"
-                              placeholder="Enter year"
+                              // TODO: remove comment when https://github.com/mantinedev/mantine/issues/5401 is fixed
+                              // placeholder="Enter year"
                               popoverProps={{
                                 withinPortal: true,
                               }}
@@ -659,7 +661,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                           <Flex gap="xs">
                             <YearPickerInput
                               label="Start year"
-                              placeholder="Enter start year"
+                              // placeholder="Enter start year"
                               w="100%"
                               popoverProps={{
                                 withinPortal: true,
@@ -684,7 +686,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                             />
                             <YearPickerInput
                               label="End year"
-                              placeholder="Enter end year"
+                              // placeholder="Enter end year"
                               w="100%"
                               popoverProps={{
                                 withinPortal: true,
@@ -787,7 +789,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                               />
                               <YearPickerInput
                                 label="Year"
-                                placeholder="Enter year"
+                                // placeholder="Enter year"
                                 popoverProps={{
                                   withinPortal: true,
                                 }}
