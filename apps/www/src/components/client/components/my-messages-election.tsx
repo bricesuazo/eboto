@@ -5,7 +5,6 @@ import Image from "next/image";
 import { api } from "@/trpc/client";
 import {
   ActionIcon,
-  Affix,
   Alert,
   Box,
   Drawer,
@@ -29,7 +28,7 @@ export default function MyMessagesElection({
 }: {
   election_id: string;
 }) {
-  const [opened, { open, close, toggle }] = useDisclosure(false);
+  const [opened, { close, toggle }] = useDisclosure(false);
 
   const { width } = useViewportSize();
 
@@ -37,7 +36,7 @@ export default function MyMessagesElection({
     if (width < 1000 && opened) {
       close();
     }
-  }, [width]);
+  }, [width, opened, close]);
 
   // const TriggerButton = forwardRef<
   //   HTMLButtonElement,
@@ -122,7 +121,7 @@ function Message({
       {!getAllMyMessagesQuery.data || getAllMyMessagesQuery.isLoading ? (
         <Stack gap="xs">
           {Array.from({ length: 3 }).map((_, index) => (
-            <Skeleton h={60} />
+            <Skeleton key={index} h={60} />
           ))}
         </Stack>
       ) : getAllMyMessagesQuery.data.length === 0 ? (
