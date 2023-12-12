@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { api } from "@/trpc/client";
 import {
   ActionIcon,
@@ -15,6 +16,7 @@ import {
   Textarea,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useScrollIntoView } from "@mantine/hooks";
 import {
   IconAlertTriangle,
   IconChevronLeft,
@@ -33,6 +35,13 @@ export default function Chat({
   chat: ChatType;
   onBack: () => void;
 }) {
+  const { scrollIntoView, targetRef, scrollableRef } = useScrollIntoView<
+    HTMLDivElement,
+    HTMLDivElement
+  >({
+    // offset: 60,
+    duration: 0,
+  });
   const context = api.useUtils();
   const form = useForm({
     validateInputOnBlur: true,
@@ -65,8 +74,13 @@ export default function Chat({
           ? await context.election.getAllAdminCommissionerRooms.invalidate()
           : await context.election.getAllCommissionerVoterRooms.invalidate(),
       ]);
+      scrollIntoView();
     },
   });
+
+  useEffect(() => {
+    scrollIntoView();
+  }, [getMessagesQuery.data, scrollIntoView]);
 
   return (
     <Stack h="100%" gap={0}>
@@ -94,7 +108,6 @@ export default function Chat({
 
         <Box w={34} h={34} />
       </Flex>
-
       {getMessagesQuery.isError ? (
         <Center h="100%">
           <Alert
@@ -112,7 +125,7 @@ export default function Chat({
           <Loader />
         </Center>
       ) : (
-        <ScrollArea px="md" style={{ flex: 1 }}>
+        <ScrollArea px="md" style={{ flex: 1 }} viewportRef={scrollableRef}>
           {getMessagesQuery.data.map((message) => (
             <Box
               key={message.id}
@@ -155,6 +168,7 @@ export default function Chat({
               </HoverCard>
             </Box>
           ))}
+          <div ref={targetRef} />
         </ScrollArea>
       )}
 
@@ -188,8 +202,6 @@ export default function Chat({
           </ActionIcon>
         </Flex>
       </form>
-
-      {/* <Box h={51} /> */}
     </Stack>
   );
 }
