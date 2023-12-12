@@ -48,6 +48,7 @@ import {
   Popover,
   PopoverDropdown,
   PopoverTarget,
+  ScrollArea,
   ScrollAreaAutosize,
   Skeleton,
   Stack,
@@ -603,139 +604,151 @@ export default function DashboardElection({
                 setTab(value ?? "");
                 router.push(
                   value === "voters" ? pathname : `${pathname}?t=admin`,
+                  {
+                    scroll: false,
+                  },
                 );
               }}
-              variant="outline"
+              // variant="outline"
               defaultValue="voters"
-              h="96%"
+              h="100%"
             >
-              <TabsList grow h={40}>
-                <TabsTab value="admin">Chat Admin</TabsTab>
-                <TabsTab value="voters">Chat from Voters</TabsTab>
-              </TabsList>
+              <Stack gap={0} h="100%">
+                <TabsList grow h={40}>
+                  <TabsTab value="admin">Chat Admin</TabsTab>
+                  <TabsTab value="voters">Chat from Voters</TabsTab>
+                </TabsList>
 
-              <Box p="sm" h="100%">
-                <TabsPanel value="admin">
-                  <Stack gap="xs">
-                    {!getAllAdminCommissionerRoomsQuery.data ? (
-                      [0, 1, 2, 3, 4, 5].map((i) => <Skeleton key={i} h={80} />)
-                    ) : getAllAdminCommissionerRoomsQuery.data.length === 0 ? (
-                      <Stack gap="xs" justify="center" align="center" p="xl">
-                        <IconMessage2X size="3rem" />
-                        <Balancer>
-                          <Text size="sm" ta="center">
-                            Did you find a bug? Feature request? Or just need
-                            help? Message us here.
-                          </Text>
-                        </Balancer>
-                        <CreateAdminMessagePopover
-                          election_slug={params.electionDashboardSlug as string}
-                        />
-                      </Stack>
-                    ) : (
-                      <>
-                        <Card padding="lg" radius="md" withBorder>
-                          <Stack align="center">
-                            <Balancer>
-                              <Text size="sm" ta="center">
-                                Did you find a bug? Feature request? Or just
-                                need help? Message us here.
-                              </Text>
-                            </Balancer>
-                            <CreateAdminMessagePopover
-                              election_slug={
-                                params.electionDashboardSlug as string
-                              }
-                            />
-                          </Stack>
-                        </Card>
-                        {getAllAdminCommissionerRoomsQuery.data.map((room) => (
-                          <UnstyledButton
-                            key={room.id}
-                            p="md"
-                            style={{
-                              border: "1px solid #80808050",
-                              borderRadius: 8,
-                            }}
-                            w="100%"
-                            onClick={() =>
-                              setChat({
-                                type: "admin",
-                                id: room.id,
-                                name: room.messages[0]?.user.name ?? "",
-                                title: room.name,
-                              })
+                <ScrollArea h="100%">
+                  <TabsPanel value="admin" p="md">
+                    <Stack gap="xs">
+                      {!getAllAdminCommissionerRoomsQuery.data ? (
+                        [0, 1, 2, 3, 4, 5].map((i) => (
+                          <Skeleton key={i} h={80} />
+                        ))
+                      ) : getAllAdminCommissionerRoomsQuery.data.length ===
+                        0 ? (
+                        <Stack gap="xs" justify="center" align="center" p="xl">
+                          <IconMessage2X size="3rem" />
+                          <Balancer>
+                            <Text size="sm" ta="center">
+                              Did you find a bug? Feature request? Or just need
+                              help? Message us here.
+                            </Text>
+                          </Balancer>
+                          <CreateAdminMessagePopover
+                            election_slug={
+                              params.electionDashboardSlug as string
                             }
-                          >
-                            <Flex justify="space-between">
-                              <Box>
-                                <Text
-                                  lineClamp={1}
-                                  style={{
-                                    wordBreak: "break-all",
-                                  }}
-                                >
-                                  {room.name}
+                          />
+                        </Stack>
+                      ) : (
+                        <>
+                          <Card padding="lg" radius="md" withBorder>
+                            <Stack align="center">
+                              <Balancer>
+                                <Text size="sm" ta="center">
+                                  Did you find a bug? Feature request? Or just
+                                  need help? Message us here.
                                 </Text>
-                                {room.messages[0] && (
-                                  <Flex align="center" gap="sm">
-                                    <Image
-                                      src={
-                                        room.messages[0].user.image ??
-                                        room.messages[0].user.image_file?.url ??
-                                        ""
-                                      }
-                                      alt={
-                                        room.messages[0].user.name + " image."
-                                      }
-                                      width={20}
-                                      height={20}
-                                      style={{
-                                        borderRadius: "50%",
-                                      }}
-                                    />
+                              </Balancer>
+                              <CreateAdminMessagePopover
+                                election_slug={
+                                  params.electionDashboardSlug as string
+                                }
+                              />
+                            </Stack>
+                          </Card>
+                          {getAllAdminCommissionerRoomsQuery.data.map(
+                            (room) => (
+                              <UnstyledButton
+                                key={room.id}
+                                p="md"
+                                style={{
+                                  border: "1px solid #80808050",
+                                  borderRadius: 8,
+                                }}
+                                w="100%"
+                                onClick={() =>
+                                  setChat({
+                                    type: "admin",
+                                    id: room.id,
+                                    name: room.messages[0]?.user.name ?? "",
+                                    title: room.name,
+                                  })
+                                }
+                              >
+                                <Flex justify="space-between">
+                                  <Box>
                                     <Text
-                                      size="sm"
                                       lineClamp={1}
                                       style={{
                                         wordBreak: "break-all",
                                       }}
                                     >
-                                      {room.messages[0].message}
+                                      {room.name}
                                     </Text>
-                                  </Flex>
-                                )}
-                              </Box>
-                              <HoverCard openDelay={500}>
-                                <HoverCardTarget>
-                                  <Text
-                                    size="xs"
-                                    c="gray"
-                                    aria-label={moment(room.created_at).format(
-                                      "MMMM D, YYYY hh:mm A",
+                                    {room.messages[0] && (
+                                      <Flex align="center" gap="sm">
+                                        <Image
+                                          src={
+                                            room.messages[0].user.image ??
+                                            room.messages[0].user.image_file
+                                              ?.url ??
+                                            ""
+                                          }
+                                          alt={
+                                            room.messages[0].user.name +
+                                            " image."
+                                          }
+                                          width={20}
+                                          height={20}
+                                          style={{
+                                            borderRadius: "50%",
+                                          }}
+                                        />
+                                        <Text
+                                          size="sm"
+                                          lineClamp={1}
+                                          style={{
+                                            wordBreak: "break-all",
+                                          }}
+                                        >
+                                          {room.messages[0].message}
+                                        </Text>
+                                      </Flex>
                                     )}
-                                    miw="fit-content"
-                                  >
-                                    {moment(room.created_at).fromNow()}
-                                  </Text>
-                                </HoverCardTarget>
-                                <HoverCardDropdown>
-                                  <Text size="xs" c="gray">
-                                    {moment(room.created_at).format(
-                                      "MMMM D, YYYY hh:mm A",
-                                    )}
-                                  </Text>
-                                </HoverCardDropdown>
-                              </HoverCard>
-                            </Flex>
-                          </UnstyledButton>
-                        ))}
-                      </>
-                    )}
-                  </Stack>
-                </TabsPanel>
-                <TabsPanel value="voters" h="100%">
-                  <ScrollAreaAutosize h="100%" type="scroll">
+                                  </Box>
+                                  <HoverCard openDelay={500}>
+                                    <HoverCardTarget>
+                                      <Text
+                                        size="xs"
+                                        c="gray"
+                                        aria-label={moment(
+                                          room.created_at,
+                                        ).format("MMMM D, YYYY hh:mm A")}
+                                        miw="fit-content"
+                                      >
+                                        {moment(room.created_at).fromNow()}
+                                      </Text>
+                                    </HoverCardTarget>
+                                    <HoverCardDropdown>
+                                      <Text size="xs" c="gray">
+                                        {moment(room.created_at).format(
+                                          "MMMM D, YYYY hh:mm A",
+                                        )}
+                                      </Text>
+                                    </HoverCardDropdown>
+                                  </HoverCard>
+                                </Flex>
+                              </UnstyledButton>
+                            ),
+                          )}
+                        </>
+                      )}
+                    </Stack>
+                  </TabsPanel>
+                  <TabsPanel value="voters" p="md">
                     <Stack gap="xs">
                       {!getAllCommissionerVoterRoomsQuery.data ? (
                         [0, 1, 2, 3, 4, 5].map((i) => (
@@ -831,9 +844,9 @@ export default function DashboardElection({
                         ))
                       )}
                     </Stack>
-                  </ScrollAreaAutosize>
-                </TabsPanel>
-              </Box>
+                  </TabsPanel>
+                </ScrollArea>
+              </Stack>
             </Tabs>
           )}
         </AppShellAside>

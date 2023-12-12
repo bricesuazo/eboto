@@ -9,6 +9,7 @@ import {
   HoverCardDropdown,
   HoverCardTarget,
   Loader,
+  ScrollArea,
   Stack,
   Text,
   Textarea,
@@ -94,70 +95,68 @@ export default function Chat({
         <Box w={34} h={34} />
       </Flex>
 
-      <Stack gap="xs" justify="flex-end" style={{ flex: 1 }} px="md">
-        {getMessagesQuery.isError ? (
-          <Center h="100%">
-            <Alert
-              variant="light"
-              color="red"
-              title="Error"
-              radius="md"
-              icon={<IconAlertTriangle />}
+      {getMessagesQuery.isError ? (
+        <Center h="100%">
+          <Alert
+            variant="light"
+            color="red"
+            title="Error"
+            radius="md"
+            icon={<IconAlertTriangle />}
+          >
+            {getMessagesQuery.error.message}
+          </Alert>
+        </Center>
+      ) : getMessagesQuery.isLoading || !getMessagesQuery.data ? (
+        <Center h="100%">
+          <Loader />
+        </Center>
+      ) : (
+        <ScrollArea px="md" style={{ flex: 1 }}>
+          {getMessagesQuery.data.map((message) => (
+            <Box
+              key={message.id}
+              ml={message.user.isMe ? "auto" : undefined}
+              mr={!message.user.isMe ? "auto" : undefined}
+              maw={{ base: "75%", xs: "50%", sm: "40%", md: 200, xl: 300 }}
             >
-              {getMessagesQuery.error.message}
-            </Alert>
-          </Center>
-        ) : getMessagesQuery.isLoading || !getMessagesQuery.data ? (
-          <Center h="100%">
-            <Loader />
-          </Center>
-        ) : (
-          <Box>
-            {getMessagesQuery.data.map((message) => (
               <Box
-                key={message.id}
-                ml={message.user.isMe ? "auto" : undefined}
-                mr={!message.user.isMe ? "auto" : undefined}
-                maw={{ base: "75%", xs: "50%", sm: "40%", md: 200, xl: 300 }}
+                p="xs"
+                style={{
+                  border: "1px solid #cccccc25",
+                  borderRadius: 8,
+                }}
               >
-                <Box
-                  p="xs"
+                <Text
                   style={{
-                    border: "1px solid #cccccc25",
-                    borderRadius: 8,
+                    wordBreak: "break-word",
                   }}
                 >
-                  <Text
-                    style={{
-                      wordWrap: "break-word",
-                    }}
-                  >
-                    {message.message}
-                  </Text>
-                </Box>
-                <HoverCard openDelay={500}>
-                  <HoverCardTarget>
-                    <Text
-                      size="xs"
-                      c="gray"
-                      ta={message.user.isMe ? "right" : undefined}
-                    >
-                      {moment(message.created_at).format("hh:mm A")}
-                    </Text>
-                  </HoverCardTarget>
-                  <HoverCardDropdown>
-                    <Text size="xs" c="gray">
-                      {moment(message.created_at).format(
-                        "MMMM D, YYYY hh:mm A",
-                      )}
-                    </Text>
-                  </HoverCardDropdown>
-                </HoverCard>
+                  {message.message}
+                </Text>
               </Box>
-            ))}
-          </Box>
-        )}
-      </Stack>
+              <HoverCard openDelay={500}>
+                <HoverCardTarget>
+                  <Text
+                    size="xs"
+                    c="gray"
+                    w="fit-content"
+                    ml={message.user.isMe ? "auto" : undefined}
+                    mb="xs"
+                  >
+                    {moment(message.created_at).format("hh:mm A")}
+                  </Text>
+                </HoverCardTarget>
+                <HoverCardDropdown>
+                  <Text size="xs" c="gray">
+                    {moment(message.created_at).format("MMMM D, YYYY hh:mm A")}
+                  </Text>
+                </HoverCardDropdown>
+              </HoverCard>
+            </Box>
+          ))}
+        </ScrollArea>
+      )}
 
       <form
         onSubmit={form.onSubmit((values) =>
@@ -189,6 +188,8 @@ export default function Chat({
           </ActionIcon>
         </Flex>
       </form>
+
+      {/* <Box h={51} /> */}
     </Stack>
   );
 }
