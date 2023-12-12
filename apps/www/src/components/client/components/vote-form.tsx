@@ -407,8 +407,8 @@ function VoteCard({
               ? theme.colors.green[6]
               : theme.colors.green[8]
             : colorScheme === "light"
-            ? theme.colors.gray[3]
-            : theme.colors.gray[7],
+              ? theme.colors.gray[3]
+              : theme.colors.gray[7],
           backgroundColor: isSelected
             ? colorScheme === "light"
               ? theme.colors.gray[1]

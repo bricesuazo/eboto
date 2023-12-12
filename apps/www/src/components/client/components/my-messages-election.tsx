@@ -36,7 +36,8 @@ export default function MyMessagesElection({
     if (width < 1000 && opened) {
       close();
     }
-  }, [width, opened, close]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [width]);
 
   // const TriggerButton = forwardRef<
   //   HTMLButtonElement,

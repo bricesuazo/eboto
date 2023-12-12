@@ -20,6 +20,7 @@ import moment from "moment";
 
 import type { RouterOutputs } from "@eboto/api";
 
+import MyMessagesElection from "../components/my-messages-election";
 import MessageCommissioner from "../modals/message-commissioner";
 
 export default function ElectionCandidate({
@@ -44,6 +45,8 @@ export default function ElectionCandidate({
   return (
     <>
       {/* <AdModal /> */}
+      {isVoterCanMessage && <MyMessagesElection election_id={election.id} />}
+
       <Container py="xl" size="md">
         <Stack>
           <Breadcrumbs w="100%">

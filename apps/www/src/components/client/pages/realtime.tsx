@@ -36,6 +36,7 @@ import {
 } from "@eboto/constants";
 import type { Election } from "@eboto/db/schema";
 
+import MyMessagesElection from "../components/my-messages-election";
 import MessageCommissioner from "../modals/message-commissioner";
 
 export default function Realtime({
@@ -71,6 +72,8 @@ export default function Realtime({
     <>
       {/* <AdModal /> */}
       <ScrollToTopButton />
+      {isVoterCanMessage && <MyMessagesElection election_id={election.id} />}
+
       <Container py="xl" size="md">
         <Stack gap="xl">
           <Center>

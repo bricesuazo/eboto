@@ -32,6 +32,7 @@ export default function Chat({
   chat: ChatType;
   onBack: () => void;
 }) {
+  const context = api.useUtils();
   const form = useForm({
     validateInputOnBlur: true,
     initialValues: {
@@ -57,8 +58,12 @@ export default function Chat({
 
   const sendMessageMutation = api.election.sendMessage.useMutation({
     onSuccess: async () => {
-      await getMessagesQuery.refetch();
-      form.reset();
+      await Promise.allSettled([
+        await getMessagesQuery.refetch().then(() => form.reset()),
+        chat.type === "admin"
+          ? await context.election.getAllAdminCommissionerRooms.invalidate()
+          : await context.election.getAllCommissionerVoterRooms.invalidate(),
+      ]);
     },
   });
 
