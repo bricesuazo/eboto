@@ -1235,7 +1235,7 @@ export const electionRouter = createTRPCRouter({
 
       const rooms = await ctx.db.query.commissioners_voters_rooms.findMany({
         where: (rooms, { eq, and, isNull }) =>
-          and(eq(rooms.election_id, election.id), isNull(rooms.deleted_at)),
+          and(eq(rooms.election_id, election.id), isNull(rooms.deleted_at),),
         with: {
           messages: {
             orderBy: (messages, { desc }) => desc(messages.created_at),
@@ -1409,7 +1409,42 @@ export const electionRouter = createTRPCRouter({
         },
       });
     }),
-  getMessages: protectedProcedure
+  getMessagesAsVoter: protectedProcedure
+    .input(
+      z.object({
+        room_id: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const commissionerVoterRoom =
+        await ctx.db.query.commissioners_voters_rooms.findFirst({
+          where: (rooms, { eq, and, isNull }) =>
+            and(eq(rooms.id, input.room_id), isNull(rooms.deleted_at)),
+          with: {
+            messages: {
+              orderBy: (messages, { asc }) => asc(messages.created_at),
+              with: {
+                user: true,
+              },
+            },
+          },
+        });
+
+      if (!commissionerVoterRoom)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Room not found",
+        });
+
+      return commissionerVoterRoom.messages.map((message) => ({
+        ...message,
+        user: {
+          ...message.user,
+          isMe: message.user.id === ctx.session.user.id,
+        },
+      }));
+    }),
+  getMessagesAsComissioner: protectedProcedure
     .input(
       z.object({
         type: z.enum(["admin", "voters"]),
@@ -1475,7 +1510,33 @@ export const electionRouter = createTRPCRouter({
         }));
       }
     }),
-  sendMessage: protectedProcedure
+  sendMessageAsVoter: protectedProcedure
+    .input(
+      z.object({
+        room_id: z.string().min(1),
+        message: z.string().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const commissionerVoterRoom =
+        await ctx.db.query.commissioners_voters_rooms.findFirst({
+          where: (rooms, { eq, and, isNull }) =>
+            and(eq(rooms.id, input.room_id), isNull(rooms.deleted_at)),
+        });
+
+      if (!commissionerVoterRoom)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Room not found",
+        });
+
+      await ctx.db.insert(commissioners_voters_messages).values({
+        message: input.message,
+        room_id: commissionerVoterRoom.id,
+        user_id: ctx.session.user.id,
+      });
+    }),
+  sendMessageAsCommissioner: protectedProcedure
     .input(
       z.object({
         type: z.enum(["admin", "voters"]),

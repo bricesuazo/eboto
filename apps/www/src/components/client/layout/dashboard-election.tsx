@@ -27,6 +27,7 @@ import {
   Box,
   Button,
   Card,
+  Center,
   CheckIcon,
   Combobox,
   ComboboxChevron,
@@ -66,16 +67,19 @@ import {
   useCombobox,
 } from "@mantine/core";
 import { isEmail, useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import {
   IconAlertCircle,
+  IconAlertTriangle,
   IconAt,
   IconCheck,
+  IconChevronLeft,
   IconExternalLink,
   IconLogout,
   IconMessage2X,
   IconPlus,
+  IconSend,
   IconUserMinus,
   IconUserPlus,
 } from "@tabler/icons-react";
@@ -89,8 +93,6 @@ import {
   isElectionEnded,
   isElectionOngoing,
 } from "@eboto/constants";
-
-import Chat from "../components/chat";
 
 export interface ChatType {
   type: "admin" | "voters";
@@ -985,5 +987,181 @@ function CreateAdminMessagePopover({
         </form>
       </PopoverDropdown>
     </Popover>
+  );
+}
+
+function Chat({ chat, onBack }: { chat: ChatType; onBack: () => void }) {
+  const { scrollIntoView, targetRef, scrollableRef } = useScrollIntoView<
+    HTMLDivElement,
+    HTMLDivElement
+  >({
+    duration: 0,
+  });
+  const context = api.useUtils();
+  const form = useForm({
+    validateInputOnBlur: true,
+    initialValues: {
+      message: "",
+    },
+
+    validate: zodResolver(
+      z.object({
+        message: z.string().min(3, "Message must be at least 3 characters"),
+      }),
+    ),
+  });
+
+  const getMessagesAsComissionerQuery =
+    api.election.getMessagesAsComissioner.useQuery(
+      {
+        type: chat.type,
+        room_id: chat.id,
+      },
+      {
+        refetchOnMount: true,
+      },
+    );
+
+  const sendMessageAsCommissionerMutation =
+    api.election.sendMessageAsCommissioner.useMutation({
+      onSuccess: async () => {
+        await Promise.allSettled([
+          await getMessagesAsComissionerQuery
+            .refetch()
+            .then(() => form.reset()),
+          chat.type === "admin"
+            ? await context.election.getAllAdminCommissionerRooms.invalidate()
+            : await context.election.getAllCommissionerVoterRooms.invalidate(),
+        ]);
+        scrollIntoView();
+      },
+    });
+
+  useEffect(() => {
+    scrollIntoView();
+  }, [getMessagesAsComissionerQuery.data, scrollIntoView]);
+
+  return (
+    <Stack h="100%" gap={0}>
+      <Flex justify="space-between" gap="md" p="md" align="center">
+        <ActionIcon
+          variant="default"
+          aria-label="Back"
+          size="lg"
+          onClick={onBack}
+        >
+          <IconChevronLeft
+            style={{ width: "70%", height: "70%" }}
+            stroke={1.5}
+          />
+        </ActionIcon>
+
+        <Box style={{ flex: 1 }}>
+          <Text ta="center" size="sm">
+            {chat.type === "admin" ? "Admin" : chat.name}
+          </Text>
+          <Text size="xs" lineClamp={1} ta="center">
+            {chat.title}
+          </Text>
+        </Box>
+
+        <Box w={34} h={34} />
+      </Flex>
+      {getMessagesAsComissionerQuery.isError ? (
+        <Center h="100%">
+          <Alert
+            variant="light"
+            color="red"
+            title="Error"
+            radius="md"
+            icon={<IconAlertTriangle />}
+          >
+            {getMessagesAsComissionerQuery.error.message}
+          </Alert>
+        </Center>
+      ) : getMessagesAsComissionerQuery.isLoading ||
+        !getMessagesAsComissionerQuery.data ? (
+        <Center h="100%">
+          <Loader />
+        </Center>
+      ) : (
+        <ScrollArea px="md" style={{ flex: 1 }} viewportRef={scrollableRef}>
+          {getMessagesAsComissionerQuery.data.map((message) => (
+            <Box
+              key={message.id}
+              ml={message.user.isMe ? "auto" : undefined}
+              mr={!message.user.isMe ? "auto" : undefined}
+              maw={{ base: "75%", xs: "50%", sm: "40%", md: 200, xl: 300 }}
+            >
+              <Box
+                p="xs"
+                style={{
+                  border: "1px solid #cccccc25",
+                  borderRadius: 8,
+                }}
+              >
+                <Text
+                  style={{
+                    wordBreak: "break-word",
+                  }}
+                >
+                  {message.message}
+                </Text>
+              </Box>
+              <HoverCard openDelay={500}>
+                <HoverCardTarget>
+                  <Text
+                    size="xs"
+                    c="gray"
+                    w="fit-content"
+                    ml={message.user.isMe ? "auto" : undefined}
+                    mb="xs"
+                  >
+                    {moment(message.created_at).format("hh:mm A")}
+                  </Text>
+                </HoverCardTarget>
+                <HoverCardDropdown>
+                  <Text size="xs" c="gray">
+                    {moment(message.created_at).format("MMMM D, YYYY hh:mm A")}
+                  </Text>
+                </HoverCardDropdown>
+              </HoverCard>
+            </Box>
+          ))}
+          <div ref={targetRef} />
+        </ScrollArea>
+      )}
+
+      <form
+        onSubmit={form.onSubmit((values) =>
+          sendMessageAsCommissionerMutation.mutate({
+            type: chat.type,
+            room_id: chat.id,
+            message: values.message,
+          }),
+        )}
+      >
+        <Flex align="end" p="md" gap="xs">
+          <Textarea
+            autosize
+            placeholder="Type your message here"
+            style={{ flex: 1 }}
+            maxRows={4}
+            {...form.getInputProps("message")}
+            error={!!form.errors.message}
+            disabled={sendMessageAsCommissionerMutation.isPending}
+          />
+          <ActionIcon
+            type="submit"
+            variant="default"
+            aria-label="Send"
+            size={36}
+            loading={sendMessageAsCommissionerMutation.isPending}
+          >
+            <IconSend stroke={1} />
+          </ActionIcon>
+        </Flex>
+      </form>
+    </Stack>
   );
 }
