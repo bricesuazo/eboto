@@ -10,12 +10,12 @@
     "with-env": "dotenv -e ../../.env.local --"
   },
   "dependencies": {
-    "@auth/core": "^0.18.5",
+    "@auth/core": "^0.18.6",
     "@planetscale/database": "^1.11.0",
     "drizzle-orm": "0.29.1",
     "mysql2": "^3.6.5",
     "nanoid": "^5.0.4",
-    "uploadthing": "^6.0.4"
+    "uploadthing": "^6.1.0"
   },
   "devDependencies": {
     "@eboto/eslint-config": "workspace:*",
