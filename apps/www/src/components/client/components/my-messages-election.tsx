@@ -7,16 +7,19 @@ import {
   ActionIcon,
   Alert,
   Box,
+  Card,
   Center,
-  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerOverlay,
+  DrawerRoot,
   Flex,
   HoverCard,
   HoverCardDropdown,
   HoverCardTarget,
   Loader,
   rem,
-  ScrollArea,
-  ScrollAreaAutosize,
   Skeleton,
   Stack,
   Text,
@@ -42,6 +45,12 @@ export default function MyMessagesElection({
 }: {
   election_id: string;
 }) {
+  const { scrollIntoView, targetRef, scrollableRef } = useScrollIntoView<
+    HTMLDivElement,
+    HTMLDivElement
+  >({
+    duration: 0,
+  });
   const [chat, setChat] = useState<{
     id: string;
     name: string;
@@ -70,113 +79,142 @@ export default function MyMessagesElection({
       >
         {opened ? <IconX /> : <IconMessage2 />}
       </ActionIcon>
-      <Drawer
-        radius="md"
-        opened={opened}
-        onClose={close}
-        title="Messages"
-        scrollAreaComponent={ScrollAreaAutosize}
-      >
-        <>
-          {!getAllMyMessagesQuery.data || getAllMyMessagesQuery.isLoading ? (
-            <Stack gap="xs">
-              {Array.from({ length: 3 }).map((_, index) => (
-                <Skeleton key={index} h={60} />
-              ))}
-            </Stack>
-          ) : getAllMyMessagesQuery.data.length === 0 ? (
-            <Alert
-              icon={<IconAlertCircle size="1rem" />}
-              color="yellow"
-              title="No messages"
-              variant="filled"
-            >
-              You have not received any messages from the commissioner yet.
-            </Alert>
-          ) : chat ? (
-            <Chat chat={chat} onBack={() => setChat(null)} />
-          ) : (
-            <Stack gap="sm">
-              {getAllMyMessagesQuery.data.map((room) => (
-                <UnstyledButton
-                  key={room.id}
+      <DrawerRoot padding={0} radius="md" opened={opened} onClose={close}>
+        <DrawerOverlay />
+
+        <DrawerContent ref={scrollableRef}>
+          <DrawerBody>
+            {!getAllMyMessagesQuery.data || getAllMyMessagesQuery.isLoading ? (
+              <Stack gap="xs" p="md">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <Skeleton key={index} h={60} />
+                ))}
+              </Stack>
+            ) : getAllMyMessagesQuery.data.length === 0 ? (
+              <Box p="md">
+                <Card>
+                  <Center style={{ gap: 8 }}>
+                    <IconAlertCircle size={60} stroke={1.5} />
+                    <Text size="sm">No messages found.</Text>
+                  </Center>
+                </Card>
+              </Box>
+            ) : chat ? (
+              <Chat
+                chat={chat}
+                onBack={() => setChat(null)}
+                scrollIntoView={scrollIntoView}
+              />
+            ) : (
+              <>
+                <Flex
+                  justify="space-between"
+                  gap="md"
+                  align="center"
                   p="md"
-                  style={{
-                    border: "1px solid #80808050",
-                    borderRadius: 8,
-                  }}
-                  w="100%"
-                  onClick={() =>
-                    setChat({
-                      id: room.id,
-                      name: room.messages[0]?.user.name ?? "",
-                      title: room.name,
-                    })
-                  }
+                  style={{ position: "sticky", top: 0 }}
                 >
-                  <Flex justify="space-between">
-                    <Box>
-                      <Text
-                        lineClamp={1}
-                        style={{
-                          wordBreak: "break-all",
-                        }}
-                      >
-                        {room.name}
-                      </Text>
-                      {room.messages[0] && (
-                        <Flex align="center" gap="sm">
-                          <Image
-                            src={
-                              room.messages[0].user.image ??
-                              room.messages[0].user.image_file?.url ??
-                              ""
-                            }
-                            alt={room.messages[0].user.name + " image."}
-                            width={20}
-                            height={20}
-                            style={{
-                              borderRadius: "50%",
-                            }}
-                          />
+                  <Box w={34} h={34} />
+
+                  <Box style={{ flex: 1 }}>
+                    <Text ta="center" size="sm">
+                      Messages
+                    </Text>
+                  </Box>
+
+                  <ActionIcon
+                    variant="default"
+                    aria-label="Back"
+                    size="lg"
+                    onClick={close}
+                  >
+                    <IconX size="1rem" stroke={1.5} />
+                  </ActionIcon>
+                </Flex>
+                <Stack gap="sm" p="md">
+                  {getAllMyMessagesQuery.data.map((room) => (
+                    <UnstyledButton
+                      key={room.id}
+                      p="md"
+                      style={{
+                        border: "1px solid #80808050",
+                        borderRadius: 8,
+                      }}
+                      w="100%"
+                      onClick={() =>
+                        setChat({
+                          id: room.id,
+                          name: room.messages[0]?.user.name ?? "",
+                          title: room.name,
+                        })
+                      }
+                    >
+                      <Flex justify="space-between">
+                        <Box>
                           <Text
-                            size="sm"
                             lineClamp={1}
                             style={{
                               wordBreak: "break-all",
                             }}
                           >
-                            {room.messages[0].message}
+                            {room.name}
                           </Text>
-                        </Flex>
-                      )}
-                    </Box>
-                    {/* <HoverCard openDelay={500}>
-                  <HoverCardTarget>
-                    <Text
-                      size="xs"
-                      c="gray"
-                      aria-label={moment(room.created_at).format(
-                        "MMMM D, YYYY hh:mm A",
-                      )}
-                      miw="fit-content"
-                    >
-                      {moment(room.created_at).fromNow()}
-                    </Text>
-                  </HoverCardTarget>
-                  <HoverCardDropdown>
-                    <Text size="xs" c="gray">
-                      {moment(room.created_at).format("MMMM D, YYYY hh:mm A")}
-                    </Text>
-                  </HoverCardDropdown>
-                </HoverCard> */}
-                  </Flex>
-                </UnstyledButton>
-              ))}
-            </Stack>
-          )}
-        </>
-      </Drawer>
+                          {room.messages[0] && (
+                            <Flex align="center" gap="sm">
+                              <Image
+                                src={
+                                  room.messages[0].user.image ??
+                                  room.messages[0].user.image_file?.url ??
+                                  ""
+                                }
+                                alt={room.messages[0].user.name + " image."}
+                                width={20}
+                                height={20}
+                                style={{
+                                  borderRadius: "50%",
+                                }}
+                              />
+                              <Text
+                                size="sm"
+                                lineClamp={1}
+                                style={{
+                                  wordBreak: "break-all",
+                                }}
+                              >
+                                {room.messages[0].message}
+                              </Text>
+                            </Flex>
+                          )}
+                        </Box>
+                        {/* <HoverCard openDelay={500}>
+                      <HoverCardTarget>
+                        <Text
+                          size="xs"
+                          c="gray"
+                          aria-label={moment(room.created_at).format(
+                            "MMMM D, YYYY hh:mm A",
+                          )}
+                          miw="fit-content"
+                        >
+                          {moment(room.created_at).fromNow()}
+                        </Text>
+                      </HoverCardTarget>
+                      <HoverCardDropdown>
+                        <Text size="xs" c="gray">
+                          {moment(room.created_at).format("MMMM D, YYYY hh:mm A")}
+                        </Text>
+                      </HoverCardDropdown>
+                    </HoverCard> */}
+                      </Flex>
+                    </UnstyledButton>
+                  ))}
+                </Stack>
+              </>
+            )}
+            <div ref={targetRef} />
+          </DrawerBody>
+        </DrawerContent>
+      </DrawerRoot>
     </>
   );
 }
@@ -184,6 +222,7 @@ export default function MyMessagesElection({
 function Chat({
   chat,
   onBack,
+  scrollIntoView,
 }: {
   chat: {
     id: string;
@@ -191,13 +230,8 @@ function Chat({
     title: string;
   };
   onBack: () => void;
+  scrollIntoView: () => void;
 }) {
-  const { scrollIntoView, targetRef, scrollableRef } = useScrollIntoView<
-    HTMLDivElement,
-    HTMLDivElement
-  >({
-    duration: 0,
-  });
   const context = api.useUtils();
   const form = useForm({
     validateInputOnBlur: true,
@@ -233,12 +267,18 @@ function Chat({
     });
 
   useEffect(() => {
-    scrollIntoView();
-  }, [getMessagesAsVoterQuery.data, scrollIntoView]);
+    if (chat) scrollIntoView();
+  }, [getMessagesAsVoterQuery.data, scrollIntoView, chat]);
 
   return (
-    <Stack h="100%" gap={0}>
-      <Flex justify="space-between" gap="md" align="center">
+    <Stack gap={0}>
+      <Flex
+        justify="space-between"
+        gap="md"
+        // align="center"
+        p="md"
+        style={{ position: "sticky", top: 0 }}
+      >
         <ActionIcon
           variant="default"
           aria-label="Back"
@@ -260,7 +300,11 @@ function Chat({
           </Text>
         </Box>
 
-        <Box w={34} h={34} />
+        <DrawerCloseButton>
+          <ActionIcon variant="default" aria-label="Back" size="lg">
+            <IconX size="1rem" stroke={1.5} />
+          </ActionIcon>
+        </DrawerCloseButton>
       </Flex>
       {getMessagesAsVoterQuery.isError ? (
         <Center h="100%">
@@ -279,13 +323,13 @@ function Chat({
           <Loader />
         </Center>
       ) : (
-        <ScrollArea style={{ flex: 1 }} viewportRef={scrollableRef}>
+        <Box px="md" style={{ flex: 1 }}>
           {getMessagesAsVoterQuery.data.map((message) => (
             <Box
               key={message.id}
               ml={message.user.isMe ? "auto" : undefined}
               mr={!message.user.isMe ? "auto" : undefined}
-              maw={{ base: "75%", xs: "50%", sm: "40%", md: 200, xl: 300 }}
+              maw="75%"
             >
               <Box
                 p="xs"
@@ -322,39 +366,46 @@ function Chat({
               </HoverCard>
             </Box>
           ))}
-          <div ref={targetRef} />
-        </ScrollArea>
+        </Box>
       )}
 
-      <form
-        onSubmit={form.onSubmit((values) =>
-          sendMessageAsVoterMutation.mutate({
-            room_id: chat.id,
-            message: values.message,
-          }),
-        )}
+      <Box
+        p="md"
+        style={{
+          position: "sticky",
+          bottom: 0,
+        }}
       >
-        <Flex align="end" gap="xs">
-          <Textarea
-            autosize
-            placeholder="Type your message here"
-            style={{ flex: 1 }}
-            maxRows={4}
-            {...form.getInputProps("message")}
-            error={!!form.errors.message}
-            disabled={sendMessageAsVoterMutation.isPending}
-          />
-          <ActionIcon
-            type="submit"
-            variant="default"
-            aria-label="Send"
-            size={36}
-            loading={sendMessageAsVoterMutation.isPending}
-          >
-            <IconSend stroke={1} />
-          </ActionIcon>
-        </Flex>
-      </form>
+        <form
+          onSubmit={form.onSubmit((values) =>
+            sendMessageAsVoterMutation.mutate({
+              room_id: chat.id,
+              message: values.message,
+            }),
+          )}
+        >
+          <Flex align="end" gap="xs">
+            <Textarea
+              autosize
+              placeholder="Type your message here"
+              style={{ flex: 1 }}
+              maxRows={4}
+              {...form.getInputProps("message")}
+              error={!!form.errors.message}
+              disabled={sendMessageAsVoterMutation.isPending}
+            />
+            <ActionIcon
+              type="submit"
+              variant="default"
+              aria-label="Send"
+              size={36}
+              loading={sendMessageAsVoterMutation.isPending}
+            >
+              <IconSend stroke={1} />
+            </ActionIcon>
+          </Flex>
+        </form>
+      </Box>
     </Stack>
   );
 }
