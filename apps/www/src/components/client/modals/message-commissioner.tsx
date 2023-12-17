@@ -29,6 +29,7 @@ export default function MessageCommissioner({
 }: {
   election_id: string;
 }) {
+  const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure(false);
 
   const form = useForm({
@@ -48,7 +49,8 @@ export default function MessageCommissioner({
 
   const messageCommissionerMutation =
     api.election.messageCommissioner.useMutation({
-      onSuccess: () => {
+      onSuccess: async () => {
+        await context.election.getAllMyMessages.invalidate();
         notifications.show({
           title: "Message sent!",
           message: "Successfully sent message to commissioners",

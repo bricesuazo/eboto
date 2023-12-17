@@ -79,11 +79,11 @@ export default function MyMessagesElection({
       >
         {opened ? <IconX /> : <IconMessage2 />}
       </ActionIcon>
-      <DrawerRoot padding={0} radius="md" opened={opened} onClose={close}>
+      <DrawerRoot padding={0} opened={opened} onClose={close}>
         <DrawerOverlay />
 
         <DrawerContent ref={scrollableRef}>
-          <DrawerBody>
+          <DrawerBody h="100%">
             {!getAllMyMessagesQuery.data || getAllMyMessagesQuery.isLoading ? (
               <Stack gap="xs" p="md">
                 {Array.from({ length: 3 }).map((_, index) => (
@@ -271,7 +271,7 @@ function Chat({
   }, [getMessagesAsVoterQuery.data, scrollIntoView, chat]);
 
   return (
-    <Stack gap={0}>
+    <Flex direction="column" h="100%">
       <Flex
         justify="space-between"
         gap="md"
@@ -291,7 +291,7 @@ function Chat({
           />
         </ActionIcon>
 
-        <Box style={{ flex: 1 }}>
+        <Box w="100%">
           <Text ta="center" size="sm">
             {chat.name}
           </Text>
@@ -323,7 +323,7 @@ function Chat({
           <Loader />
         </Center>
       ) : (
-        <Box px="md" style={{ flex: 1 }}>
+        <Flex direction="column" justify="end" px="md" style={{ flex: 1 }}>
           {getMessagesAsVoterQuery.data.map((message) => (
             <Box
               key={message.id}
@@ -366,7 +366,7 @@ function Chat({
               </HoverCard>
             </Box>
           ))}
-        </Box>
+        </Flex>
       )}
 
       <Box
@@ -406,6 +406,6 @@ function Chat({
           </Flex>
         </form>
       </Box>
-    </Stack>
+    </Flex>
   );
 }

@@ -1235,7 +1235,8 @@ export const electionRouter = createTRPCRouter({
 
       const rooms = await ctx.db.query.commissioners_voters_rooms.findMany({
         where: (rooms, { eq, and, isNull }) =>
-          and(eq(rooms.election_id, election.id), isNull(rooms.deleted_at),),
+          and(eq(rooms.election_id, election.id), isNull(rooms.deleted_at)),
+        orderBy: (rooms, { desc }) => desc(rooms.created_at),
         with: {
           messages: {
             orderBy: (messages, { desc }) => desc(messages.created_at),
