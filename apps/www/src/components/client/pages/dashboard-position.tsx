@@ -42,8 +42,16 @@ export default function DashboardPosition({
                   {position.name}
                 </Text>
 
-                <Text ta="center">
-                  {position.min} - {position.max} candidate(s)
+                <Text fz="sm" ta="center">
+                  {`${
+                    position.min === 0
+                      ? position.max
+                      : `${position.min} - ${position.max}`
+                  } candidate${
+                    position.max - position.min > 1 || position.min > 0
+                      ? "s"
+                      : ""
+                  }`}
                 </Text>
               </Box>
 

@@ -38,6 +38,8 @@ export default function EditPosition({ position }: { position: Position }) {
 
   const form = useForm({
     initialValues,
+    validateInputOnChange: true,
+    validateInputOnBlur: true,
     transformValues: (values) => {
       if (!values.isSingle) {
         return {
@@ -103,6 +105,11 @@ export default function EditPosition({ position }: { position: Position }) {
   });
 
   useEffect(() => {
+    form.validateField("min");
+    form.validateField("max");
+  }, [form.values.min, form.values.max, form.values.isSingle, form]);
+
+  useEffect(() => {
     if (opened) {
       form.setValues(initialValues);
       form.resetDirty(initialValues);
@@ -156,7 +163,9 @@ export default function EditPosition({ position }: { position: Position }) {
                   placeholder="Enter minimum"
                   label="Minimum"
                   withAsterisk
-                  disabled={editPositionMutation.isPending}
+                  disabled={
+                    editPositionMutation.isPending || !form.values.isSingle
+                  }
                   min={0}
                   required={form.values.isSingle}
                 />
@@ -165,7 +174,9 @@ export default function EditPosition({ position }: { position: Position }) {
                   placeholder="Enter maximum"
                   label="Maximum"
                   withAsterisk
-                  disabled={editPositionMutation.isPending}
+                  disabled={
+                    editPositionMutation.isPending || !form.values.isSingle
+                  }
                   min={1}
                   required={form.values.isSingle}
                 />
