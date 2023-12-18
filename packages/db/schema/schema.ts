@@ -349,7 +349,7 @@ export const generated_election_results = mysqlTable(
     created_at,
 
     election_id,
-    election: json("election")
+    result: json("result")
       .$type<
         Election & {
           positions: (Position & {

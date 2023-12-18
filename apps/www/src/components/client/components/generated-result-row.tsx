@@ -13,10 +13,9 @@ export default function GenerateResultRow({
 }: {
   result: GeneratedElectionResult;
 }) {
-  const nowForName = new Date();
-  const name = `${nowForName.getTime().toString()} - ${
-    result.election.name
-  } (Result) (${nowForName.toDateString()}).pdf`;
+  const name = `${result.created_at.getTime().toString()} - ${
+    result.result.name
+  } (Result) (${result.created_at.toDateString()}).pdf`;
 
   return (
     <Group
@@ -43,7 +42,7 @@ export default function GenerateResultRow({
         size="xs"
         leftSection={<IconDownload size="1rem" />}
         component={PDFDownloadLink}
-        document={<GenerateResult result={result.election} />}
+        document={<GenerateResult result={result.result} />}
         fileName={name}
       >
         Download

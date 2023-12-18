@@ -870,7 +870,6 @@ function CreateAdminMessagePopover({
   const [opened, { close, toggle }] = useDisclosure(false);
 
   const form = useForm({
-    validateInputOnBlur: true,
     validateInputOnChange: true,
     initialValues: {
       title: "",
@@ -947,7 +946,7 @@ function CreateAdminMessagePopover({
               label="Message"
               placeholder="I found a bug in the voting page. When I click the submit button, it doesn't submit my vote."
               autosize
-              minRows={3}
+              minRows={4}
               maxRows={6}
               required
               disabled={messageAdminMutation.isPending}

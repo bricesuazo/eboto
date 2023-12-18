@@ -11,7 +11,7 @@ import type { GeneratedElectionResult } from "@eboto/db/schema";
 export default function GenerateResult({
   result,
 }: {
-  result: Pick<GeneratedElectionResult, "election">["election"];
+  result: Pick<GeneratedElectionResult, "result">["result"];
 }) {
   const dateConfig: Intl.DateTimeFormatOptions = {
     timeZone: "Asia/Manila",

@@ -74,12 +74,12 @@ async function handler(_req: NextRequest) {
             vote_count: candidate.votes.length,
           })),
         })),
-      } satisfies Pick<GeneratedElectionResult, "election">["election"];
+      } satisfies Pick<GeneratedElectionResult, "result">["result"];
 
       await Promise.all([
         trx.insert(generated_election_results).values({
           election_id: election.id,
-          election: result,
+          result,
         }),
         sendElectionResult({
           emails: [
