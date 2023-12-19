@@ -30,8 +30,11 @@ const updated_at = timestamp("updated_at")
   .onUpdateNow()
   .notNull();
 const election_id = varchar("election_id", { length: 256 }).notNull();
+// .references(() => elections.id);
 const user_id = varchar("user_id", { length: 256 }).notNull();
+// .references(() => users.id);
 const voter_id = varchar("voter_id", { length: 256 }).notNull();
+// .references(() => voters.id);
 
 export const publicity = ["PRIVATE", "VOTER", "PUBLIC"] as const;
 export type Publicity = (typeof publicity)[number];

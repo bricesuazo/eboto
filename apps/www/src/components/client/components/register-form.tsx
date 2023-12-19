@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Paper, Stack, Text } from "@mantine/core";
+import Link from "next/link";
+import { Anchor, Button, Paper, Stack, Text } from "@mantine/core";
 import { signIn } from "next-auth/react";
 import Balancer from "react-wrap-balancer";
 
@@ -192,6 +193,17 @@ export default function RegisterForm() {
             </Button>
           </Stack>
         </form> */}
+        <Text size="sm" ta="center">
+          By registering, you agree to our{" "}
+          <Anchor component={Link} href="/terms" target="_blank">
+            Terms of Service
+          </Anchor>{" "}
+          and{" "}
+          <Anchor component={Link} href="/privacy" target="_blank">
+            Privacy Policy
+          </Anchor>
+          .
+        </Text>
       </Stack>
     </Paper>
   );
