@@ -107,7 +107,8 @@ export default function EditPosition({ position }: { position: Position }) {
   useEffect(() => {
     form.validateField("min");
     form.validateField("max");
-  }, [form.values.min, form.values.max, form.values.isSingle, form]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.values.min, form.values.max, form.values.isSingle]);
 
   useEffect(() => {
     if (opened) {
