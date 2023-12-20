@@ -317,7 +317,7 @@ export default function DashboardElection({
         }}
         aside={{
           breakpoint: "md",
-          width: { md: 300, xl: 400 },
+          width: { md: 280, xl: 320 },
           collapsed: {
             desktop: false,
             mobile: !store.dashboardChatMenu,

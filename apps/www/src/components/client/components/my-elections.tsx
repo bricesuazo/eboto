@@ -23,15 +23,9 @@ export function MyElectionsAsCommissioner({
           <Text>No elections found</Text>
         </Box>
       ) : (
-        getMyElectionAsCommissionerQuery.data
-          .filter((commissioner) => !commissioner.election.deleted_at)
-          .map((commissioner) => (
-            <DashboardCard
-              key={commissioner.id}
-              election={commissioner.election}
-              type="manage"
-            />
-          ))
+        getMyElectionAsCommissionerQuery.data.map((election) => (
+          <DashboardCard key={election.id} election={election} type="manage" />
+        ))
       )}
     </>
   );
@@ -55,16 +49,14 @@ export function MyElectionsAsVoter({
           <Text>No vote elections found</Text>
         </Box>
       ) : (
-        getMyElectionAsVoterQuery.data
-          .filter((voter) => !voter.election.deleted_at)
-          .map((voter) => (
-            <DashboardCard
-              key={voter.id}
-              election={voter.election}
-              type="vote"
-              hasVoted={voter.election.votes.length > 0}
-            />
-          ))
+        getMyElectionAsVoterQuery.data.map((election) => (
+          <DashboardCard
+            key={election.id}
+            election={election}
+            type="vote"
+            hasVoted={election.votes.length > 0}
+          />
+        ))
       )}
     </>
   );

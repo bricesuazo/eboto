@@ -1082,7 +1082,9 @@ export const electionRouter = createTRPCRouter({
       },
     });
 
-    return electionsAsCommissioner;
+    return electionsAsCommissioner
+      .map((commissioner) => commissioner.election)
+      .sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
   }),
   getMyElectionAsVoter: protectedProcedure.query(async ({ ctx }) => {
     const electionsThatICanVoteIn = await ctx.db.query.elections.findMany({
@@ -1127,13 +1129,16 @@ export const electionRouter = createTRPCRouter({
           with: {
             votes: {
               where: (votes, { eq }) => eq(votes.voter_id, voter?.id ?? ""),
+              limit: 1,
             },
           },
         },
       },
     });
 
-    return electionsAsVoter;
+    return electionsAsVoter
+      .map((voter) => voter.election)
+      .sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
   }),
   messageCommissioner: protectedProcedure
     .input(
