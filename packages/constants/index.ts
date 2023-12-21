@@ -61,9 +61,10 @@ export const isElectionEnded = ({ election }: { election: Election }) => {
       timeZone: "Asia/Manila",
     }),
   );
-
   return (
-    election.end_date.getTime() <= now.getTime() ||
+    now.getFullYear() >= election.end_date.getFullYear() &&
+    now.getMonth() >= election.end_date.getMonth() &&
+    now.getDate() >= election.end_date.getDate() &&
     now.getHours() >= election.voting_hour_end
   );
 };
@@ -74,11 +75,17 @@ export const isElectionOngoing = ({ election }: { election: Election }) => {
       timeZone: "Asia/Manila",
     }),
   );
+
   return (
-    election.start_date.getTime() <= now.getTime() &&
-    now.getTime() < election.end_date.getTime() &&
-    election.voting_hour_start <= now.getHours() &&
-    now.getHours() < election.voting_hour_end
+    now.getFullYear() >= election.start_date.getFullYear() &&
+    now.getMonth() >= election.start_date.getMonth() &&
+    now.getDate() >= election.start_date.getDate() &&
+    now.getHours() >= election.voting_hour_start &&
+    now.getHours() >= election.voting_hour_start &&
+    now.getFullYear() <= election.end_date.getFullYear() &&
+    now.getMonth() <= election.end_date.getMonth() &&
+    now.getDate() <= election.end_date.getDate() &&
+    now.getHours() <= election.voting_hour_end
   );
 };
 

@@ -77,6 +77,7 @@ import {
   IconChevronLeft,
   IconExternalLink,
   IconLogout,
+  IconMessage2Question,
   IconMessage2X,
   IconPlus,
   IconSend,
@@ -215,7 +216,7 @@ export default function DashboardElection({
             >
               <Flex gap="sm">
                 <TextInput
-                  placeholder="bricesuazo@gmail.com"
+                  placeholder="Email Address"
                   leftSection={<IconAt size="1rem" />}
                   style={{ flex: 1 }}
                   disabled={addCommissionerMutation.isPending}
@@ -631,7 +632,7 @@ export default function DashboardElection({
                       ) : getAllAdminCommissionerRoomsQuery.data.length ===
                         0 ? (
                         <Stack gap="xs" justify="center" align="center" p="xl">
-                          <IconMessage2X size="3rem" />
+                          <IconMessage2Question size="3rem" />
                           <Balancer>
                             <Text size="sm" ta="center">
                               Did you find a bug? Feature request? Or just need
