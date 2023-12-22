@@ -1088,12 +1088,14 @@ export const electionRouter = createTRPCRouter({
   }),
   getMyElectionAsVoter: protectedProcedure.query(async ({ ctx }) => {
     const electionsThatICanVoteIn = await ctx.db.query.elections.findMany({
-      where: (elections, { and, lt, gte, isNull, ne }) =>
+      where: (elections, { and, isNull, ne }) =>
         and(
           isNull(elections.deleted_at),
           ne(elections.publicity, "PRIVATE"),
-          lt(elections.start_date, new Date()),
-          gte(elections.end_date, new Date()),
+          // lte(elections.start_date, new Date(now.toDateString())),
+          // gte(elections.end_date, new Date(now.toDateString())),
+          // lte(elections.voting_hour_start, now.getHours()),
+          // gte(elections.voting_hour_end, now.getHours()),
           // eq(elections.voter_domain, session.user.email?.split("@")[1] ?? ""),
         ),
       with: {
@@ -1112,15 +1114,19 @@ export const electionRouter = createTRPCRouter({
       (election) => election.voters.length > 0,
     )?.voters[0];
 
+    const elections = electionsThatICanVoteIn.filter((election) =>
+      isElectionOngoing({ election, withoutHours: true }),
+    );
+
     const electionsAsVoter = await ctx.db.query.voters.findMany({
       where: (voters, { eq, ne, and, inArray, isNull }) =>
         and(
           isNull(voters.deleted_at),
           eq(voters.email, ctx.session.user.email ?? ""),
-          electionsThatICanVoteIn.length
+          elections.length
             ? inArray(
                 voters.election_id,
-                electionsThatICanVoteIn.map((election) => election.id),
+                elections.map((election) => election.id),
               )
             : ne(voters.email, ctx.session.user.email ?? ""),
         ),

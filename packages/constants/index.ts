@@ -69,22 +69,38 @@ export const isElectionEnded = ({ election }: { election: Election }) => {
   );
 };
 
-export const isElectionOngoing = ({ election }: { election: Election }) => {
+export const isElectionOngoing = ({
+  election,
+  withoutHours,
+}: {
+  election: Election;
+  withoutHours?: true;
+}) => {
   const now = new Date(
     new Date().toLocaleString("en-US", {
       timeZone: "Asia/Manila",
     }),
   );
 
+  if (withoutHours) {
+    return (
+      now.getFullYear() >= election.start_date.getFullYear() &&
+      now.getMonth() >= election.start_date.getMonth() &&
+      now.getDate() >= election.start_date.getDate() &&
+      now.getFullYear() <= election.end_date.getFullYear() &&
+      now.getMonth() <= election.end_date.getMonth() &&
+      now.getDate() <= election.end_date.getDate()
+    );
+  }
+
   return (
     now.getFullYear() >= election.start_date.getFullYear() &&
     now.getMonth() >= election.start_date.getMonth() &&
     now.getDate() >= election.start_date.getDate() &&
-    now.getHours() >= election.voting_hour_start &&
-    now.getHours() >= election.voting_hour_start &&
     now.getFullYear() <= election.end_date.getFullYear() &&
     now.getMonth() <= election.end_date.getMonth() &&
     now.getDate() <= election.end_date.getDate() &&
+    now.getHours() >= election.voting_hour_start &&
     now.getHours() <= election.voting_hour_end
   );
 };
