@@ -422,8 +422,10 @@ export default function DashboardElection({
                             {
                               group: "Completed",
                               elections: elections
-                                .filter(({ election }) =>
-                                  isElectionEnded({ election }),
+                                .filter(
+                                  ({ election }) =>
+                                    election.end_date.getTime() <
+                                    new Date().getTime(),
                                 )
                                 .sort(
                                   (a, b) =>
