@@ -633,12 +633,7 @@ export const electionRouter = createTRPCRouter({
         }
 
         const isElectionDisabled =
-          !isElectionOngoing({
-            election: isElectionCommissionerExists,
-          }) ||
-          !isElectionEnded({
-            election: isElectionCommissionerExists,
-          });
+          isElectionCommissionerExists.start_date.getTime() < Date.now();
 
         await db
           .update(elections)
