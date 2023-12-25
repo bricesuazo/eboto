@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import GenerateResult from "@/pdf/generate-result";
 import { Box, Button, Group, Text } from "@mantine/core";
 import { PDFDownloadLink } from "@react-pdf/renderer";
@@ -13,6 +14,12 @@ export default function GenerateResultRow({
 }: {
   result: GeneratedElectionResult;
 }) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const name = `${result.created_at.getTime().toString()} - ${
     result.result.name
   } (Result) (${result.created_at.toDateString()}).pdf`;
@@ -38,15 +45,21 @@ export default function GenerateResultRow({
         </Text>
       </Box>
 
-      <Button
-        size="xs"
-        leftSection={<IconDownload size="1rem" />}
-        component={PDFDownloadLink}
-        document={<GenerateResult result={result.result} />}
-        fileName={name}
-      >
-        Download
-      </Button>
+      {isMounted ? (
+        <Button
+          size="xs"
+          leftSection={<IconDownload size="1rem" />}
+          component={PDFDownloadLink}
+          document={<GenerateResult result={result.result} />}
+          fileName={name}
+        >
+          Download
+        </Button>
+      ) : (
+        <Button size="xs" leftSection={<IconDownload size="1rem" />} loading>
+          Download
+        </Button>
+      )}
     </Group>
   );
 }

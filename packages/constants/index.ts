@@ -62,10 +62,10 @@ export const isElectionEnded = ({ election }: { election: Election }) => {
     }),
   );
   return (
-    now.getFullYear() >= election.end_date.getFullYear() &&
-    now.getMonth() >= election.end_date.getMonth() &&
-    now.getDate() >= election.end_date.getDate() &&
-    now.getHours() >= election.voting_hour_end
+    now.getFullYear() > election.end_date.getFullYear() &&
+    now.getMonth() > election.end_date.getMonth() &&
+    now.getDate() > election.end_date.getDate() &&
+    now.getHours() > election.voting_hour_end
   );
 };
 

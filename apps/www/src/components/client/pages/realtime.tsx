@@ -51,9 +51,11 @@ export default function Realtime({
   const positionsQuery = api.election.getElectionRealtime.useQuery(
     election.slug,
     {
+      refetchInterval: 1000,
       initialData: positions,
       enabled:
         isElectionOngoing({ election }) && !isElectionEnded({ election }),
+      refetchOnMount: true,
       refetchOnWindowFocus: true,
       refetchOnReconnect: true,
     },
@@ -64,10 +66,13 @@ export default function Realtime({
         election_id: election.id,
       },
       {
+        refetchInterval: 1000,
+        refetchOnMount: true,
         refetchOnWindowFocus: true,
         refetchOnReconnect: true,
       },
     );
+
   return (
     <>
       {/* <AdModal /> */}

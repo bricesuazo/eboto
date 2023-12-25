@@ -155,12 +155,11 @@ export default function DashboardElection({
 
   const { data: elections } = api.election.getAllMyElections.useQuery();
 
-  const currentElectionUser = elections
-    ? elections.find(
-        ({ election }) =>
-          election.slug === params?.electionDashboardSlug?.toString(),
-      )
-    : null;
+  const currentElectionUser =
+    elections?.find(
+      ({ election }) =>
+        election.slug === params?.electionDashboardSlug?.toString(),
+    ) ?? null;
 
   const currentElection = currentElectionUser?.election;
 
@@ -317,7 +316,7 @@ export default function DashboardElection({
           },
         }}
         aside={{
-          breakpoint: "md",
+          breakpoint: "lg",
           width: { md: 280, xl: 320 },
           collapsed: {
             desktop: false,
