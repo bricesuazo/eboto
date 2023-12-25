@@ -7,10 +7,7 @@ import moment from "moment";
 import Balancer from "react-wrap-balancer";
 
 import { auth } from "@eboto/auth";
-import {
-  isElectionOngoing,
-  parseHourTo12HourFormat,
-} from "@eboto/constants";
+import { isElectionOngoing, parseHourTo12HourFormat } from "@eboto/constants";
 import { db } from "@eboto/db";
 
 export async function generateMetadata({
@@ -61,7 +58,7 @@ export default async function VotePage({
       ),
   });
 
-  if (election.voter_fields.length && !isVoter?.field)
+  if (!isVoter || (election.voter_fields.length && !isVoter?.field))
     redirect(`/${election.slug}`);
 
   const hasVoted = await db.query.votes.findFirst({

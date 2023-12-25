@@ -57,5 +57,6 @@ export default async function ElectionLayout(
 
     if (!voter && !commissioner) redirect(callbackUrl);
   }
+
   return <>{props.children}</>;
 }

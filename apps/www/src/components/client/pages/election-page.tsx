@@ -25,6 +25,7 @@ import {
   Text,
   TextInput,
   Title,
+  Tooltip,
   UnstyledButton,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -325,20 +326,41 @@ export default function ElectionPage({
             ) : (
               positions.map((position) => (
                 <Stack gap="xs" key={position.id}>
-                  <Title
-                    order={2}
-                    tw="bold"
-                    ta="center"
-                    style={{ lineClamp: 2, wordBreak: "break-word" }}
-                  >
-                    <Balancer>{position.name}</Balancer>
-                  </Title>
+                  <Flex wrap="wrap" align="center" justify="center" gap="xs">
+                    <Title
+                      order={2}
+                      tw="bold"
+                      ta="center"
+                      style={{ lineClamp: 2, wordBreak: "break-word" }}
+                    >
+                      <Balancer>{position.name}</Balancer>
+                    </Title>
+                    <Tooltip
+                      multiline
+                      withArrow
+                      label={
+                        position.min === 0 && position.max === 1
+                          ? `Voters can only vote 1 candidate for ${position.name}`
+                          : `Voters can vote minimum of ${position.min} and maximum of ${position.max} candidates for ${position.name}`
+                      }
+                      maw={240}
+                    >
+                      <ActionIcon
+                        size="xs"
+                        color="gray"
+                        variant="subtle"
+                        radius="xl"
+                      >
+                        <IconInfoCircle />
+                      </ActionIcon>
+                    </Tooltip>
+                  </Flex>
 
                   <Group justify="center" gap="sm">
                     {!position.candidates.length ? (
                       <Text fz="lg" ta="center">
                         <Balancer>
-                          No candidates for this position yet.
+                          No candidates for {position.name} yet.
                         </Balancer>
                       </Text>
                     ) : (

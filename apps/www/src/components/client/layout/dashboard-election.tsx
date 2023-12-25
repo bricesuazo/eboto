@@ -89,11 +89,7 @@ import moment from "moment";
 import Balancer from "react-wrap-balancer";
 import { z } from "zod";
 
-import {
-  electionDashboardNavbar,
-  isElectionEnded,
-  isElectionOngoing,
-} from "@eboto/constants";
+import { electionDashboardNavbar, isElectionOngoing } from "@eboto/constants";
 
 export interface ChatType {
   type: "admin" | "voters";
@@ -394,10 +390,8 @@ export default function DashboardElection({
                             {
                               group: "Ongoing",
                               elections: elections
-                                .filter(
-                                  ({ election }) =>
-                                    isElectionOngoing({ election }) &&
-                                    !isElectionEnded({ election }),
+                                .filter(({ election }) =>
+                                  isElectionOngoing({ election }),
                                 )
                                 .sort(
                                   (a, b) =>
