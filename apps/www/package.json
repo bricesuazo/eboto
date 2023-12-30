@@ -67,7 +67,7 @@
     "superjson": "^2.2.1",
     "to-words": "^4.0.0",
     "uploadthing": "^6.1.0",
-    "xlsx": "^0.18.5",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz",
     "zod": "^3.22.4",
     "zustand": "^4.4.7"
   },

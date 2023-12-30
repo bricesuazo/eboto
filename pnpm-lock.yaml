@@ -198,8 +198,8 @@ importers:
         specifier: ^6.1.0
         version: 6.1.0
       xlsx:
-        specifier: ^0.18.5
-        version: 0.18.5
+        specifier: https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz
+        version: '@cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz'
       zod:
         specifier: ^3.22.4
         version: 3.22.4
@@ -6286,11 +6286,6 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
-  /adler-32@1.3.1:
-    resolution: {integrity: sha512-ynZ4w/nUUv5rrsR8UUGoe1VC9hZj6V5hU9Qw1HlMDJGEJw5S7TfTErWTjMys6M7vr0YWcPqs3qAr4ss0nDfP+A==, tarball: https://registry.npmjs.org/adler-32/-/adler-32-1.3.1.tgz}
-    engines: {node: '>=0.8'}
-    dev: false
-
   /agent-base@6.0.2:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==, tarball: https://registry.npmjs.org/agent-base/-/agent-base-6.0.2.tgz}
     engines: {node: '>= 6.0.0'}
@@ -6929,14 +6924,6 @@ packages:
     engines: {node: '>=12.13'}
     dev: false
 
-  /cfb@1.2.2:
-    resolution: {integrity: sha512-KfdUZsSOw19/ObEWasvBP/Ac4reZvAGauZhs6S/gqNhXhI7cKwvlH7ulj+dOEYnca4bm4SGo8C1bTAQvnTjgQA==, tarball: https://registry.npmjs.org/cfb/-/cfb-1.2.2.tgz}
-    engines: {node: '>=0.8'}
-    dependencies:
-      adler-32: 1.3.1
-      crc-32: 1.2.2
-    dev: false
-
   /chainsaw@0.1.0:
     resolution: {integrity: sha512-75kWfWt6MEKNC8xYXIdRpDehRYY/tNSgwKaJq+dbbDcxORuVrrQ+SEHoWsniVn9XPYfP4gmdWIeDk/4YNp1rNQ==, tarball: https://registry.npmjs.org/chainsaw/-/chainsaw-0.1.0.tgz}
     dependencies:
@@ -7101,11 +7088,6 @@ packages:
   /clsx@2.0.0:
     resolution: {integrity: sha512-rQ1+kcj+ttHG0MKVGBUXwayCCF1oh39BF5COIpRzuCEv8Mwjv0XucrI2ExNTOn9IlLifGClWQcU9BrZORvtw6Q==, tarball: https://registry.npmjs.org/clsx/-/clsx-2.0.0.tgz}
     engines: {node: '>=6'}
-    dev: false
-
-  /codepage@1.15.0:
-    resolution: {integrity: sha512-3g6NUTPd/YtuuGrhMnOMRjFc+LJw/bnMp3+0r/Wcz3IXUuCosKRJvMphm5+Q+bvTVGcJJuRvVLuYba+WojaFaA==, tarball: https://registry.npmjs.org/codepage/-/codepage-1.15.0.tgz}
-    engines: {node: '>=0.8'}
     dev: false
 
   /color-convert@1.9.3:
@@ -7273,12 +7255,6 @@ packages:
       parse-json: 5.2.0
       path-type: 4.0.0
       yaml: 1.10.2
-    dev: false
-
-  /crc-32@1.2.2:
-    resolution: {integrity: sha512-ROmzCKrTnOwybPcJApAA6WBWij23HVfGVNKqqrZpuyZOHqK2CwHSvpGuyt/UNNvaIjEd8X5IFGp4Mh+Ie1IHJQ==, tarball: https://registry.npmjs.org/crc-32/-/crc-32-1.2.2.tgz}
-    engines: {node: '>=0.8'}
-    hasBin: true
     dev: false
 
   /create-require@1.1.1:
@@ -8778,11 +8754,6 @@ packages:
       asynckit: 0.4.0
       combined-stream: 1.0.8
       mime-types: 2.1.35
-    dev: false
-
-  /frac@1.1.2:
-    resolution: {integrity: sha512-w/XBfkibaTl3YDqASwfDUqkna4Z2p9cFSr1aHDt0WoMTECnRfBOv2WArlZILlqgWlmdIlALXGpM2AOhEk5W3IA==, tarball: https://registry.npmjs.org/frac/-/frac-1.1.2.tgz}
-    engines: {node: '>=0.8'}
     dev: false
 
   /freeport-async@2.0.0:
@@ -12566,13 +12537,6 @@ packages:
   /sprintf-js@1.0.3:
     resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==, tarball: https://registry.npmjs.org/sprintf-js/-/sprintf-js-1.0.3.tgz}
 
-  /ssf@0.11.2:
-    resolution: {integrity: sha512-+idbmIXoYET47hH+d7dfm2epdOMUDjqcB4648sTZ+t2JwoyBFL/insLfB/racrDmsKB3diwsDA696pZMieAC5g==, tarball: https://registry.npmjs.org/ssf/-/ssf-0.11.2.tgz}
-    engines: {node: '>=0.8'}
-    dependencies:
-      frac: 1.1.2
-    dev: false
-
   /ssri@8.0.1:
     resolution: {integrity: sha512-97qShzy1AiyxvPNIkLWoGua7xoQzzPjQ0HAH4B0rWKo7SZ6USuPcrUiAFrws0UH8RrbWmgq3LMTObhPIHbbBeQ==, tarball: https://registry.npmjs.org/ssri/-/ssri-8.0.1.tgz}
     engines: {node: '>= 8'}
@@ -13653,18 +13617,8 @@ packages:
     dependencies:
       isexe: 2.0.0
 
-  /wmf@1.0.2:
-    resolution: {integrity: sha512-/p9K7bEh0Dj6WbXg4JG0xvLQmIadrner1bi45VMJTfnbVHsc7yIajZyoSoK60/dtVBs12Fm6WkUI5/3WAVsNMw==, tarball: https://registry.npmjs.org/wmf/-/wmf-1.0.2.tgz}
-    engines: {node: '>=0.8'}
-    dev: false
-
   /wonka@4.0.15:
     resolution: {integrity: sha512-U0IUQHKXXn6PFo9nqsHphVCE5m3IntqZNB9Jjn7EB1lrR7YTDY3YWgFvEvwniTzXSvOH/XMzAZaIfJF/LvHYXg==, tarball: https://registry.npmjs.org/wonka/-/wonka-4.0.15.tgz}
-    dev: false
-
-  /word@0.3.0:
-    resolution: {integrity: sha512-OELeY0Q61OXpdUfTp+oweA/vtLVg5VDOXh+3he3PNzLGG/y0oylSOC1xRVj0+l4vQ3tj/bB1HVHv1ocXkQceFA==, tarball: https://registry.npmjs.org/word/-/word-0.3.0.tgz}
-    engines: {node: '>=0.8'}
     dev: false
 
   /wordwrap@1.0.0:
@@ -13728,20 +13682,6 @@ packages:
     dependencies:
       simple-plist: 1.3.1
       uuid: 7.0.3
-    dev: false
-
-  /xlsx@0.18.5:
-    resolution: {integrity: sha512-dmg3LCjBPHZnQp5/F/+nnTa+miPJxUXB6vtk42YjBBKayDNagxGEeIdWApkYPOf3Z3pm3k62Knjzp7lMeTEtFQ==, tarball: https://registry.npmjs.org/xlsx/-/xlsx-0.18.5.tgz}
-    engines: {node: '>=0.8'}
-    hasBin: true
-    dependencies:
-      adler-32: 1.3.1
-      cfb: 1.2.2
-      codepage: 1.15.0
-      crc-32: 1.2.2
-      ssf: 0.11.2
-      wmf: 1.0.2
-      word: 0.3.0
     dev: false
 
   /xml2js@0.6.0:
@@ -13821,6 +13761,14 @@ packages:
       '@types/react': 18.2.46
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
+    dev: false
+
+  '@cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz':
+    resolution: {tarball: https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz}
+    name: xlsx
+    version: 0.19.3
+    engines: {node: '>=0.8'}
+    hasBin: true
     dev: false
 
   registry.npmjs.org/@t3-oss/env-core@0.7.1(typescript@5.3.3)(zod@3.22.4):

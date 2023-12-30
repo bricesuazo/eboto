@@ -24,5 +24,8 @@
     "turbo": "^1.11.2",
     "typescript": "^5.3.3"
   },
-  "prettier": "@eboto/prettier-config"
+  "prettier": "@eboto/prettier-config",
+  "overrides": {
+    "semver": "^7.5.3"
+  }
 }
