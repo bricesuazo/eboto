@@ -2,7 +2,6 @@ import GoogleProvider from "@auth/core/providers/google";
 import type { DefaultSession } from "@auth/core/types";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import NextAuth from "next-auth";
-import type { NextAuthConfig } from "next-auth";
 import type { Provider } from "next-auth/providers";
 
 // import EmailProvider from "next-auth/providers/email";
@@ -30,9 +29,7 @@ export const {
   update,
   auth,
 } = NextAuth({
-  // TODO: remove this when ,"@auth/drizzle-adapter": "^0.3.12", fixed
-  // "@auth/drizzle-adapter": "^0.3.11" works tho
-  adapter: DrizzleAdapter(db) as NextAuthConfig["adapter"],
+  adapter: DrizzleAdapter(db),
   providers: [
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,

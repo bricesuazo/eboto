@@ -6,7 +6,7 @@
     "export": "email export"
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.484.0",
+    "@aws-sdk/client-ses": "^3.465.0",
     "@eboto/constants": "workspace:*",
     "@react-email/components": "0.0.12",
     "@react-email/render": "0.0.10",
@@ -17,7 +17,7 @@
     "@eboto/db": "workspace:*",
     "@eboto/prettier-config": "workspace:*",
     "@eboto/tsconfig": "workspace:*",
-    "@types/node": "^20.10.6",
+    "@types/node": "^20.10.5",
     "typescript": "^5.3.3"
   },
   "eslintConfig": {
