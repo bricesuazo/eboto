@@ -104,7 +104,6 @@ export default function VoteForm({
       });
     },
   });
-
   return (
     <>
       <Modal
@@ -130,51 +129,50 @@ export default function VoteForm({
           })}
         >
           <Stack>
-            {positionsQuery.data.map((position) => {
-              return (
-                <Box key={position.id}>
-                  <Text lineClamp={1}>{position.name}</Text>
-                  <Text lineClamp={1} size="xs" c="dimmed">
-                    {position.min === 0 && position.max === 1
-                      ? `One selection only (1)`
-                      : `${
-                          position.min
-                            ? `At least ${toWords
-                                .convert(position.min)
-                                .toLowerCase()} and a`
-                            : " A"
-                        }t most ${toWords
-                          .convert(position.max)
-                          .toLowerCase()} (${position.min} - ${position.max})`}
-                  </Text>
-                  {Object.entries(form.values)
-                    .find(([key]) => key === position.id)?.[1]
-                    .votes.map((candidateId) => {
-                      const candidate = position.candidates.find(
-                        (candidate) => candidate.id === candidateId,
-                      );
+            {positionsQuery.data.map((position) => (
+              <Box key={position.id}>
+                <Text lineClamp={1}>{position.name}</Text>
+                <Text lineClamp={1} size="xs" c="dimmed">
+                  {position.min === 0 && position.max === 1
+                    ? `One selection only (1)`
+                    : `${
+                        position.min
+                          ? `At least ${toWords
+                              .convert(position.min)
+                              .toLowerCase()} and a`
+                          : " A"
+                      }t most ${toWords.convert(position.max).toLowerCase()} (${
+                        position.min
+                      } - ${position.max})`}
+                </Text>
+                {/* TODO: Bug here */}
+                {Object.entries(form.values)
+                  .find(([key]) => key === position.id)?.[1]
+                  .votes.map((candidateId, idx) => {
+                    const candidate = position.candidates.find(
+                      (candidate) => candidate.id === candidateId,
+                    );
 
-                      return (
-                        <Text
-                          key={candidateId}
-                          fw={600}
-                          lineClamp={2}
-                          c="gray.500"
-                          size="lg"
-                        >
-                          {candidate
-                            ? `${candidate.last_name}, ${candidate.first_name}${
-                                candidate.middle_name
-                                  ? " " + candidate.middle_name.charAt(0) + "."
-                                  : ""
-                              } (${candidate.partylist.acronym})`
-                            : "Abstain"}
-                        </Text>
-                      );
-                    })}
-                </Box>
-              );
-            })}
+                    return (
+                      <Text
+                        key={idx}
+                        fw={600}
+                        lineClamp={2}
+                        c="gray.500"
+                        size="lg"
+                      >
+                        {candidate
+                          ? `${candidate.last_name}, ${candidate.first_name}${
+                              candidate.middle_name
+                                ? " " + candidate.middle_name.charAt(0) + "."
+                                : ""
+                            } (${candidate.partylist.acronym})`
+                          : "Abstain"}
+                      </Text>
+                    );
+                  })}
+              </Box>
+            ))}
 
             {voteMutation.isError && (
               <Alert
@@ -335,7 +333,7 @@ export default function VoteForm({
           <Button
             onClick={open}
             disabled={
-              // voteMutation.isPending ??
+              voteMutation.isPending ||
               !Object.values(form.values).every((value) => value?.isValid)
             }
             leftSection={<IconFingerprint />}

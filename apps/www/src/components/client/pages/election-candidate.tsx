@@ -47,7 +47,7 @@ export default function ElectionCandidate({
       {/* <AdModal /> */}
       {isVoterCanMessage && <MyMessagesElection election_id={election.id} />}
 
-      <Container py="xl" size="md">
+      <Container py="xl" size="md" mb={80}>
         <Stack>
           <Breadcrumbs w="100%">
             <Anchor

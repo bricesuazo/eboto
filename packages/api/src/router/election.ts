@@ -95,7 +95,7 @@ export const electionRouter = createTRPCRouter({
       return {
         election,
         positions,
-        isOngoing: isElectionOngoing({ election, withoutHours: true }),
+        isOngoing: isElectionOngoing({ election }),
         myVoterData,
         hasVoted: !!hasVoted,
         isVoterCanMessage:
@@ -1103,10 +1103,6 @@ export const electionRouter = createTRPCRouter({
       },
     });
 
-    const voter = electionsThatICanVoteIn.find(
-      (election) => election.voters.length > 0,
-    )?.voters[0];
-
     const elections = electionsThatICanVoteIn.filter((election) =>
       isElectionOngoing({ election, withoutHours: true }),
     );
@@ -1127,7 +1123,17 @@ export const electionRouter = createTRPCRouter({
         election: {
           with: {
             votes: {
-              where: (votes, { eq }) => eq(votes.voter_id, voter?.id ?? ""),
+              where: (votes, { inArray }) =>
+                electionsThatICanVoteIn.flatMap((election) =>
+                  election.voters.map((voter) => voter.id),
+                ).length > 0
+                  ? inArray(
+                      votes.voter_id,
+                      electionsThatICanVoteIn.flatMap((election) =>
+                        election.voters.map((voter) => voter.id),
+                      ),
+                    )
+                  : undefined,
               limit: 1,
             },
           },

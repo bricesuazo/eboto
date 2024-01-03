@@ -79,7 +79,7 @@ export default function Realtime({
       <ScrollToTopButton />
       {isVoterCanMessage && <MyMessagesElection election_id={election.id} />}
 
-      <Container py="xl" size="md">
+      <Container py="xl" size="md" mb={80}>
         <Stack gap="xl">
           <Center>
             <Stack>

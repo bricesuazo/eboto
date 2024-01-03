@@ -391,7 +391,10 @@ export default function DashboardElection({
                               group: "Ongoing",
                               elections: elections
                                 .filter(({ election }) =>
-                                  isElectionOngoing({ election }),
+                                  isElectionOngoing({
+                                    election,
+                                    withoutHours: true,
+                                  }),
                                 )
                                 .sort(
                                   (a, b) =>
@@ -404,8 +407,7 @@ export default function DashboardElection({
                               elections: elections
                                 .filter(
                                   ({ election }) =>
-                                    election.start_date.getTime() >
-                                    new Date().getTime(),
+                                    election.start_date.getTime() > Date.now(),
                                 )
                                 .sort(
                                   (a, b) =>
@@ -418,8 +420,7 @@ export default function DashboardElection({
                               elections: elections
                                 .filter(
                                   ({ election }) =>
-                                    election.end_date.getTime() <
-                                    new Date().getTime(),
+                                    election.end_date.getTime() < Date.now(),
                                 )
                                 .sort(
                                   (a, b) =>

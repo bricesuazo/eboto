@@ -163,7 +163,7 @@ export default function ElectionPage({
         </form>
       </Modal>
 
-      <Container pt={40} pb={80} size="md">
+      <Container pt={40} pb={80} size="md" mb={80}>
         <Stack align="center" gap="xl">
           <Box>
             <Flex justify="center" mb={8}>

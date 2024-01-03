@@ -12,6 +12,7 @@ import {
   DrawerBody,
   DrawerCloseButton,
   DrawerContent,
+  DrawerHeader,
   DrawerOverlay,
   DrawerRoot,
   Flex,
@@ -82,8 +83,11 @@ export default function MyMessagesElection({
       <DrawerRoot padding={0} opened={opened} onClose={close}>
         <DrawerOverlay />
 
-        <DrawerContent ref={scrollableRef}>
-          <DrawerBody h="100%">
+        <DrawerContent ref={scrollableRef} p="md">
+          <DrawerHeader mih="auto" mb="md">
+            <DrawerCloseButton />
+          </DrawerHeader>
+          <DrawerBody>
             {!getAllMyMessagesQuery.data || getAllMyMessagesQuery.isLoading ? (
               <Stack gap="xs" p="md">
                 {Array.from({ length: 3 }).map((_, index) => (
@@ -91,7 +95,7 @@ export default function MyMessagesElection({
                 ))}
               </Stack>
             ) : getAllMyMessagesQuery.data.length === 0 ? (
-              <Box p="md">
+              <Box>
                 <Card>
                   <Center style={{ gap: 8 }}>
                     <IconAlertCircle size={60} stroke={1.5} />
@@ -106,32 +110,11 @@ export default function MyMessagesElection({
                 scrollIntoView={scrollIntoView}
               />
             ) : (
-              <>
-                <Flex
-                  justify="space-between"
-                  gap="md"
-                  align="center"
-                  p="md"
-                  style={{ position: "sticky", top: 0 }}
-                >
-                  <Box w={34} h={34} />
-
-                  <Box style={{ flex: 1 }}>
-                    <Text ta="center" size="sm">
-                      Messages
-                    </Text>
-                  </Box>
-
-                  <ActionIcon
-                    variant="default"
-                    aria-label="Back"
-                    size="lg"
-                    onClick={close}
-                  >
-                    <IconX size="1rem" stroke={1.5} />
-                  </ActionIcon>
-                </Flex>
-                <Stack gap="sm" p="md">
+              <Stack>
+                <Text ta="center" size="sm">
+                  Messages
+                </Text>
+                <Stack gap="sm">
                   {getAllMyMessagesQuery.data.map((room) => (
                     <UnstyledButton
                       key={room.id}
@@ -209,7 +192,7 @@ export default function MyMessagesElection({
                     </UnstyledButton>
                   ))}
                 </Stack>
-              </>
+              </Stack>
             )}
             <div ref={targetRef} />
           </DrawerBody>
@@ -271,12 +254,11 @@ function Chat({
   }, [getMessagesAsVoterQuery.data, scrollIntoView, chat]);
 
   return (
-    <Flex direction="column" h="100%">
+    <Stack h="100%">
       <Flex
         justify="space-between"
         gap="md"
         // align="center"
-        p="md"
         style={{ position: "sticky", top: 0 }}
       >
         <ActionIcon
@@ -300,112 +282,111 @@ function Chat({
           </Text>
         </Box>
 
-        <DrawerCloseButton>
-          <ActionIcon variant="default" aria-label="Back" size="lg">
-            <IconX size="1rem" stroke={1.5} />
-          </ActionIcon>
-        </DrawerCloseButton>
+        <Box h={34} w={34} />
       </Flex>
-      {getMessagesAsVoterQuery.isError ? (
-        <Center h="100%">
-          <Alert
-            variant="light"
-            color="red"
-            title="Error"
-            radius="md"
-            icon={<IconAlertTriangle />}
-          >
-            {getMessagesAsVoterQuery.error.message}
-          </Alert>
-        </Center>
-      ) : getMessagesAsVoterQuery.isLoading || !getMessagesAsVoterQuery.data ? (
-        <Center h="100%">
-          <Loader />
-        </Center>
-      ) : (
-        <Flex direction="column" justify="end" px="md" style={{ flex: 1 }}>
-          {getMessagesAsVoterQuery.data.map((message) => (
-            <Box
-              key={message.id}
-              ml={message.user.isMe ? "auto" : undefined}
-              mr={!message.user.isMe ? "auto" : undefined}
-              maw="75%"
+      <Stack gap="xs">
+        {getMessagesAsVoterQuery.isError ? (
+          <Center h="100%">
+            <Alert
+              variant="light"
+              color="red"
+              title="Error"
+              radius="md"
+              icon={<IconAlertTriangle />}
             >
+              {getMessagesAsVoterQuery.error.message}
+            </Alert>
+          </Center>
+        ) : getMessagesAsVoterQuery.isLoading ||
+          !getMessagesAsVoterQuery.data ? (
+          <Center h="100%">
+            <Loader />
+          </Center>
+        ) : (
+          <Flex direction="column" justify="end" px="md" style={{ flex: 1 }}>
+            {getMessagesAsVoterQuery.data.map((message) => (
               <Box
-                p="xs"
-                style={{
-                  border: "1px solid #cccccc25",
-                  borderRadius: 8,
-                }}
+                key={message.id}
+                ml={message.user.isMe ? "auto" : undefined}
+                mr={!message.user.isMe ? "auto" : undefined}
+                maw="75%"
               >
-                <Text
+                <Box
+                  p="xs"
                   style={{
-                    wordBreak: "break-word",
+                    border: "1px solid #cccccc25",
+                    borderRadius: 8,
                   }}
                 >
-                  {message.message}
-                </Text>
-              </Box>
-              <HoverCard openDelay={500}>
-                <HoverCardTarget>
                   <Text
-                    size="xs"
-                    c="gray"
-                    w="fit-content"
-                    ml={message.user.isMe ? "auto" : undefined}
-                    mb="xs"
+                    style={{
+                      wordBreak: "break-word",
+                    }}
                   >
-                    {moment(message.created_at).format("hh:mm A")}
+                    {message.message}
                   </Text>
-                </HoverCardTarget>
-                <HoverCardDropdown>
-                  <Text size="xs" c="gray">
-                    {moment(message.created_at).format("MMMM D, YYYY hh:mm A")}
-                  </Text>
-                </HoverCardDropdown>
-              </HoverCard>
-            </Box>
-          ))}
-        </Flex>
-      )}
-
-      <Box
-        p="md"
-        style={{
-          position: "sticky",
-          bottom: 0,
-        }}
-      >
-        <form
-          onSubmit={form.onSubmit((values) =>
-            sendMessageAsVoterMutation.mutate({
-              room_id: chat.id,
-              message: values.message,
-            }),
-          )}
-        >
-          <Flex align="end" gap="xs">
-            <Textarea
-              autosize
-              placeholder="Type your message here"
-              style={{ flex: 1 }}
-              maxRows={4}
-              {...form.getInputProps("message")}
-              error={!!form.errors.message}
-              disabled={sendMessageAsVoterMutation.isPending}
-            />
-            <ActionIcon
-              type="submit"
-              variant="default"
-              aria-label="Send"
-              size={36}
-              loading={sendMessageAsVoterMutation.isPending}
-            >
-              <IconSend stroke={1} />
-            </ActionIcon>
+                </Box>
+                <HoverCard openDelay={500}>
+                  <HoverCardTarget>
+                    <Text
+                      size="xs"
+                      c="gray"
+                      w="fit-content"
+                      ml={message.user.isMe ? "auto" : undefined}
+                      mb="xs"
+                    >
+                      {moment(message.created_at).format("hh:mm A")}
+                    </Text>
+                  </HoverCardTarget>
+                  <HoverCardDropdown>
+                    <Text size="xs" c="gray">
+                      {moment(message.created_at).format(
+                        "MMMM D, YYYY hh:mm A",
+                      )}
+                    </Text>
+                  </HoverCardDropdown>
+                </HoverCard>
+              </Box>
+            ))}
           </Flex>
-        </form>
-      </Box>
-    </Flex>
+        )}
+        <Box
+          style={{
+            position: "sticky",
+            bottom: 0,
+          }}
+        >
+          <form
+            onSubmit={form.onSubmit((values) =>
+              sendMessageAsVoterMutation.mutate({
+                room_id: chat.id,
+                message: values.message,
+              }),
+            )}
+          >
+            <Flex align="end" gap="xs">
+              <Textarea
+                autosize
+                placeholder="Type your message here"
+                style={{ flex: 1 }}
+                maxRows={4}
+                {...form.getInputProps("message")}
+                error={!!form.errors.message}
+                disabled={sendMessageAsVoterMutation.isPending}
+              />
+              <ActionIcon
+                type="submit"
+                variant="default"
+                aria-label="Send"
+                size={36}
+                loading={sendMessageAsVoterMutation.isPending}
+              >
+                <IconSend stroke={1} />
+              </ActionIcon>
+            </Flex>
+          </form>
+        </Box>
+      </Stack>
+    </Stack>
   );
 }
