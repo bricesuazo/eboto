@@ -12,16 +12,16 @@
   "dependencies": {
     "@auth/core": "^0.19.0",
     "@planetscale/database": "^1.13.0",
-    "drizzle-orm": "0.29.2",
+    "drizzle-orm": "0.29.3",
     "mysql2": "^3.6.5",
     "nanoid": "^5.0.4",
-    "uploadthing": "^6.1.0"
+    "uploadthing": "^6.1.1"
   },
   "devDependencies": {
     "@eboto/eslint-config": "workspace:*",
     "@eboto/prettier-config": "workspace:*",
     "@eboto/tsconfig": "workspace:*",
-    "@types/node": "^20.10.5",
+    "@types/node": "^20.10.6",
     "dotenv-cli": "^7.3.0",
     "drizzle-kit": "0.20.9",
     "typescript": "^5.3.3"
