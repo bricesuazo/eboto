@@ -542,8 +542,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                             />
                             <YearPickerInput
                               label="Year"
-                              // TODO: remove comment when https://github.com/mantinedev/mantine/issues/5401 is fixed
-                              // placeholder="Enter year"
+                              placeholder="Enter year"
                               popoverProps={{
                                 withinPortal: true,
                               }}
@@ -661,7 +660,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                           <Flex gap="xs">
                             <YearPickerInput
                               label="Start year"
-                              // placeholder="Enter start year"
+                              placeholder="Enter start year"
                               w="100%"
                               popoverProps={{
                                 withinPortal: true,
@@ -686,7 +685,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                             />
                             <YearPickerInput
                               label="End year"
-                              // placeholder="Enter end year"
+                              placeholder="Enter end year"
                               w="100%"
                               popoverProps={{
                                 withinPortal: true,
@@ -789,7 +788,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                               />
                               <YearPickerInput
                                 label="Year"
-                                // placeholder="Enter year"
+                                placeholder="Enter year"
                                 popoverProps={{
                                   withinPortal: true,
                                 }}

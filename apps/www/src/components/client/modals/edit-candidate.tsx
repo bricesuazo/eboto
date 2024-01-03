@@ -731,7 +731,7 @@ export default function EditCandidate({
                               />
                               <YearPickerInput
                                 label="Year"
-                                // placeholder="Enter year"
+                                placeholder="Enter year"
                                 popoverProps={{
                                   withinPortal: true,
                                 }}
@@ -842,7 +842,7 @@ export default function EditCandidate({
                             <Flex gap="xs">
                               <YearPickerInput
                                 label="Start year"
-                                // placeholder="Enter start year"
+                                placeholder="Enter start year"
                                 style={{ width: "100%" }}
                                 popoverProps={{
                                   withinPortal: true,
@@ -872,7 +872,7 @@ export default function EditCandidate({
                               />
                               <YearPickerInput
                                 label="End year"
-                                // placeholder="Enter end year"
+                                placeholder="Enter end year"
                                 style={{ width: "100%" }}
                                 popoverProps={{
                                   withinPortal: true,
@@ -975,7 +975,7 @@ export default function EditCandidate({
                                 <YearPickerInput
                                   label="Year"
                                   required
-                                  // placeholder="Enter year"
+                                  placeholder="Enter year"
                                   popoverProps={{
                                     withinPortal: true,
                                   }}
