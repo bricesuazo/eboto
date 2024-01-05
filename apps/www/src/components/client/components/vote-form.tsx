@@ -14,6 +14,8 @@ import {
   Checkbox,
   CheckboxGroup,
   Group,
+  List,
+  ListItem,
   Modal,
   Radio,
   RadioGroup,
@@ -145,32 +147,34 @@ export default function VoteForm({
                         position.min
                       } - ${position.max})`}
                 </Text>
-                {/* TODO: Bug here */}
-                {Object.entries(form.values)
-                  .find(([key]) => key === position.id)?.[1]
-                  .votes.map((candidateId, idx) => {
-                    const candidate = position.candidates.find(
-                      (candidate) => candidate.id === candidateId,
-                    );
+                <List listStyleType="none">
+                  {Object.entries(form.values)
+                    .find(([key]) => key === position.id)?.[1]
+                    .votes.map((candidateId) => {
+                      const candidate = position.candidates.find(
+                        (candidate) => candidate.id === candidateId,
+                      );
 
-                    return (
-                      <Text
-                        key={idx}
-                        fw={600}
-                        lineClamp={2}
-                        c="gray.500"
-                        size="lg"
-                      >
-                        {candidate
-                          ? `${candidate.last_name}, ${candidate.first_name}${
-                              candidate.middle_name
-                                ? " " + candidate.middle_name.charAt(0) + "."
-                                : ""
-                            } (${candidate.partylist.acronym})`
-                          : "Abstain"}
-                      </Text>
-                    );
-                  })}
+                      return candidate ? (
+                        <ListItem
+                          key={candidateId}
+                          fw={600}
+                          fz="lg"
+                          style={{ lineClamp: 2 }}
+                        >
+                          {candidate.last_name}, {candidate.first_name}
+                          {candidate.middle_name
+                            ? " " + candidate.middle_name.charAt(0) + "."
+                            : ""}{" "}
+                          ({candidate.partylist.acronym})
+                        </ListItem>
+                      ) : (
+                        <ListItem key={candidateId} fw={600} fz="lg">
+                          Abstain
+                        </ListItem>
+                      );
+                    })}
+                </List>
               </Box>
             ))}
 
