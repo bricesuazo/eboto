@@ -1,16 +1,16 @@
 .candidate-card {
-  padding: var(--mantine-spacing-md);
+  /* padding: var(--mantine-spacing-md); */
   display: flex;
-  gap: var(--mantine-spacing-xs);
+  /* gap: var(--mantine-spacing-xs); */
   flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 220px;
-  height: 260px;
+  overflow: hidden;
+  transition: all 200ms ease-in-out;
 
   @media (max-width: $mantine-breakpoint-xs) {
     width: 100%;
-    height: 240px;
   }
 
   background-color: light-dark(
@@ -18,6 +18,12 @@
     var(--mantine-color-gray-9)
   );
   border-radius: var(--mantine-radius-md);
-  border: 1px solid
-    light-dark(var(--mantine-color-gray-2), var(--mantine-color-gray-8));
+  /* border: 1px solid
+    light-dark(var(--mantine-color-gray-2), var(--mantine-color-gray-8)); */
+  @mixin hover {
+    background-color: light-dark(
+      var(--mantine-color-gray-1),
+      var(--mantine-color-dark-5)
+    );
+  }
 }

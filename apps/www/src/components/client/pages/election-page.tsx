@@ -208,7 +208,7 @@ export default function ElectionPage({
                 {election.publicity.charAt(0) +
                   election.publicity.slice(1).toLowerCase()}{" "}
               </Text>
-              <HoverCard width={180} shadow="md" openDelay={500}>
+              <HoverCard width={180} shadow="md">
                 <HoverCardTarget>
                   <ActionIcon
                     size="xs"
@@ -335,25 +335,27 @@ export default function ElectionPage({
                     >
                       <Balancer>{position.name}</Balancer>
                     </Title>
-                    <Tooltip
-                      multiline
-                      withArrow
-                      label={
-                        position.min === 0 && position.max === 1
-                          ? `Voters can only vote 1 candidate for ${position.name}`
-                          : `Voters can vote minimum of ${position.min} and maximum of ${position.max} candidates for ${position.name}`
-                      }
-                      maw={240}
-                    >
-                      <ActionIcon
-                        size="xs"
-                        color="gray"
-                        variant="subtle"
-                        radius="xl"
-                      >
-                        <IconInfoCircle />
-                      </ActionIcon>
-                    </Tooltip>
+                    <HoverCard width={240} shadow="md">
+                      <HoverCardTarget>
+                        <ActionIcon
+                          size="sm"
+                          color="gray"
+                          variant="subtle"
+                          radius="xl"
+                        >
+                          <IconInfoCircle />
+                        </ActionIcon>
+                      </HoverCardTarget>
+                      <HoverCardDropdown>
+                        <Text size="sm">
+                          <Balancer>
+                            {position.min === 0 && position.max === 1
+                              ? `Voters can only vote 1 candidate for ${position.name}`
+                              : `Voters can vote minimum of ${position.min} and maximum of ${position.max} candidates for ${position.name}`}
+                          </Balancer>
+                        </Text>
+                      </HoverCardDropdown>
+                    </HoverCard>
                   </Flex>
 
                   <Group justify="center" gap="sm">
@@ -364,45 +366,66 @@ export default function ElectionPage({
                         </Balancer>
                       </Text>
                     ) : (
-                      position.candidates.map((candidate) => (
-                        <UnstyledButton
-                          key={candidate.id}
-                          component={Link}
-                          href={`/${election.slug}/${candidate.slug}`}
-                          className={classes["candidate-card"]}
-                        >
-                          <Center
-                            pos="relative"
-                            style={{
-                              aspectRatio: 1,
-                              flex: 1,
-                              // width: "100%",
-                            }}
+                      position.candidates.map((candidate) => {
+                        const candidate_name = `${candidate.first_name} ${
+                          candidate.middle_name
+                            ? candidate.middle_name + " "
+                            : ""
+                        }${candidate.last_name} (${
+                          candidate.partylist.acronym
+                        })`;
+                        return (
+                          <UnstyledButton
+                            key={candidate.id}
+                            component={Link}
+                            href={`/${election.slug}/${candidate.slug}`}
+                            className={classes["candidate-card"]}
+                            h="100%"
                           >
-                            {candidate.image ? (
-                              <Image
-                                src={candidate.image.url}
-                                alt="Candidate's image"
-                                fill
-                                sizes="100%"
-                                style={{ objectFit: "cover" }}
-                                priority
-                              />
-                            ) : (
-                              <IconUser size={92} width="100%" />
-                            )}
-                          </Center>
+                            <Center
+                              pos="relative"
+                              style={{
+                                aspectRatio: 1,
+                                flex: 1,
+                                height: "100%",
+                                width: "100%",
+                              }}
+                            >
+                              {candidate.image ? (
+                                <Image
+                                  src={candidate.image.url}
+                                  alt="Candidate's image"
+                                  fill
+                                  sizes="100%"
+                                  style={{ objectFit: "cover" }}
+                                  priority
+                                />
+                              ) : (
+                                <IconUser size={92} width="100%" />
+                              )}
+                            </Center>
 
-                          <Text lineClamp={2} ta="center">
-                            {candidate.first_name}{" "}
-                            {candidate.middle_name
-                              ? candidate.middle_name + " "
-                              : ""}
-                            {candidate.last_name} ({candidate.partylist.acronym}
-                            )
-                          </Text>
-                        </UnstyledButton>
-                      ))
+                            <Box px="xs" py="sm" w="100%">
+                              <Text
+                                lineClamp={1}
+                                ta="center"
+                                size="lg"
+                                visibleFrom="xs"
+                              >
+                                {candidate_name}
+                              </Text>
+                              <Text
+                                lineClamp={1}
+                                ta="center"
+                                size="lg"
+                                hiddenFrom="xs"
+                              >
+                                {candidate_name}
+                              </Text>
+                            </Box>
+                          </UnstyledButton>
+                        );
+                      })
                     )}
                   </Group>
                 </Stack>
