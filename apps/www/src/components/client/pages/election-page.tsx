@@ -25,7 +25,6 @@ import {
   Text,
   TextInput,
   Title,
-  Tooltip,
   UnstyledButton,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
