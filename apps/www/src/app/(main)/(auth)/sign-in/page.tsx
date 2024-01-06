@@ -7,7 +7,13 @@ export const metadata: Metadata = {
   title: "Sign in to your account",
 };
 
-export default function SignInPage() {
+export default function SignInPage({
+  searchParams: { callbackUrl },
+}: {
+  searchParams: {
+    callbackUrl?: string;
+  };
+}) {
   return (
     <>
       <Title ta="center" order={2}>
@@ -16,7 +22,15 @@ export default function SignInPage() {
 
       <Text c="dimmed" size="sm" ta="center" mt={5} mb={30}>
         Don&apos;t have an account yet?{" "}
-        <Anchor size="sm" component={Link} href="/register" truncate>
+        <Anchor
+          size="sm"
+          component={Link}
+          href={
+            "/register" +
+            (callbackUrl ? `?callbackUrl=${callbackUrl}` : undefined)
+          }
+          truncate
+        >
           Create account
         </Anchor>
       </Text>
