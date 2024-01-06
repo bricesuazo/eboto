@@ -9,6 +9,7 @@ import {
   Alert,
   Box,
   Button,
+  Checkbox,
   Group,
   InputDescription,
   InputLabel,
@@ -98,6 +99,7 @@ export default function DashboardSettings({
     newSlug: string;
     description: string;
     // voter_domain: string | null;
+    is_candidates_visible_in_realtime_when_ongoing: boolean;
     date: [Date, Date];
     publicity: Publicity;
     logo: File | string | null;
@@ -110,6 +112,9 @@ export default function DashboardSettings({
       newSlug: getElectionBySlugQuery.data.slug,
       description: getElectionBySlugQuery.data.description ?? "",
       // voter_domain: getElectionBySlugQuery.data.voter_domain,
+      is_candidates_visible_in_realtime_when_ongoing:
+        getElectionBySlugQuery.data
+          .is_candidates_visible_in_realtime_when_ongoing,
       date: [
         getElectionBySlugQuery.data.start_date,
         getElectionBySlugQuery.data.end_date,
@@ -291,6 +296,8 @@ export default function DashboardSettings({
                 // voter_domain: values.voter_domain?.length
                 //   ? values.voter_domain
                 //   : null,
+                is_candidates_visible_in_realtime_when_ongoing:
+                  values.is_candidates_visible_in_realtime_when_ongoing,
                 date: values.date,
                 publicity: values.publicity,
                 voting_hours: values.voting_hours,
@@ -375,6 +382,18 @@ export default function DashboardSettings({
               })
             }
           /> */}
+
+          <Checkbox
+            label="Show candidates' name in real-time when the election is ongoing"
+            description="When disabled, candidates' name will only be shown after the election has ended. While the election is ongoing, only anonymous number will be shown"
+            checked={form.values.is_candidates_visible_in_realtime_when_ongoing}
+            onChange={(event) =>
+              form.setFieldValue(
+                "is_candidates_visible_in_realtime_when_ongoing",
+                event.currentTarget.checked,
+              )
+            }
+          />
 
           <DatePickerInput
             type="range"

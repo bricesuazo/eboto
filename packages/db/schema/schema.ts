@@ -1,6 +1,7 @@
 import type { AdapterAccount } from "@auth/core/adapters";
 import { sql } from "drizzle-orm";
 import {
+  boolean,
   date,
   index,
   int,
@@ -64,6 +65,11 @@ export const elections = mysqlTable(
     publicity: mysqlEnum("publicity", publicity).default("PRIVATE").notNull(),
     logo: json("logo").$type<File>(),
     voter_domain: text("voter_domain"),
+    is_candidates_visible_in_realtime_when_ongoing: boolean(
+      "is_candidates_visible_in_realtime_when_ongoing",
+    )
+      .default(false)
+      .notNull(),
     deleted_at,
 
     created_at,

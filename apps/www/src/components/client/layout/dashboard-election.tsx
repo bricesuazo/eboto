@@ -754,7 +754,9 @@ export default function DashboardElection({
                         0 ? (
                         <Stack gap="xs" justify="center" align="center" p="xl">
                           <IconMessage2X size="3rem" />
-                          <Text size="sm">No message from voters yet</Text>
+                          <Text size="sm" ta="center">
+                            No message from voters yet
+                          </Text>
                         </Stack>
                       ) : (
                         getAllCommissionerVoterRoomsQuery.data.map((room) => (

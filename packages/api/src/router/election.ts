@@ -380,8 +380,9 @@ export const electionRouter = createTRPCRouter({
             return {
               id: candidate.id,
               name:
-                isElectionOngoing({ election }) &&
-                !isElectionEnded({ election })
+                !election.is_candidates_visible_in_realtime_when_ongoing ||
+                (isElectionOngoing({ election }) &&
+                  !isElectionEnded({ election }))
                   ? `Candidate ${index + 1}`
                   : `${candidate.last_name}, ${candidate.first_name}${
                       candidate.middle_name ? " " + candidate.middle_name : ""
@@ -556,6 +557,7 @@ export const electionRouter = createTRPCRouter({
         newSlug: z.string().min(1).trim().toLowerCase(),
         date: z.custom<[Date, Date]>(),
         publicity: z.enum(publicity),
+        is_candidates_visible_in_realtime_when_ongoing: z.boolean(),
         // voter_domain: z.string().nullable(),
         voting_hours: z.array(z.number()),
         logo: z
@@ -645,6 +647,8 @@ export const electionRouter = createTRPCRouter({
             start_date: input.date[0],
             end_date: input.date[1],
             // voter_domain: isElectionDisabled ? input.voter_domain : undefined,
+            is_candidates_visible_in_realtime_when_ongoing:
+              input.is_candidates_visible_in_realtime_when_ongoing,
             voting_hour_start: isElectionDisabled
               ? input.voting_hours[0]
               : undefined,

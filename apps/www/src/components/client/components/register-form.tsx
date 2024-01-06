@@ -57,6 +57,7 @@ export default function RegisterForm() {
               setLoadings((loadings) => ({ ...loadings, google: true }));
 
               await signIn("google", {
+                redirect: searchParams.has("callbackUrl"),
                 callbackUrl: searchParams.get("callbackUrl") ?? undefined,
               });
             }}
