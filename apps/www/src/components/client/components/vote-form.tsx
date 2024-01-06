@@ -10,7 +10,6 @@ import {
   Alert,
   Box,
   Button,
-  Center,
   Checkbox,
   CheckboxGroup,
   Group,
@@ -202,7 +201,7 @@ export default function VoteForm({
           </Stack>
         </form>
       </Modal>
-      <form>
+      <form style={{ marginBottom: 80 }}>
         <Stack>
           {positionsQuery.data.map((position) => {
             return (
@@ -325,28 +324,24 @@ export default function VoteForm({
           })}
         </Stack>
 
-        <Center
+        <Button
+          onClick={open}
+          disabled={
+            voteMutation.isPending ||
+            !Object.values(form.values).every((value) => value?.isValid)
+          }
+          leftSection={<IconFingerprint />}
+          size="lg"
+          radius="xl"
           style={{
-            position: "sticky",
+            position: "fixed",
             bottom: 100,
-            alignSelf: "center",
-            marginTop: 12,
-            marginBottom: 100,
+            left: "50%",
+            transform: "translateX(-50%)",
           }}
         >
-          <Button
-            onClick={open}
-            disabled={
-              voteMutation.isPending ||
-              !Object.values(form.values).every((value) => value?.isValid)
-            }
-            leftSection={<IconFingerprint />}
-            size="lg"
-            radius="xl"
-          >
-            Cast Vote
-          </Button>
-        </Center>
+          Cast Vote
+        </Button>
       </form>
     </>
   );

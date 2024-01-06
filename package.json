@@ -19,7 +19,7 @@
   "devDependencies": {
     "@eboto/prettier-config": "workspace:^",
     "@manypkg/cli": "^0.21.1",
-    "@turbo/gen": "^1.11.2",
+    "@turbo/gen": "^1.11.3",
     "prettier": "^3.1.1",
     "semver": ">=7.5.3",
     "turbo": "^1.11.3",
