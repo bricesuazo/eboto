@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-// import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Anchor, Button, Paper, Stack, Text } from "@mantine/core";
 import { signIn } from "next-auth/react";
 import Balancer from "react-wrap-balancer";
 
 export default function SigninForm() {
+  const searchParams = useSearchParams();
   const [loadings, setLoadings] = useState<{
     google: boolean;
     credential: boolean;
@@ -43,7 +44,9 @@ export default function SigninForm() {
             onClick={async () => {
               setLoadings((loadings) => ({ ...loadings, google: true }));
 
-              await signIn("google");
+              await signIn("google", {
+                callbackUrl: searchParams.get("callbackUrl") ?? undefined,
+              });
             }}
             loading={loadings.google}
             disabled={loadings.credential}
