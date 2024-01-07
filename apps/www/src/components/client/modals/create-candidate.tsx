@@ -94,7 +94,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
 
     platforms: {
       title: string;
-      description: string | null;
+      description: string;
     }[];
 
     achievements: {
@@ -434,7 +434,7 @@ export default function CreateCandidate({ position }: { position: Position }) {
                           w="100%"
                           label="Description"
                           placeholder="Enter description"
-                          value={platform.description ?? ""}
+                          value={platform.description}
                           disabled={createCandidateMutation.isPending}
                           onChange={(e) => {
                             form.setValues({

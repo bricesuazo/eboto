@@ -239,7 +239,7 @@ export default function ElectionPage({
                 </HoverCardDropdown>
               </HoverCard>
             </Flex>
-            {election.description && (
+            {election.description.length > 0 && (
               <Box maw="40rem" mt="sm" ta="center">
                 <Text>About this election:</Text>
                 <Text lineClamp={spoilerOpened ? undefined : 3}>

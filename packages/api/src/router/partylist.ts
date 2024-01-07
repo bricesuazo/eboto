@@ -96,7 +96,7 @@ export const partylistRouter = createTRPCRouter({
         oldAcronym: z.string().optional(),
         newAcronym: z.string().min(1),
         election_id: z.string().min(1),
-        description: z.string().nullable(),
+        description: z.string(),
         logo_link: z.string().nullable(),
       }),
     )

@@ -29,9 +29,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const elections = getAllMyElectionsQuery.data?.map(({ election }) => ({
     id: election.id,
     label: election.name,
-    description: election.description?.length
-      ? election.description
-      : "No description",
+    description:
+      election.description.length > 0 ? election.description : "No description",
     link: "/dashboard/" + election.slug,
     leftSection: election.logo ? (
       <Center>

@@ -6,7 +6,6 @@ import {
   index,
   int,
   json,
-  longtext,
   mysqlEnum,
   mysqlTable,
   primaryKey,
@@ -57,7 +56,7 @@ export const elections = mysqlTable(
     id,
     slug: varchar("slug", { length: 256 }).notNull().unique(),
     name: text("name").notNull(),
-    description: longtext("description"),
+    description: text("description").notNull().default(""),
     start_date: date("start_date").notNull(),
     end_date: date("end_date").notNull(),
     voting_hour_start: int("voting_hour_start").notNull().default(7),
@@ -169,8 +168,8 @@ export const partylists = mysqlTable(
     id,
     name: text("name").notNull(),
     acronym: text("acronym").notNull(),
-    description: longtext("description"),
-    logo_link: longtext("logo_link"),
+    description: text("description").notNull().default(""),
+    logo_link: text("logo_link"),
 
     created_at,
     updated_at,
@@ -192,7 +191,7 @@ export const positions = mysqlTable(
   {
     id,
     name: text("name").notNull(),
-    description: longtext("description"),
+    description: text("description").notNull().default(""),
     order: int("order").notNull(),
     min: int("min").default(0).notNull(),
     max: int("max").default(1).notNull(),
@@ -273,7 +272,7 @@ export const platforms = mysqlTable(
   {
     id,
     title: text("title").notNull(),
-    description: longtext("description"),
+    description: text("description").notNull().default(""),
 
     created_at,
     updated_at,
@@ -402,8 +401,8 @@ export const reported_problems = mysqlTable(
   "reported_problem",
   {
     id,
-    subject: longtext("subject").notNull(),
-    description: longtext("description").notNull(),
+    subject: text("subject").notNull(),
+    description: text("description").notNull(),
 
     created_at,
 

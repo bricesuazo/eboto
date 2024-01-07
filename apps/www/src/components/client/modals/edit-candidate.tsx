@@ -74,7 +74,7 @@ export default function EditCandidate({
     platforms: {
       id: string;
       title: string;
-      description: string | null;
+      description: string;
     }[];
   };
 }) {
@@ -136,7 +136,7 @@ export default function EditCandidate({
     platforms: {
       id: string;
       title: string;
-      description: string | null;
+      description: string;
     }[];
 
     achievements: {
@@ -632,7 +632,7 @@ export default function EditCandidate({
                           w="100%"
                           label="Description"
                           placeholder="Enter description"
-                          value={platform.description ?? ""}
+                          value={platform.description}
                           disabled={editCandidateMutation.isPending}
                           onChange={(e) => {
                             form.setValues({

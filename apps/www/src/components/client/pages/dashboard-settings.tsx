@@ -110,7 +110,7 @@ export default function DashboardSettings({
     initialValues: {
       name: getElectionBySlugQuery.data.name,
       newSlug: getElectionBySlugQuery.data.slug,
-      description: getElectionBySlugQuery.data.description ?? "",
+      description: getElectionBySlugQuery.data.description,
       // voter_domain: getElectionBySlugQuery.data.voter_domain,
       is_candidates_visible_in_realtime_when_ongoing:
         getElectionBySlugQuery.data
