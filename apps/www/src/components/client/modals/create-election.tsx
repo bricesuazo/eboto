@@ -132,6 +132,20 @@ export default function CreateElection({
   });
 
   useEffect(() => {
+    form.setValues({
+      ...form.values,
+      slug: form.values.name
+        .toLowerCase()
+        .replace(/[^a-z0-9 ]/g, "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .split(" ")
+        .join("-"),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.values.name]);
+
+  useEffect(() => {
     if (opened) {
       form.reset();
     }
