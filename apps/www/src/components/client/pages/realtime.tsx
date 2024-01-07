@@ -34,7 +34,7 @@ import {
   isElectionOngoing,
   parseHourTo12HourFormat,
 } from "@eboto/constants";
-import type { Election } from "@eboto/db/schema";
+import type { Election, VoterField } from "@eboto/db/schema";
 
 import MyMessagesElection from "../components/my-messages-election";
 import MessageCommissioner from "../modals/message-commissioner";
@@ -45,7 +45,7 @@ export default function Realtime({
   isVoterCanMessage,
 }: {
   positions: RouterOutputs["election"]["getElectionRealtime"];
-  election: Election;
+  election: Election & { voter_fields: VoterField[] };
   isVoterCanMessage: boolean;
 }) {
   const positionsQuery = api.election.getElectionRealtime.useQuery(
@@ -53,8 +53,7 @@ export default function Realtime({
     {
       refetchInterval: 1000,
       initialData: positions,
-      enabled:
-        isElectionOngoing({ election }) && !isElectionEnded({ election }),
+      enabled: isElectionOngoing({ election }),
       refetchOnMount: true,
       refetchOnWindowFocus: true,
       refetchOnReconnect: true,
@@ -66,6 +65,8 @@ export default function Realtime({
         election_id: election.id,
       },
       {
+        enabled:
+          isElectionOngoing({ election }) && election.voter_fields.length > 0,
         refetchInterval: 1000,
         refetchOnMount: true,
         refetchOnWindowFocus: true,
@@ -116,16 +117,16 @@ export default function Realtime({
                       parseHourTo12HourFormat(election.voting_hour_end)}
                 </Text>
 
-                {!isElectionEnded({ election }) ? (
+                {isElectionEnded({ election }) ? (
+                  <Text ta="center" tw="bold">
+                    Official result
+                  </Text>
+                ) : (
                   <Text ta="center" size="xs" c="dimmed">
                     <Balancer>
                       Realtime result as of{" "}
                       {moment(new Date()).format("MMMM Do YYYY, h:mm:ss A")}
                     </Balancer>
-                  </Text>
-                ) : (
-                  <Text ta="center" tw="bold">
-                    Official result
                   </Text>
                 )}
               </Box>
@@ -241,67 +242,69 @@ export default function Realtime({
               responsive="true"
             /> */}
 
-            <Stack gap="sm">
-              <Title order={3} ta="center">
-                Voter Stats
-              </Title>
-              {getVoterFieldsStatsInRealtimeQuery.isPending ? (
-                <Center>
-                  <Loader size="sm" />
-                </Center>
-              ) : !getVoterFieldsStatsInRealtimeQuery.data ||
-                getVoterFieldsStatsInRealtimeQuery.data.length === 0 ? (
-                <Text>No voter stats</Text>
-              ) : (
-                <SimpleGrid
-                  cols={{
-                    base: 1,
-                    md: 2,
-                  }}
-                  style={{
-                    alignItems: "start",
-                  }}
-                >
-                  {getVoterFieldsStatsInRealtimeQuery.data.map(
-                    (voterFieldStat) => (
-                      <Table
-                        key={voterFieldStat.name}
-                        withColumnBorders
-                        withTableBorder
-                      >
-                        <TableThead>
-                          <TableTr>
-                            <TableTh>{voterFieldStat.name}</TableTh>
-                            <TableTh>Voted</TableTh>
-                          </TableTr>
-                        </TableThead>
-                        <TableTbody>
-                          {voterFieldStat.options.length ? (
-                            voterFieldStat.options.map((option) => (
-                              <TableTr key={option.name}>
-                                <TableTd>{option.name}</TableTd>
+            {election.voter_fields.length > 0 && (
+              <Stack gap="sm">
+                <Title order={3} ta="center">
+                  Voter Stats
+                </Title>
+                {getVoterFieldsStatsInRealtimeQuery.isPending ? (
+                  <Center>
+                    <Loader size="sm" />
+                  </Center>
+                ) : !getVoterFieldsStatsInRealtimeQuery.data ||
+                  getVoterFieldsStatsInRealtimeQuery.data.length === 0 ? (
+                  <Text>No voter stats</Text>
+                ) : (
+                  <SimpleGrid
+                    cols={{
+                      base: 1,
+                      md: 2,
+                    }}
+                    style={{
+                      alignItems: "start",
+                    }}
+                  >
+                    {getVoterFieldsStatsInRealtimeQuery.data.map(
+                      (voterFieldStat) => (
+                        <Table
+                          key={voterFieldStat.name}
+                          withColumnBorders
+                          withTableBorder
+                        >
+                          <TableThead>
+                            <TableTr>
+                              <TableTh>{voterFieldStat.name}</TableTh>
+                              <TableTh>Voted</TableTh>
+                            </TableTr>
+                          </TableThead>
+                          <TableTbody>
+                            {voterFieldStat.options.length ? (
+                              voterFieldStat.options.map((option) => (
+                                <TableTr key={option.name}>
+                                  <TableTd>{option.name}</TableTd>
+                                  <TableTd>
+                                    <NumberFormatter
+                                      thousandSeparator
+                                      value={option.vote_count}
+                                    />
+                                  </TableTd>
+                                </TableTr>
+                              ))
+                            ) : (
+                              <TableTr>
                                 <TableTd>
-                                  <NumberFormatter
-                                    thousandSeparator
-                                    value={option.vote_count}
-                                  />
+                                  <Text>No answer yet</Text>
                                 </TableTd>
                               </TableTr>
-                            ))
-                          ) : (
-                            <TableTr>
-                              <TableTd>
-                                <Text>No answer yet</Text>
-                              </TableTd>
-                            </TableTr>
-                          )}
-                        </TableTbody>
-                      </Table>
-                    ),
-                  )}
-                </SimpleGrid>
-              )}
-            </Stack>
+                            )}
+                          </TableTbody>
+                        </Table>
+                      ),
+                    )}
+                  </SimpleGrid>
+                )}
+              </Stack>
+            )}
           </Stack>
         </Stack>
       </Container>

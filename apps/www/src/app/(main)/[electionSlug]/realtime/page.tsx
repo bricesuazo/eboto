@@ -83,6 +83,9 @@ export default async function RealtimePage({
   const election = await db.query.elections.findFirst({
     where: (election, { eq, and, isNull }) =>
       and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
+    with: {
+      voter_fields: true,
+    },
   });
   const positions = await api.election.getElectionRealtime.query(electionSlug);
 

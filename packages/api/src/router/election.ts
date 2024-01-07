@@ -380,9 +380,9 @@ export const electionRouter = createTRPCRouter({
             return {
               id: candidate.id,
               name:
-                !election.is_candidates_visible_in_realtime_when_ongoing ||
-                (isElectionOngoing({ election }) &&
-                  !isElectionEnded({ election }))
+                !election.is_candidates_visible_in_realtime_when_ongoing &&
+                isElectionOngoing({ election }) &&
+                !isElectionEnded({ election })
                   ? `Candidate ${index + 1}`
                   : `${candidate.last_name}, ${candidate.first_name}${
                       candidate.middle_name ? " " + candidate.middle_name : ""
