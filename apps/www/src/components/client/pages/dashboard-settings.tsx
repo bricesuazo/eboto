@@ -181,10 +181,19 @@ export default function DashboardSettings({
       const nowEnd = new Date(values.date[1]);
       return {
         ...values,
-        date: [
-          new Date(nowStart.setDate(nowStart.getDate() + 1)),
-          new Date(nowEnd.setDate(nowEnd.getDate() + 1)),
-        ],
+        date: !(
+          getElectionBySlugQuery.data.start_date.getTime() ===
+            nowStart.getTime() &&
+          getElectionBySlugQuery.data.end_date.getTime() === nowEnd.getTime()
+        )
+          ? [
+              new Date(nowStart.setDate(nowStart.getDate() + 1)),
+              new Date(nowEnd.setDate(nowEnd.getDate() + 1)),
+            ]
+          : [
+              getElectionBySlugQuery.data.start_date,
+              getElectionBySlugQuery.data.end_date,
+            ],
       };
     },
   });
