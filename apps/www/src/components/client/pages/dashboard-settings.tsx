@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { api } from "@/trpc/client";
@@ -197,6 +197,20 @@ export default function DashboardSettings({
       };
     },
   });
+
+  useEffect(() => {
+    form.setValues({
+      ...form.values,
+      newSlug: form.values.name
+        .toLowerCase()
+        .replace(/[^a-z0-9 ]/g, "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .split(" ")
+        .join("-"),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.values.name]);
 
   const deleteForm = useForm({
     initialValues: {

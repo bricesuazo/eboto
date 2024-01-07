@@ -200,6 +200,21 @@ export default function EditCandidate({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
 
+  useEffect(() => {
+    form.setValues({
+      ...form.values,
+      new_slug:
+        `${form.values.first_name} ${form.values.middle_name} ${form.values.last_name}`
+          .toLowerCase()
+          .replace(/[^a-z0-9 ]/g, "")
+          .replace(/\s+/g, " ")
+          .trim()
+          .split(" ")
+          .join("-"),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.values.first_name, form.values.middle_name, form.values.last_name]);
+
   const DeleteCredentialButton = ({
     type,
     id,

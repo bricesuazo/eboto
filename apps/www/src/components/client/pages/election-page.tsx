@@ -324,8 +324,20 @@ export default function ElectionPage({
               </Text>
             ) : (
               positions.map((position) => (
-                <Stack gap="xs" key={position.id}>
-                  <Flex wrap="wrap" align="center" justify="center" gap="xs">
+                <Stack gap={0} key={position.id}>
+                  <Flex
+                    wrap="wrap"
+                    align="center"
+                    justify="center"
+                    gap="xs"
+                    py="xs"
+                    style={{
+                      position: "sticky",
+                      top: 60,
+                      zIndex: 1,
+                      backgroundColor: "var(--mantine-color-body)",
+                    }}
+                  >
                     <Title
                       order={2}
                       tw="bold"
@@ -406,18 +418,20 @@ export default function ElectionPage({
 
                             <Box px="xs" py="sm" w="100%">
                               <Text
-                                lineClamp={1}
+                                lineClamp={2}
                                 ta="center"
                                 size="lg"
                                 visibleFrom="xs"
+                                h={60}
                               >
                                 {candidate_name}
                               </Text>
                               <Text
-                                lineClamp={1}
+                                lineClamp={2}
                                 ta="center"
                                 size="lg"
                                 hiddenFrom="xs"
+                                h={60}
                               >
                                 {candidate_name}
                               </Text>

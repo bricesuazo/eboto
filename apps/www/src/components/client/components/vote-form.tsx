@@ -206,22 +206,31 @@ export default function VoteForm({
           {positionsQuery.data.map((position) => {
             return (
               <Box key={position.id}>
-                <Text size="xl">{position.name}</Text>
-                <Text size="sm" c="grayText">
-                  {position.min === 0 && position.max === 1
-                    ? "Select only one."
-                    : `Select ${
-                        position.min
-                          ? `at least ${toWords
-                              .convert(position.min)
-                              .toLowerCase()} and `
-                          : ""
-                      }at most ${toWords
-                        .convert(position.max)
-                        .toLowerCase()}. (${
-                        position.min ? `${position.min} - ` : ""
-                      }${position.max})`}
-                </Text>
+                <Box
+                  py="xs"
+                  style={{
+                    position: "sticky",
+                    top: 60,
+                    backgroundColor: "var(--mantine-color-body)",
+                  }}
+                >
+                  <Text size="xl">{position.name}</Text>
+                  <Text size="sm" c="grayText">
+                    {position.min === 0 && position.max === 1
+                      ? "Select only one."
+                      : `Select ${
+                          position.min
+                            ? `at least ${toWords
+                                .convert(position.min)
+                                .toLowerCase()} and `
+                            : ""
+                        }at most ${toWords
+                          .convert(position.max)
+                          .toLowerCase()}. (${
+                          position.min ? `${position.min} - ` : ""
+                        }${position.max})`}
+                  </Text>
+                </Box>
 
                 <Group>
                   {position.min === 0 && position.max === 1 ? (
@@ -235,7 +244,7 @@ export default function VoteForm({
                         });
                       }}
                     >
-                      <Group mt="xs">
+                      <Group>
                         {position.candidates.map((candidate) => (
                           <VoteCard
                             isSelected={
@@ -283,7 +292,7 @@ export default function VoteForm({
                       }}
                       value={form.values[position.id]?.votes}
                     >
-                      <Group mt="xs">
+                      <Group>
                         {position.candidates.map((candidate) => {
                           return (
                             <VoteCard
@@ -445,7 +454,12 @@ function VoteCard({
           </Box>
         )}
         {candidate ? (
-          <Text w="100%" ta={{ base: "left", sm: "center" }} lineClamp={1}>
+          <Text
+            w="100%"
+            ta={{ base: "left", sm: "center" }}
+            lineClamp={2}
+            h={50}
+          >
             {candidate.last_name}, {candidate.first_name}
             {candidate.middle_name
               ? " " + candidate.middle_name.charAt(0) + "."
@@ -453,7 +467,7 @@ function VoteCard({
             ({candidate.partylist.acronym})
           </Text>
         ) : (
-          <Text w="100%" ta="center" lineClamp={1}>
+          <Text w="100%" ta="center" lineClamp={2}>
             Abstain
           </Text>
         )}
