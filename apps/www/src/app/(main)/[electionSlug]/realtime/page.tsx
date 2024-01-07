@@ -148,7 +148,7 @@ export default async function RealtimePage({
         ),
     });
 
-    if (isVoter && !vote) redirect(`/${election.slug}`);
+    if (isVoter && !vote && !isCommissioner) redirect(`/${election.slug}`);
   } else if (election.publicity === "VOTER") {
     if (!session) redirect(callbackUrl);
 

@@ -559,7 +559,7 @@ export const electionRouter = createTRPCRouter({
         publicity: z.enum(publicity),
         is_candidates_visible_in_realtime_when_ongoing: z.boolean(),
         // voter_domain: z.string().nullable(),
-        voting_hours: z.array(z.number()),
+        voting_hours: z.custom<[number, number]>(),
         logo: z
           .object({
             name: z.string().min(1),
@@ -634,8 +634,9 @@ export const electionRouter = createTRPCRouter({
           await ctx.utapi.deleteFiles(isElectionCommissionerExists.logo.key);
         }
 
-        const isElectionDisabled =
-          isElectionCommissionerExists.start_date.getTime() < Date.now();
+        const isElectionDatesDisabled =
+          isElectionOngoing({ election: isElectionCommissionerExists }) ||
+          isElectionEnded({ election: isElectionCommissionerExists });
 
         await db
           .update(elections)
@@ -644,15 +645,15 @@ export const electionRouter = createTRPCRouter({
             slug: input.newSlug,
             description: input.description,
             publicity: input.publicity,
-            start_date: input.date[0],
-            end_date: input.date[1],
-            // voter_domain: isElectionDisabled ? input.voter_domain : undefined,
+            start_date: isElectionDatesDisabled ? input.date[0] : undefined,
+            end_date: isElectionDatesDisabled ? input.date[1] : undefined,
+            // voter_domain: isElectionDatesDisabled ? input.voter_domain : undefined,
             is_candidates_visible_in_realtime_when_ongoing:
               input.is_candidates_visible_in_realtime_when_ongoing,
-            voting_hour_start: isElectionDisabled
+            voting_hour_start: isElectionDatesDisabled
               ? input.voting_hours[0]
               : undefined,
-            voting_hour_end: isElectionDisabled
+            voting_hour_end: isElectionDatesDisabled
               ? input.voting_hours[1]
               : undefined,
             logo: input.logo
