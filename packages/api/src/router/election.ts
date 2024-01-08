@@ -645,15 +645,15 @@ export const electionRouter = createTRPCRouter({
             slug: input.newSlug,
             description: input.description,
             publicity: input.publicity,
-            start_date: isElectionDatesDisabled ? input.date[0] : undefined,
-            end_date: isElectionDatesDisabled ? input.date[1] : undefined,
-            // voter_domain: isElectionDatesDisabled ? input.voter_domain : undefined,
+            start_date: !isElectionDatesDisabled ? input.date[0] : undefined,
+            end_date: !isElectionDatesDisabled ? input.date[1] : undefined,
+            // voter_domain: !isElectionDatesDisabled ? input.voter_domain : undefined,
             is_candidates_visible_in_realtime_when_ongoing:
               input.is_candidates_visible_in_realtime_when_ongoing,
-            voting_hour_start: isElectionDatesDisabled
+            voting_hour_start: !isElectionDatesDisabled
               ? input.voting_hours[0]
               : undefined,
-            voting_hour_end: isElectionDatesDisabled
+            voting_hour_end: !isElectionDatesDisabled
               ? input.voting_hours[1]
               : undefined,
             logo: input.logo
