@@ -16,7 +16,12 @@ import {
 } from "@mantine/core";
 import { IconRefresh } from "@tabler/icons-react";
 import type { MRT_ColumnDef, MRT_RowSelectionState } from "mantine-react-table";
-import { MantineReactTable, useMantineReactTable } from "mantine-react-table";
+import {
+  MantineReactTable,
+  MRT_GlobalFilterTextInput,
+  MRT_ToggleFiltersButton,
+  useMantineReactTable,
+} from "mantine-react-table";
 import moment from "moment";
 
 import type { RouterOutputs } from "@eboto/api";
@@ -84,7 +89,11 @@ export default function DashboardVoter({
     mantinePaperProps: {
       shadow: "none",
     },
-    initialState: { pagination: { pageSize: 15, pageIndex: 0 } },
+    initialState: {
+      pagination: { pageSize: 15, pageIndex: 0 },
+      showColumnFilters: true,
+      showGlobalFilter: true,
+    },
     state: {
       density: "xs",
       isLoading: votersQuery.isPending,
@@ -101,60 +110,71 @@ export default function DashboardVoter({
     //       display: isTopToolbar ? "block" : "none",
     //     },
     // }),
+    mantineSearchTextInputProps: {
+      placeholder: "Search voters",
+      miw: 100,
+    },
     positionToolbarAlertBanner: "bottom",
     enableRowActions: true,
     positionActionsColumn: "last",
     renderTopToolbar: () => (
-      <Group gap="xs" p="sm" pb="xs">
-        <Tooltip withArrow label="Refresh">
-          <div>
-            <ActionIcon
-              variant="light"
-              onClick={async () => await votersQuery.refetch()}
-              size="lg"
-              loading={votersQuery.isRefetching}
-              hiddenFrom="sm"
-              loaderProps={{
-                width: 18,
-              }}
-            >
-              <IconRefresh size="1.25rem" />
-            </ActionIcon>
-            <Button
-              variant="light"
-              onClick={async () => await votersQuery.refetch()}
-              loading={votersQuery.isRefetching}
-              leftSection={<IconRefresh size="1.25rem" />}
-              visibleFrom="sm"
-              loaderProps={{
-                width: 20,
-              }}
-            >
-              Refresh
-            </Button>
-          </div>
-        </Tooltip>
+      <Flex gap="sm" p="sm" pb="xs" justify="space-between">
+        <Flex gap="xs">
+          <Tooltip withArrow label="Refresh">
+            <div>
+              <ActionIcon
+                variant="light"
+                onClick={async () => await votersQuery.refetch()}
+                size="lg"
+                loading={votersQuery.isRefetching}
+                hiddenFrom="sm"
+                loaderProps={{
+                  width: 18,
+                }}
+              >
+                <IconRefresh size="1.25rem" />
+              </ActionIcon>
+              <Button
+                variant="light"
+                onClick={async () => await votersQuery.refetch()}
+                loading={votersQuery.isRefetching}
+                leftSection={<IconRefresh size="1.25rem" />}
+                visibleFrom="sm"
+                loaderProps={{
+                  width: 20,
+                }}
+              >
+                Refresh
+              </Button>
+            </div>
+          </Tooltip>
 
-        <Tooltip withArrow label="Delete selected">
-          <DeleteBulkVoter
-            voters={votersQuery.data.voters
-              .filter((voter) => rowSelection[voter.id])
-              .map((voter) => ({
-                id: voter.id,
-                email: voter.email,
-              }))}
-            election_id={data.election.id}
-            isDisabled={
-              votersQuery.data.voters.length === 0 ||
-              Object.keys(rowSelection).length === 0 ||
-              Object.values(rowSelection).every((isSelected) => !isSelected)
-            }
-            onSuccess={() => {
-              setRowSelection({});
-            }}
-          />
-        </Tooltip>
-      </Group>
+          <Tooltip withArrow label="Delete selected">
+            <DeleteBulkVoter
+              voters={votersQuery.data.voters
+                .filter((voter) => rowSelection[voter.id])
+                .map((voter) => ({
+                  id: voter.id,
+                  email: voter.email,
+                }))}
+              election_id={data.election.id}
+              isDisabled={
+                votersQuery.data.voters.length === 0 ||
+                Object.keys(rowSelection).length === 0 ||
+                Object.values(rowSelection).every((isSelected) => !isSelected)
+              }
+              onSuccess={() => {
+                setRowSelection({});
+              }}
+            />
+          </Tooltip>
+        </Flex>
+
+        <Flex gap="xs">
+          <MRT_GlobalFilterTextInput table={table} />
+          <MRT_ToggleFiltersButton table={table} />
+        </Flex>
+      </Flex>
     ),
     renderRowActions: ({ row }) => (
       <Flex gap="sm">
