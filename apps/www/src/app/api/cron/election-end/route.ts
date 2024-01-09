@@ -10,7 +10,7 @@ import { sendElectionResult } from "@eboto/email/emails/election-result";
 // export const runtime = "edge";
 
 async function handler(_req: NextRequest) {
-  console.log("ELECTION START CRON");
+  console.log("ELECTION END CRON");
   // TODO: Use toISOString() instead of toLocaleDateString() and toLocaleString()
   const date_today = new Date(
     new Date().toLocaleDateString("en-US", {

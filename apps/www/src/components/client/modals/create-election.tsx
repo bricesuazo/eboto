@@ -45,7 +45,7 @@ export default function CreateElection({
   const [opened, { open, close }] = useDisclosure(false);
 
   const createElectionMutation = api.election.create.useMutation({
-    onSuccess: async () => {
+    onSuccess: () => {
       router.push(`/dashboard/${form.values.slug}`);
       close();
       notifications.show({
@@ -54,7 +54,7 @@ export default function CreateElection({
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
-      await fireConfetti();
+      fireConfetti();
     },
   });
 

@@ -85,7 +85,7 @@ export default function VoteForm({
   const [opened, { open, close }] = useDisclosure(false);
 
   const voteMutation = api.election.vote.useMutation({
-    onSuccess: async () => {
+    onSuccess: () => {
       router.push(`/${election.slug}/realtime`);
       notifications.show({
         title: "Vote casted successfully!",
@@ -93,7 +93,7 @@ export default function VoteForm({
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
-      await fireConfetti();
+      fireConfetti();
     },
     onError: () => {
       notifications.show({

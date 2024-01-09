@@ -1,10 +1,11 @@
 "use client";
 
 import QRCodeModal from "@/components/client/modals/qr-code";
-import type { Election } from "@eboto/db/schema";
 import { ActionIcon, Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconQrcode } from "@tabler/icons-react";
+
+import type { Election } from "@eboto/db/schema";
 
 export default function DashboardShowQRCode({
   election,
