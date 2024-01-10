@@ -11,7 +11,7 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
-import { isEmail, useForm } from "@mantine/form";
+import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import {
@@ -53,7 +53,10 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
       email: "",
     },
     validate: {
-      email: isEmail("Please enter a valid email address"),
+      email: (value) =>
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+          ? "Please enter a valid email"
+          : null,
     },
   });
 

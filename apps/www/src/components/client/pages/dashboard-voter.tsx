@@ -91,7 +91,6 @@ export default function DashboardVoter({
     },
     initialState: {
       pagination: { pageSize: 15, pageIndex: 0 },
-      showColumnFilters: true,
       showGlobalFilter: true,
     },
     state: {
