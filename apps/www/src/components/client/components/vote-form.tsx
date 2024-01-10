@@ -12,6 +12,7 @@ import {
   Button,
   Checkbox,
   CheckboxGroup,
+  Divider,
   Group,
   List,
   ListItem,
@@ -130,52 +131,45 @@ export default function VoteForm({
           })}
         >
           <Stack>
-            {positionsQuery.data.map((position) => (
-              <Box key={position.id}>
-                <Text lineClamp={1}>{position.name}</Text>
-                <Text lineClamp={1} size="xs" c="dimmed">
-                  {position.min === 0 && position.max === 1
-                    ? `One selection only (1)`
-                    : `${
-                        position.min
-                          ? `At least ${toWords
-                              .convert(position.min)
-                              .toLowerCase()} and a`
-                          : " A"
-                      }t most ${toWords.convert(position.max).toLowerCase()} (${
-                        position.min
-                      } - ${position.max})`}
-                </Text>
-                <List listStyleType="none">
-                  {Object.entries(form.values)
-                    .find(([key]) => key === position.id)?.[1]
-                    .votes.map((candidateId) => {
-                      const candidate = position.candidates.find(
-                        (candidate) => candidate.id === candidateId,
-                      );
+            <Box>
+              {positionsQuery.data.map((position, index) => (
+                <Box key={position.id}>
+                  <Text lineClamp={1}>{position.name}</Text>
+                  <List listStyleType="none">
+                    {Object.entries(form.values)
+                      .find(([key]) => key === position.id)?.[1]
+                      .votes.map((candidateId) => {
+                        const candidate = position.candidates.find(
+                          (candidate) => candidate.id === candidateId,
+                        );
 
-                      return candidate ? (
-                        <ListItem
-                          key={candidateId}
-                          fw={600}
-                          fz="lg"
-                          style={{ lineClamp: 2 }}
-                        >
-                          {candidate.last_name}, {candidate.first_name}
-                          {candidate.middle_name
-                            ? " " + candidate.middle_name.charAt(0) + "."
-                            : ""}{" "}
-                          ({candidate.partylist.acronym})
-                        </ListItem>
-                      ) : (
-                        <ListItem key={candidateId} fw={600} fz="lg">
-                          Abstain
-                        </ListItem>
-                      );
-                    })}
-                </List>
-              </Box>
-            ))}
+                        return candidate ? (
+                          <ListItem
+                            key={candidateId}
+                            fw={600}
+                            fz="lg"
+                            style={{ lineClamp: 2 }}
+                          >
+                            {candidate.last_name}, {candidate.first_name}
+                            {candidate.middle_name
+                              ? " " + candidate.middle_name.charAt(0) + "."
+                              : ""}{" "}
+                            ({candidate.partylist.acronym})
+                          </ListItem>
+                        ) : (
+                          <ListItem key={candidateId} fw={600} fz="lg">
+                            Abstain
+                          </ListItem>
+                        );
+                      })}
+                  </List>
+
+                  {index !== positionsQuery.data.length - 1 && (
+                    <Divider my="sm" />
+                  )}
+                </Box>
+              ))}
+            </Box>
 
             {voteMutation.isError && (
               <Alert
