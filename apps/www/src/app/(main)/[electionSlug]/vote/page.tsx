@@ -58,7 +58,13 @@ export default async function VotePage({
       ),
   });
 
-  if (!isVoter || (election.voter_fields.length && !isVoter?.field))
+  if (
+    !isVoter ||
+    (election.voter_fields.length && !isVoter?.field) ||
+    Object.values(isVoter.field ?? {}).some(
+      (value) => !value || value.trim() === "",
+    )
+  )
     redirect(`/${election.slug}`);
 
   const hasVoted = await db.query.votes.findFirst({
