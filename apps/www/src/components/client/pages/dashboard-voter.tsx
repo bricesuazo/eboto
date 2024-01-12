@@ -175,30 +175,33 @@ export default function DashboardVoter({
         </Flex>
       </Flex>
     ),
-    renderRowActions: ({ row }) => (
-      <Flex gap="sm">
-        <Tooltip withArrow label="Edit">
-          <EditVoter
-            voter_fields={votersQuery.data.election.voter_fields}
-            election_id={data.election.id}
-            voter={{
-              id: row.id,
-              email: row.getValue<string>("email"),
-            }}
-          />
-        </Tooltip>
+    renderRowActions: ({ row }) => {
+      return (
+        <Flex gap="sm">
+          <Tooltip withArrow label="Edit">
+            <EditVoter
+              voter_fields={votersQuery.data.election.voter_fields}
+              election_id={data.election.id}
+              voter={{
+                id: row.id,
+                email: row.getValue<string>("email"),
+                field: row.original.field,
+              }}
+            />
+          </Tooltip>
 
-        <Tooltip withArrow label="Delete">
-          <DeleteVoter
-            voter={{
-              id: row.id,
-              email: row.getValue<string>("email"),
-            }}
-            election_id={data.election.id}
-          />
-        </Tooltip>
-      </Flex>
-    ),
+          <Tooltip withArrow label="Delete">
+            <DeleteVoter
+              voter={{
+                id: row.id,
+                email: row.getValue<string>("email"),
+              }}
+              election_id={data.election.id}
+            />
+          </Tooltip>
+        </Flex>
+      );
+    },
   });
 
   return (

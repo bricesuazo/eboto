@@ -20,6 +20,7 @@ import {
   IconAt,
   IconCheck,
   IconEdit,
+  IconLetterCase,
 } from "@tabler/icons-react";
 
 import type { VoterField } from "@eboto/db/schema";
@@ -27,11 +28,13 @@ import type { VoterField } from "@eboto/db/schema";
 export default function EditVoter({
   election_id,
   voter,
+  voter_fields,
 }: {
   election_id: string;
   voter: {
     id: string;
     email: string;
+    field: Record<string, string> | null;
   };
   voter_fields: VoterField[];
 }) {
@@ -40,11 +43,14 @@ export default function EditVoter({
 
   const initialValues = {
     email: voter.email,
+    ...voter.field,
   };
 
-  const form = useForm<{
-    email: string;
-  }>({
+  const form = useForm<
+    {
+      email: string;
+    } & (Record<string, string> | null)
+  >({
     initialValues,
     validate: {
       email: (value) =>
@@ -78,20 +84,7 @@ export default function EditVoter({
 
   return (
     <>
-      <ActionIcon
-        variant="outline"
-        onClick={() => {
-          //   setVoterToEdit({
-          //     id: row.id,
-          //     email: row.getValue<string>("email"),
-          //     field: voters.find((v) => v.id === row.id)?.field ?? {},
-          //     account_status: row.getValue<
-          //       "ACCEPTED" | "INVITED" | "DECLINED" | "ADDED"
-          //     >("account_status"),
-          //   });
-          open();
-        }}
-      >
+      <ActionIcon variant="outline" onClick={open}>
         <IconEdit size="1rem" />
       </ActionIcon>
       <Modal
@@ -105,6 +98,10 @@ export default function EditVoter({
               id: voter.id,
               election_id,
               email: values.email,
+              voter_fields: voter_fields.map((field) => ({
+                id: field.id,
+                value: values[field.id],
+              })),
             });
           })}
         >
@@ -121,6 +118,21 @@ export default function EditVoter({
                 "You can only edit the email address of a voter if they have not yet accepted their invitation."
               }
             />
+
+            {voter_fields
+              .sort((a, b) => a.created_at.getTime() - b.created_at.getTime())
+              .map((field) => {
+                return (
+                  <TextInput
+                    key={field.id}
+                    placeholder={`Enter voter's ${field.name}`}
+                    leftSection={<IconLetterCase size="1rem" />}
+                    label={field.name}
+                    {...form.getInputProps(field.id)}
+                    disabled={editVoterMutation.isPending}
+                  />
+                );
+              })}
 
             {editVoterMutation.isError && (
               <Alert

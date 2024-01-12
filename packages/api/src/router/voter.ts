@@ -136,6 +136,16 @@ export const voterRouter = createTRPCRouter({
             message: "Election is ended",
           });
 
+        if (
+          input.fields.some((field) =>
+            field.name.toLowerCase().includes("email"),
+          )
+        )
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Field cannot be added",
+          });
+
         await db
           .delete(voter_fields)
           .where(eq(voter_fields.election_id, input.election_id));
@@ -171,6 +181,12 @@ export const voterRouter = createTRPCRouter({
         id: z.string().min(1),
         email: z.string().min(1),
         election_id: z.string().min(1),
+        voter_fields: z.array(
+          z.object({
+            id: z.string().min(1),
+            value: z.string().optional(),
+          }),
+        ),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -211,6 +227,13 @@ export const voterRouter = createTRPCRouter({
         .update(voters)
         .set({
           email: input.email,
+          field: input.voter_fields.reduce(
+            (acc, field) => {
+              acc[field.id] = field.value ?? "";
+              return acc;
+            },
+            {} as Record<string, string>,
+          ),
         })
         .where(eq(voters.id, input.id));
 
@@ -439,24 +462,22 @@ export const voterRouter = createTRPCRouter({
           message: "Voter does not exists",
         });
 
-      await ctx.db.transaction(async (db) => {
-        await db
-          .update(voters)
-          .set({
-            field: input.fields.reduce(
-              (acc, field) => {
-                acc[field.id] = field.value;
-                return acc;
-              },
-              {} as Record<string, string>,
-            ),
-          })
-          .where(
-            and(
-              eq(voters.id, input.voter_id),
-              eq(voters.election_id, input.election_id),
-            ),
-          );
-      });
+      await ctx.db
+        .update(voters)
+        .set({
+          field: input.fields.reduce(
+            (acc, field) => {
+              acc[field.id] = field.value;
+              return acc;
+            },
+            {} as Record<string, string>,
+          ),
+        })
+        .where(
+          and(
+            eq(voters.id, input.voter_id),
+            eq(voters.election_id, input.election_id),
+          ),
+        );
     }),
 });

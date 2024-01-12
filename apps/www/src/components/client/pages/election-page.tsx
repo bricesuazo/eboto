@@ -83,7 +83,10 @@ export default function ElectionPage({
 
   const form = useForm<Record<string, string>>({
     initialValues: Object.fromEntries(
-      election.voter_fields.map((field) => [field.id, ""]),
+      election.voter_fields.map((field) => [
+        field.id,
+        myVoterData?.field?.[field.id] ?? "",
+      ]),
     ),
     validate: (values) => {
       const errors: Record<string, string> = {};
@@ -272,7 +275,11 @@ export default function ElectionPage({
               ) : (
                 !!myVoterData && (
                   <>
-                    {!!election.voter_fields.length && !myVoterData.field ? (
+                    {!!election.voter_fields.length &&
+                    (!myVoterData.field ||
+                      Object.values(myVoterData.field).some(
+                        (value) => !value || value.trim() === "",
+                      )) ? (
                       <Button
                         onClick={open}
                         radius="xl"

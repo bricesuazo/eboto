@@ -89,6 +89,9 @@ export default function UpdateVoterField({
 
         if (value.some((field) => field.name.trim() === ""))
           return "Field name is required";
+
+        if (value.some((field) => field.name.toLowerCase().trim() === "email"))
+          return "Email field cannot be added";
       },
     },
   });
