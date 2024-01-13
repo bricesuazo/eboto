@@ -262,48 +262,48 @@ export default function ElectionPage({
               </Box>
             )}
             <Flex justify="center" gap="sm" mt={8} align="center">
-              {election.publicity === "PUBLIC" ||
-              hasVoted ||
-              isElectionEnded({ election }) ? (
-                <Button
-                  radius="xl"
-                  size="md"
-                  component={Link}
-                  leftSection={<IconClock />}
-                  href={`/${election.slug}/realtime`}
-                >
-                  Realtime count
-                </Button>
-              ) : !isOngoing ? (
+              {!isOngoing ? (
                 <Text c="red">Voting is not yet open</Text>
+              ) : !hasVoted && !!myVoterData ? (
+                <>
+                  {election.voter_fields.length &&
+                  (!myVoterData.field ||
+                    Object.values(myVoterData.field).some(
+                      (value) => !value || value.trim() === "",
+                    )) ? (
+                    <Button
+                      onClick={open}
+                      radius="xl"
+                      size="md"
+                      leftSection={<IconFingerprint />}
+                    >
+                      Vote now!
+                    </Button>
+                  ) : (
+                    <Button
+                      radius="xl"
+                      size="md"
+                      leftSection={<IconFingerprint />}
+                      component={Link}
+                      href={`/${election.slug}/vote`}
+                    >
+                      Vote now!
+                    </Button>
+                  )}
+                </>
               ) : (
-                !!myVoterData && (
-                  <>
-                    {!!election.voter_fields.length &&
-                    (!myVoterData.field ||
-                      Object.values(myVoterData.field).some(
-                        (value) => !value || value.trim() === "",
-                      )) ? (
-                      <Button
-                        onClick={open}
-                        radius="xl"
-                        size="md"
-                        leftSection={<IconFingerprint />}
-                      >
-                        Vote now!
-                      </Button>
-                    ) : (
-                      <Button
-                        radius="xl"
-                        size="md"
-                        leftSection={<IconFingerprint />}
-                        component={Link}
-                        href={`/${election.slug}/vote`}
-                      >
-                        Vote now!
-                      </Button>
-                    )}
-                  </>
+                (election.publicity === "PUBLIC" ||
+                  hasVoted ||
+                  isElectionEnded({ election })) && (
+                  <Button
+                    radius="xl"
+                    size="md"
+                    component={Link}
+                    leftSection={<IconClock />}
+                    href={`/${election.slug}/realtime`}
+                  >
+                    Realtime count
+                  </Button>
                 )
               )}
               <ElectionShowQRCode election={election} />
