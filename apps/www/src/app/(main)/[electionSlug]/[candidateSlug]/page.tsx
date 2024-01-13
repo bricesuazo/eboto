@@ -5,6 +5,7 @@ import { api } from "@/trpc/server";
 import { env } from "env.mjs";
 
 import { auth } from "@eboto/auth";
+import { formatName } from "@eboto/constants";
 import { db } from "@eboto/db";
 
 export async function generateMetadata({
@@ -62,9 +63,9 @@ export async function generateMetadata({
   if (!candidate) return notFound();
 
   return {
-    title: `${`${candidate.last_name}, ${candidate.first_name}${
-      candidate.middle_name ? " " + candidate.middle_name : ""
-    }`} – ${election.name}`,
+    title: `${formatName(election.name_arrangement, candidate)} – ${
+      election.name
+    }`,
     description: `See information about ${candidate.first_name} ${candidate.last_name} | eBoto`,
     openGraph: {
       title: election.name,

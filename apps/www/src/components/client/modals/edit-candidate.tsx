@@ -43,6 +43,7 @@ import {
   IconX,
 } from "@tabler/icons-react";
 
+import { formatName } from "@eboto/constants";
 import type { Candidate, Election } from "@eboto/db/schema";
 
 export default function EditCandidate({
@@ -110,12 +111,11 @@ export default function EditCandidate({
     onSuccess: async () => {
       await context.candidate.getDashboardData.invalidate();
       notifications.show({
-        title: `${form.values.first_name}${
-          form.values.middle_name && ` ${form.values.middle_name}`
-        } ${form.values.last_name} created!`,
-        message: `Successfully updated candidate: ${form.values.first_name}${
-          form.values.middle_name && ` ${form.values.middle_name}`
-        } ${form.values.last_name}`,
+        title: `${formatName(election.name_arrangement, candidate)} created!`,
+        message: `Successfully updated candidate: ${formatName(
+          election.name_arrangement,
+          candidate,
+        )}`,
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });

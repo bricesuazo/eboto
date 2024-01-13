@@ -7,12 +7,15 @@ import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
 
+import { formatName } from "@eboto/constants";
 import type { Candidate } from "@eboto/db/schema";
 
 export default function DeleteCandidate({
   candidate,
+  name_arrangement,
 }: {
   candidate: Candidate;
+  name_arrangement: number;
 }) {
   const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure(false);
@@ -20,9 +23,7 @@ export default function DeleteCandidate({
     onSuccess: async () => {
       await context.candidate.getDashboardData.invalidate();
       notifications.show({
-        title: `${candidate.first_name}${
-          candidate.middle_name && ` ${candidate.middle_name}`
-        } ${candidate.last_name} deleted!`,
+        title: `${formatName(name_arrangement, candidate, true)} deleted!`,
         message: "Successfully deleted partylist",
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
@@ -61,9 +62,8 @@ export default function DeleteCandidate({
         onClose={close}
         title={
           <Text fw={600}>
-            Confirm Delete Candidate - {candidate.first_name}{" "}
-            {candidate.last_name}
-            {candidate.middle_name ? ` ${candidate.middle_name}` : ""}
+            Confirm Delete Candidate -{" "}
+            {formatName(name_arrangement, candidate, true)}
           </Text>
         }
       >

@@ -3,6 +3,7 @@ import { nanoid } from "nanoid";
 import { z } from "zod";
 
 import {
+  formatName,
   isElectionEnded,
   isElectionOngoing,
   positionTemplate,
@@ -221,11 +222,10 @@ export const electionRouter = createTRPCRouter({
 
                         return {
                           id: candidate?.id ?? "",
-                          name: `${candidate?.first_name} ${
-                            candidate?.middle_name
-                              ? candidate?.middle_name + " "
-                              : ""
-                          }${candidate?.last_name}`,
+                          name: `${formatName(
+                            election.name_arrangement,
+                            candidate!,
+                          )}`,
                         };
                       }),
                     }
@@ -384,9 +384,9 @@ export const electionRouter = createTRPCRouter({
                 isElectionOngoing({ election }) &&
                 !isElectionEnded({ election })
                   ? `Candidate ${index + 1}`
-                  : `${candidate.last_name}, ${candidate.first_name}${
-                      candidate.middle_name ? " " + candidate.middle_name : ""
-                    } (${candidate.partylist.acronym})`,
+                  : `${formatName(election.name_arrangement, candidate)} (${
+                      candidate.partylist.acronym
+                    })`,
               vote: candidate.votes.length,
             };
           }),

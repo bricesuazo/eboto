@@ -9,7 +9,7 @@ import {
 import type { TablerIconsProps } from "@tabler/icons-react";
 import { z } from "zod";
 
-import type { Election } from "@eboto/db/schema";
+import type { Candidate, Election } from "@eboto/db/schema";
 
 export const baseUrl =
   process.env.NODE_ENV === "production"
@@ -105,6 +105,27 @@ export const isElectionOngoing = ({
   );
 };
 
+export function formatName(
+  arrangement: number,
+  candidate: Candidate,
+  isMiddleInitialOnly?: true,
+) {
+  const middle_name = isMiddleInitialOnly
+    ? candidate.middle_name?.charAt(0) + "."
+    : candidate.middle_name;
+
+  if (arrangement === 0) {
+    return `${candidate.first_name}${middle_name ? " " + middle_name : ""} ${
+      candidate.last_name
+    }`;
+  } else if (arrangement === 1) {
+    return `${candidate.last_name}, ${candidate.first_name}${
+      candidate.middle_name ? " " + candidate.middle_name : ""
+    }`;
+  }
+
+  return "No name";
+}
 export const electionDashboardNavbar: {
   id: number;
   label: string;

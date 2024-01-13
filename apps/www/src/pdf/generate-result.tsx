@@ -6,6 +6,7 @@ import {
   View,
 } from "@react-pdf/renderer";
 
+import { formatName } from "@eboto/constants";
 import type { GeneratedElectionResult } from "@eboto/db/schema";
 
 export default function GenerateResult({
@@ -174,8 +175,7 @@ export default function GenerateResult({
                             }}
                           >
                             <Text>
-                              {candidate.last_name}, {candidate.first_name}{" "}
-                              {candidate.middle_name}
+                              {formatName(result.name_arrangement, candidate)}
                             </Text>
                             <Text>
                               <Text

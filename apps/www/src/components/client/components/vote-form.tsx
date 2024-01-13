@@ -36,6 +36,7 @@ import {
   IconX,
 } from "@tabler/icons-react";
 
+import { formatName } from "@eboto/constants";
 import type {
   Candidate,
   Election,
@@ -150,10 +151,11 @@ export default function VoteForm({
                             fz="lg"
                             style={{ lineClamp: 2 }}
                           >
-                            {candidate.last_name}, {candidate.first_name}
-                            {candidate.middle_name
-                              ? " " + candidate.middle_name.charAt(0) + "."
-                              : ""}{" "}
+                            {formatName(
+                              election.name_arrangement,
+                              candidate,
+                              true,
+                            )}{" "}
                             ({candidate.partylist.acronym})
                           </ListItem>
                         ) : (
@@ -250,6 +252,7 @@ export default function VoteForm({
                             type="radio"
                             key={candidate.id}
                             value={candidate.id}
+                            name_arrangement={election.name_arrangement}
                           />
                         ))}
                         <VoteCard
@@ -260,6 +263,7 @@ export default function VoteForm({
                             ) ?? false
                           }
                           value="abstain"
+                          name_arrangement={election.name_arrangement}
                         />
                       </Group>
                     </RadioGroup>
@@ -306,6 +310,7 @@ export default function VoteForm({
                                 )
                               }
                               key={candidate.id}
+                              name_arrangement={election.name_arrangement}
                             />
                           );
                         })}
@@ -317,6 +322,7 @@ export default function VoteForm({
                             ) ?? false
                           }
                           value="abstain"
+                          name_arrangement={election.name_arrangement}
                         />
                       </Group>
                     </CheckboxGroup>
@@ -356,6 +362,7 @@ function VoteCard({
   value,
   disabled,
   type,
+  name_arrangement,
 }: {
   type: "radio" | "checkbox";
   value: string;
@@ -364,6 +371,7 @@ function VoteCard({
     partylist: Partylist;
   };
   isSelected: boolean;
+  name_arrangement: number;
 }) {
   const ref = useRef<HTMLInputElement>(null);
   const { colorScheme } = useMantineColorScheme();
@@ -454,11 +462,8 @@ function VoteCard({
             lineClamp={2}
             h={50}
           >
-            {candidate.last_name}, {candidate.first_name}
-            {candidate.middle_name
-              ? " " + candidate.middle_name.charAt(0) + "."
-              : ""}{" "}
-            ({candidate.partylist.acronym})
+            {formatName(name_arrangement, candidate, true)} (
+            {candidate.partylist.acronym})
           </Text>
         ) : (
           <Text w="100%" ta="center" lineClamp={2}>

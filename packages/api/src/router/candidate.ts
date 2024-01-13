@@ -8,6 +8,7 @@ import {
   affiliations,
   candidates,
   credentials,
+  elections,
   events_attended,
   platforms,
 } from "@eboto/db/schema";
@@ -609,5 +610,75 @@ export const candidateRouter = createTRPCRouter({
               commissioner.user.email === ctx.session?.user.email,
           ),
       };
+    }),
+  editNameArrangement: protectedProcedure
+    .input(
+      z.object({
+        election_id: z.string().min(1),
+        name_arrangement: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const election = await ctx.db.query.elections.findFirst({
+        where: (election, { eq, and, isNull }) =>
+          and(eq(election.id, input.election_id), isNull(election.deleted_at)),
+        with: {
+          commissioners: {
+            where: (commissioner, { eq, and, isNull }) =>
+              and(
+                eq(commissioner.user_id, ctx.session?.user.id ?? ""),
+                isNull(commissioner.deleted_at),
+              ),
+          },
+        },
+      });
+
+      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+
+      if (
+        !election.commissioners.some(
+          (commissioner) => commissioner.user_id === ctx.session?.user.id,
+        )
+      )
+        throw new TRPCError({ code: "NOT_FOUND" });
+
+      await ctx.db
+        .update(elections)
+        .set({
+          name_arrangement: input.name_arrangement,
+        })
+        .where(eq(elections.id, input.election_id));
+    }),
+  getNameArrangement: protectedProcedure
+    .input(
+      z.object({
+        election_id: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const election = await ctx.db.query.elections.findFirst({
+        where: (election, { eq, and, isNull }) =>
+          and(eq(election.id, input.election_id), isNull(election.deleted_at)),
+        with: {
+          commissioners: {
+            where: (commissioner, { eq, and, isNull }) =>
+              and(
+                eq(commissioner.user_id, ctx.session?.user.id ?? ""),
+                isNull(commissioner.deleted_at),
+              ),
+          },
+        },
+      });
+
+      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+
+      if (
+        !election.commissioners.some(
+          (commissioner) => commissioner.user_id === ctx.session?.user.id,
+        )
+      )
+        throw new TRPCError({ code: "NOT_FOUND" });
+
+      return election.name_arrangement;
     }),
 });

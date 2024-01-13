@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -17,6 +18,7 @@ import {
   HoverCardDropdown,
   HoverCardTarget,
   ScrollArea,
+  Select,
   Stack,
   Text,
 } from "@mantine/core";
@@ -24,6 +26,7 @@ import { IconUser } from "@tabler/icons-react";
 import Balancer from "react-wrap-balancer";
 
 import type { RouterOutputs } from "@eboto/api";
+import { formatName } from "@eboto/constants";
 import type { Election } from "@eboto/db/schema";
 
 export default function DashboardCandidate({
@@ -40,10 +43,48 @@ export default function DashboardCandidate({
     },
   );
 
+  const getNameArrangementQuery = api.candidate.getNameArrangement.useQuery(
+    {
+      election_id: election.id,
+    },
+    {
+      initialData: election.name_arrangement,
+    },
+  );
+
+  const [nameArangement, setNameArrangement] = useState(
+    getNameArrangementQuery.data,
+  );
+
+  const editNameArrangementMutation =
+    api.candidate.editNameArrangement.useMutation({
+      onMutate: ({ name_arrangement }) => {
+        setNameArrangement(name_arrangement);
+      },
+    });
+
   if (!election) notFound();
 
   return (
     <Stack gap="lg">
+      <Select
+        label="Candidate's name arrangement"
+        placeholder="Pick name arrangement"
+        disabled={editNameArrangementMutation.isPending}
+        value={nameArangement.toString()}
+        onChange={(e) => {
+          if (!e) return;
+
+          editNameArrangementMutation.mutate({
+            election_id: election.id,
+            name_arrangement: parseInt(e),
+          });
+        }}
+        data={[
+          { value: "0", label: "First name Middle name Last name" },
+          { value: "1", label: "Last name, First name Middle name" },
+        ]}
+      />
       {positionsWithCandidatesQuery.data.length === 0 ? (
         <Box>
           <Text>
@@ -93,11 +134,10 @@ export default function DashboardCandidate({
                     </Box>
                   ) : (
                     position.candidates.map((candidate) => {
-                      const title = `${candidate.first_name} ${
-                        candidate.middle_name && ` ${candidate.middle_name}`
-                      } ${candidate.last_name} (${
-                        candidate.partylist.acronym
-                      })`;
+                      const title = `${formatName(
+                        election.name_arrangement,
+                        candidate,
+                      )} (${candidate.partylist.acronym})`;
                       return (
                         <Group
                           key={candidate.id}
@@ -141,7 +181,10 @@ export default function DashboardCandidate({
                                 candidate={candidate}
                                 election={election}
                               />
-                              <DeleteCandidate candidate={candidate} />
+                              <DeleteCandidate
+                                candidate={candidate}
+                                name_arrangement={getNameArrangementQuery.data}
+                              />
                             </Flex>
                             <HoverCardDropdown>{title}</HoverCardDropdown>
                           </HoverCard>

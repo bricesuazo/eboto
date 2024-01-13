@@ -39,7 +39,11 @@ import moment from "moment";
 import Balancer from "react-wrap-balancer";
 
 import type { RouterOutputs } from "@eboto/api";
-import { isElectionEnded, parseHourTo12HourFormat } from "@eboto/constants";
+import {
+  formatName,
+  isElectionEnded,
+  parseHourTo12HourFormat,
+} from "@eboto/constants";
 
 import MyMessagesElection from "../components/my-messages-election";
 import MessageCommissioner from "../modals/message-commissioner";
@@ -385,13 +389,10 @@ export default function ElectionPage({
                       </Text>
                     ) : (
                       position.candidates.map((candidate) => {
-                        const candidate_name = `${candidate.first_name} ${
-                          candidate.middle_name
-                            ? candidate.middle_name + " "
-                            : ""
-                        }${candidate.last_name} (${
-                          candidate.partylist.acronym
-                        })`;
+                        const candidate_name = `${formatName(
+                          election.name_arrangement,
+                          candidate,
+                        )} (${candidate.partylist.acronym})`;
                         return (
                           <UnstyledButton
                             key={candidate.id}

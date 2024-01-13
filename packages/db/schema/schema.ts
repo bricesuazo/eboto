@@ -69,6 +69,7 @@ export const elections = mysqlTable(
     )
       .default(false)
       .notNull(),
+    name_arrangement: int("name_arrangement").default(0).notNull(),
     deleted_at,
 
     created_at,

@@ -19,6 +19,7 @@ import { IconUser } from "@tabler/icons-react";
 import moment from "moment";
 
 import type { RouterOutputs } from "@eboto/api";
+import { formatName } from "@eboto/constants";
 
 import MyMessagesElection from "../components/my-messages-election";
 import MessageCommissioner from "../modals/message-commissioner";
@@ -60,9 +61,7 @@ export default function ElectionCandidate({
             </Anchor>
 
             <Text truncate maw={300}>
-              {`${candidate.last_name}, ${candidate.first_name}${
-                candidate.middle_name ? " " + candidate.middle_name : ""
-              }`}
+              {formatName(election.name_arrangement, candidate)}
             </Text>
           </Breadcrumbs>
           <Flex gap="md" direction={{ base: "column", xs: "row" }}>
@@ -75,7 +74,7 @@ export default function ElectionCandidate({
                 {candidate.image ? (
                   <Image
                     src={candidate.image.url}
-                    alt={candidate.first_name + " " + candidate.last_name}
+                    alt={formatName(election.name_arrangement, candidate, true)}
                     fill
                     sizes="100%"
                     priority
@@ -89,9 +88,7 @@ export default function ElectionCandidate({
 
             <Box style={{ flex: 1 }}>
               <Title order={2}>
-                {`${candidate.last_name}, ${candidate.first_name}${
-                  candidate.middle_name ? " " + candidate.middle_name : ""
-                }`}
+                {formatName(election.name_arrangement, candidate)}
               </Title>
               <Text>Running for {candidate.position.name}</Text>
               <Text>{candidate.partylist.name}</Text>
