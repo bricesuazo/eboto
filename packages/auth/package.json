@@ -9,10 +9,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@auth/core": "^0.20.0",
-    "@auth/drizzle-adapter": "^0.3.14",
+    "@auth/core": "^0.21.0",
+    "@auth/drizzle-adapter": "^0.3.15",
     "@eboto/db": "workspace:*",
-    "@t3-oss/env-nextjs": "^0.7.1",
+    "@t3-oss/env-nextjs": "^0.7.3",
     "next-auth": "5.0.0-beta.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -23,7 +23,7 @@
     "@eboto/prettier-config": "workspace:*",
     "@eboto/tsconfig": "workspace:*",
     "eslint": "^8.56.0",
-    "prettier": "^3.1.1",
+    "prettier": "^3.2.4",
     "typescript": "^5.3.3"
   },
   "eslintConfig": {
