@@ -13,6 +13,7 @@ import {
   credentials,
   deleted_accounts,
   deleted_users,
+  draft_votes,
   elections,
   events_attended,
   generated_election_results,
@@ -29,6 +30,7 @@ import {
 
 export const electionsRelations = relations(elections, ({ many }) => ({
   votes: many(votes),
+  draft_votes: many(draft_votes),
   positions: many(positions),
   partylists: many(partylists),
   candidates: many(candidates),
@@ -58,6 +60,25 @@ export const votesRelations = relations(votes, ({ one }) => ({
   }),
 }));
 
+export const draft_votesRelations = relations(draft_votes, ({ one }) => ({
+  voter: one(voters, {
+    fields: [draft_votes.voter_id],
+    references: [voters.id],
+  }),
+  candidate: one(candidates, {
+    fields: [draft_votes.candidate_id],
+    references: [candidates.id],
+  }),
+  position: one(positions, {
+    fields: [draft_votes.position_id],
+    references: [positions.id],
+  }),
+  election: one(elections, {
+    fields: [draft_votes.election_id],
+    references: [elections.id],
+  }),
+}));
+
 export const commissionersRelations = relations(commissioners, ({ one }) => ({
   user: one(users, {
     fields: [commissioners.user_id],
@@ -80,6 +101,7 @@ export const votersRelations = relations(voters, ({ one, many }) => ({
   // }),
 
   votes: many(votes),
+  draft_votes: many(draft_votes),
 }));
 
 export const partylistsRelations = relations(partylists, ({ one, many }) => ({
@@ -97,6 +119,7 @@ export const positionsRelations = relations(positions, ({ one, many }) => ({
   }),
   candidates: many(candidates),
   votes: many(votes),
+  draft_votes: many(draft_votes),
 }));
 
 export const candidatesRelations = relations(candidates, ({ one, many }) => ({
@@ -118,6 +141,7 @@ export const candidatesRelations = relations(candidates, ({ one, many }) => ({
   }),
   platforms: many(platforms),
   votes: many(votes),
+  draft_votes: many(draft_votes),
 }));
 
 // export const verification_tokensRelations = relations(
