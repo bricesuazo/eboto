@@ -13,6 +13,7 @@ import {
   Checkbox,
   CheckboxGroup,
   Divider,
+  Flex,
   Group,
   List,
   ListItem,
@@ -36,28 +37,54 @@ import {
   IconX,
 } from "@tabler/icons-react";
 
+import type { RouterOutputs } from "@eboto/api";
 import { formatName } from "@eboto/constants";
-import type {
-  Candidate,
-  Election,
-  Partylist,
-  Position,
-} from "@eboto/db/schema";
+import type { Candidate, Election, Partylist } from "@eboto/db/schema";
 
 export default function VoteForm({
   positions,
   election,
+  getDraftVotes,
 }: {
   election: Election;
-  positions: (Position & {
-    candidates: (Candidate & {
-      partylist: Partylist;
-    })[];
-  })[];
+  positions: RouterOutputs["election"]["getElectionVoting"];
+  getDraftVotes: RouterOutputs["election"]["getDraftVotes"];
 }) {
   const positionsQuery = api.election.getElectionVoting.useQuery(election.id, {
     initialData: positions,
   });
+  const getDraftVotesQuery = api.election.getDraftVotes.useQuery(
+    {
+      election_id: election.id,
+    },
+    {
+      initialData: getDraftVotes,
+    },
+  );
+  const setDraftVotesMutation = api.election.setDraftVotes.useMutation({
+    onMutate: (data) => {
+      form.setValues(
+        Object.fromEntries(
+          Object.entries(data.draft_votes).map(([key, value]) => [
+            key,
+            {
+              votes: value,
+              min: positionsQuery.data.find((e) => e.id === key)!.min,
+              max: positionsQuery.data.find((e) => e.id === key)!.max,
+              isValid:
+                value.length !== 0 &&
+                ((value.includes("abstain") && value.length === 1) ||
+                  (value.length >=
+                    positionsQuery.data.find((e) => e.id === key)!.min &&
+                    value.length <=
+                      positionsQuery.data.find((e) => e.id === key)!.max)),
+            },
+          ]),
+        ),
+      );
+    },
+  });
+
   const router = useRouter();
   const { fireConfetti } = useConfetti();
   const form = useForm<
@@ -75,13 +102,26 @@ export default function VoteForm({
       positionsQuery.data.map((position) => [
         position.id,
         {
-          votes: [],
+          votes: getDraftVotesQuery.data?.[position.id] ?? [],
           min: position.min,
           max: position.max,
-          isValid: false,
+          isValid:
+            getDraftVotesQuery.data?.[position.id]?.length !== 0 &&
+            ((getDraftVotesQuery.data?.[position.id]?.includes("abstain") &&
+              getDraftVotesQuery.data?.[position.id]?.length === 1) ??
+              (getDraftVotesQuery.data[position.id]!.length >= position.min &&
+                getDraftVotesQuery.data[position.id]!.length <= position.max)),
         },
       ]),
     ),
+    // onValuesChange: (values) => {
+    //   setDraftVotesMutation.mutate({
+    //     election_id: election.id,
+    //     draft_votes: Object.fromEntries(
+    //       Object.entries(values).map(([key, value]) => [key, value.votes]),
+    //     ),
+    //   });
+    // },
   });
 
   const [opened, { open, close }] = useDisclosure(false);
@@ -97,16 +137,17 @@ export default function VoteForm({
       });
       fireConfetti();
     },
-    onError: () => {
+    onError: (error) => {
       notifications.show({
         title: "Error casting vote",
-        message: voteMutation.error?.message,
+        message: error.message,
         icon: <IconX size="1.1rem" />,
         color: "red",
         autoClose: 5000,
       });
     },
   });
+
   return (
     <>
       <Modal
@@ -199,6 +240,34 @@ export default function VoteForm({
       </Modal>
       <form style={{ marginBottom: 80 }}>
         <Stack>
+          <Flex direction="column" gap={4} align="center">
+            <Text ta="center" size="sm">
+              {getDraftVotesQuery.isLoading
+                ? "Fetching draft votes..."
+                : setDraftVotesMutation.isPending
+                  ? "Saving draft votes..."
+                  : "Votes draft saved"}
+            </Text>
+
+            <Button
+              w="fit-content"
+              size="compact-xs"
+              variant="subtle"
+              radius="lg"
+              loading={setDraftVotesMutation.isPending}
+              disabled={getDraftVotesQuery.isLoading}
+              onClick={() => {
+                setDraftVotesMutation.mutate({
+                  election_id: election.id,
+                  draft_votes: Object.fromEntries(
+                    Object.entries(form.values).map(([key]) => [key, []]),
+                  ),
+                });
+              }}
+            >
+              Clear Votes
+            </Button>
+          </Flex>
           {positionsQuery.data.map((position) => {
             return (
               <Box key={position.id}>

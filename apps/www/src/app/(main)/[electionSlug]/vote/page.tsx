@@ -142,7 +142,11 @@ export default async function VotePage({
                 parseHourTo12HourFormat(election.voting_hour_end)}
           </Text>
         </Box>
-        <VoteForm election={election} positions={positions} />
+        <VoteForm
+          election={election}
+          positions={positions}
+          getDraftVotes={isVoter.draft_votes}
+        />
       </Stack>
     </Container>
   );

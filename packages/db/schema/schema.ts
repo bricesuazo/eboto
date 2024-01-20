@@ -113,28 +113,6 @@ export const votes = mysqlTable(
     voteElectionIdIdx: index("voteElectionId_idx").on(vote.election_id),
   }),
 );
-export const draft_votes = mysqlTable(
-  "draft_vote",
-  {
-    id,
-    created_at,
-
-    voter_id,
-    candidate_id: varchar("candidate_id", { length: 256 }),
-    position_id: varchar("position_id", { length: 256 }),
-    election_id,
-  },
-  (draft_vote) => ({
-    voteIdIdx: index("voteId_idx").on(draft_vote.id),
-    voteVoterIdIdx: index("voteVoterId_idx").on(draft_vote.voter_id),
-    voteCandidateIdIdx: index("voteCandidateId_idx").on(
-      draft_vote.candidate_id,
-    ),
-    votePositionIdIdx: index("votePositionId_idx").on(draft_vote.position_id),
-    voteElectionIdIdx: index("voteElectionId_idx").on(draft_vote.election_id),
-  }),
-);
-
 export const commissioners = mysqlTable(
   "commissioner",
   {
@@ -171,6 +149,10 @@ export const voters = mysqlTable(
 
     email: varchar("email", { length: 256 }).notNull(),
     field: json("field").$type<Record<string, string>>(),
+    draft_votes: json("draft_votes")
+      .notNull()
+      .$type<Record<string, string[]>>()
+      .default({}),
     // user_id,
 
     deleted_at,

@@ -21,6 +21,7 @@ import {
   positions,
   publicity,
   reported_problems,
+  voters,
   votes,
 } from "@eboto/db/schema";
 import { sendVoteCasted } from "@eboto/email/emails/vote-casted";
@@ -1598,5 +1599,75 @@ export const electionRouter = createTRPCRouter({
           user_id: ctx.session.user.id,
         });
       }
+    }),
+  getDraftVotes: protectedProcedure
+    .input(
+      z.object({
+        election_id: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const election = await ctx.db.query.elections.findFirst({
+        where: (elections, { eq, and, isNull }) =>
+          and(
+            eq(elections.id, input.election_id),
+            isNull(elections.deleted_at),
+          ),
+      });
+
+      if (!election)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election not found",
+        });
+
+      const voter = await ctx.db.query.voters.findFirst({
+        where: (voters, { eq, and, isNull }) =>
+          and(
+            eq(voters.election_id, input.election_id),
+            eq(voters.email, ctx.session.user.email ?? ""),
+            isNull(voters.deleted_at),
+          ),
+      });
+
+      if (!voter)
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Unauthorized",
+        });
+
+      return voter.draft_votes;
+    }),
+  setDraftVotes: protectedProcedure
+    .input(
+      z.object({
+        election_id: z.string().min(1),
+        draft_votes: z.record(z.string().array()),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const election = await ctx.db.query.elections.findFirst({
+        where: (elections, { eq, and, isNull }) =>
+          and(
+            eq(elections.id, input.election_id),
+            isNull(elections.deleted_at),
+          ),
+      });
+
+      if (!election)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Election not found",
+        });
+
+      await ctx.db
+        .update(voters)
+        .set({ draft_votes: input.draft_votes })
+        .where(
+          and(
+            eq(voters.election_id, input.election_id),
+            eq(voters.email, ctx.session.user.email ?? ""),
+          ),
+        );
     }),
 });
