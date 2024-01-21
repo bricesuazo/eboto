@@ -53,6 +53,9 @@ importers:
       '@eboto/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint
+      '@eboto/payment':
+        specifier: workspace:*
+        version: link:../../packages/payment
       '@emotion/react':
         specifier: ^11.11.3
         version: 11.11.3(@types/react@18.2.48)(react@18.2.0)
@@ -437,6 +440,22 @@ importers:
       typescript:
         specifier: ^5.3.3
         version: 5.3.3
+
+  packages/payment:
+    dependencies:
+      '@lemonsqueezy/lemonsqueezy.js':
+        specifier: ^1.2.5
+        version: 1.2.5
+      '@t3-oss/env-nextjs':
+        specifier: ^0.7.3
+        version: 0.7.3(typescript@5.3.3)(zod@3.22.4)
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
+    devDependencies:
+      '@types/node':
+        specifier: ^20.11.5
+        version: 20.11.5
 
   tooling/eslint:
     dependencies:
@@ -2343,6 +2362,10 @@ packages:
       '@jridgewell/resolve-uri': 3.1.1
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
+
+  /@lemonsqueezy/lemonsqueezy.js@1.2.5:
+    resolution: {integrity: sha512-T2XjKf5wgJcnZyY9ohZWUmaetzf2qGg0WfSbTsA1Mc9ubU/1w9T4BqsZagyyaXZjZ09SyLjvunzzivX5ppuohA==, tarball: https://registry.npmjs.org/@lemonsqueezy/lemonsqueezy.js/-/lemonsqueezy.js-1.2.5.tgz}
+    dev: false
 
   /@mantine/carousel@7.4.2(@mantine/core@7.4.2)(@mantine/hooks@7.4.2)(embla-carousel-react@8.0.0-rc19)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-PWb7hdj9HTYC+IXkHjSZJhz1r0ARUHcjdL2JVraGA3/dpdWPNWICWgJq8U2LRHYqAUtkc5YauItiwa8uKc0Jww==, tarball: https://registry.npmjs.org/@mantine/carousel/-/carousel-7.4.2.tgz}

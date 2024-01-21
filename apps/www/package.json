@@ -18,6 +18,7 @@
     "@eboto/db": "workspace:*",
     "@eboto/email": "workspace:*",
     "@eboto/eslint-config": "workspace:*",
+    "@eboto/payment": "workspace:*",
     "@emotion/react": "^11.11.3",
     "@mantine/carousel": "^7.4.2",
     "@mantine/code-highlight": "^7.4.2",

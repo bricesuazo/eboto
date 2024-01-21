@@ -10,6 +10,7 @@ Empower your elections with eBoto, the versatile and web-based voting platform t
 - **ORM**: [Drizzle](https://orm.drizzle.team/)
 - **API**: [tRPC](https://trpc.io/) + [TanStack Query](https://tanstack.com/query/)
 - **Authentication**: [NextAuth.js](https://next-auth.js.org/)
+- **Payment**: [Lemon Squeezy](https://www.lemonsqueezy.com/)
 - **Deployment**: [Vercel](https://vercel.com)
 - **Styling**: [Mantine](https://mantine.dev/)
 - **Email**: [React Email](https://react.email/) + [Amazon SES](https://aws.amazon.com/ses/)
