@@ -1,6 +1,6 @@
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/bricesuazo/eboto)
 
-# [eBoto](https://www.eboto-mo.com/) - Your One-Stop Online Voting Solution
+# [eBoto](https://eboto.app) - Your One-Stop Online Voting Solution
 
 Empower your elections with eBoto, the versatile and web-based voting platform that offers secure online elections for any type of organization.
 

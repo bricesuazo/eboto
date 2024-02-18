@@ -46,7 +46,7 @@ interface ElectionResultProps {
 
 export async function sendElectionResult(props: ElectionResultProps) {
   await ses.sendEmail({
-    Source: "eBoto <contact@eboto-mo.com>",
+    Source: "eBoto <contact@eboto.app>",
     ReplyToAddresses: [process.env.EMAIL_FROM!],
     Destination: {
       BccAddresses: props.emails,

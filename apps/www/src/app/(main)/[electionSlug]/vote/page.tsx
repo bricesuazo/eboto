@@ -35,7 +35,7 @@ export default async function VotePage({
   const session = await auth();
 
   if (!session)
-    redirect(`/sign-in?callbackUrl=https://eboto-mo.com/${electionSlug}/vote`);
+    redirect(`/sign-in?callbackUrl=https://eboto.app/${electionSlug}/vote`);
 
   const election = await db.query.elections.findFirst({
     where: (election, { eq, and, isNull }) =>

@@ -167,7 +167,7 @@ export function GET(request: Request) {
             <img
               src={
                 candidateImg ??
-                "https://raw.githubusercontent.com/bricesuazo/eboto-mo/main/public/images/default-avatar.png"
+                "https://raw.githubusercontent.com/bricesuazo/eboto/main/public/images/default-avatar.png"
               }
               alt={candidateName}
               style={{

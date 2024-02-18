@@ -74,7 +74,7 @@ export async function generateMetadata({
         {
           url: `${
             env.NODE_ENV === "production"
-              ? "https://eboto-mo.com"
+              ? "https://eboto.app"
               : "http://localhost:3000"
           }/api/og?type=candidate&candidate_name=${encodeURIComponent(
             candidate.first_name,

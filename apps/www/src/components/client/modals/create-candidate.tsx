@@ -306,8 +306,8 @@ export default function CreateCandidate({ position }: { position: Position }) {
                       <Text size="xs">
                         This will be used as the candidate&apos;s URL.
                         <br />
-                        eboto-mo.com/{params?.electionDashboardSlug?.toString()}
-                        /{form.values.slug || "candidate-slug"}
+                        eboto.app/{params?.electionDashboardSlug?.toString()}/
+                        {form.values.slug || "candidate-slug"}
                       </Text>
                     }
                     required

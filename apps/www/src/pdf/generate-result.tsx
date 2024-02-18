@@ -108,7 +108,7 @@ export default function GenerateResult({
             >
               {result.name}
             </Text>
-            <Text>https://eboto-mo.com/{result.slug}</Text>
+            <Text>https://eboto.app/{result.slug}</Text>
             <Text>
               {new Date(result.start_date).toLocaleString("en-US", dateConfig)}
               {" - "}

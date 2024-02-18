@@ -54,7 +54,7 @@ export async function generateMetadata({
         {
           url: `${
             process.env.NODE_ENV === "production"
-              ? "https://eboto-mo.com"
+              ? "https://eboto.app"
               : "http://localhost:3000"
           }/api/og?type=election&election_name=${encodeURIComponent(
             election.name,
@@ -111,7 +111,7 @@ export default async function RealtimePage({
 
   let isVoterCanMessage = !!isVoter && !isCommissioner;
 
-  const callbackUrl = `/sign-in?callbackUrl=https://eboto-mo.com/${election.slug}/realtime`;
+  const callbackUrl = `/sign-in?callbackUrl=https://eboto.app/${election.slug}/realtime`;
 
   if (election.publicity === "PRIVATE") {
     isVoterCanMessage = false;

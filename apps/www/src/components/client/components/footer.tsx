@@ -70,7 +70,7 @@ export default function Footer() {
           <ActionIcon
             variant="subtle"
             component={Link}
-            href="https://github.com/bricesuazo/eboto-mo"
+            href="https://github.com/bricesuazo/eboto"
             target="_blank"
             size="lg"
             visibleFrom="sm"
