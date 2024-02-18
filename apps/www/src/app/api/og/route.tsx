@@ -3,10 +3,8 @@ import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
 
-const eBotoLogo =
-  "https://raw.githubusercontent.com/bricesuazo/eboto/main/apps/www/public/images/logo.png";
-const cvsuFront =
-  "https://raw.githubusercontent.com/bricesuazo/eboto/main/apps/www/public/images/cvsu-front.jpg";
+const eBotoLogo = "https://eboto.app/images/logo.png";
+const cvsuFront = "https://eboto.app/images/cvsu-front.jpg";
 
 export function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -115,8 +113,21 @@ export function GET(request: Request) {
               style={{
                 width: 164,
                 height: 164,
+                marginBottom: 32,
               }}
             />
+
+            <p
+              style={{
+                fontSize: 52,
+                fontWeight: "bold",
+                lineHeight: -2,
+                textAlign: "center",
+              }}
+            >
+              eBoto
+            </p>
+
             <Header />
           </div>
         </div>
@@ -166,8 +177,7 @@ export function GET(request: Request) {
           >
             <img
               src={
-                candidateImg ??
-                "https://raw.githubusercontent.com/bricesuazo/eboto/main/public/images/default-avatar.png"
+                candidateImg ?? "https://eboto.app/images/default-avatar.png"
               }
               alt={candidateName}
               style={{

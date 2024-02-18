@@ -63,7 +63,7 @@ export default function ElectionStart(props: ElectionStartProps) {
         <Body className="bg-white font-sans">
           <Container className="mx-auto px-12 pt-5">
             <Img
-              src={`https://raw.githubusercontent.com/bricesuazo/eboto/main/apps/www/public/images/logo.png`}
+              src={`https://eboto.app/images/logo.png`}
               width="42"
               height="42"
               alt="eBoto"

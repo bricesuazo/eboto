@@ -88,7 +88,7 @@ export default function ElectionResult(props: ElectionResultProps) {
             }}
           >
             <Img
-              src={`https://raw.githubusercontent.com/bricesuazo/eboto/main/apps/www/public/images/logo.png`}
+              src={`https://eboto.app/images/logo.png`}
               width="42"
               height="42"
               alt="eBoto"

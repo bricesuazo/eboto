@@ -12,8 +12,10 @@ export const siteConfig = {
   url: "https://eboto.app",
   ogImage: "https://eboto.app/og.jpg",
   links: {
-    twitter: "https://twitter.com/brice_suazo",
+    twitter: "https://twitter.com/ebotoapp",
     github: "https://github.com/bricesuazo/eboto",
+    youtube: "https://www.youtube.com/ebotoapp",
+    facebook: "https://www.facebook.com/ebotoapp",
   },
 };
 

@@ -26,7 +26,7 @@ pnpm install
 pnpm run dev
 ```
 
-Create a `.env` file similar to [`.env.example`](https://github.com/bricesuazo/eboto/blob/main/.env.example).
+Create a `.env` file similar to [`.env.example`](.env.example).
 
 ### For the [Mobile](/apps/mobile) Version
 
