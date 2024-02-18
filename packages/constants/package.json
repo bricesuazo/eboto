@@ -1,5 +1,6 @@
 {
   "name": "@eboto/constants",
+  "version": "0.0.0",
   "main": "./index.ts",
   "publishConfig": {
     "access": "public"
@@ -9,6 +10,6 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@eboto/db": "workspace:*"
+    "@eboto/db": "0.0.0"
   }
 }

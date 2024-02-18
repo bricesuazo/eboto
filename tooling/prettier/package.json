@@ -1,5 +1,6 @@
 {
   "name": "@eboto/prettier-config",
+  "version": "0.0.0",
   "main": "index.mjs",
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
@@ -11,7 +12,7 @@
     "prettier": "^3.2.5"
   },
   "devDependencies": {
-    "@eboto/tsconfig": "workspace:*",
+    "@eboto/tsconfig": "0.0.0",
     "typescript": "^5.3.3"
   },
   "prettier": "@eboto/prettier-config"

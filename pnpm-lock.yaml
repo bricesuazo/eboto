@@ -36,22 +36,22 @@ importers:
         specifier: ^1.7.0
         version: 1.7.0
       '@eboto/api':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../../packages/api
       '@eboto/auth':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../../packages/auth
       '@eboto/constants':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../../packages/constants
       '@eboto/db':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../../packages/db
       '@eboto/email':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../../packages/email
       '@eboto/eslint-config':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../../tooling/eslint
       '@emotion/react':
         specifier: ^11.11.3
@@ -211,10 +211,10 @@ importers:
         version: 4.5.1(@types/react@18.2.56)(react@18.2.0)
     devDependencies:
       '@eboto/prettier-config':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../../tooling/prettier
       '@eboto/tsconfig':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../../tooling/tsconfig
       '@tanstack/eslint-plugin-query':
         specifier: ^5.20.1
@@ -244,16 +244,16 @@ importers:
   packages/api:
     dependencies:
       '@eboto/auth':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../auth
       '@eboto/constants':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../constants
       '@eboto/db':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../db
       '@eboto/email':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../email
       '@t3-oss/env-nextjs':
         specifier: ^0.9.2
@@ -281,13 +281,13 @@ importers:
         version: 3.22.4
     devDependencies:
       '@eboto/eslint-config':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../../tooling/eslint
       '@eboto/prettier-config':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../../tooling/prettier
       '@eboto/tsconfig':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../../tooling/tsconfig
       eslint:
         specifier: ^8.56.0
@@ -308,7 +308,7 @@ importers:
         specifier: ^0.3.17
         version: 0.3.17
       '@eboto/db':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../db
       '@t3-oss/env-nextjs':
         specifier: ^0.9.2
@@ -327,13 +327,13 @@ importers:
         version: 3.22.4
     devDependencies:
       '@eboto/eslint-config':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../../tooling/eslint
       '@eboto/prettier-config':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../../tooling/prettier
       '@eboto/tsconfig':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../../tooling/tsconfig
       eslint:
         specifier: ^8.56.0
@@ -355,7 +355,7 @@ importers:
         version: 3.22.4
     devDependencies:
       '@eboto/db':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../db
 
   packages/db:
@@ -380,13 +380,13 @@ importers:
         version: 6.4.0(next@14.1.0)
     devDependencies:
       '@eboto/eslint-config':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../../tooling/eslint
       '@eboto/prettier-config':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../../tooling/prettier
       '@eboto/tsconfig':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../../tooling/tsconfig
       '@types/node':
         specifier: ^20.11.19
@@ -407,7 +407,7 @@ importers:
         specifier: ^3.515.0
         version: 3.515.0
       '@eboto/constants':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../constants
       '@react-email/components':
         specifier: 0.0.14
@@ -423,13 +423,13 @@ importers:
         version: 2.0.0(eslint@8.56.0)
     devDependencies:
       '@eboto/db':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../db
       '@eboto/prettier-config':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../../tooling/prettier
       '@eboto/tsconfig':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../../tooling/tsconfig
       '@types/node':
         specifier: ^20.11.19
@@ -472,10 +472,10 @@ importers:
         version: 4.6.0(eslint@8.56.0)
     devDependencies:
       '@eboto/prettier-config':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../prettier
       '@eboto/tsconfig':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../tsconfig
       eslint:
         specifier: ^8.56.0
@@ -494,7 +494,7 @@ importers:
         version: 3.2.5
     devDependencies:
       '@eboto/tsconfig':
-        specifier: workspace:*
+        specifier: 0.0.0
         version: link:../tsconfig
       typescript:
         specifier: ^5.3.3
