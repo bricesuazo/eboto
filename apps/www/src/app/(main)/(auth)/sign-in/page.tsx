@@ -26,8 +26,7 @@ export default function SignInPage({
           size="sm"
           component={Link}
           href={
-            "/register" +
-            (callbackUrl ? `?callbackUrl=${callbackUrl}` : undefined)
+            "/register" + (callbackUrl ? `?callbackUrl=${callbackUrl}` : "")
           }
           truncate
         >
