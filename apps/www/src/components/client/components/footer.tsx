@@ -42,7 +42,7 @@ export default function Footer() {
           <ActionIcon
             variant="subtle"
             component={Link}
-            href="https://www.facebook.com/cvsueboto/"
+            href="https://www.facebook.com/ebotoapp"
             target="_blank"
             size="lg"
           >
@@ -51,7 +51,7 @@ export default function Footer() {
           <ActionIcon
             variant="subtle"
             component={Link}
-            href="https://twitter.com/cvsueboto"
+            href="https://twitter.com/ebotoapp"
             target="_blank"
             size="lg"
             visibleFrom="xs"
@@ -61,7 +61,7 @@ export default function Footer() {
           <ActionIcon
             variant="subtle"
             component={Link}
-            href="https://www.youtube.com/@e-boto"
+            href="https://www.youtube.com/@ebotoapp"
             target="_blank"
             size="lg"
           >

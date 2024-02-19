@@ -96,7 +96,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           property="og:image"
           content={`${
             env.NODE_ENV === "production"
-              ? "https://eboto-mo.com"
+              ? "https://eboto.app"
               : "http://localhost:3000"
           }/api/og?type=website`}
         />
@@ -104,7 +104,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           property="og:image:type"
           content={`${
             env.NODE_ENV === "production"
-              ? "https://eboto-mo.com"
+              ? "https://eboto.app"
               : "http://localhost:3000"
           }/api/og?type=website`}
         />
@@ -112,7 +112,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           property="og:image:width"
           content={`${
             env.NODE_ENV === "production"
-              ? "https://eboto-mo.com"
+              ? "https://eboto.app"
               : "http://localhost:3000"
           }/api/og?type=website`}
         />
@@ -120,7 +120,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           property="og:image:height"
           content={`${
             env.NODE_ENV === "production"
-              ? "https://eboto-mo.com"
+              ? "https://eboto.app"
               : "http://localhost:3000"
           }/api/og?type=website`}
         />
@@ -129,7 +129,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           name="twitter:image"
           content={`${
             env.NODE_ENV === "production"
-              ? "https://eboto-mo.com"
+              ? "https://eboto.app"
               : "http://localhost:3000"
           }/api/og?type=website`}
         />
@@ -137,7 +137,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           name="twitter:image:type"
           content={`${
             env.NODE_ENV === "production"
-              ? "https://eboto-mo.com"
+              ? "https://eboto.app"
               : "http://localhost:3000"
           }/api/og?type=website`}
         />
@@ -145,7 +145,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           name="twitter:image:width"
           content={`${
             env.NODE_ENV === "production"
-              ? "https://eboto-mo.com"
+              ? "https://eboto.app"
               : "http://localhost:3000"
           }/api/og?type=website`}
         />
@@ -153,7 +153,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           name="twitter:image:height"
           content={`${
             env.NODE_ENV === "production"
-              ? "https://eboto-mo.com"
+              ? "https://eboto.app"
               : "http://localhost:3000"
           }/api/og?type=website`}
         />
