@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import Realtime from "@/components/client/pages/realtime";
+import Realtime from "@/components/pages/realtime";
 import { api } from "@/trpc/server";
 import moment from "moment";
 

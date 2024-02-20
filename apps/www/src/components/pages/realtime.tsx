@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import ScrollToTopButton from "@/components/client/components/scroll-to-top";
+import ScrollToTopButton from "@/components/scroll-to-top";
 import { api } from "@/trpc/client";
 import {
   Box,
@@ -36,8 +36,8 @@ import {
 } from "@eboto/constants";
 import type { Election, VoterField } from "@eboto/db/schema";
 
-import MyMessagesElection from "../components/my-messages-election";
 import MessageCommissioner from "../modals/message-commissioner";
+import MyMessagesElection from "../my-messages-election";
 
 export default function Realtime({
   positions,

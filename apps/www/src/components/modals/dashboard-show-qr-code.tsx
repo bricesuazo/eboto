@@ -1,6 +1,6 @@
 "use client";
 
-import QRCodeModal from "@/components/client/modals/qr-code";
+import QRCodeModal from "@/components/modals/qr-code";
 import { ActionIcon, Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconQrcode } from "@tabler/icons-react";

@@ -1,5 +1,5 @@
-import Footer from "@/components/client/components/footer";
-import Header from "@/components/client/components/header";
+import Footer from "@/components/footer";
+import Header from "@/components/header";
 import {
   AppShell,
   AppShellFooter,

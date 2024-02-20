@@ -16,18 +16,21 @@ import {
   elections,
   events_attended,
   generated_election_results,
+  orders,
   partylists,
   platforms,
   positions,
+  products,
   reported_problems,
   sessions,
   users,
+  variants,
   voter_fields,
   voters,
   votes,
 } from "./schema";
 
-export const electionsRelations = relations(elections, ({ many }) => ({
+export const electionsRelations = relations(elections, ({ one, many }) => ({
   votes: many(votes),
   positions: many(positions),
   partylists: many(partylists),
@@ -37,6 +40,10 @@ export const electionsRelations = relations(elections, ({ many }) => ({
   generated_election_results: many(generated_election_results),
   voter_fields: many(voter_fields),
   reported_problems: many(reported_problems),
+  variant: one(variants, {
+    fields: [elections.variant_id],
+    references: [variants.id],
+  }),
 }));
 
 export const votesRelations = relations(votes, ({ one }) => ({
@@ -273,3 +280,29 @@ export const adminCommissionersRoomsRelations = relations(
     }),
   }),
 );
+
+export const ordersRelations = relations(orders, ({ one }) => ({
+  election: one(elections, {
+    fields: [orders.election_id],
+    references: [elections.id],
+  }),
+  user: one(users, {
+    fields: [orders.user_id],
+    references: [users.id],
+  }),
+  variant: one(variants, {
+    fields: [orders.variant_id],
+    references: [variants.id],
+  }),
+}));
+
+export const productsRelations = relations(products, ({ many }) => ({
+  variants: many(variants),
+}));
+
+export const variantsRelations = relations(variants, ({ one }) => ({
+  product: one(products, {
+    fields: [variants.product_id],
+    references: [products.id],
+  }),
+}));

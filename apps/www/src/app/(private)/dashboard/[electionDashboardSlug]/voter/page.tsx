@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import DashboardVoter from "@/components/client/pages/dashboard-voter";
+import DashboardVoter from "@/components/pages/dashboard-voter";
 import { api } from "@/trpc/server";
 
 export const metadata: Metadata = {

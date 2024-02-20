@@ -1,12 +1,12 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import Dashboard from "@/components/layout/dashboard";
+import CreateElection from "@/components/modals/create-election";
 import {
   MyElectionsAsCommissioner as MyElectionsAsCommissionerClient,
   MyElectionsAsVoter as MyElectionsAsVoterClient,
-} from "@/components/client/components/my-elections";
-import Dashboard from "@/components/client/layout/dashboard";
-import CreateElection from "@/components/client/modals/create-election";
+} from "@/components/my-elections";
 import { api } from "@/trpc/server";
 import {
   Box,

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import DashboardSettings from "@/components/client/pages/dashboard-settings";
+import DashboardSettings from "@/components/pages/dashboard-settings";
 import { api } from "@/trpc/server";
 
 export const metadata: Metadata = {

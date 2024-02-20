@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import DashboardElection from "@/components/client/layout/dashboard-election";
+import DashboardElection from "@/components/layout/dashboard-election";
 
 import { auth } from "@eboto/auth";
 import { db } from "@eboto/db";

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import VoteForm from "@/components/client/components/vote-form";
+import VoteForm from "@/components/vote-form";
 import { api } from "@/trpc/server";
 import { Box, Container, Stack, Text, Title } from "@mantine/core";
 import moment from "moment";

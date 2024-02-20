@@ -1,8 +1,8 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import ContactForm from "@/components/client/components/contact-form";
-import PublicElections from "@/components/client/components/public-elections";
+import ContactForm from "@/components/contact-form";
+import PublicElections from "@/components/public-elections";
 import classes from "@/styles/Home.module.css";
 import {
   Accordion,
@@ -22,10 +22,9 @@ import Balancer from "react-wrap-balancer";
 
 import { FAQs } from "@eboto/constants";
 
-const ReactPlayer = dynamic(
-  () => import("@/components/client/components/react-player"),
-  { ssr: false },
-);
+const ReactPlayer = dynamic(() => import("@/components/react-player"), {
+  ssr: false,
+});
 
 export default function HomePage() {
   return (

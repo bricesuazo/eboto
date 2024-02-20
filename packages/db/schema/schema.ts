@@ -70,6 +70,7 @@ export const elections = mysqlTable(
       .default(false)
       .notNull(),
     name_arrangement: int("name_arrangement").default(0).notNull(),
+    variant_id: varchar("variant_id", { length: 256 }),
     deleted_at,
 
     created_at,
@@ -626,6 +627,50 @@ export const admin_commissioners_rooms = mysqlTable(
     commissionersVotersRoomElectionIdIdx: index(
       "commissionersVotersRoomElectionId_idx",
     ).on(admin_commissioners_room.election_id),
+  }),
+);
+
+export const orders = mysqlTable(
+  "order",
+  {
+    id: varchar("id", { length: 256 }).notNull(),
+    election_id,
+    user_id,
+    variant_id: varchar("variant_id", { length: 256 }).notNull(),
+
+    created_at,
+  },
+  (order) => ({
+    orderIdIdx: index("orderId_idx").on(order.id),
+    orderIdUserIdElectionIdIdx: index("orderId_idx").on(
+      order.id,
+      order.user_id,
+      order.election_id,
+    ),
+  }),
+);
+
+export const products = mysqlTable(
+  "product",
+  {
+    id: varchar("id", { length: 256 }).notNull(),
+    name: text("name").notNull(),
+  },
+  (product) => ({
+    productIdIdx: index("productId_idx").on(product.id),
+  }),
+);
+
+export const variants = mysqlTable(
+  "variant",
+  {
+    id: varchar("id", { length: 256 }).notNull(),
+    name: text("name").notNull(),
+    price: int("price").notNull(),
+    product_id: varchar("product_id", { length: 256 }).notNull(),
+  },
+  (product) => ({
+    productIdIdx: index("productId_idx").on(product.id),
   }),
 );
 

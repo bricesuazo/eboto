@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import ElectionBoost from "@/components/modals/election-boost";
 import classes from "@/styles/Pricing.module.css";
 import {
   Box,
@@ -167,9 +168,7 @@ export default function PricingPage() {
                 <ListItem>No Watermark</ListItem>
               </List>
             </Box>
-            <Button size="lg" radius="xl" variant="gradient" w="100%">
-              Get Boost (Soon!)
-            </Button>
+            <ElectionBoost />
           </Box>
           <Box mih={{ base: "20rem", sm: "28rem" }} className={classes.card}>
             <Box>

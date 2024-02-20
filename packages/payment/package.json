@@ -1,6 +1,7 @@
 {
   "name": "@eboto/payment",
   "main": "./index.ts",
+  "version": "0.0.0",
   "publishConfig": {
     "access": "public"
   },

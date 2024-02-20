@@ -4,8 +4,8 @@ import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import ScrollToTopButton from "@/components/client/components/scroll-to-top";
-import ElectionShowQRCode from "@/components/client/modals/election-show-qr-code";
+import ElectionShowQRCode from "@/components/modals/election-show-qr-code";
+import ScrollToTopButton from "@/components/scroll-to-top";
 import classes from "@/styles/Election.module.css";
 import { api } from "@/trpc/client";
 import {
@@ -45,8 +45,8 @@ import {
   parseHourTo12HourFormat,
 } from "@eboto/constants";
 
-import MyMessagesElection from "../components/my-messages-election";
 import MessageCommissioner from "../modals/message-commissioner";
+import MyMessagesElection from "../my-messages-election";
 
 export default function ElectionPage({
   data,
