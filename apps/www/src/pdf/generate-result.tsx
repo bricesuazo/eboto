@@ -60,7 +60,7 @@ export default function GenerateResult({
         >
           <View style={{ display: "flex", alignItems: "center" }}>
             <PdfImage
-              src="https://raw.githubusercontent.com/bricesuazo/eboto/main/apps/www/public/images/logo.png"
+              src="https://eboto.app/images/logo.png"
               style={{
                 width: 32,
                 height: 32,
@@ -108,7 +108,7 @@ export default function GenerateResult({
             >
               {result.name}
             </Text>
-            <Text>https://eboto-mo.com/{result.slug}</Text>
+            <Text>https://eboto.app/{result.slug}</Text>
             <Text>
               {new Date(result.start_date).toLocaleString("en-US", dateConfig)}
               {" - "}

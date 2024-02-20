@@ -13,7 +13,7 @@ import type { Candidate, Election } from "@eboto/db/schema";
 
 export const baseUrl =
   process.env.NODE_ENV === "production"
-    ? "https://www.eboto-mo.com"
+    ? "https://eboto.app"
     : "http://localhost:3000";
 
 export const PRICING = [

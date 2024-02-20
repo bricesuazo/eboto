@@ -1,23 +1,24 @@
 {
   "name": "@eboto/email",
+  "version": "0.0.0",
   "main": "./index.tsx",
   "scripts": {
     "email:dev": "email dev --port 3002",
     "export": "email export"
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.495.0",
-    "@eboto/constants": "workspace:*",
+    "@aws-sdk/client-ses": "^3.515.0",
+    "@eboto/constants": "0.0.0",
     "@react-email/components": "0.0.14",
     "@react-email/render": "0.0.12",
     "react": "^18.2.0",
     "react-email": "2.0.0"
   },
   "devDependencies": {
-    "@eboto/db": "workspace:*",
-    "@eboto/prettier-config": "workspace:*",
-    "@eboto/tsconfig": "workspace:*",
-    "@types/node": "^20.11.5",
+    "@eboto/db": "0.0.0",
+    "@eboto/prettier-config": "0.0.0",
+    "@eboto/tsconfig": "0.0.0",
+    "@types/node": "^20.11.19",
     "typescript": "^5.3.3"
   },
   "eslintConfig": {

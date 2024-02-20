@@ -46,7 +46,7 @@ interface VoteCastedProps {
 
 export async function sendVoteCasted(props: VoteCastedProps) {
   await ses.sendEmail({
-    Source: "eBoto <contact@eboto-mo.com>",
+    Source: "eBoto <contact@eboto.app>",
     ReplyToAddresses: [process.env.EMAIL_FROM!],
     Destination: {
       ToAddresses: [props.email],
@@ -90,7 +90,7 @@ export default function VoteCasted(props: VoteCastedProps) {
             }}
           >
             <Img
-              src={`https://raw.githubusercontent.com/bricesuazo/eboto/main/apps/www/public/images/logo.png`}
+              src={`https://eboto.app/images/logo.png`}
               width="42"
               height="42"
               alt="eBoto"

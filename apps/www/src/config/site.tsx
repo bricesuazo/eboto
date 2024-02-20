@@ -9,11 +9,13 @@ export const siteConfig = {
   name: "eBoto – Your One-Stop Online Voting Solution",
   description:
     "Empower your elections with eBoto, the versatile and web-based voting platform that offers secure online elections for any type of organization.",
-  url: "https://www.eboto-mo.com",
-  ogImage: "https://www.eboto-mo.com/og.jpg",
+  url: "https://eboto.app",
+  ogImage: "https://eboto.app/og.jpg",
   links: {
-    twitter: "https://twitter.com/brice_suazo",
-    github: "https://github.com/bricesuazo/eboto-mo",
+    twitter: "https://twitter.com/ebotoapp",
+    github: "https://github.com/bricesuazo/eboto",
+    youtube: "https://www.youtube.com/ebotoapp",
+    facebook: "https://www.facebook.com/ebotoapp",
   },
 };
 

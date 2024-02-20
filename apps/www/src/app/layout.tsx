@@ -18,6 +18,7 @@ import TRPCProvider from "@/trpc/TRPCProvider";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { Analytics } from "@vercel/analytics/react";
+import { env } from "env.mjs";
 import { SessionProvider } from "next-auth/react";
 
 const font = Poppins({
@@ -90,6 +91,71 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
+        />
+        <meta
+          property="og:image"
+          content={`${
+            env.NODE_ENV === "production"
+              ? "https://eboto.app"
+              : "http://localhost:3000"
+          }/api/og?type=website`}
+        />
+        <meta
+          property="og:image:type"
+          content={`${
+            env.NODE_ENV === "production"
+              ? "https://eboto.app"
+              : "http://localhost:3000"
+          }/api/og?type=website`}
+        />
+        <meta
+          property="og:image:width"
+          content={`${
+            env.NODE_ENV === "production"
+              ? "https://eboto.app"
+              : "http://localhost:3000"
+          }/api/og?type=website`}
+        />
+        <meta
+          property="og:image:height"
+          content={`${
+            env.NODE_ENV === "production"
+              ? "https://eboto.app"
+              : "http://localhost:3000"
+          }/api/og?type=website`}
+        />
+
+        <meta
+          name="twitter:image"
+          content={`${
+            env.NODE_ENV === "production"
+              ? "https://eboto.app"
+              : "http://localhost:3000"
+          }/api/og?type=website`}
+        />
+        <meta
+          name="twitter:image:type"
+          content={`${
+            env.NODE_ENV === "production"
+              ? "https://eboto.app"
+              : "http://localhost:3000"
+          }/api/og?type=website`}
+        />
+        <meta
+          name="twitter:image:width"
+          content={`${
+            env.NODE_ENV === "production"
+              ? "https://eboto.app"
+              : "http://localhost:3000"
+          }/api/og?type=website`}
+        />
+        <meta
+          name="twitter:image:height"
+          content={`${
+            env.NODE_ENV === "production"
+              ? "https://eboto.app"
+              : "http://localhost:3000"
+          }/api/og?type=website`}
         />
       </head>
       <body className={font.className}>

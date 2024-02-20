@@ -1,14 +1,15 @@
 {
   "name": "@eboto/constants",
+  "version": "0.0.0",
   "main": "./index.ts",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@tabler/icons-react": "^2.46.0",
+    "@tabler/icons-react": "^2.47.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@eboto/db": "workspace:*"
+    "@eboto/db": "0.0.0"
   }
 }

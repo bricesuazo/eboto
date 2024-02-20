@@ -460,7 +460,7 @@ export default function EditCandidate({
                       <Text size="xs">
                         This will be used as the candidate&apos;s URL.
                         <br />
-                        eboto-mo.com/{election.slug}/
+                        eboto.app/{election.slug}/
                         {form.values.new_slug || "candidate-slug"}
                       </Text>
                     }

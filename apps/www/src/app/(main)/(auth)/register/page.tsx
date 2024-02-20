@@ -25,10 +25,7 @@ export default function RegisterPage({
         <Anchor
           size="sm"
           component={Link}
-          href={
-            "/sign-in" +
-            (callbackUrl ? `?callbackUrl=${callbackUrl}` : undefined)
-          }
+          href={"/sign-in" + (callbackUrl ? `?callbackUrl=${callbackUrl}` : "")}
           truncate
         >
           Sign in

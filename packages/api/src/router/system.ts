@@ -15,7 +15,7 @@ export const systemRouter = createTRPCRouter({
     )
     .mutation(async ({ input }) => {
       const embed = {
-        title: "📩 New message from eboto-mo.com",
+        title: "📩 New message from eboto.app",
         description: `>>> ${input.message.toString().trim()}`,
         color: 5759645,
         fields: [

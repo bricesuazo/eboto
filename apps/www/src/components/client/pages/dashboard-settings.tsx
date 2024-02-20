@@ -337,7 +337,7 @@ export default function DashboardSettings({
               <>
                 This will be used as the URL for your election
                 <br />
-                eboto-mo.com/{form.values.newSlug || "election-slug"}
+                eboto.app/{form.values.newSlug || "election-slug"}
               </>
             }
             withAsterisk

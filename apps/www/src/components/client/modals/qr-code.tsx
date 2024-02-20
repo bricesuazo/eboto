@@ -1,9 +1,10 @@
 "use client";
 
-import type { Election } from "@eboto/db/schema";
 import { Button, Center, Modal, Stack, Text } from "@mantine/core";
 import { IconDownload } from "@tabler/icons-react";
 import { QRCodeCanvas } from "qrcode.react";
+
+import type { Election } from "@eboto/db/schema";
 
 export default function QRCodeModal({
   election,
@@ -26,11 +27,11 @@ export default function QRCodeModal({
         <Center hiddenFrom="sm">
           <QRCodeCanvas
             id="qr-gen"
-            value={`https://eboto-mo.com/${election.slug}`}
+            value={`https://eboto.app/${election.slug}`}
             includeMargin
             size={256}
             imageSettings={{
-              src: "/images/eboto-mo-pfp.png",
+              src: "/images/eboto-pfp.png",
               x: undefined,
               y: undefined,
               height: 54,
@@ -42,11 +43,11 @@ export default function QRCodeModal({
         <Center visibleFrom="sm">
           <QRCodeCanvas
             id="qr-gen"
-            value={`https://eboto-mo.com/${election.slug}`}
+            value={`https://eboto.app/${election.slug}`}
             includeMargin
             size={408}
             imageSettings={{
-              src: "/images/eboto-mo-pfp.png",
+              src: "/images/eboto-pfp.png",
               x: undefined,
               y: undefined,
               height: 86,

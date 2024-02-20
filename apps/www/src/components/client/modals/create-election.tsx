@@ -208,7 +208,7 @@ export default function CreateElection({
                 <>
                   This will be used as the URL for your election
                   <br />
-                  eboto-mo.com/{form.values.slug || "election-slug"}
+                  eboto.app/{form.values.slug || "election-slug"}
                 </>
               }
               disabled={createElectionMutation.isPending}
