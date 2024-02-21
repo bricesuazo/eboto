@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import KeyFeatures from "@/components/key-features";
 import ElectionBoost from "@/components/modals/election-boost";
 import classes from "@/styles/Pricing.module.css";
 import {
@@ -145,30 +146,9 @@ export default function PricingPage() {
                   // label: item.label === -1 ? "Unlimited" : item.label,
                 }))}
               />
-              <Text fz="lg" fw={600} mt="lg" mb="xs">
-                Key Features
-              </Text>
-
-              <List
-                spacing="xs"
-                size="sm"
-                center
-                icon={
-                  <ThemeIcon variant="gradient" size={24} radius="xl">
-                    <IconCircleCheck
-                      style={{ width: rem(16), height: rem(16) }}
-                    />
-                  </ThemeIcon>
-                }
-              >
-                <ListItem>Ad-Free</ListItem>
-                <ListItem>Live Support</ListItem>
-                <ListItem>Realtime Chat w/ Voters</ListItem>
-                <ListItem>Realtime Update</ListItem>
-                <ListItem>No Watermark</ListItem>
-              </List>
+              <KeyFeatures />
             </Box>
-            <ElectionBoost />
+            <ElectionBoost value={value} />
           </Box>
           <Box mih={{ base: "20rem", sm: "28rem" }} className={classes.card}>
             <Box>

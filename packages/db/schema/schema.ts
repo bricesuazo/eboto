@@ -70,7 +70,7 @@ export const elections = mysqlTable(
       .default(false)
       .notNull(),
     name_arrangement: int("name_arrangement").default(0).notNull(),
-    variant_id: varchar("variant_id", { length: 256 }),
+    variant_id: varchar("variant_id", { length: 256 }).notNull(),
     deleted_at,
 
     created_at,

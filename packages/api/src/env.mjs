@@ -6,6 +6,7 @@ export const env = createEnv({
   server: {
     UPLOADTHING_SECRET: z.string().min(1),
     DISCORD_WEBHOOK_URL: z.string().min(1),
+    LEMONSQUEEZY_FREE_VARIANT_ID: z.string().min(1),
   },
   client: {},
   // Client side variables gets destructured here due to Next.js static analysis
@@ -13,6 +14,7 @@ export const env = createEnv({
   runtimeEnv: {
     UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
     DISCORD_WEBHOOK_URL: process.env.DISCORD_WEBHOOK_URL,
+    LEMONSQUEEZY_FREE_VARIANT_ID: process.env.LEMONSQUEEZY_FREE_VARIANT_ID,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });
