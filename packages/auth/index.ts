@@ -1,4 +1,3 @@
-import type { Adapter } from "@auth/core/adapters";
 import GoogleProvider from "@auth/core/providers/google";
 import type { DefaultSession } from "@auth/core/types";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";

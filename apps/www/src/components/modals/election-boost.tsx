@@ -36,14 +36,8 @@ export default function ElectionBoost({
   const electionsQuery = api.election.getAllMyElections.useQuery(undefined, {
     enabled: session.status === "authenticated" && opened,
   });
-  const context = api.useUtils();
 
-  const createSingleVoterMutation = api.voter.createSingle.useMutation({
-    onSuccess: async () => {
-      await context.election.getVotersByElectionSlug.invalidate();
-
-      close();
-    },
+  const boostMutation = api.payment.boost.useMutation({
     onError: (error) => {
       notifications.show({
         title: "Error",
@@ -82,7 +76,7 @@ export default function ElectionBoost({
 
   useEffect(() => {
     if (opened) {
-      createSingleVoterMutation.reset();
+      boostMutation.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
@@ -100,7 +94,7 @@ export default function ElectionBoost({
           radius="xl"
           variant="gradient"
           w="100%"
-          disabled={createSingleVoterMutation.isPending}
+          disabled={boostMutation.isPending}
           component={Link}
           href="/contact"
         >
@@ -113,7 +107,7 @@ export default function ElectionBoost({
           variant="gradient"
           w="100%"
           onClick={open}
-          disabled={createSingleVoterMutation.isPending}
+          disabled={boostMutation.isPending}
         >
           Get Boost
         </Button>
@@ -123,7 +117,7 @@ export default function ElectionBoost({
           radius="xl"
           variant="gradient"
           w="100%"
-          disabled={createSingleVoterMutation.isPending}
+          disabled={boostMutation.isPending}
           component={Link}
           href="/sign-in"
           loading={session.status === "loading"}
@@ -133,14 +127,19 @@ export default function ElectionBoost({
       )}
 
       <Modal
-        opened={opened || createSingleVoterMutation.isPending}
+        opened={opened || boostMutation.isPending}
         onClose={close}
         title={<Text fw={600}>Get Your Election Boosted!</Text>}
       >
         <form
-          onSubmit={form.onSubmit((value) => {
-            console.log("🚀 ~ onSubmit={form.onSubmit ~ value:", value);
-          })}
+          onSubmit={form.onSubmit((values) =>
+            values.election_id
+              ? boostMutation.mutate({
+                  election_id: values.election_id,
+                  price: values.price,
+                })
+              : undefined,
+          )}
         >
           <Flex direction="column" align="center" justify="center">
             <Title>
@@ -208,17 +207,17 @@ export default function ElectionBoost({
                   label: election.name,
                 })) ?? []
               }
-              disabled={electionsQuery.isLoading}
+              disabled={electionsQuery.isLoading || boostMutation.isPending}
               {...form.getInputProps("election_id")}
             />
 
-            {createSingleVoterMutation.isError && (
+            {boostMutation.isError && (
               <Alert
                 icon={<IconAlertCircle size="1rem" />}
                 title="Error"
                 color="red"
               >
-                {createSingleVoterMutation.error.message}
+                {boostMutation.error.message}
               </Alert>
             )}
             <Flex mt="xl" direction="column" align="center" gap="xs">
@@ -228,7 +227,7 @@ export default function ElectionBoost({
                 size="xl"
                 radius="xl"
                 disabled={!form.isValid()}
-                loading={createSingleVoterMutation.isPending}
+                loading={boostMutation.isPending}
               >
                 Get boost!
               </Button>
@@ -236,7 +235,7 @@ export default function ElectionBoost({
                 variant="default"
                 radius="xl"
                 onClick={close}
-                disabled={createSingleVoterMutation.isPending}
+                disabled={boostMutation.isPending}
               >
                 Close
               </Button>
