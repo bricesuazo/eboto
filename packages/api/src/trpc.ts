@@ -6,18 +6,22 @@ import { ZodError } from "zod";
 import { auth } from "@eboto/auth";
 import type { Session } from "@eboto/auth";
 import { db } from "@eboto/db";
+import { payment } from "@eboto/payment";
+import type { LemonSqueezy } from "@eboto/payment";
 
 // import { env } from "./env.mjs";
 
 interface CreateContextOptions {
   session: Session | null;
   utapi: UTApi;
+  payment: LemonSqueezy;
 }
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     db,
     utapi: opts.utapi,
+    payment: opts.payment,
   };
 };
 
@@ -35,6 +39,7 @@ export async function createTRPCContext(opts: {
       // fetch: globalThis.fetch,
       // apiKey: env.UPLOADTHING_SECRET,
     }),
+    payment,
   });
 }
 

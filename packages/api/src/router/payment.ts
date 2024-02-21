@@ -26,5 +26,31 @@ export const paymentRouter = createTRPCRouter({
           code: "BAD_REQUEST",
           message: "No boost found",
         });
+
+      const checkout = await ctx.payment
+        .createCheckout({
+          storeId: parseInt(env.LEMONSQUEEZY_STORE_ID),
+          variantId: parseInt(boost.id),
+          attributes: {
+            product_options: {
+              redirect_url: env.APP_URL + "/dashboard",
+            },
+            checkout_data: {
+              custom: {
+                user_id: ctx.session.user.id,
+                election_id: input.election_id,
+              },
+            },
+          },
+        })
+        .catch((err) => {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to create checkout",
+            cause: err,
+          });
+        });
+
+      return checkout.data.attributes.url;
     }),
 });

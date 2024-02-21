@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { api } from "@/trpc/client";
 import {
   Alert,
@@ -31,6 +32,7 @@ export default function ElectionBoost({
 }: {
   value: number;
 }) {
+  const router = useRouter();
   const session = useSession();
   const [opened, { open, close }] = useDisclosure(false);
   const electionsQuery = api.election.getAllMyElections.useQuery(undefined, {
@@ -38,6 +40,7 @@ export default function ElectionBoost({
   });
 
   const boostMutation = api.payment.boost.useMutation({
+    onSuccess: (url) => router.push(url),
     onError: (error) => {
       notifications.show({
         title: "Error",
@@ -117,7 +120,7 @@ export default function ElectionBoost({
           radius="xl"
           variant="gradient"
           w="100%"
-          disabled={boostMutation.isPending}
+          disabled={boostMutation.isPending || session.status === "loading"}
           component={Link}
           href="/sign-in"
           loading={session.status === "loading"}
