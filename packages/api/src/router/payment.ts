@@ -13,18 +13,33 @@ export const paymentRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const boost = await ctx.db.query.variants.findFirst({
-        where: (product, { eq, and }) =>
-          and(
-            eq(product.product_id, env.LEMONSQUEEZY_BOOST_PRODUCT_ID),
-            eq(product.price, 499 + (input.price / 25) * 200),
-          ),
-      });
+      const [election, boost] = await Promise.all([
+        await ctx.db.query.elections.findFirst({
+          where: (election, { eq, and, isNull }) =>
+            and(
+              eq(election.id, input.election_id),
+              isNull(election.deleted_at),
+            ),
+        }),
+        await ctx.db.query.variants.findFirst({
+          where: (product, { eq, and }) =>
+            and(
+              eq(product.product_id, env.LEMONSQUEEZY_BOOST_PRODUCT_ID),
+              eq(product.price, 499 + (input.price / 25) * 200),
+            ),
+        }),
+      ]);
 
       if (!boost)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "No boost found",
+        });
+
+      if (!election)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "No election found",
         });
 
       const checkout = await ctx.payment
@@ -33,9 +48,16 @@ export const paymentRouter = createTRPCRouter({
           variantId: parseInt(boost.id),
           attributes: {
             product_options: {
-              redirect_url: env.APP_URL + "/dashboard",
+              redirect_url: env.APP_URL + "/dashboard/" + election.slug,
+              receipt_link_url: env.APP_URL + "/account/billing",
             },
             checkout_data: {
+              email: ctx.session.user.email?.length
+                ? ctx.session.user.email
+                : undefined,
+              name: ctx.session.user.name?.length
+                ? ctx.session.user.name
+                : undefined,
               custom: {
                 user_id: ctx.session.user.id,
                 election_id: input.election_id,

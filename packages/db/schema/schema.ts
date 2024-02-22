@@ -633,7 +633,7 @@ export const admin_commissioners_rooms = mysqlTable(
 export const orders = mysqlTable(
   "order",
   {
-    id: varchar("id", { length: 256 }).notNull(),
+    id,
     election_id,
     user_id,
     variant_id: varchar("variant_id", { length: 256 }).notNull(),
