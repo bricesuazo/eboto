@@ -16,13 +16,13 @@ import {
   elections,
   events_attended,
   generated_election_results,
-  orders,
   partylists,
   platforms,
   positions,
   products,
   reported_problems,
   sessions,
+  user_boosts,
   users,
   variants,
   voter_fields,
@@ -281,21 +281,6 @@ export const adminCommissionersRoomsRelations = relations(
   }),
 );
 
-export const ordersRelations = relations(orders, ({ one }) => ({
-  election: one(elections, {
-    fields: [orders.election_id],
-    references: [elections.id],
-  }),
-  user: one(users, {
-    fields: [orders.user_id],
-    references: [users.id],
-  }),
-  variant: one(variants, {
-    fields: [orders.variant_id],
-    references: [variants.id],
-  }),
-}));
-
 export const productsRelations = relations(products, ({ many }) => ({
   variants: many(variants),
 }));
@@ -304,5 +289,11 @@ export const variantsRelations = relations(variants, ({ one }) => ({
   product: one(products, {
     fields: [variants.product_id],
     references: [products.id],
+  }),
+}));
+export const user_boostsRelations = relations(user_boosts, ({ one }) => ({
+  user: one(users, {
+    fields: [user_boosts.user_id],
+    references: [users.id],
   }),
 }));

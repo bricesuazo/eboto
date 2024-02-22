@@ -2,7 +2,7 @@ import crypto from "crypto";
 import { env } from "env.mjs";
 
 import { db, eq } from "@eboto/db";
-import { elections, orders } from "@eboto/db/schema";
+import { elections, user_boosts, users } from "@eboto/db/schema";
 
 const isError = (error: unknown): error is Error => {
   return error instanceof Error;
@@ -11,10 +11,16 @@ const isError = (error: unknown): error is Error => {
 interface WebhookPayload {
   meta: {
     event_name: string;
-    custom_data: {
-      election_id: string;
-      user_id: string;
-    };
+    custom_data:
+      | {
+          type: "boost";
+          election_id: string;
+          user_id: string;
+        }
+      | {
+          type: "plus";
+          user_id: string;
+        };
   };
   data: {
     type: string;
@@ -127,28 +133,33 @@ export async function POST(req: Request) {
     switch (payload.meta.event_name) {
       case "order_created":
         await db.transaction(async (trx) => {
-          const election = await trx.query.elections.findFirst({
-            where: eq(elections.id, payload.meta.custom_data.election_id),
-          });
+          if (payload.meta.custom_data.type === "boost") {
+            const election = await trx.query.elections.findFirst({
+              where: eq(elections.id, payload.meta.custom_data.election_id),
+            });
 
-          if (!election) {
-            throw new Error("Election not found");
+            if (!election) {
+              throw new Error("Election not found");
+            }
+
+            await trx
+              .update(elections)
+              .set({
+                variant_id:
+                  payload.data.attributes.first_order_item.variant_id.toString(),
+              })
+              .where(eq(elections.id, election.id));
+          } else if (payload.meta.custom_data.type === "plus") {
+            const user = await trx.query.users.findFirst({
+              where: eq(users.id, payload.meta.custom_data.user_id),
+            });
+
+            if (!user) {
+              throw new Error("User not found");
+            }
+
+            await trx.insert(user_boosts).values({ user_id: user.id });
           }
-
-          await trx.insert(orders).values({
-            election_id: payload.meta.custom_data.election_id,
-            user_id: payload.meta.custom_data.user_id,
-            variant_id:
-              payload.data.attributes.first_order_item.variant_id.toString(),
-          });
-
-          await trx
-            .update(elections)
-            .set({
-              variant_id:
-                payload.data.attributes.first_order_item.variant_id.toString(),
-            })
-            .where(eq(elections.id, election.id));
         });
 
         break;

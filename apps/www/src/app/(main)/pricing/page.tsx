@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import KeyFeatures from "@/components/key-features";
 import ElectionBoost from "@/components/modals/election-boost";
 import classes from "@/styles/Pricing.module.css";
+import { api } from "@/trpc/client";
 import {
   Box,
   Button,
@@ -28,7 +30,8 @@ import {
   ThemeIcon,
   Title,
 } from "@mantine/core";
-import { IconCircleCheck, IconCircleX } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import { IconCircleCheck, IconCircleX, IconMail } from "@tabler/icons-react";
 import Balancer from "react-wrap-balancer";
 
 import { PRICING } from "@eboto/constants";
@@ -36,7 +39,20 @@ import { PRICING } from "@eboto/constants";
 export const dynamic = "force-static";
 
 export default function PricingPage() {
+  const router = useRouter();
   const [value, setValue] = useState(0);
+
+  const plusMutation = api.payment.plus.useMutation({
+    onSuccess: (url) => router.push(url),
+    onError: (error) => {
+      notifications.show({
+        title: "Error",
+        message: error.message,
+        color: "red",
+        autoClose: 3000,
+      });
+    },
+  });
 
   return (
     <Container py="xl">
@@ -180,6 +196,7 @@ export default function PricingPage() {
               radius="xl"
               variant="outline"
               w="100%"
+              rightSection={<IconMail />}
             >
               Contact Us
             </Button>
@@ -195,7 +212,7 @@ export default function PricingPage() {
             <Title>
               <NumberFormatter
                 prefix="₱ "
-                value={99}
+                value={199}
                 fixedDecimalScale
                 decimalScale={2}
               />
@@ -228,10 +245,11 @@ export default function PricingPage() {
               w={{ base: "100%", md: "auto" }}
               size="lg"
               radius="xl"
-              variant="outline"
               style={{ marginBottom: "auto" }}
+              loading={plusMutation.isPending}
+              onClick={() => plusMutation.mutate()}
             >
-              Get Plus (Soon!)
+              Get Plus
             </Button>
           </Flex>
         </Flex>
@@ -422,9 +440,7 @@ export default function PricingPage() {
                   </Button>
                 </TableTd>
                 <TableTd>
-                  <Button w="100%" radius="xl" size="lg" variant="gradient">
-                    Get Boost (Soon!)
-                  </Button>
+                  <ElectionBoost value={value} />
                 </TableTd>
               </TableTr>
             </TableTfoot>

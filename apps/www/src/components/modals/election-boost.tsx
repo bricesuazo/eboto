@@ -20,7 +20,7 @@ import {
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { IconAlertCircle } from "@tabler/icons-react";
+import { IconAlertCircle, IconMail, IconRocket } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 
 import { PRICING } from "@eboto/constants";
@@ -100,8 +100,9 @@ export default function ElectionBoost({
           disabled={boostMutation.isPending}
           component={Link}
           href="/contact"
+          rightSection={<IconMail />}
         >
-          Contact us
+          Contact Us
         </Button>
       ) : session.status === "authenticated" ? (
         <Button
@@ -111,6 +112,7 @@ export default function ElectionBoost({
           w="100%"
           onClick={open}
           disabled={boostMutation.isPending}
+          rightSection={<IconRocket />}
         >
           Get Boost
         </Button>
@@ -124,6 +126,7 @@ export default function ElectionBoost({
           component={Link}
           href="/sign-in"
           loading={session.status === "loading"}
+          rightSection={<IconRocket />}
         >
           Get Boost
         </Button>

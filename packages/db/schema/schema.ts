@@ -630,26 +630,6 @@ export const admin_commissioners_rooms = mysqlTable(
   }),
 );
 
-export const orders = mysqlTable(
-  "order",
-  {
-    id,
-    election_id,
-    user_id,
-    variant_id: varchar("variant_id", { length: 256 }).notNull(),
-
-    created_at,
-  },
-  (order) => ({
-    orderIdIdx: index("orderId_idx").on(order.id),
-    orderIdUserIdElectionIdIdx: index("orderId_idx").on(
-      order.id,
-      order.user_id,
-      order.election_id,
-    ),
-  }),
-);
-
 export const products = mysqlTable(
   "product",
   {
@@ -671,6 +651,21 @@ export const variants = mysqlTable(
   },
   (product) => ({
     productIdIdx: index("productId_idx").on(product.id),
+  }),
+);
+
+export const user_boosts = mysqlTable(
+  "user_boost",
+  {
+    id,
+    user_id,
+
+    created_at,
+    redeemed_at: timestamp("redeemed_at"),
+  },
+  (user_boost) => ({
+    userBoostIdIdx: index("userBoostId_idx").on(user_boost.id),
+    userBoostUserIdIdx: index("userBoostUserId_idx").on(user_boost.user_id),
   }),
 );
 
