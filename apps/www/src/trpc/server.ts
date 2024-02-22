@@ -11,6 +11,7 @@ import { appRouter } from "@eboto/api";
 import type { AppRouter } from "@eboto/api";
 import { auth } from "@eboto/auth";
 import { db } from "@eboto/db";
+import { payment } from "@eboto/payment";
 
 import { endingLink } from "./shared";
 
@@ -43,6 +44,7 @@ export const api = createTRPCNextAppDirServer<AppRouter>({
                 cookie: cookies().toString(),
                 "x-trpc-source": "rsc-invoke",
               },
+              payment,
             };
           },
         }),

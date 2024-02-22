@@ -18,6 +18,7 @@
     "@eboto/db": "0.0.0",
     "@eboto/email": "0.0.0",
     "@eboto/eslint-config": "0.0.0",
+    "@eboto/payment": "0.0.0",
     "@emotion/react": "^11.11.3",
     "@mantine/carousel": "^7.5.3",
     "@mantine/code-highlight": "^7.5.3",

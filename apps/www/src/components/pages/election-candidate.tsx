@@ -21,8 +21,8 @@ import moment from "moment";
 import type { RouterOutputs } from "@eboto/api";
 import { formatName } from "@eboto/constants";
 
-import MyMessagesElection from "../components/my-messages-election";
 import MessageCommissioner from "../modals/message-commissioner";
+import MyMessagesElection from "../my-messages-election";
 
 export default function ElectionCandidate({
   data,

@@ -70,6 +70,7 @@ export const elections = mysqlTable(
       .default(false)
       .notNull(),
     name_arrangement: int("name_arrangement").default(0).notNull(),
+    variant_id: varchar("variant_id", { length: 256 }).notNull(),
     deleted_at,
 
     created_at,
@@ -626,6 +627,45 @@ export const admin_commissioners_rooms = mysqlTable(
     commissionersVotersRoomElectionIdIdx: index(
       "commissionersVotersRoomElectionId_idx",
     ).on(admin_commissioners_room.election_id),
+  }),
+);
+
+export const products = mysqlTable(
+  "product",
+  {
+    id: varchar("id", { length: 256 }).notNull(),
+    name: text("name").notNull(),
+  },
+  (product) => ({
+    productIdIdx: index("productId_idx").on(product.id),
+  }),
+);
+
+export const variants = mysqlTable(
+  "variant",
+  {
+    id: varchar("id", { length: 256 }).notNull(),
+    name: text("name").notNull(),
+    price: int("price").notNull(),
+    product_id: varchar("product_id", { length: 256 }).notNull(),
+  },
+  (product) => ({
+    productIdIdx: index("productId_idx").on(product.id),
+  }),
+);
+
+export const user_boosts = mysqlTable(
+  "user_boost",
+  {
+    id,
+    user_id,
+
+    created_at,
+    redeemed_at: timestamp("redeemed_at"),
+  },
+  (user_boost) => ({
+    userBoostIdIdx: index("userBoostId_idx").on(user_boost.id),
+    userBoostUserIdIdx: index("userBoostUserId_idx").on(user_boost.user_id),
   }),
 );
 

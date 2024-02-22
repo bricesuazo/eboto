@@ -1,8 +1,8 @@
 "use client";
 
-import CreatePartylist from "@/components/client/modals/create-partylist";
-import DeletePartylist from "@/components/client/modals/delete-partylist";
-import EditPartylist from "@/components/client/modals/edit-partylist";
+import CreatePartylist from "@/components/modals/create-partylist";
+import DeletePartylist from "@/components/modals/delete-partylist";
+import EditPartylist from "@/components/modals/edit-partylist";
 import classes from "@/styles/Partylist.module.css";
 import { api } from "@/trpc/client";
 import { Box, Flex, Group, Stack, Text, Title } from "@mantine/core";

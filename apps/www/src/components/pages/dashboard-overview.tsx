@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import GenerateResultRow from "@/components/client/components/generated-result-row";
-import DashboardShowQRCode from "@/components/client/modals/dashboard-show-qr-code";
+import GenerateResultRow from "@/components/generated-result-row";
+import DashboardShowQRCode from "@/components/modals/dashboard-show-qr-code";
 import { api } from "@/trpc/client";
 import {
   ActionIcon,

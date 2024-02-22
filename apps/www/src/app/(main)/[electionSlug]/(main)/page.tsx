@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import ElectionPageClient from "@/components/client/pages/election-page";
+import ElectionPageClient from "@/components/pages/election-page";
 import { api } from "@/trpc/server";
 import { env } from "env.mjs";
 import moment from "moment";

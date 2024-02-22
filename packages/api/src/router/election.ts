@@ -25,6 +25,7 @@ import {
 } from "@eboto/db/schema";
 import { sendVoteCasted } from "@eboto/email/emails/vote-casted";
 
+import { env } from "../env.mjs";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const electionRouter = createTRPCRouter({
@@ -517,6 +518,7 @@ export const electionRouter = createTRPCRouter({
           end_date: input.date[1],
           voting_hour_start: input.voting_hours[0],
           voting_hour_end: input.voting_hours[1],
+          variant_id: env.LEMONSQUEEZY_FREE_VARIANT_ID,
         });
         await db.insert(commissioners).values({
           election_id: id,

@@ -349,6 +349,7 @@ export const takenSlugs: TakenSlugs = [
   "terms",
   "disclaimer",
   "pricing",
+  "billing",
 ];
 
 export const FAQs: { id: string; question: string; answer: string }[] = [

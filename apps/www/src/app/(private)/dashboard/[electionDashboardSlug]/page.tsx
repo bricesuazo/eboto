@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import DashboardOverview from "@/components/client/pages/dashboard-overview";
+import DashboardOverview from "@/components/pages/dashboard-overview";
 import { api } from "@/trpc/server";
 
 export const metadata: Metadata = {

@@ -19,6 +19,7 @@ export const env = createEnv({
     QSTASH_CURRENT_SIGNING_KEY: z.string().min(1),
     QSTASH_NEXT_SIGNING_KEY: z.string().min(1),
     UPLOADTHING_SECRET: z.string().min(1),
+    LEMONSQUEEZY_WEBHOOK_SECRET: z.string().min(1),
   },
 
   /**
@@ -40,5 +41,6 @@ export const env = createEnv({
     QSTASH_CURRENT_SIGNING_KEY: process.env.QSTASH_CURRENT_SIGNING_KEY,
     QSTASH_NEXT_SIGNING_KEY: process.env.QSTASH_NEXT_SIGNING_KEY,
     UPLOADTHING_SECRET: process.env.UPLOADTHING_SECRET,
+    LEMONSQUEEZY_WEBHOOK_SECRET: process.env.LEMONSQUEEZY_WEBHOOK_SECRET,
   },
 });

@@ -8,8 +8,8 @@ import {
 
 import { auth } from "@eboto/auth";
 
-import Footer from "../components/footer";
-import Header from "../components/header";
+import Footer from "../footer";
+import Header from "../header";
 
 export default async function Dashboard(props: React.PropsWithChildren) {
   const session = await auth();

@@ -43,54 +43,32 @@ export default function AccountPageLayoutClient({
       label: "Billing",
       value: "billing",
       icon: IconCreditCard,
-      isDisabled: true,
     },
   ];
 
   return (
     <Container h="100%" p="md">
       <Flex h="100%" gap="md">
-        <Stack gap="xs" w={{ base: "12rem", sm: "16rem" }} visibleFrom="xs">
-          {options.map((option) => {
-            if (option.isDisabled)
-              return (
-                <Button
-                  key={option.id}
-                  disabled
-                  variant={
-                    pathname?.split("/account")[1] === option.value
-                      ? "light"
-                      : "subtle"
-                  }
-                  size="md"
-                  justify="left"
-                  leftSection={<option.icon size="1.25rem" />}
-                  fw="normal"
-                  fz="sm"
-                >
-                  {option.label}
-                </Button>
-              );
-            return (
-              <Button
-                key={option.id}
-                component={Link}
-                href={`/account/${option.value}`}
-                variant={
-                  pathname?.split("/account")[1] === option.value
-                    ? "light"
-                    : "subtle"
-                }
-                size="md"
-                justify="left"
-                leftSection={<option.icon size="1.25rem" />}
-                fw="normal"
-                fz="sm"
-              >
-                {option.label}
-              </Button>
-            );
-          })}
+        <Stack gap={4} w={{ base: "12rem", sm: "16rem" }} visibleFrom="xs">
+          {options.map((option) => (
+            <Button
+              key={option.id}
+              component={Link}
+              href={`/account/${option.value}`}
+              variant={
+                pathname?.split("/account")[1] === option.value
+                  ? "light"
+                  : "subtle"
+              }
+              size="md"
+              justify="left"
+              leftSection={<option.icon size="1.25rem" />}
+              fw="normal"
+              fz="sm"
+            >
+              {option.label}
+            </Button>
+          ))}
         </Stack>
         <Divider orientation="vertical" visibleFrom="xs" />
         <Box style={{ flex: 1 }}>
@@ -122,7 +100,6 @@ export default function AccountPageLayoutClient({
                   <ComboboxOption
                     value={option.value}
                     key={option.id}
-                    disabled={option.isDisabled}
                     active={
                       options.find(
                         (option) =>

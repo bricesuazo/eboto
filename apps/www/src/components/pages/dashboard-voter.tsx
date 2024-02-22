@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import CreateVoter from "@/components/client/modals/create-voter";
-import UploadBulkVoter from "@/components/client/modals/upload-bulk-voter";
+import CreateVoter from "@/components/modals/create-voter";
+import UploadBulkVoter from "@/components/modals/upload-bulk-voter";
 import { api } from "@/trpc/client";
 import {
   ActionIcon,

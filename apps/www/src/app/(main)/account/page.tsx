@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import AccountPageClient from "@/components/client/pages/account";
+import AccountPageClient from "@/components/pages/account";
 
 import { auth } from "@eboto/auth";
 

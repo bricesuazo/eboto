@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import RegisterForm from "@/components/client/components/register-form";
+import RegisterForm from "@/components/register-form";
 import { Anchor, Text, Title } from "@mantine/core";
 
 export const metadata: Metadata = {

@@ -1,4 +1,4 @@
-import ContactForm from "@/components/client/components/contact-form";
+import ContactForm from "@/components/contact-form";
 import { Box, Container, Stack, Text, Title } from "@mantine/core";
 import Balancer from "react-wrap-balancer";
 

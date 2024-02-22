@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import DashboardPosition from "@/components/client/pages/dashboard-position";
+import DashboardPosition from "@/components/pages/dashboard-position";
 import { api } from "@/trpc/server";
 
 import { db } from "@eboto/db";

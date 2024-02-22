@@ -4,9 +4,9 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import CreateCandidate from "@/components/client/modals/create-candidate";
-import DeleteCandidate from "@/components/client/modals/delete-candidate";
-import EditCandidate from "@/components/client/modals/edit-candidate";
+import CreateCandidate from "@/components/modals/create-candidate";
+import DeleteCandidate from "@/components/modals/delete-candidate";
+import EditCandidate from "@/components/modals/edit-candidate";
 import classes from "@/styles/Candidate.module.css";
 import { api } from "@/trpc/client";
 import {

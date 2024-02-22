@@ -9,9 +9,9 @@ import {
   useRouter,
   useSearchParams,
 } from "next/navigation";
-import Footer from "@/components/client/components/footer";
-import Header from "@/components/client/components/header";
-import CreateElection from "@/components/client/modals/create-election";
+import Footer from "@/components/footer";
+import Header from "@/components/header";
+import CreateElection from "@/components/modals/create-election";
 import { useStore } from "@/store";
 import { api } from "@/trpc/client";
 import {
