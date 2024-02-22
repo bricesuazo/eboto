@@ -633,7 +633,7 @@ export const admin_commissioners_rooms = mysqlTable(
 export const products = mysqlTable(
   "product",
   {
-    id: varchar("id", { length: 256 }).notNull(),
+    id: varchar("id", { length: 256 }).primaryKey().notNull().unique(),
     name: text("name").notNull(),
   },
   (product) => ({
@@ -644,7 +644,7 @@ export const products = mysqlTable(
 export const variants = mysqlTable(
   "variant",
   {
-    id: varchar("id", { length: 256 }).notNull(),
+    id: varchar("id", { length: 256 }).primaryKey().notNull().unique(),
     name: text("name").notNull(),
     price: int("price").notNull(),
     product_id: varchar("product_id", { length: 256 }).notNull(),
