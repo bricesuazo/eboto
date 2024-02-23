@@ -2,7 +2,7 @@ import crypto from "crypto";
 import { env } from "env.mjs";
 
 import { db, eq } from "@eboto/db";
-import { elections, user_boosts, users } from "@eboto/db/schema";
+import { elections, elections_plus, users } from "@eboto/db/schema";
 
 const isError = (error: unknown): error is Error => {
   return error instanceof Error;
@@ -158,7 +158,7 @@ export async function POST(req: Request) {
               throw new Error("User not found");
             }
 
-            await trx.insert(user_boosts).values({ user_id: user.id });
+            await trx.insert(elections_plus).values({ user_id: user.id });
           }
         });
 

@@ -22,7 +22,7 @@ import {
   products,
   reported_problems,
   sessions,
-  user_boosts,
+  elections_plus,
   users,
   variants,
   voter_fields,
@@ -291,9 +291,9 @@ export const variantsRelations = relations(variants, ({ one }) => ({
     references: [products.id],
   }),
 }));
-export const user_boostsRelations = relations(user_boosts, ({ one }) => ({
+export const elections_plusRelations = relations(elections_plus, ({ one }) => ({
   user: one(users, {
-    fields: [user_boosts.user_id],
+    fields: [elections_plus.user_id],
     references: [users.id],
   }),
 }));
