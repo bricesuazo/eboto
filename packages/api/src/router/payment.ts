@@ -44,8 +44,8 @@ export const paymentRouter = createTRPCRouter({
 
       const checkout = await ctx.payment
         .createCheckout({
-          storeId: parseInt(env.LEMONSQUEEZY_STORE_ID),
-          variantId: parseInt(boost.id),
+          storeId: env.LEMONSQUEEZY_STORE_ID,
+          variantId: boost.id,
           attributes: {
             product_options: {
               redirect_url: env.APP_URL + "/dashboard/" + election.slug,
@@ -79,8 +79,8 @@ export const paymentRouter = createTRPCRouter({
   plus: protectedProcedure.mutation(async ({ ctx }) => {
     const checkout = await ctx.payment
       .createCheckout({
-        storeId: parseInt(env.LEMONSQUEEZY_STORE_ID),
-        variantId: parseInt(env.LEMONSQUEEZY_PLUS_VARIANT_ID),
+        storeId: env.LEMONSQUEEZY_STORE_ID,
+        variantId: env.LEMONSQUEEZY_PLUS_VARIANT_ID,
         attributes: {
           product_options: {
             redirect_url: env.APP_URL + "/account/billing",

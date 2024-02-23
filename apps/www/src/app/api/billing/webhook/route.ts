@@ -145,8 +145,7 @@ export async function POST(req: Request) {
             await trx
               .update(elections)
               .set({
-                variant_id:
-                  payload.data.attributes.first_order_item.variant_id.toString(),
+                variant_id: payload.data.attributes.first_order_item.variant_id,
               })
               .where(eq(elections.id, election.id));
           } else if (payload.meta.custom_data.type === "plus") {

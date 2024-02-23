@@ -15,6 +15,20 @@
       "when": 1708687500809,
       "tag": "0001_dusty_the_phantom",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1708691671408,
+      "tag": "0002_last_trauma",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1708696541614,
+      "tag": "0003_mysterious_mentor",
+      "breakpoints": true
     }
   ]
 }

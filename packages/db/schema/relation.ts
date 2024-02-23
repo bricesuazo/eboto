@@ -14,6 +14,7 @@ import {
   deleted_accounts,
   deleted_users,
   elections,
+  elections_plus,
   events_attended,
   generated_election_results,
   partylists,
@@ -22,7 +23,6 @@ import {
   products,
   reported_problems,
   sessions,
-  elections_plus,
   users,
   variants,
   voter_fields,
@@ -168,11 +168,7 @@ export const reported_problemsRelations = relations(
   }),
 );
 
-export const credentialsRelations = relations(credentials, ({ one, many }) => ({
-  candidate: one(candidates, {
-    fields: [credentials.candidate_id],
-    references: [candidates.id],
-  }),
+export const credentialsRelations = relations(credentials, ({ many }) => ({
   affiliations: many(affiliations),
   achievements: many(achievements),
   events_attended: many(events_attended),
