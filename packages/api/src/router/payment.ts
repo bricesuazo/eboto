@@ -76,38 +76,50 @@ export const paymentRouter = createTRPCRouter({
 
       return checkout.data.attributes.url;
     }),
-  plus: protectedProcedure.mutation(async ({ ctx }) => {
-    const checkout = await ctx.payment
-      .createCheckout({
-        storeId: env.LEMONSQUEEZY_STORE_ID,
-        variantId: env.LEMONSQUEEZY_PLUS_VARIANT_ID,
-        attributes: {
-          product_options: {
-            redirect_url: env.APP_URL + "/account/billing",
-            receipt_link_url: env.APP_URL + "/account/billing",
-          },
-          checkout_data: {
-            email: ctx.session.user.email?.length
-              ? ctx.session.user.email
-              : undefined,
-            name: ctx.session.user.name?.length
-              ? ctx.session.user.name
-              : undefined,
-            custom: {
-              user_id: ctx.session.user.id,
-              type: "plus",
+  plus: protectedProcedure
+    .input(
+      z.object({
+        quantity: z.number().min(1, "Quantity must be at least 1"),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const checkout = await ctx.payment
+        .createCheckout({
+          storeId: env.LEMONSQUEEZY_STORE_ID,
+          variantId: env.LEMONSQUEEZY_PLUS_VARIANT_ID,
+          attributes: {
+            product_options: {
+              redirect_url: env.APP_URL + "/dashboard",
+              receipt_link_url: env.APP_URL + "/account/billing",
+            },
+            checkout_data: {
+              email: ctx.session.user.email?.length
+                ? ctx.session.user.email
+                : undefined,
+              name: ctx.session.user.name?.length
+                ? ctx.session.user.name
+                : undefined,
+              variant_quantities: [
+                {
+                  variant_id: env.LEMONSQUEEZY_PLUS_VARIANT_ID,
+                  quantity: input.quantity,
+                },
+              ],
+              custom: {
+                user_id: ctx.session.user.id,
+                type: "plus",
+              },
             },
           },
-        },
-      })
-      .catch((err) => {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to create checkout",
-          cause: err,
+        })
+        .catch((err) => {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to create checkout",
+            cause: err,
+          });
         });
-      });
 
-    return checkout.data.attributes.url;
-  }),
+      return checkout.data.attributes.url;
+    }),
 });

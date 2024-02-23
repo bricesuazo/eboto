@@ -1,22 +1,27 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useConfetti } from "@/components/providers";
 import { api } from "@/trpc/client";
 import type { MantineStyleProp } from "@mantine/core";
 import {
+  ActionIcon,
   Alert,
   Box,
   Button,
+  Flex,
   Group,
   InputDescription,
   InputLabel,
   Modal,
+  NumberInput,
   RangeSlider,
   Select,
   Stack,
+  Text,
   TextInput,
+  Title,
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
@@ -27,6 +32,7 @@ import {
   IconCalendar,
   IconCheck,
   IconLetterCase,
+  IconMinus,
   IconPlus,
   IconTemplate,
 } from "@tabler/icons-react";
@@ -42,11 +48,33 @@ export default function CreateElection({
 }) {
   const router = useRouter();
   const { fireConfetti } = useConfetti();
-  const [opened, { open, close }] = useDisclosure(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [
+    openedCreateElection,
+    { open: openCreateElection, close: closeCreateElection },
+  ] = useDisclosure(false);
+  const [openedGetPlus, { open: openGetPlus, close: closeGetPlus }] =
+    useDisclosure(false);
+  const getElectionsPlusLeftQuery =
+    api.election.getElectionsPlusLeft.useQuery();
+  const plusMutation = api.payment.plus.useMutation({
+    onSuccess: (url) => {
+      setIsRedirecting(true);
+      router.push(url);
+    },
+    onError: (error) => {
+      notifications.show({
+        title: "Error",
+        message: error.message,
+        color: "red",
+        autoClose: 3000,
+      });
+    },
+  });
 
   const createElectionMutation = api.election.create.useMutation({
     onSuccess: () => {
-      router.push(`/dashboard/${form.values.slug}`);
+      router.push(`/dashboard/${formCreateElection.values.slug}`);
       close();
       notifications.show({
         title: "Election created!",
@@ -58,7 +86,7 @@ export default function CreateElection({
     },
   });
 
-  const form = useForm<{
+  const formCreateElection = useForm<{
     name: string;
     slug: string;
     date: [Date | null, Date | null];
@@ -130,11 +158,24 @@ export default function CreateElection({
       };
     },
   });
+  const formGetPlus = useForm<{
+    quantity: number;
+  }>({
+    validateInputOnBlur: true,
+    initialValues: {
+      quantity: 1,
+    },
+    validate: zodResolver(
+      z.object({
+        quantity: z.number().min(1, "Quantity must be at least 1"),
+      }),
+    ),
+  });
 
   useEffect(() => {
-    form.setValues({
-      ...form.values,
-      slug: form.values.name
+    formCreateElection.setValues({
+      ...formCreateElection.values,
+      slug: formCreateElection.values.name
         .toLowerCase()
         .replace(/[^a-z0-9 ]/g, "")
         .replace(/\s+/g, " ")
@@ -143,32 +184,128 @@ export default function CreateElection({
         .join("-"),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.values.name]);
+  }, [formCreateElection.values.name]);
 
   useEffect(() => {
-    if (opened) {
-      form.reset();
+    if (openedCreateElection) {
+      formCreateElection.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [opened]);
+  }, [openedCreateElection]);
+  useEffect(() => {
+    if (openedGetPlus) {
+      formGetPlus.reset();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openedGetPlus]);
 
   return (
     <>
       <Button
-        onClick={open}
+        onClick={
+          getElectionsPlusLeftQuery.data !== 0
+            ? openCreateElection
+            : openGetPlus
+        }
         style={style}
         leftSection={<IconPlus size="1.25rem" />}
+        disabled={getElectionsPlusLeftQuery.isLoading}
+        radius="xl"
       >
         Create Election
       </Button>
+
       <Modal
-        opened={opened}
-        onClose={close}
+        opened={openedGetPlus}
+        onClose={closeGetPlus}
+        title="Get Plus to create more elections"
+      >
+        <Flex direction="column" gap="xl">
+          <Box>
+            <Title order={1} fz={80} ta="center">
+              0
+            </Title>
+            <Title order={2} ta="center">
+              Elections left
+            </Title>
+          </Box>
+          <ActionIcon.Group px="xl">
+            <ActionIcon
+              variant="default"
+              size={60}
+              onClick={() => {
+                if (formGetPlus.values.quantity === 1) return;
+
+                formGetPlus.setValues({
+                  quantity: formGetPlus.values.quantity - 1,
+                });
+              }}
+              disabled={formGetPlus.values.quantity === 1}
+            >
+              <IconMinus stroke={4} />
+            </ActionIcon>
+            <NumberInput
+              size="xl"
+              fz="xl"
+              inputMode="numeric"
+              value={formGetPlus.values.quantity.toString()}
+              hideControls
+              readOnly
+              styles={{
+                input: {
+                  textAlign: "center",
+                  fontSize: "2rem",
+                  padding: "0.5rem",
+                },
+              }}
+            />
+            <ActionIcon
+              variant="default"
+              size={60}
+              onClick={() =>
+                formGetPlus.setValues({
+                  quantity: formGetPlus.values.quantity + 1,
+                })
+              }
+            >
+              <IconPlus stroke={4} />
+            </ActionIcon>
+          </ActionIcon.Group>
+          <Text ta="center">Get Plus to create more elections!</Text>
+          <Flex direction="column" gap="xs" justify="center" align="center">
+            <Button
+              w={{ base: "100%", md: "auto" }}
+              size="lg"
+              radius="xl"
+              style={{ marginBottom: "auto" }}
+              loading={plusMutation.isPending}
+              onClick={() =>
+                plusMutation.mutate({ quantity: formGetPlus.values.quantity })
+              }
+              rightSection={!isRedirecting ? <IconPlus /> : undefined}
+              disabled={isRedirecting}
+            >
+              {isRedirecting ? "Redirecting..." : "Get Plus"}
+            </Button>
+            <Button
+              variant="subtle"
+              radius="xl"
+              onClick={closeGetPlus}
+              disabled={plusMutation.isPending || isRedirecting}
+            >
+              Close
+            </Button>
+          </Flex>
+        </Flex>
+      </Modal>
+      <Modal
+        opened={openedCreateElection}
+        onClose={closeCreateElection}
         title="Create election"
         closeOnClickOutside={false}
       >
         <form
-          onSubmit={form.onSubmit((value) => {
+          onSubmit={formCreateElection.onSubmit((value) => {
             const now = new Date();
             now.setSeconds(0);
             now.setMilliseconds(0);
@@ -199,7 +336,7 @@ export default function CreateElection({
                 createElectionMutation.error?.data?.code === "CONFLICT" &&
                 createElectionMutation.error?.message
               }
-              {...form.getInputProps("name")}
+              {...formCreateElection.getInputProps("name")}
             />
 
             <TextInput
@@ -208,7 +345,7 @@ export default function CreateElection({
                 <>
                   This will be used as the URL for your election
                   <br />
-                  eboto.app/{form.values.slug || "election-slug"}
+                  eboto.app/{formCreateElection.values.slug || "election-slug"}
                 </>
               }
               disabled={createElectionMutation.isPending}
@@ -220,7 +357,7 @@ export default function CreateElection({
                 createElectionMutation.error?.data?.code === "CONFLICT" &&
                 createElectionMutation.error?.message
               }
-              {...form.getInputProps("slug")}
+              {...formCreateElection.getInputProps("slug")}
             />
 
             <DatePickerInput
@@ -234,19 +371,23 @@ export default function CreateElection({
               firstDayOfWeek={0}
               required
               disabled={createElectionMutation.isPending}
-              {...form.getInputProps("date")}
+              {...formCreateElection.getInputProps("date")}
             />
 
             <Box>
               <InputLabel required>Voting Hours</InputLabel>
               <InputDescription>
                 Voters can only vote within the specified hours (
-                {form.values.voting_hours[0] === 0 &&
-                form.values.voting_hours[1] === 24
+                {formCreateElection.values.voting_hours[0] === 0 &&
+                formCreateElection.values.voting_hours[1] === 24
                   ? "Whole day"
-                  : parseHourTo12HourFormat(form.values.voting_hours[0]) +
+                  : parseHourTo12HourFormat(
+                      formCreateElection.values.voting_hours[0],
+                    ) +
                     " - " +
-                    parseHourTo12HourFormat(form.values.voting_hours[1])}
+                    parseHourTo12HourFormat(
+                      formCreateElection.values.voting_hours[1],
+                    )}
                 )
               </InputDescription>
               <RangeSlider
@@ -261,7 +402,7 @@ export default function CreateElection({
                   { value: 19, label: "7PM" },
                 ]}
                 label={parseHourTo12HourFormat}
-                {...form.getInputProps("voting_hours")}
+                {...formCreateElection.getInputProps("voting_hours")}
               />
             </Box>
 
@@ -271,14 +412,14 @@ export default function CreateElection({
               placeholder="Select a template"
               withAsterisk
               required
-              {...form.getInputProps("template")}
+              {...formCreateElection.getInputProps("template")}
               data={positionTemplate
                 .sort((a, b) => a.order - b.order)
                 .map((template) => ({
                   group: template.name,
 
                   items: template.organizations.map((organization) => ({
-                    // disabled: form.values.template === organization.id,
+                    // disabled: formCreateElection.values.template === organization.id,
                     value: organization.id,
                     label: organization.name,
                   })),
@@ -310,7 +451,7 @@ export default function CreateElection({
               </Button>
               <Button
                 type="submit"
-                disabled={!form.isValid()}
+                disabled={!formCreateElection.isValid()}
                 loading={createElectionMutation.isPending}
               >
                 Create

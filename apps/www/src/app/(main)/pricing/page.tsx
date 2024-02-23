@@ -256,7 +256,7 @@ export default function PricingPage() {
               radius="xl"
               style={{ marginBottom: "auto" }}
               loading={plusMutation.isPending}
-              onClick={() => plusMutation.mutate()}
+              onClick={() => plusMutation.mutate({ quantity: 1 })}
               rightSection={!isRedirecting ? <IconPlus /> : undefined}
               disabled={isRedirecting}
             >

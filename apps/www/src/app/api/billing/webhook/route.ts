@@ -60,6 +60,7 @@ interface WebhookPayload {
         product_name: string;
         variant_name: string;
         price: number;
+        quantity: number;
         created_at: string;
         updated_at: string;
         deleted_at: string | null;
@@ -129,6 +130,7 @@ export async function POST(req: Request) {
     }
 
     const payload = JSON.parse(rawBody) as WebhookPayload;
+    console.log("🚀 ~ POST ~ payload:", rawBody);
 
     switch (payload.meta.event_name) {
       case "order_created":
@@ -157,7 +159,15 @@ export async function POST(req: Request) {
               throw new Error("User not found");
             }
 
-            await trx.insert(elections_plus).values({ user_id: user.id });
+            await trx.insert(elections_plus).values(
+              [
+                ...(Array(
+                  payload.data.attributes.first_order_item.quantity,
+                ) as void[]),
+              ].map(() => ({
+                user_id: user.id,
+              })),
+            );
           }
         });
 

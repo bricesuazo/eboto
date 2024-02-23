@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import ElectionsLeft from "@/components/elections-left";
 import Dashboard from "@/components/layout/dashboard";
 import CreateElection from "@/components/modals/create-election";
 import {
@@ -10,6 +11,7 @@ import {
 import { api } from "@/trpc/server";
 import {
   Box,
+  Center,
   Container,
   Flex,
   Group,
@@ -35,17 +37,22 @@ export default async function Page() {
     <Dashboard>
       <Container size="md" my="md">
         <Stack gap="xl">
-          <Box hiddenFrom="xs">
+          <Flex direction="column" gap="sm" hiddenFrom="xs">
             <CreateElection style={{ width: "100%" }} />
-          </Box>
+            <Center>
+              <ElectionsLeft />
+            </Center>
+          </Flex>
           <Box>
             <Flex align="center" justify="space-between">
               <Title order={2}>My elections</Title>
 
-              <Box visibleFrom="xs">
+              <Flex gap="xs" visibleFrom="xs" align="center">
+                <ElectionsLeft />
                 <CreateElection />
-              </Box>
+              </Flex>
             </Flex>
+
             <Text size="sm" c="grayText" mb="md">
               You can manage the elections below.
             </Text>

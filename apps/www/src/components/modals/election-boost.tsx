@@ -245,7 +245,7 @@ export default function ElectionBoost({
                 {isRedirecting ? "Redirecting..." : "Get Boost!"}
               </Button>
               <Button
-                variant="default"
+                variant="subtle"
                 radius="xl"
                 onClick={close}
                 disabled={boostMutation.isPending || isRedirecting}
