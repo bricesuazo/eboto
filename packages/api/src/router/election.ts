@@ -17,6 +17,7 @@ import {
   commissioners_voters_messages,
   commissioners_voters_rooms,
   elections,
+  elections_plus,
   partylists,
   positions,
   publicity,
@@ -497,6 +498,21 @@ export const electionRouter = createTRPCRouter({
         });
       }
 
+      const election_plus = await ctx.db.query.elections_plus.findFirst({
+        where: (elections_plus, { eq, and, isNull }) =>
+          and(
+            isNull(elections_plus.redeemed_at),
+            eq(elections_plus.user_id, ctx.session.user.id),
+          ),
+      });
+
+      if (!election_plus) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You don't have the permission to create an election",
+        });
+      }
+
       const isElectionSlugExists = await ctx.db.query.elections.findFirst({
         where: (elections, { eq }) => eq(elections.slug, input.slug),
       });
@@ -547,6 +563,11 @@ export const electionRouter = createTRPCRouter({
             })) ?? [];
         if (input.template !== "none" && positionsInTemplate.length > 0)
           await db.insert(positions).values(positionsInTemplate);
+
+        await db
+          .update(elections_plus)
+          .set({ redeemed_at: new Date() })
+          .where(eq(elections_plus.id, election_plus.id));
       });
     }),
   edit: protectedProcedure
@@ -1601,4 +1622,15 @@ export const electionRouter = createTRPCRouter({
         });
       }
     }),
+  getElectionsPlusLeft: protectedProcedure.query(async ({ ctx }) => {
+    const elections_plus = await ctx.db.query.elections_plus.findMany({
+      where: (elections_plus, { and, isNull }) =>
+        and(
+          isNull(elections_plus.redeemed_at),
+          eq(elections_plus.user_id, ctx.session.user.id),
+        ),
+    });
+
+    return elections_plus.length;
+  }),
 });

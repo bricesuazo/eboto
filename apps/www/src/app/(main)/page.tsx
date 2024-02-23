@@ -2,7 +2,6 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import ContactForm from "@/components/contact-form";
-import PublicElections from "@/components/public-elections";
 import classes from "@/styles/Home.module.css";
 import {
   Accordion,
@@ -11,6 +10,7 @@ import {
   AccordionPanel,
   Box,
   Button,
+  Center,
   Container,
   Flex,
   SimpleGrid,
@@ -18,9 +18,12 @@ import {
   Text,
   Title,
 } from "@mantine/core";
+import { IconArrowRight } from "@tabler/icons-react";
 import Balancer from "react-wrap-balancer";
 
 import { FAQs } from "@eboto/constants";
+
+import { MainPricing } from "./pricing/page";
 
 const ReactPlayer = dynamic(() => import("@/components/react-player"), {
   ssr: false,
@@ -106,9 +109,25 @@ export default function HomePage() {
           </Box>
         </Stack>
 
-        <Box id="public-elections">
+        {/* <Box id="public-elections">
           <PublicElections />
-        </Box>
+        </Box> */}
+        <Flex direction="column" gap="md">
+          <MainPricing />
+        </Flex>
+
+        <Center>
+          <Button
+            variant="default"
+            component={Link}
+            href="/pricing"
+            size="lg"
+            radius="xl"
+            rightSection={<IconArrowRight />}
+          >
+            View all pricing
+          </Button>
+        </Center>
 
         <SimpleGrid id="faq" cols={{ base: 1, sm: 2 }} pos="relative">
           <Box
