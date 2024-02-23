@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@/trpc/client";
@@ -34,13 +34,17 @@ export default function ElectionBoost({
 }) {
   const router = useRouter();
   const session = useSession();
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
   const electionsQuery = api.election.getAllMyElections.useQuery(undefined, {
     enabled: session.status === "authenticated" && opened,
   });
 
   const boostMutation = api.payment.boost.useMutation({
-    onSuccess: (url) => router.push(url),
+    onSuccess: (url) => {
+      setIsRedirecting(true);
+      router.push(url);
+    },
     onError: (error) => {
       notifications.show({
         title: "Error",
@@ -111,10 +115,10 @@ export default function ElectionBoost({
           variant="gradient"
           w="100%"
           onClick={open}
-          disabled={boostMutation.isPending}
-          rightSection={<IconRocket />}
+          disabled={boostMutation.isPending || isRedirecting}
+          rightSection={!isRedirecting ? <IconRocket /> : undefined}
         >
-          Get Boost
+          {isRedirecting ? "Redirecting..." : "Get Boost"}
         </Button>
       ) : (
         <Button
@@ -133,7 +137,7 @@ export default function ElectionBoost({
       )}
 
       <Modal
-        opened={opened || boostMutation.isPending}
+        opened={opened || boostMutation.isPending || isRedirecting}
         onClose={close}
         title={<Text fw={600}>Get Your Election Boosted!</Text>}
       >
@@ -232,16 +236,19 @@ export default function ElectionBoost({
                 variant="gradient"
                 size="xl"
                 radius="xl"
-                disabled={!form.isValid()}
+                disabled={!form.isValid() || isRedirecting}
                 loading={boostMutation.isPending}
+                rightSection={
+                  !isRedirecting ? <IconRocket size="1.75rem" /> : undefined
+                }
               >
-                Get boost!
+                {isRedirecting ? "Redirecting..." : "Get Boost!"}
               </Button>
               <Button
                 variant="default"
                 radius="xl"
                 onClick={close}
-                disabled={boostMutation.isPending}
+                disabled={boostMutation.isPending || isRedirecting}
               >
                 Close
               </Button>

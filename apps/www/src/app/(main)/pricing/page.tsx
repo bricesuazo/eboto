@@ -31,7 +31,12 @@ import {
   Title,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconCircleCheck, IconCircleX, IconMail } from "@tabler/icons-react";
+import {
+  IconCircleCheck,
+  IconCircleX,
+  IconMail,
+  IconPlus,
+} from "@tabler/icons-react";
 import Balancer from "react-wrap-balancer";
 
 import { PRICING } from "@eboto/constants";
@@ -41,9 +46,13 @@ export const dynamic = "force-static";
 export default function PricingPage() {
   const router = useRouter();
   const [value, setValue] = useState(0);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const plusMutation = api.payment.plus.useMutation({
-    onSuccess: (url) => router.push(url),
+    onSuccess: (url) => {
+      setIsRedirecting(true);
+      router.push(url);
+    },
     onError: (error) => {
       notifications.show({
         title: "Error",
@@ -248,8 +257,10 @@ export default function PricingPage() {
               style={{ marginBottom: "auto" }}
               loading={plusMutation.isPending}
               onClick={() => plusMutation.mutate()}
+              rightSection={!isRedirecting ? <IconPlus /> : undefined}
+              disabled={isRedirecting}
             >
-              Get Plus
+              {isRedirecting ? "Redirecting..." : "Get Plus"}
             </Button>
           </Flex>
         </Flex>

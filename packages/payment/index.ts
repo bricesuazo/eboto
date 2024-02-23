@@ -1,4 +1,4 @@
-import LemonSqueezy from "@lemonsqueezy/lemonsqueezy.js";
+import { LemonSqueezy } from "@lemonsqueezy/lemonsqueezy.js";
 
 import { env } from "./env.mjs";
 

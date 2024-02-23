@@ -13,9 +13,9 @@
   "dependencies": {
     "@auth/core": "^0.27.0",
     "@planetscale/database": "^1.16.0",
-    "drizzle-orm": "0.29.3",
+    "drizzle-orm": "0.29.4",
     "mysql2": "^3.9.1",
-    "nanoid": "^5.0.5",
+    "nanoid": "^5.0.6",
     "uploadthing": "^6.4.1"
   },
   "devDependencies": {
