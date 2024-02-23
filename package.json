@@ -6,6 +6,7 @@
     "clean:workspaces": "turbo clean",
     "db:push": "pnpm --filter @eboto/db db:push --no-daemon",
     "db:studio": "pnpm turbo --filter @eboto/db db:studio --no-daemon",
+    "db:seed": "pnpm turbo --filter=@eboto/db db:seed --no-daemon",
     "db:generate": "pnpm --filter @eboto/db db:generate",
     "email:dev": "pnpm turbo --filter=@eboto/email email:dev --no-daemon",
     "dev": "turbo dev --parallel",

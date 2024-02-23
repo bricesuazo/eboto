@@ -408,9 +408,4 @@ export const FAQs: { id: string; question: string; answer: string }[] = [
     answer:
       "Yes, eBoto offers a template for SSG Elections, and you can customize it further in the dashboard page to suit your specific requirements.",
   },
-  // {
-  //   id: "",
-  //   question: "",
-  //   answer: "",
-  // },
 ];

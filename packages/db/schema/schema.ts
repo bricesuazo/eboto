@@ -3,6 +3,7 @@ import { sql } from "drizzle-orm";
 import {
   boolean,
   date,
+  foreignKey,
   index,
   int,
   json,
@@ -29,12 +30,18 @@ const updated_at = timestamp("updated_at")
   .default(sql`CURRENT_TIMESTAMP`)
   .onUpdateNow()
   .notNull();
-const election_id = varchar("election_id", { length: 256 }).notNull();
-// .references(() => elections.id);
-const user_id = varchar("user_id", { length: 256 }).notNull();
-// .references(() => users.id);
-const voter_id = varchar("voter_id", { length: 256 }).notNull();
-// .references(() => voters.id);
+const election_id = varchar("election_id", { length: 256 })
+  .references(() => elections.id, { onDelete: "cascade" })
+  .notNull();
+const user_id = varchar("user_id", { length: 256 })
+  .references(() => users.id, { onDelete: "cascade" })
+  .notNull();
+const voter_id = varchar("voter_id", { length: 256 })
+  .references(() => voters.id, { onDelete: "cascade" })
+  .notNull();
+const credential_id = varchar("credential_id", { length: 256 })
+  .references(() => credentials.id, { onDelete: "cascade" })
+  .notNull();
 
 export const publicity = ["PRIVATE", "VOTER", "PUBLIC"] as const;
 export type Publicity = (typeof publicity)[number];
@@ -70,7 +77,9 @@ export const elections = mysqlTable(
       .default(false)
       .notNull(),
     name_arrangement: int("name_arrangement").default(0).notNull(),
-    variant_id: varchar("variant_id", { length: 256 }).notNull(),
+    variant_id: int("variant_id")
+      .references(() => variants.id, { onDelete: "cascade" })
+      .notNull(),
     deleted_at,
 
     created_at,
@@ -92,6 +101,9 @@ export const elections = mysqlTable(
     electionDeletedAtIdx: index("electionDeletedAt_idx").on(
       election.deleted_at,
     ),
+    electionVariantIdIdx: index("electionVariantId_idx").on(
+      election.variant_id,
+    ),
   }),
 );
 
@@ -102,8 +114,14 @@ export const votes = mysqlTable(
     created_at,
 
     voter_id,
-    candidate_id: varchar("candidate_id", { length: 256 }),
-    position_id: varchar("position_id", { length: 256 }),
+    candidate_id: varchar("candidate_id", { length: 256 }).references(
+      () => candidates.id,
+      { onDelete: "cascade" },
+    ),
+    position_id: varchar("position_id", { length: 256 }).references(
+      () => positions.id,
+      { onDelete: "cascade" },
+    ),
     election_id,
   },
   (vote) => ({
@@ -229,9 +247,13 @@ export const candidates = mysqlTable(
     deleted_at,
 
     election_id,
-    credential_id: varchar("credential_id", { length: 256 }).notNull(),
-    position_id: varchar("position_id", { length: 256 }).notNull(),
-    partylist_id: varchar("partylist_id", { length: 256 }).notNull(),
+    credential_id,
+    position_id: varchar("position_id", { length: 256 })
+      .references(() => positions.id, { onDelete: "cascade" })
+      .notNull(),
+    partylist_id: varchar("partylist_id", { length: 256 })
+      .references(() => partylists.id, { onDelete: "cascade" })
+      .notNull(),
   },
   (candidate) => ({
     candidateIdIdx: index("candidateId_idx").on(candidate.id),
@@ -259,13 +281,15 @@ export const credentials = mysqlTable(
     created_at,
     updated_at,
 
-    candidate_id: varchar("candidate_id", { length: 256 }).notNull(),
+    // candidate_id: varchar("candidate_id", { length: 256 })
+    //   .references(() => candidates.id, { onDelete: "cascade" })
+    //   .notNull(),
   },
   (credential) => ({
     credentialIdIdx: index("credentialId_idx").on(credential.id),
-    credentialCandidateIdIdx: index("credentialCandidateId_idx").on(
-      credential.candidate_id,
-    ),
+    // credentialCandidateIdIdx: index("credentialCandidateId_idx").on(
+    //   credential.candidate_id,
+    // ),
   }),
 );
 
@@ -279,7 +303,9 @@ export const platforms = mysqlTable(
     created_at,
     updated_at,
 
-    candidate_id: varchar("candidate_id", { length: 256 }).notNull(),
+    candidate_id: varchar("candidate_id", { length: 256 })
+      .references(() => candidates.id, { onDelete: "cascade" })
+      .notNull(),
   },
   (platform) => ({
     platformIdIdx: index("platformId_idx").on(platform.id),
@@ -301,7 +327,7 @@ export const affiliations = mysqlTable(
     created_at,
     updated_at,
 
-    credential_id: varchar("credential_id", { length: 256 }).notNull(),
+    credential_id,
   },
   (affiliation) => ({
     affiliationIdIdx: index("affiliationId_idx").on(affiliation.id),
@@ -321,7 +347,7 @@ export const achievements = mysqlTable(
     created_at,
     updated_at,
 
-    credential_id: varchar("credential_id", { length: 256 }).notNull(),
+    credential_id,
   },
   (achievement) => ({
     achievementIdIdx: index("achievementId_idx").on(achievement.id),
@@ -341,7 +367,7 @@ export const events_attended = mysqlTable(
     created_at,
     updated_at,
 
-    credential_id: varchar("credential_id", { length: 256 }).notNull(),
+    credential_id,
   },
   (event_attended) => ({
     eventAttendedIdIdx: index("eventAttendedId_idx").on(event_attended.id),
@@ -470,7 +496,7 @@ export const verification_tokens = mysqlTable(
     expires: timestamp("expires", { mode: "date" }).notNull(),
   },
   (vt) => ({
-    compoundKey: primaryKey(vt.identifier, vt.token),
+    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
   }),
 );
 
@@ -492,7 +518,9 @@ export const accounts = mysqlTable(
     session_state: varchar("session_state", { length: 255 }),
   },
   (account) => ({
-    compoundKey: primaryKey(account.provider, account.providerAccountId),
+    compoundKey: primaryKey({
+      columns: [account.provider, account.providerAccountId],
+    }),
     accountUserIdIdx: index("account_userId_idx").on(account.userId),
   }),
 );
@@ -514,10 +542,9 @@ export const deleted_accounts = mysqlTable(
     session_state: varchar("session_state", { length: 255 }),
   },
   (deleted_account) => ({
-    compoundKey: primaryKey(
-      deleted_account.provider,
-      deleted_account.providerAccountId,
-    ),
+    compoundKey: primaryKey({
+      columns: [deleted_account.provider, deleted_account.providerAccountId],
+    }),
     deletedAccountDeletedUserIdIdx: index(
       "deletedAccount_deletedUserId_idx",
     ).on(deleted_account.deletedUserId),
@@ -529,7 +556,9 @@ export const sessions = mysqlTable(
     sessionToken: varchar("sessionToken", { length: 255 })
       .notNull()
       .primaryKey(),
-    userId: varchar("userId", { length: 255 }).notNull(),
+    userId: varchar("userId", { length: 256 })
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
     expires: timestamp("expires", { mode: "date" }).notNull(),
   },
   (session) => ({
@@ -547,19 +576,23 @@ export const commissioners_voters_messages = mysqlTable(
     created_at,
     deleted_at,
 
-    room_id: varchar("room_id", { length: 256 }).notNull(),
+    room_id: varchar("room_id", { length: 256 })
+      // .references(() => commissioners_voters_rooms.id, { onDelete: "cascade" })
+      .notNull(),
     user_id,
   },
   (commissioners_voters_message) => ({
-    commissionersVotersMessageIdIdx: index(
-      "commissionersVotersMessageId_idx",
-    ).on(commissioners_voters_message.id),
-    commissionersVotersMessageRoomIdIdx: index(
-      "commissionersVotersMessageRoomId_idx",
-    ).on(commissioners_voters_message.room_id),
-    commissionersVotersMessageUserIdIdx: index(
-      "commissionersVotersMessageUserId_idx",
-    ).on(commissioners_voters_message.user_id),
+    roomReference: foreignKey({
+      columns: [commissioners_voters_message.room_id],
+      foreignColumns: [commissioners_voters_rooms.id],
+      name: "CVM_RoomReference",
+    }),
+    commissionersVotersMsgRoomIdIdx: index("CVM_CVMRI_idx").on(
+      commissioners_voters_message.room_id,
+    ),
+    commissionersVotersMsgUserIdIdx: index("CVM_CVMUI_idx").on(
+      commissioners_voters_message.user_id,
+    ),
   }),
 );
 
@@ -575,12 +608,9 @@ export const commissioners_voters_rooms = mysqlTable(
     election_id,
   },
   (commissioners_voters_room) => ({
-    commissionersVotersRoomIdIdx: index("commissionersVotersRoomId_idx").on(
-      commissioners_voters_room.id,
+    commissionersVotersRoomElectionIdIdx: index("CVR_CVREI_idx").on(
+      commissioners_voters_room.election_id,
     ),
-    commissionersVotersRoomElectionIdIdx: index(
-      "commissionersVotersRoomElectionId_idx",
-    ).on(commissioners_voters_room.election_id),
   }),
 );
 
@@ -593,19 +623,23 @@ export const admin_commissioners_messages = mysqlTable(
     created_at,
     deleted_at,
 
-    room_id: varchar("room_id", { length: 256 }).notNull(),
+    room_id: varchar("room_id", { length: 256 })
+      // .references(() => admin_commissioners_rooms.id, { onDelete: "cascade" })
+      .notNull(),
     user_id,
   },
   (admin_commissioners_message) => ({
-    commissionersVotersMessageIdIdx: index(
-      "commissionersVotersMessageId_idx",
-    ).on(admin_commissioners_message.id),
-    commissionersVotersMessageRoomIdIdx: index(
-      "commissionersVotersMessageRoomId_idx",
-    ).on(admin_commissioners_message.room_id),
-    commissionersVotersMessageUserIdIdx: index(
-      "commissionersVotersMessageUserId_idx",
-    ).on(admin_commissioners_message.user_id),
+    roomReference: foreignKey({
+      columns: [admin_commissioners_message.room_id],
+      foreignColumns: [admin_commissioners_rooms.id],
+      name: "ACM_RoomReference",
+    }),
+    commissionersVotersMsgRoomIdIdx: index("ACM_CVMRI_idx").on(
+      admin_commissioners_message.room_id,
+    ),
+    commissionersVotersMsgUserIdIdx: index("ACM_CVMUI_idx").on(
+      admin_commissioners_message.user_id,
+    ),
   }),
 );
 
@@ -621,19 +655,16 @@ export const admin_commissioners_rooms = mysqlTable(
     election_id,
   },
   (admin_commissioners_room) => ({
-    commissionersVotersRoomIdIdx: index("commissionersVotersRoomId_idx").on(
-      admin_commissioners_room.id,
+    commissionersVotersRoomElectionIdIdx: index("ACR_CVREI_idx").on(
+      admin_commissioners_room.election_id,
     ),
-    commissionersVotersRoomElectionIdIdx: index(
-      "commissionersVotersRoomElectionId_idx",
-    ).on(admin_commissioners_room.election_id),
   }),
 );
 
 export const products = mysqlTable(
   "product",
   {
-    id: varchar("id", { length: 256 }).primaryKey().notNull().unique(),
+    id: int("id").primaryKey().notNull().unique(),
     name: text("name").notNull(),
   },
   (product) => ({
@@ -644,10 +675,12 @@ export const products = mysqlTable(
 export const variants = mysqlTable(
   "variant",
   {
-    id: varchar("id", { length: 256 }).primaryKey().notNull().unique(),
+    id: int("id").primaryKey().notNull().unique(),
     name: text("name").notNull(),
     price: int("price").notNull(),
-    product_id: varchar("product_id", { length: 256 }).notNull(),
+    product_id: int("product_id")
+      .references(() => products.id, { onDelete: "cascade" })
+      .notNull(),
   },
   (product) => ({
     productIdIdx: index("productId_idx").on(product.id),
@@ -673,6 +706,10 @@ export const elections_plus = mysqlTable(
 
 export type Election = typeof elections.$inferSelect;
 export type User = typeof users.$inferSelect;
+export type Account = typeof accounts.$inferSelect;
+export type DeletedAccount = typeof deleted_accounts.$inferSelect;
+export type Session = typeof sessions.$inferSelect;
+export type DeletedUser = typeof deleted_users.$inferSelect;
 export type Vote = typeof votes.$inferSelect;
 export type Commissioner = typeof commissioners.$inferSelect;
 export type Voter = typeof voters.$inferSelect;
@@ -698,3 +735,7 @@ export type AdminCommissionersMessage =
   typeof admin_commissioners_messages.$inferSelect;
 export type AdminCommissionersRoom =
   typeof admin_commissioners_rooms.$inferSelect;
+
+export type Product = typeof products.$inferSelect;
+export type Variant = typeof variants.$inferSelect;
+export type ElectionPlus = typeof elections_plus.$inferSelect;

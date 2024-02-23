@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import CreateCandidate from "@/components/modals/create-candidate";
 import DeleteCandidate from "@/components/modals/delete-candidate";
 import EditCandidate from "@/components/modals/edit-candidate";
@@ -36,6 +36,7 @@ export default function DashboardCandidate({
   election: Election;
   positionsWithCandidates: RouterOutputs["candidate"]["getDashboardData"];
 }) {
+  const router = useRouter();
   const positionsWithCandidatesQuery = api.candidate.getDashboardData.useQuery(
     { election_id: election.id },
     {
@@ -58,6 +59,7 @@ export default function DashboardCandidate({
 
   const editNameArrangementMutation =
     api.candidate.editNameArrangement.useMutation({
+      onSuccess: () => router.refresh(),
       onMutate: ({ name_arrangement }) => {
         setNameArrangement(name_arrangement);
       },

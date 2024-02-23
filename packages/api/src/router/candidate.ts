@@ -341,6 +341,11 @@ export const candidateRouter = createTRPCRouter({
       const candidateId = nanoid();
       const credentialId = nanoid();
       await ctx.db.transaction(async (db) => {
+        await db.insert(credentials).values({
+          id: credentialId,
+          // candidate_id: candidateId,
+        });
+
         await db.insert(candidates).values({
           id: candidateId,
           slug: input.slug,
@@ -369,11 +374,6 @@ export const candidateRouter = createTRPCRouter({
                     )
                   ).data,
               )),
-        });
-
-        await db.insert(credentials).values({
-          id: credentialId,
-          candidate_id: candidateId,
         });
 
         if (input.platforms.length > 0)
