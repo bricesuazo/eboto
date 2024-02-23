@@ -654,8 +654,8 @@ export const variants = mysqlTable(
   }),
 );
 
-export const user_boosts = mysqlTable(
-  "user_boost",
+export const elections_plus = mysqlTable(
+  "election_plus",
   {
     id,
     user_id,
@@ -663,9 +663,11 @@ export const user_boosts = mysqlTable(
     created_at,
     redeemed_at: timestamp("redeemed_at"),
   },
-  (user_boost) => ({
-    userBoostIdIdx: index("userBoostId_idx").on(user_boost.id),
-    userBoostUserIdIdx: index("userBoostUserId_idx").on(user_boost.user_id),
+  (election_plus) => ({
+    electionPlusIdIdx: index("electionPlusId_idx").on(election_plus.id),
+    electionPlusUserIdIdx: index("electionPlusUserId_idx").on(
+      election_plus.user_id,
+    ),
   }),
 );
 

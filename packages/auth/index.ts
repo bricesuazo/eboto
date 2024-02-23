@@ -7,7 +7,7 @@ import type { Provider } from "next-auth/providers";
 // import EmailProvider from "next-auth/providers/email";
 
 import { db } from "@eboto/db";
-import { user_boosts } from "@eboto/db/schema";
+import { elections_plus } from "@eboto/db/schema";
 
 import { env } from "./env.mjs";
 
@@ -33,7 +33,7 @@ export const {
   adapter: DrizzleAdapter(db),
   events: {
     createUser: async ({ user }) => {
-      await db.insert(user_boosts).values({ user_id: user.id });
+      await db.insert(elections_plus).values({ user_id: user.id });
     },
   },
   providers: [
