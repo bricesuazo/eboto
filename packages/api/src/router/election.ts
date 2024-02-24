@@ -373,26 +373,28 @@ export const electionRouter = createTRPCRouter({
 
       // make the candidate as "Candidate 1"... "Candidate N" if the election is ongoing
 
-      return realtimeResult.map((position) => ({
-        ...position,
-        votes: position.votes.length,
-        candidates: position.candidates
-          .sort((a, b) => b.votes.length - a.votes.length)
-          .map((candidate, index) => {
-            return {
-              id: candidate.id,
-              name:
-                !election.is_candidates_visible_in_realtime_when_ongoing &&
-                isElectionOngoing({ election }) &&
-                !isElectionEnded({ election })
-                  ? `Candidate ${index + 1}`
-                  : `${formatName(election.name_arrangement, candidate)} (${
-                      candidate.partylist.acronym
-                    })`,
-              vote: candidate.votes.length,
-            };
-          }),
-      }));
+      return {
+        positions: realtimeResult.map((position) => ({
+          ...position,
+          votes: position.votes.length,
+          candidates: position.candidates
+            .sort((a, b) => b.votes.length - a.votes.length)
+            .map((candidate, index) => {
+              return {
+                id: candidate.id,
+                name:
+                  !election.is_candidates_visible_in_realtime_when_ongoing &&
+                  isElectionOngoing({ election }) &&
+                  !isElectionEnded({ election })
+                    ? `Candidate ${index + 1}`
+                    : `${formatName(election.name_arrangement, candidate)} (${
+                        candidate.partylist.acronym
+                      })`,
+                vote: candidate.votes.length,
+              };
+            }),
+        })),
+      };
     }),
   getAllMyElections: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.query.commissioners

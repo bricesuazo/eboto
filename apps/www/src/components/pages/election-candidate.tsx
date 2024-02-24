@@ -21,6 +21,7 @@ import moment from "moment";
 import type { RouterOutputs } from "@eboto/api";
 import { formatName } from "@eboto/constants";
 
+import AdModal from "../ad-modal";
 import MessageCommissioner from "../modals/message-commissioner";
 import MyMessagesElection from "../my-messages-election";
 
@@ -28,10 +29,12 @@ export default function ElectionCandidate({
   data,
   candidate_slug,
   election_slug,
+  is_free,
 }: {
   data: RouterOutputs["candidate"]["getPageData"];
   candidate_slug: string;
   election_slug: string;
+  is_free: boolean;
 }) {
   const {
     data: { candidate, election, isVoterCanMessage },
@@ -45,7 +48,7 @@ export default function ElectionCandidate({
 
   return (
     <>
-      {/* <AdModal /> */}
+      {is_free && <AdModal />}
       {isVoterCanMessage && <MyMessagesElection election_id={election.id} />}
 
       <Container py="xl" size="md" mb={80}>

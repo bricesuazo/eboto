@@ -45,15 +45,18 @@ import {
   parseHourTo12HourFormat,
 } from "@eboto/constants";
 
+import AdModal from "../ad-modal";
 import MessageCommissioner from "../modals/message-commissioner";
 import MyMessagesElection from "../my-messages-election";
 
 export default function ElectionPage({
   data,
   election_slug,
+  is_free,
 }: {
   data: RouterOutputs["election"]["getElectionPage"];
   election_slug: string;
+  is_free: boolean;
 }) {
   const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
@@ -111,7 +114,7 @@ export default function ElectionPage({
   }, [opened]);
   return (
     <>
-      {/* <AdModal /> */}
+      {is_free && <AdModal />}
       <ScrollToTopButton />
       {isVoterCanMessage && <MyMessagesElection election_id={election.id} />}
       <Modal

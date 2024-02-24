@@ -36,6 +36,7 @@ import {
 } from "@eboto/constants";
 import type { Election, VoterField } from "@eboto/db/schema";
 
+import AdModal from "../ad-modal";
 import MessageCommissioner from "../modals/message-commissioner";
 import MyMessagesElection from "../my-messages-election";
 
@@ -45,7 +46,7 @@ export default function Realtime({
   isVoterCanMessage,
 }: {
   positions: RouterOutputs["election"]["getElectionRealtime"];
-  election: Election & { voter_fields: VoterField[] };
+  election: Election & { voter_fields: VoterField[]; is_free: boolean };
   isVoterCanMessage: boolean;
 }) {
   const positionsQuery = api.election.getElectionRealtime.useQuery(
@@ -53,7 +54,7 @@ export default function Realtime({
     {
       refetchInterval: 1000,
       initialData: positions,
-      enabled: isElectionOngoing({ election }),
+      enabled: !election.is_free,
       refetchOnMount: true,
       refetchOnWindowFocus: true,
       refetchOnReconnect: true,
@@ -76,7 +77,7 @@ export default function Realtime({
 
   return (
     <>
-      {/* <AdModal /> */}
+      {election.is_free && <AdModal />}
       <ScrollToTopButton />
       {isVoterCanMessage && <MyMessagesElection election_id={election.id} />}
 
@@ -169,7 +170,7 @@ export default function Realtime({
                 xs: "md",
               }}
             >
-              {positionsQuery.data.map((position) => (
+              {positionsQuery.data.positions.map((position) => (
                 <Table
                   key={position.id}
                   highlightOnHover
