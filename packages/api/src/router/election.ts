@@ -815,10 +815,19 @@ export const electionRouter = createTRPCRouter({
           message: "Election is not public",
         });
 
+      const date = new Date();
+      date.setMinutes(0);
+      date.setSeconds(0);
+
       const voters = await ctx.db.query.voters.findMany({
         where: (voters, { eq }) => eq(voters.election_id, input.election_id),
         with: {
-          votes: true,
+          votes: {
+            where: (vote, { lte }) =>
+              election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID
+                ? lte(vote.created_at, date)
+                : undefined,
+          },
         },
       });
 
@@ -1116,7 +1125,11 @@ export const electionRouter = createTRPCRouter({
     });
 
     return electionsAsCommissioner
-      .map((commissioner) => commissioner.election)
+      .map((commissioner) => ({
+        ...commissioner.election,
+        is_free:
+          commissioner.election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID,
+      }))
       .sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
   }),
   getMyElectionAsVoter: protectedProcedure.query(async ({ ctx }) => {

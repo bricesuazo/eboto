@@ -32,10 +32,12 @@ export default function DashboardCard({
   election,
   type,
   hasVoted,
+  is_free,
 }: {
   election: Election;
   type: "vote" | "manage";
   hasVoted?: boolean;
+  is_free?: boolean;
 }) {
   const { hovered, ref } = useHover<HTMLAnchorElement>();
   return (
@@ -51,6 +53,12 @@ export default function DashboardCard({
         type === "vote" ? `/${election.slug}` : `/dashboard/${election.slug}`
       }
       target={type === "vote" ? "_blank" : undefined}
+      style={{
+        borderColor:
+          is_free === false && type === "manage"
+            ? "var(--mantine-color-green-5)"
+            : undefined,
+      }}
     >
       {type === "vote" && (
         <ActionIcon

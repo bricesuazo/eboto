@@ -76,7 +76,7 @@ export default function Realtime({
       {
         enabled:
           isElectionOngoing({ election }) && election.voter_fields.length > 0,
-        refetchInterval: 1000,
+        refetchInterval: !election.is_free ? 1000 : false,
         refetchOnMount: true,
         refetchOnWindowFocus: true,
         refetchOnReconnect: true,
