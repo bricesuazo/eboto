@@ -1089,83 +1089,86 @@ function AdminChat({
               <CreateAdminMessagePopover election_slug={election_slug!} />
             </Stack>
           </Card>
-          {getAllAdminCommissionerRoomsQuery.data.map((room) => (
-            <UnstyledButton
-              key={room.id}
-              p="md"
-              style={{
-                border: "1px solid #80808050",
-                borderRadius: 8,
-              }}
-              w="100%"
-              onClick={() =>
-                setChat({
-                  type: "admin",
-                  id: room.id,
-                  name: room.messages[0]?.user.name ?? "",
-                  title: room.name,
-                })
-              }
-            >
-              <Flex justify="space-between">
-                <Box>
-                  <Text
-                    lineClamp={1}
-                    style={{
-                      wordBreak: "break-all",
-                    }}
-                  >
-                    {room.name}
-                  </Text>
-                  {room.messages[0] && (
-                    <Flex align="center" gap="sm">
-                      <Image
-                        src={
-                          room.messages[0].user.image ??
-                          room.messages[0].user.image_file?.url ??
-                          ""
-                        }
-                        alt={room.messages[0].user.name + " image."}
-                        width={20}
-                        height={20}
-                        style={{
-                          borderRadius: "50%",
-                        }}
-                      />
-                      <Text
-                        size="sm"
-                        lineClamp={1}
-                        style={{
-                          wordBreak: "break-all",
-                        }}
-                      >
-                        {room.messages[0].message}
-                      </Text>
-                    </Flex>
-                  )}
-                </Box>
-                <HoverCard openDelay={500}>
-                  <HoverCardTarget>
+          {getAllAdminCommissionerRoomsQuery.data.map((room) => {
+            const user = room.messages[0]?.user;
+            return (
+              <UnstyledButton
+                key={room.id}
+                p="md"
+                style={{
+                  border: "1px solid #80808050",
+                  borderRadius: 8,
+                }}
+                w="100%"
+                onClick={() =>
+                  setChat({
+                    type: "admin",
+                    id: room.id,
+                    name: user?.name ?? "",
+                    title: room.name,
+                  })
+                }
+              >
+                <Flex justify="space-between">
+                  <Box>
                     <Text
-                      size="xs"
-                      c="gray"
-                      aria-label={moment(room.created_at).format(
-                        "MMMM D, YYYY hh:mm A",
-                      )}
-                      miw="fit-content"
+                      lineClamp={1}
+                      style={{
+                        wordBreak: "break-all",
+                      }}
                     >
-                      {moment(room.created_at).fromNow()}
+                      {room.name}
                     </Text>
-                  </HoverCardTarget>
-                  <HoverCardDropdown>
-                    <Text size="xs" c="gray">
-                      {moment(room.created_at).format("MMMM D, YYYY hh:mm A")}
-                    </Text>
-                  </HoverCardDropdown>
-                </HoverCard>
-              </Flex>
-            </UnstyledButton>
-          ))}
+                    {room.messages[0] && (
+                      <Flex align="center" gap="sm">
+                        {user ? (
+                          <Image
+                            src={user.image ?? user.image_file?.url ?? ""}
+                            alt={user.name + " image."}
+                            width={20}
+                            height={20}
+                            style={{
+                              borderRadius: "50%",
+                            }}
+                          />
+                        ) : (
+                          "Admin"
+                        )}
+                        <Text
+                          size="sm"
+                          lineClamp={1}
+                          style={{
+                            wordBreak: "break-all",
+                          }}
+                        >
+                          {room.messages[0].message}
+                        </Text>
+                      </Flex>
+                    )}
+                  </Box>
+                  <HoverCard openDelay={500}>
+                    <HoverCardTarget>
+                      <Text
+                        size="xs"
+                        c="gray"
+                        aria-label={moment(room.created_at).format(
+                          "MMMM D, YYYY hh:mm A",
+                        )}
+                        miw="fit-content"
+                      >
+                        {moment(room.created_at).fromNow()}
+                      </Text>
+                    </HoverCardTarget>
+                    <HoverCardDropdown>
+                      <Text size="xs" c="gray">
+                        {moment(room.created_at).format("MMMM D, YYYY hh:mm A")}
+                      </Text>
+                    </HoverCardDropdown>
+                  </HoverCard>
+                </Flex>
+              </UnstyledButton>
+            );
+          })}
         </>
       )}
     </Stack>

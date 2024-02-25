@@ -626,7 +626,9 @@ export const admin_commissioners_messages = mysqlTable(
     room_id: varchar("room_id", { length: 256 })
       // .references(() => admin_commissioners_rooms.id, { onDelete: "cascade" })
       .notNull(),
-    user_id,
+    user_id: varchar("user_id", { length: 256 }).references(() => users.id, {
+      onDelete: "cascade",
+    })
   },
   (admin_commissioners_message) => ({
     roomReference: foreignKey({

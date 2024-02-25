@@ -1575,7 +1575,7 @@ export const electionRouter = createTRPCRouter({
           ...message,
           user: {
             ...message.user,
-            isMe: message.user.id === ctx.session.user.id,
+            isMe: message.user?.id === ctx.session.user.id,
           },
         }));
       }

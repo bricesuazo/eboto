@@ -1,0 +1,1 @@
+ALTER TABLE `admin_commissioners_message` MODIFY COLUMN `user_id` varchar(256);
