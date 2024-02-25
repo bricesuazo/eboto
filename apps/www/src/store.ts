@@ -6,6 +6,10 @@ interface Store {
   spotlight: boolean;
   dashboardChatMenu: boolean;
   toggleDashboardChatMenu: (input?: boolean) => void;
+  electionBoost: boolean;
+  electionBoostElectionId: string | null;
+  setElectionBoostElectionId: (input: string) => void;
+  toggleElectionBoost: (input?: boolean) => void;
 }
 
 export const useStore = create<Store>((set) => ({
@@ -21,5 +25,16 @@ export const useStore = create<Store>((set) => ({
     set((state) => ({
       dashboardChatMenu: input ?? !state.dashboardChatMenu,
       dashboardMenu: false,
+    })),
+  electionBoost: false,
+  electionBoostElectionId: null,
+  setElectionBoostElectionId: (input) =>
+    set(() => ({
+      electionBoostElectionId: input,
+    })),
+  toggleElectionBoost: (input) =>
+    set((state) => ({
+      electionBoost: input ?? !state.electionBoost,
+      electionBoostElectionId: null,
     })),
 }));

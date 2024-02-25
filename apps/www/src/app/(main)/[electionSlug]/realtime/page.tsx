@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import Realtime from "@/components/pages/realtime";
 import { api } from "@/trpc/server";
+import { env } from "env.mjs";
 import moment from "moment";
 
 import { auth } from "@eboto/auth";
@@ -173,10 +174,14 @@ export default async function RealtimePage({
     )
       redirect(`/${election.slug}`);
   }
+
   return (
     <Realtime
       positions={positions}
-      election={election}
+      election={{
+        ...election,
+        is_free: election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID,
+      }}
       isVoterCanMessage={isVoterCanMessage}
     />
   );

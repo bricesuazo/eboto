@@ -24,7 +24,12 @@ export function MyElectionsAsCommissioner({
         </Box>
       ) : (
         getMyElectionAsCommissionerQuery.data.map((election) => (
-          <DashboardCard key={election.id} election={election} type="manage" />
+          <DashboardCard
+            key={election.id}
+            election={election}
+            type="manage"
+            is_free={election.is_free}
+          />
         ))
       )}
     </>

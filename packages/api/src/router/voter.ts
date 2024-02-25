@@ -5,6 +5,7 @@ import { z } from "zod";
 import { isElectionEnded, isElectionOngoing } from "@eboto/constants";
 import { and, eq, inArray } from "@eboto/db";
 import { voter_fields, voters } from "@eboto/db/schema";
+import { LS_DATA_DEV, LS_DATA_PROD } from "@eboto/db/seed";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
@@ -37,6 +38,32 @@ export const voterRouter = createTRPCRouter({
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Unauthorized",
+        });
+
+      const voters_length = await ctx.db.query.voters.findMany({
+        where: (voter, { eq, and, isNull }) =>
+          and(
+            eq(voter.election_id, input.election_id),
+            isNull(voter.deleted_at),
+          ),
+      });
+
+      const data =
+        process.env.NODE_ENV === "development" ? LS_DATA_DEV : LS_DATA_PROD;
+
+      const variant = data.products
+        .flatMap((product) => product.variants)
+        .find((variant) => variant.id === isElectionExists.variant_id);
+
+      if (!variant) throw new TRPCError({ code: "NOT_FOUND" });
+
+      if (voters_length.length >= variant.voters)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message:
+            "Maximum number of voters reached. Maximum no. of voters is " +
+            variant.voters +
+            ".",
         });
 
       const votersFromDb = await ctx.db.query.voters.findFirst({
@@ -390,6 +417,32 @@ export const voterRouter = createTRPCRouter({
 
         if (isElectionExists.commissioners.length === 0)
           throw new Error("Unauthorized");
+
+        const voters_length = await ctx.db.query.voters.findMany({
+          where: (voter, { eq, and, isNull }) =>
+            and(
+              eq(voter.election_id, input.election_id),
+              isNull(voter.deleted_at),
+            ),
+        });
+
+        const data =
+          process.env.NODE_ENV === "development" ? LS_DATA_DEV : LS_DATA_PROD;
+
+        const variant = data.products
+          .flatMap((product) => product.variants)
+          .find((variant) => variant.id === isElectionExists.variant_id);
+
+        if (!variant) throw new TRPCError({ code: "NOT_FOUND" });
+
+        if (voters_length.length >= variant.voters)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message:
+              "Maximum number of voters reached. Maximum no. of voters is " +
+              variant.voters +
+              ".",
+          });
 
         const votersFromDb = await db.query.voters.findMany({
           where: (voter, { eq, and, isNull }) =>

@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import ScrollToTopButton from "@/components/scroll-to-top";
 import { api } from "@/trpc/client";
+import { Adsense } from "@ctrl/react-adsense";
 import {
   Box,
   Button,
@@ -36,8 +38,14 @@ import {
 } from "@eboto/constants";
 import type { Election, VoterField } from "@eboto/db/schema";
 
+import AdModal from "../ad-modal";
 import MessageCommissioner from "../modals/message-commissioner";
 import MyMessagesElection from "../my-messages-election";
+
+const date = new Date();
+const rounded_off_date = new Date();
+rounded_off_date.setMinutes(0);
+rounded_off_date.setSeconds(0);
 
 export default function Realtime({
   positions,
@@ -45,15 +53,16 @@ export default function Realtime({
   isVoterCanMessage,
 }: {
   positions: RouterOutputs["election"]["getElectionRealtime"];
-  election: Election & { voter_fields: VoterField[] };
+  election: Election & { voter_fields: VoterField[]; is_free: boolean };
   isVoterCanMessage: boolean;
 }) {
+  const [time, setTime] = useState(!election.is_free ? date : rounded_off_date);
   const positionsQuery = api.election.getElectionRealtime.useQuery(
     election.slug,
     {
-      refetchInterval: 1000,
+      refetchInterval: !election.is_free ? 1000 : false,
       initialData: positions,
-      enabled: isElectionOngoing({ election }),
+      enabled: !election.is_free,
       refetchOnMount: true,
       refetchOnWindowFocus: true,
       refetchOnReconnect: true,
@@ -67,16 +76,26 @@ export default function Realtime({
       {
         enabled:
           isElectionOngoing({ election }) && election.voter_fields.length > 0,
-        refetchInterval: 1000,
+        refetchInterval: !election.is_free ? 1000 : false,
         refetchOnMount: true,
         refetchOnWindowFocus: true,
         refetchOnReconnect: true,
       },
     );
 
+  useEffect(() => {
+    if (election.is_free) return;
+
+    const interval = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [election.is_free]);
+
   return (
     <>
-      {/* <AdModal /> */}
+      {election.is_free && <AdModal />}
       <ScrollToTopButton />
       {isVoterCanMessage && <MyMessagesElection election_id={election.id} />}
 
@@ -125,7 +144,7 @@ export default function Realtime({
                   <Text ta="center" size="xs" c="dimmed">
                     <Balancer>
                       Realtime result as of{" "}
-                      {moment(new Date()).format("MMMM Do YYYY, h:mm:ss A")}
+                      {moment(time).format("MMMM Do YYYY, h:mm:ss A")}
                     </Balancer>
                   </Text>
                 )}
@@ -146,16 +165,18 @@ export default function Realtime({
               )}
             </Stack>
           </Center>
-          {/* <Adsense
-            style={{
-              display: "block",
-              width: "100%",
-            }}
-            client="ca-pub-8443325162715161"
-            slot="6949415137"
-            format="auto"
-            responsive="true"
-          /> */}
+          {election.is_free && (
+            <Adsense
+              style={{
+                display: "block",
+                width: "100%",
+              }}
+              client="ca-pub-8443325162715161"
+              slot="6949415137"
+              format="auto"
+              responsive="true"
+            />
+          )}
 
           <Stack gap="xl">
             <SimpleGrid
@@ -169,7 +190,7 @@ export default function Realtime({
                 xs: "md",
               }}
             >
-              {positionsQuery.data.map((position) => (
+              {positionsQuery.data.positions.map((position) => (
                 <Table
                   key={position.id}
                   highlightOnHover
@@ -231,16 +252,18 @@ export default function Realtime({
               ))}
             </SimpleGrid>
 
-            {/* <Adsense
-              style={{
-                display: "block",
-                width: "100%",
-              }}
-              client="ca-pub-8443325162715161"
-              slot="6949415137"
-              format="auto"
-              responsive="true"
-            /> */}
+            {election.is_free && (
+              <Adsense
+                style={{
+                  display: "block",
+                  width: "100%",
+                }}
+                client="ca-pub-8443325162715161"
+                slot="6949415137"
+                format="auto"
+                responsive="true"
+              />
+            )}
 
             {election.voter_fields.length > 0 && (
               <Stack gap="sm">

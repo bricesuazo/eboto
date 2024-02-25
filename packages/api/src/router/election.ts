@@ -340,6 +340,11 @@ export const electionRouter = createTRPCRouter({
 
       if (!election) throw new Error("Election not found");
 
+      const is_free = election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID;
+      const date = new Date();
+      date.setMinutes(0);
+      date.setSeconds(0);
+
       const realtimeResult = await ctx.db.query.positions.findMany({
         where: (position, { eq, and, isNull }) =>
           and(
@@ -348,7 +353,10 @@ export const electionRouter = createTRPCRouter({
           ),
         orderBy: (position, { asc }) => asc(position.order),
         with: {
-          votes: true,
+          votes: {
+            where: (vote, { lte }) =>
+              is_free ? lte(vote.created_at, date) : undefined,
+          },
           candidates: {
             where: (candidate, { eq, and, isNull }) =>
               and(
@@ -357,6 +365,8 @@ export const electionRouter = createTRPCRouter({
               ),
             with: {
               votes: {
+                where: (vote, { lte }) =>
+                  is_free ? lte(vote.created_at, date) : undefined,
                 with: {
                   candidate: true,
                 },
@@ -373,26 +383,28 @@ export const electionRouter = createTRPCRouter({
 
       // make the candidate as "Candidate 1"... "Candidate N" if the election is ongoing
 
-      return realtimeResult.map((position) => ({
-        ...position,
-        votes: position.votes.length,
-        candidates: position.candidates
-          .sort((a, b) => b.votes.length - a.votes.length)
-          .map((candidate, index) => {
-            return {
-              id: candidate.id,
-              name:
-                !election.is_candidates_visible_in_realtime_when_ongoing &&
-                isElectionOngoing({ election }) &&
-                !isElectionEnded({ election })
-                  ? `Candidate ${index + 1}`
-                  : `${formatName(election.name_arrangement, candidate)} (${
-                      candidate.partylist.acronym
-                    })`,
-              vote: candidate.votes.length,
-            };
-          }),
-      }));
+      return {
+        positions: realtimeResult.map((position) => ({
+          ...position,
+          votes: position.votes.length,
+          candidates: position.candidates
+            .sort((a, b) => b.votes.length - a.votes.length)
+            .map((candidate, index) => {
+              return {
+                id: candidate.id,
+                name:
+                  !election.is_candidates_visible_in_realtime_when_ongoing &&
+                  isElectionOngoing({ election }) &&
+                  !isElectionEnded({ election })
+                    ? `Candidate ${index + 1}`
+                    : `${formatName(election.name_arrangement, candidate)} (${
+                        candidate.partylist.acronym
+                      })`,
+                vote: candidate.votes.length,
+              };
+            }),
+        })),
+      };
     }),
   getAllMyElections: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.query.commissioners
@@ -803,10 +815,19 @@ export const electionRouter = createTRPCRouter({
           message: "Election is not public",
         });
 
+      const date = new Date();
+      date.setMinutes(0);
+      date.setSeconds(0);
+
       const voters = await ctx.db.query.voters.findMany({
         where: (voters, { eq }) => eq(voters.election_id, input.election_id),
         with: {
-          votes: true,
+          votes: {
+            where: (vote, { lte }) =>
+              election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID
+                ? lte(vote.created_at, date)
+                : undefined,
+          },
         },
       });
 
@@ -1104,7 +1125,11 @@ export const electionRouter = createTRPCRouter({
     });
 
     return electionsAsCommissioner
-      .map((commissioner) => commissioner.election)
+      .map((commissioner) => ({
+        ...commissioner.election,
+        is_free:
+          commissioner.election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID,
+      }))
       .sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
   }),
   getMyElectionAsVoter: protectedProcedure.query(async ({ ctx }) => {
@@ -1211,6 +1236,12 @@ export const electionRouter = createTRPCRouter({
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Election not found",
+        });
+
+      if (election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID)
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You cannot send a message in a free election",
         });
 
       if (!election.commissioners.length)

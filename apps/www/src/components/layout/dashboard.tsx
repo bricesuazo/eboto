@@ -22,7 +22,7 @@ export default async function Dashboard(props: React.PropsWithChildren) {
         <Header userId={session.user.id} />
       </AppShellHeader>
 
-      <AppShellMain>{props.children} </AppShellMain>
+      <AppShellMain>{props.children}</AppShellMain>
       <AppShellFooter>
         <Footer />
       </AppShellFooter>

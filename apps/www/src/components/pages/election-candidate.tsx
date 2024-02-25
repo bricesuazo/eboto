@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { api } from "@/trpc/client";
+import { Adsense } from "@ctrl/react-adsense";
 import {
   Anchor,
   Box,
@@ -21,6 +22,7 @@ import moment from "moment";
 import type { RouterOutputs } from "@eboto/api";
 import { formatName } from "@eboto/constants";
 
+import AdModal from "../ad-modal";
 import MessageCommissioner from "../modals/message-commissioner";
 import MyMessagesElection from "../my-messages-election";
 
@@ -28,10 +30,12 @@ export default function ElectionCandidate({
   data,
   candidate_slug,
   election_slug,
+  is_free,
 }: {
   data: RouterOutputs["candidate"]["getPageData"];
   candidate_slug: string;
   election_slug: string;
+  is_free: boolean;
 }) {
   const {
     data: { candidate, election, isVoterCanMessage },
@@ -45,7 +49,7 @@ export default function ElectionCandidate({
 
   return (
     <>
-      {/* <AdModal /> */}
+      {is_free && <AdModal />}
       {isVoterCanMessage && <MyMessagesElection election_id={election.id} />}
 
       <Container py="xl" size="md" mb={80}>
@@ -96,16 +100,18 @@ export default function ElectionCandidate({
                 <MessageCommissioner election_id={election.id} />
               )}
 
-              {/* <Adsense
-                style={{
-                  display: "block",
-                  width: "100%",
-                }}
-                client="ca-pub-8443325162715161"
-                slot="6949415137"
-                format="auto"
-                responsive="true"
-              /> */}
+              {is_free && (
+                <Adsense
+                  style={{
+                    display: "block",
+                    width: "100%",
+                  }}
+                  client="ca-pub-8443325162715161"
+                  slot="6949415137"
+                  format="auto"
+                  responsive="true"
+                />
+              )}
 
               {candidate.platforms.length ? (
                 <Stack mt="xl" gap="xs">

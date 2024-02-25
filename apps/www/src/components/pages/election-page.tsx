@@ -8,6 +8,7 @@ import ElectionShowQRCode from "@/components/modals/election-show-qr-code";
 import ScrollToTopButton from "@/components/scroll-to-top";
 import classes from "@/styles/Election.module.css";
 import { api } from "@/trpc/client";
+import { Adsense } from "@ctrl/react-adsense";
 import {
   ActionIcon,
   Anchor,
@@ -45,15 +46,18 @@ import {
   parseHourTo12HourFormat,
 } from "@eboto/constants";
 
+import AdModal from "../ad-modal";
 import MessageCommissioner from "../modals/message-commissioner";
 import MyMessagesElection from "../my-messages-election";
 
 export default function ElectionPage({
   data,
   election_slug,
+  is_free,
 }: {
   data: RouterOutputs["election"]["getElectionPage"];
   election_slug: string;
+  is_free: boolean;
 }) {
   const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
@@ -111,7 +115,7 @@ export default function ElectionPage({
   }, [opened]);
   return (
     <>
-      {/* <AdModal /> */}
+      {is_free && <AdModal />}
       <ScrollToTopButton />
       {isVoterCanMessage && <MyMessagesElection election_id={election.id} />}
       <Modal
@@ -308,23 +312,24 @@ export default function ElectionPage({
               )}
               <ElectionShowQRCode election={election} />
             </Flex>
-            {isVoterCanMessage && (
+            {!is_free && isVoterCanMessage && (
               <Center mt="xs">
                 <MessageCommissioner election_id={election.id} />
               </Center>
             )}
           </Box>
-          {/* <Adsense
-            style={{
-              display: "block",
-              width: "100%",
-            }}
-            client="ca-pub-8443325162715161"
-            slot="6949415137"
-            format="auto"
-            responsive="true"
-          /> */}
-
+          {is_free && (
+            <Adsense
+              style={{
+                display: "block",
+                width: "100%",
+              }}
+              client="ca-pub-8443325162715161"
+              slot="6949415137"
+              format="auto"
+              responsive="true"
+            />
+          )}
           <Stack gap="xl" w="100%">
             {positions.length === 0 ? (
               <Text ta="center">

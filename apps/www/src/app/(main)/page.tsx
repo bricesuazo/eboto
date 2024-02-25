@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import ContactForm from "@/components/contact-form";
+import ElectionBoost from "@/components/modals/election-boost";
 import classes from "@/styles/Home.module.css";
 import {
   Accordion,
@@ -31,163 +32,167 @@ const ReactPlayer = dynamic(() => import("@/components/react-player"), {
 
 export default function HomePage() {
   return (
-    <Container size="md" pos="relative" pb={80}>
-      <Dots className={classes.dots} style={{ left: 0, top: 0 }} />
-      <Dots className={classes.dots} style={{ left: 60, top: 0 }} />
-      <Dots className={classes.dots} style={{ left: 0, top: 140 }} />
-      <Dots className={classes.dots} style={{ right: 0, top: 60 }} />
+    <>
+      <ElectionBoost />
+      <Container size="md" pos="relative" pb={80}>
+        <Dots className={classes.dots} style={{ left: 0, top: 0 }} />
+        <Dots className={classes.dots} style={{ left: 60, top: 0 }} />
+        <Dots className={classes.dots} style={{ left: 0, top: 140 }} />
+        <Dots className={classes.dots} style={{ right: 0, top: 60 }} />
 
-      <Stack gap={80}>
-        <Box pos="relative" py={156}>
-          <Title
-            ta={{ base: "left", sm: "center" }}
-            fz={{ base: "2.25rem", sm: "3rem" }}
-            mb="md"
-            lts={-1}
-            className={classes.title}
-          >
-            <Balancer>
-              Your{" "}
-              <Text component="span" className={classes.highlight} inherit>
-                One-Stop
-              </Text>{" "}
-              Online Voting Solution
-            </Balancer>
-          </Title>
-
-          <Container p={0} size="md">
-            <Text
-              fz={{ base: "md", sm: "lg", md: "xl" }}
+        <Stack gap={80}>
+          <Box pos="relative" py={156}>
+            <Title
               ta={{ base: "left", sm: "center" }}
+              fz={{ base: "2.25rem", sm: "3rem" }}
+              mb="md"
+              lts={-1}
+              className={classes.title}
             >
               <Balancer>
-                Empower your elections with eBoto, the versatile and web-based
-                voting platform that offers secure online elections for any type
-                of organization.
+                Your{" "}
+                <Text component="span" className={classes.highlight} inherit>
+                  One-Stop
+                </Text>{" "}
+                Online Voting Solution
+              </Balancer>
+            </Title>
+
+            <Container p={0} size="md">
+              <Text
+                fz={{ base: "md", sm: "lg", md: "xl" }}
+                ta={{ base: "left", sm: "center" }}
+              >
+                <Balancer>
+                  Empower your elections with eBoto, the versatile and web-based
+                  voting platform that offers secure online elections for any
+                  type of organization.
+                </Balancer>
+              </Text>
+            </Container>
+
+            <Flex
+              justify="center"
+              mt="lg"
+              gap="sm"
+              direction={{ base: "column", sm: "row" }}
+            >
+              <Button
+                component={Link}
+                href="/sign-in"
+                className={classes.control}
+                size="md"
+                variant="outline"
+              >
+                Sign in
+              </Button>
+              <Button
+                component={Link}
+                href="/register"
+                className={classes.control}
+                size="md"
+              >
+                Get started
+              </Button>
+            </Flex>
+          </Box>
+
+          <Stack gap="xl" id="what">
+            <Title order={2} ta="center">
+              <Balancer>Ano ang eBoto? (What is eBoto?)</Balancer>
+            </Title>
+
+            <Box className={classes.playerContainer}>
+              <ReactPlayer
+                url="https://www.youtube.com/watch?v=BKud553RTbk"
+                width="100%"
+                height="100%"
+                controls
+              />
+            </Box>
+          </Stack>
+
+          {/* <Box id="public-elections">
+            <PublicElections />
+          </Box> */}
+          <Flex direction="column" gap="md">
+            <MainPricing />
+          </Flex>
+
+          <Center>
+            <Button
+              variant="default"
+              component={Link}
+              href="/pricing"
+              size="lg"
+              radius="xl"
+              rightSection={<IconArrowRight />}
+            >
+              View all pricing
+            </Button>
+          </Center>
+
+          <SimpleGrid id="faq" cols={{ base: 1, sm: 2 }} pos="relative">
+            <Box
+              top={60}
+              style={{
+                aspectRatio: "3/2",
+              }}
+              pos={{ base: "inherit", sm: "sticky" }}
+            >
+              <Image
+                src="/images/faq.svg"
+                fill
+                alt="Frequently Asked Questions"
+                style={{
+                  userSelect: "none",
+                  pointerEvents: "none",
+                  zIndex: -1,
+                }}
+              />
+            </Box>
+
+            <Box>
+              <Title order={2} ta="left" p="md" visibleFrom="sm">
+                Frequently Asked Questions
+              </Title>
+              <Title order={2} ta="center" p="md" hiddenFrom="sm">
+                Frequently Asked Questions
+              </Title>
+
+              <Accordion
+                chevronPosition="right"
+                defaultValue={FAQs[0]?.id ?? ""}
+                variant="separated"
+              >
+                {FAQs.map((item) => (
+                  <AccordionItem key={item.id} value={item.id}>
+                    <AccordionControl>{item.question}</AccordionControl>
+                    <AccordionPanel>{item.answer}</AccordionPanel>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </Box>
+          </SimpleGrid>
+
+          <Box id="contact">
+            <ContactForm />
+          </Box>
+
+          <Stack gap="xs" className={classes.cta}>
+            <Title ta="center">
+              <Balancer>Ready to get started?</Balancer>
+            </Title>
+            <Text ta="center" fz="lg">
+              <Balancer>
+                Create your free account today and start voting online in
+                minutes.
               </Balancer>
             </Text>
-          </Container>
-
-          <Flex
-            justify="center"
-            mt="lg"
-            gap="sm"
-            direction={{ base: "column", sm: "row" }}
-          >
-            <Button
-              component={Link}
-              href="/sign-in"
-              className={classes.control}
-              size="md"
-              variant="outline"
-            >
-              Sign in
-            </Button>
-            <Button
-              component={Link}
-              href="/register"
-              className={classes.control}
-              size="md"
-            >
-              Get started
-            </Button>
-          </Flex>
-        </Box>
-
-        <Stack gap="xl" id="what">
-          <Title order={2} ta="center">
-            <Balancer>Ano ang eBoto? (What is eBoto?)</Balancer>
-          </Title>
-
-          <Box className={classes.playerContainer}>
-            <ReactPlayer
-              url="https://www.youtube.com/watch?v=BKud553RTbk"
-              width="100%"
-              height="100%"
-              controls
-            />
-          </Box>
+          </Stack>
         </Stack>
-
-        {/* <Box id="public-elections">
-          <PublicElections />
-        </Box> */}
-        <Flex direction="column" gap="md">
-          <MainPricing />
-        </Flex>
-
-        <Center>
-          <Button
-            variant="default"
-            component={Link}
-            href="/pricing"
-            size="lg"
-            radius="xl"
-            rightSection={<IconArrowRight />}
-          >
-            View all pricing
-          </Button>
-        </Center>
-
-        <SimpleGrid id="faq" cols={{ base: 1, sm: 2 }} pos="relative">
-          <Box
-            top={60}
-            style={{
-              aspectRatio: "3/2",
-            }}
-            pos={{ base: "inherit", sm: "sticky" }}
-          >
-            <Image
-              src="/images/faq.svg"
-              fill
-              alt="Frequently Asked Questions"
-              style={{
-                userSelect: "none",
-                pointerEvents: "none",
-                zIndex: -1,
-              }}
-            />
-          </Box>
-
-          <Box>
-            <Title order={2} ta="left" p="md" visibleFrom="sm">
-              Frequently Asked Questions
-            </Title>
-            <Title order={2} ta="center" p="md" hiddenFrom="sm">
-              Frequently Asked Questions
-            </Title>
-
-            <Accordion
-              chevronPosition="right"
-              defaultValue={FAQs[0]?.id ?? ""}
-              variant="separated"
-            >
-              {FAQs.map((item) => (
-                <AccordionItem key={item.id} value={item.id}>
-                  <AccordionControl>{item.question}</AccordionControl>
-                  <AccordionPanel>{item.answer}</AccordionPanel>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </Box>
-        </SimpleGrid>
-
-        <Box id="contact">
-          <ContactForm />
-        </Box>
-
-        <Stack gap="xs" className={classes.cta}>
-          <Title ta="center">
-            <Balancer>Ready to get started?</Balancer>
-          </Title>
-          <Text ta="center" fz="lg">
-            <Balancer>
-              Create your free account today and start voting online in minutes.
-            </Balancer>
-          </Text>
-        </Stack>
-      </Stack>
-    </Container>
+      </Container>
+    </>
   );
 }
 
