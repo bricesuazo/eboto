@@ -91,6 +91,8 @@ import { z } from "zod";
 
 import { electionDashboardNavbar, isElectionOngoing } from "@eboto/constants";
 
+import BoostCard from "../boost-card";
+
 export interface ChatType {
   type: "admin" | "voters";
   id: string;
@@ -101,8 +103,12 @@ export interface ChatType {
 export default function DashboardElection({
   children,
   userId,
+  is_free,
+  election_id,
 }: React.PropsWithChildren<{
   userId?: string;
+  is_free: boolean;
+  election_id: string;
 }>) {
   const router = useRouter();
   const params = useParams();
@@ -170,8 +176,6 @@ export default function DashboardElection({
     },
   });
   const store = useStore();
-
-  // const isBoosted = false;
 
   const form = useForm({
     initialValues: {
@@ -336,11 +340,11 @@ export default function DashboardElection({
           {/* <ScrollArea p="md" scrollHideDelay={0}> */}
           <Stack justify="space-between">
             <Stack>
-              {/* {isBoosted ? ( */}
-              <CreateElection style={{ width: "100%" }} />
-              {/* ) : (
-                <BoostCard />
-              )} */}
+              {!is_free ? (
+                <CreateElection style={{ width: "100%" }} />
+              ) : (
+                <BoostCard election_id={election_id} />
+              )}
 
               <Divider />
 

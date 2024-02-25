@@ -444,7 +444,7 @@ export default function CreateElection({
               <Button
                 variant="default"
                 mr={2}
-                onClick={close}
+                onClick={closeCreateElection}
                 disabled={createElectionMutation.isPending}
               >
                 Cancel

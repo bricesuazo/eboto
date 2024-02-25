@@ -1,5 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import DashboardElection from "@/components/layout/dashboard-election";
+import { env } from "env.mjs";
 
 import { auth } from "@eboto/auth";
 import { db } from "@eboto/db";
@@ -32,7 +33,11 @@ export default async function DashboardLayout(
   if (!election || election.commissioners.length === 0) notFound();
 
   return (
-    <DashboardElection userId={session.user.id}>
+    <DashboardElection
+      userId={session.user.id}
+      is_free={election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID}
+      election_id={election.id}
+    >
       {props.children}
     </DashboardElection>
   );

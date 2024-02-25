@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useStore } from "@/store";
 import { api } from "@/trpc/client";
 import {
   Alert,
@@ -18,9 +18,8 @@ import {
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { IconAlertCircle, IconMail, IconRocket } from "@tabler/icons-react";
+import { IconAlertCircle, IconRocket } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 
 import { PRICING } from "@eboto/constants";
@@ -30,14 +29,14 @@ import KeyFeatures from "../key-features";
 export default function ElectionBoost({
   value: initialValue,
 }: {
-  value: number;
+  value?: number;
 }) {
   const router = useRouter();
   const session = useSession();
   const [isRedirecting, setIsRedirecting] = useState(false);
-  const [opened, { open, close }] = useDisclosure(false);
+  const store = useStore();
   const electionsQuery = api.election.getAllMyElections.useQuery(undefined, {
-    enabled: session.status === "authenticated" && opened,
+    enabled: session.status === "authenticated" && store.electionBoost,
   });
 
   const boostMutation = api.payment.boost.useMutation({
@@ -60,7 +59,7 @@ export default function ElectionBoost({
     price: number;
   }>({
     initialValues: {
-      price: initialValue,
+      price: initialValue ?? 0,
     },
     validate: {
       election_id: (value) => {
@@ -77,16 +76,22 @@ export default function ElectionBoost({
   });
 
   useEffect(() => {
-    form.setFieldValue("price", (initialValue / 20) * 25);
+    if (!store.electionBoostElectionId) return;
+
+    form.setFieldValue("election_id", store.electionBoostElectionId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [store.electionBoostElectionId]);
+  useEffect(() => {
+    form.setFieldValue("price", ((initialValue ?? 0) / 20) * 25);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialValue]);
 
   useEffect(() => {
-    if (opened) {
+    if (store.electionBoost) {
       boostMutation.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [opened]);
+  }, [store.electionBoost]);
 
   const PRICING_WITHOUT_UNLI = PRICING.slice(0, 5).map((item, index) => ({
     ...item,
@@ -94,168 +99,128 @@ export default function ElectionBoost({
   }));
 
   return (
-    <>
-      {form.values.price > 100 ? (
-        <Button
-          size="lg"
-          radius="xl"
-          variant="gradient"
-          w="100%"
-          disabled={boostMutation.isPending}
-          component={Link}
-          href="/contact"
-          rightSection={<IconMail />}
-        >
-          Contact Us
-        </Button>
-      ) : session.status === "authenticated" ? (
-        <Button
-          size="lg"
-          radius="xl"
-          variant="gradient"
-          w="100%"
-          onClick={open}
-          disabled={boostMutation.isPending || isRedirecting}
-          rightSection={!isRedirecting ? <IconRocket /> : undefined}
-        >
-          {isRedirecting ? "Redirecting..." : "Get Boost"}
-        </Button>
-      ) : (
-        <Button
-          size="lg"
-          radius="xl"
-          variant="gradient"
-          w="100%"
-          disabled={boostMutation.isPending || session.status === "loading"}
-          component={Link}
-          href="/sign-in"
-          loading={session.status === "loading"}
-          rightSection={<IconRocket />}
-        >
-          Get Boost
-        </Button>
-      )}
-
-      <Modal
-        opened={opened || boostMutation.isPending || isRedirecting}
-        onClose={close}
-        title={<Text fw={600}>Get Your Election Boosted!</Text>}
+    <Modal
+      opened={store.electionBoost || boostMutation.isPending || isRedirecting}
+      onClose={() => store.toggleElectionBoost(false)}
+      title={<Text fw={600}>Get Your Election Boosted!</Text>}
+    >
+      <form
+        onSubmit={form.onSubmit((values) =>
+          values.election_id
+            ? boostMutation.mutate({
+                election_id: values.election_id,
+                price: values.price,
+              })
+            : undefined,
+        )}
       >
-        <form
-          onSubmit={form.onSubmit((values) =>
-            values.election_id
-              ? boostMutation.mutate({
-                  election_id: values.election_id,
-                  price: values.price,
-                })
-              : undefined,
-          )}
-        >
-          <Flex direction="column" align="center" justify="center">
-            <Title>
-              <NumberFormatter
-                prefix="₱ "
-                value={
-                  499 +
-                  (PRICING_WITHOUT_UNLI.find(
-                    (item) => item.value === form.values.price,
-                  )?.price_added ?? 0)
-                }
-                fixedDecimalScale
-                decimalScale={2}
-              />
-            </Title>
-            <Text>
-              with up to{" "}
-              <NumberFormatter
-                value={
-                  PRICING_WITHOUT_UNLI.find(
-                    (item) => item.value === form.values.price,
-                  )?.label
-                }
-                thousandSeparator
-              />{" "}
-              voters
-            </Text>
-          </Flex>
+        <Flex direction="column" align="center" justify="center">
+          <Title>
+            <NumberFormatter
+              prefix="₱ "
+              value={
+                499 +
+                (PRICING_WITHOUT_UNLI.find(
+                  (item) => item.value === form.values.price,
+                )?.price_added ?? 0)
+              }
+              fixedDecimalScale
+              decimalScale={2}
+            />
+          </Title>
+          <Text>
+            with up to{" "}
+            <NumberFormatter
+              value={
+                PRICING_WITHOUT_UNLI.find(
+                  (item) => item.value === form.values.price,
+                )?.label
+              }
+              thousandSeparator
+            />{" "}
+            voters
+          </Text>
+        </Flex>
 
-          <Slider
-            px={{ xs: "xl" }}
-            mt="xl"
-            mb="md"
-            thumbSize={20}
-            step={25}
-            label={(value) => (
-              <NumberFormatter
-                value={
-                  PRICING_WITHOUT_UNLI.find((item) => item.value === value)
-                    ?.label
-                }
-                thousandSeparator
-              />
-            )}
-            marks={PRICING_WITHOUT_UNLI.map((item) => ({
-              value: item.value,
-            }))}
-            {...form.getInputProps("price")}
+        <Slider
+          px={{ xs: "xl" }}
+          mt="xl"
+          mb="md"
+          thumbSize={20}
+          step={25}
+          label={(value) => (
+            <NumberFormatter
+              value={
+                PRICING_WITHOUT_UNLI.find((item) => item.value === value)?.label
+              }
+              thousandSeparator
+            />
+          )}
+          marks={PRICING_WITHOUT_UNLI.map((item) => ({
+            value: item.value,
+          }))}
+          {...form.getInputProps("price")}
+        />
+
+        <Box w="fit-content" mb="xl" mx="auto">
+          <KeyFeatures isModal />
+        </Box>
+
+        <Stack gap="sm">
+          <Select
+            label="Election"
+            ta="center"
+            placeholder="Select election"
+            withAsterisk
+            size="md"
+            data={
+              electionsQuery.data?.map(({ election }) => ({
+                value: election.id,
+                label: election.name,
+              })) ?? []
+            }
+            disabled={electionsQuery.isLoading || boostMutation.isPending}
+            {...form.getInputProps("election_id")}
           />
 
-          <Box w="fit-content" mb="xl" mx="auto">
-            <KeyFeatures isModal />
-          </Box>
-
-          <Stack gap="sm">
-            <Select
-              label="Election"
-              ta="center"
-              placeholder="Select election"
-              withAsterisk
-              size="md"
-              data={
-                electionsQuery.data?.map(({ election }) => ({
-                  value: election.id,
-                  label: election.name,
-                })) ?? []
+          {boostMutation.isError && (
+            <Alert
+              icon={<IconAlertCircle size="1rem" />}
+              title="Error"
+              color="red"
+            >
+              {boostMutation.error.message}
+            </Alert>
+          )}
+          <Flex mt="xl" direction="column" align="center" gap="xs">
+            <Button
+              type="submit"
+              variant="gradient"
+              size="xl"
+              radius="xl"
+              disabled={!form.isValid() || isRedirecting}
+              loading={boostMutation.isPending}
+              rightSection={
+                !isRedirecting ? <IconRocket size="1.75rem" /> : undefined
               }
-              disabled={electionsQuery.isLoading || boostMutation.isPending}
-              {...form.getInputProps("election_id")}
-            />
-
-            {boostMutation.isError && (
-              <Alert
-                icon={<IconAlertCircle size="1rem" />}
-                title="Error"
-                color="red"
-              >
-                {boostMutation.error.message}
-              </Alert>
-            )}
-            <Flex mt="xl" direction="column" align="center" gap="xs">
-              <Button
-                type="submit"
-                variant="gradient"
-                size="xl"
-                radius="xl"
-                disabled={!form.isValid() || isRedirecting}
-                loading={boostMutation.isPending}
-                rightSection={
-                  !isRedirecting ? <IconRocket size="1.75rem" /> : undefined
-                }
-              >
-                {isRedirecting ? "Redirecting..." : "Get Boost!"}
-              </Button>
-              <Button
-                variant="subtle"
-                radius="xl"
-                onClick={close}
-                disabled={boostMutation.isPending || isRedirecting}
-              >
-                Close
-              </Button>
-            </Flex>
-          </Stack>
-        </form>
-      </Modal>
-    </>
+            >
+              {isRedirecting ? "Redirecting..." : "Get Boost!"}
+            </Button>
+            <Button
+              variant="subtle"
+              radius="xl"
+              onClick={
+                boostMutation.isPending || isRedirecting
+                  ? undefined
+                  : () => store.toggleElectionBoost(false)
+              }
+              disabled={boostMutation.isPending || isRedirecting}
+            >
+              Close
+            </Button>
+          </Flex>
+        </Stack>
+      </form>
+    </Modal>
   );
 }
