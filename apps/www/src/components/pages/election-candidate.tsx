@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { api } from "@/trpc/client";
+import { Adsense } from "@ctrl/react-adsense";
 import {
   Anchor,
   Box,
@@ -99,16 +100,18 @@ export default function ElectionCandidate({
                 <MessageCommissioner election_id={election.id} />
               )}
 
-              {/* <Adsense
-                style={{
-                  display: "block",
-                  width: "100%",
-                }}
-                client="ca-pub-8443325162715161"
-                slot="6949415137"
-                format="auto"
-                responsive="true"
-              /> */}
+              {is_free && (
+                <Adsense
+                  style={{
+                    display: "block",
+                    width: "100%",
+                  }}
+                  client="ca-pub-8443325162715161"
+                  slot="6949415137"
+                  format="auto"
+                  responsive="true"
+                />
+              )}
 
               {candidate.platforms.length ? (
                 <Stack mt="xl" gap="xs">

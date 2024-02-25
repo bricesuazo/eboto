@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import ScrollToTopButton from "@/components/scroll-to-top";
 import { api } from "@/trpc/client";
+import { Adsense } from "@ctrl/react-adsense";
 import {
   Box,
   Button,
@@ -147,16 +148,18 @@ export default function Realtime({
               )}
             </Stack>
           </Center>
-          {/* <Adsense
-            style={{
-              display: "block",
-              width: "100%",
-            }}
-            client="ca-pub-8443325162715161"
-            slot="6949415137"
-            format="auto"
-            responsive="true"
-          /> */}
+          {election.is_free && (
+            <Adsense
+              style={{
+                display: "block",
+                width: "100%",
+              }}
+              client="ca-pub-8443325162715161"
+              slot="6949415137"
+              format="auto"
+              responsive="true"
+            />
+          )}
 
           <Stack gap="xl">
             <SimpleGrid
@@ -232,16 +235,18 @@ export default function Realtime({
               ))}
             </SimpleGrid>
 
-            {/* <Adsense
-              style={{
-                display: "block",
-                width: "100%",
-              }}
-              client="ca-pub-8443325162715161"
-              slot="6949415137"
-              format="auto"
-              responsive="true"
-            /> */}
+            {election.is_free && (
+              <Adsense
+                style={{
+                  display: "block",
+                  width: "100%",
+                }}
+                client="ca-pub-8443325162715161"
+                slot="6949415137"
+                format="auto"
+                responsive="true"
+              />
+            )}
 
             {election.voter_fields.length > 0 && (
               <Stack gap="sm">

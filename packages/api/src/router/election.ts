@@ -1215,6 +1215,12 @@ export const electionRouter = createTRPCRouter({
           message: "Election not found",
         });
 
+      if (election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID)
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You cannot send a message in a free election",
+        });
+
       if (!election.commissioners.length)
         throw new TRPCError({
           code: "BAD_REQUEST",
