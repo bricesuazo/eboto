@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import ScrollToTopButton from "@/components/scroll-to-top";
@@ -41,6 +42,11 @@ import AdModal from "../ad-modal";
 import MessageCommissioner from "../modals/message-commissioner";
 import MyMessagesElection from "../my-messages-election";
 
+const date = new Date();
+const rounded_off_date = new Date();
+rounded_off_date.setMinutes(0);
+rounded_off_date.setSeconds(0);
+
 export default function Realtime({
   positions,
   election,
@@ -50,10 +56,11 @@ export default function Realtime({
   election: Election & { voter_fields: VoterField[]; is_free: boolean };
   isVoterCanMessage: boolean;
 }) {
+  const [time, setTime] = useState(!election.is_free ? date : rounded_off_date);
   const positionsQuery = api.election.getElectionRealtime.useQuery(
     election.slug,
     {
-      refetchInterval: 1000,
+      refetchInterval: !election.is_free ? 1000 : false,
       initialData: positions,
       enabled: !election.is_free,
       refetchOnMount: true,
@@ -75,6 +82,16 @@ export default function Realtime({
         refetchOnReconnect: true,
       },
     );
+
+  useEffect(() => {
+    if (election.is_free) return;
+
+    const interval = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [election.is_free]);
 
   return (
     <>
@@ -127,7 +144,7 @@ export default function Realtime({
                   <Text ta="center" size="xs" c="dimmed">
                     <Balancer>
                       Realtime result as of{" "}
-                      {moment(new Date()).format("MMMM Do YYYY, h:mm:ss A")}
+                      {moment(time).format("MMMM Do YYYY, h:mm:ss A")}
                     </Balancer>
                   </Text>
                 )}

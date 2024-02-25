@@ -340,6 +340,11 @@ export const electionRouter = createTRPCRouter({
 
       if (!election) throw new Error("Election not found");
 
+      const is_free = election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID;
+      const date = new Date();
+      date.setMinutes(0);
+      date.setSeconds(0);
+
       const realtimeResult = await ctx.db.query.positions.findMany({
         where: (position, { eq, and, isNull }) =>
           and(
@@ -348,7 +353,10 @@ export const electionRouter = createTRPCRouter({
           ),
         orderBy: (position, { asc }) => asc(position.order),
         with: {
-          votes: true,
+          votes: {
+            where: (vote, { lte }) =>
+              is_free ? lte(vote.created_at, date) : undefined,
+          },
           candidates: {
             where: (candidate, { eq, and, isNull }) =>
               and(
@@ -357,6 +365,8 @@ export const electionRouter = createTRPCRouter({
               ),
             with: {
               votes: {
+                where: (vote, { lte }) =>
+                  is_free ? lte(vote.created_at, date) : undefined,
                 with: {
                   candidate: true,
                 },
