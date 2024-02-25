@@ -75,7 +75,7 @@ export default function CreateElection({
   const createElectionMutation = api.election.create.useMutation({
     onSuccess: () => {
       router.push(`/dashboard/${formCreateElection.values.slug}`);
-      close();
+      closeCreateElection();
       notifications.show({
         title: "Election created!",
         message: "Successfully created election",
