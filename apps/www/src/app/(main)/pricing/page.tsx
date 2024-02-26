@@ -275,6 +275,8 @@ export function MainPricing({
   const [isRedirecting, setIsRedirecting] = useState(false);
   const plusMutation = api.payment.plus.useMutation({
     onSuccess: (url) => {
+      if (!url) return;
+
       setIsRedirecting(true);
       router.push(url);
     },

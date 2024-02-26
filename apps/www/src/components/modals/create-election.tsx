@@ -59,6 +59,8 @@ export default function CreateElection({
     api.election.getElectionsPlusLeft.useQuery();
   const plusMutation = api.payment.plus.useMutation({
     onSuccess: (url) => {
+      if (!url) return;
+
       setIsRedirecting(true);
       router.push(url);
     },

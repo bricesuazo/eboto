@@ -41,6 +41,8 @@ export default function ElectionBoost({
 
   const boostMutation = api.payment.boost.useMutation({
     onSuccess: (url) => {
+      if (!url) return;
+
       setIsRedirecting(true);
       router.push(url);
     },

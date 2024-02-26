@@ -1,7 +1,7 @@
-import { LemonSqueezy } from "@lemonsqueezy/lemonsqueezy.js";
+import { lemonSqueezySetup } from "@lemonsqueezy/lemonsqueezy.js";
 
 import { env } from "./env.mjs";
 
-export const payment = new LemonSqueezy(env.LEMONSQUEEZY_API_KEY);
+lemonSqueezySetup({ apiKey: env.LEMONSQUEEZY_API_KEY });
 
-export type { LemonSqueezy };
+export * from "@lemonsqueezy/lemonsqueezy.js";

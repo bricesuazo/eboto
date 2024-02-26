@@ -24,7 +24,7 @@
     "@eboto/eslint-config": "0.0.0",
     "@eboto/prettier-config": "0.0.0",
     "@eboto/tsconfig": "0.0.0",
-    "@types/node": "^20.11.19",
+    "@types/node": "^20.11.20",
     "dotenv-cli": "^7.3.0",
     "drizzle-kit": "0.20.14",
     "typescript": "^5.3.3"

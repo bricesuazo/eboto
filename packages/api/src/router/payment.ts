@@ -43,26 +43,22 @@ export const paymentRouter = createTRPCRouter({
         });
 
       const checkout = await ctx.payment
-        .createCheckout({
-          storeId: env.LEMONSQUEEZY_STORE_ID,
-          variantId: boost.id,
-          attributes: {
-            product_options: {
-              redirect_url: env.APP_URL + "/dashboard/" + election.slug,
-              receipt_link_url: env.APP_URL + "/account/billing",
-            },
-            checkout_data: {
-              email: ctx.session.user.email?.length
-                ? ctx.session.user.email
-                : undefined,
-              name: ctx.session.user.name?.length
-                ? ctx.session.user.name
-                : undefined,
-              custom: {
-                user_id: ctx.session.user.id,
-                election_id: input.election_id,
-                type: "boost",
-              },
+        .createCheckout(env.LEMONSQUEEZY_STORE_ID, boost.id, {
+          productOptions: {
+            redirectUrl: env.APP_URL + "/dashboard/" + election.slug,
+            receiptLinkUrl: env.APP_URL + "/account/billing",
+          },
+          checkoutData: {
+            email: ctx.session.user.email?.length
+              ? ctx.session.user.email
+              : undefined,
+            name: ctx.session.user.name?.length
+              ? ctx.session.user.name
+              : undefined,
+            custom: {
+              user_id: ctx.session.user.id,
+              election_id: input.election_id,
+              type: "boost",
             },
           },
         })
@@ -74,7 +70,7 @@ export const paymentRouter = createTRPCRouter({
           });
         });
 
-      return checkout.data.attributes.url;
+      return checkout.data?.data.attributes.url;
     }),
   plus: protectedProcedure
     .input(
@@ -84,24 +80,24 @@ export const paymentRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const checkout = await ctx.payment
-        .createCheckout({
-          storeId: env.LEMONSQUEEZY_STORE_ID,
-          variantId: env.LEMONSQUEEZY_PLUS_VARIANT_ID,
-          attributes: {
-            product_options: {
-              redirect_url: env.APP_URL + "/dashboard",
-              receipt_link_url: env.APP_URL + "/account/billing",
+        .createCheckout(
+          env.LEMONSQUEEZY_STORE_ID,
+          env.LEMONSQUEEZY_PLUS_VARIANT_ID,
+          {
+            productOptions: {
+              redirectUrl: env.APP_URL + "/dashboard",
+              receiptLinkUrl: env.APP_URL + "/account/billing",
             },
-            checkout_data: {
+            checkoutData: {
               email: ctx.session.user.email?.length
                 ? ctx.session.user.email
                 : undefined,
               name: ctx.session.user.name?.length
                 ? ctx.session.user.name
                 : undefined,
-              variant_quantities: [
+              variantQuantities: [
                 {
-                  variant_id: env.LEMONSQUEEZY_PLUS_VARIANT_ID,
+                  variantId: env.LEMONSQUEEZY_PLUS_VARIANT_ID,
                   quantity: input.quantity,
                 },
               ],
@@ -111,7 +107,7 @@ export const paymentRouter = createTRPCRouter({
               },
             },
           },
-        })
+        )
         .catch((err) => {
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
@@ -120,6 +116,6 @@ export const paymentRouter = createTRPCRouter({
           });
         });
 
-      return checkout.data.attributes.url;
+      return checkout.data?.data.attributes.url;
     }),
 });

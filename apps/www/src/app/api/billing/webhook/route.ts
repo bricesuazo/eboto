@@ -130,7 +130,6 @@ export async function POST(req: Request) {
     }
 
     const payload = JSON.parse(rawBody) as WebhookPayload;
-    console.log("🚀 ~ POST ~ payload:", rawBody);
 
     switch (payload.meta.event_name) {
       case "order_created":
