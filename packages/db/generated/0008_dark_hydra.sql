@@ -1,0 +1,1 @@
+DROP INDEX `electionSlug_idx` ON `election`;
