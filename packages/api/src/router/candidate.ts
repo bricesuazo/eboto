@@ -193,7 +193,8 @@ export const candidateRouter = createTRPCRouter({
               description: platform.description,
               candidate_id: input.id,
             })
-            .onDuplicateKeyUpdate({
+            .onConflictDoUpdate({
+              target: platforms.id,
               set: {
                 title: platform.title,
                 description: platform.description,
@@ -212,7 +213,8 @@ export const candidateRouter = createTRPCRouter({
               end_year: affiliation.end_year,
               credential_id: input.credential_id,
             })
-            .onDuplicateKeyUpdate({
+            .onConflictDoUpdate({
+              target: affiliations.id,
               set: {
                 org_name: affiliation.org_name,
                 org_position: affiliation.org_position,
@@ -232,7 +234,8 @@ export const candidateRouter = createTRPCRouter({
               year: achievement.year,
               credential_id: input.credential_id,
             })
-            .onDuplicateKeyUpdate({
+            .onConflictDoUpdate({
+              target: achievements.id,
               set: {
                 name: achievement.name,
                 year: achievement.year,
@@ -250,7 +253,8 @@ export const candidateRouter = createTRPCRouter({
               year: event.year,
               credential_id: input.credential_id,
             })
-            .onDuplicateKeyUpdate({
+            .onConflictDoUpdate({
+              target: events_attended.id,
               set: {
                 name: event.name,
                 year: event.year,

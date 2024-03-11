@@ -4,18 +4,17 @@
   "main": "./index.ts",
   "types": "./index.ts",
   "scripts": {
-    "db:push": "pnpm with-env drizzle-kit push:mysql -- --verbose",
+    "db:push": "pnpm with-env drizzle-kit push:pg -- --verbose",
     "db:studio": "pnpm with-env drizzle-kit studio --verbose",
     "db:seed": "pnpm with-env tsx ./seed.ts",
-    "db:generate": "pnpm with-env drizzle-kit generate:mysql",
+    "db:generate": "pnpm with-env drizzle-kit generate:pg",
     "clean": "rm -rf .turbo node_modules",
     "with-env": "dotenv -e ../../.env.local --"
   },
   "dependencies": {
     "@auth/core": "^0.27.0",
-    "@planetscale/database": "^1.16.0",
-    "drizzle-orm": "0.29.4",
-    "mysql2": "^3.9.1",
+    "@neondatabase/serverless": "^0.9.0",
+    "drizzle-orm": "0.30.1",
     "nanoid": "^5.0.6",
     "tsx": "^4.7.1",
     "uploadthing": "^6.4.1"

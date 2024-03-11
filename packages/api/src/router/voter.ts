@@ -403,7 +403,7 @@ export const voterRouter = createTRPCRouter({
       if (!commissioner) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       await ctx.db.transaction(async (db) => {
-        const isElectionExists = await ctx.db.query.elections.findFirst({
+        const isElectionExists = await db.query.elections.findFirst({
           where: (elections, { eq }) => eq(elections.id, input.election_id),
           with: {
             commissioners: {
@@ -418,7 +418,7 @@ export const voterRouter = createTRPCRouter({
         if (isElectionExists.commissioners.length === 0)
           throw new Error("Unauthorized");
 
-        const voters_length = await ctx.db.query.voters.findMany({
+        const voters_length = await db.query.voters.findMany({
           where: (voter, { eq, and, isNull }) =>
             and(
               eq(voter.election_id, input.election_id),
@@ -432,7 +432,6 @@ export const voterRouter = createTRPCRouter({
         const variant = data.products
           .flatMap((product) => product.variants)
           .find((variant) => variant.id === isElectionExists.variant_id);
-
         if (!variant) throw new TRPCError({ code: "NOT_FOUND" });
 
         if (voters_length.length >= variant.voters)

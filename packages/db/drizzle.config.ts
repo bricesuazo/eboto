@@ -6,9 +6,9 @@ if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is not set");
 }
 export default {
-  driver: "mysql2",
+  driver: "pg",
   dbCredentials: {
-    uri: process.env.DATABASE_URL,
+    connectionString: process.env.DATABASE_URL,
   },
   schema: "./schema",
   out: "./generated",

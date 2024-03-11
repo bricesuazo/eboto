@@ -2,18 +2,17 @@ import type { AdapterAccount } from "@auth/core/adapters";
 import { sql } from "drizzle-orm";
 import {
   boolean,
-  date,
   foreignKey,
   index,
-  int,
+  integer,
   json,
-  mysqlEnum,
-  mysqlTable,
+  pgEnum,
+  pgTable,
   primaryKey,
   text,
   timestamp,
   varchar,
-} from "drizzle-orm/mysql-core";
+} from "drizzle-orm/pg-core";
 import { nanoid } from "nanoid";
 import type { UploadFileResponse } from "uploadthing/client";
 
@@ -25,10 +24,7 @@ const created_at = timestamp("created_at")
   .default(sql`CURRENT_TIMESTAMP`)
   .notNull();
 const deleted_at = timestamp("deleted_at");
-const updated_at = timestamp("updated_at")
-  .default(sql`CURRENT_TIMESTAMP`)
-  .onUpdateNow()
-  .notNull();
+const updated_at = timestamp("updated_at").defaultNow().notNull();
 const election_id = varchar("election_id", { length: 256 })
   .references(() => elections.id, { onDelete: "cascade" })
   .notNull();
@@ -56,18 +52,20 @@ type File = Pick<
   "key" | "name" | "size" | "url"
 >;
 
-export const elections = mysqlTable(
+export const publicityEnum = pgEnum("publicity", publicity);
+
+export const elections = pgTable(
   "election",
   {
     id,
     slug: varchar("slug", { length: 256 }).notNull().unique(),
     name: text("name").notNull(),
     description: text("description").notNull().default(""),
-    start_date: date("start_date").notNull(),
-    end_date: date("end_date").notNull(),
-    voting_hour_start: int("voting_hour_start").notNull().default(7),
-    voting_hour_end: int("voting_hour_end").notNull().default(19),
-    publicity: mysqlEnum("publicity", publicity).default("PRIVATE").notNull(),
+    start_date: timestamp("start_date", { mode: "date" }).notNull(),
+    end_date: timestamp("end_date", { mode: "date" }).notNull(),
+    voting_hour_start: integer("voting_hour_start").notNull().default(7),
+    voting_hour_end: integer("voting_hour_end").notNull().default(19),
+    publicity: publicityEnum("publicity").default("PRIVATE").notNull(),
     logo: json("logo").$type<File>(),
     voter_domain: text("voter_domain"),
     is_candidates_visible_in_realtime_when_ongoing: boolean(
@@ -75,8 +73,8 @@ export const elections = mysqlTable(
     )
       .default(false)
       .notNull(),
-    name_arrangement: int("name_arrangement").default(0).notNull(),
-    variant_id: int("variant_id")
+    name_arrangement: integer("name_arrangement").default(0).notNull(),
+    variant_id: integer("variant_id")
       .references(() => variants.id, { onDelete: "cascade" })
       .notNull(),
     deleted_at,
@@ -104,7 +102,7 @@ export const elections = mysqlTable(
   }),
 );
 
-export const votes = mysqlTable(
+export const votes = pgTable(
   "vote",
   {
     id,
@@ -129,7 +127,7 @@ export const votes = mysqlTable(
   }),
 );
 
-export const commissioners = mysqlTable(
+export const commissioners = pgTable(
   "commissioner",
   {
     id,
@@ -153,7 +151,7 @@ export const commissioners = mysqlTable(
   }),
 );
 
-export const voters = mysqlTable(
+export const voters = pgTable(
   "voter",
   {
     id,
@@ -173,7 +171,7 @@ export const voters = mysqlTable(
   }),
 );
 
-export const partylists = mysqlTable(
+export const partylists = pgTable(
   "partylist",
   {
     id,
@@ -196,15 +194,15 @@ export const partylists = mysqlTable(
   }),
 );
 
-export const positions = mysqlTable(
+export const positions = pgTable(
   "position",
   {
     id,
     name: text("name").notNull(),
     description: text("description").notNull().default(""),
-    order: int("order").notNull(),
-    min: int("min").default(0).notNull(),
-    max: int("max").default(1).notNull(),
+    order: integer("order").notNull(),
+    min: integer("min").default(0).notNull(),
+    max: integer("max").default(1).notNull(),
 
     created_at,
     updated_at,
@@ -220,7 +218,7 @@ export const positions = mysqlTable(
   }),
 );
 
-export const candidates = mysqlTable(
+export const candidates = pgTable(
   "candidate",
   {
     id,
@@ -261,14 +259,14 @@ export const candidates = mysqlTable(
   }),
 );
 
-export const credentials = mysqlTable("credential", {
+export const credentials = pgTable("credential", {
   id,
 
   created_at,
   updated_at,
 });
 
-export const platforms = mysqlTable(
+export const platforms = pgTable(
   "platform",
   {
     id,
@@ -289,14 +287,14 @@ export const platforms = mysqlTable(
   }),
 );
 
-export const affiliations = mysqlTable(
+export const affiliations = pgTable(
   "affiliation",
   {
     id,
     org_name: text("org_name").notNull(),
     org_position: text("org_position").notNull(),
-    start_year: date("start_year").notNull(),
-    end_year: date("end_year").notNull(),
+    start_year: timestamp("start_year", { mode: "date" }).notNull(),
+    end_year: timestamp("end_year", { mode: "date" }).notNull(),
 
     created_at,
     updated_at,
@@ -310,12 +308,12 @@ export const affiliations = mysqlTable(
   }),
 );
 
-export const achievements = mysqlTable(
+export const achievements = pgTable(
   "achievement",
   {
     id,
     name: text("name").notNull(),
-    year: date("year").notNull(),
+    year: timestamp("year", { mode: "date" }).notNull(),
 
     created_at,
     updated_at,
@@ -329,12 +327,12 @@ export const achievements = mysqlTable(
   }),
 );
 
-export const events_attended = mysqlTable(
+export const events_attended = pgTable(
   "event_attended",
   {
     id,
     name: text("name").notNull(),
-    year: date("year").notNull(),
+    year: timestamp("year", { mode: "date" }).notNull(),
 
     created_at,
     updated_at,
@@ -348,7 +346,7 @@ export const events_attended = mysqlTable(
   }),
 );
 
-export const generated_election_results = mysqlTable(
+export const generated_election_results = pgTable(
   "generated_election_result",
   {
     id,
@@ -375,7 +373,7 @@ export const generated_election_results = mysqlTable(
     ).on(generated_election_result.election_id),
   }),
 );
-export const voter_fields = mysqlTable(
+export const voter_fields = pgTable(
   "voter_field",
   {
     id,
@@ -392,7 +390,7 @@ export const voter_fields = mysqlTable(
   }),
 );
 
-export const reported_problems = mysqlTable(
+export const reported_problems = pgTable(
   "reported_problem",
   {
     id,
@@ -414,31 +412,25 @@ export const reported_problems = mysqlTable(
   }),
 );
 
-export const users = mysqlTable("user", {
+export const users = pgTable("user", {
   id,
   name: varchar("name", { length: 255 }),
   email: varchar("email", { length: 255 }).notNull().unique(),
-  emailVerified: timestamp("emailVerified", {
-    mode: "date",
-    fsp: 3,
-  }).default(sql`CURRENT_TIMESTAMP(3)`),
+  emailVerified: timestamp("emailVerified").defaultNow(),
   image_file: json("image_file").$type<File>(),
   image: text("image"),
 });
 
-export const deleted_users = mysqlTable("deleted_user", {
+export const deleted_users = pgTable("deleted_user", {
   id,
   name: varchar("name", { length: 255 }),
   email: varchar("email", { length: 255 }).notNull().unique(),
-  emailVerified: timestamp("emailVerified", {
-    mode: "date",
-    fsp: 3,
-  }).default(sql`CURRENT_TIMESTAMP(3)`),
+  emailVerified: timestamp("emailVerified").defaultNow(),
   image_file: json("image_file").$type<File>(),
   image: text("image"),
 });
 
-export const verification_tokens = mysqlTable(
+export const verification_tokens = pgTable(
   "verification_token",
   {
     identifier: varchar("identifier", { length: 255 }).notNull(),
@@ -450,7 +442,7 @@ export const verification_tokens = mysqlTable(
   }),
 );
 
-export const accounts = mysqlTable(
+export const accounts = pgTable(
   "account",
   {
     userId: varchar("userId", { length: 255 }).notNull(),
@@ -461,7 +453,7 @@ export const accounts = mysqlTable(
     providerAccountId: varchar("providerAccountId", { length: 255 }).notNull(),
     refresh_token: varchar("refresh_token", { length: 255 }),
     access_token: varchar("access_token", { length: 255 }),
-    expires_at: int("expires_at"),
+    expires_at: integer("expires_at"),
     token_type: varchar("token_type", { length: 255 }),
     scope: varchar("scope", { length: 255 }),
     id_token: text("id_token"),
@@ -474,7 +466,7 @@ export const accounts = mysqlTable(
     accountUserIdIdx: index("account_userId_idx").on(account.userId),
   }),
 );
-export const deleted_accounts = mysqlTable(
+export const deleted_accounts = pgTable(
   "deleted_account",
   {
     deletedUserId: varchar("deletedUserId", { length: 255 }).notNull(),
@@ -485,7 +477,7 @@ export const deleted_accounts = mysqlTable(
     providerAccountId: varchar("providerAccountId", { length: 255 }).notNull(),
     refresh_token: varchar("refresh_token", { length: 255 }),
     access_token: varchar("access_token", { length: 255 }),
-    expires_at: int("expires_at"),
+    expires_at: integer("expires_at"),
     token_type: varchar("token_type", { length: 255 }),
     scope: varchar("scope", { length: 255 }),
     id_token: text("id_token"),
@@ -500,7 +492,7 @@ export const deleted_accounts = mysqlTable(
     ).on(deleted_account.deletedUserId),
   }),
 );
-export const sessions = mysqlTable(
+export const sessions = pgTable(
   "session",
   {
     sessionToken: varchar("sessionToken", { length: 255 })
@@ -516,7 +508,7 @@ export const sessions = mysqlTable(
   }),
 );
 
-export const commissioners_voters_messages = mysqlTable(
+export const commissioners_voters_messages = pgTable(
   "commissioners_voters_message",
   {
     id,
@@ -545,7 +537,7 @@ export const commissioners_voters_messages = mysqlTable(
   }),
 );
 
-export const commissioners_voters_rooms = mysqlTable(
+export const commissioners_voters_rooms = pgTable(
   "commissioners_voters_room",
   {
     id,
@@ -563,7 +555,7 @@ export const commissioners_voters_rooms = mysqlTable(
   }),
 );
 
-export const admin_commissioners_messages = mysqlTable(
+export const admin_commissioners_messages = pgTable(
   "admin_commissioners_message",
   {
     id,
@@ -594,7 +586,7 @@ export const admin_commissioners_messages = mysqlTable(
   }),
 );
 
-export const admin_commissioners_rooms = mysqlTable(
+export const admin_commissioners_rooms = pgTable(
   "admin_commissioners_room",
   {
     id,
@@ -612,21 +604,21 @@ export const admin_commissioners_rooms = mysqlTable(
   }),
 );
 
-export const products = mysqlTable("product", {
-  id: int("id").primaryKey().notNull(),
+export const products = pgTable("product", {
+  id: integer("id").primaryKey().notNull(),
   name: text("name").notNull(),
 });
 
-export const variants = mysqlTable("variant", {
-  id: int("id").primaryKey().notNull(),
+export const variants = pgTable("variant", {
+  id: integer("id").primaryKey().notNull(),
   name: text("name").notNull(),
-  price: int("price").notNull(),
-  product_id: int("product_id")
+  price: integer("price").notNull(),
+  product_id: integer("product_id")
     .references(() => products.id, { onDelete: "cascade" })
     .notNull(),
 });
 
-export const elections_plus = mysqlTable(
+export const elections_plus = pgTable(
   "election_plus",
   {
     id,

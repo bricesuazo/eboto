@@ -1,68 +1,12 @@
 {
   "version": "5",
-  "dialect": "mysql",
+  "dialect": "pg",
   "entries": [
     {
       "idx": 0,
       "version": "5",
-      "when": 1701861817365,
-      "tag": "0000_fine_gorgon",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1708687500809,
-      "tag": "0001_dusty_the_phantom",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1708691671408,
-      "tag": "0002_last_trauma",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1708696541614,
-      "tag": "0003_mysterious_mentor",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1708875043745,
-      "tag": "0004_rare_morph",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1709990625229,
-      "tag": "0005_rich_giant_girl",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "5",
-      "when": 1709991509024,
-      "tag": "0006_sturdy_zodiak",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "5",
-      "when": 1709991744390,
-      "tag": "0007_dear_mongu",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "5",
-      "when": 1709992194805,
-      "tag": "0008_dark_hydra",
+      "when": 1709997113981,
+      "tag": "0000_bumpy_azazel",
       "breakpoints": true
     }
   ]
