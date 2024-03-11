@@ -20,11 +20,13 @@ const id = varchar("id", { length: 256 })
   .primaryKey()
   .notNull()
   .$defaultFn(() => nanoid());
-const created_at = timestamp("created_at")
+const created_at = timestamp("created_at", { withTimezone: true })
   .default(sql`CURRENT_TIMESTAMP`)
   .notNull();
-const deleted_at = timestamp("deleted_at");
-const updated_at = timestamp("updated_at").defaultNow().notNull();
+const deleted_at = timestamp("deleted_at", { withTimezone: true });
+const updated_at = timestamp("updated_at", { withTimezone: true })
+  .defaultNow()
+  .notNull();
 const election_id = varchar("election_id", { length: 256 })
   .references(() => elections.id, { onDelete: "cascade" })
   .notNull();
@@ -61,8 +63,14 @@ export const elections = pgTable(
     slug: varchar("slug", { length: 256 }).notNull().unique(),
     name: text("name").notNull(),
     description: text("description").notNull().default(""),
-    start_date: timestamp("start_date", { mode: "date" }).notNull(),
-    end_date: timestamp("end_date", { mode: "date" }).notNull(),
+    start_date: timestamp("start_date", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    end_date: timestamp("end_date", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
     voting_hour_start: integer("voting_hour_start").notNull().default(7),
     voting_hour_end: integer("voting_hour_end").notNull().default(19),
     publicity: publicityEnum("publicity").default("PRIVATE").notNull(),
@@ -293,8 +301,14 @@ export const affiliations = pgTable(
     id,
     org_name: text("org_name").notNull(),
     org_position: text("org_position").notNull(),
-    start_year: timestamp("start_year", { mode: "date" }).notNull(),
-    end_year: timestamp("end_year", { mode: "date" }).notNull(),
+    start_year: timestamp("start_year", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    end_year: timestamp("end_year", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
 
     created_at,
     updated_at,
@@ -313,7 +327,7 @@ export const achievements = pgTable(
   {
     id,
     name: text("name").notNull(),
-    year: timestamp("year", { mode: "date" }).notNull(),
+    year: timestamp("year", { mode: "date", withTimezone: true }).notNull(),
 
     created_at,
     updated_at,
@@ -332,7 +346,7 @@ export const events_attended = pgTable(
   {
     id,
     name: text("name").notNull(),
-    year: timestamp("year", { mode: "date" }).notNull(),
+    year: timestamp("year", { mode: "date", withTimezone: true }).notNull(),
 
     created_at,
     updated_at,
@@ -416,7 +430,9 @@ export const users = pgTable("user", {
   id,
   name: varchar("name", { length: 255 }),
   email: varchar("email", { length: 255 }).notNull().unique(),
-  emailVerified: timestamp("emailVerified").defaultNow(),
+  emailVerified: timestamp("emailVerified", {
+    withTimezone: true,
+  }).defaultNow(),
   image_file: json("image_file").$type<File>(),
   image: text("image"),
 });
@@ -425,7 +441,9 @@ export const deleted_users = pgTable("deleted_user", {
   id,
   name: varchar("name", { length: 255 }),
   email: varchar("email", { length: 255 }).notNull().unique(),
-  emailVerified: timestamp("emailVerified").defaultNow(),
+  emailVerified: timestamp("emailVerified", {
+    withTimezone: true,
+  }).defaultNow(),
   image_file: json("image_file").$type<File>(),
   image: text("image"),
 });
@@ -435,7 +453,10 @@ export const verification_tokens = pgTable(
   {
     identifier: varchar("identifier", { length: 255 }).notNull(),
     token: varchar("token", { length: 255 }).notNull(),
-    expires: timestamp("expires", { mode: "date" }).notNull(),
+    expires: timestamp("expires", {
+      withTimezone: true,
+      mode: "date",
+    }).notNull(),
   },
   (vt) => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
@@ -501,7 +522,10 @@ export const sessions = pgTable(
     userId: varchar("userId", { length: 256 })
       .references(() => users.id, { onDelete: "cascade" })
       .notNull(),
-    expires: timestamp("expires", { mode: "date" }).notNull(),
+    expires: timestamp("expires", {
+      withTimezone: true,
+      mode: "date",
+    }).notNull(),
   },
   (session) => ({
     sessionUserIdIdx: index("sessionUserId_idx").on(session.userId),
@@ -625,7 +649,7 @@ export const elections_plus = pgTable(
     user_id,
 
     created_at,
-    redeemed_at: timestamp("redeemed_at"),
+    redeemed_at: timestamp("redeemed_at", { withTimezone: true }),
   },
   (election_plus) => ({
     electionPlusUserIdIdx: index("electionPlusUserId_idx").on(
