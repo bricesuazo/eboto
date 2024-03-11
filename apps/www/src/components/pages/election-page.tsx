@@ -403,6 +403,7 @@ export default function ElectionPage({
                             key={candidate.id}
                             component={Link}
                             href={`/${election.slug}/${candidate.slug}`}
+                            prefetch={false}
                             className={classes["candidate-card"]}
                             h="100%"
                           >
