@@ -1,30 +1,30 @@
-import { db } from ".";
-import { products, variants } from "./schema";
+// import { db } from ".";
+// import { products, variants } from "./schema";
 
-async function main() {
-  await db.transaction(async (trx) => {
-    await trx.insert(products).values(
-      LS_DATA_PROD.products.map((product) => ({
-        id: product.id,
-        name: product.name,
-      })),
-    );
-    await trx.insert(variants).values(
-      LS_DATA_PROD.products.flatMap((product) =>
-        product.variants.map((variant) => ({
-          id: variant.id,
-          name: variant.name,
-          price: variant.price,
-          product_id: product.id,
-        })),
-      ),
-    );
+// async function main() {
+//   await db.transaction(async (trx) => {
+//     await trx.insert(products).values(
+//       LS_DATA_PROD.products.map((product) => ({
+//         id: product.id,
+//         name: product.name,
+//       })),
+//     );
+//     await trx.insert(variants).values(
+//       LS_DATA_PROD.products.flatMap((product) =>
+//         product.variants.map((variant) => ({
+//           id: variant.id,
+//           name: variant.name,
+//           price: variant.price,
+//           product_id: product.id,
+//         })),
+//       ),
+//     );
 
-    console.log("Seeded products and variants");
-  });
-}
+//     console.log("Seeded products and variants");
+//   });
+// }
 
-void main();
+// void main();
 
 interface LS_DATA_TYPE {
   products: {
