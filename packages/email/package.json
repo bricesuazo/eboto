@@ -15,7 +15,6 @@
     "react-email": "2.1.0"
   },
   "devDependencies": {
-    "@eboto/db": "0.0.0",
     "@eboto/prettier-config": "0.0.0",
     "@eboto/tsconfig": "0.0.0",
     "@types/node": "^20.11.20",

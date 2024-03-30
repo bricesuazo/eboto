@@ -6,10 +6,8 @@ Empower your elections with eBoto, the versatile and web-based voting platform t
 
 - **Monorepo**: [TurboRepo](https://turbo.build/)
 - **Framework**: [Next.js](https://nextjs.org/) + [Typescript](https://www.typescriptlang.org/)
-- **Database**: [PlanetScale](https://planetscale.com/)
-- **ORM**: [Drizzle](https://orm.drizzle.team/)
+- **Database, Storage, and Authentication**: [Supabase](https://supabase.com/)
 - **API**: [tRPC](https://trpc.io/) + [TanStack Query](https://tanstack.com/query/)
-- **Authentication**: [NextAuth.js](https://next-auth.js.org/)
 - **Payment**: [Lemon Squeezy](https://www.lemonsqueezy.com/)
 - **Deployment**: [Vercel](https://vercel.com)
 - **Styling**: [Mantine](https://mantine.dev/)

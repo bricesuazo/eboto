@@ -13,9 +13,7 @@
   "dependencies": {
     "@ctrl/react-adsense": "^1.7.0",
     "@eboto/api": "0.0.0",
-    "@eboto/auth": "0.0.0",
     "@eboto/constants": "0.0.0",
-    "@eboto/db": "0.0.0",
     "@eboto/email": "0.0.0",
     "@eboto/eslint-config": "0.0.0",
     "@eboto/payment": "0.0.0",
