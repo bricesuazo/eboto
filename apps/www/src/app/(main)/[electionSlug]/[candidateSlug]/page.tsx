@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ElectionCandidate from "@/components/pages/election-candidate";
 import { api } from "@/trpc/server";
+import { createClient } from "@/utils/supabase/server";
 import { env } from "env.mjs";
 
-import { auth } from "@eboto/auth";
 import { formatName } from "@eboto/constants";
 import { db } from "@eboto/db";
 
@@ -13,7 +13,10 @@ export async function generateMetadata({
 }: {
   params: { electionSlug: string; candidateSlug: string };
 }): Promise<Metadata> {
-  const session = await auth();
+  const supabase = createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   const election = await db.query.elections.findFirst({
     where: (election, { eq, and, isNull }) =>
       and(eq(election.slug, electionSlug), isNull(election.deleted_at)),

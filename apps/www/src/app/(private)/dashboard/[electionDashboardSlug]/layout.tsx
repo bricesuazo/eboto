@@ -1,14 +1,17 @@
 import { notFound, redirect } from "next/navigation";
 import DashboardElection from "@/components/layout/dashboard-election";
+import { createClient } from "@/utils/supabase/server";
 import { env } from "env.mjs";
 
-import { auth } from "@eboto/auth";
 import { db } from "@eboto/db";
 
 export default async function DashboardLayout(
   props: React.PropsWithChildren<{ params: { electionDashboardSlug: string } }>,
 ) {
-  const session = await auth();
+  const supabase = createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (!session) redirect("/sign-in");
 

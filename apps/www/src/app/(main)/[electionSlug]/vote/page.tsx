@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import VoteForm from "@/components/vote-form";
 import { api } from "@/trpc/server";
+import { createClient } from "@/utils/supabase/server";
 import { Box, Container, Stack, Text, Title } from "@mantine/core";
 import moment from "moment";
 import Balancer from "react-wrap-balancer";
 
-import { auth } from "@eboto/auth";
 import { isElectionOngoing, parseHourTo12HourFormat } from "@eboto/constants";
 import { db } from "@eboto/db";
 
@@ -32,7 +32,10 @@ export default async function VotePage({
 }: {
   params: { electionSlug: string };
 }) {
-  const session = await auth();
+  const supabase = createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (!session)
     redirect(`/sign-in?callbackUrl=https://eboto.app/${electionSlug}/vote`);

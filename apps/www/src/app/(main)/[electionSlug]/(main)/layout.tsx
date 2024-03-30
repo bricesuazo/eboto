@@ -1,13 +1,16 @@
 import { notFound, redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
 
-import { auth } from "@eboto/auth";
 import { isElectionOngoing } from "@eboto/constants";
 import { db } from "@eboto/db";
 
 export default async function ElectionLayout(
   props: React.PropsWithChildren<{ params: { electionSlug: string } }>,
 ) {
-  const session = await auth();
+  const supabase = createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   const election = await db.query.elections.findFirst({
     where: (elections, { eq, and, isNull }) =>
       and(

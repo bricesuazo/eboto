@@ -19,13 +19,13 @@
     "@web-std/file": "^3.0.3",
     "nanoid": "^5.0.6",
     "superjson": "^2.2.1",
-    "uploadthing": "^6.4.1",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@eboto/eslint-config": "0.0.0",
     "@eboto/prettier-config": "0.0.0",
     "@eboto/tsconfig": "0.0.0",
+    "@supabase/supabase-js": "^2.41.1",
     "eslint": "^8.57.0",
     "prettier": "^3.2.5",
     "typescript": "^5.3.3"

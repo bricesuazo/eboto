@@ -1,43 +1,35 @@
+import type { Session, SupabaseClient } from "@supabase/supabase-js";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
-import { UTApi } from "uploadthing/server";
 import { ZodError } from "zod";
 
-import { auth } from "@eboto/auth";
-import type { Session } from "@eboto/auth";
-import { db } from "@eboto/db";
 import * as payment from "@eboto/payment";
 
-// import { env } from "./env.mjs";
+import type { Database } from "./../../../supabase/types";
 
 interface CreateContextOptions {
   session: Session | null;
-  utapi: UTApi;
   payment: typeof payment;
+  supabase: SupabaseClient<Database>;
 }
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
-    session: opts.session,
-    db,
-    utapi: opts.utapi,
+    ...opts,
     payment,
   };
 };
 
-export async function createTRPCContext(opts: {
-  req?: Request;
-  session: Session | null;
-}) {
-  // const source = opts.req?.headers.get("x-trpc-source") ?? "unknown";
+export function createTRPCContext(
+  opts: CreateContextOptions & {
+    req?: Request;
+  },
+) {
+  const source = opts.req?.headers.get("x-trpc-source") ?? "unknown";
 
-  // console.log(">>> tRPC Request from", source, "by", session?.user);
+  console.log(">>> tRPC Request from", source, "by", opts.session?.user);
 
   return createInnerTRPCContext({
-    session: opts.session ?? (await auth()),
-    utapi: new UTApi({
-      // fetch: globalThis.fetch,
-      // apiKey: env.UPLOADTHING_SECRET,
-    }),
+    ...opts,
     payment,
   });
 }

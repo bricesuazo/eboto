@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ElectionPageClient from "@/components/pages/election-page";
 import { api } from "@/trpc/server";
+import { createClient } from "@/utils/supabase/server";
 import { env } from "env.mjs";
 import moment from "moment";
 
-import { auth } from "@eboto/auth";
 import { db } from "@eboto/db";
 
 export async function generateMetadata({
@@ -13,7 +13,10 @@ export async function generateMetadata({
 }: {
   params: { electionSlug: string };
 }): Promise<Metadata> {
-  const session = await auth();
+  const supabase = createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   const election = await db.query.elections.findFirst({
     where: (election, { eq, and, isNull }) =>
       and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
