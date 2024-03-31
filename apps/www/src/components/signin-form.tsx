@@ -1,14 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import { Anchor, Button, Paper, Stack, Text } from "@mantine/core";
+import {
+  Alert,
+  Anchor,
+  Button,
+  Divider,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
+} from "@mantine/core";
+import { isEmail, isNotEmpty, useForm } from "@mantine/form";
+import { IconAt, IconCheck } from "@tabler/icons-react";
 import Balancer from "react-wrap-balancer";
 
 export default function SigninForm() {
   const searchParams = useSearchParams();
+  const [isEmailSent, setIsEmailSent] = useState(false);
   const [loadings, setLoadings] = useState<{
     google: boolean;
     credential: boolean;
@@ -16,19 +28,29 @@ export default function SigninForm() {
     google: false,
     credential: false,
   });
-  // const form = useForm({
-  //   initialValues: {
-  //     email: "",
-  //     password: "",
-  //   },
-  //   : true,
-  //   validate: {
-  //     email: isEmail("Invalid email") || isNotEmpty("Email is required"),
-  //     password: hasLength({ min: 8 }, "Password must be at least 8 characters"),
-  //   },
-  // });
+  const form = useForm({
+    initialValues: {
+      email: "",
+      // password: "",
+    },
+    validate: {
+      email: isEmail("Invalid email") || isNotEmpty("Email is required"),
+      // password: hasLength({ min: 8 }, "Password must be at least 8 characters"),
+    },
+  });
 
-  // const params = useParams();
+  useEffect(() => {
+    async function checkUser() {
+      const supabase = createClient();
+
+      await supabase.auth.getSession().then(({ data, error }) => {
+        console.log("🚀 ~ awaitsupabase.auth.getSession ~ data:", data);
+        console.log("🚀 ~ awaitsupabase.auth.getSession ~ error:", error);
+      });
+    }
+
+    void checkUser();
+  }, []);
 
   return (
     <Paper radius="md" p="xl" withBorder shadow="md">
@@ -85,114 +107,68 @@ export default function SigninForm() {
             Google
           </Button>
         </Stack>
-        {/* <Divider label="Or continue with email" labelPosition="center" />
-        <Stack gap="xs">
-          <TextInput
-            required
-            label="Email"
-            placeholder="brice@eboto.com"
-            disabled
-          />
+        {!isEmailSent ? (
+          <>
+            <Divider label="Or continue with email" labelPosition="center" />
 
-          <Button disabled>Send magic link (soon)</Button>
-        </Stack> */}
+            <form
+              onSubmit={form.onSubmit((values) => {
+                const supabase = createClient();
+                setLoadings((loadings) => ({ ...loadings, credential: true }));
 
-        {/* <Divider label="Or continue with email" labelPosition="center" />
-          <form
-            onSubmit={form.onSubmit(() => {
-              setLoadings((loadings) => ({ ...loadings, credential: true }));
-              // if (!isLoaded) return;
-              // void (async () => {
-              //   await signIn
-              //     .create({
-              //       identifier: values.email,
-              //       password: values.password,
-              //       redirectUrl: params?.callbackUrl?.toString() ?? "/dashboard",
-              //     })
-              //     .then(async (result) => {
-              //       if (result.status === "complete") {
-              //         console.log(result);
-              //         await setActive({ session: result.createdSessionId });
-              //       } else {
-              //         console.log(result);
-              //       }
-              //     })
-              //     .catch((err) => console.error("error", err));
-              // })();
-            })}
-          >
-            <Stack>
-              <TextInput
-                placeholder="Enter your email address"
-                type="email"
-                withAsterisk
-                label="Email"
-                required
-                {...form.getInputProps("email")}
-                leftSection={<IconAt size="1rem" />}
-                disabled={loadings.credential || loadings.google}
-              />
-  
-              <PasswordInput
-                placeholder="Enter your password"
-                withAsterisk
-                label="Password"
-                required
-                {...form.getInputProps("password")}
-                leftSection={<IconLock size="1rem" />}
-                disabled={loadings.credential || loadings.google}
-              />
-              <Group justify="space-between">
-                <Checkbox
-                  label="Remember me"
-                  size="sm"
+                void (async () => {
+                  await supabase.auth.signInWithOtp({
+                    email: values.email,
+                    options: {
+                      emailRedirectTo:
+                        searchParams.get("callbackUrl") ?? "/dashboard",
+                    },
+                  });
+
+                  setLoadings((loadings) => ({
+                    ...loadings,
+                    credential: false,
+                  }));
+                  setIsEmailSent(true);
+                })();
+              })}
+            >
+              <Stack>
+                <TextInput
+                  placeholder="Enter your email address"
+                  type="email"
+                  withAsterisk
+                  label="Email"
+                  required
+                  {...form.getInputProps("email")}
+                  leftSection={<IconAt size="1rem" />}
                   disabled={loadings.credential || loadings.google}
                 />
-  
-                <Anchor
-                  size="sm"
-                  visibleFrom="xs"
-                  component={Link}
-                  href={`/reset-password${
-                    form.values.email ? `?email=${form.values.email}` : ""
-                  }`}
+
+                {/* {error && (
+                <Alert
+                  leftSection={<IconAlertCircle size="1rem" />}
+                  title="Error"
+                  color="red"
                 >
-                  Forgot password?
-                </Anchor>
-              </Group>
-  
-              {error && (
-                  <Alert
-                    leftSection={<IconAlertCircle size="1rem" />}
-                    title="Error"
-                    color="red"
-                  >
-                    {error}
-                  </Alert>
-         
-  
-              <Button
-                type="submit"
-                loading={loadings.credential}
-                disabled={loadings.google || true}
-              >
-                Sign in
-              </Button>
-  
-              <Center hiddenFrom="xs">
-                <Anchor
-                  size="sm"
-                  variant=""
-                  component={Link}
-                  href={`/reset-password${
-                    form.values.email ? `?email=${form.values.email}` : ""
-                  }`}
+                  {error}
+                </Alert>
+              )} */}
+                <Button
+                  type="submit"
+                  loading={loadings.credential}
+                  disabled={!form.isValid("email")}
                 >
-                  Forgot your password?
-                </Anchor>
-              </Center>
-            </Stack>
-          </form> */}
+                  Send magic link
+                </Button>
+              </Stack>
+            </form>
+          </>
+        ) : (
+          <Alert title="Success" icon={<IconCheck />}>
+            A magic link has been sent to your email address.
+          </Alert>
+        )}
         <Text size="sm" ta="center">
           By signing in, you agree to our{" "}
           <Anchor component={Link} href="/terms" target="_blank">
