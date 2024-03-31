@@ -1,5 +1,4 @@
 import { TRPCError } from "@trpc/server";
-import { nanoid } from "nanoid";
 import { z } from "zod";
 
 import { isElectionEnded, isElectionOngoing } from "@eboto/constants";
@@ -93,7 +92,6 @@ export const voterRouter = createTRPCRouter({
         });
 
       await ctx.supabase.from("voters").insert({
-        id: nanoid(),
         email: input.email,
         election_id: isElectionExists.id,
       });

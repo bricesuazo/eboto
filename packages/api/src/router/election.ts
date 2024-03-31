@@ -1,5 +1,4 @@
 import { TRPCError } from "@trpc/server";
-import { nanoid } from "nanoid";
 import { z } from "zod";
 
 import {
@@ -280,31 +279,6 @@ export const electionRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      // const election = await ctx.db.query.elections.findFirst({
-      //   where: (elections, { eq, and, isNull }) =>
-      //     and(
-      //       eq(elections.slug, input.election_slug),
-      //       isNull(elections.deleted_at),
-      //     ),
-      //   with: {
-      //     positions: true,
-      //     partylists: {
-      //       where: (partylist, { and, isNull, ne }) =>
-      //         and(ne(partylist.acronym, "IND"), isNull(partylist.deleted_at)),
-      //     },
-      //     voters: {
-      //       where: (voters, { isNull }) => isNull(voters.deleted_at),
-      //       with: {
-      //         votes: true,
-      //       },
-      //     },
-      //     generated_election_results: true,
-      //     candidates: {
-      //       where: (candidates, { isNull }) => isNull(candidates.deleted_at),
-      //     },
-      //   },
-      // });
-
       const { data: election } = await ctx.supabase
         .from("elections")
         .select(
@@ -319,10 +293,10 @@ export const electionRouter = createTRPCRouter({
         )
         .eq("slug", input.election_slug)
         .is("deleted_at", null)
-        .neq("partylists:acronym", "IND")
-        .is("partylists:deleted_at", null)
-        .is("voters:deleted_at", null)
-        .is("candidates:deleted_at", null)
+        .neq("partylists.acronym", "IND")
+        .is("partylists.deleted_at", null)
+        .is("voters.deleted_at", null)
+        .is("candidates.deleted_at", null)
         .single();
 
       if (!election) throw new TRPCError({ code: "NOT_FOUND" });
@@ -753,30 +727,20 @@ export const electionRouter = createTRPCRouter({
       }
 
       // TODO: use transaction
-      // const isElectionCommissionerExists = await db.query.elections.findFirst({
-      //   where: (elections, { eq, and, isNull }) =>
-      //     and(eq(elections.id, input.id), isNull(elections.deleted_at)),
-      //   with: {
-      //     commissioners: {
-      //       where: (commissioners, { eq, and, isNull }) =>
-      //         and(
-      //           eq(commissioners.user_id, ctx.session.user.id),
-      //           isNull(commissioners.deleted_at),
-      //         ),
-      //     },
-      //   },
-      // });
-
       const { data: isElectionCommissionerExists } = await ctx.supabase
         .from("elections")
         .select("*, commissioners(*)")
-        .eq("election_id", input.id)
+        .eq("id", input.id)
         .is("deleted_at", null)
-        .eq("commissioners:user_id", ctx.session.user.id)
-        .is("commissioners:deleted_at", null)
+        .eq("commissioners.user_id", ctx.session.user.id)
+        .is("commissioners.deleted_at", null)
         .single();
 
-      if (!isElectionCommissionerExists?.commissioners?.length) {
+      if (
+        !isElectionCommissionerExists ||
+        (isElectionCommissionerExists &&
+          isElectionCommissionerExists.commissioners.length === 0)
+      ) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Unauthorized",
@@ -1012,33 +976,6 @@ export const electionRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      // const election = await ctx.db.query.elections.findFirst({
-      //   where: (elections, { eq, and, isNull }) =>
-      //     and(
-      //       eq(elections.id, input.election_id),
-      //       isNull(elections.deleted_at),
-      //     ),
-      //   with: {
-      //     voters: {
-      //       limit: 1,
-      //       where: (voters, { isNull }) => isNull(voters.deleted_at),
-      //     },
-      //     partylists: {
-      //       limit: 2,
-      //       where: (partylists, { isNull }) => isNull(partylists.deleted_at),
-      //     },
-      //     positions: {
-      //       limit: 1,
-      //       where: (positions, { isNull }) => isNull(positions.deleted_at),
-      //     },
-      //     candidates: {
-      //       limit: 1,
-      //       where: (candidates, { isNull }) => isNull(candidates.deleted_at),
-      //     },
-      //   },
-      // });
-
-      // TODO: not sure if this is the correct way
       const { data: election } = await ctx.supabase
         .from("elections")
         .select(
@@ -1050,17 +987,16 @@ export const electionRouter = createTRPCRouter({
           candidates(*)
         `,
         )
-
         .eq("id", input.election_id)
         .is("deleted_at", null)
-        .limit(1)
-        .is("voters:deleted_at", null)
-        .limit(1)
-        .is("partylists:deleted_at", null)
-        .limit(2)
-        .is("positions:deleted_at", null)
-        .limit(1)
-        .is("candidates:deleted_at", null)
+        .is("voters.deleted_at", null)
+        .limit(1, { referencedTable: "voters" })
+        .is("partylists.deleted_at", null)
+        .limit(2, { referencedTable: "partylists" })
+        .is("positions.deleted_at", null)
+        .limit(1, { referencedTable: "positions" })
+        .is("candidates.deleted_at", null)
+        .limit(1, { referencedTable: "candidates" })
         .limit(1)
         .single();
 
@@ -1095,25 +1031,6 @@ export const electionRouter = createTRPCRouter({
   getAllCommissionerByElectionSlug: protectedProcedure
     .input(z.object({ election_slug: z.string() }))
     .query(async ({ ctx, input }) => {
-      // const election = await ctx.db.query.elections.findFirst({
-      //   where: (elections, { eq, and, isNull }) =>
-      //     and(
-      //       eq(elections.slug, input.election_slug),
-      //       isNull(elections.deleted_at),
-      //     ),
-      //   with: {
-      //     commissioners: {
-      //       where: (commissioners, { isNull }) =>
-      //         isNull(commissioners.deleted_at),
-      //       with: {
-      //         user: true,
-      //       },
-      //       orderBy: (commissioners, { asc }) => asc(commissioners.created_at),
-      //     },
-      //   },
-      // });
-
-      // TODO: not sure if this is the correct way
       const { data: election } = await ctx.supabase
         .from("elections")
         .select(
@@ -1124,8 +1041,11 @@ export const electionRouter = createTRPCRouter({
         )
         .eq("slug", input.election_slug)
         .is("deleted_at", null)
-        .is("commissioners:deleted_at", null)
-        .order("commissioners:created_at", { ascending: true })
+        .is("commissioners.deleted_at", null)
+        .order("created_at", {
+          referencedTable: "commissioners",
+          ascending: true,
+        })
         .single();
 
       if (!election) throw new TRPCError({ code: "NOT_FOUND" });
@@ -1553,15 +1473,24 @@ export const electionRouter = createTRPCRouter({
         });
 
       // TODO: use transaction
-      const id = nanoid();
-      await ctx.supabase.from("commissioners_voters_rooms").insert({
-        id,
-        election_id: input.election_id,
-        name: input.title,
-      });
+      const { data: room, error: room_error } = await ctx.supabase
+        .from("commissioners_voters_rooms")
+        .insert({
+          election_id: input.election_id,
+          name: input.title,
+        })
+        .select("id")
+        .single();
+
+      if (room_error)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: room_error.message,
+        });
+
       await ctx.supabase.from("commissioners_voters_messages").insert({
         message: input.message,
-        room_id: id,
+        room_id: room.id,
         user_id: ctx.session.user.id,
       });
     }),
@@ -1625,30 +1554,12 @@ export const electionRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      // const election = await ctx.db.query.elections.findFirst({
-      //   where: (elections, { eq, and, isNull }) =>
-      //     and(
-      //       eq(elections.slug, input.election_slug),
-      //       isNull(elections.deleted_at),
-      //     ),
-      //   with: {
-      //     commissioners: {
-      //       where: (commissioners, { isNull }) =>
-      //         isNull(commissioners.deleted_at),
-      //       with: {
-      //         user: true,
-      //       },
-      //     },
-      //   },
-      // });
-
-      // TODO: not sure if this is the correct way
       const { data: election } = await ctx.supabase
         .from("elections")
         .select("*, commissioners(*, user:users(*))")
         .eq("slug", input.election_slug)
         .is("deleted_at", null)
-        .is("commissioners:deleted_at", null)
+        .is("commissioners.deleted_at", null)
         .single();
 
       if (!election)
@@ -1664,15 +1575,24 @@ export const electionRouter = createTRPCRouter({
         });
 
       // TODO: use transaction
-      const id = nanoid();
-      await ctx.supabase.from("admin_commissioners_rooms").insert({
-        id,
-        election_id: election.id,
-        name: input.title,
-      });
+      const { data: room, error: room_error } = await ctx.supabase
+        .from("admin_commissioners_rooms")
+        .insert({
+          election_id: election.id,
+          name: input.title,
+        })
+        .select("id")
+        .single();
+
+      if (room_error)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: room_error.message,
+        });
+
       await ctx.supabase.from("admin_commissioners_messages").insert({
         message: input.message,
-        room_id: id,
+        room_id: room.id,
         user_id: ctx.session.user.id,
       });
     }),
@@ -1683,30 +1603,12 @@ export const electionRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      // const election = await ctx.db.query.elections.findFirst({
-      //   where: (elections, { eq, and, isNull }) =>
-      //     and(
-      //       eq(elections.slug, input.election_slug),
-      //       isNull(elections.deleted_at),
-      //     ),
-      //   with: {
-      //     commissioners: {
-      //       where: (commissioners, { isNull }) =>
-      //         isNull(commissioners.deleted_at),
-      //       with: {
-      //         user: true,
-      //       },
-      //     },
-      //   },
-      // });
-
-      // TODO: not sure if this is the correct way
       const { data: election } = await ctx.supabase
         .from("elections")
         .select("*, commissioners(*, user:users(*))")
         .eq("slug", input.election_slug)
         .is("deleted_at", null)
-        .is("commissioners:deleted_at", null)
+        .is("commissioners.deleted_at", null)
         .single();
 
       if (!election)
@@ -1725,30 +1627,17 @@ export const electionRouter = createTRPCRouter({
           message: "Unauthorized",
         });
 
-      //  ctx.db.query.commissioners_voters_rooms.findMany({
-      //   where: (rooms, { eq, and, isNull }) =>
-      //     and(eq(rooms.election_id, election.id), isNull(rooms.deleted_at)),
-      //   with: {
-      //     messages: {
-      //       orderBy: (messages, { desc }) => desc(messages.created_at),
-      //       with: {
-      //         user: true,
-      //       },
-      //       limit: 1,
-      //     },
-      //   },
-      //  });
-
-      // TODO: not sure if this is the correct way
       const { data: rooms } = await ctx.supabase
         .from("commissioners_voters_rooms")
         .select("*, messages: commissioners_voters_messages(*, user:users(*))")
         .eq("election_id", election.id)
         .is("deleted_at", null)
-        .order("created_at", { ascending: false })
-        .order("commissioners_voters_messages:created_at", {
+        .order("created_at", {
+          referencedTable: "commissioners_voters_messages",
           ascending: false,
-        });
+        })
+        .limit(1, { referencedTable: "commissioners_voters_messages" })
+        .order("created_at", { ascending: false });
 
       if (!rooms) throw new TRPCError({ code: "NOT_FOUND" });
 
@@ -1784,7 +1673,7 @@ export const electionRouter = createTRPCRouter({
         .select("*, commissioners(*, user:users(*))")
         .eq("slug", input.election_slug)
         .is("deleted_at", null)
-        .is("commissioners:deleted_at", null)
+        .is("commissioners.deleted_at", null)
         .single();
 
       if (!election)
@@ -1803,29 +1692,21 @@ export const electionRouter = createTRPCRouter({
           message: "Unauthorized",
         });
 
-      // ctx.db.query.admin_commissioners_rooms.findMany({
-      //   where: (rooms, { eq, and, isNull }) =>
-      //     and(eq(rooms.election_id, election.id), isNull(rooms.deleted_at)),
-      //   with: {
-      //     messages: {
-      //       orderBy: (messages, { desc }) => desc(messages.created_at),
-      //       with: {
-      //         user: true,
-      //       },
-      //       limit: 1,
-      //     },
-      //   },
-      // });
-
-      // TODO: not sure if this is the correct way
-      const { data: rooms } = await ctx.supabase
+      const { data: rooms, error: rooms_error } = await ctx.supabase
         .from("admin_commissioners_rooms")
         .select("*, messages: admin_commissioners_messages(*, user: users(*))")
         .eq("election_id", election.id)
         .is("deleted_at", null)
-        .order("created_at", { ascending: false })
-        .order("admin_commissioners_messages:created_at", {
+        .order("created_at", {
+          referencedTable: "admin_commissioners_messages",
           ascending: false,
+        })
+        .order("created_at", { ascending: false });
+
+      if (rooms_error)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: rooms_error.message,
         });
 
       if (!rooms) throw new TRPCError({ code: "NOT_FOUND" });
@@ -1885,28 +1766,16 @@ export const electionRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       if (input.type === "voters") {
-        // const commissionerVoterRoom =
-        //   await ctx.db.query.commissioners_voters_rooms.findFirst({
-        //     where: (rooms, { eq, and, isNull }) =>
-        //       and(eq(rooms.id, input.room_id), isNull(rooms.deleted_at)),
-        //     with: {
-        //       messages: {
-        //         orderBy: (messages, { asc }) => asc(messages.created_at),
-        //         with: {
-        //           user: true,
-        //         },
-        //       },
-        //     },
-        //   });
-
-        // TODO: not sure if this is the correct way
         const { data: commissionerVoterRoom } = await ctx.supabase
           .from("commissioners_voters_rooms")
           .select("*, messages:commissioners_voters_messages(*, user:users(*))")
           .eq("id", input.room_id)
           .is("deleted_at", null)
+          .order("created_at", {
+            ascending: true,
+            referencedTable: "commissioners_voters_messages",
+          })
           .order("created_at", { ascending: true })
-          .order("messages:created_at", { ascending: true })
           .single();
 
         if (!commissionerVoterRoom)
@@ -1923,28 +1792,16 @@ export const electionRouter = createTRPCRouter({
           },
         }));
       } else {
-        // const adminCommissionerRoom =
-        //   await ctx.db.query.admin_commissioners_rooms.findFirst({
-        //     where: (rooms, { eq, and, isNull }) =>
-        //       and(eq(rooms.id, input.room_id), isNull(rooms.deleted_at)),
-        //     with: {
-        //       messages: {
-        //         orderBy: (messages, { asc }) => asc(messages.created_at),
-        //         with: {
-        //           user: true,
-        //         },
-        //       },
-        //     },
-        //   });
-
-        // TODO: not sure if this is the correct way
         const { data: adminCommissionerRoom } = await ctx.supabase
           .from("admin_commissioners_rooms")
           .select("*, messages:admin_commissioners_messages(*, user:users(*))")
           .eq("id", input.room_id)
           .is("deleted_at", null)
+          .order("created_at", {
+            ascending: true,
+            referencedTable: "admin_commissioners_messages",
+          })
           .order("created_at", { ascending: true })
-          .order("messages:created_at", { ascending: true })
           .single();
 
         if (!adminCommissionerRoom)

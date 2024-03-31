@@ -66,6 +66,7 @@
     "sharp": "^0.33.2",
     "superjson": "^2.2.1",
     "to-words": "^4.0.0",
+    "uuid": "^9.0.1",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz",
     "zod": "^3.22.4",
     "zustand": "^4.5.1"
@@ -78,6 +79,7 @@
     "@types/node": "^20.11.20",
     "@types/react": "^18.2.58",
     "@types/react-dom": "^18.2.19",
+    "@types/uuid": "^9.0.8",
     "encoding": "^0.1.13",
     "postcss-preset-mantine": "^1.13.0",
     "postcss-simple-vars": "^7.0.1",

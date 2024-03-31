@@ -1,5 +1,4 @@
 import { TRPCError } from "@trpc/server";
-import { nanoid } from "nanoid";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
@@ -138,7 +137,6 @@ export const candidateRouter = createTRPCRouter({
       }
 
       // TODO: add transaction
-
       const { data: candidate } = await ctx.supabase
         .from("candidates")
         .select("*")
@@ -189,16 +187,17 @@ export const candidateRouter = createTRPCRouter({
           //   : input.image,
         })
         .eq("id", input.id)
-        .eq("election_id", input.election_id);
+        .eq("election_id", input.election_id)
+        .is("deleted_at", null);
 
-      for (const platform of input.platforms) {
-        await ctx.supabase.from("platforms").upsert({
+      await ctx.supabase.from("platforms").upsert(
+        input.platforms.map((platform) => ({
           id: platform.id,
           title: platform.title,
           description: platform.description,
           candidate_id: input.id,
-        });
-      }
+        })),
+      );
 
       await ctx.supabase.from("affiliations").upsert(
         input.affiliations.map((affiliation) => ({
@@ -220,14 +219,14 @@ export const candidateRouter = createTRPCRouter({
         })),
       );
 
-      for (const event of input.eventsAttended) {
-        await ctx.supabase.from("events_attended").upsert({
+      await ctx.supabase.from("events_attended").upsert(
+        input.eventsAttended.map((event) => ({
           id: event.id,
           name: event.name,
           year: event.year,
           credential_id: input.credential_id,
-        });
-      }
+        })),
+      );
     }),
   createSingle: protectedProcedure
     .input(
@@ -307,52 +306,65 @@ export const candidateRouter = createTRPCRouter({
       if (isCandidateSlugExists)
         throw new Error("Candidate slug is already exists");
 
-      const candidateId = nanoid();
-      const credentialId = nanoid();
-
       // TODO: add transaction
-      await ctx.supabase.from("credentials").insert({
-        id: credentialId,
-        // candidate_id: candidateId,
-      });
+      const { data: credential, error: credential_error } = await ctx.supabase
+        .from("credentials")
+        .insert({})
+        .select("id")
+        .single();
 
-      await ctx.supabase.from("candidates").insert({
-        id: candidateId,
-        slug: input.slug,
-        first_name: input.first_name,
-        middle_name: input.middle_name,
-        last_name: input.last_name,
-        election_id: input.election_id,
-        position_id: input.position_id,
-        partylist_id: input.partylist_id,
-        credential_id: credentialId,
+      if (credential_error)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: credential_error.message,
+        });
 
-        // TODO: fix image upload
-        // image:
-        //   input.image &&
-        //   (await fetch(input.image.base64)
-        //     .then((res) => res.blob())
-        //     .then(
-        //       async (blob) =>
-        //         (
-        //           await ctx.utapi.uploadFiles(
-        //             new File(
-        //               [blob],
-        //               `candidate_image_${candidateId}_${input.image!.name}`,
-        //               {
-        //                 type: input.image!.type,
-        //               },
-        //             ),
-        //           )
-        //         ).data,
-        //     )),
-      });
+      const { data: candidate, error: candidate_error } = await ctx.supabase
+        .from("candidates")
+        .insert({
+          slug: input.slug,
+          first_name: input.first_name,
+          middle_name: input.middle_name,
+          last_name: input.last_name,
+          election_id: input.election_id,
+          position_id: input.position_id,
+          partylist_id: input.partylist_id,
+          credential_id: credential.id,
+
+          // TODO: fix image upload
+          // image:
+          //   input.image &&
+          //   (await fetch(input.image.base64)
+          //     .then((res) => res.blob())
+          //     .then(
+          //       async (blob) =>
+          //         (
+          //           await ctx.utapi.uploadFiles(
+          //             new File(
+          //               [blob],
+          //               `candidate_image_${candidateId}_${input.image!.name}`,
+          //               {
+          //                 type: input.image!.type,
+          //               },
+          //             ),
+          //           )
+          //         ).data,
+          //     )),
+        })
+        .select("id")
+        .single();
+
+      if (candidate_error)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: candidate_error.message,
+        });
 
       await ctx.supabase.from("platforms").insert(
         input.platforms.map((platform) => ({
           title: platform.title,
           description: platform.description,
-          candidate_id: candidateId,
+          candidate_id: candidate.id,
         })),
       );
 
@@ -362,7 +374,7 @@ export const candidateRouter = createTRPCRouter({
           org_position: affiliation.org_position,
           start_year: affiliation.start_year.toISOString(),
           end_year: affiliation.end_year.toISOString(),
-          credential_id: credentialId,
+          credential_id: credential.id,
         })),
       );
 
@@ -370,7 +382,7 @@ export const candidateRouter = createTRPCRouter({
         input.achievements.map((achievement) => ({
           name: achievement.name,
           year: achievement.year.toISOString(),
-          credential_id: credentialId,
+          credential_id: credential.id,
         })),
       );
 
@@ -378,13 +390,11 @@ export const candidateRouter = createTRPCRouter({
         input.eventsAttended.map((event) => ({
           name: event.name,
           year: event.year.toISOString(),
-          credential_id: credentialId,
+          credential_id: credential.id,
         })),
       );
 
-      return {
-        candidate_id: candidateId,
-      };
+      return { candidate_id: candidate.id };
     }),
   delete: protectedProcedure
     .input(
@@ -539,6 +549,12 @@ export const candidateRouter = createTRPCRouter({
         )
         .eq("election_id", input.election_id)
         .is("deleted_at", null)
+        .is("candidates.deleted_at", null)
+        .is("candidates.platforms.deleted_at", null)
+        .is("candidates.credential.deleted_at", null)
+        .is("candidates.credential.achievements.deleted_at", null)
+        .is("candidates.credential.affiliations.deleted_at", null)
+        .is("candidates.credential.events_attended.deleted_at", null)
         .order("order", { ascending: true });
 
       if (!positionsWithCandidates)
@@ -633,29 +649,9 @@ export const candidateRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      // const election = await ctx.db.query.elections.findFirst({
-      //   where: (election, { eq, and, isNull }) =>
-      //     and(eq(election.id, input.election_id), isNull(election.deleted_at)),
-      //   with: {
-      //     commissioners: {
-      //       where: (commissioner, { eq, and, isNull }) =>
-      //         and(
-      //           eq(commissioner.user_id, ctx.session?.user.id ?? ""),
-      //           isNull(commissioner.deleted_at),
-      //         ),
-      //     },
-      //   },
-      // });
-
-      // TODO: not sure if this is correct
       const { data: election } = await ctx.supabase
         .from("elections")
-        .select(
-          `
-          *,
-          commissioners: commissioners(*)
-          `,
-        )
+        .select("*, commissioners: commissioners(*)")
         .eq("id", input.election_id)
         .is("deleted_at", null)
         .eq("commissioners.user_id", ctx.session?.user.id ?? "")
@@ -685,29 +681,9 @@ export const candidateRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      // const election = await ctx.db.query.elections.findFirst({
-      //   where: (election, { eq, and, isNull }) =>
-      //     and(eq(election.id, input.election_id), isNull(election.deleted_at)),
-      //   with: {
-      //     commissioners: {
-      //       where: (commissioner, { eq, and, isNull }) =>
-      //         and(
-      //           eq(commissioner.user_id, ctx.session?.user.id ?? ""),
-      //           isNull(commissioner.deleted_at),
-      //         ),
-      //     },
-      //   },
-      // });
-
-      // TODO: not sure if this is correct
       const { data: election } = await ctx.supabase
         .from("elections")
-        .select(
-          `
-          name_arrangement,
-          commissioners: commissioners(user_id)
-          `,
-        )
+        .select("name_arrangement, commissioners: commissioners(user_id)")
         .eq("id", input.election_id)
         .is("deleted_at", null)
         .eq("commissioners.user_id", ctx.session?.user.id ?? "")

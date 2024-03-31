@@ -42,6 +42,7 @@ import {
   IconUserSearch,
   IconX,
 } from "@tabler/icons-react";
+import { v4 as uuid } from "uuid";
 
 import { formatName } from "@eboto/constants";
 
@@ -104,16 +105,32 @@ export default function EditCandidate({
 
     platforms: candidate.platforms ?? [],
 
-    achievements: candidate.credential?.achievements ?? [],
-    affiliations: candidate.credential?.affiliations ?? [],
-    events_attended: candidate.credential?.events_attended ?? [],
+    achievements: (candidate.credential?.achievements ?? []).map(
+      (achievement) => ({
+        ...achievement,
+        year: achievement.year,
+      }),
+    ),
+    affiliations: (candidate.credential?.affiliations ?? []).map(
+      (affiliation) => ({
+        ...affiliation,
+        start_year: affiliation.start_year,
+        end_year: affiliation.end_year,
+      }),
+    ),
+    events_attended: (candidate.credential?.events_attended ?? []).map(
+      (event) => ({
+        ...event,
+        year: event.year,
+      }),
+    ),
   };
 
   const editCandidateMutation = api.candidate.edit.useMutation({
     onSuccess: async () => {
       await context.candidate.getDashboardData.invalidate();
       notifications.show({
-        title: `${formatName(election.name_arrangement, candidate)} created!`,
+        title: `${formatName(election.name_arrangement, candidate)} updated!`,
         message: `Successfully updated candidate: ${formatName(
           election.name_arrangement,
           candidate,
@@ -223,7 +240,7 @@ export default function EditCandidate({
     disabled,
   }: {
     type: "PLATFORM" | "ACHIEVEMENT" | "AFFILIATION" | "EVENTATTENDED";
-    id: string;
+    id: string | number;
     disabled?: boolean;
   }) => {
     const context = api.useUtils();
@@ -265,7 +282,10 @@ export default function EditCandidate({
         disabled={disabled}
         onClick={async () => {
           if (type === "PLATFORM") {
-            if (candidate.platforms.find((a) => a.id === id)) {
+            if (
+              candidate.platforms.find((a) => a.id === id) &&
+              typeof id === "string"
+            ) {
               await deletePlatformMutation.mutateAsync({ id });
             } else {
               form.setValues({
@@ -274,7 +294,10 @@ export default function EditCandidate({
               });
             }
           } else if (type === "ACHIEVEMENT") {
-            if (candidate.credential?.achievements.find((a) => a.id === id)) {
+            if (
+              candidate.credential?.achievements.find((a) => a.id === id) &&
+              typeof id === "string"
+            ) {
               await deleteCredentialMutation.mutateAsync({ id, type });
             } else {
               form.setValues({
@@ -285,7 +308,10 @@ export default function EditCandidate({
               });
             }
           } else if (type === "AFFILIATION") {
-            if (candidate.credential?.affiliations.find((a) => a.id === id)) {
+            if (
+              candidate.credential?.affiliations.find((a) => a.id === id) &&
+              typeof id === "string"
+            ) {
               await deleteCredentialMutation.mutateAsync({ id, type });
             } else {
               form.setValues({
@@ -297,7 +323,8 @@ export default function EditCandidate({
             }
           } else {
             if (
-              candidate.credential?.events_attended.find((a) => a.id === id)
+              candidate.credential?.events_attended.find((a) => a.id === id) &&
+              typeof id === "string"
             ) {
               await deleteCredentialMutation.mutateAsync({ id, type });
             } else {
@@ -380,7 +407,7 @@ export default function EditCandidate({
                   org_name: a.org_name,
                   org_position: a.org_position,
                   start_year: a.start_year,
-                  end_year: new Date(a.end_year).toDateString(),
+                  end_year: a.end_year,
                 })),
                 eventsAttended: values.events_attended.map((a) => ({
                   id: a.id,
@@ -685,7 +712,7 @@ export default function EditCandidate({
                         platforms: [
                           ...form.values.platforms,
                           {
-                            id: (form.values.platforms.length + 1).toString(),
+                            id: uuid(),
                             title: "",
                             description: "",
                           },
@@ -762,7 +789,7 @@ export default function EditCandidate({
                                         i === index
                                           ? {
                                               ...achievement,
-                                              year: date?.toISOString() ?? "",
+                                              year: date?.toDateString() ?? "",
                                             }
                                           : achievement,
                                     ),
@@ -790,14 +817,12 @@ export default function EditCandidate({
                             achievements: [
                               ...form.values.achievements,
                               {
-                                id: (
-                                  form.values.achievements.length + 1
-                                ).toString(),
+                                id: uuid(),
                                 name: "",
                                 year: new Date(
                                   new Date().getFullYear(),
                                   0,
-                                ).toISOString(),
+                                ).toDateString(),
                               },
                             ],
                           });
@@ -876,7 +901,7 @@ export default function EditCandidate({
                                           ? {
                                               ...affiliation,
                                               start_year:
-                                                date?.toString() ?? "",
+                                                date?.toDateString() ?? "",
                                             }
                                           : affiliation,
                                     ),
@@ -901,7 +926,8 @@ export default function EditCandidate({
                                         i === index
                                           ? {
                                               ...affiliation,
-                                              end_year: date?.toString() ?? "",
+                                              end_year:
+                                                date?.toDateString() ?? "",
                                             }
                                           : affiliation,
                                     ),
@@ -929,19 +955,17 @@ export default function EditCandidate({
                             affiliations: [
                               ...form.values.affiliations,
                               {
-                                id: (
-                                  form.values.affiliations.length + 1
-                                ).toString(),
+                                id: uuid(),
                                 org_name: "",
                                 org_position: "",
                                 start_year: new Date(
                                   new Date().getFullYear(),
                                   -1,
-                                ).toISOString(),
+                                ).toDateString(),
                                 end_year: new Date(
                                   new Date().getFullYear(),
                                   0,
-                                ).toISOString(),
+                                ).toDateString(),
                               },
                             ],
                           });
@@ -1002,7 +1026,8 @@ export default function EditCandidate({
                                             i === index
                                               ? {
                                                   ...achievement,
-                                                  year: date?.toString() ?? "",
+                                                  year:
+                                                    date?.toDateString() ?? "",
                                                 }
                                               : achievement,
                                         ),
@@ -1031,14 +1056,12 @@ export default function EditCandidate({
                             events_attended: [
                               ...form.values.events_attended,
                               {
-                                id: (
-                                  form.values.events_attended.length + 1
-                                ).toString(),
+                                id: uuid(),
                                 name: "",
                                 year: new Date(
                                   new Date().getFullYear(),
                                   0,
-                                ).toISOString(),
+                                ).toDateString(),
                               },
                             ],
                           });
