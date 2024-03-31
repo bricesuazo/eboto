@@ -1,4 +1,3 @@
-import { cache } from "react";
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 import type { CookieOptions } from "@supabase/ssr";
@@ -6,12 +5,12 @@ import { env } from "env.mjs";
 
 import type { Database } from "./../../../../../supabase/types";
 
-export const createClient = cache((key?: string) => {
+export const createClient = () => {
   const cookieStore = cookies();
 
   return createServerClient<Database>(
     env.NEXT_PUBLIC_SUPABASE_URL,
-    key ?? env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
         get(name: string) {
@@ -38,4 +37,4 @@ export const createClient = cache((key?: string) => {
       },
     },
   );
-});
+};

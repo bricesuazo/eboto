@@ -15,11 +15,10 @@ const handler = (req: Request) =>
         data: { session },
       } = await supabaseServer.auth.getSession();
 
-      const supabaseAdmin = createClientAdmin();
       return createTRPCContext({
         req,
         session,
-        supabase: supabaseAdmin,
+        supabase: createClientAdmin(),
       });
     },
   });

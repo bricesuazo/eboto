@@ -1,7 +1,11 @@
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { env } from "env.mjs";
 
-import { createClient as createClientServer } from "./server";
+import type { Database } from "./../../../../../supabase/types";
 
-export function createClient() {
-  return createClientServer(env.SUPABASE_SERVICE_ROLE_KEY);
-}
+export const createClient = () => {
+  return createSupabaseClient<Database>(
+    env.NEXT_PUBLIC_SUPABASE_URL,
+    env.SUPABASE_SERVICE_ROLE_KEY,
+  );
+};
