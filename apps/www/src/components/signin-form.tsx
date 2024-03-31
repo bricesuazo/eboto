@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
@@ -39,19 +39,6 @@ export default function SigninForm() {
     },
   });
 
-  useEffect(() => {
-    async function checkUser() {
-      const supabase = createClient();
-
-      await supabase.auth.getSession().then(({ data, error }) => {
-        console.log("🚀 ~ awaitsupabase.auth.getSession ~ data:", data);
-        console.log("🚀 ~ awaitsupabase.auth.getSession ~ error:", error);
-      });
-    }
-
-    void checkUser();
-  }, []);
-
   return (
     <Paper radius="md" p="xl" withBorder shadow="md">
       <Stack>
@@ -67,11 +54,10 @@ export default function SigninForm() {
               const supabase = createClient();
               setLoadings((loadings) => ({ ...loadings, google: true }));
 
-              const callbackUrl = searchParams.get("callbackUrl");
               await supabase.auth.signInWithOAuth({
                 provider: "google",
                 options: {
-                  redirectTo: callbackUrl ? callbackUrl : undefined,
+                  redirectTo: searchParams.get("callbackUrl") ?? "/dashboard",
                 },
               });
             }}

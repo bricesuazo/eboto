@@ -9,8 +9,8 @@ export default async function ElectionLayout(
 ) {
   const supabaseServer = createClientServer();
   const {
-    data: { session },
-  } = await supabaseServer.auth.getSession();
+    data: { user },
+  } = await supabaseServer.auth.getUser();
 
   const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin
@@ -25,13 +25,13 @@ export default async function ElectionLayout(
   const isOngoing = isElectionOngoing({ election });
 
   if (election.publicity === "PRIVATE") {
-    if (!session) notFound();
+    if (!user) notFound();
 
     const { data: commissioner } = await supabaseAdmin
       .from("commissioners")
       .select()
       .eq("election_id", election.id)
-      .eq("user_id", session.user.id)
+      .eq("user_id", user.id)
       .is("deleted_at", null)
       .single();
 
@@ -39,13 +39,13 @@ export default async function ElectionLayout(
   } else if (election.publicity === "VOTER") {
     const callbackUrl = `/sign-in?callbackUrl=https://eboto.app/${props.params.electionSlug}`;
 
-    if (!session) redirect(callbackUrl);
+    if (!user) redirect(callbackUrl);
 
     const { data: voter } = await supabaseAdmin
       .from("voters")
       .select()
       .eq("election_id", election.id)
-      .eq("email", session.user.email ?? "")
+      .eq("email", user.email ?? "")
       .is("deleted_at", null)
       .single();
 
@@ -53,7 +53,7 @@ export default async function ElectionLayout(
       .from("commissioners")
       .select()
       .eq("election_id", election.id)
-      .eq("user_id", session.user.id)
+      .eq("user_id", user.id)
       .is("deleted_at", null)
       .single();
 

@@ -20,7 +20,7 @@ export const voterRouter = createTRPCRouter({
         .select("*, commissioners(*)")
         .eq("id", input.election_id)
         .is("deleted_at", null)
-        .eq("commissioners.user_id", ctx.session.user.id)
+        .eq("commissioners.user_id", ctx.user.auth.id)
         .single();
 
       if (!isElectionExists)
@@ -109,7 +109,7 @@ export const voterRouter = createTRPCRouter({
         .from("commissioners")
         .select("*")
         .eq("election_id", input.election_id)
-        .eq("user_id", ctx.session.user.id)
+        .eq("user_id", ctx.user.auth.id)
         .is("deleted_at", null)
         .single();
 
@@ -234,7 +234,7 @@ export const voterRouter = createTRPCRouter({
       const { data: commissioner } = await ctx.supabase
         .from("commissioners")
         .select("*")
-        .eq("user_id", ctx.session.user.id)
+        .eq("user_id", ctx.user.auth.id)
         .eq("election_id", election.id)
         .is("deleted_at", null)
         .single();
@@ -245,7 +245,7 @@ export const voterRouter = createTRPCRouter({
         .from("commissioners")
         .select("*")
         .eq("election_id", input.election_id)
-        .eq("user_id", ctx.session.user.id)
+        .eq("user_id", ctx.user.auth.id)
         .is("deleted_at", null)
         .single();
 
@@ -296,7 +296,7 @@ export const voterRouter = createTRPCRouter({
         .from("commissioners")
         .select("*")
         .eq("election_id", input.election_id)
-        .eq("user_id", ctx.session.user.id)
+        .eq("user_id", ctx.user.auth.id)
         .is("deleted_at", null)
         .single();
 
@@ -351,7 +351,7 @@ export const voterRouter = createTRPCRouter({
       const { data: commissioner } = await ctx.supabase
         .from("commissioners")
         .select("*")
-        .eq("user_id", ctx.session.user.id)
+        .eq("user_id", ctx.user.auth.id)
         .eq("election_id", election.id)
         .is("deleted_at", null)
         .single();
@@ -397,7 +397,7 @@ export const voterRouter = createTRPCRouter({
       const { data: commissioner } = await ctx.supabase
         .from("commissioners")
         .select("*")
-        .eq("user_id", ctx.session.user.id)
+        .eq("user_id", ctx.user.auth.id)
         .eq("election_id", election.id)
         .is("deleted_at", null)
         .single();
@@ -411,7 +411,7 @@ export const voterRouter = createTRPCRouter({
         .select("*, commissioners(*)")
         .eq("id", input.election_id)
         .is("deleted_at", null)
-        .eq("commissioners.user_id", ctx.session.user.id)
+        .eq("commissioners.user_id", ctx.user.auth.id)
         .single();
 
       if (!isElectionExists) throw new Error("Election does not exists");

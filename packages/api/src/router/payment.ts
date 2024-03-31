@@ -29,7 +29,7 @@ export const paymentRouter = createTRPCRouter({
         await ctx.supabase
           .from("users")
           .select()
-          .eq("id", ctx.session.user.id)
+          .eq("id", ctx.user.auth.id)
           .single(),
       ]);
 
@@ -62,12 +62,12 @@ export const paymentRouter = createTRPCRouter({
             receiptLinkUrl: env.APP_URL + "/account/billing",
           },
           checkoutData: {
-            email: ctx.session.user.email?.length
-              ? ctx.session.user.email
+            email: ctx.user.auth.email?.length
+              ? ctx.user.auth.email
               : undefined,
             name: user.name?.length ? user.name : undefined,
             custom: {
-              user_id: ctx.session.user.id,
+              user_id: ctx.user.auth.id,
               election_id: input.election_id,
               type: "boost",
             },
@@ -93,7 +93,7 @@ export const paymentRouter = createTRPCRouter({
       const { data: user } = await ctx.supabase
         .from("users")
         .select()
-        .eq("id", ctx.session.user.id)
+        .eq("id", ctx.user.auth.id)
         .single();
 
       if (!user)
@@ -109,9 +109,7 @@ export const paymentRouter = createTRPCRouter({
               receiptLinkUrl: env.APP_URL + "/account/billing",
             },
             checkoutData: {
-              email: ctx.session.user.email?.length
-                ? ctx.session.user.email
-                : undefined,
+              email: ctx.user.db.email.length ? ctx.user.db.email : undefined,
               name: user.name?.length ? user.name : undefined,
               variantQuantities: [
                 {
@@ -120,7 +118,7 @@ export const paymentRouter = createTRPCRouter({
                 },
               ],
               custom: {
-                user_id: ctx.session.user.id,
+                user_id: ctx.user.auth.id,
                 type: "plus",
               },
             },

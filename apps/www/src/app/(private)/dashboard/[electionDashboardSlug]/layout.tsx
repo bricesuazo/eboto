@@ -9,10 +9,10 @@ export default async function DashboardLayout(
 ) {
   const supabaseServer = creatClientServer();
   const {
-    data: { session },
-  } = await supabaseServer.auth.getSession();
+    data: { user },
+  } = await supabaseServer.auth.getUser();
 
-  if (!session) redirect("/sign-in");
+  if (!user) redirect("/sign-in");
 
   // const election = await db.query.elections.findFirst({
   //   where: (elections, { eq, and, isNull }) =>
@@ -46,14 +46,14 @@ export default async function DashboardLayout(
     .from("commissioners")
     .select()
     .eq("election_id", election.id)
-    .eq("user_id", session.user.id)
+    .eq("user_id", user.id)
     .is("deleted_at", null);
 
   if (!commissioners || commissioners.length === 0) notFound();
 
   return (
     <DashboardElection
-      userId={session.user.id}
+      userId={user.id}
       is_free={election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID}
       election_id={election.id}
     >

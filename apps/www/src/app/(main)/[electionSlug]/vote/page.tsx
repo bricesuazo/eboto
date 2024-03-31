@@ -37,10 +37,10 @@ export default async function VotePage({
 }) {
   const supabaseServer = createClientServer();
   const {
-    data: { session },
-  } = await supabaseServer.auth.getSession();
+    data: { user },
+  } = await supabaseServer.auth.getUser();
 
-  if (!session)
+  if (!user)
     redirect(`/sign-in?callbackUrl=https://eboto.app/${electionSlug}/vote`);
 
   const supabaseAdmin = createClientAdmin();
@@ -58,7 +58,7 @@ export default async function VotePage({
   const { data: voter } = await supabaseAdmin
     .from("voters")
     .select("id, field")
-    .eq("email", session.user.email ?? "")
+    .eq("email", user.email ?? "")
     .eq("election_id", election.id)
     .is("deleted_at", null)
     .single();
@@ -92,7 +92,7 @@ export default async function VotePage({
     const { data: commissioner } = await supabaseAdmin
       .from("commissioners")
       .select()
-      .eq("user_id", session.user.id)
+      .eq("user_id", user.id)
       .eq("election_id", election.id)
       .is("deleted_at", null)
       .single();
@@ -114,7 +114,7 @@ export default async function VotePage({
     const { data: commissioner } = await supabaseAdmin
       .from("commissioners")
       .select()
-      .eq("user_id", session.user.id)
+      .eq("user_id", user.id)
       .eq("election_id", election.id)
       .single();
 

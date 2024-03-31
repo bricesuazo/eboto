@@ -270,7 +270,7 @@ export function MainPricing({
 }) {
   const [value, setValue] = useState(initialValue ?? 0);
   const router = useRouter();
-  const sessionQuery = api.auth.getSession.useQuery();
+  const userQuery = api.auth.getUser.useQuery();
 
   const [isRedirecting, setIsRedirecting] = useState(false);
   const plusMutation = api.payment.plus.useMutation({
@@ -486,7 +486,7 @@ export function MainPricing({
           </Box>
 
           <Flex style={{ flex: 4 }} justify={{ md: "end" }}>
-            {sessionQuery.data ? (
+            {userQuery.data ? (
               <Button
                 w={{ base: "100%", md: "auto" }}
                 size="lg"
@@ -508,7 +508,7 @@ export function MainPricing({
                 rightSection={<IconPlus />}
                 component={Link}
                 href="/sign-in"
-                disabled={plusMutation.isPending || sessionQuery.isLoading}
+                disabled={plusMutation.isPending || userQuery.isLoading}
               >
                 Get Plus
               </Button>
@@ -521,7 +521,7 @@ export function MainPricing({
 }
 
 function GetBoostButton({ value }: { value: number }) {
-  const sessionQuery = api.auth.getSession.useQuery();
+  const userQuery = api.auth.getUser.useQuery();
   const store = useStore();
 
   return value === 100 ? (
@@ -536,7 +536,7 @@ function GetBoostButton({ value }: { value: number }) {
     >
       Contact Us
     </Button>
-  ) : sessionQuery.data ? (
+  ) : userQuery.data ? (
     <Button
       size="lg"
       radius="xl"
@@ -553,7 +553,7 @@ function GetBoostButton({ value }: { value: number }) {
       radius="xl"
       variant="gradient"
       w="100%"
-      disabled={sessionQuery.isLoading}
+      disabled={userQuery.isLoading}
       component={Link}
       href="/sign-in"
       rightSection={<IconRocket />}

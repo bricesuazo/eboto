@@ -30,10 +30,10 @@ export const metadata: Metadata = {
 export default async function Page() {
   const supabase = createClient();
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!session) redirect("/sign-in");
+  if (!user) redirect("/sign-in");
 
   return (
     <Dashboard>

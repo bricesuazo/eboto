@@ -11,6 +11,7 @@ import { appRouter } from "@eboto/api";
 import type { AppRouter } from "@eboto/api";
 import * as payment from "@eboto/payment";
 
+import type { Database } from "../../../../supabase/types";
 import { endingLink } from "./shared";
 
 /**
@@ -33,10 +34,29 @@ export const api = createTRPCNextAppDirServer<AppRouter>({
           async createContext() {
             const supabase = createClient();
             const {
-              data: { session },
-            } = await supabase.auth.getSession();
+              data: { user },
+            } = await supabase.auth.getUser();
+
+            let user_db: Database["public"]["Tables"]["users"]["Row"] | null =
+              null;
+
+            if (user) {
+              const { data } = await supabase
+                .from("users")
+                .select()
+                .eq("id", user.id)
+                .single();
+
+              user_db = data;
+            }
             return {
-              session,
+              user:
+                user && user_db
+                  ? {
+                      db: user_db,
+                      auth: user,
+                    }
+                  : null,
               supabase,
               headers: {
                 cookie: cookies().toString(),

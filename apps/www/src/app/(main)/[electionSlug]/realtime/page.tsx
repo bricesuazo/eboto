@@ -16,8 +16,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const supabaseServer = createClientServer();
   const {
-    data: { session },
-  } = await supabaseServer.auth.getSession();
+    data: { user },
+  } = await supabaseServer.auth.getUser();
 
   const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin
@@ -33,13 +33,13 @@ export async function generateMetadata({
     .from("voters")
     .select("id")
     .eq("election_id", election.id)
-    .eq("email", session?.user?.email ?? "");
+    .eq("email", user?.email ?? "");
 
   const { data: commissioners } = await supabaseAdmin
     .from("commissioners")
     .select("id")
     .eq("election_id", election.id)
-    .eq("user_id", session?.user?.id ?? "");
+    .eq("user_id", user?.id ?? "");
 
   if (
     !voters ||
@@ -98,8 +98,8 @@ export default async function RealtimePage({
 }) {
   const supabaseServer = createClientServer();
   const {
-    data: { session },
-  } = await supabaseServer.auth.getSession();
+    data: { user },
+  } = await supabaseServer.auth.getUser();
   const positions = await api.election.getElectionRealtime.query(electionSlug);
 
   const supabaseAdmin = createClientAdmin();
@@ -116,7 +116,7 @@ export default async function RealtimePage({
     .from("voters")
     .select("id")
     .eq("election_id", election.id)
-    .eq("email", session?.user?.email ?? "")
+    .eq("email", user?.email ?? "")
     .is("deleted_at", null)
     .single();
 
@@ -124,7 +124,7 @@ export default async function RealtimePage({
     .from("commissioners")
     .select("id")
     .eq("election_id", election.id)
-    .eq("user_id", session?.user.id ?? "")
+    .eq("user_id", user?.id ?? "")
     .is("deleted_at", null)
     .single();
 
@@ -134,13 +134,13 @@ export default async function RealtimePage({
 
   if (election.publicity === "PRIVATE") {
     isVoterCanMessage = false;
-    if (!session) redirect(callbackUrl);
+    if (!user) redirect(callbackUrl);
 
     const { data: isCommissioner } = await supabaseAdmin
       .from("commissioners")
       .select("user:users(email)")
       .eq("election_id", election.id)
-      .eq("user_id", session.user.id)
+      .eq("user_id", user.id)
       .is("deleted_at", null)
       .single();
 
@@ -172,7 +172,7 @@ export default async function RealtimePage({
 
     if (isVoter && !vote && !isCommissioner) redirect(`/${election.slug}`);
   } else if (election.publicity === "VOTER") {
-    if (!session) redirect(callbackUrl);
+    if (!user) redirect(callbackUrl);
 
     const { data: vote } = await supabaseAdmin
       .from("votes")

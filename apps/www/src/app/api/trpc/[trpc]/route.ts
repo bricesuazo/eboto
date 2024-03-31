@@ -4,6 +4,8 @@ import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 
 import { appRouter, createTRPCContext } from "@eboto/api";
 
+import type { Database } from "../../../../../../../supabase/types";
+
 const handler = (req: Request) =>
   fetchRequestHandler({
     endpoint: "/api/trpc",
@@ -12,12 +14,30 @@ const handler = (req: Request) =>
     createContext: async () => {
       const supabaseServer = createClientServer();
       const {
-        data: { session },
-      } = await supabaseServer.auth.getSession();
+        data: { user },
+      } = await supabaseServer.auth.getUser();
+
+      let user_db: Database["public"]["Tables"]["users"]["Row"] | null = null;
+
+      if (user) {
+        const { data } = await supabaseServer
+          .from("users")
+          .select()
+          .eq("id", user.id)
+          .single();
+
+        user_db = data;
+      }
 
       return createTRPCContext({
         req,
-        session,
+        user:
+          user && user_db
+            ? {
+                db: user_db,
+                auth: user,
+              }
+            : null,
         supabase: createClientAdmin(),
       });
     },

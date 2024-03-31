@@ -6,13 +6,13 @@ import { createClient } from "@/utils/supabase/server";
 export default async function AccountPage() {
   const supabase = createClient();
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!session) notFound();
+  if (!user) notFound();
 
-  const getSessionProtectedQuery =
-    await api.auth.getSessionProtected.query(undefined);
+  const getUserProtectedQuery =
+    await api.auth.getUserProtected.query(undefined);
 
-  return <AccountPageClient {...getSessionProtectedQuery} />;
+  return <AccountPageClient {...getUserProtectedQuery} />;
 }

@@ -5,10 +5,10 @@ import { Container } from "@mantine/core";
 export default async function AuthLayout(props: React.PropsWithChildren) {
   const supabase = createClient();
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (session) redirect("/dashboard");
+  if (user) redirect("/dashboard");
 
   return (
     <Container size={420} my={40}>

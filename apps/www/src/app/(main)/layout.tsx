@@ -15,8 +15,8 @@ export default async function RootLayout({
 }) {
   const supabase = createClient();
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
   return (
     <AppShell
       padding={0}
@@ -27,7 +27,7 @@ export default async function RootLayout({
       //  navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
     >
       <AppShellHeader>
-        <Header userId={session?.user.id} />
+        <Header userId={user?.id} />
       </AppShellHeader>
 
       <AppShellMain>{children}</AppShellMain>

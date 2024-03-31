@@ -16,13 +16,13 @@ const confettiContext = createContext(
 );
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const sessionQuery = api.auth.getSession.useQuery();
+  const userQuery = api.auth.getUser.useQuery();
   const router = useRouter();
 
   const getAllMyElectionsQuery = api.election.getAllMyElections.useQuery(
     undefined,
     {
-      enabled: !!sessionQuery.data,
+      enabled: !!userQuery.data,
     },
   );
 

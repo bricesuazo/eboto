@@ -61,7 +61,7 @@ export const partylistRouter = createTRPCRouter({
       const { data: commissioner } = await ctx.supabase
         .from("commissioners")
         .select()
-        .eq("user_id", ctx.session.user.id)
+        .eq("user_id", ctx.user.auth.id)
         .eq("election_id", election.id)
         .is("deleted_at", null)
         .single();
@@ -109,7 +109,7 @@ export const partylistRouter = createTRPCRouter({
       const { data: commissioner } = await ctx.supabase
         .from("commissioners")
         .select()
-        .eq("user_id", ctx.session.user.id)
+        .eq("user_id", ctx.user.auth.id)
         .eq("election_id", election.id)
         .is("deleted_at", null)
         .single();
@@ -169,7 +169,7 @@ export const partylistRouter = createTRPCRouter({
       const { data: commissioner } = await ctx.supabase
         .from("commissioners")
         .select()
-        .eq("user_id", ctx.session.user.id)
+        .eq("user_id", ctx.user.auth.id)
         .eq("election_id", election.id)
         .is("deleted_at", null)
         .single();

@@ -113,7 +113,7 @@ export const candidateRouter = createTRPCRouter({
       const { data: commissioner } = await ctx.supabase
         .from("commissioners")
         .select("*")
-        .eq("user_id", ctx.session.user.id)
+        .eq("user_id", ctx.user.auth.id)
         .eq("election_id", election.id)
         .is("deleted_at", null)
         .single();
@@ -288,7 +288,7 @@ export const candidateRouter = createTRPCRouter({
       const { data: commissioner } = await ctx.supabase
         .from("commissioners")
         .select()
-        .eq("user_id", ctx.session.user.id)
+        .eq("user_id", ctx.user.auth.id)
         .eq("election_id", election.id)
         .is("deleted_at", null)
         .single();
@@ -416,7 +416,7 @@ export const candidateRouter = createTRPCRouter({
       const { data: commissioner } = await ctx.supabase
         .from("commissioners")
         .select()
-        .eq("user_id", ctx.session.user.id)
+        .eq("user_id", ctx.user.auth.id)
         .eq("election_id", election.id)
         .is("deleted_at", null)
         .single();
@@ -522,7 +522,7 @@ export const candidateRouter = createTRPCRouter({
       const { data: commissioner } = await ctx.supabase
         .from("commissioners")
         .select()
-        .eq("user_id", ctx.session.user.id)
+        .eq("user_id", ctx.user.auth.id)
         .eq("election_id", election.id)
         .is("deleted_at", null)
         .single();
@@ -632,12 +632,9 @@ export const candidateRouter = createTRPCRouter({
         },
         isVoterCanMessage:
           election.publicity !== "PRIVATE" &&
-          election.voters.some(
-            (voter) => voter.email === ctx.session?.user.email,
-          ) &&
+          election.voters.some((voter) => voter.email === ctx.user?.db.email) &&
           !election.commissioners.some(
-            (commissioner) =>
-              commissioner.user?.email === ctx.session?.user.email,
+            (commissioner) => commissioner.user?.email === ctx.user?.db.email,
           ),
       };
     }),
@@ -654,7 +651,7 @@ export const candidateRouter = createTRPCRouter({
         .select("*, commissioners: commissioners(*)")
         .eq("id", input.election_id)
         .is("deleted_at", null)
-        .eq("commissioners.user_id", ctx.session?.user.id ?? "")
+        .eq("commissioners.user_id", ctx.user?.auth.id ?? "")
         .is("commissioners.deleted_at", null)
         .single();
 
@@ -662,7 +659,7 @@ export const candidateRouter = createTRPCRouter({
 
       if (
         !election.commissioners.some(
-          (commissioner) => commissioner.user_id === ctx.session?.user.id,
+          (commissioner) => commissioner.user_id === ctx.user?.auth.id,
         )
       )
         throw new TRPCError({ code: "NOT_FOUND" });
@@ -686,7 +683,7 @@ export const candidateRouter = createTRPCRouter({
         .select("name_arrangement, commissioners: commissioners(user_id)")
         .eq("id", input.election_id)
         .is("deleted_at", null)
-        .eq("commissioners.user_id", ctx.session?.user.id ?? "")
+        .eq("commissioners.user_id", ctx.user?.auth.id ?? "")
         .is("commissioners.deleted_at", null)
         .single();
 
@@ -694,7 +691,7 @@ export const candidateRouter = createTRPCRouter({
 
       if (
         !election.commissioners.some(
-          (commissioner) => commissioner.user_id === ctx.session?.user.id,
+          (commissioner) => commissioner.user_id === ctx.user?.auth.id,
         )
       )
         throw new TRPCError({ code: "NOT_FOUND" });

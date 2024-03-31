@@ -54,7 +54,7 @@ export const userRouter = createTRPCRouter({
           //     : null,
           // image: image_file ? image_file.url : input.image ? user.image : null,
         })
-        .eq("id", ctx.session.user.id)
+        .eq("id", ctx.user.auth.id)
         .select()
         .single();
 

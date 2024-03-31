@@ -64,7 +64,7 @@ export const electionRouter = createTRPCRouter({
         .from("voters")
         .select()
         .eq("election_id", election.id)
-        .eq("email", ctx.session?.user.email ?? "")
+        .eq("email", ctx.user?.db.email ?? "")
         .is("deleted_at", null)
         .single();
 
@@ -95,8 +95,7 @@ export const electionRouter = createTRPCRouter({
           election.publicity !== "PRIVATE" &&
           !!myVoterData &&
           !commissioners?.some(
-            (commissioner) =>
-              commissioner.user?.email === ctx.session?.user.email,
+            (commissioner) => commissioner.user?.email === ctx?.user?.db.email,
           ),
       };
     }),
@@ -141,7 +140,7 @@ export const electionRouter = createTRPCRouter({
       const { data: existingVotes } = await ctx.supabase
         .from("votes")
         .select()
-        .eq("voter_id", ctx.session.user.id)
+        .eq("voter_id", ctx.user.auth.id)
         .eq("election_id", election.id)
         .single();
 
@@ -155,7 +154,7 @@ export const electionRouter = createTRPCRouter({
         .from("voters")
         .select()
         .eq("election_id", election.id)
-        .eq("email", ctx.session.user.email ?? "")
+        .eq("email", ctx.user.db.email)
         .is("deleted_at", null)
         .single();
 
@@ -183,56 +182,53 @@ export const electionRouter = createTRPCRouter({
           .flat(),
       );
 
-      if (ctx.session.user.email) {
-        const { data: positions } = await ctx.supabase
-          .from("positions")
-          .select()
-          .eq("election_id", input.election_id)
-          .is("deleted_at", null)
-          .order("order", { ascending: true });
+      const { data: positions } = await ctx.supabase
+        .from("positions")
+        .select()
+        .eq("election_id", input.election_id)
+        .is("deleted_at", null)
+        .order("order", { ascending: true });
 
-        const { data: candidates } = await ctx.supabase
-          .from("candidates")
-          .select()
-          .eq("election_id", input.election_id)
-          .is("deleted_at", null);
+      const { data: candidates } = await ctx.supabase
+        .from("candidates")
+        .select()
+        .eq("election_id", input.election_id)
+        .is("deleted_at", null);
 
-        if (!positions || !candidates)
-          throw new TRPCError({ code: "NOT_FOUND" });
+      if (!positions || !candidates) throw new TRPCError({ code: "NOT_FOUND" });
 
-        await sendVoteCasted({
-          email: ctx.session.user.email,
-          election: {
-            name: election.name,
-            slug: election.slug,
+      await sendVoteCasted({
+        email: ctx.user.db.email,
+        election: {
+          name: election.name,
+          slug: election.slug,
 
-            positions: input.votes.map((vote) => ({
-              id: vote.position_id,
-              name:
-                positions.find((position) => position.id === vote.position_id)
-                  ?.name ?? "",
-              vote: !vote.votes.isAbstain
-                ? {
-                    isAbstain: false,
-                    candidates: vote.votes.candidates.map((candidate_id) => {
-                      const candidate = candidates.find(
-                        (candidate) => candidate.id === candidate_id,
-                      );
+          positions: input.votes.map((vote) => ({
+            id: vote.position_id,
+            name:
+              positions.find((position) => position.id === vote.position_id)
+                ?.name ?? "",
+            vote: !vote.votes.isAbstain
+              ? {
+                  isAbstain: false,
+                  candidates: vote.votes.candidates.map((candidate_id) => {
+                    const candidate = candidates.find(
+                      (candidate) => candidate.id === candidate_id,
+                    );
 
-                      return {
-                        id: candidate?.id ?? "",
-                        name: `${formatName(
-                          election.name_arrangement,
-                          candidate!,
-                        )}`,
-                      };
-                    }),
-                  }
-                : { isAbstain: true },
-            })),
-          },
-        });
-      }
+                    return {
+                      id: candidate?.id ?? "",
+                      name: `${formatName(
+                        election.name_arrangement,
+                        candidate!,
+                      )}`,
+                    };
+                  }),
+                }
+              : { isAbstain: true },
+          })),
+        },
+      });
     }),
   getElectionBySlug: publicProcedure
     .input(
@@ -314,7 +310,7 @@ export const electionRouter = createTRPCRouter({
         subject: input.subject,
         description: input.description,
         election_id: input.election_id,
-        user_id: ctx.session.user.id,
+        user_id: ctx.user.auth.id,
       });
     }),
   getElectionVoting: publicProcedure
@@ -446,7 +442,7 @@ export const electionRouter = createTRPCRouter({
     const { data: commissioners } = await ctx.supabase
       .from("commissioners")
       .select("*, election: elections(*, commissioners(*, user:users(*)))")
-      .eq("user_id", ctx.session.user.id)
+      .eq("user_id", ctx.user.auth.id)
       .is("deleted_at", null)
       .is("elections.commissioners.deleted_at", null)
       .order("created_at", {
@@ -535,7 +531,7 @@ export const electionRouter = createTRPCRouter({
         await ctx.supabase
           .from("elections_plus")
           .select()
-          .eq("user_id", ctx.session.user.id)
+          .eq("user_id", ctx.user.auth.id)
           .is("redeemed_at", null)
           .single();
 
@@ -591,7 +587,7 @@ export const electionRouter = createTRPCRouter({
         .from("commissioners")
         .insert({
           election_id: create_election.id,
-          user_id: ctx.session.user.id,
+          user_id: ctx.user.auth.id,
         });
 
       if (commissioners_error)
@@ -711,7 +707,7 @@ export const electionRouter = createTRPCRouter({
         .select("*, commissioners(*)")
         .eq("id", input.id)
         .is("deleted_at", null)
-        .eq("commissioners.user_id", ctx.session.user.id)
+        .eq("commissioners.user_id", ctx.user.auth.id)
         .is("commissioners.deleted_at", null)
         .single();
 
@@ -874,7 +870,7 @@ export const electionRouter = createTRPCRouter({
 
       if (!election) throw new TRPCError({ code: "NOT_FOUND" });
 
-      if (!ctx.session && election.publicity !== "PUBLIC")
+      if (!ctx && election.publicity !== "PUBLIC")
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "Election is not public",
@@ -1035,7 +1031,7 @@ export const electionRouter = createTRPCRouter({
           ...commissioner.user,
           isTheCreator:
             commissioner.user?.id === election.commissioners[0]?.user_id,
-          isMe: commissioner.user?.id === ctx.session.user.id,
+          isMe: commissioner.user?.id === ctx.user.auth.id,
         },
       }));
     }),
@@ -1047,7 +1043,7 @@ export const electionRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      if (ctx.session.user.email === input.email)
+      if (ctx.user.db.email === input.email)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "You cannot add yourself as a commissioner",
@@ -1161,7 +1157,7 @@ export const electionRouter = createTRPCRouter({
       .from("elections")
       .select("*, commissioners(*)")
       .is("deleted_at", null)
-      .eq("commissioners.user_id", ctx.session.user.id)
+      .eq("commissioners.user_id", ctx.user.auth.id)
       .is("commissioners.deleted_at", null);
 
     if (!electionsThatICanManage) throw new TRPCError({ code: "NOT_FOUND" });
@@ -1170,7 +1166,7 @@ export const electionRouter = createTRPCRouter({
       ? await ctx.supabase
           .from("commissioners")
           .select("*, election: elections(*)")
-          .eq("user_id", ctx.session.user.id)
+          .eq("user_id", ctx.user.auth.id)
           .is("deleted_at", null)
           .in(
             "election_id",
@@ -1179,7 +1175,7 @@ export const electionRouter = createTRPCRouter({
       : await ctx.supabase
           .from("commissioners")
           .select("*, election: elections(*)")
-          .eq("user_id", ctx.session.user.id)
+          .eq("user_id", ctx.user.auth.id)
           .is("deleted_at", null);
 
     if (!electionsAsCommissioner) throw new TRPCError({ code: "NOT_FOUND" });
@@ -1202,7 +1198,7 @@ export const electionRouter = createTRPCRouter({
       .select("*, voters(*)")
       .neq("publicity", "PRIVATE")
       .is("deleted_at", null)
-      .eq("voters.email", ctx.session.user.email ?? "")
+      .eq("voters.email", ctx.user.db.email)
       .is("voters.deleted_at", null)
       .limit(1, { referencedTable: "voters" });
 
@@ -1216,13 +1212,13 @@ export const electionRouter = createTRPCRouter({
     //   where: (voters, { eq, ne, and, inArray, isNull }) =>
     //     and(
     //       isNull(voters.deleted_at),
-    //       eq(voters.email, ctx.session.user.email ?? ""),
+    //       eq(voters.email, ctx.user.db.email),
     //       elections.length
     //         ? inArray(
     //             voters.election_id,
     //             elections.map((election) => election.id),
     //           )
-    //         : ne(voters.email, ctx.session.user.email ?? ""),
+    //         : ne(voters.email, ctx.user.db.email),
     //     ),
     //   with: {
     //     election: {
@@ -1251,7 +1247,7 @@ export const electionRouter = createTRPCRouter({
       ? await ctx.supabase
           .from("voters")
           .select("*, election: elections(*, votes(*))")
-          .eq("email", ctx.session.user.email ?? "")
+          .eq("email", ctx.user.db.email)
           .is("deleted_at", null)
           .in(
             "election_id",
@@ -1260,7 +1256,7 @@ export const electionRouter = createTRPCRouter({
       : await ctx.supabase
           .from("voters")
           .select("*, election: elections(*, votes(*))")
-          .eq("email", ctx.session.user.email ?? "")
+          .eq("email", ctx.user.db.email)
           .is("deleted_at", null);
 
     if (!electionsAsVoter) throw new TRPCError({ code: "NOT_FOUND" });
@@ -1287,7 +1283,7 @@ export const electionRouter = createTRPCRouter({
         .eq("id", input.election_id)
         .is("deleted_at", null)
         .neq("publicity", "PRIVATE")
-        .eq("voters.email", ctx.session.user.email ?? "")
+        .eq("voters.email", ctx.user.db.email)
         .is("voters.deleted_at", null)
         .is("commissioners.deleted_at", null)
         .single();
@@ -1318,7 +1314,7 @@ export const electionRouter = createTRPCRouter({
 
       if (
         election.commissioners.find(
-          (commissioner) => commissioner.user?.email === ctx.session.user.email,
+          (commissioner) => commissioner.user?.email === ctx.user.db.email,
         )
       )
         throw new TRPCError({
@@ -1345,7 +1341,7 @@ export const electionRouter = createTRPCRouter({
       await ctx.supabase.from("commissioners_voters_messages").insert({
         message: input.message,
         room_id: room.id,
-        user_id: ctx.session.user.id,
+        user_id: ctx.user.auth.id,
       });
     }),
   getAllMyMessages: protectedProcedure
@@ -1432,7 +1428,7 @@ export const electionRouter = createTRPCRouter({
       await ctx.supabase.from("admin_commissioners_messages").insert({
         message: input.message,
         room_id: room.id,
-        user_id: ctx.session.user.id,
+        user_id: ctx.user.auth.id,
       });
     }),
   getAllCommissionerVoterRooms: protectedProcedure
@@ -1458,7 +1454,7 @@ export const electionRouter = createTRPCRouter({
 
       if (
         !election.commissioners.find(
-          (commissioner) => commissioner.user?.email === ctx.session.user.email,
+          (commissioner) => commissioner.user?.email === ctx.user.db.email,
         )
       )
         throw new TRPCError({
@@ -1505,7 +1501,7 @@ export const electionRouter = createTRPCRouter({
 
       if (
         !election.commissioners.find(
-          (commissioner) => commissioner.user?.email === ctx.session.user.email,
+          (commissioner) => commissioner.user?.email === ctx.user.db.email,
         )
       )
         throw new TRPCError({
@@ -1562,7 +1558,7 @@ export const electionRouter = createTRPCRouter({
         ...message,
         user: {
           ...message.user,
-          isMe: message.user?.id === ctx.session.user.id,
+          isMe: message.user?.id === ctx.user.auth.id,
         },
       }));
     }),
@@ -1597,7 +1593,7 @@ export const electionRouter = createTRPCRouter({
           ...message,
           user: {
             ...message.user,
-            isMe: message.user?.id === ctx.session.user.id,
+            isMe: message.user?.id === ctx.user.auth.id,
           },
         }));
       } else {
@@ -1623,7 +1619,7 @@ export const electionRouter = createTRPCRouter({
           ...message,
           user: {
             ...message.user,
-            isMe: message.user?.id === ctx.session.user.id,
+            isMe: message.user?.id === ctx.user.auth.id,
           },
         }));
       }
@@ -1652,7 +1648,7 @@ export const electionRouter = createTRPCRouter({
       await ctx.supabase.from("commissioners_voters_messages").insert({
         message: input.message,
         room_id: commissionerVoterRoom.id,
-        user_id: ctx.session.user.id,
+        user_id: ctx.user.auth.id,
       });
     }),
   sendMessageAsCommissioner: protectedProcedure
@@ -1681,7 +1677,7 @@ export const electionRouter = createTRPCRouter({
         await ctx.supabase.from("commissioners_voters_messages").insert({
           message: input.message,
           room_id: commissionerVoterRoom.id,
-          user_id: ctx.session.user.id,
+          user_id: ctx.user.auth.id,
         });
       } else {
         const { data: adminCommissionerRoom } = await ctx.supabase
@@ -1700,7 +1696,7 @@ export const electionRouter = createTRPCRouter({
         await ctx.supabase.from("admin_commissioners_messages").insert({
           message: input.message,
           room_id: adminCommissionerRoom.id,
-          user_id: ctx.session.user.id,
+          user_id: ctx.user.auth.id,
         });
       }
     }),
@@ -1708,7 +1704,7 @@ export const electionRouter = createTRPCRouter({
     const { data: elections_plus } = await ctx.supabase
       .from("elections_plus")
       .select()
-      .eq("user_id", ctx.session.user.id)
+      .eq("user_id", ctx.user.auth.id)
       .is("redeemed_at", null);
 
     if (!elections_plus) throw new TRPCError({ code: "NOT_FOUND" });

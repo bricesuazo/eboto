@@ -180,9 +180,9 @@ CREATE TABLE IF NOT EXISTS "public"."elections" (
     "voter_domain" "text",
     "is_candidates_visible_in_realtime_when_ongoing" boolean DEFAULT false NOT NULL,
     "name_arrangement" smallint DEFAULT '0'::smallint NOT NULL,
+    "variant_id" integer NOT NULL,
     "deleted_at" timestamp with time zone,
-    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
-    "variant_id" integer NOT NULL
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
 );
 
 ALTER TABLE "public"."elections" OWNER TO "postgres";
@@ -519,6 +519,8 @@ ALTER TABLE ONLY "public"."votes"
 
 ALTER TABLE ONLY "public"."votes"
     ADD CONSTRAINT "public_votes_voter_id_fkey" FOREIGN KEY ("voter_id") REFERENCES "public"."voters"("id") ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+CREATE POLICY "Enable select to their own data" ON "public"."users" FOR SELECT USING (("auth"."uid"() = "id"));
 
 ALTER TABLE "public"."achievements" ENABLE ROW LEVEL SECURITY;
 

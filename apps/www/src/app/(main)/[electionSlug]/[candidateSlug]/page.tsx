@@ -15,8 +15,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const supabaseServer = createClientServer();
   const {
-    data: { session },
-  } = await supabaseServer.auth.getSession();
+    data: { user },
+  } = await supabaseServer.auth.getUser();
 
   const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin
@@ -32,14 +32,14 @@ export async function generateMetadata({
     .from("voters")
     .select()
     .eq("election_id", election.id)
-    .eq("email", session?.user?.email ?? "")
+    .eq("email", user?.email ?? "")
     .is("deleted_at", null);
 
   const { data: commissioners } = await supabaseAdmin
     .from("commissioners")
     .select()
     .eq("election_id", election.id)
-    .eq("user_id", session?.user?.id ?? "")
+    .eq("user_id", user?.id ?? "")
     .is("deleted_at", null);
 
   if (!voters || !commissioners) notFound();

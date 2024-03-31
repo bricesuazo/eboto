@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useStore } from "@/store";
 import classes from "@/styles/Header.module.css";
 import { api } from "@/trpc/client";
@@ -52,8 +52,10 @@ import {
 } from "@tabler/icons-react";
 
 export default function Header({ userId }: { userId?: string }) {
-  const sessionQuery = api.auth.getSession.useQuery();
+  const utils = api.useUtils();
+  const userQuery = api.auth.getUser.useQuery();
   const params = useParams();
+  const router = useRouter();
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [reportAProblemLoading, setReportAProblemLoading] = useState(false);
   const reportAProblemMutation = api.election.reportAProblem.useMutation();
@@ -261,10 +263,10 @@ export default function Header({ userId }: { userId?: string }) {
                           height: 24,
                         }}
                       >
-                        {!sessionQuery.isLoading ? (
-                          sessionQuery.data?.user.image_path ? (
+                        {!userQuery.isLoading ? (
+                          userQuery.data?.user?.db.image_path ? (
                             <Image
-                              src={sessionQuery.data.user.image_path}
+                              src={userQuery.data.user.db.image_path}
                               alt="Profile picture"
                               fill
                               sizes="100%"
@@ -282,13 +284,13 @@ export default function Header({ userId }: { userId?: string }) {
                       </Box>
 
                       <Box w={{ base: 100, sm: 140 }}>
-                        {sessionQuery.data ? (
+                        {userQuery.data ? (
                           <>
                             <Text size="xs" truncate fw="bold">
-                              {sessionQuery.data.user.name}
+                              {userQuery.data.user?.db.name}
                             </Text>
                             <Text size="xs" truncate>
-                              {sessionQuery.data.user.email}
+                              {userQuery.data.user?.db.email}
                             </Text>
                           </>
                         ) : (
@@ -367,6 +369,8 @@ export default function Header({ userId }: { userId?: string }) {
                       const supabase = createClient();
 
                       await supabase.auth.signOut();
+                      await utils.auth.invalidate();
+                      router.push("/sign-in");
                     }}
                     closeMenuOnClick={false}
                     leftSection={

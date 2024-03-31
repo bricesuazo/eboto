@@ -55,11 +55,10 @@ export default function RegisterForm() {
               const supabase = createClient();
               setLoadings((loadings) => ({ ...loadings, google: true }));
 
-              const callbackUrl = searchParams.get("callbackUrl");
               await supabase.auth.signInWithOAuth({
                 provider: "google",
                 options: {
-                  redirectTo: callbackUrl ? callbackUrl : undefined,
+                  redirectTo: searchParams.get("callbackUrl") ?? "/dashboard",
                 },
               });
             }}

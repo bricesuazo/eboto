@@ -23,7 +23,7 @@ import { IconAt, IconLetterCase, IconLock, IconX } from "@tabler/icons-react";
 import type { RouterOutputs } from "@eboto/api";
 
 export default function AccountPageClient(
-  props: RouterOutputs["auth"]["getSessionProtected"],
+  props: RouterOutputs["auth"]["getUserProtected"],
 ) {
   const context = api.useUtils();
   const openRef = useRef<() => void>(null);
@@ -31,12 +31,9 @@ export default function AccountPageClient(
   const [opened, { open, close }] = useDisclosure(false);
   const [page, setPage] = useState<number>(0);
 
-  const getSessionProtectedQuery = api.auth.getSessionProtected.useQuery(
-    undefined,
-    {
-      initialData: props,
-    },
-  );
+  const getUserProtectedQuery = api.auth.getUserProtected.useQuery(undefined, {
+    initialData: props,
+  });
 
   // const confirmPasswordMutation = api.user.checkPassword.useMutation({
   //   onSuccess: () => setPage(1),
@@ -60,8 +57,8 @@ export default function AccountPageClient(
       //   firstName: "",
       //   middleName: "",
       //   lastName: "",
-      name: getSessionProtectedQuery.data.user.name,
-      image: getSessionProtectedQuery.data.user.image_path,
+      name: getUserProtectedQuery.data.user.db.name,
+      image: getUserProtectedQuery.data.user.db.image_path,
     },
     // validate: {
     //   firstName: isNotEmpty("First name is required"),
@@ -84,7 +81,7 @@ export default function AccountPageClient(
 
   const updateProfileMutation = api.user.updateProfile.useMutation({
     onSuccess: async (user) => {
-      await context.auth.getSession.invalidate();
+      await context.auth.getUser.invalidate();
 
       const dataFormatted = {
         // firstName: data.first_name,
@@ -120,8 +117,8 @@ export default function AccountPageClient(
   //     //   firstName: session.user.firstName,
   //     //   middleName: session.user.middleName ?? "",
   //     //   lastName: session.user.lastName,
-  //     name: getSessionProtectedQuery.data.user.name ?? null,
-  //     image: getSessionProtectedQuery.data.user.image ?? null,
+  //     name: getUserProtectedQuery.data.user.name ?? null,
+  //     image: getUserProtectedQuery.data.user.image ?? null,
   //   };
 
   //   accountForm.setValues(data);
@@ -228,7 +225,7 @@ export default function AccountPageClient(
           <TextInput
             placeholder="Email"
             label="Email"
-            value={getSessionProtectedQuery.data.user.email ?? undefined}
+            value={getUserProtectedQuery.data.user.db.email ?? undefined}
             leftSection={<IconAt size="1rem" />}
             readOnly
             disabled
@@ -280,7 +277,7 @@ export default function AccountPageClient(
                         <Text>{accountForm.values.name}</Text>
                       </Group>
                     ) : (
-                      props.user.image_path && (
+                      props.user.db.image_path && (
                         <Group>
                           <Box
                             pos="relative"
@@ -290,7 +287,7 @@ export default function AccountPageClient(
                             })}
                           >
                             <Image
-                              src={props.user.image_path}
+                              src={props.user.db.image_path}
                               alt="image"
                               fill
                               sizes="100%"
@@ -337,11 +334,11 @@ export default function AccountPageClient(
                   onClick={() => {
                     accountForm.setValues({
                       ...accountForm.values,
-                      image: props.user.image_path,
+                      image: props.user.db.image_path,
                     });
                   }}
                   disabled={
-                    accountForm.values.image === props.user.image_path ||
+                    accountForm.values.image === props.user.db.image_path ||
                     loading
                   }
                 >
