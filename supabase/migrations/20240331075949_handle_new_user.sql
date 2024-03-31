@@ -8,6 +8,10 @@ AS $function$
 begin
   insert into public.users (id, email)
   values (new.id, new.email);
+
+  insert into public.elections_plus (user_id)
+  values (new.id);
+
   return new;
 end;
 $function$

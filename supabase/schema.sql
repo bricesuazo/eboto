@@ -46,6 +46,10 @@ CREATE OR REPLACE FUNCTION "public"."handle_new_user"() RETURNS "trigger"
 begin
   insert into public.users (id, email)
   values (new.id, new.email);
+
+  insert into public.elections_plus (user_id)
+  values (new.id);
+
   return new;
 end;
 $$;
@@ -176,9 +180,9 @@ CREATE TABLE IF NOT EXISTS "public"."elections" (
     "voter_domain" "text",
     "is_candidates_visible_in_realtime_when_ongoing" boolean DEFAULT false NOT NULL,
     "name_arrangement" smallint DEFAULT '0'::smallint NOT NULL,
-    "variant_id" smallint NOT NULL,
     "deleted_at" timestamp with time zone,
-    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "variant_id" integer NOT NULL
 );
 
 ALTER TABLE "public"."elections" OWNER TO "postgres";
@@ -469,7 +473,7 @@ ALTER TABLE ONLY "public"."elections_plus"
     ADD CONSTRAINT "public_elections_plus_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 ALTER TABLE ONLY "public"."elections"
-    ADD CONSTRAINT "public_elections_variant_id_fkey" FOREIGN KEY ("variant_id") REFERENCES "public"."variants"("id") ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT "public_elections_variant_id_fkey" FOREIGN KEY ("variant_id") REFERENCES "public"."variants"("id") ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 ALTER TABLE ONLY "public"."events_attended"
     ADD CONSTRAINT "public_events_attended_credential_id_fkey" FOREIGN KEY ("credential_id") REFERENCES "public"."credentials"("id") ON UPDATE RESTRICT ON DELETE RESTRICT;

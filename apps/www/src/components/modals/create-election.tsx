@@ -317,8 +317,10 @@ export default function CreateElection({
               name: value.name.trim(),
               slug: value.slug.trim(),
               date: [
-                value.date[0] ?? new Date(now.setDate(now.getDate() + 1)),
-                value.date[1] ?? new Date(now.setDate(now.getDate() + 5)),
+                value.date[0]?.toISOString() ??
+                  new Date(now.setDate(now.getDate() + 1)).toISOString(),
+                value.date[1]?.toISOString() ??
+                  new Date(now.setDate(now.getDate() + 5)).toISOString(),
               ],
               template: value.template,
               voting_hours: value.voting_hours,
