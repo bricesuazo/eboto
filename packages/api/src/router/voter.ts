@@ -15,17 +15,6 @@ export const voterRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      // const isElectionExists = await ctx.db.query.elections.findFirst({
-      //   where: (elections, { eq }) => eq(elections.id, input.election_id),
-      //   with: {
-      //     commissioners: {
-      //       where: (commissioners, { eq }) =>
-      //         eq(commissioners.user_id, ctx.session.user.id),
-      //     },
-      //   },
-      // });
-
-      // TODO: not sure if this is correct
       const { data: isElectionExists } = await ctx.supabase
         .from("elections")
         .select("*, commissioners(*)")

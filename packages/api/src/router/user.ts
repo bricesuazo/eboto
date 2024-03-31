@@ -61,14 +61,6 @@ export const userRouter = createTRPCRouter({
       if (error) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
 
       return data;
-
-      // return update({
-      //   user: {
-      //     ...ctx.session.user,
-      //     name: input.name,
-      //     image: image_file ? image_file.url : input.image ? user.image : null,
-      //   },
-      // });
     }),
 
   deleteAccount: protectedProcedure.mutation(() => {
