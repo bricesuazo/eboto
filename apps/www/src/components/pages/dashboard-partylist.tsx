@@ -9,13 +9,14 @@ import { Box, Flex, Group, Stack, Text, Title } from "@mantine/core";
 import { IconFlag } from "@tabler/icons-react";
 
 import type { RouterOutputs } from "@eboto/api";
-import type { Election } from "@eboto/db/schema";
+
+import type { Database } from "../../../../../supabase/types";
 
 export default function DashboardPartylist({
   election,
   partylists,
 }: {
-  election: Election;
+  election: Database["public"]["Tables"]["elections"]["Row"];
   partylists: RouterOutputs["partylist"]["getDashboardData"];
 }) {
   const partylistsQuery = api.partylist.getDashboardData.useQuery(
@@ -45,7 +46,8 @@ export default function DashboardPartylist({
               </Flex>
 
               <Flex gap="xs" justify="center">
-                <EditPartylist partylist={partylist} />
+                {/* TODO: fix this */}
+                <EditPartylist partylist={{ ...partylist, logo_url: null }} />
                 <DeletePartylist partylist={partylist} />
               </Flex>
             </Flex>

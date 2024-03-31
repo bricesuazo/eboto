@@ -2,51 +2,62 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import Realtime from "@/components/pages/realtime";
 import { api } from "@/trpc/server";
-import { createClient } from "@/utils/supabase/server";
+import { supabase as supabaseAdmin } from "@/utils/supabase/admin";
+import { supabase } from "@/utils/supabase/server";
 import { env } from "env.mjs";
 import moment from "moment";
 
 import { isElectionEnded, isElectionOngoing } from "@eboto/constants";
-import { db } from "@eboto/db";
 
 export async function generateMetadata({
   params: { electionSlug },
 }: {
   params: { electionSlug: string };
 }): Promise<Metadata> {
-  const supabase = createClient();
   const {
     data: { session },
   } = await supabase.auth.getSession();
-  const election = await db.query.elections.findFirst({
-    where: (election, { eq, and, isNull }) =>
-      and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
-    with: {
-      voters: {
-        where: (voters, { isNull, and, eq }) =>
-          and(
-            isNull(voters.deleted_at),
-            eq(voters.email, session?.user?.email ?? ""),
-          ),
-      },
-      commissioners: {
-        where: (commissioners, { isNull, and, eq }) =>
-          and(
-            isNull(commissioners.deleted_at),
-            eq(commissioners.user_id, session?.user?.id ?? ""),
-          ),
-      },
-    },
-  });
+
+  const { data: election } = await supabaseAdmin
+    .from("elections")
+    .select("id, name, slug, start_date, end_date, logo_path, publicity")
+    .eq("slug", electionSlug)
+    .is("deleted_at", null)
+    .single();
+
+  if (!election) notFound();
+
+  const { data: voters } = await supabaseAdmin
+    .from("voters")
+    .select("id")
+    .eq("election_id", election.id)
+    .eq("email", session?.user?.email ?? "");
+
+  const { data: commissioners } = await supabaseAdmin
+    .from("commissioners")
+    .select("id")
+    .eq("election_id", election.id)
+    .eq("user_id", session?.user?.id ?? "");
 
   if (
-    !election ||
+    !voters ||
+    !commissioners ||
     (election.publicity === "VOTER" &&
-      !election.voters &&
-      !election.commissioners.length) ||
-    (election.publicity === "PRIVATE" && !election.commissioners.length)
+      !voters.length &&
+      !commissioners.length) ||
+    (election.publicity === "PRIVATE" && !commissioners.length)
   )
     notFound();
+
+  let image_url: string | undefined;
+
+  if (election.logo_path) {
+    const { data: url } = await supabase.storage
+      .from("candidates")
+      .createSignedUrl(election.logo_path, 60);
+
+    image_url = url?.signedUrl;
+  }
 
   return {
     title: election.name + " - Realtime Result",
@@ -63,7 +74,7 @@ export async function generateMetadata({
           }/api/og?type=election&election_name=${encodeURIComponent(
             election.name,
           )}&election_logo=${encodeURIComponent(
-            election.logo?.url ?? "",
+            image_url ?? "",
           )}&election_date=${encodeURIComponent(
             moment(election.start_date).format("MMMM D, YYYY") +
               " - " +
@@ -83,40 +94,37 @@ export default async function RealtimePage({
 }: {
   params: { electionSlug: string };
 }) {
-  const supabase = createClient();
   const {
     data: { session },
   } = await supabase.auth.getSession();
-  const election = await db.query.elections.findFirst({
-    where: (election, { eq, and, isNull }) =>
-      and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
-    with: {
-      voter_fields: true,
-    },
-  });
   const positions = await api.election.getElectionRealtime.query(electionSlug);
+
+  const { data: election } = await supabaseAdmin
+    .from("elections")
+    .select("*, voter_fields(*)")
+    .eq("slug", electionSlug)
+    .is("deleted_at", null)
+    .single();
 
   if (!election) notFound();
 
-  const isVoter = await db.query.voters.findFirst({
-    where: (voter, { eq, and, isNull }) =>
-      and(
-        eq(voter.election_id, election.id),
-        eq(voter.email, session?.user.email ?? ""),
-        isNull(voter.deleted_at),
-      ),
-  });
+  const { data: voter } = await supabaseAdmin
+    .from("voters")
+    .select("id")
+    .eq("election_id", election.id)
+    .eq("email", session?.user?.email ?? "")
+    .is("deleted_at", null)
+    .single();
 
-  const isCommissioner = await db.query.commissioners.findFirst({
-    where: (commissioner, { eq, and, isNull }) =>
-      and(
-        eq(commissioner.election_id, election.id),
-        eq(commissioner.user_id, session?.user.id ?? ""),
-        isNull(commissioner.deleted_at),
-      ),
-  });
+  const { data: commissioner } = await supabaseAdmin
+    .from("commissioners")
+    .select("id")
+    .eq("election_id", election.id)
+    .eq("user_id", session?.user.id ?? "")
+    .is("deleted_at", null)
+    .single();
 
-  let isVoterCanMessage = !!isVoter && !isCommissioner;
+  let isVoterCanMessage = !!voter && !commissioner;
 
   const callbackUrl = `/sign-in?callbackUrl=https://eboto.app/${election.slug}/realtime`;
 
@@ -124,50 +132,52 @@ export default async function RealtimePage({
     isVoterCanMessage = false;
     if (!session) redirect(callbackUrl);
 
-    const isCommissioner = await db.query.commissioners.findFirst({
-      where: (commissioner, { eq, and, isNull }) =>
-        and(
-          eq(commissioner.election_id, election.id),
-          eq(commissioner.user_id, session.user.id),
-          isNull(commissioner.deleted_at),
-        ),
-      with: {
-        user: true,
-      },
-    });
+    const { data: isCommissioner } = await supabaseAdmin
+      .from("commissioners")
+      .select("user:users(email)")
+      .eq("election_id", election.id)
+      .eq("user_id", session.user.id)
+      .is("deleted_at", null)
+      .single();
 
-    if (!isCommissioner) notFound();
+    if (!isCommissioner?.user) notFound();
 
-    const isVoter = await db.query.voters.findFirst({
-      where: (voter, { eq, and, isNull }) =>
-        and(
-          eq(voter.election_id, election.id),
-          eq(voter.email, isCommissioner.user.email),
-          isNull(voter.deleted_at),
-        ),
-    });
+    // const isVoter = await db.query.voters.findFirst({
+    //   where: (voter, { eq, and, isNull }) =>
+    //     and(
+    //       eq(voter.election_id, election.id),
+    //       eq(voter.email, isCommissioner.user.email),
+    //       isNull(voter.deleted_at),
+    //     ),
+    // });
 
-    const vote = await db.query.votes.findFirst({
-      where: (vote, { eq, and }) =>
-        and(
-          eq(vote.election_id, election.id),
-          eq(vote.voter_id, isVoter?.id ?? ""),
-        ),
-    });
+    const { data: isVoter } = await supabaseAdmin
+      .from("voters")
+      .select("id")
+      .eq("election_id", election.id)
+      .eq("email", isCommissioner.user.email)
+      .is("deleted_at", null)
+      .single();
+
+    const { data: vote } = await supabaseAdmin
+      .from("votes")
+      .select("id")
+      .eq("election_id", election.id)
+      .eq("voter_id", isVoter?.id ?? "")
+      .single();
 
     if (isVoter && !vote && !isCommissioner) redirect(`/${election.slug}`);
   } else if (election.publicity === "VOTER") {
     if (!session) redirect(callbackUrl);
 
-    const vote = await db.query.votes.findFirst({
-      where: (votes, { eq, and }) =>
-        and(
-          eq(votes.election_id, election.id),
-          eq(votes.voter_id, isVoter?.id ?? ""),
-        ),
-    });
+    const { data: vote } = await supabaseAdmin
+      .from("votes")
+      .select("id")
+      .eq("election_id", election.id)
+      .eq("voter_id", voter?.id ?? "")
+      .single();
 
-    if (!isVoter && !isCommissioner) notFound();
+    if (!voter && !commissioner) notFound();
 
     if (
       !isElectionEnded({
@@ -186,6 +196,8 @@ export default async function RealtimePage({
       positions={positions}
       election={{
         ...election,
+        // TODO: Add logo_url
+        logo_url: null,
         is_free: election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID,
       }}
       isVoterCanMessage={isVoterCanMessage}

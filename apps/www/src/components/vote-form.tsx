@@ -37,21 +37,17 @@ import {
 } from "@tabler/icons-react";
 
 import { formatName } from "@eboto/constants";
-import type {
-  Candidate,
-  Election,
-  Partylist,
-  Position,
-} from "@eboto/db/schema";
+
+import type { Database } from "../../../../supabase/types";
 
 export default function VoteForm({
   positions,
   election,
 }: {
-  election: Election;
-  positions: (Position & {
-    candidates: (Candidate & {
-      partylist: Partylist;
+  election: Database["public"]["Tables"]["elections"]["Row"];
+  positions: (Database["public"]["Tables"]["positions"]["Row"] & {
+    candidates: (Database["public"]["Tables"]["candidates"]["Row"] & {
+      partylist: Database["public"]["Tables"]["partylists"]["Row"];
     })[];
   })[];
 }) {
@@ -248,7 +244,8 @@ export default function VoteForm({
                                 candidate.id,
                               ) ?? false
                             }
-                            candidate={candidate}
+                            // TODO: fix this when storage is implemented
+                            candidate={{ ...candidate, image_url: null }}
                             type="radio"
                             key={candidate.id}
                             value={candidate.id}
@@ -295,7 +292,8 @@ export default function VoteForm({
                           return (
                             <VoteCard
                               type="checkbox"
-                              candidate={candidate}
+                              // TODO: fix this when storage is implemented
+                              candidate={{ ...candidate, image_url: null }}
                               isSelected={
                                 form.values[position.id]?.votes.includes(
                                   candidate.id,
@@ -367,8 +365,9 @@ function VoteCard({
   type: "radio" | "checkbox";
   value: string;
   disabled?: boolean;
-  candidate?: Candidate & {
-    partylist: Partylist;
+  candidate?: Database["public"]["Tables"]["candidates"]["Row"] & {
+    image_url: string | null;
+    partylist: Database["public"]["Tables"]["partylists"]["Row"];
   };
   isSelected: boolean;
   name_arrangement: number;
@@ -439,9 +438,9 @@ function VoteCard({
           <Box>
             <IconUserQuestion size={80} style={{ padding: 8 }} />
           </Box>
-        ) : candidate.image ? (
+        ) : candidate.image_url ? (
           <Image
-            src={candidate.image.url}
+            src={candidate.image_url}
             alt=""
             width={80}
             height={80}

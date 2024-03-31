@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
@@ -39,7 +40,7 @@ export const userRouter = createTRPCRouter({
       // if (user.image_file && !image_file && !input.image)
       //   await ctx.utapi.deleteFiles(user.image_file.key);
 
-      await ctx.supabase
+      const { data, error } = await ctx.supabase
         .from("users")
         .update({
           //   first_name: input.firstName,
@@ -53,7 +54,13 @@ export const userRouter = createTRPCRouter({
           //     : null,
           // image: image_file ? image_file.url : input.image ? user.image : null,
         })
-        .eq("id", ctx.session.user.id);
+        .eq("id", ctx.session.user.id)
+        .select()
+        .single();
+
+      if (error) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+
+      return data;
 
       // return update({
       //   user: {

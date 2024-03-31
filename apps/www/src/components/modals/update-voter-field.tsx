@@ -24,7 +24,7 @@ import {
   IconUsersGroup,
 } from "@tabler/icons-react";
 
-import type { Election, VoterField } from "@eboto/db/schema";
+import type { Database } from "../../../../../supabase/types";
 
 interface Field {
   id: string;
@@ -39,7 +39,9 @@ export default function UpdateVoterField({
   election,
   isDisabled,
 }: {
-  election: Election & { voter_fields: VoterField[] };
+  election: Database["public"]["Tables"]["elections"]["Row"] & {
+    voter_fields: Database["public"]["Tables"]["voter_fields"]["Row"][];
+  };
   isDisabled: boolean;
 }) {
   const context = api.useUtils();

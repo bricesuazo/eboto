@@ -492,7 +492,7 @@ export type Database = {
           deleted_at?: string | null
           id?: string
           name: string
-          updated_at: string
+          updated_at?: string
           year: string
         }
         Update: {
@@ -868,27 +868,27 @@ export type Database = {
       }
       votes: {
         Row: {
-          candidate_id: string
+          candidate_id: string | null
           created_at: string
           election_id: string
           id: string
-          position_id: string
+          position_id: string | null
           voter_id: string
         }
         Insert: {
-          candidate_id: string
+          candidate_id?: string | null
           created_at?: string
           election_id: string
           id?: string
-          position_id: string
+          position_id?: string | null
           voter_id: string
         }
         Update: {
-          candidate_id?: string
+          candidate_id?: string | null
           created_at?: string
           election_id?: string
           id?: string
-          position_id?: string
+          position_id?: string | null
           voter_id?: string
         }
         Relationships: [

@@ -40,8 +40,6 @@ CREATE TYPE "public"."publicity" AS ENUM (
 
 ALTER TYPE "public"."publicity" OWNER TO "postgres";
 
-COMMENT ON TYPE "public"."publicity" IS 'Election Publicity';
-
 SET default_tablespace = '';
 
 SET default_table_access_method = "heap";
@@ -188,7 +186,7 @@ CREATE TABLE IF NOT EXISTS "public"."events_attended" (
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "name" "text" NOT NULL,
     "year" "date" NOT NULL,
-    "updated_at" timestamp with time zone NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "credential_id" "uuid" NOT NULL,
     "deleted_at" timestamp with time zone
 );
@@ -328,8 +326,8 @@ CREATE TABLE IF NOT EXISTS "public"."votes" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "voter_id" "uuid" NOT NULL,
-    "candidate_id" "uuid" NOT NULL,
-    "position_id" "uuid" NOT NULL,
+    "candidate_id" "uuid",
+    "position_id" "uuid",
     "election_id" "uuid" NOT NULL
 );
 

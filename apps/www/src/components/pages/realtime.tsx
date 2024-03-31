@@ -36,8 +36,8 @@ import {
   isElectionOngoing,
   parseHourTo12HourFormat,
 } from "@eboto/constants";
-import type { Election, VoterField } from "@eboto/db/schema";
 
+import type { Database } from "../../../../../supabase/types";
 import AdModal from "../ad-modal";
 import MessageCommissioner from "../modals/message-commissioner";
 import MyMessagesElection from "../my-messages-election";
@@ -53,7 +53,11 @@ export default function Realtime({
   isVoterCanMessage,
 }: {
   positions: RouterOutputs["election"]["getElectionRealtime"];
-  election: Election & { voter_fields: VoterField[]; is_free: boolean };
+  election: Database["public"]["Tables"]["elections"]["Row"] & {
+    logo_url: string | null;
+    voter_fields: Database["public"]["Tables"]["voter_fields"]["Row"][];
+    is_free: boolean;
+  };
   isVoterCanMessage: boolean;
 }) {
   const [time, setTime] = useState(!election.is_free ? date : rounded_off_date);
@@ -105,9 +109,9 @@ export default function Realtime({
             <Stack>
               <Box>
                 <Group justify="center" mb={8}>
-                  {election.logo ? (
+                  {election.logo_url ? (
                     <Image
-                      src={election.logo.url}
+                      src={election.logo_url}
                       alt="Logo"
                       width={92}
                       height={92}

@@ -20,9 +20,15 @@ import {
   IconLetterCase,
 } from "@tabler/icons-react";
 
-import type { Partylist } from "@eboto/db/schema";
+import type { Database } from "../../../../../supabase/types";
 
-export default function EditPartylist({ partylist }: { partylist: Partylist }) {
+export default function EditPartylist({
+  partylist,
+}: {
+  partylist: Database["public"]["Tables"]["partylists"]["Row"] & {
+    logo_url: string | null;
+  };
+}) {
   const [opened, { open, close }] = useDisclosure(false);
   const context = api.useUtils();
   const initialValues = {
@@ -32,7 +38,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
     oldAcronym: partylist.acronym,
     newAcronym: partylist.acronym,
     description: partylist.description,
-    logo_link: partylist.logo_link,
+    logo_url: partylist.logo_url,
   };
   const form = useForm({
     initialValues,
@@ -113,7 +119,7 @@ export default function EditPartylist({ partylist }: { partylist: Partylist }) {
               newAcronym: value.newAcronym,
               election_id: partylist.election_id,
               description: value.description,
-              logo_link: value.logo_link,
+              logo_url: value.logo_url,
             });
           })}
         >

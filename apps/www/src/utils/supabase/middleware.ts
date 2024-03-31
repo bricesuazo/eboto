@@ -3,6 +3,8 @@ import type { NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import type { CookieOptions } from "@supabase/ssr";
 
+export const dynamic = "force-dynamic";
+
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({
     request: {

@@ -19,11 +19,11 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
   };
 };
 
-export function createTRPCContext(
-  opts: CreateContextOptions & {
-    req?: Request;
-  },
-) {
+export function createTRPCContext(opts: {
+  req?: Request;
+  session: Session | null;
+  supabase: SupabaseClient<Database>;
+}) {
   const source = opts.req?.headers.get("x-trpc-source") ?? "unknown";
 
   console.log(">>> tRPC Request from", source, "by", opts.session?.user);

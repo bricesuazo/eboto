@@ -1,23 +1,22 @@
 import { notFound, redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
+import { supabase as supabaseAdmin } from "@/utils/supabase/admin";
+import { supabase } from "@/utils/supabase/server";
 
 import { isElectionOngoing } from "@eboto/constants";
-import { db } from "@eboto/db";
 
 export default async function ElectionLayout(
   props: React.PropsWithChildren<{ params: { electionSlug: string } }>,
 ) {
-  const supabase = createClient();
   const {
     data: { session },
   } = await supabase.auth.getSession();
-  const election = await db.query.elections.findFirst({
-    where: (elections, { eq, and, isNull }) =>
-      and(
-        eq(elections.slug, props.params.electionSlug),
-        isNull(elections.deleted_at),
-      ),
-  });
+
+  const { data: election } = await supabaseAdmin
+    .from("elections")
+    .select()
+    .eq("slug", props.params.electionSlug)
+    .is("deleted_at", null)
+    .single();
 
   if (!election) notFound();
 
@@ -26,13 +25,13 @@ export default async function ElectionLayout(
   if (election.publicity === "PRIVATE") {
     if (!session) notFound();
 
-    const commissioner = await db.query.commissioners.findFirst({
-      where: (commissioner, { eq, and }) =>
-        and(
-          eq(commissioner.election_id, election.id),
-          eq(commissioner.user_id, session.user.id),
-        ),
-    });
+    const { data: commissioner } = await supabaseAdmin
+      .from("commissioners")
+      .select()
+      .eq("election_id", election.id)
+      .eq("user_id", session.user.id)
+      .is("deleted_at", null)
+      .single();
 
     if (!commissioner) notFound();
   } else if (election.publicity === "VOTER") {
@@ -40,21 +39,21 @@ export default async function ElectionLayout(
 
     if (!session) redirect(callbackUrl);
 
-    const voter = await db.query.voters.findFirst({
-      where: (voter, { eq, and }) =>
-        and(
-          eq(voter.election_id, election.id),
-          eq(voter.email, session.user.email ?? ""),
-        ),
-    });
+    const { data: voter } = await supabaseAdmin
+      .from("voters")
+      .select()
+      .eq("election_id", election.id)
+      .eq("email", session.user.email ?? "")
+      .is("deleted_at", null)
+      .single();
 
-    const commissioner = await db.query.commissioners.findFirst({
-      where: (commissioner, { eq, and }) =>
-        and(
-          eq(commissioner.election_id, election.id),
-          eq(commissioner.user_id, session.user.id),
-        ),
-    });
+    const { data: commissioner } = await supabaseAdmin
+      .from("commissioners")
+      .select()
+      .eq("election_id", election.id)
+      .eq("user_id", session.user.id)
+      .is("deleted_at", null)
+      .single();
 
     if (!isOngoing && !voter && !commissioner) notFound();
 

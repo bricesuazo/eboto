@@ -37,8 +37,8 @@ import {
 
 import type { RouterOutputs } from "@eboto/api";
 import { parseHourTo12HourFormat } from "@eboto/constants";
-import type { Publicity } from "@eboto/db/schema";
-import { publicity } from "@eboto/db/schema";
+
+import type { Database } from "../../../../../supabase/types";
 
 export default function DashboardSettings({
   election,
@@ -76,11 +76,11 @@ export default function DashboardSettings({
 
       form.setValues({
         ...form.values,
-        logo: refetchedElection.data?.logo?.url ?? null,
+        logo: refetchedElection.data?.logo_path ?? null,
       });
       form.resetDirty({
         ...form.values,
-        logo: refetchedElection.data?.logo?.url ?? null,
+        logo: refetchedElection.data?.logo_path ?? null,
       });
     },
     onError: (error) => {
@@ -97,11 +97,11 @@ export default function DashboardSettings({
   const form = useForm<{
     name: string;
     newSlug: string;
-    description: string;
+    description: string | null;
     // voter_domain: string | null;
     is_candidates_visible_in_realtime_when_ongoing: boolean;
-    date: [Date, Date];
-    publicity: Publicity;
+    date: [string, string];
+    publicity: Database["public"]["Enums"]["publicity"];
     logo: File | string | null;
     voting_hours: [number, number];
   }>({
@@ -124,7 +124,7 @@ export default function DashboardSettings({
         getElectionBySlugQuery.data.voting_hour_start,
         getElectionBySlugQuery.data.voting_hour_end,
       ],
-      logo: getElectionBySlugQuery.data.logo?.url ?? null,
+      logo: getElectionBySlugQuery.data.logo_path,
     },
     validate: {
       name: hasLength(
@@ -146,10 +146,10 @@ export default function DashboardSettings({
         if (!value[0] || !value[1])
           return "Please enter an election start and end date";
 
-        if (value[0].getTime() > value[1].getTime())
+        if (new Date(value[0]).getTime() > new Date(value[1]).getTime())
           return "Start date must be before end date";
 
-        if (value[1].getTime() < value[0].getTime())
+        if (new Date(value[1]).getTime() < new Date(value[0]).getTime())
           return "End date must be after start date";
       },
       publicity: (value) => {
@@ -182,13 +182,14 @@ export default function DashboardSettings({
       return {
         ...values,
         date: !(
-          getElectionBySlugQuery.data.start_date.getTime() ===
+          new Date(getElectionBySlugQuery.data.start_date).getTime() ===
             nowStart.getTime() &&
-          getElectionBySlugQuery.data.end_date.getTime() === nowEnd.getTime()
+          new Date(getElectionBySlugQuery.data.end_date).getTime() ===
+            nowEnd.getTime()
         )
           ? [
-              new Date(nowStart.setDate(nowStart.getDate() + 1)),
-              new Date(nowEnd.setDate(nowEnd.getDate() + 1)),
+              new Date(nowStart.setDate(nowStart.getDate() + 1)).toISOString(),
+              new Date(nowEnd.setDate(nowEnd.getDate() + 1)).toISOString(),
             ]
           : [
               getElectionBySlugQuery.data.start_date,
@@ -416,7 +417,8 @@ export default function DashboardSettings({
             required
             disabled={
               editElectionMutation.isPending ||
-              getElectionBySlugQuery.data.start_date.getTime() < Date.now()
+              new Date(getElectionBySlugQuery.data.start_date).getTime() <
+                Date.now()
             }
             {...form.getInputProps("date")}
           />
@@ -446,7 +448,8 @@ export default function DashboardSettings({
               label={parseHourTo12HourFormat}
               disabled={
                 editElectionMutation.isPending ||
-                getElectionBySlugQuery.data.start_date.getTime() < Date.now()
+                new Date(getElectionBySlugQuery.data.start_date).getTime() <
+                  Date.now()
               }
               {...form.getInputProps("voting_hours")}
             />
@@ -461,7 +464,13 @@ export default function DashboardSettings({
             }}
             required
             {...form.getInputProps("publicity")}
-            data={publicity.map((p) => ({
+            data={(
+              [
+                "PRIVATE",
+                "VOTER",
+                "PUBLIC",
+              ] satisfies Database["public"]["Enums"]["publicity"][]
+            ).map((p) => ({
               value: p,
               label: p.charAt(0) + p.slice(1).toLowerCase(),
             }))}
@@ -548,12 +557,12 @@ export default function DashboardSettings({
                   onClick={() => {
                     form.setValues({
                       ...form.values,
-                      logo: getElectionBySlugQuery.data.logo?.url ?? null,
+                      logo: getElectionBySlugQuery.data.logo_path,
                     });
                   }}
                   disabled={
                     form.values.logo ===
-                      (getElectionBySlugQuery.data.logo?.url ?? null) ||
+                      getElectionBySlugQuery.data.logo_path ||
                     editElectionMutation.isPending
                   }
                 >

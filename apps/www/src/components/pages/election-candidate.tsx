@@ -75,9 +75,9 @@ export default function ElectionCandidate({
                 w={{ base: "100%", xs: 200, sm: 280 }}
                 style={{ aspectRatio: "1/1" }}
               >
-                {candidate.image ? (
+                {candidate.image_path ? (
                   <Image
-                    src={candidate.image.url}
+                    src={candidate.image_path}
                     alt={formatName(election.name_arrangement, candidate, true)}
                     fill
                     sizes="100%"

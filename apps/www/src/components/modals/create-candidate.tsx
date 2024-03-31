@@ -46,9 +46,13 @@ import {
   IconX,
 } from "@tabler/icons-react";
 
-import type { Position } from "@eboto/db/schema";
+import type { Database } from "../../../../../supabase/types";
 
-export default function CreateCandidate({ position }: { position: Position }) {
+export default function CreateCandidate({
+  position,
+}: {
+  position: Database["public"]["Tables"]["positions"]["Row"];
+}) {
   const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure(false);
   const partylistsQuery = api.partylist.getAllPartylistsByElectionId.useQuery({

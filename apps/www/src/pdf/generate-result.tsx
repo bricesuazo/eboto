@@ -7,12 +7,13 @@ import {
 } from "@react-pdf/renderer";
 
 import { formatName } from "@eboto/constants";
-import type { GeneratedElectionResult } from "@eboto/db/schema";
+
+import type { GeneratedElectionResult } from "../../../../supabase/custom-types";
 
 export default function GenerateResult({
   result,
 }: {
-  result: Pick<GeneratedElectionResult, "result">["result"];
+  result: GeneratedElectionResult;
 }) {
   const dateConfig: Intl.DateTimeFormatOptions = {
     timeZone: "Asia/Manila",
@@ -87,9 +88,9 @@ export default function GenerateResult({
               marginBottom: 20,
             }}
           >
-            {result.logo && (
+            {result.logo_url && (
               <PdfImage
-                src={result.logo.url}
+                src={result.logo_url}
                 style={{
                   display: "flex",
                   width: 80,

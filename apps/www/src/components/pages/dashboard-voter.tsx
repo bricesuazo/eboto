@@ -185,7 +185,7 @@ export default function DashboardVoter({
               voter={{
                 id: row.id,
                 email: row.getValue<string>("email"),
-                field: row.original.field,
+                field: row.original.field as Record<string, string>,
               }}
             />
           </Tooltip>

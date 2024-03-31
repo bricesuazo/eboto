@@ -23,9 +23,13 @@ import {
   IconLetterCase,
 } from "@tabler/icons-react";
 
-import type { Position } from "@eboto/db/schema";
+import type { Database } from "../../../../../supabase/types";
 
-export default function EditPosition({ position }: { position: Position }) {
+export default function EditPosition({
+  position,
+}: {
+  position: Database["public"]["Tables"]["positions"]["Row"];
+}) {
   const [opened, { open, close }] = useDisclosure(false);
   const context = api.useUtils();
 

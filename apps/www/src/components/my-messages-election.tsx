@@ -127,7 +127,7 @@ export default function MyMessagesElection({
                       onClick={() =>
                         setChat({
                           id: room.id,
-                          name: room.messages[0]?.user.name ?? "",
+                          name: room.messages[0]?.user?.name ?? "",
                           title: room.name,
                         })
                       }
@@ -145,12 +145,8 @@ export default function MyMessagesElection({
                           {room.messages[0] && (
                             <Flex align="center" gap="sm">
                               <Image
-                                src={
-                                  room.messages[0].user.image ??
-                                  room.messages[0].user.image_file?.url ??
-                                  ""
-                                }
-                                alt={room.messages[0].user.name + " image."}
+                                src={room.messages[0].user?.image_path ?? ""}
+                                alt={room.messages[0].user?.name + " image."}
                                 width={20}
                                 height={20}
                                 style={{

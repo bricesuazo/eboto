@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { useStore } from "@/store";
 import classes from "@/styles/Header.module.css";
 import { api } from "@/trpc/client";
+import { supabase } from "@/utils/supabase/client";
 import {
   ActionIcon,
   Box,
@@ -49,10 +50,9 @@ import {
   IconSun,
   IconUserCircle,
 } from "@tabler/icons-react";
-import { signOut } from "next-auth/react";
 
 export default function Header({ userId }: { userId?: string }) {
-  const session = api.auth.getSession.useQuery();
+  const sessionQuery = api.auth.getSession.useQuery();
   const params = useParams();
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [reportAProblemLoading, setReportAProblemLoading] = useState(false);
@@ -261,10 +261,10 @@ export default function Header({ userId }: { userId?: string }) {
                           height: 24,
                         }}
                       >
-                        {!session.isPending ? (
-                          session.data?.user.image ? (
+                        {!sessionQuery.isLoading ? (
+                          sessionQuery.data?.user.image_path ? (
                             <Image
-                              src={session.data.user.image}
+                              src={sessionQuery.data.user.image_path}
                               alt="Profile picture"
                               fill
                               sizes="100%"
@@ -282,13 +282,13 @@ export default function Header({ userId }: { userId?: string }) {
                       </Box>
 
                       <Box w={{ base: 100, sm: 140 }}>
-                        {session.data ? (
+                        {sessionQuery.data ? (
                           <>
                             <Text size="xs" truncate fw="bold">
-                              {session.data.user.name}
+                              {sessionQuery.data.user.name}
                             </Text>
                             <Text size="xs" truncate>
-                              {session.data.user.email}
+                              {sessionQuery.data.user.email}
                             </Text>
                           </>
                         ) : (
@@ -364,7 +364,7 @@ export default function Header({ userId }: { userId?: string }) {
                   <MenuItem
                     onClick={async () => {
                       setLogoutLoading(true);
-                      await signOut();
+                      await supabase.auth.signOut();
                     }}
                     closeMenuOnClick={false}
                     leftSection={

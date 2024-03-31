@@ -93,7 +93,9 @@ export default function ElectionPage({
     initialValues: Object.fromEntries(
       election.voter_fields.map((field) => [
         field.id,
-        myVoterData?.field?.[field.id] ?? "",
+        (myVoterData?.field as Record<string, string> | undefined)?.[
+          field.id
+        ] ?? "",
       ]),
     ),
     validate: (values) => {
@@ -177,9 +179,9 @@ export default function ElectionPage({
         <Stack align="center" gap="xl">
           <Box>
             <Flex justify="center" mb={8}>
-              {election.logo ? (
+              {election.logo_path ? (
                 <Image
-                  src={election.logo.url}
+                  src={election.logo_path}
                   alt="Logo"
                   width={128}
                   height={128}
@@ -250,7 +252,7 @@ export default function ElectionPage({
                 </HoverCardDropdown>
               </HoverCard>
             </Flex>
-            {election.description.length > 0 && (
+            {election.description && election.description.length > 0 && (
               <Box maw="40rem" mt="sm" ta="center">
                 <Text>About this election:</Text>
                 <Text lineClamp={spoilerOpened ? undefined : 3}>
@@ -273,7 +275,7 @@ export default function ElectionPage({
                   {election.voter_fields.length &&
                   (!myVoterData.field ||
                     Object.values(myVoterData.field).some(
-                      (value) => !value || value.trim() === "",
+                      (value) => !value || (value as string).trim() === "",
                     )) ? (
                     <Button
                       onClick={open}
@@ -415,9 +417,9 @@ export default function ElectionPage({
                                 width: "100%",
                               }}
                             >
-                              {candidate.image ? (
+                              {candidate.image_path ? (
                                 <Image
-                                  src={candidate.image.url}
+                                  src={candidate.image_path}
                                   alt="Candidate's image"
                                   fill
                                   sizes="100%"

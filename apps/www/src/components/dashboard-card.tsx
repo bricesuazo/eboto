@@ -26,15 +26,18 @@ import {
 import moment from "moment";
 
 import { parseHourTo12HourFormat } from "@eboto/constants";
-import type { Election } from "@eboto/db/schema";
+
+import type { Database } from "../../../../supabase/types";
 
 export default function DashboardCard({
   election,
   type,
   hasVoted,
   is_free,
+  election_logo_url,
 }: {
-  election: Election;
+  election: Database["public"]["Tables"]["elections"]["Row"];
+  election_logo_url?: string;
   type: "vote" | "manage";
   hasVoted?: boolean;
   is_free?: boolean;
@@ -80,7 +83,7 @@ export default function DashboardCard({
         </ActionIcon>
       )}
 
-      {election.logo && (
+      {election_logo_url && (
         <Box
           mx="auto"
           style={{
@@ -91,7 +94,7 @@ export default function DashboardCard({
           }}
         >
           <Image
-            src={election.logo.url}
+            src={election_logo_url}
             alt={election.name + " logo"}
             fill
             sizes="100%"
@@ -99,7 +102,7 @@ export default function DashboardCard({
               objectFit: "cover",
             }}
             priority
-            blurDataURL={election.logo.url}
+            blurDataURL={election_logo_url}
           />
           <Flex
             gap="xs"
@@ -186,7 +189,7 @@ export default function DashboardCard({
       )}
       <Center style={{ flex: 1 }}>
         <Box>
-          {!election.logo && (
+          {!election.logo_path && (
             <Flex gap="xs" justify="center" mb="sm">
               <HoverCard width={200} openDelay={200} closeDelay={0}>
                 <HoverCardTarget>

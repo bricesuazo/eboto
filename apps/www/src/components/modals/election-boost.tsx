@@ -20,7 +20,6 @@ import {
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconAlertCircle, IconRocket } from "@tabler/icons-react";
-import { useSession } from "next-auth/react";
 
 import { PRICING } from "@eboto/constants";
 
@@ -32,11 +31,11 @@ export default function ElectionBoost({
   value?: number;
 }) {
   const router = useRouter();
-  const session = useSession();
+  const sessionQuery = api.auth.getSession.useQuery();
   const [isRedirecting, setIsRedirecting] = useState(false);
   const store = useStore();
   const electionsQuery = api.election.getAllMyElections.useQuery(undefined, {
-    enabled: session.status === "authenticated" && store.electionBoost,
+    enabled: sessionQuery.data && store.electionBoost,
   });
 
   const boostMutation = api.payment.boost.useMutation({

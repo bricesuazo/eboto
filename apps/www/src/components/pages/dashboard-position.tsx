@@ -5,8 +5,8 @@ import { api } from "@/trpc/client";
 import { Box, Flex, Group, Stack, Text } from "@mantine/core";
 
 import type { RouterOutputs } from "@eboto/api";
-import type { Election } from "@eboto/db/schema";
 
+import type { Database } from "../../../../../supabase/types";
 import CreatePosition from "../modals/create-position";
 import DeletePosition from "../modals/delete-position";
 import EditPosition from "../modals/edit-position";
@@ -15,7 +15,7 @@ export default function DashboardPosition({
   election,
   positions,
 }: {
-  election: Election;
+  election: Database["public"]["Tables"]["elections"]["Row"];
   positions: RouterOutputs["position"]["getDashboardData"];
 }) {
   const positionsQuery = api.position.getDashboardData.useQuery(

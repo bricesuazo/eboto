@@ -9,7 +9,7 @@ import {
 import type { TablerIconsProps } from "@tabler/icons-react";
 import { z } from "zod";
 
-import type { Candidate, Election } from "@eboto/db/schema";
+import { Database } from "./../../supabase/types";
 
 export const baseUrl =
   process.env.NODE_ENV === "production"
@@ -55,16 +55,20 @@ export const parseHourTo12HourFormat = (hour: number) => {
   else return `${hour - 12} PM`;
 };
 
-export const isElectionEnded = ({ election }: { election: Election }) => {
+export const isElectionEnded = ({
+  election,
+}: {
+  election: Database["public"]["Tables"]["elections"]["Row"];
+}) => {
   const now = new Date(
     new Date().toLocaleString("en-US", {
       timeZone: "Asia/Manila",
     }),
   );
   return (
-    now.getFullYear() >= election.end_date.getFullYear() &&
-    now.getMonth() >= election.end_date.getMonth() &&
-    now.getDate() >= election.end_date.getDate() &&
+    now.getFullYear() >= new Date(election.end_date).getFullYear() &&
+    now.getMonth() >= new Date(election.end_date).getMonth() &&
+    now.getDate() >= new Date(election.end_date).getDate() &&
     now.getHours() >= election.voting_hour_end
   );
 };
@@ -73,7 +77,7 @@ export const isElectionOngoing = ({
   election,
   withoutHours,
 }: {
-  election: Election;
+  election: Database["public"]["Tables"]["elections"]["Row"];
   withoutHours?: true;
 }) => {
   const now = new Date(
@@ -84,30 +88,30 @@ export const isElectionOngoing = ({
 
   if (withoutHours) {
     return (
-      now.getFullYear() >= election.start_date.getFullYear() &&
-      now.getMonth() >= election.start_date.getMonth() &&
-      now.getDate() >= election.start_date.getDate() &&
-      now.getFullYear() <= election.end_date.getFullYear() &&
-      now.getMonth() <= election.end_date.getMonth() &&
-      now.getDate() <= election.end_date.getDate()
+      now.getFullYear() >= new Date(election.start_date).getFullYear() &&
+      now.getMonth() >= new Date(election.start_date).getMonth() &&
+      now.getDate() >= new Date(election.start_date).getDate() &&
+      now.getFullYear() <= new Date(election.end_date).getFullYear() &&
+      now.getMonth() <= new Date(election.end_date).getMonth() &&
+      now.getDate() <= new Date(election.end_date).getDate()
     );
   }
 
   return (
-    now.getFullYear() >= election.start_date.getFullYear() &&
-    now.getMonth() >= election.start_date.getMonth() &&
-    now.getDate() >= election.start_date.getDate() &&
+    now.getFullYear() >= new Date(election.start_date).getFullYear() &&
+    now.getMonth() >= new Date(election.start_date).getMonth() &&
+    now.getDate() >= new Date(election.start_date).getDate() &&
     now.getHours() >= election.voting_hour_start &&
-    now.getFullYear() <= election.end_date.getFullYear() &&
-    now.getMonth() <= election.end_date.getMonth() &&
-    now.getDate() <= election.end_date.getDate() &&
+    now.getFullYear() <= new Date(election.end_date).getFullYear() &&
+    now.getMonth() <= new Date(election.end_date).getMonth() &&
+    now.getDate() <= new Date(election.end_date).getDate() &&
     now.getHours() < election.voting_hour_end
   );
 };
 
 export function formatName(
   arrangement: number,
-  candidate: Candidate,
+  candidate: Database["public"]["Tables"]["candidates"]["Row"],
   isMiddleInitialOnly?: true,
 ) {
   const middle_name = isMiddleInitialOnly

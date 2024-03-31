@@ -1,4 +1,5 @@
-import { createClient } from "@/utils/supabase/server";
+import { supabase as supabaseAdmin } from "@/utils/supabase/admin";
+import { supabase } from "@/utils/supabase/server";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 
 import { appRouter, createTRPCContext } from "@eboto/api";
@@ -9,11 +10,14 @@ const handler = (req: Request) =>
     req,
     router: appRouter,
     createContext: async () => {
-      const supabase = createClient();
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      return createTRPCContext({ req, session });
+      return createTRPCContext({
+        req,
+        session,
+        supabase: supabaseAdmin,
+      });
     },
   });
 

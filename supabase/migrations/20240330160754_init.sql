@@ -153,7 +153,7 @@ create table "public"."events_attended" (
     "created_at" timestamp with time zone not null default now(),
     "name" text not null,
     "year" date not null,
-    "updated_at" timestamp with time zone not null,
+    "updated_at" timestamp with time zone not null default now(),
     "credential_id" uuid not null,
     "deleted_at" timestamp with time zone
 );
@@ -286,8 +286,8 @@ create table "public"."votes" (
     "id" uuid not null default gen_random_uuid(),
     "created_at" timestamp with time zone not null default now(),
     "voter_id" uuid not null,
-    "candidate_id" uuid not null,
-    "position_id" uuid not null,
+    "candidate_id" uuid,
+    "position_id" uuid,
     "election_id" uuid not null
 );
 

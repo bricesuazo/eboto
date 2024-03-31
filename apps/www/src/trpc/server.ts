@@ -1,5 +1,5 @@
 import { cookies, headers } from "next/headers";
-import { createClient } from "@/utils/supabase/server";
+import { supabase } from "@/utils/supabase/server";
 import { loggerLink } from "@trpc/client";
 import { experimental_nextCacheLink as nextCacheLink } from "@trpc/next/app-dir/links/nextCache";
 import { experimental_createTRPCNextAppDirServer as createTRPCNextAppDirServer } from "@trpc/next/app-dir/server";
@@ -31,7 +31,6 @@ export const api = createTRPCNextAppDirServer<AppRouter>({
           revalidate: false,
           router: appRouter,
           async createContext() {
-            const supabase = createClient();
             const {
               data: { session },
             } = await supabase.auth.getSession();

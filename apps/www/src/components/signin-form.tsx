@@ -3,8 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { supabase } from "@/utils/supabase/client";
 import { Anchor, Button, Paper, Stack, Text } from "@mantine/core";
-import { signIn } from "next-auth/react";
 import Balancer from "react-wrap-balancer";
 
 export default function SigninForm() {
@@ -44,9 +44,12 @@ export default function SigninForm() {
             onClick={async () => {
               setLoadings((loadings) => ({ ...loadings, google: true }));
 
-              await signIn("google", {
-                redirect: searchParams.has("callbackUrl"),
-                callbackUrl: searchParams.get("callbackUrl") ?? undefined,
+              const callbackUrl = searchParams.get("callbackUrl");
+              await supabase.auth.signInWithOAuth({
+                provider: "google",
+                options: {
+                  redirectTo: callbackUrl ? callbackUrl : undefined,
+                },
               });
             }}
             loading={loadings.google}

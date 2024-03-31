@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import DashboardCandidate from "@/components/pages/dashboard-candidate";
 import { api } from "@/trpc/server";
-
-import { db } from "@eboto/db";
+import { supabase } from "@/utils/supabase/admin";
 
 export const metadata: Metadata = {
   title: "Candidates",
@@ -14,13 +13,12 @@ export default async function Page({
 }: {
   params: { electionDashboardSlug: string };
 }) {
-  const election = await db.query.elections.findFirst({
-    where: (election, { eq, and, isNull }) =>
-      and(
-        eq(election.slug, electionDashboardSlug),
-        isNull(election.deleted_at),
-      ),
-  });
+  const { data: election } = await supabase
+    .from("elections")
+    .select()
+    .eq("slug", electionDashboardSlug)
+    .is("deleted_at", null)
+    .single();
 
   if (!election) notFound();
 

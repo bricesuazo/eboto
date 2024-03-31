@@ -13,22 +13,29 @@ export const paymentRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const [election, boost] = await Promise.all([
-        await ctx.db.query.elections.findFirst({
-          where: (election, { eq, and, isNull }) =>
-            and(
-              eq(election.id, input.election_id),
-              isNull(election.deleted_at),
-            ),
-        }),
-        await ctx.db.query.variants.findFirst({
-          where: (product, { eq, and }) =>
-            and(
-              eq(product.product_id, env.LEMONSQUEEZY_BOOST_PRODUCT_ID),
-              eq(product.price, 499 + (input.price / 25) * 200),
-            ),
-        }),
+      const [electionQuery, boostQuery, userQuery] = await Promise.all([
+        await ctx.supabase
+          .from("elections")
+          .select()
+          .eq("id", input.election_id)
+          .is("deleted_at", null)
+          .single(),
+        await ctx.supabase
+          .from("variants")
+          .select()
+          .eq("product_id", env.LEMONSQUEEZY_BOOST_PRODUCT_ID)
+          .eq("price", 499 + (input.price / 25) * 200)
+          .single(),
+        await ctx.supabase
+          .from("users")
+          .select()
+          .eq("id", ctx.session.user.id)
+          .single(),
       ]);
+
+      const { data: election } = electionQuery;
+      const { data: boost } = boostQuery;
+      const { data: user } = userQuery;
 
       if (!boost)
         throw new TRPCError({
@@ -42,6 +49,12 @@ export const paymentRouter = createTRPCRouter({
           message: "No election found",
         });
 
+      if (!user)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "No user found",
+        });
+
       const checkout = await ctx.payment
         .createCheckout(env.LEMONSQUEEZY_STORE_ID, boost.id, {
           productOptions: {
@@ -52,9 +65,7 @@ export const paymentRouter = createTRPCRouter({
             email: ctx.session.user.email?.length
               ? ctx.session.user.email
               : undefined,
-            name: ctx.session.user.name?.length
-              ? ctx.session.user.name
-              : undefined,
+            name: user.name?.length ? user.name : undefined,
             custom: {
               user_id: ctx.session.user.id,
               election_id: input.election_id,
@@ -79,6 +90,15 @@ export const paymentRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const { data: user } = await ctx.supabase
+        .from("users")
+        .select()
+        .eq("id", ctx.session.user.id)
+        .single();
+
+      if (!user)
+        throw new TRPCError({ code: "BAD_REQUEST", message: "No user found" });
+
       const checkout = await ctx.payment
         .createCheckout(
           env.LEMONSQUEEZY_STORE_ID,
@@ -92,9 +112,7 @@ export const paymentRouter = createTRPCRouter({
               email: ctx.session.user.email?.length
                 ? ctx.session.user.email
                 : undefined,
-              name: ctx.session.user.name?.length
-                ? ctx.session.user.name
-                : undefined,
+              name: user.name?.length ? user.name : undefined,
               variantQuantities: [
                 {
                   variantId: env.LEMONSQUEEZY_PLUS_VARIANT_ID,

@@ -19,7 +19,6 @@ import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { Analytics } from "@vercel/analytics/react";
 import { env } from "env.mjs";
-import { SessionProvider } from "next-auth/react";
 
 const font = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -185,13 +184,11 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
             },
           }}
         >
-          <SessionProvider>
-            <TRPCProvider>
-              <Notifications />
-              <Providers>{children}</Providers>
-              <Analytics />
-            </TRPCProvider>
-          </SessionProvider>
+          <TRPCProvider>
+            <Notifications />
+            <Providers>{children}</Providers>
+            <Analytics />
+          </TRPCProvider>
         </MantineProvider>
       </body>
     </html>
