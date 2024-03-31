@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import VoteForm from "@/components/vote-form";
 import { api } from "@/trpc/server";
-import { supabase as supabaseAdmin } from "@/utils/supabase/admin";
-import { supabase } from "@/utils/supabase/server";
+import { createClient as createClientAdmin } from "@/utils/supabase/admin";
+import { createClient as createClientServer } from "@/utils/supabase/server";
 import { Box, Container, Stack, Text, Title } from "@mantine/core";
 import moment from "moment";
 import Balancer from "react-wrap-balancer";
@@ -15,6 +15,7 @@ export async function generateMetadata({
 }: {
   params: { electionSlug: string };
 }): Promise<Metadata> {
+  const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin
     .from("elections")
     .select("name")
@@ -34,13 +35,15 @@ export default async function VotePage({
 }: {
   params: { electionSlug: string };
 }) {
+  const supabaseServer = createClientServer();
   const {
     data: { session },
-  } = await supabase.auth.getSession();
+  } = await supabaseServer.auth.getSession();
 
   if (!session)
     redirect(`/sign-in?callbackUrl=https://eboto.app/${electionSlug}/vote`);
 
+  const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin
     .from("elections")
     .select()

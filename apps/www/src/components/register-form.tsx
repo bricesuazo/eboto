@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { supabase } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/client";
 import { Anchor, Button, Paper, Stack, Text } from "@mantine/core";
 import Balancer from "react-wrap-balancer";
 
@@ -54,6 +54,7 @@ export default function RegisterForm() {
           <Button
             radius="xl"
             onClick={async () => {
+              const supabase = createClient();
               setLoadings((loadings) => ({ ...loadings, google: true }));
 
               const callbackUrl = searchParams.get("callbackUrl");

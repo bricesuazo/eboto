@@ -2,7 +2,7 @@
 
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { supabase } from "@/utils/supabase/admin";
+import { createClient } from "@/utils/supabase/admin";
 import { verifySignatureAppRouter } from "@upstash/qstash/dist/nextjs";
 
 import { sendElectionStart } from "@eboto/email/emails/election-start";
@@ -11,6 +11,7 @@ import { sendElectionStart } from "@eboto/email/emails/election-start";
 export const dynamic = "force-dynamic";
 
 async function handler(_req: NextRequest) {
+  const supabase = createClient();
   console.log("ELECTION START CRON");
   // TODO: Use toISOString() instead of toLocaleDateString() and toLocaleString()
   const date_today = new Date(

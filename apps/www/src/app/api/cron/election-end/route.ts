@@ -1,7 +1,7 @@
 // TODO: migrate this to inngest
 
 import { NextResponse } from "next/server";
-import { supabase } from "@/utils/supabase/admin";
+import { createClient } from "@/utils/supabase/admin";
 import { verifySignatureAppRouter } from "@upstash/qstash/dist/nextjs";
 
 import { sendElectionResult } from "@eboto/email/emails/election-result";
@@ -12,6 +12,7 @@ import type { GeneratedElectionResult } from "./../../../../../../../supabase/cu
 export const dynamic = "force-dynamic";
 
 async function handler(_req: Request) {
+  const supabase = createClient();
   console.log("ELECTION END CRON");
   // TODO: Use toISOString() instead of toLocaleDateString() and toLocaleString()
   const date_today = new Date(

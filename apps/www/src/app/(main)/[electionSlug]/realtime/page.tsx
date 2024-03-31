@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import Realtime from "@/components/pages/realtime";
 import { api } from "@/trpc/server";
-import { supabase as supabaseAdmin } from "@/utils/supabase/admin";
-import { supabase } from "@/utils/supabase/server";
+import { createClient as createClientAdmin } from "@/utils/supabase/admin";
+import { createClient as createClientServer } from "@/utils/supabase/server";
 import { env } from "env.mjs";
 import moment from "moment";
 
@@ -14,10 +14,12 @@ export async function generateMetadata({
 }: {
   params: { electionSlug: string };
 }): Promise<Metadata> {
+  const supabaseServer = createClientServer();
   const {
     data: { session },
-  } = await supabase.auth.getSession();
+  } = await supabaseServer.auth.getSession();
 
+  const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin
     .from("elections")
     .select("id, name, slug, start_date, end_date, logo_path, publicity")
@@ -52,7 +54,7 @@ export async function generateMetadata({
   let image_url: string | undefined;
 
   if (election.logo_path) {
-    const { data: url } = await supabase.storage
+    const { data: url } = await supabaseServer.storage
       .from("candidates")
       .createSignedUrl(election.logo_path, 60);
 
@@ -94,11 +96,13 @@ export default async function RealtimePage({
 }: {
   params: { electionSlug: string };
 }) {
+  const supabaseServer = createClientServer();
   const {
     data: { session },
-  } = await supabase.auth.getSession();
+  } = await supabaseServer.auth.getSession();
   const positions = await api.election.getElectionRealtime.query(electionSlug);
 
+  const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin
     .from("elections")
     .select("*, voter_fields(*)")

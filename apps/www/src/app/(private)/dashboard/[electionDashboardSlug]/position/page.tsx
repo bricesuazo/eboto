@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import DashboardPosition from "@/components/pages/dashboard-position";
 import { api } from "@/trpc/server";
-import { supabase } from "@/utils/supabase/admin";
+import { createClient } from "@/utils/supabase/admin";
 
 export const metadata: Metadata = {
   title: "Positions",
@@ -13,6 +13,7 @@ export default async function Page({
 }: {
   params: { electionDashboardSlug: string };
 }) {
+  const supabase = createClient();
   const { data: election } = await supabase
     .from("elections")
     .select()

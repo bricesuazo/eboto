@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ElectionCandidate from "@/components/pages/election-candidate";
 import { api } from "@/trpc/server";
-import { supabase as supabaseAdmin } from "@/utils/supabase/admin";
-import { supabase } from "@/utils/supabase/server";
+import { createClient as createClientAdmin } from "@/utils/supabase/admin";
+import { createClient as createClientServer } from "@/utils/supabase/server";
 import { env } from "env.mjs";
 
 import { formatName } from "@eboto/constants";
@@ -13,10 +13,12 @@ export async function generateMetadata({
 }: {
   params: { electionSlug: string; candidateSlug: string };
 }): Promise<Metadata> {
+  const supabaseServer = createClientServer();
   const {
     data: { session },
-  } = await supabase.auth.getSession();
+  } = await supabaseServer.auth.getSession();
 
+  const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin
     .from("elections")
     .select()
@@ -63,7 +65,7 @@ export async function generateMetadata({
   let image_url: string | undefined;
 
   if (candidate.image_path) {
-    const { data: url } = await supabase.storage
+    const { data: url } = await supabaseServer.storage
       .from("candidates")
       .createSignedUrl(candidate.image_path, 60);
 

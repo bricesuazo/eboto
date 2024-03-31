@@ -9,7 +9,7 @@ import {
   MyElectionsAsVoter as MyElectionsAsVoterClient,
 } from "@/components/my-elections";
 import { api } from "@/trpc/server";
-import { supabase } from "@/utils/supabase/server";
+import { createClient } from "@/utils/supabase/server";
 import {
   Box,
   Center,
@@ -28,6 +28,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
+  const supabase = createClient();
   const {
     data: { session },
   } = await supabase.auth.getSession();

@@ -1,15 +1,16 @@
 import { notFound, redirect } from "next/navigation";
 import DashboardElection from "@/components/layout/dashboard-election";
-import { supabase as supabaseAdmin } from "@/utils/supabase/admin";
-import { supabase } from "@/utils/supabase/server";
+import { createClient as creatClientAdmin } from "@/utils/supabase/admin";
+import { createClient as creatClientServer } from "@/utils/supabase/server";
 import { env } from "env.mjs";
 
 export default async function DashboardLayout(
   props: React.PropsWithChildren<{ params: { electionDashboardSlug: string } }>,
 ) {
+  const supabaseServer = creatClientServer();
   const {
     data: { session },
-  } = await supabase.auth.getSession();
+  } = await supabaseServer.auth.getSession();
 
   if (!session) redirect("/sign-in");
 
@@ -30,6 +31,7 @@ export default async function DashboardLayout(
   //     },
   //   },
   // });
+  const supabaseAdmin = creatClientAdmin();
 
   const { data: election } = await supabaseAdmin
     .from("elections")

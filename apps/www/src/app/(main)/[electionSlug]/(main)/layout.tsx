@@ -1,16 +1,18 @@
 import { notFound, redirect } from "next/navigation";
-import { supabase as supabaseAdmin } from "@/utils/supabase/admin";
-import { supabase } from "@/utils/supabase/server";
+import { createClient as createClientAdmin } from "@/utils/supabase/admin";
+import { createClient as createClientServer } from "@/utils/supabase/server";
 
 import { isElectionOngoing } from "@eboto/constants";
 
 export default async function ElectionLayout(
   props: React.PropsWithChildren<{ params: { electionSlug: string } }>,
 ) {
+  const supabaseServer = createClientServer();
   const {
     data: { session },
-  } = await supabase.auth.getSession();
+  } = await supabaseServer.auth.getSession();
 
+  const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin
     .from("elections")
     .select()

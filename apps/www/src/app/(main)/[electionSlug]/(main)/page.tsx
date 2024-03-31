@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ElectionPageClient from "@/components/pages/election-page";
 import { api } from "@/trpc/server";
-import { supabase as supabaseAdmin } from "@/utils/supabase/admin";
-import { supabase } from "@/utils/supabase/server";
+import { createClient as createClientAdmin } from "@/utils/supabase/admin";
+import { createClient as createClientServer } from "@/utils/supabase/server";
 import { env } from "env.mjs";
 import moment from "moment";
 
@@ -12,9 +12,12 @@ export async function generateMetadata({
 }: {
   params: { electionSlug: string };
 }): Promise<Metadata> {
+  const supabaseServer = createClientServer();
   const {
     data: { session },
-  } = await supabase.auth.getSession();
+  } = await supabaseServer.auth.getSession();
+
+  const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin
     .from("elections")
     .select()
@@ -52,7 +55,7 @@ export async function generateMetadata({
   let election_logo_url: string | undefined;
 
   if (election.logo_path) {
-    const { data: url, error: url_error } = await supabase.storage
+    const { data: url, error: url_error } = await supabaseServer.storage
       .from("elections")
       .createSignedUrl(election.logo_path, 60);
 

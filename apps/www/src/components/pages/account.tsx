@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { api } from "@/trpc/client";
 import { transformUploadImage } from "@/utils";
-import { supabase } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/client";
 import {
   Box,
   Button,
@@ -43,6 +43,7 @@ export default function AccountPageClient(
   // });
   const deleteAccountMutation = api.user.deleteAccount.useMutation({
     onSuccess: async () => {
+      const supabase = createClient();
       await supabase.auth.signOut();
       close();
     },

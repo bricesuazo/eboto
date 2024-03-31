@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import { useStore } from "@/store";
 import classes from "@/styles/Header.module.css";
 import { api } from "@/trpc/client";
-import { supabase } from "@/utils/supabase/client";
+import { createClient } from "@/utils/supabase/client";
 import {
   ActionIcon,
   Box,
@@ -364,6 +364,8 @@ export default function Header({ userId }: { userId?: string }) {
                   <MenuItem
                     onClick={async () => {
                       setLogoutLoading(true);
+                      const supabase = createClient();
+
                       await supabase.auth.signOut();
                     }}
                     closeMenuOnClick={false}

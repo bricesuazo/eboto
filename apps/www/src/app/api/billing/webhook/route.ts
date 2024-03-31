@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { supabase } from "@/utils/supabase/admin";
+import { createClient } from "@/utils/supabase/admin";
 import { env } from "env.mjs";
 
 const isError = (error: unknown): error is Error => {
@@ -115,6 +115,7 @@ interface WebhookPayload {
 }
 
 export async function POST(req: Request) {
+  const supabase = createClient();
   try {
     const rawBody = await req.text();
 

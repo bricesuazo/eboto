@@ -1,6 +1,6 @@
 import Footer from "@/components/footer";
 import Header from "@/components/header";
-import { supabase } from "@/utils/supabase/server";
+import { createClient } from "@/utils/supabase/server";
 import {
   AppShell,
   AppShellFooter,
@@ -13,6 +13,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const supabase = createClient();
   const {
     data: { session },
   } = await supabase.auth.getSession();

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { supabase } from "@/utils/supabase/server";
+import { createClient } from "@/utils/supabase/server";
 import {
   AppShell,
   AppShellFooter,
@@ -11,6 +11,7 @@ import Footer from "../footer";
 import Header from "../header";
 
 export default async function Dashboard(props: React.PropsWithChildren) {
+  const supabase = createClient();
   const {
     data: { session },
   } = await supabase.auth.getSession();

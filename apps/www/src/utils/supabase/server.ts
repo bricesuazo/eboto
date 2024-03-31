@@ -6,8 +6,6 @@ import { env } from "env.mjs";
 
 import type { Database } from "./../../../../../supabase/types";
 
-export const dynamic = "force-dynamic";
-
 export const createClient = cache((key?: string) => {
   const cookieStore = cookies();
 
@@ -41,5 +39,3 @@ export const createClient = cache((key?: string) => {
     },
   );
 });
-
-export const supabase = createClient();
