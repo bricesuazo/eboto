@@ -445,6 +445,7 @@ export const electionRouter = createTRPCRouter({
       .eq("user_id", ctx.user.auth.id)
       .is("deleted_at", null)
       .is("elections.commissioners.deleted_at", null)
+      .is("elections.deleted_at", null)
       .order("created_at", {
         referencedTable: "elections.commissioners",
         ascending: true,

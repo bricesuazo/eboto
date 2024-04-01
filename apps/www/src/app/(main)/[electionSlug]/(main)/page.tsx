@@ -42,7 +42,7 @@ export async function generateMetadata({
       .eq("user_id", user?.id ?? "")
       .is("deleted_at", null);
 
-  if (voters_error ?? commissioners_error) notFound();
+  if (!!voters_error || !!commissioners_error) notFound();
 
   if (
     (election.publicity === "VOTER" &&
