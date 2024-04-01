@@ -103,11 +103,22 @@ export const electionRouter = createTRPCRouter({
         }
       }
 
+      let logo_url: string | null = null;
+
+      if (election.logo_path) {
+        const { data: image } = ctx.supabase.storage
+          .from("elections")
+          .getPublicUrl(election.logo_path);
+
+        logo_url = image.publicUrl;
+      }
+
       return {
         election: {
           ...election,
           voter_fields,
           commissioners,
+          logo_url,
         },
         positions: positions.map((position) => ({
           ...position,
@@ -274,7 +285,17 @@ export const electionRouter = createTRPCRouter({
 
       if (!election) throw new TRPCError({ code: "NOT_FOUND" });
 
-      return election;
+      let logo_url: string | null = null;
+
+      if (election.logo_path) {
+        const { data: image } = ctx.supabase.storage
+          .from("elections")
+          .getPublicUrl(election.logo_path);
+
+        logo_url = image.publicUrl;
+      }
+
+      return { ...election, logo_url };
     }),
   getDashboardOverviewData: protectedProcedure
     .input(
@@ -484,15 +505,27 @@ export const electionRouter = createTRPCRouter({
 
     if (!commissioners) throw new TRPCError({ code: "NOT_FOUND" });
 
-    return commissioners.map((commissioner) => ({
-      ...commissioner,
-      election: {
-        ...commissioner.election!,
-        isTheCreator:
-          commissioner.user_id ===
-          commissioner.election?.commissioners[0]?.user_id,
-      },
-    }));
+    return commissioners.map((commissioner) => {
+      let logo_url: string | null = null;
+
+      if (commissioner.election?.logo_path) {
+        const { data: url } = ctx.supabase.storage
+          .from("elections")
+          .getPublicUrl(commissioner.election.logo_path);
+
+        logo_url = url.publicUrl;
+      }
+      return {
+        ...commissioner,
+        election: {
+          ...commissioner.election!,
+          isTheCreator:
+            commissioner.user_id ===
+            commissioner.election?.commissioners[0]?.user_id,
+          logo_url,
+        },
+      };
+    });
   }),
   getVotersByElectionSlug: protectedProcedure
     .input(
@@ -784,25 +817,17 @@ export const electionRouter = createTRPCRouter({
           voting_hour_end: !isElectionDatesDisabled
             ? input.voting_hours[1]
             : undefined,
-          // TODO: uncomment this when the logo is ready
-          // logo: input.logo
-          //   ? await fetch(input.logo.base64)
-          //       .then((res) => res.blob())
-          //       .then(
-          //         async (blob) =>
-          //           (
-          //             await ctx.utapi.uploadFiles(
-          //               new File(
-          //                 [blob],
-          //                 `election_logo_${input.id}_${input.logo!.name}`,
-          //                 {
-          //                   type: input.logo!.type,
-          //                 },
-          //               ),
-          //             )
-          //           ).data,
-          //       )
-          //   : input.logo,
+          logo_path: input.logo
+            ? await fetch(input.logo.base64)
+                .then((res) => res.blob())
+                .then(async (blob) => {
+                  const { data } = await ctx.supabase.storage
+                    .from("elections")
+                    .upload(`${input.id}/logo/${Date.now()}`, blob);
+
+                  return data?.path;
+                })
+            : input.logo,
         })
         .eq("id", input.id);
     }),
@@ -1198,12 +1223,24 @@ export const electionRouter = createTRPCRouter({
     if (!electionsAsCommissioner) throw new TRPCError({ code: "NOT_FOUND" });
 
     return electionsAsCommissioner
-      .map((commissioner) => ({
-        ...commissioner.election!,
-        is_free:
-          commissioner.election?.variant_id ===
-          env.LEMONSQUEEZY_FREE_VARIANT_ID,
-      }))
+      .map((commissioner) => {
+        let logo_url: string | null = null;
+
+        if (commissioner.election?.logo_path) {
+          const { data: url } = ctx.supabase.storage
+            .from("elections")
+            .getPublicUrl(commissioner.election?.logo_path);
+
+          logo_url = url.publicUrl;
+        }
+        return {
+          ...commissioner.election!,
+          is_free:
+            commissioner.election?.variant_id ===
+            env.LEMONSQUEEZY_FREE_VARIANT_ID,
+          logo_url,
+        };
+      })
       .sort(
         (a, b) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
@@ -1280,6 +1317,18 @@ export const electionRouter = createTRPCRouter({
 
     return electionsAsVoter
       .map((voter) => voter.election!)
+      .map((election) => {
+        let logo_url: string | null = null;
+
+        if (election.logo_path) {
+          const { data: url } = ctx.supabase.storage
+            .from("elections")
+            .getPublicUrl(election.logo_path);
+
+          logo_url = url.publicUrl;
+        }
+        return { ...election, logo_url, is_free: true };
+      })
       .sort(
         (a, b) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),

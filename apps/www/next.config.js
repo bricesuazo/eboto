@@ -11,8 +11,8 @@ module.exports = {
         hostname: "lh3.googleusercontent.com",
       },
       {
-        protocol: "https",
-        hostname: "utfs.io",
+        protocol: "http",
+        hostname: "127.0.0.1",
       },
     ],
   },

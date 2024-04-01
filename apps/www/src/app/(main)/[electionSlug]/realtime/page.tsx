@@ -53,14 +53,14 @@ export async function generateMetadata({
       notFound();
   }
 
-  let image_url: string | undefined;
+  let logo_url: string | null = null;
 
   if (election.logo_path) {
-    const { data: url } = await supabaseServer.storage
-      .from("candidates")
-      .createSignedUrl(election.logo_path, 60);
+    const { data: url } = supabaseServer.storage
+      .from("elections")
+      .getPublicUrl(election.logo_path);
 
-    image_url = url?.signedUrl;
+    logo_url = url.publicUrl;
   }
 
   return {
@@ -78,7 +78,7 @@ export async function generateMetadata({
           }/api/og?type=election&election_name=${encodeURIComponent(
             election.name,
           )}&election_logo=${encodeURIComponent(
-            image_url ?? "",
+            logo_url ?? "",
           )}&election_date=${encodeURIComponent(
             moment(election.start_date).format("MMMM D, YYYY") +
               " - " +

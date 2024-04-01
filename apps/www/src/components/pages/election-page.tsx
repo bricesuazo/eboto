@@ -177,9 +177,9 @@ export default function ElectionPage({
         <Stack align="center" gap="xl">
           <Box>
             <Flex justify="center" mb={8}>
-              {election.logo_path ? (
+              {election.logo_url ? (
                 <Image
-                  src={election.logo_path}
+                  src={election.logo_url}
                   alt="Logo"
                   width={128}
                   height={128}

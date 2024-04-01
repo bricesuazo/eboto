@@ -34,11 +34,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
         ? election.description
         : "No description",
     link: "/dashboard/" + election.slug,
-    leftSection: election.logo_path ? (
+    leftSection: election.logo_url ? (
       <Center>
         <Image
           // TODO: Fix this
-          src={election.logo_path}
+          src={election.logo_url}
           alt={`${election.name} logo`}
           width={24}
           height={24}

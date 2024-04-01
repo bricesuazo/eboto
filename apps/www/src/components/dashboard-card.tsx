@@ -25,22 +25,19 @@ import {
 } from "@tabler/icons-react";
 import moment from "moment";
 
+import type { RouterOutputs } from "@eboto/api";
 import { parseHourTo12HourFormat } from "@eboto/constants";
-
-import type { Database } from "../../../../supabase/types";
 
 export default function DashboardCard({
   election,
   type,
   hasVoted,
-  is_free,
-  election_logo_url,
 }: {
-  election: Database["public"]["Tables"]["elections"]["Row"];
-  election_logo_url?: string;
+  election:
+    | RouterOutputs["election"]["getMyElectionAsCommissioner"][number]
+    | RouterOutputs["election"]["getMyElectionAsVoter"][number];
   type: "vote" | "manage";
   hasVoted?: boolean;
-  is_free?: boolean;
 }) {
   const { hovered, ref } = useHover<HTMLAnchorElement>();
   return (
@@ -58,7 +55,7 @@ export default function DashboardCard({
       target={type === "vote" ? "_blank" : undefined}
       style={{
         borderColor:
-          is_free === false && type === "manage"
+          election.is_free === false && type === "manage"
             ? "var(--mantine-color-green-5)"
             : undefined,
       }}
@@ -83,7 +80,7 @@ export default function DashboardCard({
         </ActionIcon>
       )}
 
-      {election_logo_url && (
+      {election.logo_url && (
         <Box
           mx="auto"
           style={{
@@ -94,7 +91,7 @@ export default function DashboardCard({
           }}
         >
           <Image
-            src={election_logo_url}
+            src={election.logo_url}
             alt={election.name + " logo"}
             fill
             sizes="100%"
@@ -102,7 +99,7 @@ export default function DashboardCard({
               objectFit: "cover",
             }}
             priority
-            blurDataURL={election_logo_url}
+            blurDataURL={election.logo_url}
           />
           <Flex
             gap="xs"
@@ -189,7 +186,7 @@ export default function DashboardCard({
       )}
       <Center style={{ flex: 1 }}>
         <Box>
-          {!election.logo_path && (
+          {!election.logo_url && (
             <Flex gap="xs" justify="center" mb="sm">
               <HoverCard width={200} openDelay={200} closeDelay={0}>
                 <HoverCardTarget>

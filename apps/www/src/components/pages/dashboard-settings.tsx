@@ -76,11 +76,11 @@ export default function DashboardSettings({
 
       form.setValues({
         ...form.values,
-        logo: refetchedElection.data?.logo_path ?? null,
+        logo: refetchedElection.data?.logo_url ?? null,
       });
       form.resetDirty({
         ...form.values,
-        logo: refetchedElection.data?.logo_path ?? null,
+        logo: refetchedElection.data?.logo_url ?? null,
       });
     },
     onError: (error) => {
@@ -124,7 +124,7 @@ export default function DashboardSettings({
         getElectionBySlugQuery.data.voting_hour_start,
         getElectionBySlugQuery.data.voting_hour_end,
       ],
-      logo: getElectionBySlugQuery.data.logo_path,
+      logo: getElectionBySlugQuery.data.logo_url,
     },
     validate: {
       name: hasLength(
@@ -560,12 +560,11 @@ export default function DashboardSettings({
                   onClick={() => {
                     form.setValues({
                       ...form.values,
-                      logo: getElectionBySlugQuery.data.logo_path,
+                      logo: getElectionBySlugQuery.data.logo_url,
                     });
                   }}
                   disabled={
-                    form.values.logo ===
-                      getElectionBySlugQuery.data.logo_path ||
+                    form.values.logo === getElectionBySlugQuery.data.logo_url ||
                     editElectionMutation.isPending
                   }
                 >
