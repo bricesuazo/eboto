@@ -29,27 +29,29 @@ export async function generateMetadata({
 
   if (!election) notFound();
 
-  const { data: voters } = await supabaseAdmin
-    .from("voters")
-    .select("id")
-    .eq("election_id", election.id)
-    .eq("email", user?.email ?? "");
+  if (user) {
+    const { data: voters } = await supabaseAdmin
+      .from("voters")
+      .select("id")
+      .eq("election_id", election.id)
+      .eq("email", user?.email ?? "");
 
-  const { data: commissioners } = await supabaseAdmin
-    .from("commissioners")
-    .select("id")
-    .eq("election_id", election.id)
-    .eq("user_id", user?.id ?? "");
+    const { data: commissioners } = await supabaseAdmin
+      .from("commissioners")
+      .select("id")
+      .eq("election_id", election.id)
+      .eq("user_id", user?.id ?? "");
 
-  if (
-    !voters ||
-    !commissioners ||
-    (election.publicity === "VOTER" &&
-      !voters.length &&
-      !commissioners.length) ||
-    (election.publicity === "PRIVATE" && !commissioners.length)
-  )
-    notFound();
+    if (
+      !voters ||
+      !commissioners ||
+      (election.publicity === "VOTER" &&
+        !voters.length &&
+        !commissioners.length) ||
+      (election.publicity === "PRIVATE" && !commissioners.length)
+    )
+      notFound();
+  }
 
   let image_url: string | undefined;
 
@@ -146,15 +148,6 @@ export default async function RealtimePage({
 
     if (!isCommissioner?.user) notFound();
 
-    // const isVoter = await db.query.voters.findFirst({
-    //   where: (voter, { eq, and, isNull }) =>
-    //     and(
-    //       eq(voter.election_id, election.id),
-    //       eq(voter.email, isCommissioner.user.email),
-    //       isNull(voter.deleted_at),
-    //     ),
-    // });
-
     const { data: isVoter } = await supabaseAdmin
       .from("voters")
       .select("id")
@@ -163,25 +156,28 @@ export default async function RealtimePage({
       .is("deleted_at", null)
       .single();
 
-    const { data: vote } = await supabaseAdmin
+    const { data: votes, error: votes_error } = await supabaseAdmin
       .from("votes")
       .select("id")
       .eq("election_id", election.id)
-      .eq("voter_id", isVoter?.id ?? "")
-      .single();
+      .eq("voter_id", isVoter?.id ?? "");
 
-    if (isVoter && !vote && !isCommissioner) redirect(`/${election.slug}`);
+    if (votes_error) notFound();
+
+    if (isVoter && votes.length && !isCommissioner)
+      redirect(`/${election.slug}`);
   } else if (election.publicity === "VOTER") {
     if (!user) redirect(callbackUrl);
 
-    const { data: vote } = await supabaseAdmin
+    if (!voter && !commissioner) notFound();
+
+    const { data: votes, error: votes_error } = await supabaseAdmin
       .from("votes")
       .select("id")
       .eq("election_id", election.id)
-      .eq("voter_id", voter?.id ?? "")
-      .single();
+      .eq("voter_id", voter?.id ?? "");
 
-    if (!voter && !commissioner) notFound();
+    if (votes_error) notFound();
 
     if (
       !isElectionEnded({
@@ -190,7 +186,7 @@ export default async function RealtimePage({
       isElectionOngoing({
         election,
       }) &&
-      !vote
+      !votes.length
     )
       redirect(`/${election.slug}`);
   }

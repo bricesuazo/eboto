@@ -35,7 +35,7 @@ export default function ElectionBoost({
   const [isRedirecting, setIsRedirecting] = useState(false);
   const store = useStore();
   const electionsQuery = api.election.getAllMyElections.useQuery(undefined, {
-    enabled: userQuery.data && store.electionBoost,
+    enabled: !!userQuery.data && store.electionBoost,
   });
 
   const boostMutation = api.payment.boost.useMutation({

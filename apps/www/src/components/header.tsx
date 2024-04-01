@@ -264,9 +264,9 @@ export default function Header({ userId }: { userId?: string }) {
                         }}
                       >
                         {!userQuery.isLoading ? (
-                          userQuery.data?.user?.db.image_path ? (
+                          userQuery.data?.db.image_path ? (
                             <Image
-                              src={userQuery.data.user.db.image_path}
+                              src={userQuery.data.db.image_path}
                               alt="Profile picture"
                               fill
                               sizes="100%"
@@ -287,10 +287,10 @@ export default function Header({ userId }: { userId?: string }) {
                         {userQuery.data ? (
                           <>
                             <Text size="xs" truncate fw="bold">
-                              {userQuery.data.user?.db.name}
+                              {userQuery.data.db.name}
                             </Text>
                             <Text size="xs" truncate>
-                              {userQuery.data.user?.db.email}
+                              {userQuery.data.db.email}
                             </Text>
                           </>
                         ) : (

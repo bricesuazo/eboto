@@ -57,8 +57,8 @@ export default function AccountPageClient(
       //   firstName: "",
       //   middleName: "",
       //   lastName: "",
-      name: getUserProtectedQuery.data.user.db.name,
-      image: getUserProtectedQuery.data.user.db.image_path,
+      name: getUserProtectedQuery.data.db.name,
+      image: getUserProtectedQuery.data.db.image_path,
     },
     // validate: {
     //   firstName: isNotEmpty("First name is required"),
@@ -225,7 +225,7 @@ export default function AccountPageClient(
           <TextInput
             placeholder="Email"
             label="Email"
-            value={getUserProtectedQuery.data.user.db.email ?? undefined}
+            value={getUserProtectedQuery.data.db.email ?? undefined}
             leftSection={<IconAt size="1rem" />}
             readOnly
             disabled
@@ -277,7 +277,7 @@ export default function AccountPageClient(
                         <Text>{accountForm.values.name}</Text>
                       </Group>
                     ) : (
-                      props.user.db.image_path && (
+                      props.db.image_path && (
                         <Group>
                           <Box
                             pos="relative"
@@ -287,7 +287,7 @@ export default function AccountPageClient(
                             })}
                           >
                             <Image
-                              src={props.user.db.image_path}
+                              src={props.db.image_path}
                               alt="image"
                               fill
                               sizes="100%"
@@ -334,12 +334,11 @@ export default function AccountPageClient(
                   onClick={() => {
                     accountForm.setValues({
                       ...accountForm.values,
-                      image: props.user.db.image_path,
+                      image: props.db.image_path,
                     });
                   }}
                   disabled={
-                    accountForm.values.image === props.user.db.image_path ||
-                    loading
+                    accountForm.values.image === props.db.image_path || loading
                   }
                 >
                   Reset image

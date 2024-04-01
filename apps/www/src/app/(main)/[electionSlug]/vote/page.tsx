@@ -79,14 +79,15 @@ export default async function VotePage({
   )
     redirect(`/${election.slug}`);
 
-  const { data: voted } = await supabaseAdmin
+  const { data: votes, error: votes_error } = await supabaseAdmin
     .from("votes")
     .select()
     .eq("voter_id", voter.id)
-    .eq("election_id", election.id)
-    .single();
+    .eq("election_id", election.id);
 
-  if (voted) redirect(`/${election.slug}/realtime`);
+  if (votes_error) notFound();
+
+  if (votes.length) redirect(`/${election.slug}/realtime`);
 
   if (election.publicity === "PRIVATE") {
     const { data: commissioner } = await supabaseAdmin

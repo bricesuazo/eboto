@@ -27,30 +27,31 @@ export async function generateMetadata({
 
   if (!election) notFound();
 
-  const { data: voters, error: voters_error } = await supabaseAdmin
-    .from("voters")
-    .select()
-    .eq("election_id", election.id)
-    .eq("email", user?.email ?? "")
-    .is("deleted_at", null);
+  if (election.publicity === "PRIVATE") {
+    if (!user) notFound();
 
-  const { data: commissioners, error: commissioners_error } =
-    await supabaseAdmin
+    const { data: commissioner } = await supabaseAdmin
       .from("commissioners")
       .select()
       .eq("election_id", election.id)
-      .eq("user_id", user?.id ?? "")
-      .is("deleted_at", null);
+      .eq("user_id", user.id)
+      .is("deleted_at", null)
+      .single();
 
-  if (!!voters_error || !!commissioners_error) notFound();
+    if (!commissioner) notFound();
+  } else if (election.publicity === "VOTER") {
+    if (!user) notFound();
 
-  if (
-    (election.publicity === "VOTER" &&
-      !voters.length &&
-      !commissioners.length) ||
-    (election.publicity === "PRIVATE" && !commissioners.length)
-  )
-    notFound();
+    const { data: voter } = await supabaseAdmin
+      .from("voters")
+      .select()
+      .eq("election_id", election.id)
+      .eq("email", user?.email ?? "")
+      .is("deleted_at", null)
+      .single();
+
+    if (!voter) notFound();
+  }
 
   let election_logo_url: string | undefined;
 
