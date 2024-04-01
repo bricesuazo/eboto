@@ -58,7 +58,7 @@ export default function AccountPageClient(
       //   middleName: "",
       //   lastName: "",
       name: getUserProtectedQuery.data.db.name,
-      image: getUserProtectedQuery.data.db.image_path,
+      image: getUserProtectedQuery.data.db.image_url,
     },
     // validate: {
     //   firstName: isNotEmpty("First name is required"),
@@ -88,7 +88,7 @@ export default function AccountPageClient(
         // middleName: data.middle_name ?? "",
         // lastName: data.last_name,
         name: user.name,
-        image: user.image_path,
+        image: user.image_url,
       };
 
       accountForm.setValues(dataFormatted);
@@ -277,7 +277,7 @@ export default function AccountPageClient(
                         <Text>{accountForm.values.name}</Text>
                       </Group>
                     ) : (
-                      props.db.image_path && (
+                      props.db.image_url && (
                         <Group>
                           <Box
                             pos="relative"
@@ -287,7 +287,7 @@ export default function AccountPageClient(
                             })}
                           >
                             <Image
-                              src={props.db.image_path}
+                              src={props.db.image_url}
                               alt="image"
                               fill
                               sizes="100%"
@@ -334,11 +334,11 @@ export default function AccountPageClient(
                   onClick={() => {
                     accountForm.setValues({
                       ...accountForm.values,
-                      image: props.db.image_path,
+                      image: props.db.image_url,
                     });
                   }}
                   disabled={
-                    accountForm.values.image === props.db.image_path || loading
+                    accountForm.values.image === props.db.image_url || loading
                   }
                 >
                   Reset image

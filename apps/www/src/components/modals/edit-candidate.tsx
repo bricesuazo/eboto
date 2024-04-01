@@ -101,7 +101,7 @@ export default function EditCandidate({
     partylist_id: candidate.partylist_id,
 
     position_id: candidate.position_id,
-    image: candidate.image_path ?? null,
+    image: candidate.image_url,
 
     platforms: candidate.platforms ?? [],
 

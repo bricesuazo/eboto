@@ -191,13 +191,21 @@ export default async function RealtimePage({
       redirect(`/${election.slug}`);
   }
 
+  let logo_url: string | null = null;
+
+  if (election.logo_path) {
+    const { data: image } = supabaseServer.storage
+      .from("elections")
+      .getPublicUrl(election.logo_path);
+
+    logo_url = image.publicUrl;
+  }
   return (
     <Realtime
       positions={positions}
       election={{
         ...election,
-        // TODO: Add logo_url
-        logo_url: null,
+        logo_url,
         is_free: election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID,
       }}
       isVoterCanMessage={isVoterCanMessage}

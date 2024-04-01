@@ -166,25 +166,17 @@ export const candidateRouter = createTRPCRouter({
           last_name: input.last_name,
           position_id: input.position_id,
           partylist_id: input.partylist_id,
-          // TODO: fix image upload
-          // image: input.image
-          //   ? await fetch(input.image.base64)
-          //       .then((res) => res.blob())
-          //       .then(
-          //         async (blob) =>
-          //           (
-          //             await ctx.utapi.uploadFiles(
-          //               new File(
-          //                 [blob],
-          //                 `candidate_image_${input.id}_${input.image!.name}`,
-          //                 {
-          //                   type: input.image!.type,
-          //                 },
-          //               ),
-          //             )
-          //           ).data,
-          //       )
-          //   : input.image,
+          image_path: input.image
+            ? await fetch(input.image.base64)
+                .then((res) => res.blob())
+                .then(async (blob) => {
+                  const { data } = await ctx.supabase.storage
+                    .from("candidates")
+                    .upload(`${input.id}/images/${Date.now()}`, blob);
+
+                  return data?.path;
+                })
+            : input.image,
         })
         .eq("id", input.id)
         .eq("election_id", input.election_id)
@@ -330,26 +322,6 @@ export const candidateRouter = createTRPCRouter({
           position_id: input.position_id,
           partylist_id: input.partylist_id,
           credential_id: credential.id,
-
-          // TODO: fix image upload
-          // image:
-          //   input.image &&
-          //   (await fetch(input.image.base64)
-          //     .then((res) => res.blob())
-          //     .then(
-          //       async (blob) =>
-          //         (
-          //           await ctx.utapi.uploadFiles(
-          //             new File(
-          //               [blob],
-          //               `candidate_image_${candidateId}_${input.image!.name}`,
-          //               {
-          //                 type: input.image!.type,
-          //               },
-          //             ),
-          //           )
-          //         ).data,
-          //     )),
         })
         .select("id")
         .single();
@@ -359,6 +331,23 @@ export const candidateRouter = createTRPCRouter({
           code: "INTERNAL_SERVER_ERROR",
           message: candidate_error.message,
         });
+
+      if (input.image) {
+        await ctx.supabase
+          .from("candidates")
+          .update({
+            image_path: await fetch(input.image.base64)
+              .then((res) => res.blob())
+              .then(async (blob) => {
+                const { data } = await ctx.supabase.storage
+                  .from("candidates")
+                  .upload(`${candidate.id}/images/${Date.now()}`, blob);
+
+                return data?.path;
+              }),
+          })
+          .eq("id", candidate.id);
+      }
 
       await ctx.supabase.from("platforms").insert(
         input.platforms.map((platform) => ({
@@ -565,10 +554,23 @@ export const candidateRouter = createTRPCRouter({
 
       return positionsWithCandidates.map((position) => ({
         ...position,
-        candidates: position.candidates.map((candidate) => ({
-          ...candidate,
-          partylist: candidate.partylist!,
-        })),
+        candidates: position.candidates.map((candidate) => {
+          let image_url: string | null = null;
+
+          if (candidate.image_path) {
+            const { data: image } = ctx.supabase.storage
+              .from("candidates")
+              .getPublicUrl(candidate.image_path);
+
+            image_url = image.publicUrl;
+          }
+
+          return {
+            ...candidate,
+            image_url,
+            partylist: candidate.partylist!,
+          };
+        }),
       }));
     }),
   getPageData: publicProcedure
@@ -617,10 +619,21 @@ export const candidateRouter = createTRPCRouter({
 
       if (!candidate) throw new TRPCError({ code: "NOT_FOUND" });
 
+      let image_url: string | null = null;
+
+      if (candidate.image_path) {
+        const { data: image } = ctx.supabase.storage
+          .from("candidates")
+          .getPublicUrl(candidate.image_path);
+
+        image_url = image.publicUrl;
+      }
+
       return {
         election,
         candidate: {
           ...candidate,
+          image_url,
           partylist: candidate.partylist!,
           position: candidate.position!,
           credential: {

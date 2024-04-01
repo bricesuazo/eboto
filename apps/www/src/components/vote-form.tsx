@@ -36,6 +36,7 @@ import {
   IconX,
 } from "@tabler/icons-react";
 
+import type { RouterOutputs } from "@eboto/api";
 import { formatName } from "@eboto/constants";
 
 import type { Database } from "../../../../supabase/types";
@@ -45,11 +46,7 @@ export default function VoteForm({
   election,
 }: {
   election: Database["public"]["Tables"]["elections"]["Row"];
-  positions: (Database["public"]["Tables"]["positions"]["Row"] & {
-    candidates: (Database["public"]["Tables"]["candidates"]["Row"] & {
-      partylist: Database["public"]["Tables"]["partylists"]["Row"];
-    })[];
-  })[];
+  positions: RouterOutputs["election"]["getElectionVoting"];
 }) {
   const positionsQuery = api.election.getElectionVoting.useQuery(election.id, {
     initialData: positions,
@@ -244,8 +241,7 @@ export default function VoteForm({
                                 candidate.id,
                               ) ?? false
                             }
-                            // TODO: fix this when storage is implemented
-                            candidate={{ ...candidate, image_url: null }}
+                            candidate={candidate}
                             type="radio"
                             key={candidate.id}
                             value={candidate.id}
@@ -292,8 +288,7 @@ export default function VoteForm({
                           return (
                             <VoteCard
                               type="checkbox"
-                              // TODO: fix this when storage is implemented
-                              candidate={{ ...candidate, image_url: null }}
+                              candidate={candidate}
                               isSelected={
                                 form.values[position.id]?.votes.includes(
                                   candidate.id,

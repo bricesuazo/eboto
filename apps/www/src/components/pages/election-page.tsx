@@ -415,9 +415,9 @@ export default function ElectionPage({
                                 width: "100%",
                               }}
                             >
-                              {candidate.image_path ? (
+                              {candidate.image_url ? (
                                 <Image
-                                  src={candidate.image_path}
+                                  src={candidate.image_url}
                                   alt="Candidate's image"
                                   fill
                                   sizes="100%"

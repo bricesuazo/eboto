@@ -21,25 +21,6 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      // TODO:
-      // const image_file = input.image
-      //   ? await fetch(input.image.base64)
-      //       .then((res) => res.blob())
-      //       .then(
-      //         async (blob) =>
-      //           (
-      //             await ctx.utapi.uploadFiles(
-      //               new File([blob], `user_image_${ctx.session.user.id}`, {
-      //                 type: input.image!.type,
-      //               }),
-      //             )
-      //           ).data,
-      //       )
-      //   : input.image;
-
-      // if (user.image_file && !image_file && !input.image)
-      //   await ctx.utapi.deleteFiles(user.image_file.key);
-
       const { data, error } = await ctx.supabase
         .from("users")
         .update({
@@ -47,12 +28,17 @@ export const userRouter = createTRPCRouter({
           //   middle_name: input.middleName,
           //   last_name: input.lastName,
           name: input.name,
-          // image_file: image_file
-          //   ? image_file
-          //   : input.image
-          //     ? user.image_file
-          //     : null,
-          // image: image_file ? image_file.url : input.image ? user.image : null,
+          image_path: input.image
+            ? await fetch(input.image.base64)
+                .then((res) => res.blob())
+                .then(async (blob) => {
+                  const { data } = await ctx.supabase.storage
+                    .from("users")
+                    .upload(`${ctx.user.auth.id}/avatar/${Date.now()}`, blob);
+
+                  return data?.path;
+                })
+            : input.image,
         })
         .eq("id", ctx.user.auth.id)
         .select()
@@ -60,7 +46,17 @@ export const userRouter = createTRPCRouter({
 
       if (error) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
 
-      return data;
+      let image_url: string | null = null;
+
+      if (data.image_path) {
+        const { data: image } = ctx.supabase.storage
+          .from("users")
+          .getPublicUrl(data.image_path);
+
+        image_url = image.publicUrl;
+      }
+
+      return { ...data, image_url };
     }),
 
   deleteAccount: protectedProcedure.mutation(() => {

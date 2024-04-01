@@ -76,10 +76,20 @@ async function handler(_req: Request) {
       "END: 🚀 ~ file: cron.tsx:91 ~ awaitdb.transaction ~ election:",
       election,
     );
+
+    let logo_url: string | null = null;
+
+    if (election.logo_path) {
+      const { data: image } = supabase.storage
+        .from("elections")
+        .getPublicUrl(election.logo_path);
+
+      logo_url = image.publicUrl;
+    }
+
     const result = {
       ...election,
-      // TODO: Fix this
-      logo_url: null,
+      logo_url,
       positions: election.positions.map((position) => ({
         ...position,
         abstain_count: position.votes.length,

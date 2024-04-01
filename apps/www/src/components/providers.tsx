@@ -37,7 +37,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
     leftSection: election.logo_url ? (
       <Center>
         <Image
-          // TODO: Fix this
           src={election.logo_url}
           alt={`${election.name} logo`}
           width={24}

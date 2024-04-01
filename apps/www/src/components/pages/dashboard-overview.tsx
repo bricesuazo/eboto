@@ -396,11 +396,7 @@ export default function DashboardOverview({
             </Text>
           ) : (
             election.generated_election_results.map((result) => (
-              <GenerateResultRow
-                key={result.id}
-                // TODO: Fix this
-                result={{ ...result.election, logo_url: null }}
-              />
+              <GenerateResultRow key={result.id} result={result.election} />
             ))
           )}
         </Box>

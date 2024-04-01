@@ -122,10 +122,23 @@ export const electionRouter = createTRPCRouter({
         },
         positions: positions.map((position) => ({
           ...position,
-          candidates: position.candidates.map((candidate) => ({
-            ...candidate,
-            partylist: candidate.partylist!,
-          })),
+          candidates: position.candidates.map((candidate) => {
+            let image_url: string | null = null;
+
+            if (candidate.image_path) {
+              const { data: image } = ctx.supabase.storage
+                .from("candidates")
+                .getPublicUrl(candidate.image_path);
+
+              image_url = image.publicUrl;
+            }
+
+            return {
+              ...candidate,
+              image_url,
+              partylist: candidate.partylist!,
+            };
+          }),
         })),
         isOngoing: isElectionOngoing({ election }),
         myVoterData,
@@ -329,20 +342,33 @@ export const electionRouter = createTRPCRouter({
       return {
         ...election,
         generated_election_results: election.generated_election_results.map(
-          (result) => ({
-            ...result,
-            election: {
-              ...result.election!,
-              positions: result.election!.positions.map((position) => ({
-                ...position,
-                abstain_count: position.votes.length,
-                candidates: position.candidates.map((candidate) => ({
-                  ...candidate,
-                  vote_count: candidate.votes.length,
+          (result) => {
+            let logo_url: string | null = null;
+
+            if (result.election?.logo_path) {
+              const { data: image } = ctx.supabase.storage
+                .from("partylists")
+                .getPublicUrl(result.election.logo_path);
+
+              logo_url = image.publicUrl;
+            }
+
+            return {
+              ...result,
+              election: {
+                ...result.election!,
+                logo_url,
+                positions: result.election!.positions.map((position) => ({
+                  ...position,
+                  abstain_count: position.votes.length,
+                  candidates: position.candidates.map((candidate) => ({
+                    ...candidate,
+                    vote_count: candidate.votes.length,
+                  })),
                 })),
-              })),
-            },
-          }),
+              },
+            };
+          },
         ),
       };
     }),
@@ -382,10 +408,23 @@ export const electionRouter = createTRPCRouter({
 
       return positions.map((position) => ({
         ...position,
-        candidates: position.candidates.map((candidate) => ({
-          ...candidate,
-          partylist: candidate.partylist!,
-        })),
+        candidates: position.candidates.map((candidate) => {
+          let image_url: string | null = null;
+
+          if (candidate.image_path) {
+            const { data: image } = ctx.supabase.storage
+              .from("candidates")
+              .getPublicUrl(candidate.image_path);
+
+            image_url = image.publicUrl;
+          }
+
+          return {
+            ...candidate,
+            image_url,
+            partylist: candidate.partylist!,
+          };
+        }),
       }));
     }),
   getElectionRealtime: publicProcedure
@@ -1067,15 +1106,28 @@ export const electionRouter = createTRPCRouter({
 
       if (!election) throw new TRPCError({ code: "NOT_FOUND" });
 
-      return election.commissioners.map((commissioner) => ({
-        ...commissioner,
-        user: {
-          ...commissioner.user,
-          isTheCreator:
-            commissioner.user?.id === election.commissioners[0]?.user_id,
-          isMe: commissioner.user?.id === ctx.user.auth.id,
-        },
-      }));
+      return election.commissioners.map((commissioner) => {
+        let image_url: string | null = null;
+
+        if (commissioner.user?.image_path) {
+          const { data: image } = ctx.supabase.storage
+            .from("users")
+            .getPublicUrl(commissioner.user.image_path);
+
+          image_url = image.publicUrl;
+        }
+
+        return {
+          ...commissioner,
+          user: {
+            ...commissioner.user,
+            isTheCreator:
+              commissioner.user?.id === election.commissioners[0]?.user_id,
+            isMe: commissioner.user?.id === ctx.user.auth.id,
+            image_url,
+          },
+        };
+      });
     }),
   addCommissioner: protectedProcedure
     .input(
@@ -1444,7 +1496,28 @@ export const electionRouter = createTRPCRouter({
 
       if (!rooms) throw new TRPCError({ code: "NOT_FOUND" });
 
-      return rooms;
+      return rooms.map((room) => ({
+        ...room,
+        messages: room.messages.map((message) => {
+          let image_url: string | null = null;
+
+          if (message.user?.image_path) {
+            const { data: image } = ctx.supabase.storage
+              .from("users")
+              .getPublicUrl(message.user.image_path);
+
+            image_url = image.publicUrl;
+          }
+
+          return {
+            ...message,
+            user: {
+              ...message.user,
+              image_url,
+            },
+          };
+        }),
+      }));
     }),
   messageAdmin: protectedProcedure
     .input(
@@ -1542,7 +1615,28 @@ export const electionRouter = createTRPCRouter({
 
       if (!rooms) throw new TRPCError({ code: "NOT_FOUND" });
 
-      return rooms;
+      return rooms.map((room) => ({
+        ...room,
+        messages: room.messages.map((message) => {
+          let image_url: string | null = null;
+
+          if (message.user?.image_path) {
+            const { data: image } = ctx.supabase.storage
+              .from("users")
+              .getPublicUrl(message.user.image_path);
+
+            image_url = image.publicUrl;
+          }
+
+          return {
+            ...message,
+            user: {
+              ...message.user,
+              image_url,
+            },
+          };
+        }),
+      }));
     }),
   getAllAdminCommissionerRooms: protectedProcedure
     .input(
@@ -1594,7 +1688,28 @@ export const electionRouter = createTRPCRouter({
 
       if (!rooms) throw new TRPCError({ code: "NOT_FOUND" });
 
-      return rooms;
+      return rooms.map((room) => ({
+        ...room,
+        messages: room.messages.map((message) => {
+          let image_url: string | null = null;
+
+          if (message.user?.image_path) {
+            const { data: image } = ctx.supabase.storage
+              .from("users")
+              .getPublicUrl(message.user.image_path);
+
+            image_url = image.publicUrl;
+          }
+
+          return {
+            ...message,
+            user: {
+              ...message.user,
+              image_url,
+            },
+          };
+        }),
+      }));
     }),
   getMessagesAsVoter: protectedProcedure
     .input(

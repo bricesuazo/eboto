@@ -64,14 +64,14 @@ export async function generateMetadata({
 
   if (!candidate?.position) return notFound();
 
-  let image_url: string | undefined;
+  let image_url: string | null = null;
 
   if (candidate.image_path) {
-    const { data: url } = await supabaseServer.storage
+    const { data: image } = supabaseServer.storage
       .from("candidates")
-      .createSignedUrl(candidate.image_path, 60);
+      .getPublicUrl(candidate.image_path);
 
-    image_url = url?.signedUrl;
+    image_url = image.publicUrl;
   }
 
   return {

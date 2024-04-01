@@ -524,15 +524,14 @@ export default function DashboardElection({
                             }
                             withArrow
                           >
-                            {/* TODO: fix this */}
-                            {commissioner.user.image_path ? (
+                            {commissioner.user.image_url ? (
                               <ThemeIcon
                                 size="lg"
                                 variant="default"
                                 radius="xl"
                               >
                                 <Image
-                                  src={commissioner.user.image_path}
+                                  src={commissioner.user.image_url}
                                   alt="Profile picture"
                                   width={24}
                                   height={24}
@@ -675,7 +674,7 @@ export default function DashboardElection({
                                   <Flex align="center" gap="sm">
                                     <Image
                                       src={
-                                        room.messages[0].user?.image_path ?? ""
+                                        room.messages[0].user?.image_url ?? ""
                                       }
                                       alt={
                                         room.messages[0].user?.name + " image."

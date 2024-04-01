@@ -267,9 +267,9 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
                         }}
                       >
                         {!userQuery.isLoading ? (
-                          userQuery.data?.db.image_path ? (
+                          userQuery.data?.db.image_url ? (
                             <Image
-                              src={userQuery.data.db.image_path}
+                              src={userQuery.data.db.image_url}
                               alt="Profile picture"
                               fill
                               sizes="100%"
