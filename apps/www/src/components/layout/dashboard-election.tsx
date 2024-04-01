@@ -102,11 +102,11 @@ export interface ChatType {
 
 export default function DashboardElection({
   children,
-  userId,
+  isLoggedIn,
   is_free,
   election_id,
 }: React.PropsWithChildren<{
-  userId?: string;
+  isLoggedIn?: boolean;
   is_free: boolean;
   election_id: string;
 }>) {
@@ -319,7 +319,7 @@ export default function DashboardElection({
         p="md"
       >
         <AppShellHeader>
-          <Header userId={userId} />
+          <Header isLoggedIn={isLoggedIn} />
         </AppShellHeader>
 
         <AppShellMain>{children}</AppShellMain>

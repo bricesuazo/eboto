@@ -51,7 +51,7 @@ import {
   IconUserCircle,
 } from "@tabler/icons-react";
 
-export default function Header({ userId }: { userId?: string }) {
+export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
   const utils = api.useUtils();
   const userQuery = api.auth.getUser.useQuery();
   const params = useParams();
@@ -187,7 +187,10 @@ export default function Header({ userId }: { userId?: string }) {
       <Container h="100%" fluid={!!params?.electionDashboardSlug}>
         <Flex h="100%" align="center" justify="space-between" gap="xs">
           <Flex h="100%" align="center" gap="xs">
-            <UnstyledButton component={Link} href={userId ? "/dashboard" : "/"}>
+            <UnstyledButton
+              component={Link}
+              href={isLoggedIn ? "/dashboard" : "/"}
+            >
               <Flex gap="xs" align="center">
                 <Image
                   src="/images/logo.png"
@@ -215,7 +218,7 @@ export default function Header({ userId }: { userId?: string }) {
             </Center>
           </Flex>
 
-          {userId ? (
+          {isLoggedIn ? (
             <Flex
               align="center"
               gap={{
@@ -316,7 +319,6 @@ export default function Header({ userId }: { userId?: string }) {
                   <MenuItem
                     component={Link}
                     href="/dashboard"
-                    // onClick={() => router.push("/dashboard")}
                     leftSection={<IconChartBar size={16} />}
                   >
                     Dashboard

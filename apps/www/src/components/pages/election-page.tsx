@@ -93,9 +93,7 @@ export default function ElectionPage({
     initialValues: Object.fromEntries(
       election.voter_fields.map((field) => [
         field.id,
-        (myVoterData?.field as Record<string, string> | undefined)?.[
-          field.id
-        ] ?? "",
+        myVoterData?.field?.[field.id] ?? "",
       ]),
     ),
     validate: (values) => {
@@ -275,7 +273,7 @@ export default function ElectionPage({
                   {election.voter_fields.length &&
                   (!myVoterData.field ||
                     Object.values(myVoterData.field).some(
-                      (value) => !value || (value as string).trim() === "",
+                      (value) => !value || value.trim() === "",
                     )) ? (
                     <Button
                       onClick={open}

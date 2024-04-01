@@ -27,7 +27,7 @@ export default async function RootLayout({
       //  navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
     >
       <AppShellHeader>
-        <Header userId={user?.id} />
+        <Header isLoggedIn={!!user} />
       </AppShellHeader>
 
       <AppShellMain>{children}</AppShellMain>
