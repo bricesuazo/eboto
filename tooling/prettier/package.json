@@ -8,12 +8,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ianvs/prettier-plugin-sort-imports": "^4.1.1",
+    "@ianvs/prettier-plugin-sort-imports": "^4.2.1",
     "prettier": "^3.2.5"
   },
   "devDependencies": {
-    "@eboto/tsconfig": "0.0.0",
-    "typescript": "^5.3.3"
+    "@eboto/tsconfig": "workspace:*",
+    "typescript": "^5.4.3"
   },
   "prettier": "@eboto/prettier-config"
 }

@@ -6,7 +6,7 @@ import {
   IconUsers,
   IconUserSearch,
 } from "@tabler/icons-react";
-import type { TablerIconsProps } from "@tabler/icons-react";
+import type { Icon, IconProps } from "@tabler/icons-react";
 import moment from "moment";
 import { z } from "zod";
 
@@ -147,7 +147,9 @@ export const electionDashboardNavbar: {
   id: number;
   label: string;
   path?: string;
-  icon: React.FC<TablerIconsProps>;
+  icon: React.ForwardRefExoticComponent<
+    Omit<IconProps, "ref"> & React.RefAttributes<Icon>
+  >;
 }[] = [
   {
     id: 0,
