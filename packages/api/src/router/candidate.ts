@@ -151,9 +151,9 @@ export const candidateRouter = createTRPCRouter({
           message: "Candidate not found",
         });
 
-      if (candidate.image_path && (input.image === null || !!input.image)) {
+      if (candidate.image_path && (input.image === null || input.image)) {
         await ctx.supabase.storage
-          .from("candidate-images")
+          .from("candidates")
           .remove([candidate.image_path]);
       }
 

@@ -21,6 +21,12 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
+      if (ctx.user.db.image_path && (input.image === null || input.image)) {
+        await ctx.supabase.storage
+          .from("users")
+          .remove([ctx.user.db.image_path]);
+      }
+
       const { data, error } = await ctx.supabase
         .from("users")
         .update({

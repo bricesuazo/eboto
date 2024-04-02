@@ -1116,19 +1116,19 @@ function AdminChat({
                     </Text>
                     {room.messages[0] && (
                       <Flex align="center" gap="sm">
-                        {user ? (
-                          <Image
-                            src={user.image_path ?? ""}
-                            alt={user.name + " image."}
-                            width={20}
-                            height={20}
-                            style={{
-                              borderRadius: "50%",
-                            }}
-                          />
-                        ) : (
-                          "Admin"
-                        )}
+                        {user
+                          ? user.image_url && (
+                              <Image
+                                src={user.image_url}
+                                alt={user.name + " image."}
+                                width={20}
+                                height={20}
+                                style={{
+                                  borderRadius: "50%",
+                                }}
+                              />
+                            )
+                          : "Admin"}
                         <Text
                           size="sm"
                           lineClamp={1}

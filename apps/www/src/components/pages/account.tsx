@@ -25,7 +25,6 @@ import type { RouterOutputs } from "@eboto/api";
 export default function AccountPageClient(
   props: RouterOutputs["auth"]["getUserProtected"],
 ) {
-  const context = api.useUtils();
   const openRef = useRef<() => void>(null);
   const [loading, setLoading] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
@@ -80,15 +79,15 @@ export default function AccountPageClient(
   });
 
   const updateProfileMutation = api.user.updateProfile.useMutation({
-    onSuccess: async (user) => {
-      await context.auth.getUser.invalidate();
+    onSuccess: async () => {
+      const user = await getUserProtectedQuery.refetch();
 
       const dataFormatted = {
         // firstName: data.first_name,
         // middleName: data.middle_name ?? "",
         // lastName: data.last_name,
-        name: user.name,
-        image: user.image_url,
+        name: user.data?.db.name ?? null,
+        image: user.data?.db.image_url ?? null,
       };
 
       accountForm.setValues(dataFormatted);
@@ -334,11 +333,12 @@ export default function AccountPageClient(
                   onClick={() => {
                     accountForm.setValues({
                       ...accountForm.values,
-                      image: props.db.image_url,
+                      image: getUserProtectedQuery.data.db.image_url,
                     });
                   }}
                   disabled={
-                    accountForm.values.image === props.db.image_url || loading
+                    accountForm.values.image ===
+                      getUserProtectedQuery.data.db.image_url || loading
                   }
                 >
                   Reset image
