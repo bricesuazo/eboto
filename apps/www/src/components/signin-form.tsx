@@ -57,7 +57,9 @@ export default function SigninForm() {
               await supabase.auth.signInWithOAuth({
                 provider: "google",
                 options: {
-                  redirectTo: searchParams.get("callbackUrl") ?? "/dashboard",
+                  redirectTo: `${location.origin}/auth/callback?next=${
+                    searchParams.get("callbackUrl") ?? "/dashboard"
+                  }`,
                 },
               });
             }}
