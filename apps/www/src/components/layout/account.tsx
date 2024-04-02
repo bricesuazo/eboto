@@ -20,7 +20,7 @@ import {
   Stack,
   useCombobox,
 } from "@mantine/core";
-import { IconCreditCard, IconUser } from "@tabler/icons-react";
+import { IconUser } from "@tabler/icons-react";
 
 export default function AccountPageLayoutClient({
   children,
@@ -38,12 +38,12 @@ export default function AccountPageLayoutClient({
       value: "",
       icon: IconUser,
     },
-    {
-      id: 1,
-      label: "Billing",
-      value: "billing",
-      icon: IconCreditCard,
-    },
+    // {
+    //   id: 1,
+    //   label: "Billing",
+    //   value: "billing",
+    //   icon: IconCreditCard,
+    // },
   ];
 
   return (

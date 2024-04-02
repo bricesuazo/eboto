@@ -9,6 +9,7 @@ import {
   MyElectionsAsVoter as MyElectionsAsVoterClient,
 } from "@/components/my-elections";
 import { api } from "@/trpc/server";
+import { createClient } from "@/utils/supabase/server";
 import {
   Box,
   Center,
@@ -21,17 +22,18 @@ import {
   Title,
 } from "@mantine/core";
 
-import { auth } from "@eboto/auth";
-
 export const metadata: Metadata = {
   title: "Dashboard",
   description: "eBoto | Dashboard",
 };
 
 export default async function Page() {
-  const session = await auth();
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!session) redirect("/sign-in");
+  if (!user) redirect("/sign-in");
 
   return (
     <Dashboard>

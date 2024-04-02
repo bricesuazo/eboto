@@ -7,9 +7,13 @@ import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
 
-import type { Position } from "@eboto/db/schema";
+import type { Database } from "../../../../../supabase/types";
 
-export default function DeletePosition({ position }: { position: Position }) {
+export default function DeletePosition({
+  position,
+}: {
+  position: Database["public"]["Tables"]["positions"]["Row"];
+}) {
   const [opened, { open, close }] = useDisclosure(false);
   const context = api.useUtils();
 

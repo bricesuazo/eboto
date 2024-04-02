@@ -7,7 +7,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import { IconDownload } from "@tabler/icons-react";
 import moment from "moment";
 
-import type { GeneratedElectionResult } from "@eboto/db/schema";
+import type { GeneratedElectionResult } from "../../../../supabase/custom-types";
 
 export default function GenerateResultRow({
   result,
@@ -20,9 +20,9 @@ export default function GenerateResultRow({
     setIsMounted(true);
   }, []);
 
-  const name = `${result.created_at.getTime().toString()} - ${
-    result.result.name
-  } (Result) (${result.created_at.toDateString()}).pdf`;
+  const name = `${new Date(result.created_at).getTime().toString()} - ${
+    result.name
+  } (Result) (${new Date(result.created_at).toDateString()}).pdf`;
 
   return (
     <Group
@@ -50,7 +50,7 @@ export default function GenerateResultRow({
           size="xs"
           leftSection={<IconDownload size="1rem" />}
           component={PDFDownloadLink}
-          document={<GenerateResult result={result.result} />}
+          document={<GenerateResult result={result} />}
           fileName={name}
         >
           Download

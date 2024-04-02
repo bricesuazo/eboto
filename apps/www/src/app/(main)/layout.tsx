@@ -1,5 +1,6 @@
 import Footer from "@/components/footer";
 import Header from "@/components/header";
+import { createClient } from "@/utils/supabase/server";
 import {
   AppShell,
   AppShellFooter,
@@ -7,14 +8,15 @@ import {
   AppShellMain,
 } from "@mantine/core";
 
-import { auth } from "@eboto/auth";
-
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   return (
     <AppShell
       padding={0}
@@ -25,7 +27,7 @@ export default async function RootLayout({
       //  navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
     >
       <AppShellHeader>
-        <Header userId={session?.user.id} />
+        <Header isLoggedIn={!!user} />
       </AppShellHeader>
 
       <AppShellMain>{children}</AppShellMain>

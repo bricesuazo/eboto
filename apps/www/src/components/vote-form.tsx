@@ -36,24 +36,17 @@ import {
   IconX,
 } from "@tabler/icons-react";
 
+import type { RouterOutputs } from "@eboto/api";
 import { formatName } from "@eboto/constants";
-import type {
-  Candidate,
-  Election,
-  Partylist,
-  Position,
-} from "@eboto/db/schema";
+
+import type { Database } from "../../../../supabase/types";
 
 export default function VoteForm({
   positions,
   election,
 }: {
-  election: Election;
-  positions: (Position & {
-    candidates: (Candidate & {
-      partylist: Partylist;
-    })[];
-  })[];
+  election: Database["public"]["Tables"]["elections"]["Row"];
+  positions: RouterOutputs["election"]["getElectionVoting"];
 }) {
   const positionsQuery = api.election.getElectionVoting.useQuery(election.id, {
     initialData: positions,
@@ -367,8 +360,9 @@ function VoteCard({
   type: "radio" | "checkbox";
   value: string;
   disabled?: boolean;
-  candidate?: Candidate & {
-    partylist: Partylist;
+  candidate?: Database["public"]["Tables"]["candidates"]["Row"] & {
+    image_url: string | null;
+    partylist: Database["public"]["Tables"]["partylists"]["Row"];
   };
   isSelected: boolean;
   name_arrangement: number;
@@ -439,9 +433,9 @@ function VoteCard({
           <Box>
             <IconUserQuestion size={80} style={{ padding: 8 }} />
           </Box>
-        ) : candidate.image ? (
+        ) : candidate.image_url ? (
           <Image
-            src={candidate.image.url}
+            src={candidate.image_url}
             alt=""
             width={80}
             height={80}

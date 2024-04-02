@@ -1,8 +1,6 @@
 import crypto from "crypto";
+import { createClient } from "@/utils/supabase/admin";
 import { env } from "env.mjs";
-
-import { db, eq } from "@eboto/db";
-import { elections, elections_plus, users } from "@eboto/db/schema";
 
 const isError = (error: unknown): error is Error => {
   return error instanceof Error;
@@ -117,6 +115,7 @@ interface WebhookPayload {
 }
 
 export async function POST(req: Request) {
+  const supabase = createClient();
   try {
     const rawBody = await req.text();
 
@@ -131,44 +130,49 @@ export async function POST(req: Request) {
 
     const payload = JSON.parse(rawBody) as WebhookPayload;
 
+    // TODO: add transaction
     switch (payload.meta.event_name) {
       case "order_created":
-        await db.transaction(async (trx) => {
-          if (payload.meta.custom_data.type === "boost") {
-            const election = await trx.query.elections.findFirst({
-              where: eq(elections.id, payload.meta.custom_data.election_id),
-            });
+        if (payload.meta.custom_data.type === "boost") {
+          const { data: election } = await supabase
+            .from("elections")
+            .select()
+            .eq("id", payload.meta.custom_data.election_id)
+            .is("deleted_at", null)
+            .single();
 
-            if (!election) {
-              throw new Error("Election not found");
-            }
-
-            await trx
-              .update(elections)
-              .set({
-                variant_id: payload.data.attributes.first_order_item.variant_id,
-              })
-              .where(eq(elections.id, election.id));
-          } else if (payload.meta.custom_data.type === "plus") {
-            const user = await trx.query.users.findFirst({
-              where: eq(users.id, payload.meta.custom_data.user_id),
-            });
-
-            if (!user) {
-              throw new Error("User not found");
-            }
-
-            await trx.insert(elections_plus).values(
-              [
-                ...(Array(
-                  payload.data.attributes.first_order_item.quantity,
-                ) as void[]),
-              ].map(() => ({
-                user_id: user.id,
-              })),
-            );
+          if (!election) {
+            throw new Error("Election not found");
           }
-        });
+
+          await supabase
+            .from("elections")
+            .update({
+              variant_id: payload.data.attributes.first_order_item.variant_id,
+            })
+            .eq("id", election.id);
+        } else if (payload.meta.custom_data.type === "plus") {
+          const { data: user } = await supabase
+            .from("users")
+            .select()
+            .eq("id", payload.meta.custom_data.user_id)
+            .is("deleted_at", null)
+            .single();
+
+          if (!user) {
+            throw new Error("User not found");
+          }
+
+          await supabase.from("elections_plus").insert(
+            [
+              ...(Array(
+                payload.data.attributes.first_order_item.quantity,
+              ) as void[]),
+            ].map(() => ({
+              user_id: user.id,
+            })),
+          );
+        }
 
         break;
       case "order_refunded":

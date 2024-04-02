@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useStore } from "@/store";
 import classes from "@/styles/Header.module.css";
 import { api } from "@/trpc/client";
+import { createClient } from "@/utils/supabase/client";
 import {
   ActionIcon,
   Box,
@@ -49,11 +50,12 @@ import {
   IconSun,
   IconUserCircle,
 } from "@tabler/icons-react";
-import { signOut } from "next-auth/react";
 
-export default function Header({ userId }: { userId?: string }) {
-  const session = api.auth.getSession.useQuery();
+export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
+  const utils = api.useUtils();
+  const userQuery = api.auth.getUser.useQuery();
   const params = useParams();
+  const router = useRouter();
   const [logoutLoading, setLogoutLoading] = useState(false);
   const [reportAProblemLoading, setReportAProblemLoading] = useState(false);
   const reportAProblemMutation = api.election.reportAProblem.useMutation();
@@ -185,7 +187,10 @@ export default function Header({ userId }: { userId?: string }) {
       <Container h="100%" fluid={!!params?.electionDashboardSlug}>
         <Flex h="100%" align="center" justify="space-between" gap="xs">
           <Flex h="100%" align="center" gap="xs">
-            <UnstyledButton component={Link} href={userId ? "/dashboard" : "/"}>
+            <UnstyledButton
+              component={Link}
+              href={isLoggedIn ? "/dashboard" : "/"}
+            >
               <Flex gap="xs" align="center">
                 <Image
                   src="/images/logo.png"
@@ -213,7 +218,7 @@ export default function Header({ userId }: { userId?: string }) {
             </Center>
           </Flex>
 
-          {userId ? (
+          {isLoggedIn ? (
             <Flex
               align="center"
               gap={{
@@ -261,10 +266,10 @@ export default function Header({ userId }: { userId?: string }) {
                           height: 24,
                         }}
                       >
-                        {!session.isPending ? (
-                          session.data?.user.image ? (
+                        {!userQuery.isLoading ? (
+                          userQuery.data?.db.image_url ? (
                             <Image
-                              src={session.data.user.image}
+                              src={userQuery.data.db.image_url}
                               alt="Profile picture"
                               fill
                               sizes="100%"
@@ -282,13 +287,13 @@ export default function Header({ userId }: { userId?: string }) {
                       </Box>
 
                       <Box w={{ base: 100, sm: 140 }}>
-                        {session.data ? (
+                        {userQuery.data ? (
                           <>
                             <Text size="xs" truncate fw="bold">
-                              {session.data.user.name}
+                              {userQuery.data.db.name}
                             </Text>
                             <Text size="xs" truncate>
-                              {session.data.user.email}
+                              {userQuery.data.db.email}
                             </Text>
                           </>
                         ) : (
@@ -314,7 +319,6 @@ export default function Header({ userId }: { userId?: string }) {
                   <MenuItem
                     component={Link}
                     href="/dashboard"
-                    // onClick={() => router.push("/dashboard")}
                     leftSection={<IconChartBar size={16} />}
                   >
                     Dashboard
@@ -364,7 +368,11 @@ export default function Header({ userId }: { userId?: string }) {
                   <MenuItem
                     onClick={async () => {
                       setLogoutLoading(true);
-                      await signOut();
+                      const supabase = createClient();
+
+                      await supabase.auth.signOut();
+                      await utils.auth.invalidate();
+                      router.push("/sign-in");
                     }}
                     closeMenuOnClick={false}
                     leftSection={

@@ -2,7 +2,7 @@
 
 module.exports = {
   reactStrictMode: true,
-  transpilePackages: ["@eboto/db", "@eboto/auth", "@eboto/api"],
+  transpilePackages: ["@eboto/api"],
   images: {
     // unoptimized: true,
     remotePatterns: [
@@ -11,8 +11,8 @@ module.exports = {
         hostname: "lh3.googleusercontent.com",
       },
       {
-        protocol: "https",
-        hostname: "utfs.io",
+        protocol: "http",
+        hostname: "127.0.0.1",
       },
     ],
   },

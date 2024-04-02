@@ -39,7 +39,6 @@ import {
   IconPlus,
   IconRocket,
 } from "@tabler/icons-react";
-import { useSession } from "next-auth/react";
 import Balancer from "react-wrap-balancer";
 
 import { PRICING } from "@eboto/constants";
@@ -271,7 +270,8 @@ export function MainPricing({
 }) {
   const [value, setValue] = useState(initialValue ?? 0);
   const router = useRouter();
-  const session = useSession();
+  const userQuery = api.auth.getUser.useQuery();
+
   const [isRedirecting, setIsRedirecting] = useState(false);
   const plusMutation = api.payment.plus.useMutation({
     onSuccess: (url) => {
@@ -486,7 +486,7 @@ export function MainPricing({
           </Box>
 
           <Flex style={{ flex: 4 }} justify={{ md: "end" }}>
-            {session.status === "authenticated" ? (
+            {userQuery.data ? (
               <Button
                 w={{ base: "100%", md: "auto" }}
                 size="lg"
@@ -508,9 +508,7 @@ export function MainPricing({
                 rightSection={<IconPlus />}
                 component={Link}
                 href="/sign-in"
-                disabled={
-                  plusMutation.isPending || session.status === "loading"
-                }
+                disabled={plusMutation.isPending || userQuery.isLoading}
               >
                 Get Plus
               </Button>
@@ -523,7 +521,7 @@ export function MainPricing({
 }
 
 function GetBoostButton({ value }: { value: number }) {
-  const session = useSession();
+  const userQuery = api.auth.getUser.useQuery();
   const store = useStore();
 
   return value === 100 ? (
@@ -538,7 +536,7 @@ function GetBoostButton({ value }: { value: number }) {
     >
       Contact Us
     </Button>
-  ) : session.status === "authenticated" ? (
+  ) : userQuery.data ? (
     <Button
       size="lg"
       radius="xl"
@@ -555,7 +553,7 @@ function GetBoostButton({ value }: { value: number }) {
       radius="xl"
       variant="gradient"
       w="100%"
-      disabled={session.status === "loading"}
+      disabled={userQuery.isLoading}
       component={Link}
       href="/sign-in"
       rightSection={<IconRocket />}

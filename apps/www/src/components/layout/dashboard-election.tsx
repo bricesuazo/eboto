@@ -102,11 +102,11 @@ export interface ChatType {
 
 export default function DashboardElection({
   children,
-  userId,
+  isLoggedIn,
   is_free,
   election_id,
 }: React.PropsWithChildren<{
-  userId?: string;
+  isLoggedIn?: boolean;
   is_free: boolean;
   election_id: string;
 }>) {
@@ -319,7 +319,7 @@ export default function DashboardElection({
         p="md"
       >
         <AppShellHeader>
-          <Header userId={userId} />
+          <Header isLoggedIn={isLoggedIn} />
         </AppShellHeader>
 
         <AppShellMain>{children}</AppShellMain>
@@ -392,8 +392,8 @@ export default function DashboardElection({
                                 )
                                 .sort(
                                   (a, b) =>
-                                    b.election.updated_at.getTime() -
-                                    a.election.updated_at.getTime(),
+                                    new Date(b.election.updated_at).getTime() -
+                                    new Date(a.election.updated_at).getTime(),
                                 ),
                             },
                             {
@@ -401,12 +401,13 @@ export default function DashboardElection({
                               elections: elections
                                 .filter(
                                   ({ election }) =>
-                                    election.start_date.getTime() > Date.now(),
+                                    new Date(election.start_date).getTime() >
+                                    Date.now(),
                                 )
                                 .sort(
                                   (a, b) =>
-                                    b.election.updated_at.getTime() -
-                                    a.election.updated_at.getTime(),
+                                    new Date(b.election.updated_at).getTime() -
+                                    new Date(a.election.updated_at).getTime(),
                                 ),
                             },
                             {
@@ -414,12 +415,13 @@ export default function DashboardElection({
                               elections: elections
                                 .filter(
                                   ({ election }) =>
-                                    election.end_date.getTime() < Date.now(),
+                                    new Date(election.end_date).getTime() <
+                                    Date.now(),
                                 )
                                 .sort(
                                   (a, b) =>
-                                    b.election.updated_at.getTime() -
-                                    a.election.updated_at.getTime(),
+                                    new Date(b.election.updated_at).getTime() -
+                                    new Date(a.election.updated_at).getTime(),
                                 ),
                             },
                           ].map(({ group, elections }) => (
@@ -522,19 +524,14 @@ export default function DashboardElection({
                             }
                             withArrow
                           >
-                            {commissioner.user.image_file?.url ??
-                            commissioner.user.image ? (
+                            {commissioner.user.image_url ? (
                               <ThemeIcon
                                 size="lg"
                                 variant="default"
                                 radius="xl"
                               >
                                 <Image
-                                  src={
-                                    commissioner.user.image ??
-                                    commissioner.user.image_file?.url ??
-                                    ""
-                                  }
+                                  src={commissioner.user.image_url}
                                   alt="Profile picture"
                                   width={24}
                                   height={24}
@@ -550,7 +547,7 @@ export default function DashboardElection({
                                 variant="default"
                                 radius="xl"
                               >
-                                {commissioner.user.email.slice(0, 2)}
+                                {commissioner.user.email?.slice(0, 2)}
                               </ThemeIcon>
                             )}
                           </Tooltip>
@@ -658,7 +655,7 @@ export default function DashboardElection({
                               setChat({
                                 type: "voters",
                                 id: room.id,
-                                name: room.messages[0]?.user.name ?? "",
+                                name: room.messages[0]?.user?.name ?? "",
                                 title: room.name,
                               })
                             }
@@ -677,12 +674,10 @@ export default function DashboardElection({
                                   <Flex align="center" gap="sm">
                                     <Image
                                       src={
-                                        room.messages[0].user.image ??
-                                        room.messages[0].user.image_file?.url ??
-                                        ""
+                                        room.messages[0].user?.image_url ?? ""
                                       }
                                       alt={
-                                        room.messages[0].user.name + " image."
+                                        room.messages[0].user?.name + " image."
                                       }
                                       width={20}
                                       height={20}
@@ -1121,19 +1116,19 @@ function AdminChat({
                     </Text>
                     {room.messages[0] && (
                       <Flex align="center" gap="sm">
-                        {user ? (
-                          <Image
-                            src={user.image ?? user.image_file?.url ?? ""}
-                            alt={user.name + " image."}
-                            width={20}
-                            height={20}
-                            style={{
-                              borderRadius: "50%",
-                            }}
-                          />
-                        ) : (
-                          "Admin"
-                        )}
+                        {user
+                          ? user.image_url && (
+                              <Image
+                                src={user.image_url}
+                                alt={user.name + " image."}
+                                width={20}
+                                height={20}
+                                style={{
+                                  borderRadius: "50%",
+                                }}
+                              />
+                            )
+                          : "Admin"}
                         <Text
                           size="sm"
                           lineClamp={1}

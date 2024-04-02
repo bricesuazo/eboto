@@ -1,15 +1,18 @@
-import type { NextRequest } from "next/server";
+// TODO: migrate this to inngest
+
 import { NextResponse } from "next/server";
+import { createClient } from "@/utils/supabase/admin";
 import { verifySignatureAppRouter } from "@upstash/qstash/dist/nextjs";
 
-import { db } from "@eboto/db";
-import type { GeneratedElectionResult } from "@eboto/db/schema";
-import { generated_election_results } from "@eboto/db/schema";
 import { sendElectionResult } from "@eboto/email/emails/election-result";
 
-// export const runtime = "edge";
+import type { GeneratedElectionResult } from "./../../../../../../../supabase/custom-types";
 
-async function handler(_req: NextRequest) {
+// export const runtime = "edge";
+export const dynamic = "force-dynamic";
+
+async function handler(_req: Request) {
+  const supabase = createClient();
   console.log("ELECTION END CRON");
   // TODO: Use toISOString() instead of toLocaleDateString() and toLocaleString()
   const date_today = new Date(
@@ -25,79 +28,99 @@ async function handler(_req: NextRequest) {
   console.log("END: 🚀 ~ file: cron.tsx:12 ~ handler ~ today:", date_today);
   console.log("END: 🚀 ~ file: cron.tsx:19 ~ handler ~ today:", today);
 
-  await db.transaction(async (trx) => {
-    // const date_today_end = new Date(date_today);
-    const electionsEnd = await trx.query.elections.findMany({
-      where: (election, { eq, and, isNull }) =>
-        and(
-          eq(
-            election.end_date,
-            date_today,
-            // new Date(date_today_end.setDate(date_today_end.getDate() + 1)),
-          ),
-          eq(election.voting_hour_end, today.getHours()),
-          isNull(election.deleted_at),
-        ),
-      with: {
-        voters: true,
-        commissioners: {
-          with: {
-            user: true,
-          },
-        },
-        positions: {
-          with: {
-            candidates: {
-              with: {
-                votes: true,
-                partylist: true,
-              },
-            },
-            votes: true,
-          },
-        },
-      },
-    });
+  // TODO: add transaction
+  // const date_today_end = new Date(date_today);
 
-    for (const election of electionsEnd) {
-      console.log(
-        "END: 🚀 ~ file: cron.tsx:91 ~ awaitdb.transaction ~ election:",
-        election,
-      );
-      const result = {
-        ...election,
-        positions: election.positions.map((position) => ({
-          ...position,
-          abstain_count: position.votes.length,
-          candidates: position.candidates.map((candidate) => ({
-            ...candidate,
-            vote_count: candidate.votes.length,
-          })),
-        })),
-      } satisfies Pick<GeneratedElectionResult, "result">["result"];
+  const { data: electionsEnd } = await supabase
+    .from("elections")
+    .select(
+      "*, positions(*, votes(*), candidates(*, votes(*)), partylist: partylists(*))",
+    )
+    .eq("end_date", date_today.toISOString())
+    .eq("voting_hour_end", today.getHours())
 
-      await Promise.all([
-        trx.insert(generated_election_results).values({
-          election_id: election.id,
-          result,
-        }),
-        sendElectionResult({
-          emails: [
-            ...new Set([
-              ...election.voters.map((voter) => voter.email),
-              ...election.commissioners.map(
-                (commissioner) => commissioner.user.email,
-              ),
-            ]),
-          ],
-          election: result,
-        }),
-      ]);
-      console.log("Email result sent to", election.name);
+    .is("deleted_at", null);
+
+  if (!electionsEnd)
+    return NextResponse.json({ success: false }, { status: 500 });
+
+  const { data: commissionersElections } = await supabase
+    .from("commissioners")
+    .select("*, user: users(email)")
+    .in(
+      "election_id",
+      electionsEnd.map((election) => election.id),
+    )
+    .is("deleted_at", null);
+
+  const { data: votersElections } = await supabase
+    .from("voters")
+    .select()
+    .in(
+      "election_id",
+      electionsEnd.map((election) => election.id),
+    )
+    .is("deleted_at", null);
+
+  if (!commissionersElections || !votersElections)
+    return NextResponse.json({ success: false }, { status: 500 });
+
+  for (const election of electionsEnd) {
+    const commissioners = commissionersElections.filter(
+      (commissioner) => commissioner.election_id === election.id,
+    );
+    const voters = votersElections.filter(
+      (voter) => voter.election_id === election.id,
+    );
+    console.log(
+      "END: 🚀 ~ file: cron.tsx:91 ~ awaitdb.transaction ~ election:",
+      election,
+    );
+
+    let logo_url: string | null = null;
+
+    if (election.logo_path) {
+      const { data: image } = supabase.storage
+        .from("elections")
+        .getPublicUrl(election.logo_path);
+
+      logo_url = image.publicUrl;
     }
-  });
 
-  return NextResponse.json({});
+    const result = {
+      ...election,
+      logo_url,
+      positions: election.positions.map((position) => ({
+        ...position,
+        abstain_count: position.votes.length,
+        candidates: position.candidates.map((candidate) => ({
+          ...candidate,
+          vote_count: candidate.votes.length,
+        })),
+      })),
+    } satisfies GeneratedElectionResult;
+
+    await Promise.all([
+      supabase.from("generated_election_results").insert({
+        election_id: election.id,
+        result,
+      }),
+      sendElectionResult({
+        emails: [
+          ...new Set([
+            ...voters.map((voter) => voter.email),
+            ...commissioners.map((commissioner) =>
+              commissioner.user ? commissioner.user.email : "",
+            ),
+          ]),
+        ],
+        election: result,
+      }),
+    ]);
+    console.log("Email result sent to", election.name);
+  }
+
+  return NextResponse.json({ success: true });
 }
 
 export const POST = verifySignatureAppRouter(handler);

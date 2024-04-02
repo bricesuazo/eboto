@@ -1,43 +1,35 @@
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
-import { UTApi } from "uploadthing/server";
 import { ZodError } from "zod";
 
-import { auth } from "@eboto/auth";
-import type { Session } from "@eboto/auth";
-import { db } from "@eboto/db";
 import * as payment from "@eboto/payment";
 
-// import { env } from "./env.mjs";
+import type { Database } from "./../../../supabase/types";
 
 interface CreateContextOptions {
-  session: Session | null;
-  utapi: UTApi;
+  user: { auth: User; db: Database["public"]["Tables"]["users"]["Row"] } | null;
   payment: typeof payment;
+  supabase: SupabaseClient<Database>;
 }
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
-    session: opts.session,
-    db,
-    utapi: opts.utapi,
+    ...opts,
     payment,
   };
 };
 
-export async function createTRPCContext(opts: {
+export function createTRPCContext(opts: {
   req?: Request;
-  session: Session | null;
+  user: { auth: User; db: Database["public"]["Tables"]["users"]["Row"] } | null;
+  supabase: SupabaseClient<Database>;
 }) {
   // const source = opts.req?.headers.get("x-trpc-source") ?? "unknown";
 
-  // console.log(">>> tRPC Request from", source, "by", session?.user);
+  // console.log(">>> tRPC Request from", source, "by", opts.session?.user);
 
   return createInnerTRPCContext({
-    session: opts.session ?? (await auth()),
-    utapi: new UTApi({
-      // fetch: globalThis.fetch,
-      // apiKey: env.UPLOADTHING_SECRET,
-    }),
+    ...opts,
     payment,
   });
 }
@@ -67,15 +59,25 @@ export const t = initTRPC.context<Context>().create({
 export const createTRPCRouter = t.router;
 export const publicProcedure = t.procedure;
 
-const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session?.user.id) {
+const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
+  if (!ctx.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
+
+  const { data: user_db } = await ctx.supabase
+    .from("users")
+    .select()
+    .eq("id", ctx.user.auth.id)
+    .single();
+
+  if (!user_db) throw new TRPCError({ code: "UNAUTHORIZED" });
+
   return next({
     ctx: {
       ...ctx,
-      session: {
-        ...ctx.session,
+      user: {
+        ...ctx.user,
+        db: user_db,
       },
     },
   });

@@ -2,65 +2,77 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ElectionCandidate from "@/components/pages/election-candidate";
 import { api } from "@/trpc/server";
+import { createClient as createClientAdmin } from "@/utils/supabase/admin";
+import { createClient as createClientServer } from "@/utils/supabase/server";
 import { env } from "env.mjs";
 
-import { auth } from "@eboto/auth";
 import { formatName } from "@eboto/constants";
-import { db } from "@eboto/db";
 
 export async function generateMetadata({
   params: { electionSlug, candidateSlug },
 }: {
   params: { electionSlug: string; candidateSlug: string };
 }): Promise<Metadata> {
-  const session = await auth();
-  const election = await db.query.elections.findFirst({
-    where: (election, { eq, and, isNull }) =>
-      and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
-    with: {
-      voters: {
-        where: (voters, { isNull, and, eq }) =>
-          and(
-            isNull(voters.deleted_at),
-            eq(voters.email, session?.user?.email ?? ""),
-          ),
-      },
-      commissioners: {
-        where: (commissioners, { isNull, and, eq }) =>
-          and(
-            isNull(commissioners.deleted_at),
-            eq(commissioners.user_id, session?.user?.id ?? ""),
-          ),
-      },
-    },
-  });
+  const supabaseServer = createClientServer();
+  const {
+    data: { user },
+  } = await supabaseServer.auth.getUser();
 
-  if (
-    !election ||
-    (election.publicity === "VOTER" &&
-      !election.voters.length &&
-      !election.commissioners.length) ||
-    (election.publicity === "PRIVATE" && !election.commissioners.length)
-  )
-    notFound();
+  const supabaseAdmin = createClientAdmin();
+  const { data: election } = await supabaseAdmin
+    .from("elections")
+    .select()
+    .eq("slug", electionSlug)
+    .is("deleted_at", null)
+    .single();
 
-  const candidate = await db.query.candidates.findFirst({
-    where: (candidates, { eq, and, isNull }) =>
-      and(
-        eq(candidates.election_id, election.id),
-        eq(candidates.slug, candidateSlug),
-        isNull(candidates.deleted_at),
-      ),
-    with: {
-      position: {
-        columns: {
-          name: true,
-        },
-      },
-    },
-  });
+  if (!election) notFound();
 
-  if (!candidate) return notFound();
+  if (election.publicity === "PRIVATE") {
+    if (!user) notFound();
+
+    const { data: commissioner } = await supabaseAdmin
+      .from("commissioners")
+      .select()
+      .eq("election_id", election.id)
+      .eq("user_id", user.id)
+      .is("deleted_at", null)
+      .single();
+
+    if (!commissioner) notFound();
+  } else if (election.publicity === "VOTER") {
+    if (!user) notFound();
+
+    const { data: voter } = await supabaseAdmin
+      .from("voters")
+      .select()
+      .eq("election_id", election.id)
+      .eq("email", user?.email ?? "")
+      .is("deleted_at", null)
+      .single();
+
+    if (!voter) notFound();
+  }
+
+  const { data: candidate } = await supabaseAdmin
+    .from("candidates")
+    .select("*, position: positions(name)")
+    .eq("election_id", election.id)
+    .eq("slug", candidateSlug)
+    .is("deleted_at", null)
+    .single();
+
+  if (!candidate?.position) return notFound();
+
+  let image_url: string | null = null;
+
+  if (candidate.image_path) {
+    const { data: image } = supabaseServer.storage
+      .from("candidates")
+      .getPublicUrl(candidate.image_path);
+
+    image_url = image.publicUrl;
+  }
 
   return {
     title: `${formatName(election.name_arrangement, candidate)} – ${
@@ -86,7 +98,7 @@ export async function generateMetadata({
             candidate.last_name,
           )}&candidate_position=${encodeURIComponent(
             candidate.position.name,
-          )}&candidate_img=${encodeURIComponent(candidate.image?.url ?? "")}`,
+          )}&candidate_img=${encodeURIComponent(image_url ?? "")}`,
           width: 1200,
           height: 630,
           alt: election.name,

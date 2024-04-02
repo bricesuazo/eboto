@@ -7,12 +7,12 @@ import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
 
-import type { Partylist } from "@eboto/db/schema";
+import type { Database } from "../../../../../supabase/types";
 
 export default function DeletePartylist({
   partylist,
 }: {
-  partylist: Partylist;
+  partylist: Database["public"]["Tables"]["partylists"]["Row"];
 }) {
   const context = api.useUtils();
   const { mutate, isPending, isError, error, reset } =

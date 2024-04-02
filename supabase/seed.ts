@@ -1,6 +1,3 @@
-// import { db } from ".";
-// import { products, variants } from "./schema";
-
 interface LS_DATA_TYPE {
   products: {
     id: number;

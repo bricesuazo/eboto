@@ -1,9 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { and, eq } from "@eboto/db";
-import { positions } from "@eboto/db/schema";
-
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const positionRouter = createTRPCRouter({
@@ -14,14 +11,18 @@ export const positionRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const positions = await ctx.db.query.positions.findMany({
-        where: (positions, { eq, and, isNull }) =>
-          and(
-            eq(positions.election_id, input.election_id),
-            isNull(positions.deleted_at),
-          ),
-        orderBy: (positions, { asc }) => asc(positions.order),
-      });
+      const { data: positions, error: positions_error } = await ctx.supabase
+        .from("positions")
+        .select("*")
+        .eq("election_id", input.election_id)
+        .is("deleted_at", null)
+        .order("order", { ascending: true });
+
+      if (positions_error)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: positions_error.message,
+        });
 
       return positions;
     }),
@@ -35,35 +36,41 @@ export const positionRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const election = await ctx.db.query.elections.findFirst({
-        where: (election, { eq, and, isNull }) =>
-          and(eq(election.id, input.election_id), isNull(election.deleted_at)),
-      });
+      const { data: election } = await ctx.supabase
+        .from("elections")
+        .select("*")
+        .eq("id", input.election_id)
+        .is("deleted_at", null)
+        .single();
 
       if (!election) throw new TRPCError({ code: "NOT_FOUND" });
 
-      const commissioner = await ctx.db.query.commissioners.findFirst({
-        where: (commissioner, { eq, and, isNull }) =>
-          and(
-            eq(commissioner.user_id, ctx.session.user.id),
-            eq(commissioner.election_id, election.id),
-            isNull(commissioner.deleted_at),
-          ),
-      });
+      const { data: commissioner } = await ctx.supabase
+        .from("commissioners")
+        .select("*")
+        .eq("user_id", ctx.user.auth.id)
+        .eq("election_id", election.id)
+        .is("deleted_at", null)
+        .single();
 
       if (!commissioner) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      const positionsInDB = await ctx.db.query.positions.findMany({
-        where: (positions, { eq }) =>
-          eq(positions.election_id, input.election_id),
-        columns: {
-          id: true,
-        },
-      });
+      const { data: positions, error: positions_error } = await ctx.supabase
+        .from("positions")
+        .select("id")
+        .eq("election_id", input.election_id)
+        .is("deleted_at", null)
+        .order("order", { ascending: true });
 
-      await ctx.db.insert(positions).values({
+      if (positions_error)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: positions_error.message,
+        });
+
+      await ctx.supabase.from("positions").insert({
         name: input.name,
-        order: positionsInDB.length,
+        order: positions.length,
         min: input.min,
         max: input.max,
         election_id: input.election_id,
@@ -77,46 +84,40 @@ export const positionRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const election = await ctx.db.query.elections.findFirst({
-        where: (election, { eq, and, isNull }) =>
-          and(eq(election.id, input.election_id), isNull(election.deleted_at)),
-      });
+      const { data: election } = await ctx.supabase
+        .from("elections")
+        .select("*")
+        .eq("id", input.election_id)
+        .is("deleted_at", null)
+        .single();
 
       if (!election) throw new TRPCError({ code: "NOT_FOUND" });
 
-      const commissioner = await ctx.db.query.commissioners.findFirst({
-        where: (commissioner, { eq, and, isNull }) =>
-          and(
-            eq(commissioner.user_id, ctx.session.user.id),
-            eq(commissioner.election_id, election.id),
-            isNull(commissioner.deleted_at),
-          ),
-      });
+      const { data: commissioner } = await ctx.supabase
+        .from("commissioners")
+        .select("*")
+        .eq("user_id", ctx.user.auth.id)
+        .eq("election_id", election.id)
+        .is("deleted_at", null)
+        .single();
 
       if (!commissioner) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      const position = await ctx.db.query.positions.findFirst({
-        where: (position, { eq, and, isNull }) =>
-          and(
-            eq(position.id, input.position_id),
-            eq(position.election_id, input.election_id),
-            isNull(position.deleted_at),
-          ),
-      });
+      const { data: position } = await ctx.supabase
+        .from("positions")
+        .select("*")
+        .eq("id", input.position_id)
+        .eq("election_id", input.election_id)
+        .is("deleted_at", null)
+        .single();
 
       if (!position) throw new TRPCError({ code: "NOT_FOUND" });
 
-      await ctx.db
-        .update(positions)
-        .set({
-          deleted_at: new Date(),
-        })
-        .where(
-          and(
-            eq(positions.id, input.position_id),
-            eq(positions.election_id, input.election_id),
-          ),
-        );
+      await ctx.supabase
+        .from("positions")
+        .update({ deleted_at: new Date().toISOString() })
+        .eq("id", input.position_id)
+        .eq("election_id", input.election_id);
     }),
   edit: protectedProcedure
     .input(
@@ -138,19 +139,15 @@ export const positionRouter = createTRPCRouter({
       //   },
       // });
 
-      await ctx.db
-        .update(positions)
-        .set({
+      await ctx.supabase
+        .from("positions")
+        .update({
           name: input.name,
           description: input.description,
           min: input.min,
           max: input.max,
         })
-        .where(
-          and(
-            eq(positions.id, input.id),
-            eq(positions.election_id, input.election_id),
-          ),
-        );
+        .eq("id", input.id)
+        .eq("election_id", input.election_id);
     }),
 });

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { api } from "@/trpc/server";
 import {
   AppShell,
   AppShellFooter,
@@ -6,20 +7,18 @@ import {
   AppShellMain,
 } from "@mantine/core";
 
-import { auth } from "@eboto/auth";
-
 import Footer from "../footer";
 import Header from "../header";
 
 export default async function Dashboard(props: React.PropsWithChildren) {
-  const session = await auth();
+  const user = await api.auth.getUser.query();
 
-  if (!session) notFound();
+  if (!user) notFound();
 
   return (
     <AppShell header={{ height: 60 }} footer={{ height: 52 }}>
       <AppShellHeader>
-        <Header userId={session.user.id} />
+        <Header isLoggedIn={true} />
       </AppShellHeader>
 
       <AppShellMain>{props.children}</AppShellMain>

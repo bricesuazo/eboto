@@ -1,12 +1,14 @@
 import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
 import { Container } from "@mantine/core";
 
-import { auth } from "@eboto/auth";
-
 export default async function AuthLayout(props: React.PropsWithChildren) {
-  const session = await auth();
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (session) redirect("/dashboard");
+  if (user) redirect("/dashboard");
 
   return (
     <Container size={420} my={40}>

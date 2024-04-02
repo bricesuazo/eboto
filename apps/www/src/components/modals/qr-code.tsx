@@ -4,14 +4,14 @@ import { Button, Center, Modal, Stack, Text } from "@mantine/core";
 import { IconDownload } from "@tabler/icons-react";
 import { QRCodeCanvas } from "qrcode.react";
 
-import type { Election } from "@eboto/db/schema";
+import type { Database } from "../../../../../supabase/types";
 
 export default function QRCodeModal({
   election,
   opened,
   close,
 }: {
-  election: Election;
+  election: Database["public"]["Tables"]["elections"]["Row"];
   opened: boolean;
   close: () => void;
 }) {

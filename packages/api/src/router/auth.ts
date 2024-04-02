@@ -1,6 +1,30 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const authRouter = createTRPCRouter({
-  getSession: publicProcedure.query(({ ctx }) => ctx.session),
-  getSessionProtected: protectedProcedure.query(({ ctx }) => ctx.session),
+  getUser: publicProcedure.query(({ ctx }) => {
+    let image_url: string | null = null;
+
+    if (ctx.user?.db.image_path) {
+      const { data: image } = ctx.supabase.storage
+        .from("users")
+        .getPublicUrl(ctx.user.db.image_path);
+
+      image_url = image.publicUrl;
+    }
+
+    return { ...ctx.user, db: { ...ctx.user?.db, image_url } };
+  }),
+  getUserProtected: protectedProcedure.query(({ ctx }) => {
+    let image_url: string | null = null;
+
+    if (ctx.user.db.image_path) {
+      const { data: image } = ctx.supabase.storage
+        .from("users")
+        .getPublicUrl(ctx.user.db.image_path);
+
+      image_url = image.publicUrl;
+    }
+
+    return { ...ctx.user, db: { ...ctx.user.db, image_url } };
+  }),
 });

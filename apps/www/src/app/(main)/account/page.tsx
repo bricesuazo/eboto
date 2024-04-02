@@ -1,12 +1,18 @@
 import { notFound } from "next/navigation";
 import AccountPageClient from "@/components/pages/account";
-
-import { auth } from "@eboto/auth";
+import { api } from "@/trpc/server";
+import { createClient } from "@/utils/supabase/server";
 
 export default async function AccountPage() {
-  const session = await auth();
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!session) notFound();
+  if (!user) notFound();
 
-  return <AccountPageClient session={session} />;
+  const getUserProtectedQuery =
+    await api.auth.getUserProtected.query(undefined);
+
+  return <AccountPageClient {...getUserProtectedQuery} />;
 }

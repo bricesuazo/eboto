@@ -27,13 +27,14 @@ import Balancer from "react-wrap-balancer";
 
 import type { RouterOutputs } from "@eboto/api";
 import { formatName } from "@eboto/constants";
-import type { Election } from "@eboto/db/schema";
+
+import type { Database } from "../../../../../supabase/types";
 
 export default function DashboardCandidate({
   election,
   positionsWithCandidates,
 }: {
-  election: Election;
+  election: Database["public"]["Tables"]["elections"]["Row"];
   positionsWithCandidates: RouterOutputs["candidate"]["getDashboardData"];
 }) {
   const router = useRouter();
@@ -150,9 +151,9 @@ export default function DashboardCandidate({
                           <HoverCard openDelay={500} width={256} offset={60}>
                             <HoverCardTarget>
                               <Stack align="center" justify="center" gap="xs">
-                                {candidate.image ? (
+                                {candidate.image_url ? (
                                   <Image
-                                    src={candidate.image.url}
+                                    src={candidate.image_url}
                                     width={100}
                                     height={100}
                                     alt={

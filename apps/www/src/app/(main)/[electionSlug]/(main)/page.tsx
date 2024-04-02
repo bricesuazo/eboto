@@ -2,47 +2,66 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ElectionPageClient from "@/components/pages/election-page";
 import { api } from "@/trpc/server";
+import { createClient as createClientAdmin } from "@/utils/supabase/admin";
+import { createClient as createClientServer } from "@/utils/supabase/server";
 import { env } from "env.mjs";
 import moment from "moment";
-
-import { auth } from "@eboto/auth";
-import { db } from "@eboto/db";
 
 export async function generateMetadata({
   params: { electionSlug },
 }: {
   params: { electionSlug: string };
 }): Promise<Metadata> {
-  const session = await auth();
-  const election = await db.query.elections.findFirst({
-    where: (election, { eq, and, isNull }) =>
-      and(eq(election.slug, electionSlug), isNull(election.deleted_at)),
-    with: {
-      voters: {
-        where: (voters, { isNull, and, eq }) =>
-          and(
-            isNull(voters.deleted_at),
-            eq(voters.email, session?.user?.email ?? ""),
-          ),
-      },
-      commissioners: {
-        where: (commissioners, { isNull, and, eq }) =>
-          and(
-            isNull(commissioners.deleted_at),
-            eq(commissioners.user_id, session?.user?.id ?? ""),
-          ),
-      },
-    },
-  });
+  const supabaseServer = createClientServer();
+  const {
+    data: { user },
+  } = await supabaseServer.auth.getUser();
 
-  if (
-    !election ||
-    (election.publicity === "VOTER" &&
-      !election.voters.length &&
-      !election.commissioners.length) ||
-    (election.publicity === "PRIVATE" && !election.commissioners.length)
-  )
-    notFound();
+  const supabaseAdmin = createClientAdmin();
+  const { data: election } = await supabaseAdmin
+    .from("elections")
+    .select()
+    .eq("slug", electionSlug)
+    .is("deleted_at", null)
+    .single();
+
+  if (!election) notFound();
+
+  if (election.publicity === "PRIVATE") {
+    if (!user) notFound();
+
+    const { data: commissioner } = await supabaseAdmin
+      .from("commissioners")
+      .select()
+      .eq("election_id", election.id)
+      .eq("user_id", user.id)
+      .is("deleted_at", null)
+      .single();
+
+    if (!commissioner) notFound();
+  } else if (election.publicity === "VOTER") {
+    if (!user) notFound();
+
+    const { data: voter } = await supabaseAdmin
+      .from("voters")
+      .select()
+      .eq("election_id", election.id)
+      .eq("email", user?.email ?? "")
+      .is("deleted_at", null)
+      .single();
+
+    if (!voter) notFound();
+  }
+
+  let logo_url: string | null = null;
+
+  if (election.logo_path) {
+    const { data: url } = supabaseServer.storage
+      .from("elections")
+      .getPublicUrl(election.logo_path);
+
+    logo_url = url.publicUrl;
+  }
 
   return {
     title: election.name,
@@ -59,7 +78,7 @@ export async function generateMetadata({
           }/api/og?type=election&election_name=${encodeURIComponent(
             election.name,
           )}&election_logo=${encodeURIComponent(
-            election.logo?.url ?? "",
+            logo_url ?? "",
           )}&election_date=${encodeURIComponent(
             moment(election.start_date).format("MMMM D, YYYY") +
               " - " +

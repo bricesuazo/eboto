@@ -8,13 +8,14 @@ import { notifications } from "@mantine/notifications";
 import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
 
 import { formatName } from "@eboto/constants";
-import type { Candidate } from "@eboto/db/schema";
+
+import type { Database } from "../../../../../supabase/types";
 
 export default function DeleteCandidate({
   candidate,
   name_arrangement,
 }: {
-  candidate: Candidate;
+  candidate: Database["public"]["Tables"]["candidates"]["Row"];
   name_arrangement: number;
 }) {
   const context = api.useUtils();

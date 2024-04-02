@@ -6,10 +6,11 @@ import {
   IconUsers,
   IconUserSearch,
 } from "@tabler/icons-react";
-import type { TablerIconsProps } from "@tabler/icons-react";
+import type { Icon, IconProps } from "@tabler/icons-react";
+import moment from "moment";
 import { z } from "zod";
 
-import type { Candidate, Election } from "@eboto/db/schema";
+import { Database } from "./../../supabase/types";
 
 export const baseUrl =
   process.env.NODE_ENV === "production"
@@ -55,59 +56,75 @@ export const parseHourTo12HourFormat = (hour: number) => {
   else return `${hour - 12} PM`;
 };
 
-export const isElectionEnded = ({ election }: { election: Election }) => {
-  const now = new Date(
-    new Date().toLocaleString("en-US", {
-      timeZone: "Asia/Manila",
-    }),
-  );
+export const isElectionEnded = ({
+  election,
+}: {
+  election: Database["public"]["Tables"]["elections"]["Row"];
+}) => {
+  const now = new Date();
+
+  const end_date = new Date(election.end_date);
+
   return (
-    now.getFullYear() >= election.end_date.getFullYear() &&
-    now.getMonth() >= election.end_date.getMonth() &&
-    now.getDate() >= election.end_date.getDate() &&
+    moment().isAfter(end_date, "day") &&
     now.getHours() >= election.voting_hour_end
   );
+
+  // return (
+  //   now.getFullYear() >= end_date.getFullYear() &&
+  //   now.getMonth() >= end_date.getMonth() &&
+  //   now.getDate() >= end_date.getDate() &&
+  //   now.getHours() >= election.voting_hour_end
+  // );
 };
 
 export const isElectionOngoing = ({
   election,
   withoutHours,
 }: {
-  election: Election;
+  election: Database["public"]["Tables"]["elections"]["Row"];
   withoutHours?: true;
 }) => {
-  const now = new Date(
-    new Date().toLocaleString("en-US", {
-      timeZone: "Asia/Manila",
-    }),
-  );
+  const now = new Date();
+
+  const start_date = new Date(election.start_date);
+  const end_date = new Date(election.end_date);
 
   if (withoutHours) {
-    return (
-      now.getFullYear() >= election.start_date.getFullYear() &&
-      now.getMonth() >= election.start_date.getMonth() &&
-      now.getDate() >= election.start_date.getDate() &&
-      now.getFullYear() <= election.end_date.getFullYear() &&
-      now.getMonth() <= election.end_date.getMonth() &&
-      now.getDate() <= election.end_date.getDate()
-    );
+    return moment().isBetween(start_date, end_date, "day", "[]");
   }
 
   return (
-    now.getFullYear() >= election.start_date.getFullYear() &&
-    now.getMonth() >= election.start_date.getMonth() &&
-    now.getDate() >= election.start_date.getDate() &&
+    moment().isBetween(start_date, end_date, "hour", "[]") &&
     now.getHours() >= election.voting_hour_start &&
-    now.getFullYear() <= election.end_date.getFullYear() &&
-    now.getMonth() <= election.end_date.getMonth() &&
-    now.getDate() <= election.end_date.getDate() &&
     now.getHours() < election.voting_hour_end
   );
+  // if (withoutHours) {
+  //   return (
+  //     now.getFullYear() >= start_date.getFullYear() &&
+  //     now.getMonth() >= start_date.getMonth() &&
+  //     now.getDate() >= start_date.getDate() &&
+  //     now.getFullYear() <= end_date.getFullYear() &&
+  //     now.getMonth() <= end_date.getMonth() &&
+  //     now.getDate() <= end_date.getDate()
+  //   );
+  // }
+
+  // return (
+  //   now.getFullYear() >= start_date.getFullYear() &&
+  //   now.getMonth() >= start_date.getMonth() &&
+  //   now.getDate() >= start_date.getDate() &&
+  //   now.getHours() >= election.voting_hour_start &&
+  //   now.getFullYear() <= end_date.getFullYear() &&
+  //   now.getMonth() <= end_date.getMonth() &&
+  //   now.getDate() <= end_date.getDate() &&
+  //   now.getHours() < election.voting_hour_end
+  // );
 };
 
 export function formatName(
   arrangement: number,
-  candidate: Candidate,
+  candidate: Database["public"]["Tables"]["candidates"]["Row"],
   isMiddleInitialOnly?: true,
 ) {
   const middle_name = isMiddleInitialOnly
@@ -130,7 +147,9 @@ export const electionDashboardNavbar: {
   id: number;
   label: string;
   path?: string;
-  icon: React.FC<TablerIconsProps>;
+  icon: React.ForwardRefExoticComponent<
+    Omit<IconProps, "ref"> & React.RefAttributes<Icon>
+  >;
 }[] = [
   {
     id: 0,

@@ -3,12 +3,24 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Anchor, Button, Paper, Stack, Text } from "@mantine/core";
-import { signIn } from "next-auth/react";
+import { createClient } from "@/utils/supabase/client";
+import {
+  Alert,
+  Anchor,
+  Button,
+  Divider,
+  Paper,
+  Stack,
+  Text,
+  TextInput,
+} from "@mantine/core";
+import { isEmail, isNotEmpty, useForm } from "@mantine/form";
+import { IconAt, IconCheck } from "@tabler/icons-react";
 import Balancer from "react-wrap-balancer";
 
 export default function RegisterForm() {
   const searchParams = useSearchParams();
+  const [isEmailSent, setIsEmailSent] = useState(false);
   const [loadings, setLoadings] = useState<{
     google: boolean;
     credential: boolean;
@@ -17,30 +29,16 @@ export default function RegisterForm() {
     credential: false,
   });
 
-  // const form = useForm({
-  //   initialValues: {
-  //     email: "",
-  //     firstName: "",
-  //     lastName: "",
-  //     password: "",
-  //     confirmPassword: "",
-  //   },
-  //   : true,
-  //   validate: {
-  //     firstName: hasLength(
-  //       { min: 2 },
-  //       "First name must be at least 2 characters",
-  //     ),
-  //     lastName: hasLength(
-  //       { min: 2 },
-  //       "Last name must be at least 2 characters",
-  //     ),
-  //     email: isEmail("Invalid email") || isNotEmpty("Email is required"),
-  //     password: hasLength({ min: 8 }, "Password must be at least 8 characters"),
-
-  //     confirmPassword: matchesField("password", "Passwords do not match"),
-  //   },
-  // });
+  const form = useForm({
+    initialValues: {
+      email: "",
+      // password: "",
+    },
+    validate: {
+      email: isEmail("Invalid email") || isNotEmpty("Email is required"),
+      // password: hasLength({ min: 8 }, "Password must be at least 8 characters"),
+    },
+  });
 
   return (
     <Paper radius="md" p="xl" withBorder shadow="md">
@@ -54,11 +52,14 @@ export default function RegisterForm() {
           <Button
             radius="xl"
             onClick={async () => {
+              const supabase = createClient();
               setLoadings((loadings) => ({ ...loadings, google: true }));
 
-              await signIn("google", {
-                redirect: searchParams.has("callbackUrl"),
-                callbackUrl: searchParams.get("callbackUrl") ?? undefined,
+              await supabase.auth.signInWithOAuth({
+                provider: "google",
+                options: {
+                  redirectTo: searchParams.get("callbackUrl") ?? "/dashboard",
+                },
               });
             }}
             loading={loadings.google}
@@ -93,111 +94,68 @@ export default function RegisterForm() {
             Google
           </Button>
         </Stack>
-        {/* <Divider label="Or continue with email" labelPosition="center" />
-        <Stack gap="xs">
-          <TextInput
-            required
-            label="Email"
-            placeholder="brice@eboto.com"
-            disabled
-          />
-          <Button disabled>Send magic link (soon)</Button>
-        </Stack> */}
+        {!isEmailSent ? (
+          <>
+            <Divider label="Or continue with email" labelPosition="center" />
 
-        {/* <Divider label="Or continue with email" labelPosition="center" />
-        <form
-          onSubmit={form.onSubmit(() => {
-            // if (!isSignUpLoaded) return;
+            <form
+              onSubmit={form.onSubmit((values) => {
+                const supabase = createClient();
+                setLoadings((loadings) => ({ ...loadings, credential: true }));
 
-            setLoadings((loadings) => ({ ...loadings, credential: true }));
-            // void (async () => {
-            //   await signUp
-            //     .create({
-            //       emailAddress: values.email,
-            //       password: values.password,
-            //       firstName: values.firstName,
-            //       lastName: values.lastName,
-            //       actionCompleteRedirectUrl:
-            //         (params?.callbackUrl as string | undefined) ?? "/dashboard",
-            //     })
-            //     .then(async (result) => {
-            //       if (result.status === "complete") {
-            //         console.log(result);
-            //         await setActive({ session: result.createdSessionId });
-            //       } else {
-            //         console.log(result);
-            //       }
-            //     })
-            //     .catch((err) => console.error("error", err));
-            // })();
-          })}
-        >
-          <Stack gap="sm">
-            <Group grow>
-              <TextInput
-                placeholder="Enter your first name"
-                withAsterisk
-                label="First name"
-                required
-                {...form.getInputProps("firstName")}
-                leftSection={<IconLetterCase size="1rem" />}
-                disabled={loadings.credential}
-              />
-              <TextInput
-                placeholder="Enter your last name"
-                withAsterisk
-                label="Last name"
-                {...form.getInputProps("lastName")}
-                disabled={loadings.credential}
-                leftSection={<IconLetterCase size="1rem" />}
-              />
-            </Group>
+                void (async () => {
+                  await supabase.auth.signInWithOtp({
+                    email: values.email,
+                    options: {
+                      emailRedirectTo:
+                        searchParams.get("callbackUrl") ?? "/dashboard",
+                    },
+                  });
 
-            <TextInput
-              placeholder="Enter your email address"
-              type="email"
-              withAsterisk
-              label="Email"
-              required
-              leftSection={<IconAt size="1rem" />}
-              disabled={loadings.credential}
-              {...form.getInputProps("email")}
-            />
+                  setLoadings((loadings) => ({
+                    ...loadings,
+                    credential: false,
+                  }));
+                  setIsEmailSent(true);
+                })();
+              })}
+            >
+              <Stack>
+                <TextInput
+                  placeholder="Enter your email address"
+                  type="email"
+                  withAsterisk
+                  label="Email"
+                  required
+                  {...form.getInputProps("email")}
+                  leftSection={<IconAt size="1rem" />}
+                  disabled={loadings.credential || loadings.google}
+                />
 
-            <PasswordInput
-              placeholder="Enter your password"
-              withAsterisk
-              label="Password"
-              required
-              {...form.getInputProps("password")}
-              disabled={loadings.credential}
-              leftSection={<IconLock size="1rem" />}
-            />
-            <PasswordInput
-              placeholder="Confirm your password"
-              withAsterisk
-              label="Confirm password"
-              required
-              {...form.getInputProps("confirmPassword")}
-              disabled={loadings.credential}
-              leftSection={<IconLock size="1rem" />}
-            />
-
-         {signUpMutation.isError && (
-                    <Alert
-                      leftSection={<IconAlertCircle size="1rem" />}
-                      title="Error"
-                      color="red"
-                    > 
-                      {signUpMutation.error.message}
-                    </Alert>
-                  )} 
-
-            <Button type="submit" loading={loadings.credential} disabled>
-              Sign up
-            </Button>
-          </Stack>
-        </form> */}
+                {/* {error && (
+                <Alert
+                  leftSection={<IconAlertCircle size="1rem" />}
+                  title="Error"
+                  color="red"
+                >
+                  {error}
+                </Alert>
+              )} */}
+                <Button
+                  type="submit"
+                  loading={loadings.credential}
+                  disabled={!form.isValid("email")}
+                >
+                  Send magic link
+                </Button>
+              </Stack>
+            </form>
+          </>
+        ) : (
+          <Alert title="Success" icon={<IconCheck />}>
+            A magic link has been sent to your email address.
+          </Alert>
+        )}
         <Text size="sm" ta="center">
           By registering, you agree to our{" "}
           <Anchor component={Link} href="/terms" target="_blank">

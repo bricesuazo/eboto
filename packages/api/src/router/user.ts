@@ -1,15 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { update } from "@eboto/auth";
-import { eq } from "@eboto/db";
-import {
-  accounts,
-  deleted_accounts,
-  deleted_users,
-  users,
-} from "@eboto/db/schema";
-
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
@@ -30,88 +21,74 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const user = await ctx.db.query.users.findFirst({
-        where: (users, { eq }) => eq(users.id, ctx.session.user.id),
-      });
+      if (ctx.user.db.image_path && (input.image === null || input.image)) {
+        await ctx.supabase.storage
+          .from("users")
+          .remove([ctx.user.db.image_path]);
+      }
 
-      if (!user) throw new TRPCError({ code: "NOT_FOUND" });
+      const { data, error } = await ctx.supabase
+        .from("users")
+        .update({
+          //   first_name: input.firstName,
+          //   middle_name: input.middleName,
+          //   last_name: input.lastName,
+          name: input.name,
+          image_path: input.image
+            ? await fetch(input.image.base64)
+                .then((res) => res.blob())
+                .then(async (blob) => {
+                  const { data } = await ctx.supabase.storage
+                    .from("users")
+                    .upload(`${ctx.user.auth.id}/avatar/${Date.now()}`, blob);
 
-      return await ctx.db.transaction(async (db) => {
-        const image_file = input.image
-          ? await fetch(input.image.base64)
-              .then((res) => res.blob())
-              .then(
-                async (blob) =>
-                  (
-                    await ctx.utapi.uploadFiles(
-                      new File([blob], `user_image_${ctx.session.user.id}`, {
-                        type: input.image!.type,
-                      }),
-                    )
-                  ).data,
-              )
-          : input.image;
+                  return data?.path;
+                })
+            : input.image,
+        })
+        .eq("id", ctx.user.auth.id)
+        .select()
+        .single();
 
-        if (user.image_file && !image_file && !input.image)
-          await ctx.utapi.deleteFiles(user.image_file.key);
+      if (error) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
 
-        await db
-          .update(users)
-          .set({
-            //   first_name: input.firstName,
-            //   middle_name: input.middleName,
-            //   last_name: input.lastName,
-            name: input.name,
-            image_file: image_file
-              ? image_file
-              : input.image
-                ? user.image_file
-                : null,
-            image: image_file
-              ? image_file.url
-              : input.image
-                ? user.image
-                : null,
-          })
-          .where(eq(users.id, ctx.session.user.id));
+      let image_url: string | null = null;
 
-        return update({
-          user: {
-            ...ctx.session.user,
-            name: input.name,
-            image: image_file
-              ? image_file.url
-              : input.image
-                ? user.image
-                : null,
-          },
-        });
-      });
+      if (data.image_path) {
+        const { data: image } = ctx.supabase.storage
+          .from("users")
+          .getPublicUrl(data.image_path);
+
+        image_url = image.publicUrl;
+      }
+
+      return { ...data, image_url };
     }),
 
-  deleteAccount: protectedProcedure.mutation(async ({ ctx }) => {
-    await ctx.db.transaction(async (db) => {
-      const user = await db.query.users.findFirst({
-        where: (users, { eq }) => eq(users.id, ctx.session.user.id),
-      });
+  deleteAccount: protectedProcedure.mutation(() => {
+    // TODO:
+    // await ctx.db.transaction(async (db) => {
+    //   const user = await db.query.users.findFirst({
+    //     where: (users, { eq }) => eq(users.id, ctx.session.user.id),
+    //   });
 
-      if (!user) throw new TRPCError({ code: "NOT_FOUND" });
+    //   if (!user) throw new TRPCError({ code: "NOT_FOUND" });
 
-      const account = await db.query.accounts.findFirst({
-        where: (accounts, { eq }) => eq(accounts.userId, ctx.session.user.id),
-      });
+    //   const account = await db.query.accounts.findFirst({
+    //     where: (accounts, { eq }) => eq(accounts.userId, ctx.session.user.id),
+    //   });
 
-      if (!account) throw new TRPCError({ code: "NOT_FOUND" });
+    //   if (!account) throw new TRPCError({ code: "NOT_FOUND" });
 
-      await db.insert(deleted_users).values(user);
-      await db.insert(deleted_accounts).values({
-        ...account,
-        deletedUserId: user.id,
-      });
+    //   await db.insert(deleted_users).values(user);
+    //   await db.insert(deleted_accounts).values({
+    //     ...account,
+    //     deletedUserId: user.id,
+    //   });
 
-      await db.delete(users).where(eq(users.id, ctx.session.user.id));
-      await db.delete(accounts).where(eq(accounts.userId, ctx.session.user.id));
-    });
+    //   await db.delete(users).where(eq(users.id, ctx.session.user.id));
+    //   await db.delete(accounts).where(eq(accounts.userId, ctx.session.user.id));
+    // });
 
     return true;
   }),

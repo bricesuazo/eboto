@@ -37,8 +37,8 @@ import {
 
 import type { RouterOutputs } from "@eboto/api";
 import { parseHourTo12HourFormat } from "@eboto/constants";
-import type { Publicity } from "@eboto/db/schema";
-import { publicity } from "@eboto/db/schema";
+
+import type { Database } from "../../../../../supabase/types";
 
 export default function DashboardSettings({
   election,
@@ -76,11 +76,11 @@ export default function DashboardSettings({
 
       form.setValues({
         ...form.values,
-        logo: refetchedElection.data?.logo?.url ?? null,
+        logo: refetchedElection.data?.logo_url ?? null,
       });
       form.resetDirty({
         ...form.values,
-        logo: refetchedElection.data?.logo?.url ?? null,
+        logo: refetchedElection.data?.logo_url ?? null,
       });
     },
     onError: (error) => {
@@ -101,7 +101,7 @@ export default function DashboardSettings({
     // voter_domain: string | null;
     is_candidates_visible_in_realtime_when_ongoing: boolean;
     date: [Date, Date];
-    publicity: Publicity;
+    publicity: Database["public"]["Enums"]["publicity"];
     logo: File | string | null;
     voting_hours: [number, number];
   }>({
@@ -110,21 +110,21 @@ export default function DashboardSettings({
     initialValues: {
       name: getElectionBySlugQuery.data.name,
       newSlug: getElectionBySlugQuery.data.slug,
-      description: getElectionBySlugQuery.data.description,
+      description: getElectionBySlugQuery.data.description ?? "",
       // voter_domain: getElectionBySlugQuery.data.voter_domain,
       is_candidates_visible_in_realtime_when_ongoing:
         getElectionBySlugQuery.data
           .is_candidates_visible_in_realtime_when_ongoing,
       date: [
-        getElectionBySlugQuery.data.start_date,
-        getElectionBySlugQuery.data.end_date,
+        new Date(getElectionBySlugQuery.data.start_date),
+        new Date(getElectionBySlugQuery.data.end_date),
       ],
       publicity: getElectionBySlugQuery.data.publicity,
       voting_hours: [
         getElectionBySlugQuery.data.voting_hour_start,
         getElectionBySlugQuery.data.voting_hour_end,
       ],
-      logo: getElectionBySlugQuery.data.logo?.url ?? null,
+      logo: getElectionBySlugQuery.data.logo_url,
     },
     validate: {
       name: hasLength(
@@ -146,10 +146,10 @@ export default function DashboardSettings({
         if (!value[0] || !value[1])
           return "Please enter an election start and end date";
 
-        if (value[0].getTime() > value[1].getTime())
+        if (new Date(value[0]).getTime() > new Date(value[1]).getTime())
           return "Start date must be before end date";
 
-        if (value[1].getTime() < value[0].getTime())
+        if (new Date(value[1]).getTime() < new Date(value[0]).getTime())
           return "End date must be after start date";
       },
       publicity: (value) => {
@@ -177,22 +177,23 @@ export default function DashboardSettings({
       // },
     },
     transformValues: (values) => {
-      const nowStart = new Date(values.date[0]);
-      const nowEnd = new Date(values.date[1]);
+      const nowStart = values.date[0];
+      const nowEnd = values.date[1];
       return {
         ...values,
         date: !(
-          getElectionBySlugQuery.data.start_date.getTime() ===
+          new Date(getElectionBySlugQuery.data.start_date).getTime() ===
             nowStart.getTime() &&
-          getElectionBySlugQuery.data.end_date.getTime() === nowEnd.getTime()
+          new Date(getElectionBySlugQuery.data.end_date).getTime() ===
+            nowEnd.getTime()
         )
           ? [
               new Date(nowStart.setDate(nowStart.getDate() + 1)),
               new Date(nowEnd.setDate(nowEnd.getDate() + 1)),
             ]
           : [
-              getElectionBySlugQuery.data.start_date,
-              getElectionBySlugQuery.data.end_date,
+              new Date(getElectionBySlugQuery.data.start_date),
+              new Date(getElectionBySlugQuery.data.end_date),
             ],
       };
     },
@@ -307,7 +308,10 @@ export default function DashboardSettings({
                 //   : null,
                 is_candidates_visible_in_realtime_when_ongoing:
                   values.is_candidates_visible_in_realtime_when_ongoing,
-                date: values.date,
+                date: [
+                  values.date[0].toISOString(),
+                  values.date[1].toISOString(),
+                ],
                 publicity: values.publicity,
                 voting_hours: values.voting_hours,
                 logo:
@@ -416,7 +420,8 @@ export default function DashboardSettings({
             required
             disabled={
               editElectionMutation.isPending ||
-              getElectionBySlugQuery.data.start_date.getTime() < Date.now()
+              new Date(getElectionBySlugQuery.data.start_date).getTime() <
+                Date.now()
             }
             {...form.getInputProps("date")}
           />
@@ -446,7 +451,8 @@ export default function DashboardSettings({
               label={parseHourTo12HourFormat}
               disabled={
                 editElectionMutation.isPending ||
-                getElectionBySlugQuery.data.start_date.getTime() < Date.now()
+                new Date(getElectionBySlugQuery.data.start_date).getTime() <
+                  Date.now()
               }
               {...form.getInputProps("voting_hours")}
             />
@@ -461,7 +467,13 @@ export default function DashboardSettings({
             }}
             required
             {...form.getInputProps("publicity")}
-            data={publicity.map((p) => ({
+            data={(
+              [
+                "PRIVATE",
+                "VOTER",
+                "PUBLIC",
+              ] satisfies Database["public"]["Enums"]["publicity"][]
+            ).map((p) => ({
               value: p,
               label: p.charAt(0) + p.slice(1).toLowerCase(),
             }))}
@@ -548,12 +560,11 @@ export default function DashboardSettings({
                   onClick={() => {
                     form.setValues({
                       ...form.values,
-                      logo: getElectionBySlugQuery.data.logo?.url ?? null,
+                      logo: getElectionBySlugQuery.data.logo_url,
                     });
                   }}
                   disabled={
-                    form.values.logo ===
-                      (getElectionBySlugQuery.data.logo?.url ?? null) ||
+                    form.values.logo === getElectionBySlugQuery.data.logo_url ||
                     editElectionMutation.isPending
                   }
                 >

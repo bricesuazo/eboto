@@ -26,8 +26,8 @@ interface ElectionResultProps {
   election: {
     name: string;
     slug: string;
-    start_date: Date;
-    end_date: Date;
+    start_date: string;
+    end_date: string;
     positions: {
       id: string;
       name: string;

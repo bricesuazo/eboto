@@ -4,11 +4,13 @@
     "build": "turbo build",
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "turbo clean",
-    "db:push": "pnpm --filter @eboto/db db:push --no-daemon",
-    "db:studio": "pnpm turbo --filter @eboto/db db:studio --no-daemon",
-    "db:seed": "pnpm turbo --filter=@eboto/db db:seed --no-daemon",
-    "db:generate": "pnpm --filter @eboto/db db:generate",
-    "email:dev": "pnpm turbo --filter=@eboto/email email:dev --no-daemon",
+    "db:cli": "pnpm db:dump && pnpm db:gen && pnpm db:diff",
+    "db:push": "supabase db push",
+    "db:diff": "supabase db diff --local -f",
+    "db:gen": "supabase gen types typescript --local --schema public > supabase/types.ts",
+    "db:reset": "supabase db reset --local",
+    "db:dump": "supabase db dump -f supabase/schema.sql --local",
+    "email:dev": "pnpm turbo --filter=@eboto/email email:dev",
     "dev": "turbo dev --parallel",
     "start": "turbo start --parallel",
     "format": "turbo format --continue -- --cache --cache-location='node_modules/.cache/.prettiercache'",
@@ -19,12 +21,12 @@
   },
   "devDependencies": {
     "@eboto/prettier-config": "workspace:^",
-    "@manypkg/cli": "^0.21.2",
-    "@turbo/gen": "^1.12.4",
+    "@manypkg/cli": "^0.21.3",
+    "@turbo/gen": "^1.13.1",
     "prettier": "^3.2.5",
     "semver": ">=7.6.0",
-    "turbo": "^1.12.4",
-    "typescript": "^5.3.3"
+    "turbo": "^1.13.1",
+    "typescript": "^5.4.3"
   },
   "prettier": "@eboto/prettier-config"
 }

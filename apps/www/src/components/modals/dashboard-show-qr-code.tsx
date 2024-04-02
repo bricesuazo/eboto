@@ -5,12 +5,12 @@ import { ActionIcon, Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconQrcode } from "@tabler/icons-react";
 
-import type { Election } from "@eboto/db/schema";
+import type { Database } from "../../../../../supabase/types";
 
 export default function DashboardShowQRCode({
   election,
 }: {
-  election: Election;
+  election: Database["public"]["Tables"]["elections"]["Row"];
 }) {
   const [opened, { open, close }] = useDisclosure(false);
   return (

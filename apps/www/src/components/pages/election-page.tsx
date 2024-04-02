@@ -177,9 +177,9 @@ export default function ElectionPage({
         <Stack align="center" gap="xl">
           <Box>
             <Flex justify="center" mb={8}>
-              {election.logo ? (
+              {election.logo_url ? (
                 <Image
-                  src={election.logo.url}
+                  src={election.logo_url}
                   alt="Logo"
                   width={128}
                   height={128}
@@ -250,7 +250,7 @@ export default function ElectionPage({
                 </HoverCardDropdown>
               </HoverCard>
             </Flex>
-            {election.description.length > 0 && (
+            {election.description && election.description.length > 0 && (
               <Box maw="40rem" mt="sm" ta="center">
                 <Text>About this election:</Text>
                 <Text lineClamp={spoilerOpened ? undefined : 3}>
@@ -415,9 +415,9 @@ export default function ElectionPage({
                                 width: "100%",
                               }}
                             >
-                              {candidate.image ? (
+                              {candidate.image_url ? (
                                 <Image
-                                  src={candidate.image.url}
+                                  src={candidate.image_url}
                                   alt="Candidate's image"
                                   fill
                                   sizes="100%"

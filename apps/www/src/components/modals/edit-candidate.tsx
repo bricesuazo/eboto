@@ -42,40 +42,43 @@ import {
   IconUserSearch,
   IconX,
 } from "@tabler/icons-react";
+import { v4 as uuid } from "uuid";
 
 import { formatName } from "@eboto/constants";
-import type { Candidate, Election } from "@eboto/db/schema";
+
+import type { Database } from "../../../../../supabase/types";
 
 export default function EditCandidate({
   candidate,
   election,
 }: {
-  election: Election;
-  candidate: Candidate & {
+  election: Database["public"]["Tables"]["elections"]["Row"];
+  candidate: Database["public"]["Tables"]["candidates"]["Row"] & {
+    image_url: string | null;
     credential: {
       id: string;
       affiliations: {
         id: string;
         org_name: string;
         org_position: string;
-        start_year: Date;
-        end_year: Date;
+        start_year: string;
+        end_year: string;
       }[];
       achievements: {
         id: string;
         name: string;
-        year: Date;
+        year: string;
       }[];
       events_attended: {
         id: string;
         name: string;
-        year: Date;
+        year: string;
       }[];
     } | null;
     platforms: {
       id: string;
       title: string;
-      description: string;
+      description: string | null;
     }[];
   };
 }) {
@@ -98,20 +101,36 @@ export default function EditCandidate({
     partylist_id: candidate.partylist_id,
 
     position_id: candidate.position_id,
-    image: candidate.image?.url ?? null,
+    image: candidate.image_url,
 
     platforms: candidate.platforms ?? [],
 
-    achievements: candidate.credential?.achievements ?? [],
-    affiliations: candidate.credential?.affiliations ?? [],
-    events_attended: candidate.credential?.events_attended ?? [],
+    achievements: (candidate.credential?.achievements ?? []).map(
+      (achievement) => ({
+        ...achievement,
+        year: achievement.year,
+      }),
+    ),
+    affiliations: (candidate.credential?.affiliations ?? []).map(
+      (affiliation) => ({
+        ...affiliation,
+        start_year: affiliation.start_year,
+        end_year: affiliation.end_year,
+      }),
+    ),
+    events_attended: (candidate.credential?.events_attended ?? []).map(
+      (event) => ({
+        ...event,
+        year: event.year,
+      }),
+    ),
   };
 
   const editCandidateMutation = api.candidate.edit.useMutation({
     onSuccess: async () => {
       await context.candidate.getDashboardData.invalidate();
       notifications.show({
-        title: `${formatName(election.name_arrangement, candidate)} created!`,
+        title: `${formatName(election.name_arrangement, candidate)} updated!`,
         message: `Successfully updated candidate: ${formatName(
           election.name_arrangement,
           candidate,
@@ -136,25 +155,25 @@ export default function EditCandidate({
     platforms: {
       id: string;
       title: string;
-      description: string;
+      description: string | null;
     }[];
 
     achievements: {
       id: string;
       name: string;
-      year: Date;
+      year: string;
     }[];
     affiliations: {
       id: string;
       org_name: string;
       org_position: string;
-      start_year: Date;
-      end_year: Date;
+      start_year: string;
+      end_year: string;
     }[];
     events_attended: {
       id: string;
       name: string;
-      year: Date;
+      year: string;
     }[];
   }>({
     initialValues,
@@ -221,7 +240,7 @@ export default function EditCandidate({
     disabled,
   }: {
     type: "PLATFORM" | "ACHIEVEMENT" | "AFFILIATION" | "EVENTATTENDED";
-    id: string;
+    id: string | number;
     disabled?: boolean;
   }) => {
     const context = api.useUtils();
@@ -263,7 +282,10 @@ export default function EditCandidate({
         disabled={disabled}
         onClick={async () => {
           if (type === "PLATFORM") {
-            if (candidate.platforms.find((a) => a.id === id)) {
+            if (
+              candidate.platforms.find((a) => a.id === id) &&
+              typeof id === "string"
+            ) {
               await deletePlatformMutation.mutateAsync({ id });
             } else {
               form.setValues({
@@ -272,7 +294,10 @@ export default function EditCandidate({
               });
             }
           } else if (type === "ACHIEVEMENT") {
-            if (candidate.credential?.achievements.find((a) => a.id === id)) {
+            if (
+              candidate.credential?.achievements.find((a) => a.id === id) &&
+              typeof id === "string"
+            ) {
               await deleteCredentialMutation.mutateAsync({ id, type });
             } else {
               form.setValues({
@@ -283,7 +308,10 @@ export default function EditCandidate({
               });
             }
           } else if (type === "AFFILIATION") {
-            if (candidate.credential?.affiliations.find((a) => a.id === id)) {
+            if (
+              candidate.credential?.affiliations.find((a) => a.id === id) &&
+              typeof id === "string"
+            ) {
               await deleteCredentialMutation.mutateAsync({ id, type });
             } else {
               form.setValues({
@@ -295,7 +323,8 @@ export default function EditCandidate({
             }
           } else {
             if (
-              candidate.credential?.events_attended.find((a) => a.id === id)
+              candidate.credential?.events_attended.find((a) => a.id === id) &&
+              typeof id === "string"
             ) {
               await deleteCredentialMutation.mutateAsync({ id, type });
             } else {
@@ -370,20 +399,20 @@ export default function EditCandidate({
                 achievements: values.achievements.map((a) => ({
                   id: a.id,
                   name: a.name,
-                  year: new Date(a.year?.toDateString() ?? ""),
+                  year: a.year,
                 })),
 
                 affiliations: values.affiliations.map((a) => ({
                   id: a.id,
                   org_name: a.org_name,
                   org_position: a.org_position,
-                  start_year: new Date(a.start_year?.toDateString() ?? ""),
-                  end_year: new Date(a.end_year?.toDateString() ?? ""),
+                  start_year: a.start_year,
+                  end_year: a.end_year,
                 })),
                 eventsAttended: values.events_attended.map((a) => ({
                   id: a.id,
                   name: a.name,
-                  year: new Date(a.year?.toDateString() ?? ""),
+                  year: a.year,
                 })),
               });
             })();
@@ -547,7 +576,7 @@ export default function EditCandidate({
                             <Text>{form.values.image.name}</Text>
                           </Group>
                         ) : (
-                          candidate.image && (
+                          candidate.image_url && (
                             <Group>
                               <Box
                                 pos="relative"
@@ -557,7 +586,7 @@ export default function EditCandidate({
                                 })}
                               >
                                 <Image
-                                  src={candidate.image.url}
+                                  src={candidate.image_url}
                                   alt="image"
                                   fill
                                   sizes="100%"
@@ -590,11 +619,11 @@ export default function EditCandidate({
                       onClick={() => {
                         form.setValues({
                           ...form.values,
-                          image: candidate.image?.url ?? null,
+                          image: candidate.image_url ?? null,
                         });
                       }}
                       disabled={
-                        form.values.image === (candidate.image?.url ?? null) ||
+                        form.values.image === (candidate.image_url ?? null) ||
                         editCandidateMutation.isPending
                       }
                       style={{ flex: 1 }}
@@ -647,7 +676,7 @@ export default function EditCandidate({
                           w="100%"
                           label="Description"
                           placeholder="Enter description"
-                          value={platform.description}
+                          value={platform.description ?? ""}
                           disabled={editCandidateMutation.isPending}
                           onChange={(e) => {
                             form.setValues({
@@ -683,7 +712,7 @@ export default function EditCandidate({
                         platforms: [
                           ...form.values.platforms,
                           {
-                            id: (form.values.platforms.length + 1).toString(),
+                            id: uuid(),
                             title: "",
                             description: "",
                           },
@@ -750,7 +779,7 @@ export default function EditCandidate({
                                 popoverProps={{
                                   withinPortal: true,
                                 }}
-                                value={achievement.year}
+                                value={new Date(achievement.year)}
                                 disabled={editCandidateMutation.isPending}
                                 onChange={(date) => {
                                   form.setValues({
@@ -760,9 +789,7 @@ export default function EditCandidate({
                                         i === index
                                           ? {
                                               ...achievement,
-                                              year: new Date(
-                                                date?.toString() ?? "",
-                                              ),
+                                              year: date?.toDateString() ?? "",
                                             }
                                           : achievement,
                                     ),
@@ -790,11 +817,12 @@ export default function EditCandidate({
                             achievements: [
                               ...form.values.achievements,
                               {
-                                id: (
-                                  form.values.achievements.length + 1
-                                ).toString(),
+                                id: uuid(),
                                 name: "",
-                                year: new Date(new Date().getFullYear(), 0),
+                                year: new Date(
+                                  new Date().getFullYear(),
+                                  0,
+                                ).toDateString(),
                               },
                             ],
                           });
@@ -862,10 +890,7 @@ export default function EditCandidate({
                                 popoverProps={{
                                   withinPortal: true,
                                 }}
-                                value={
-                                  form.values.affiliations[index]?.start_year ??
-                                  new Date()
-                                }
+                                value={new Date(affiliation.start_year)}
                                 disabled={editCandidateMutation.isPending}
                                 onChange={(date) => {
                                   form.setValues({
@@ -875,9 +900,8 @@ export default function EditCandidate({
                                         i === index
                                           ? {
                                               ...affiliation,
-                                              start_year: new Date(
-                                                date?.toString() ?? "",
-                                              ),
+                                              start_year:
+                                                date?.toDateString() ?? "",
                                             }
                                           : affiliation,
                                     ),
@@ -892,10 +916,7 @@ export default function EditCandidate({
                                 popoverProps={{
                                   withinPortal: true,
                                 }}
-                                value={
-                                  form.values.affiliations[index]?.end_year ??
-                                  new Date()
-                                }
+                                value={new Date(affiliation.end_year)}
                                 disabled={editCandidateMutation.isPending}
                                 onChange={(date) => {
                                   form.setValues({
@@ -905,9 +926,8 @@ export default function EditCandidate({
                                         i === index
                                           ? {
                                               ...affiliation,
-                                              end_year: new Date(
-                                                date?.toString() ?? "",
-                                              ),
+                                              end_year:
+                                                date?.toDateString() ?? "",
                                             }
                                           : affiliation,
                                     ),
@@ -935,16 +955,17 @@ export default function EditCandidate({
                             affiliations: [
                               ...form.values.affiliations,
                               {
-                                id: (
-                                  form.values.affiliations.length + 1
-                                ).toString(),
+                                id: uuid(),
                                 org_name: "",
                                 org_position: "",
                                 start_year: new Date(
                                   new Date().getFullYear(),
                                   -1,
-                                ),
-                                end_year: new Date(new Date().getFullYear(), 0),
+                                ).toDateString(),
+                                end_year: new Date(
+                                  new Date().getFullYear(),
+                                  0,
+                                ).toDateString(),
                               },
                             ],
                           });
@@ -994,10 +1015,7 @@ export default function EditCandidate({
                                   popoverProps={{
                                     withinPortal: true,
                                   }}
-                                  value={
-                                    form.values.events_attended[index]?.year ??
-                                    new Date()
-                                  }
+                                  value={new Date(events_attended.year)}
                                   disabled={editCandidateMutation.isPending}
                                   onChange={(date) => {
                                     form.setValues({
@@ -1008,9 +1026,8 @@ export default function EditCandidate({
                                             i === index
                                               ? {
                                                   ...achievement,
-                                                  year: new Date(
-                                                    date?.toString() ?? "",
-                                                  ),
+                                                  year:
+                                                    date?.toDateString() ?? "",
                                                 }
                                               : achievement,
                                         ),
@@ -1039,11 +1056,12 @@ export default function EditCandidate({
                             events_attended: [
                               ...form.values.events_attended,
                               {
-                                id: (
-                                  form.values.events_attended.length + 1
-                                ).toString(),
+                                id: uuid(),
                                 name: "",
-                                year: new Date(new Date().getFullYear(), 0),
+                                year: new Date(
+                                  new Date().getFullYear(),
+                                  0,
+                                ).toDateString(),
                               },
                             ],
                           });

@@ -1,9 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { and, eq } from "@eboto/db";
-import { partylists } from "@eboto/db/schema";
-
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const partylistRouter = createTRPCRouter({
@@ -14,14 +11,14 @@ export const partylistRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const partylists = await ctx.db.query.partylists.findMany({
-        where: (partylists, { eq, and, isNull }) =>
-          and(
-            eq(partylists.election_id, input.election_id),
-            isNull(partylists.deleted_at),
-          ),
-        orderBy: (partylists, { asc }) => asc(partylists.created_at),
-      });
+      const { data: partylists } = await ctx.supabase
+        .from("partylists")
+        .select()
+        .eq("election_id", input.election_id)
+        .is("deleted_at", null)
+        .order("created_at", { ascending: true });
+
+      if (!partylists) throw new TRPCError({ code: "NOT_FOUND" });
 
       return partylists;
     }),
@@ -32,15 +29,14 @@ export const partylistRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const partylists = await ctx.db.query.partylists.findMany({
-        where: (partylists, { eq, and, isNull, not }) =>
-          and(
-            eq(partylists.election_id, input.election_id),
-            not(eq(partylists.acronym, "IND")),
-            isNull(partylists.deleted_at),
-          ),
-        orderBy: (partylists, { desc }) => desc(partylists.updated_at),
-      });
+      const { data: partylists } = await ctx.supabase
+        .from("partylists")
+        .select()
+        .eq("election_id", input.election_id)
+        .is("deleted_at", null)
+        .order("created_at", { ascending: false });
+
+      if (!partylists) throw new TRPCError({ code: "NOT_FOUND" });
 
       return partylists;
     }),
@@ -53,36 +49,36 @@ export const partylistRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const election = await ctx.db.query.elections.findFirst({
-        where: (election, { eq, and, isNull }) =>
-          and(eq(election.id, input.election_id), isNull(election.deleted_at)),
-      });
+      const { data: election } = await ctx.supabase
+        .from("elections")
+        .select()
+        .eq("id", input.election_id)
+        .is("deleted_at", null)
+        .single();
 
       if (!election) throw new TRPCError({ code: "NOT_FOUND" });
 
-      const commissioner = await ctx.db.query.commissioners.findFirst({
-        where: (commissioner, { eq, and, isNull }) =>
-          and(
-            eq(commissioner.user_id, ctx.session.user.id),
-            eq(commissioner.election_id, election.id),
-            isNull(commissioner.deleted_at),
-          ),
-      });
+      const { data: commissioner } = await ctx.supabase
+        .from("commissioners")
+        .select()
+        .eq("user_id", ctx.user.auth.id)
+        .eq("election_id", election.id)
+        .is("deleted_at", null)
+        .single();
 
       if (!commissioner) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      const isAcronymExists = await ctx.db.query.partylists.findFirst({
-        where: (partylist, { eq, and, isNull }) =>
-          and(
-            eq(partylist.election_id, input.election_id),
-            eq(partylist.acronym, input.acronym),
-            isNull(partylist.deleted_at),
-          ),
-      });
+      const { data: isAcronymExists } = await ctx.supabase
+        .from("partylists")
+        .select()
+        .eq("election_id", input.election_id)
+        .eq("acronym", input.acronym)
+        .is("deleted_at", null)
+        .single();
 
       if (isAcronymExists) throw new Error("Acronym is already exists");
 
-      await ctx.db.insert(partylists).values({
+      await ctx.supabase.from("partylists").insert({
         name: input.name,
         acronym: input.acronym,
         election_id: input.election_id,
@@ -96,26 +92,27 @@ export const partylistRouter = createTRPCRouter({
         oldAcronym: z.string().optional(),
         newAcronym: z.string().min(1),
         election_id: z.string().min(1),
-        description: z.string(),
-        logo_link: z.string().nullable(),
+        description: z.string().nullable(),
+        logo_url: z.string().nullable(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const election = await ctx.db.query.elections.findFirst({
-        where: (election, { eq, and, isNull }) =>
-          and(eq(election.id, input.election_id), isNull(election.deleted_at)),
-      });
+      const { data: election } = await ctx.supabase
+        .from("elections")
+        .select()
+        .eq("id", input.election_id)
+        .is("deleted_at", null)
+        .single();
 
       if (!election) throw new TRPCError({ code: "NOT_FOUND" });
 
-      const commissioner = await ctx.db.query.commissioners.findFirst({
-        where: (commissioner, { eq, and, isNull }) =>
-          and(
-            eq(commissioner.user_id, ctx.session.user.id),
-            eq(commissioner.election_id, election.id),
-            isNull(commissioner.deleted_at),
-          ),
-      });
+      const { data: commissioner } = await ctx.supabase
+        .from("commissioners")
+        .select()
+        .eq("user_id", ctx.user.auth.id)
+        .eq("election_id", election.id)
+        .is("deleted_at", null)
+        .single();
 
       if (!commissioner) throw new TRPCError({ code: "UNAUTHORIZED" });
 
@@ -126,13 +123,13 @@ export const partylistRouter = createTRPCRouter({
         });
 
       if (input.oldAcronym !== input.newAcronym) {
-        const isAcronymExists = await ctx.db.query.partylists.findFirst({
-          where: (partylist, { eq, and }) =>
-            and(
-              eq(partylist.election_id, input.election_id),
-              eq(partylist.acronym, input.newAcronym),
-            ),
-        });
+        const { data: isAcronymExists } = await ctx.supabase
+          .from("partylists")
+          .select()
+          .eq("election_id", input.election_id)
+          .eq("acronym", input.newAcronym)
+          .is("deleted_at", null)
+          .single();
 
         if (isAcronymExists)
           throw new TRPCError({
@@ -141,15 +138,16 @@ export const partylistRouter = createTRPCRouter({
           });
       }
 
-      await ctx.db
-        .update(partylists)
-        .set({
+      await ctx.supabase
+        .from("partylists")
+        .update({
           name: input.name,
           acronym: input.newAcronym,
           description: input.description,
-          logo_link: input.logo_link,
+          // TODO: Implement logo upload
+          // logo_link: input.logo_link,
         })
-        .where(eq(partylists.id, input.id));
+        .eq("id", input.id);
     }),
   delete: protectedProcedure
     .input(
@@ -159,34 +157,29 @@ export const partylistRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const election = await ctx.db.query.elections.findFirst({
-        where: (election, { eq, and, isNull }) =>
-          and(eq(election.id, input.election_id), isNull(election.deleted_at)),
-      });
+      const { data: election } = await ctx.supabase
+        .from("elections")
+        .select()
+        .eq("id", input.election_id)
+        .is("deleted_at", null)
+        .single();
 
       if (!election) throw new TRPCError({ code: "NOT_FOUND" });
 
-      const commissioner = await ctx.db.query.commissioners.findFirst({
-        where: (commissioner, { eq, and, isNull }) =>
-          and(
-            eq(commissioner.user_id, ctx.session.user.id),
-            eq(commissioner.election_id, election.id),
-            isNull(commissioner.deleted_at),
-          ),
-      });
+      const { data: commissioner } = await ctx.supabase
+        .from("commissioners")
+        .select()
+        .eq("user_id", ctx.user.auth.id)
+        .eq("election_id", election.id)
+        .is("deleted_at", null)
+        .single();
 
       if (!commissioner) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      await ctx.db
-        .update(partylists)
-        .set({
-          deleted_at: new Date(),
-        })
-        .where(
-          and(
-            eq(partylists.id, input.partylist_id),
-            eq(partylists.election_id, input.election_id),
-          ),
-        );
+      await ctx.supabase
+        .from("partylists")
+        .update({ deleted_at: new Date().toISOString() })
+        .eq("id", input.partylist_id)
+        .eq("election_id", input.election_id);
     }),
 });

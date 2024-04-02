@@ -23,7 +23,7 @@ import {
   IconLetterCase,
 } from "@tabler/icons-react";
 
-import type { VoterField } from "@eboto/db/schema";
+import type { Database } from "../../../../../supabase/types";
 
 export default function EditVoter({
   election_id,
@@ -36,7 +36,7 @@ export default function EditVoter({
     email: string;
     field: Record<string, string> | null;
   };
-  voter_fields: VoterField[];
+  voter_fields: Database["public"]["Tables"]["voter_fields"]["Row"][];
 }) {
   const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure(false);
@@ -120,7 +120,11 @@ export default function EditVoter({
             />
 
             {voter_fields
-              .sort((a, b) => a.created_at.getTime() - b.created_at.getTime())
+              .sort(
+                (a, b) =>
+                  new Date(a.created_at).getTime() -
+                  new Date(b.created_at).getTime(),
+              )
               .map((field) => {
                 return (
                   <TextInput

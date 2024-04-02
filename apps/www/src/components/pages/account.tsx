@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { api } from "@/trpc/client";
 import { transformUploadImage } from "@/utils";
+import { createClient } from "@/utils/supabase/client";
 import {
   Box,
   Button,
@@ -18,18 +19,19 @@ import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { hasLength, useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconAt, IconLetterCase, IconLock, IconX } from "@tabler/icons-react";
-import type { Session } from "next-auth";
-import { signOut } from "next-auth/react";
 
-export default function AccountPageClient({ session }: { session: Session }) {
-  const context = api.useUtils();
+import type { RouterOutputs } from "@eboto/api";
+
+export default function AccountPageClient(
+  props: RouterOutputs["auth"]["getUserProtected"],
+) {
   const openRef = useRef<() => void>(null);
   const [loading, setLoading] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
   const [page, setPage] = useState<number>(0);
 
-  const sessionQuery = api.auth.getSessionProtected.useQuery(undefined, {
-    initialData: session,
+  const getUserProtectedQuery = api.auth.getUserProtected.useQuery(undefined, {
+    initialData: props,
   });
 
   // const confirmPasswordMutation = api.user.checkPassword.useMutation({
@@ -37,7 +39,8 @@ export default function AccountPageClient({ session }: { session: Session }) {
   // });
   const deleteAccountMutation = api.user.deleteAccount.useMutation({
     onSuccess: async () => {
-      await signOut();
+      const supabase = createClient();
+      await supabase.auth.signOut();
       close();
     },
   });
@@ -53,8 +56,8 @@ export default function AccountPageClient({ session }: { session: Session }) {
       //   firstName: "",
       //   middleName: "",
       //   lastName: "",
-      name: sessionQuery.data.user.name,
-      image: sessionQuery.data.user.image,
+      name: getUserProtectedQuery.data.db.name,
+      image: getUserProtectedQuery.data.db.image_url,
     },
     // validate: {
     //   firstName: isNotEmpty("First name is required"),
@@ -76,15 +79,15 @@ export default function AccountPageClient({ session }: { session: Session }) {
   });
 
   const updateProfileMutation = api.user.updateProfile.useMutation({
-    onSuccess: async (session) => {
-      await context.auth.getSession.invalidate();
+    onSuccess: async () => {
+      const user = await getUserProtectedQuery.refetch();
 
       const dataFormatted = {
         // firstName: data.first_name,
         // middleName: data.middle_name ?? "",
         // lastName: data.last_name,
-        name: session?.user.name,
-        image: session?.user.image,
+        name: user.data?.db.name ?? null,
+        image: user.data?.db.image_url ?? null,
       };
 
       accountForm.setValues(dataFormatted);
@@ -113,8 +116,8 @@ export default function AccountPageClient({ session }: { session: Session }) {
   //     //   firstName: session.user.firstName,
   //     //   middleName: session.user.middleName ?? "",
   //     //   lastName: session.user.lastName,
-  //     name: sessionQuery.data.user.name ?? null,
-  //     image: sessionQuery.data.user.image ?? null,
+  //     name: getUserProtectedQuery.data.user.name ?? null,
+  //     image: getUserProtectedQuery.data.user.image ?? null,
   //   };
 
   //   accountForm.setValues(data);
@@ -221,7 +224,7 @@ export default function AccountPageClient({ session }: { session: Session }) {
           <TextInput
             placeholder="Email"
             label="Email"
-            value={sessionQuery.data.user.email ?? undefined}
+            value={getUserProtectedQuery.data.db.email ?? undefined}
             leftSection={<IconAt size="1rem" />}
             readOnly
             disabled
@@ -273,7 +276,7 @@ export default function AccountPageClient({ session }: { session: Session }) {
                         <Text>{accountForm.values.name}</Text>
                       </Group>
                     ) : (
-                      session.user.image && (
+                      props.db.image_url && (
                         <Group>
                           <Box
                             pos="relative"
@@ -283,7 +286,7 @@ export default function AccountPageClient({ session }: { session: Session }) {
                             })}
                           >
                             <Image
-                              src={session.user.image}
+                              src={props.db.image_url}
                               alt="image"
                               fill
                               sizes="100%"
@@ -330,11 +333,12 @@ export default function AccountPageClient({ session }: { session: Session }) {
                   onClick={() => {
                     accountForm.setValues({
                       ...accountForm.values,
-                      image: session.user.image,
+                      image: getUserProtectedQuery.data.db.image_url,
                     });
                   }}
                   disabled={
-                    accountForm.values.image === session.user.image || loading
+                    accountForm.values.image ===
+                      getUserProtectedQuery.data.db.image_url || loading
                   }
                 >
                   Reset image

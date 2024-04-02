@@ -8,7 +8,6 @@ import { api } from "@/trpc/client";
 import { Center, rem } from "@mantine/core";
 import { Spotlight } from "@mantine/spotlight";
 import { IconLayoutDashboard, IconSearch } from "@tabler/icons-react";
-import { useSession } from "next-auth/react";
 import Realistic from "react-canvas-confetti/dist/presets/realistic";
 import type { TConductorInstance } from "react-canvas-confetti/dist/types";
 
@@ -17,13 +16,13 @@ const confettiContext = createContext(
 );
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const session = useSession();
+  const userQuery = api.auth.getUser.useQuery();
   const router = useRouter();
 
   const getAllMyElectionsQuery = api.election.getAllMyElections.useQuery(
     undefined,
     {
-      enabled: session.status === "authenticated",
+      enabled: !!userQuery.data,
     },
   );
 
@@ -31,12 +30,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
     id: election.id,
     label: election.name,
     description:
-      election.description.length > 0 ? election.description : "No description",
+      election.description && election.description.length > 0
+        ? election.description
+        : "No description",
     link: "/dashboard/" + election.slug,
-    leftSection: election.logo ? (
+    leftSection: election.logo_url ? (
       <Center>
         <Image
-          src={election.logo.url}
+          src={election.logo_url}
           alt={`${election.name} logo`}
           width={24}
           height={24}
@@ -86,8 +87,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
         }}
       />
       <confettiContext.Provider value={confetti}>
-        <Realistic onInit={confetti.onInit} />
         {children}
+        <Realistic onInit={confetti.onInit} />
       </confettiContext.Provider>
     </>
   );
