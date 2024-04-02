@@ -630,21 +630,20 @@ export const electionRouter = createTRPCRouter({
         });
       }
 
-      const { data: election_plus, error: election_plus_error } =
+      const { data: elections_plus, error: elections_plus_error } =
         await ctx.supabase
           .from("elections_plus")
           .select()
           .eq("user_id", ctx.user.auth.id)
-          .is("redeemed_at", null)
-          .single();
+          .is("redeemed_at", null);
 
-      if (election_plus_error)
+      if (elections_plus_error)
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: election_plus_error.message,
+          message: elections_plus_error.message,
         });
 
-      if (!election_plus)
+      if (elections_plus.length === 0)
         throw new TRPCError({
           code: "UNAUTHORIZED",
           message: "You don't have the permission to create an election",
@@ -740,10 +739,11 @@ export const electionRouter = createTRPCRouter({
           });
       }
 
-      await ctx.supabase
-        .from("elections_plus")
-        .update({ redeemed_at: new Date().toISOString() })
-        .eq("id", election_plus.id);
+      if (elections_plus[0])
+        await ctx.supabase
+          .from("elections_plus")
+          .update({ redeemed_at: new Date().toISOString() })
+          .eq("id", elections_plus[0].id);
     }),
   edit: protectedProcedure
     .input(

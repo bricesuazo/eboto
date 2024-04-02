@@ -87,8 +87,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
         }}
       />
       <confettiContext.Provider value={confetti}>
-        <Realistic onInit={confetti.onInit} />
         {children}
+        <Realistic onInit={confetti.onInit} />
       </confettiContext.Provider>
     </>
   );
