@@ -58,7 +58,7 @@ export default function RegisterForm() {
               await supabase.auth.signInWithOAuth({
                 provider: "google",
                 options: {
-                  redirectTo: `${location.origin}/auth/callback?next=${
+                  redirectTo: `${location.origin}/api/auth/callback?next=${
                     searchParams.get("callbackUrl") ?? "/dashboard"
                   }`,
                 },
