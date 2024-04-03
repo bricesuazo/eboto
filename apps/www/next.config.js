@@ -4,7 +4,7 @@ module.exports = {
   reactStrictMode: true,
   transpilePackages: ["@eboto/api"],
   images: {
-    // unoptimized: true,
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
