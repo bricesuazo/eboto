@@ -1,14 +1,14 @@
 import type { HTTPBatchLinkOptions, HTTPHeaders, TRPCLink } from "@trpc/client";
 import { httpBatchLink } from "@trpc/client";
+import { env } from "env.mjs";
 
 import type { AppRouter } from "@eboto/api";
 
 export const getBaseUrl = () => {
   if (typeof window !== "undefined") return "";
-  const vc = process.env.VERCEL_URL;
-  console.log("🚀 ~ getBaseUrl ~ vc:", vc);
-  if (vc) return `https://${vc}`;
-  return `http://localhost:3000`;
+
+  return env.APP_URL;
+  // return `http://localhost:3000`;
 };
 export function getUrl() {
   return getBaseUrl() + "/api/trpc";
