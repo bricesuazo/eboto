@@ -18,6 +18,7 @@ import TRPCProvider from "@/trpc/TRPCProvider";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { env } from "env.mjs";
 
 const font = Poppins({
@@ -188,6 +189,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
             <Notifications />
             <Providers>{children}</Providers>
             <Analytics />
+            <SpeedInsights />
           </TRPCProvider>
         </MantineProvider>
       </body>
