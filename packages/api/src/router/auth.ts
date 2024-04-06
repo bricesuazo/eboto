@@ -2,6 +2,8 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const authRouter = createTRPCRouter({
   getUser: publicProcedure.query(({ ctx }) => {
+    if (!ctx.user) return null;
+
     let image_url: string | null = null;
 
     if (ctx.user?.db.image_path) {

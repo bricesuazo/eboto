@@ -744,6 +744,17 @@ export const electionRouter = createTRPCRouter({
           .from("elections_plus")
           .update({ redeemed_at: new Date().toISOString() })
           .eq("id", elections_plus[0].id);
+
+      await Promise.all([
+        ctx.inngest.send({
+          name: "election-start",
+          data: { election_id: create_election.id },
+        }),
+        ctx.inngest.send({
+          name: "election-end",
+          data: { election_id: create_election.id },
+        }),
+      ]);
     }),
   edit: protectedProcedure
     .input(
@@ -869,6 +880,22 @@ export const electionRouter = createTRPCRouter({
             : input.logo,
         })
         .eq("id", input.id);
+
+      await ctx.inngest.send({
+        name: "election",
+        data: { election_id: input.id },
+      });
+
+      await Promise.all([
+        ctx.inngest.send({
+          name: "election-start",
+          data: { election_id: input.id },
+        }),
+        ctx.inngest.send({
+          name: "election-end",
+          data: { election_id: input.id },
+        }),
+      ]);
     }),
   delete: protectedProcedure
     .input(

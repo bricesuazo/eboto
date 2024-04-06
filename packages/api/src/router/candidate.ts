@@ -594,7 +594,12 @@ export const candidateRouter = createTRPCRouter({
         .is("deleted_at", null)
         .single();
 
-      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+      if (
+        !election ||
+        ((election.publicity === "PRIVATE" || election.publicity === "VOTER") &&
+          !ctx.user)
+      )
+        throw new TRPCError({ code: "NOT_FOUND" });
 
       const { data: candidate } = await ctx.supabase
         .from("candidates")

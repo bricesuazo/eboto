@@ -3,6 +3,7 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
+import { inngest } from "@eboto/inngest";
 import * as payment from "@eboto/payment";
 
 import type { Database } from "./../../../supabase/types";
@@ -10,13 +11,11 @@ import type { Database } from "./../../../supabase/types";
 interface CreateContextOptions {
   user: { auth: User; db: Database["public"]["Tables"]["users"]["Row"] } | null;
   payment: typeof payment;
+  inngest: typeof inngest;
   supabase: SupabaseClient<Database>;
 }
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
-  return {
-    ...opts,
-    payment,
-  };
+  return { ...opts, payment };
 };
 
 export function createTRPCContext(opts: {
@@ -28,10 +27,7 @@ export function createTRPCContext(opts: {
 
   // console.log(">>> tRPC Request from", source, "by", opts.session?.user);
 
-  return createInnerTRPCContext({
-    ...opts,
-    payment,
-  });
+  return createInnerTRPCContext({ ...opts, payment, inngest });
 }
 
 export type Context = Awaited<ReturnType<typeof createTRPCContext>>;

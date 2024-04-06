@@ -1,6 +1,5 @@
 {
   "name": "@eboto/prettier-config",
-  "version": "0.0.0",
   "main": "index.mjs",
   "scripts": {
     "clean": "rm -rf .turbo node_modules",
