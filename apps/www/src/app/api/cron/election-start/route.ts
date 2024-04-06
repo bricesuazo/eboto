@@ -127,4 +127,4 @@ async function handler(_req: NextRequest) {
   return NextResponse.json({ success: true });
 }
 
-export const POST = verifySignatureAppRouter(handler);
+export const GET = verifySignatureAppRouter(handler);
