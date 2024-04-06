@@ -248,21 +248,21 @@ export const candidateRouter = createTRPCRouter({
         achievements: z.array(
           z.object({
             name: z.string().min(1),
-            year: z.date(),
+            year: z.string(),
           }),
         ),
         affiliations: z.array(
           z.object({
             org_name: z.string().min(1),
             org_position: z.string().min(1),
-            start_year: z.date(),
-            end_year: z.date(),
+            start_year: z.string(),
+            end_year: z.string(),
           }),
         ),
         eventsAttended: z.array(
           z.object({
             name: z.string().min(1),
-            year: z.date(),
+            year: z.string(),
           }),
         ),
       }),
@@ -361,8 +361,8 @@ export const candidateRouter = createTRPCRouter({
         input.affiliations.map((affiliation) => ({
           org_name: affiliation.org_name,
           org_position: affiliation.org_position,
-          start_year: affiliation.start_year.toISOString(),
-          end_year: affiliation.end_year.toISOString(),
+          start_year: affiliation.start_year,
+          end_year: affiliation.end_year,
           credential_id: credential.id,
         })),
       );
@@ -370,7 +370,7 @@ export const candidateRouter = createTRPCRouter({
       await ctx.supabase.from("achievements").insert(
         input.achievements.map((achievement) => ({
           name: achievement.name,
-          year: achievement.year.toISOString(),
+          year: achievement.year,
           credential_id: credential.id,
         })),
       );
@@ -378,7 +378,7 @@ export const candidateRouter = createTRPCRouter({
       await ctx.supabase.from("events_attended").insert(
         input.eventsAttended.map((event) => ({
           name: event.name,
-          year: event.year.toISOString(),
+          year: event.year,
           credential_id: credential.id,
         })),
       );

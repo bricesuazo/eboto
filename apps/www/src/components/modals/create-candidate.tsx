@@ -27,7 +27,6 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { YearPickerInput } from "@mantine/dates";
-import type { DateValue } from "@mantine/dates";
 import { Dropzone, DropzoneReject, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import type { FileWithPath } from "@mantine/dropzone";
 import { hasLength, useForm } from "@mantine/form";
@@ -45,6 +44,7 @@ import {
   IconUserSearch,
   IconX,
 } from "@tabler/icons-react";
+import moment from "moment";
 
 import type { Database } from "../../../../../supabase/types";
 
@@ -103,17 +103,17 @@ export default function CreateCandidate({
 
     achievements: {
       name: string;
-      year: DateValue;
+      year: string;
     }[];
     affiliations: {
       org_name: string;
       org_position: string;
-      start_year: DateValue;
-      end_year: DateValue;
+      start_year: string;
+      end_year: string;
     }[];
     eventsAttended: {
       name: string;
-      year: DateValue;
+      year: string;
     }[];
   }>({
     initialValues: {
@@ -228,17 +228,17 @@ export default function CreateCandidate({
 
                 achievements: values.achievements.map((a) => ({
                   name: a.name,
-                  year: new Date(a.year?.toDateString() ?? ""),
+                  year: a.year,
                 })),
                 affiliations: values.affiliations.map((a) => ({
                   org_name: a.org_name,
                   org_position: a.org_position,
-                  start_year: new Date(a.start_year?.toDateString() ?? ""),
-                  end_year: new Date(a.end_year?.toDateString() ?? ""),
+                  start_year: a.start_year,
+                  end_year: a.end_year,
                 })),
                 eventsAttended: values.eventsAttended.map((a) => ({
                   name: a.name,
-                  year: new Date(a.year?.toDateString() ?? ""),
+                  year: a.year,
                 })),
               });
             })();
@@ -565,7 +565,7 @@ export default function CreateCandidate({
                                 withinPortal: true,
                               }}
                               disabled={createCandidateMutation.isPending}
-                              value={achievement.year}
+                              value={new Date(achievement.year)}
                               onChange={(date) => {
                                 form.setValues({
                                   ...form.values,
@@ -574,7 +574,7 @@ export default function CreateCandidate({
                                       i === index
                                         ? {
                                             ...achievement,
-                                            year: date,
+                                            year: moment(date).format(),
                                           }
                                         : achievement,
                                   ),
@@ -616,7 +616,7 @@ export default function CreateCandidate({
                               ...form.values.achievements,
                               {
                                 name: "",
-                                year: new Date(new Date().getFullYear(), 0),
+                                year: moment().format("YYYY"),
                               },
                             ],
                           });
@@ -683,7 +683,7 @@ export default function CreateCandidate({
                               popoverProps={{
                                 withinPortal: true,
                               }}
-                              value={affiliation.start_year}
+                              value={new Date(affiliation.start_year)}
                               disabled={createCandidateMutation.isPending}
                               onChange={(date) => {
                                 form.setValues({
@@ -693,7 +693,7 @@ export default function CreateCandidate({
                                       i === index
                                         ? {
                                             ...affiliation,
-                                            start_year: date,
+                                            start_year: moment(date).format(),
                                           }
                                         : affiliation,
                                   ),
@@ -709,7 +709,7 @@ export default function CreateCandidate({
                                 withinPortal: true,
                               }}
                               disabled={createCandidateMutation.isPending}
-                              value={affiliation.end_year}
+                              value={new Date(affiliation.end_year)}
                               onChange={(date) => {
                                 form.setValues({
                                   ...form.values,
@@ -718,7 +718,7 @@ export default function CreateCandidate({
                                       i === index
                                         ? {
                                             ...affiliation,
-                                            end_year: date,
+                                            end_year: moment(date).format(),
                                           }
                                         : affiliation,
                                   ),
@@ -761,11 +761,10 @@ export default function CreateCandidate({
                               {
                                 org_name: "",
                                 org_position: "",
-                                start_year: new Date(
-                                  new Date().getFullYear(),
-                                  -1,
-                                ),
-                                end_year: new Date(new Date().getFullYear(), 0),
+                                start_year: moment()
+                                  .subtract(1, "years")
+                                  .format("YYYY"),
+                                end_year: moment().format("YYYY"),
                               },
                             ],
                           });
@@ -810,7 +809,7 @@ export default function CreateCandidate({
                                 popoverProps={{
                                   withinPortal: true,
                                 }}
-                                value={eventAttended.year}
+                                value={new Date(eventAttended.year)}
                                 disabled={createCandidateMutation.isPending}
                                 onChange={(date) => {
                                   form.setValues({
@@ -821,7 +820,7 @@ export default function CreateCandidate({
                                           i === index
                                             ? {
                                                 ...achievement,
-                                                year: date,
+                                                year: moment(date).format(),
                                               }
                                             : achievement,
                                       ),
@@ -865,7 +864,7 @@ export default function CreateCandidate({
                               ...form.values.eventsAttended,
                               {
                                 name: "",
-                                year: new Date(new Date().getFullYear(), 0),
+                                year: moment().format("YYYY"),
                               },
                             ],
                           });

@@ -42,6 +42,7 @@ import {
   IconUserSearch,
   IconX,
 } from "@tabler/icons-react";
+import moment from "moment";
 import { v4 as uuid } from "uuid";
 
 import { formatName } from "@eboto/constants";
@@ -789,7 +790,7 @@ export default function EditCandidate({
                                         i === index
                                           ? {
                                               ...achievement,
-                                              year: date?.toDateString() ?? "",
+                                              year: moment(date).format(),
                                             }
                                           : achievement,
                                     ),
@@ -819,10 +820,7 @@ export default function EditCandidate({
                               {
                                 id: uuid(),
                                 name: "",
-                                year: new Date(
-                                  new Date().getFullYear(),
-                                  0,
-                                ).toDateString(),
+                                year: moment().format("YYYY"),
                               },
                             ],
                           });
@@ -900,8 +898,7 @@ export default function EditCandidate({
                                         i === index
                                           ? {
                                               ...affiliation,
-                                              start_year:
-                                                date?.toDateString() ?? "",
+                                              start_year: moment(date).format(),
                                             }
                                           : affiliation,
                                     ),
@@ -926,8 +923,7 @@ export default function EditCandidate({
                                         i === index
                                           ? {
                                               ...affiliation,
-                                              end_year:
-                                                date?.toDateString() ?? "",
+                                              end_year: moment(date).format(),
                                             }
                                           : affiliation,
                                     ),
@@ -961,11 +957,8 @@ export default function EditCandidate({
                                 start_year: new Date(
                                   new Date().getFullYear(),
                                   -1,
-                                ).toDateString(),
-                                end_year: new Date(
-                                  new Date().getFullYear(),
-                                  0,
-                                ).toDateString(),
+                                ).toISOString(),
+                                end_year: moment().format("YYYY"),
                               },
                             ],
                           });
@@ -1026,8 +1019,7 @@ export default function EditCandidate({
                                             i === index
                                               ? {
                                                   ...achievement,
-                                                  year:
-                                                    date?.toDateString() ?? "",
+                                                  year: moment(date).format(),
                                                 }
                                               : achievement,
                                         ),
@@ -1058,10 +1050,7 @@ export default function EditCandidate({
                               {
                                 id: uuid(),
                                 name: "",
-                                year: new Date(
-                                  new Date().getFullYear(),
-                                  0,
-                                ).toDateString(),
+                                year: moment().format("YYYY"),
                               },
                             ],
                           });

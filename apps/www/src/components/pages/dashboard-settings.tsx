@@ -176,27 +176,6 @@ export default function DashboardSettings({
       //   }
       // },
     },
-    transformValues: (values) => {
-      const nowStart = values.date[0];
-      const nowEnd = values.date[1];
-      return {
-        ...values,
-        date: !(
-          new Date(getElectionBySlugQuery.data.start_date).getTime() ===
-            nowStart.getTime() &&
-          new Date(getElectionBySlugQuery.data.end_date).getTime() ===
-            nowEnd.getTime()
-        )
-          ? [
-              new Date(nowStart.setDate(nowStart.getDate() + 1)),
-              new Date(nowEnd.setDate(nowEnd.getDate() + 1)),
-            ]
-          : [
-              new Date(getElectionBySlugQuery.data.start_date),
-              new Date(getElectionBySlugQuery.data.end_date),
-            ],
-      };
-    },
   });
 
   const deleteForm = useForm({

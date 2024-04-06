@@ -148,17 +148,6 @@ export default function CreateElection({
           ),
       }),
     ),
-    transformValues: (values) => {
-      const nowStart = new Date(values.date[0] ?? new Date());
-      const nowEnd = new Date(values.date[1] ?? new Date());
-      return {
-        ...values,
-        date: [
-          new Date(nowStart.setDate(nowStart.getDate() + 1)),
-          new Date(nowEnd.setDate(nowEnd.getDate() + 1)),
-        ],
-      };
-    },
   });
   const formGetPlus = useForm<{
     quantity: number;
