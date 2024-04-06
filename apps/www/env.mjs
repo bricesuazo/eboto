@@ -16,8 +16,6 @@ export const env = createEnv({
   server: {
     SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
     NODE_ENV: z.enum(["development", "test", "production"]),
-    QSTASH_CURRENT_SIGNING_KEY: z.string().min(1),
-    QSTASH_NEXT_SIGNING_KEY: z.string().min(1),
     LEMONSQUEEZY_WEBHOOK_SECRET: z.string().min(1),
     LEMONSQUEEZY_FREE_VARIANT_ID: z.number().min(1),
     APP_URL: z.string().url(),
@@ -50,8 +48,6 @@ export const env = createEnv({
     LEMONSQUEEZY_FREE_VARIANT_ID: parseInt(
       process.env.LEMONSQUEEZY_FREE_VARIANT_ID ?? "-1",
     ),
-    QSTASH_CURRENT_SIGNING_KEY: process.env.QSTASH_CURRENT_SIGNING_KEY,
-    QSTASH_NEXT_SIGNING_KEY: process.env.QSTASH_NEXT_SIGNING_KEY,
     LEMONSQUEEZY_WEBHOOK_SECRET: process.env.LEMONSQUEEZY_WEBHOOK_SECRET,
     INNGEST_SIGNING_KEY: process.env.INNGEST_SIGNING_KEY,
     INNGEST_EVENT_KEY: process.env.INNGEST_EVENT_KEY,

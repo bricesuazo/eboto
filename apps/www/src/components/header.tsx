@@ -61,7 +61,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
   const reportAProblemMutation = api.election.reportAProblem.useMutation();
 
   const electionsQuery = api.election.getAllMyElections.useQuery(undefined, {
-    enabled: reportAProblemLoading,
+    enabled: !!userQuery.data && reportAProblemLoading,
   });
 
   const { setColorScheme } = useMantineColorScheme();
