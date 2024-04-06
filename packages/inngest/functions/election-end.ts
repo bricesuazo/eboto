@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import moment from "moment";
 import { z } from "zod";
 
 import { sendElectionResult } from "@eboto/email/emails/election-result";
@@ -40,10 +41,12 @@ export default inngest.createFunction(
 
     if (!election) throw new Error("Election not found");
 
-    const end_date = new Date(election.end_date);
-    end_date.setHours(election.voting_hour_end);
+    const end_date = moment(election.end_date).add(
+      election.voting_hour_end,
+      "hours",
+    );
 
-    await step.sleepUntil("election-end", end_date);
+    await step.sleepUntil("election-end", end_date.toDate());
 
     await step.run("send-election-end", async () => {
       let logo_url: string | null = null;
