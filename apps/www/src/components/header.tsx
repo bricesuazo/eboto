@@ -372,7 +372,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
 
                       await supabase.auth.signOut();
                       await utils.auth.invalidate();
-                      router.push("/sign-in");
+                      router.refresh();
                     }}
                     closeMenuOnClick={false}
                     leftSection={

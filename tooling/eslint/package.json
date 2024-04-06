@@ -1,6 +1,5 @@
 {
   "name": "@eboto/eslint-config",
-  "version": "0.0.0",
   "files": [
     "./base.js",
     "./nextjs.js",
