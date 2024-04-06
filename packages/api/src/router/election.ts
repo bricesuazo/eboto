@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import moment from "moment";
 import { z } from "zod";
 
 import {
@@ -881,21 +882,33 @@ export const electionRouter = createTRPCRouter({
         })
         .eq("id", input.id);
 
-      await ctx.inngest.send({
-        name: "election",
-        data: { election_id: input.id },
-      });
+      if (
+        !moment(input.date[0]).isSame(
+          moment(isElectionCommissionerExists.start_date),
+        ) ||
+        !moment(input.date[1]).isSame(
+          moment(isElectionCommissionerExists.end_date),
+        ) ||
+        input.voting_hours[0] !==
+          isElectionCommissionerExists.voting_hour_start ||
+        input.voting_hours[1] !== isElectionCommissionerExists.voting_hour_end
+      ) {
+        await ctx.inngest.send({
+          name: "election",
+          data: { election_id: input.id },
+        });
 
-      await Promise.all([
-        ctx.inngest.send({
-          name: "election-start",
-          data: { election_id: input.id },
-        }),
-        ctx.inngest.send({
-          name: "election-end",
-          data: { election_id: input.id },
-        }),
-      ]);
+        await Promise.all([
+          ctx.inngest.send({
+            name: "election-start",
+            data: { election_id: input.id },
+          }),
+          ctx.inngest.send({
+            name: "election-end",
+            data: { election_id: input.id },
+          }),
+        ]);
+      }
     }),
   delete: protectedProcedure
     .input(
