@@ -3,14 +3,15 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/admin";
-import { verifySignatureAppRouter } from "@upstash/qstash/dist/nextjs";
+
+// import { verifySignatureAppRouter } from "@upstash/qstash/dist/nextjs";
 
 import { sendElectionStart } from "@eboto/email/emails/election-start";
 
 // export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-async function handler(_req: NextRequest) {
+export async function handler(_req: NextRequest) {
   const supabase = createClient();
   console.log("ELECTION START CRON");
   // TODO: Use toISOString() instead of toLocaleDateString() and toLocaleString()
@@ -127,4 +128,4 @@ async function handler(_req: NextRequest) {
   return NextResponse.json({ success: true });
 }
 
-export const GET = verifySignatureAppRouter(handler);
+// export const GET = verifySignatureAppRouter(handler);
