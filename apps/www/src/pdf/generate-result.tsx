@@ -88,9 +88,9 @@ export default function GenerateResult({
               marginBottom: 20,
             }}
           >
-            {result.logo_url && (
+            {result.election.logo_url && (
               <PdfImage
-                src={result.logo_url}
+                src={result.election.logo_url}
                 style={{
                   display: "flex",
                   width: 80,
@@ -107,13 +107,19 @@ export default function GenerateResult({
                 fontSize: 18,
               }}
             >
-              {result.name}
+              {result.election.name}
             </Text>
-            <Text>https://eboto.app/{result.slug}</Text>
+            <Text>https://eboto.app/{result.election.slug}</Text>
             <Text>
-              {new Date(result.start_date).toLocaleString("en-US", dateConfig)}
+              {new Date(result.election.start_date).toLocaleString(
+                "en-US",
+                dateConfig,
+              )}
               {" - "}
-              {new Date(result.end_date).toLocaleString("en-US", dateConfig)}
+              {new Date(result.election.end_date).toLocaleString(
+                "en-US",
+                dateConfig,
+              )}
             </Text>
             <View style={{ marginVertical: 8 }}>
               <Text>Generated on:</Text>
@@ -131,7 +137,7 @@ export default function GenerateResult({
               alignItems: "center",
             }}
           >
-            {result.positions.map((position) => {
+            {result.election.positions.map((position) => {
               return (
                 <View
                   key={position.id}
@@ -176,7 +182,10 @@ export default function GenerateResult({
                             }}
                           >
                             <Text>
-                              {formatName(result.name_arrangement, candidate)}
+                              {formatName(
+                                result.election.name_arrangement,
+                                candidate,
+                              )}
                             </Text>
                             <Text>
                               <Text

@@ -64,6 +64,7 @@ export default function DashboardOverview({
       refetchOnReconnect: true,
     },
   );
+  console.log("🚀 ~ election:", election);
   const getVoterFieldsStatsQuery = api.election.getVoterFieldsStats.useQuery(
     {
       election_id: data.id,
@@ -396,7 +397,7 @@ export default function DashboardOverview({
             </Text>
           ) : (
             election.generated_election_results.map((result) => (
-              <GenerateResultRow key={result.id} result={result.election} />
+              <GenerateResultRow key={result.id} result={result} />
             ))
           )}
         </Box>

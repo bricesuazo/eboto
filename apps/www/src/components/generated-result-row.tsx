@@ -21,7 +21,7 @@ export default function GenerateResultRow({
   }, []);
 
   const name = `${new Date(result.created_at).getTime().toString()} - ${
-    result.name
+    result.election.name
   } (Result) (${new Date(result.created_at).toDateString()}).pdf`;
 
   return (
