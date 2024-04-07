@@ -37,6 +37,9 @@ export default inngest.createFunction(
         "name, slug, voting_hour_start, start_date, end_date, publicity, commissioners(user: users(email)), voters(*)",
       )
       .eq("id", election_id)
+      .is("deleted_at", null)
+      .is("commissioners.deleted_at", null)
+      .is("voters.deleted_at", null)
       .single();
 
     if (!election) throw new Error("Election not found");
