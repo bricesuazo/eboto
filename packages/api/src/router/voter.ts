@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { isElectionEnded, isElectionOngoing } from "@eboto/constants";
 
+import { env } from "../env.mjs";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { LS_DATA_DEV, LS_DATA_PROD } from "./../../../../supabase/seed";
 
@@ -17,7 +18,7 @@ export const voterRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { data: isElectionExists } = await ctx.supabase
         .from("elections")
-        .select("*, commissioners(*)")
+        .select("*, commissioners(*), variant: variants(*)")
         .eq("id", input.election_id)
         .is("deleted_at", null)
         .eq("commissioners.user_id", ctx.user.auth.id)
@@ -66,19 +67,59 @@ export const voterRouter = createTRPCRouter({
             ".",
         });
 
-      const { data: votersFromDb } = await ctx.supabase
+      const { data: voters, error: voters_error } = await ctx.supabase
         .from("voters")
         .select("*")
         .eq("election_id", input.election_id)
-        .eq("email", input.email)
-        .is("deleted_at", null)
-        .single();
+        .is("deleted_at", null);
 
-      if (votersFromDb)
+      if (voters_error)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: voters_error.message,
+        });
+
+      if (voters.find((voter) => voter.email === input.email))
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Email is already a voter",
         });
+
+      if (isElectionExists.no_of_voters) {
+        if (voters.length + 1 >= isElectionExists.no_of_voters)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message:
+              "Maximum number of voters reached. Maximum no. of voters is " +
+              isElectionExists.no_of_voters +
+              ".",
+          });
+      } else {
+        const is_free =
+          env.LEMONSQUEEZY_FREE_VARIANT_ID === isElectionExists.variant_id;
+
+        if (is_free && voters.length + 1 >= 500)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message:
+              "Maximum number of voters reached. Maximum no. of voters is 500.",
+          });
+
+        if (!is_free && isElectionExists.variant) {
+          const no_of_voters = parseInt(
+            isElectionExists.variant.name.match(/[\d,]+/)![0].replace(",", ""),
+          );
+
+          if (voters.length + 1 >= no_of_voters)
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message:
+                "Maximum number of voters reached. Maximum no. of voters is " +
+                no_of_voters +
+                ".",
+            });
+        }
+      }
 
       await ctx.supabase.from("voters").insert({
         email: input.email,
@@ -408,7 +449,7 @@ export const voterRouter = createTRPCRouter({
       // TODO: use transaction
       const { data: isElectionExists } = await ctx.supabase
         .from("elections")
-        .select("*, commissioners(*)")
+        .select("*, commissioners(*), variant: variants(*)")
         .eq("id", input.election_id)
         .is("deleted_at", null)
         .eq("commissioners.user_id", ctx.user.auth.id)
@@ -419,12 +460,11 @@ export const voterRouter = createTRPCRouter({
       if (isElectionExists.commissioners.length === 0)
         throw new Error("Unauthorized");
 
-      const { data: voters_length, error: voters_length_error } =
-        await ctx.supabase
-          .from("voters")
-          .select("*")
-          .eq("election_id", input.election_id)
-          .is("deleted_at", null);
+      const { data: voters, error: voters_length_error } = await ctx.supabase
+        .from("voters")
+        .select("*")
+        .eq("election_id", input.election_id)
+        .is("deleted_at", null);
 
       if (voters_length_error)
         throw new TRPCError({
@@ -441,7 +481,7 @@ export const voterRouter = createTRPCRouter({
 
       if (!variant) throw new TRPCError({ code: "NOT_FOUND" });
 
-      if (voters_length.length >= variant.voters)
+      if (voters.length >= variant.voters)
         throw new TRPCError({
           code: "BAD_REQUEST",
           message:
@@ -470,16 +510,65 @@ export const voterRouter = createTRPCRouter({
           ),
       );
 
-      await ctx.supabase.from("voters").insert(
-        uniqueVoters.map((voter) => ({
-          election_id: isElectionExists.id,
-          email: voter.email,
-        })),
-      );
+      if (isElectionExists.no_of_voters) {
+        if (
+          voters.length + uniqueVoters.length >=
+          isElectionExists.no_of_voters
+        )
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message:
+              "Maximum number of voters reached. Maximum no. of voters is " +
+              isElectionExists.no_of_voters +
+              ".",
+          });
+      } else {
+        const is_free =
+          env.LEMONSQUEEZY_FREE_VARIANT_ID === isElectionExists.variant_id;
+
+        if (is_free && voters.length + uniqueVoters.length >= 500)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message:
+              "Maximum number of voters reached. Maximum no. of voters is 500.",
+          });
+
+        if (!is_free && isElectionExists.variant) {
+          const no_of_voters = parseInt(
+            isElectionExists.variant.name.match(/[\d,]+/)![0].replace(",", ""),
+          );
+
+          if (voters.length + uniqueVoters.length >= no_of_voters)
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message:
+                "Maximum number of voters reached. Maximum no. of voters is " +
+                no_of_voters +
+                ".",
+            });
+        }
+      }
+
+      const { data: uploaded_voters, error: uploaded_voters_error } =
+        await ctx.supabase
+          .from("voters")
+          .insert(
+            uniqueVoters.map((voter) => ({
+              election_id: isElectionExists.id,
+              email: voter.email,
+            })),
+          )
+          .select();
+
+      if (uploaded_voters_error)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: uploaded_voters_error.message,
+        });
       // });
 
       return {
-        count: input.voters.length,
+        count: uploaded_voters.length,
       };
     }),
   addVoterFieldToVoter: protectedProcedure

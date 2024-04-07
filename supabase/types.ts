@@ -387,6 +387,7 @@ export type Database = {
           logo_path: string | null
           name: string
           name_arrangement: number
+          no_of_voters: number | null
           publicity: Database["public"]["Enums"]["publicity"]
           slug: string
           start_date: string
@@ -406,6 +407,7 @@ export type Database = {
           logo_path?: string | null
           name: string
           name_arrangement?: number
+          no_of_voters?: number | null
           publicity?: Database["public"]["Enums"]["publicity"]
           slug: string
           start_date: string
@@ -425,6 +427,7 @@ export type Database = {
           logo_path?: string | null
           name?: string
           name_arrangement?: number
+          no_of_voters?: number | null
           publicity?: Database["public"]["Enums"]["publicity"]
           slug?: string
           start_date?: string

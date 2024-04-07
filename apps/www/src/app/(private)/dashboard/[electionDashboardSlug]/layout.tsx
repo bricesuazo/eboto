@@ -54,7 +54,10 @@ export default async function DashboardLayout(
   return (
     <DashboardElection
       isLoggedIn={true}
-      is_free={election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID}
+      is_free={
+        election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID &&
+        election.no_of_voters === null
+      }
       election_id={election.id}
     >
       {props.children}

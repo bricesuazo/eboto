@@ -182,7 +182,8 @@ CREATE TABLE IF NOT EXISTS "public"."elections" (
     "name_arrangement" smallint DEFAULT '0'::smallint NOT NULL,
     "variant_id" integer NOT NULL,
     "deleted_at" timestamp with time zone,
-    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "no_of_voters" integer
 );
 
 ALTER TABLE "public"."elections" OWNER TO "postgres";

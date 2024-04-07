@@ -128,7 +128,10 @@ export default async function CandidatePage({
       data={data}
       candidate_slug={candidateSlug}
       election_slug={electionSlug}
-      is_free={data.election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID}
+      is_free={
+        data.election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID &&
+        data.election.no_of_voters === null
+      }
     />
   );
 }

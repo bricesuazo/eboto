@@ -206,7 +206,9 @@ export default async function RealtimePage({
       election={{
         ...election,
         logo_url,
-        is_free: election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID,
+        is_free:
+          election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID &&
+          election.no_of_voters === null,
       }}
       isVoterCanMessage={isVoterCanMessage}
     />

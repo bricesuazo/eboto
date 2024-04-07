@@ -89,7 +89,7 @@ import moment from "moment";
 import Balancer from "react-wrap-balancer";
 import { z } from "zod";
 
-import { electionDashboardNavbar, isElectionOngoing } from "@eboto/constants";
+import { electionDashboardNavbar, isElectionEnded } from "@eboto/constants";
 
 import BoostCard from "../boost-card";
 
@@ -388,7 +388,16 @@ export default function DashboardElection({
                               group: "Ongoing",
                               elections: elections
                                 .filter(({ election }) =>
-                                  isElectionOngoing({ election }),
+                                  moment().isBetween(
+                                    moment(election.start_date).add(
+                                      election.voting_hour_start,
+                                      "hours",
+                                    ),
+                                    moment(election.end_date).add(
+                                      election.voting_hour_end,
+                                      "hours",
+                                    ),
+                                  ),
                                 )
                                 .sort(
                                   (a, b) =>
@@ -399,10 +408,8 @@ export default function DashboardElection({
                             {
                               group: "Upcoming",
                               elections: elections
-                                .filter(
-                                  ({ election }) =>
-                                    new Date(election.start_date).getTime() >
-                                    Date.now(),
+                                .filter(({ election }) =>
+                                  moment().isBefore(election.start_date),
                                 )
                                 .sort(
                                   (a, b) =>
@@ -413,10 +420,8 @@ export default function DashboardElection({
                             {
                               group: "Completed",
                               elections: elections
-                                .filter(
-                                  ({ election }) =>
-                                    new Date(election.end_date).getTime() <
-                                    Date.now(),
+                                .filter(({ election }) =>
+                                  isElectionEnded({ election }),
                                 )
                                 .sort(
                                   (a, b) =>

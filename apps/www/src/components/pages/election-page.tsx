@@ -170,7 +170,7 @@ export default function ElectionPage({
       </Modal>
 
       <Container pt={40} pb={80} size="md" mb={80}>
-        <Stack align="center" gap="xl">
+        <Stack align="center" gap="md">
           <Box>
             <Flex justify="center" mb={8}>
               {election.logo_url ? (
@@ -262,15 +262,25 @@ export default function ElectionPage({
               </Box>
             )}
             <Flex justify="center" gap="sm" mt={8} align="center">
-              {!isElectionOngoing({ election }) ? (
-                <Text c="red">Voting is not yet open</Text>
-              ) : !hasVoted && !!myVoterData ? (
+              {(election.publicity === "PUBLIC" ||
+                hasVoted ||
+                isElectionEnded({ election })) && (
+                <Button
+                  radius="xl"
+                  size="md"
+                  component={Link}
+                  leftSection={<IconClock />}
+                  href={`/${election.slug}/realtime`}
+                >
+                  Realtime count
+                </Button>
+              )}
+              {isElectionOngoing({ election }) && !hasVoted && myVoterData && (
                 <>
                   {election.voter_fields.length &&
-                  (!myVoterData.field ||
-                    Object.values(myVoterData.field).some(
-                      (value) => !value || value.trim() === "",
-                    )) ? (
+                  Object.values(myVoterData.field).some(
+                    (value) => !value || value.trim() === "",
+                  ) ? (
                     <Button
                       onClick={open}
                       radius="xl"
@@ -291,23 +301,20 @@ export default function ElectionPage({
                     </Button>
                   )}
                 </>
-              ) : (
-                (election.publicity === "PUBLIC" ||
-                  hasVoted ||
-                  isElectionEnded({ election })) && (
-                  <Button
-                    radius="xl"
-                    size="md"
-                    component={Link}
-                    leftSection={<IconClock />}
-                    href={`/${election.slug}/realtime`}
-                  >
-                    Realtime count
-                  </Button>
-                )
               )}
               <ElectionShowQRCode election={election} />
             </Flex>
+            {isElectionEnded({ election }) ? (
+              <Text ta="center" p="md">
+                This election has ended
+              </Text>
+            ) : (
+              !isElectionOngoing({ election }) && (
+                <Text c="red" ta="center" p="md">
+                  Voting is not yet open
+                </Text>
+              )
+            )}
             {!is_free && isVoterCanMessage && (
               <Center mt="xs">
                 <MessageCommissioner election_id={election.id} />
