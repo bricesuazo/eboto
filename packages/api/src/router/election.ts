@@ -141,7 +141,6 @@ export const electionRouter = createTRPCRouter({
             };
           }),
         })),
-        isOngoing: isElectionOngoing({ election }),
         myVoterData,
         hasVoted: voted,
         isVoterCanMessage:

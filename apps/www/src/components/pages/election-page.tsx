@@ -43,6 +43,7 @@ import type { RouterOutputs } from "@eboto/api";
 import {
   formatName,
   isElectionEnded,
+  isElectionOngoing,
   parseHourTo12HourFormat,
 } from "@eboto/constants";
 
@@ -72,14 +73,7 @@ export default function ElectionPage({
       },
     });
   const {
-    data: {
-      election,
-      positions,
-      hasVoted,
-      myVoterData,
-      isOngoing,
-      isVoterCanMessage,
-    },
+    data: { election, positions, hasVoted, myVoterData, isVoterCanMessage },
   } = api.election.getElectionPage.useQuery(
     {
       election_slug,
@@ -117,7 +111,9 @@ export default function ElectionPage({
     <>
       {is_free && <AdModal />}
       <ScrollToTopButton />
-      {isVoterCanMessage && <MyMessagesElection election_id={election.id} />}
+      {!is_free && isVoterCanMessage && (
+        <MyMessagesElection election_id={election.id} />
+      )}
       <Modal
         opened={opened || addVoterFieldToVoterMutation.isPending}
         onClose={close}
@@ -266,7 +262,7 @@ export default function ElectionPage({
               </Box>
             )}
             <Flex justify="center" gap="sm" mt={8} align="center">
-              {!isOngoing ? (
+              {!isElectionOngoing({ election }) ? (
                 <Text c="red">Voting is not yet open</Text>
               ) : !hasVoted && !!myVoterData ? (
                 <>
