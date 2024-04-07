@@ -84,8 +84,6 @@ export const isElectionOngoing = ({
   election: Database["public"]["Tables"]["elections"]["Row"];
   withoutHours?: true;
 }) => {
-  const now = new Date();
-
   if (withoutHours) {
     return moment().isBetween(
       election.start_date,
@@ -93,13 +91,12 @@ export const isElectionOngoing = ({
     );
   }
 
-  return (
-    moment().isBetween(
-      election.start_date,
-      moment(election.end_date).add(1, "day").subtract(1, "millisecond"),
-    ) &&
-    now.getHours() >= election.voting_hour_start &&
-    now.getHours() < election.voting_hour_end
+  return moment().isBetween(
+    moment(election.start_date).add(election.voting_hour_start, "hours"),
+    moment(election.end_date)
+      .add(1, "day")
+      .add(election.voting_hour_end, "hours")
+      .subtract(1, "millisecond"),
   );
   // if (withoutHours) {
   //   return (
