@@ -132,11 +132,11 @@ export default async function RealtimePage({
 
   let isVoterCanMessage = !!voter && !commissioner;
 
-  const callbackUrl = `/sign-in?callbackUrl=https://eboto.app/${election.slug}/realtime`;
+  const next = `/sign-in?next=/${election.slug}/realtime`;
 
   if (election.publicity === "PRIVATE") {
     isVoterCanMessage = false;
-    if (!user) redirect(callbackUrl);
+    if (!user) redirect(next);
 
     const { data: isCommissioner } = await supabaseAdmin
       .from("commissioners")
@@ -167,7 +167,7 @@ export default async function RealtimePage({
     if (isVoter && votes.length && !isCommissioner)
       redirect(`/${election.slug}`);
   } else if (election.publicity === "VOTER") {
-    if (!user) redirect(callbackUrl);
+    if (!user) redirect(next);
 
     if (!voter && !commissioner) notFound();
 

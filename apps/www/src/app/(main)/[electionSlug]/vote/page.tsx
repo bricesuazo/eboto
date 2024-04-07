@@ -40,8 +40,7 @@ export default async function VotePage({
     data: { user },
   } = await supabaseServer.auth.getUser();
 
-  if (!user)
-    redirect(`/sign-in?callbackUrl=https://eboto.app/${electionSlug}/vote`);
+  if (!user) redirect(`/sign-in?next=/${electionSlug}/vote`);
 
   const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin

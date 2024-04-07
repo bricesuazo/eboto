@@ -8,10 +8,10 @@ export const metadata: Metadata = {
 };
 
 export default function RegisterPage({
-  searchParams: { callbackUrl },
+  searchParams: { next },
 }: {
   searchParams: {
-    callbackUrl?: string;
+    next?: string;
   };
 }) {
   return (
@@ -25,7 +25,7 @@ export default function RegisterPage({
         <Anchor
           size="sm"
           component={Link}
-          href={"/sign-in" + (callbackUrl ? `?callbackUrl=${callbackUrl}` : "")}
+          href={"/sign-in" + (next ? `?next=${next}` : "")}
           truncate
         >
           Sign in

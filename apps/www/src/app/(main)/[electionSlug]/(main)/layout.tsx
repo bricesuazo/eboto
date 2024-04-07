@@ -37,9 +37,9 @@ export default async function ElectionLayout(
 
     if (!commissioner) notFound();
   } else if (election.publicity === "VOTER") {
-    const callbackUrl = `/sign-in?callbackUrl=https://eboto.app/${props.params.electionSlug}`;
+    const next = `/sign-in?next=/${props.params.electionSlug}`;
 
-    if (!user) redirect(callbackUrl);
+    if (!user) redirect(next);
 
     const { data: voter } = await supabaseAdmin
       .from("voters")
@@ -59,7 +59,7 @@ export default async function ElectionLayout(
 
     if (!isOngoing && !voter && !commissioner) notFound();
 
-    if (!voter && !commissioner) redirect(callbackUrl);
+    if (!voter && !commissioner) redirect(next);
   }
 
   return <>{props.children}</>;

@@ -54,11 +54,13 @@ export default function SigninForm() {
               const supabase = createClient();
               setLoadings((loadings) => ({ ...loadings, google: true }));
 
+              const next = searchParams.get("next");
+
               await supabase.auth.signInWithOAuth({
                 provider: "google",
                 options: {
-                  redirectTo: `${location.origin}/api/auth/callback?next=${
-                    searchParams.get("callbackUrl") ?? "/dashboard"
+                  redirectTo: `${location.origin}/api/auth/callback${
+                    next ? `?next=${next}` : ""
                   }`,
                 },
               });
@@ -108,8 +110,7 @@ export default function SigninForm() {
                   await supabase.auth.signInWithOtp({
                     email: values.email,
                     options: {
-                      emailRedirectTo:
-                        searchParams.get("callbackUrl") ?? "/dashboard",
+                      emailRedirectTo: searchParams.get("next") ?? "/dashboard",
                     },
                   });
 

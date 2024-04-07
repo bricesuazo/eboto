@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
 
   // if "next" is in param, use it in the redirect URL
-  const next = searchParams.get("next") ?? "/";
+  const next = searchParams.get("next") ?? "/dashboard";
 
   if (code) {
     const supabase = createClient();

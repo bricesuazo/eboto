@@ -31,27 +31,32 @@ export async function generateMetadata({
   if (election.publicity === "PRIVATE") {
     if (!user) notFound();
 
-    const { data: commissioner } = await supabaseAdmin
+    const { data: commissioners } = await supabaseAdmin
       .from("commissioners")
       .select()
       .eq("election_id", election.id)
       .eq("user_id", user.id)
-      .is("deleted_at", null)
-      .single();
+      .is("deleted_at", null);
 
-    if (!commissioner) notFound();
+    if (commissioners?.length === 0) notFound();
   } else if (election.publicity === "VOTER") {
     if (!user) notFound();
 
-    const { data: voter } = await supabaseAdmin
+    const { data: commissioners } = await supabaseAdmin
+      .from("commissioners")
+      .select()
+      .eq("election_id", election.id)
+      .eq("user_id", user.id)
+      .is("deleted_at", null);
+
+    const { data: voters } = await supabaseAdmin
       .from("voters")
       .select()
       .eq("election_id", election.id)
       .eq("email", user?.email ?? "")
-      .is("deleted_at", null)
-      .single();
+      .is("deleted_at", null);
 
-    if (!voter) notFound();
+    if (commissioners?.length === 0 && voters?.length === 0) notFound();
   }
 
   const { data: candidate } = await supabaseAdmin

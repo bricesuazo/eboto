@@ -50,7 +50,9 @@ export default function ElectionCandidate({
   return (
     <>
       {is_free && <AdModal />}
-      {isVoterCanMessage && <MyMessagesElection election_id={election.id} />}
+      {!is_free && isVoterCanMessage && (
+        <MyMessagesElection election_id={election.id} />
+      )}
 
       <Container py="xl" size="md" mb={80}>
         <Stack>
@@ -96,7 +98,7 @@ export default function ElectionCandidate({
               </Title>
               <Text>Running for {candidate.position.name}</Text>
               <Text>{candidate.partylist.name}</Text>
-              {isVoterCanMessage && (
+              {!is_free && isVoterCanMessage && (
                 <MessageCommissioner election_id={election.id} />
               )}
 

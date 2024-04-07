@@ -34,9 +34,10 @@ import {
   IconLetterCase,
   IconX,
 } from "@tabler/icons-react";
+import moment from "moment";
 
 import type { RouterOutputs } from "@eboto/api";
-import { parseHourTo12HourFormat } from "@eboto/constants";
+import { isElectionOngoing, parseHourTo12HourFormat } from "@eboto/constants";
 
 import type { Database } from "../../../../../supabase/types";
 
@@ -399,8 +400,14 @@ export default function DashboardSettings({
             required
             disabled={
               editElectionMutation.isPending ||
-              new Date(getElectionBySlugQuery.data.start_date).getTime() <
-                Date.now()
+              isElectionOngoing({
+                election: getElectionBySlugQuery.data,
+              }) ||
+              moment().isAfter(
+                moment(getElectionBySlugQuery.data.end_date)
+                  .add(1, "day")
+                  .subtract(1, "millisecond"),
+              )
             }
             {...form.getInputProps("date")}
           />
@@ -430,8 +437,14 @@ export default function DashboardSettings({
               label={parseHourTo12HourFormat}
               disabled={
                 editElectionMutation.isPending ||
-                new Date(getElectionBySlugQuery.data.start_date).getTime() <
-                  Date.now()
+                isElectionOngoing({
+                  election: getElectionBySlugQuery.data,
+                }) ||
+                moment().isAfter(
+                  moment(getElectionBySlugQuery.data.end_date)
+                    .add(1, "day")
+                    .subtract(1, "millisecond"),
+                )
               }
               {...form.getInputProps("voting_hours")}
             />
