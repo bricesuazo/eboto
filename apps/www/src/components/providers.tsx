@@ -8,12 +8,20 @@ import { api } from "@/trpc/client";
 import { Center, rem } from "@mantine/core";
 import { Spotlight } from "@mantine/spotlight";
 import { IconLayoutDashboard, IconSearch } from "@tabler/icons-react";
+import posthog from "posthog-js";
+import { PostHogProvider } from "posthog-js/react";
 import Realistic from "react-canvas-confetti/dist/presets/realistic";
 import type { TConductorInstance } from "react-canvas-confetti/dist/types";
 
 const confettiContext = createContext(
   {} as ReturnType<typeof useProvideConfetti>,
 );
+
+if (typeof window !== "undefined") {
+  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+    api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+  });
+}
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const userQuery = api.auth.getUser.useQuery();
@@ -54,7 +62,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const confetti = useProvideConfetti();
 
   return (
-    <>
+    <PostHogProvider client={posthog}>
       <Spotlight
         shortcut={["mod + K", "mod + P", "/"]}
         actions={[
@@ -90,7 +98,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         {children}
         <Realistic onInit={confetti.onInit} />
       </confettiContext.Provider>
-    </>
+    </PostHogProvider>
   );
 }
 

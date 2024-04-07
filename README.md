@@ -13,6 +13,7 @@ Empower your elections with eBoto, the versatile and web-based voting platform t
 - **Styling**: [Mantine](https://mantine.dev/)
 - **Email**: [React Email](https://react.email/) + [Amazon SES](https://aws.amazon.com/ses/)
 - **Data Validator**: [Zod](https://zod.dev/)
+- **Analytics**: [PostHog](https://posthog.com/)
 
 ## Running Locally
 

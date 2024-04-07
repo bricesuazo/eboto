@@ -324,7 +324,7 @@ export default function ElectionPage({
                 display: "block",
                 width: "100%",
               }}
-              client="ca-pub-8443325162715161"
+              client="ca-pub-8867310433048493"
               slot="6949415137"
               format="auto"
               responsive="true"
