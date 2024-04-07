@@ -61,14 +61,13 @@ export const isElectionEnded = ({
 }: {
   election: Database["public"]["Tables"]["elections"]["Row"];
 }) => {
-  const now = new Date();
-
-  const end_date = new Date(election.end_date);
-
-  return (
-    moment().isAfter(end_date, "day") &&
-    now.getHours() >= election.voting_hour_end
+  return moment().isAfter(
+    moment(election.end_date).add(election.voting_hour_end, "hours"),
   );
+  // return (
+  //   moment().isAfter(end_date, "day") &&
+  //   now.getHours() >= election.voting_hour_end
+  // );
 
   // return (
   //   now.getFullYear() >= end_date.getFullYear() &&

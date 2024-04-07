@@ -1341,74 +1341,18 @@ export const electionRouter = createTRPCRouter({
   getMyElectionAsVoter: protectedProcedure.query(async ({ ctx }) => {
     const { data: electionsThatICanVoteIn } = await ctx.supabase
       .from("elections")
-      .select("*, voters(*)")
+      .select("*, voters(*, votes(*))")
       .neq("publicity", "PRIVATE")
       .is("deleted_at", null)
       .eq("voters.email", ctx.user.db.email)
       .is("voters.deleted_at", null)
-      .limit(1, { referencedTable: "voters" });
+      .limit(1, { referencedTable: "voters" })
+      .limit(1, { referencedTable: "voters.votes" });
 
     if (!electionsThatICanVoteIn) throw new TRPCError({ code: "NOT_FOUND" });
 
-    const elections = electionsThatICanVoteIn.filter((election) =>
-      isElectionOngoing({ election, withoutHours: true }),
-    );
-
-    // const electionsAsVoter = await ctx.db.query.voters.findMany({
-    //   where: (voters, { eq, ne, and, inArray, isNull }) =>
-    //     and(
-    //       isNull(voters.deleted_at),
-    //       eq(voters.email, ctx.user.db.email),
-    //       elections.length
-    //         ? inArray(
-    //             voters.election_id,
-    //             elections.map((election) => election.id),
-    //           )
-    //         : ne(voters.email, ctx.user.db.email),
-    //     ),
-    //   with: {
-    //     election: {
-    //       with: {
-    //         votes: {
-    //           where: (votes, { inArray }) =>
-    //             electionsThatICanVoteIn.flatMap((election) =>
-    //               election.voters.map((voter) => voter.id),
-    //             ).length > 0
-    //               ? inArray(
-    //                   votes.voter_id,
-    //                   electionsThatICanVoteIn.flatMap((election) =>
-    //                     election.voters.map((voter) => voter.id),
-    //                   ),
-    //                 )
-    //               : undefined,
-    //           limit: 1,
-    //         },
-    //       },
-    //     },
-    //   },
-    // });
-
-    // TODO: not sure if this is the correct way
-    const { data: electionsAsVoter } = elections.length
-      ? await ctx.supabase
-          .from("voters")
-          .select("*, election: elections(*, votes(*))")
-          .eq("email", ctx.user.db.email)
-          .is("deleted_at", null)
-          .in(
-            "election_id",
-            elections.map((election) => election.id),
-          )
-      : await ctx.supabase
-          .from("voters")
-          .select("*, election: elections(*, votes(*))")
-          .eq("email", ctx.user.db.email)
-          .is("deleted_at", null);
-
-    if (!electionsAsVoter) throw new TRPCError({ code: "NOT_FOUND" });
-
-    return electionsAsVoter
-      .map((voter) => voter.election!)
+    return electionsThatICanVoteIn
+      .filter((election) => election.voters[0])
       .map((election) => {
         let logo_url: string | null = null;
 
@@ -1419,7 +1363,14 @@ export const electionRouter = createTRPCRouter({
 
           logo_url = url.publicUrl;
         }
-        return { ...election, logo_url, is_free: true };
+        return {
+          ...election,
+          logo_url,
+          is_free: true,
+          is_voted: election.voters[0]
+            ? election.voters[0].votes.length > 0
+            : false,
+        };
       })
       .sort(
         (a, b) =>
