@@ -19,14 +19,14 @@
     "lint:fix": "turbo lint --continue -- --fix --cache --cache-location 'node_modules/.cache/.eslintcache' && manypkg fix",
     "typecheck": "turbo typecheck"
   },
-  "devDependencies": {
+  "prettier": "@eboto/prettier-config",
+  "dependencies": {
     "@eboto/prettier-config": "workspace:^",
     "@manypkg/cli": "^0.21.3",
-    "@turbo/gen": "^1.13.1",
+    "@turbo/gen": "^1.13.2",
     "prettier": "^3.2.5",
-    "semver": ">=7.6.0",
-    "turbo": "^1.13.1",
-    "typescript": "^5.4.3"
-  },
-  "prettier": "@eboto/prettier-config"
+    "semver": "^7.6.0",
+    "turbo": "^1.13.2",
+    "typescript": "^5.4.5"
+  }
 }

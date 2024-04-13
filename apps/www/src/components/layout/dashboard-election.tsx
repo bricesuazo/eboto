@@ -619,7 +619,7 @@ export default function DashboardElection({
             >
               <Stack gap={0} h="100%">
                 <TabsList grow h={40}>
-                  <TabsTab value="admin">Chat Admin</TabsTab>
+                  <TabsTab value="admin">Chat Support</TabsTab>
                   <TabsTab value="voters">Chat from Voters</TabsTab>
                 </TabsList>
 

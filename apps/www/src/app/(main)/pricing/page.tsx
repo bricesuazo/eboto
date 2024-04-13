@@ -335,6 +335,7 @@ export function MainPricing({
               >
                 <ListItem>Every Hour Result Realtime Update</ListItem>
                 <ListItem>Up to 500 voters</ListItem>
+                <ListItem>Live Admin Support</ListItem>
               </List>
             </Box>
 
@@ -431,6 +432,7 @@ export function MainPricing({
                   </ThemeIcon>
                 }
               >
+                <ListItem>Unlimited Voters</ListItem>
                 <ListItem>We will host your election in your facility</ListItem>
               </List>
             </Box>

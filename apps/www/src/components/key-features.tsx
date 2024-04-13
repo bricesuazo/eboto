@@ -28,6 +28,7 @@ export default function KeyFeatures({ isModal }: { isModal?: boolean }) {
         <ListItem>Realtime Chat w/ Voters</ListItem>
         <ListItem>Realtime Update</ListItem>
         <ListItem>No Watermark</ListItem>
+        <ListItem>Live Admin Support</ListItem>
       </List>
     </>
   );

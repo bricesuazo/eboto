@@ -3,6 +3,9 @@
 module.exports = {
   reactStrictMode: true,
   transpilePackages: ["@eboto/api"],
+  experimental: {
+    optimizePackageImports: ["@mantine/core", "@mantine/hooks"],
+  },
   images: {
     unoptimized: true,
     remotePatterns: [
