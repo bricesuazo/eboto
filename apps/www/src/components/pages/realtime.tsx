@@ -31,11 +31,7 @@ import moment from "moment";
 import Balancer from "react-wrap-balancer";
 
 import type { RouterOutputs } from "@eboto/api";
-import {
-  isElectionEnded,
-  isElectionOngoing,
-  parseHourTo12HourFormat,
-} from "@eboto/constants";
+import { isElectionEnded, parseHourTo12HourFormat } from "@eboto/constants";
 
 import type { Database } from "../../../../../supabase/types";
 import AdModal from "../ad-modal";
@@ -64,9 +60,9 @@ export default function Realtime({
   const positionsQuery = api.election.getElectionRealtime.useQuery(
     election.slug,
     {
+      enabled: !election.is_free,
       refetchInterval: !election.is_free ? 1000 : false,
       initialData: positions,
-      enabled: !election.is_free,
       refetchOnMount: true,
       refetchOnWindowFocus: true,
       refetchOnReconnect: true,
@@ -78,8 +74,7 @@ export default function Realtime({
         election_id: election.id,
       },
       {
-        enabled:
-          isElectionOngoing({ election }) && election.voter_fields.length > 0,
+        enabled: election.voter_fields.length > 0,
         refetchInterval: !election.is_free ? 1000 : false,
         refetchOnMount: true,
         refetchOnWindowFocus: true,

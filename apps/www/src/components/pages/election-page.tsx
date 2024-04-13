@@ -277,7 +277,7 @@ export default function ElectionPage({
               )}
               {isElectionOngoing({ election }) && !hasVoted && myVoterData && (
                 <>
-                  {election.voter_fields.length &&
+                  {(election.voter_fields.length > 0 && !myVoterData.field) ||
                   Object.values(myVoterData.field).some(
                     (value) => !value || value.trim() === "",
                   ) ? (

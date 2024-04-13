@@ -214,7 +214,7 @@ CREATE TABLE IF NOT EXISTS "public"."generated_election_results" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "election_id" "uuid" NOT NULL,
-    "result" "json" NOT NULL,
+    "result" "jsonb" NOT NULL,
     "deleted_at" timestamp with time zone
 );
 
@@ -331,7 +331,7 @@ ALTER TABLE "public"."voter_fields" OWNER TO "postgres";
 CREATE TABLE IF NOT EXISTS "public"."voters" (
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "email" "text" NOT NULL,
-    "field" "json",
+    "field" "jsonb",
     "deleted_at" timestamp with time zone,
     "election_id" "uuid" NOT NULL,
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL
@@ -427,6 +427,40 @@ ALTER TABLE ONLY "public"."voters"
 
 ALTER TABLE ONLY "public"."votes"
     ADD CONSTRAINT "votes_pkey" PRIMARY KEY ("id");
+
+CREATE INDEX "candidates_election_id_idx" ON "public"."candidates" USING "btree" ("election_id");
+
+CREATE INDEX "candidates_id_election_id_idx" ON "public"."candidates" USING "btree" ("id", "election_id");
+
+CREATE INDEX "candidates_slug_election_id_idx" ON "public"."candidates" USING "btree" ("slug", "election_id");
+
+CREATE INDEX "candidates_slug_idx" ON "public"."candidates" USING "btree" ("slug");
+
+CREATE INDEX "commissioners_election_id_idx" ON "public"."commissioners" USING "btree" ("election_id");
+
+CREATE INDEX "commissioners_user_id_election_id_idx" ON "public"."commissioners" USING "btree" ("user_id", "election_id");
+
+CREATE INDEX "commissioners_user_id_idx" ON "public"."commissioners" USING "btree" ("user_id");
+
+CREATE INDEX "partylists_election_id_idx" ON "public"."partylists" USING "btree" ("election_id");
+
+CREATE INDEX "positions_election_id_idx" ON "public"."positions" USING "btree" ("election_id");
+
+CREATE INDEX "variants_price_product_id_idx" ON "public"."variants" USING "btree" ("price", "product_id");
+
+CREATE INDEX "variants_product_id_idx" ON "public"."variants" USING "btree" ("product_id");
+
+CREATE INDEX "voter_fields_election_id_idx" ON "public"."voter_fields" USING "btree" ("election_id");
+
+CREATE INDEX "voter_fields_id_election_id_idx" ON "public"."voter_fields" USING "btree" ("id", "election_id");
+
+CREATE INDEX "voters_email_election_id_idx" ON "public"."voters" USING "btree" ("email", "election_id");
+
+CREATE INDEX "voters_email_idx" ON "public"."voters" USING "btree" ("email");
+
+CREATE INDEX "voters_id_election_id_idx" ON "public"."voters" USING "btree" ("id", "election_id");
+
+CREATE INDEX "votes_election_id_voter_id_idx" ON "public"."votes" USING "btree" ("election_id", "voter_id");
 
 ALTER TABLE ONLY "public"."achievements"
     ADD CONSTRAINT "public_achievements_credential_id_fkey" FOREIGN KEY ("credential_id") REFERENCES "public"."credentials"("id") ON UPDATE RESTRICT ON DELETE RESTRICT;

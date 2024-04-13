@@ -71,7 +71,7 @@ export default async function VotePage({
   if (
     !voter ||
     !voter_fields ||
-    (voter_fields.length && !voter?.field) ||
+    (voter_fields.length > 0 && !voter.field) ||
     Object.values((voter.field ?? {}) as Record<string, string>).some(
       (value) => !value || value.trim() === "",
     )
@@ -104,12 +104,13 @@ export default async function VotePage({
     election.publicity === "VOTER" ||
     election.publicity === "PUBLIC"
   ) {
-    const { data: vote } = await supabaseAdmin
+    const { data: votes } = await supabaseAdmin
       .from("votes")
       .select()
       .eq("voter_id", voter.id)
-      .eq("election_id", election.id)
-      .single();
+      .eq("election_id", election.id);
+
+    if (!votes) notFound();
 
     const { data: commissioner } = await supabaseAdmin
       .from("commissioners")
@@ -118,7 +119,7 @@ export default async function VotePage({
       .eq("election_id", election.id)
       .single();
 
-    if (vote ?? (commissioner && !voter) ?? !voter)
+    if (votes.length > 0 && commissioner && !voter && !voter)
       redirect(`/${election.slug}/realtime`);
   }
 
