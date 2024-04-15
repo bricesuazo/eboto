@@ -157,68 +157,66 @@ export const candidateRouter = createTRPCRouter({
           .remove([candidate.image_path]);
       }
 
-      await ctx.supabase
-        .from("candidates")
-        .update({
-          slug: input.new_slug,
-          first_name: input.first_name,
-          middle_name: input.middle_name,
-          last_name: input.last_name,
-          position_id: input.position_id,
-          partylist_id: input.partylist_id,
-          image_path: input.image
-            ? await fetch(input.image.base64)
-                .then((res) => res.blob())
-                .then(async (blob) => {
-                  const { data } = await ctx.supabase.storage
-                    .from("candidates")
-                    .upload(`${input.id}/images/${Date.now()}`, blob);
+      await Promise.all([
+        ctx.supabase
+          .from("candidates")
+          .update({
+            slug: input.new_slug,
+            first_name: input.first_name,
+            middle_name: input.middle_name,
+            last_name: input.last_name,
+            position_id: input.position_id,
+            partylist_id: input.partylist_id,
+            image_path: input.image
+              ? await fetch(input.image.base64)
+                  .then((res) => res.blob())
+                  .then(async (blob) => {
+                    const { data } = await ctx.supabase.storage
+                      .from("candidates")
+                      .upload(`${input.id}/images/${Date.now()}`, blob);
 
-                  return data?.path;
-                })
-            : input.image,
-        })
-        .eq("id", input.id)
-        .eq("election_id", input.election_id)
-        .is("deleted_at", null);
-
-      await ctx.supabase.from("platforms").upsert(
-        input.platforms.map((platform) => ({
-          id: platform.id,
-          title: platform.title,
-          description: platform.description,
-          candidate_id: input.id,
-        })),
-      );
-
-      await ctx.supabase.from("affiliations").upsert(
-        input.affiliations.map((affiliation) => ({
-          id: affiliation.id,
-          org_name: affiliation.org_name,
-          org_position: affiliation.org_position,
-          start_year: affiliation.start_year,
-          end_year: affiliation.end_year,
-          credential_id: input.credential_id,
-        })),
-      );
-
-      await ctx.supabase.from("achievements").upsert(
-        input.achievements.map((achievement) => ({
-          id: achievement.id,
-          name: achievement.name,
-          year: achievement.year,
-          credential_id: input.credential_id,
-        })),
-      );
-
-      await ctx.supabase.from("events_attended").upsert(
-        input.eventsAttended.map((event) => ({
-          id: event.id,
-          name: event.name,
-          year: event.year,
-          credential_id: input.credential_id,
-        })),
-      );
+                    return data?.path;
+                  })
+              : input.image,
+          })
+          .eq("id", input.id)
+          .eq("election_id", input.election_id)
+          .is("deleted_at", null),
+        ctx.supabase.from("platforms").upsert(
+          input.platforms.map((platform) => ({
+            id: platform.id,
+            title: platform.title,
+            description: platform.description,
+            candidate_id: input.id,
+          })),
+        ),
+        ctx.supabase.from("affiliations").upsert(
+          input.affiliations.map((affiliation) => ({
+            id: affiliation.id,
+            org_name: affiliation.org_name,
+            org_position: affiliation.org_position,
+            start_year: new Date(affiliation.start_year).toDateString(),
+            end_year: new Date(affiliation.end_year).toDateString(),
+            credential_id: input.credential_id,
+          })),
+        ),
+        ctx.supabase.from("achievements").upsert(
+          input.achievements.map((achievement) => ({
+            id: achievement.id,
+            name: achievement.name,
+            year: new Date(achievement.year).toDateString(),
+            credential_id: input.credential_id,
+          })),
+        ),
+        ctx.supabase.from("events_attended").upsert(
+          input.eventsAttended.map((event) => ({
+            id: event.id,
+            name: event.name,
+            year: new Date(event.year).toDateString(),
+            credential_id: input.credential_id,
+          })),
+        ),
+      ]);
     }),
   createSingle: protectedProcedure
     .input(
@@ -349,39 +347,38 @@ export const candidateRouter = createTRPCRouter({
           .eq("id", candidate.id);
       }
 
-      await ctx.supabase.from("platforms").insert(
-        input.platforms.map((platform) => ({
-          title: platform.title,
-          description: platform.description,
-          candidate_id: candidate.id,
-        })),
-      );
-
-      await ctx.supabase.from("affiliations").insert(
-        input.affiliations.map((affiliation) => ({
-          org_name: affiliation.org_name,
-          org_position: affiliation.org_position,
-          start_year: affiliation.start_year,
-          end_year: affiliation.end_year,
-          credential_id: credential.id,
-        })),
-      );
-
-      await ctx.supabase.from("achievements").insert(
-        input.achievements.map((achievement) => ({
-          name: achievement.name,
-          year: achievement.year,
-          credential_id: credential.id,
-        })),
-      );
-
-      await ctx.supabase.from("events_attended").insert(
-        input.eventsAttended.map((event) => ({
-          name: event.name,
-          year: event.year,
-          credential_id: credential.id,
-        })),
-      );
+      await Promise.all([
+        ctx.supabase.from("platforms").insert(
+          input.platforms.map((platform) => ({
+            title: platform.title,
+            description: platform.description,
+            candidate_id: candidate.id,
+          })),
+        ),
+        ctx.supabase.from("affiliations").insert(
+          input.affiliations.map((affiliation) => ({
+            org_name: affiliation.org_name,
+            org_position: affiliation.org_position,
+            start_year: new Date(affiliation.start_year).toDateString(),
+            end_year: new Date(affiliation.end_year).toDateString(),
+            credential_id: credential.id,
+          })),
+        ),
+        ctx.supabase.from("achievements").insert(
+          input.achievements.map((achievement) => ({
+            name: achievement.name,
+            year: new Date(achievement.year).toDateString(),
+            credential_id: credential.id,
+          })),
+        ),
+        ctx.supabase.from("events_attended").insert(
+          input.eventsAttended.map((event) => ({
+            name: event.name,
+            year: new Date(event.year).toDateString(),
+            credential_id: credential.id,
+          })),
+        ),
+      ]);
 
       return { candidate_id: candidate.id };
     }),
