@@ -25,6 +25,7 @@ import type { RouterOutputs } from "@eboto/api";
 export default function AccountPageClient(
   props: RouterOutputs["auth"]["getUserProtected"],
 ) {
+  const utils = api.useUtils();
   const openRef = useRef<() => void>(null);
   const [loading, setLoading] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
@@ -80,6 +81,7 @@ export default function AccountPageClient(
 
   const updateProfileMutation = api.user.updateProfile.useMutation({
     onSuccess: async () => {
+      await utils.auth.getUser.invalidate();
       const user = await getUserProtectedQuery.refetch();
 
       const dataFormatted = {

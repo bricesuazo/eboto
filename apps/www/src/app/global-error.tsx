@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import classes from "@/styles/NotFound.module.css";
 import { Button, Center, Container, Group, Text, Title } from "@mantine/core";
+import * as Sentry from "@sentry/nextjs";
 import Balancer from "react-wrap-balancer";
 
 export default function GlobalError({
@@ -13,6 +15,9 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    Sentry.captureException(error);
+  }, [error]);
   return (
     <Container className={classes.root} size="md">
       <Center mb="xl" style={{ flexDirection: "column" }}>

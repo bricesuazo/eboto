@@ -2,7 +2,18 @@
 
 import classes from "@/styles/Position.module.css";
 import { api } from "@/trpc/client";
-import { Box, Flex, Group, Stack, Text } from "@mantine/core";
+import {
+  ActionIcon,
+  Box,
+  Flex,
+  Group,
+  Popover,
+  PopoverDropdown,
+  PopoverTarget,
+  Stack,
+  Text,
+} from "@mantine/core";
+import { IconInfoCircle } from "@tabler/icons-react";
 
 import type { RouterOutputs } from "@eboto/api";
 
@@ -42,17 +53,49 @@ export default function DashboardPosition({
                   {position.name}
                 </Text>
 
-                <Text fz="sm" ta="center">
-                  {`${
-                    position.min === 0
-                      ? position.max
-                      : `${position.min} - ${position.max}`
-                  } candidate${
-                    position.max - position.min > 1 || position.min > 0
-                      ? "s"
-                      : ""
-                  }`}
-                </Text>
+                <Flex align="center" gap={4}>
+                  <Text fz="sm" ta="center">
+                    {`${
+                      position.min === 0
+                        ? position.max === 1
+                          ? "Single "
+                          : "Up to " + position.max
+                        : `${position.min} - ${position.max}`
+                    } candidate${
+                      position.max - position.min > 1 || position.min > 0
+                        ? "s"
+                        : ""
+                    }`}
+                  </Text>
+                  <Popover width={240} position="bottom" withArrow shadow="md">
+                    <PopoverTarget>
+                      <ActionIcon
+                        size="xs"
+                        color="gray"
+                        variant="subtle"
+                        radius="xl"
+                        aria-label="Publicity information"
+                      >
+                        <IconInfoCircle />
+                      </ActionIcon>
+                    </PopoverTarget>
+                    <PopoverDropdown>
+                      <Text size="sm">
+                        This position allows voters to vote for{" "}
+                        {position.min === 0
+                          ? position.max === 1
+                            ? " one"
+                            : ` up to ${position.max}`
+                          : ` a minimum of ${position.min} and a maximum of ${position.max}`}{" "}
+                        candidate
+                        {position.max - position.min > 1 || position.min > 0
+                          ? "s"
+                          : ""}
+                        .
+                      </Text>
+                    </PopoverDropdown>
+                  </Popover>
+                </Flex>
               </Box>
 
               <Flex gap="xs">
