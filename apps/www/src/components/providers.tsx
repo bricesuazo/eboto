@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState } from "react";
+import { Poppins } from "next/font/google";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { SPOTLIGHT_DATA } from "@/config/site";
@@ -31,6 +32,15 @@ import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 import Realistic from "react-canvas-confetti/dist/presets/realistic";
 import type { TConductorInstance } from "react-canvas-confetti/dist/types";
+
+export const font = Poppins({
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  subsets: ["latin"],
+});
+
+// const font = Lexend({
+//   subsets: ["latin"],
+// });
 
 export const theme = createTheme({
   components: {
@@ -103,7 +113,7 @@ export const theme = createTheme({
     }),
   },
   primaryColor: "green",
-  // fontFamily: font.style.fontFamily,
+  fontFamily: font.style.fontFamily,
   defaultGradient: {
     from: "green",
     to: "#6BD731",
