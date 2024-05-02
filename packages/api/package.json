@@ -28,7 +28,7 @@
     "@eboto/tsconfig": "workspace:*",
     "@supabase/supabase-js": "^2.43.0",
     "@types/uuid": "^9.0.8",
-    "eslint": "^9.1.1",
+    "eslint": "^8.57.0",
     "prettier": "^3.2.5",
     "typescript": "^5.4.5"
   },

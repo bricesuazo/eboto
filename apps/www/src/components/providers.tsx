@@ -5,13 +5,120 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { SPOTLIGHT_DATA } from "@/config/site";
 import { api } from "@/trpc/client";
-import { Center, rem } from "@mantine/core";
+import {
+  Center,
+  Combobox,
+  createTheme,
+  Input,
+  NumberInput,
+  rem,
+  Select,
+  Textarea,
+  TextInput,
+} from "@mantine/core";
+import {
+  DateInput,
+  DatePickerInput,
+  DateTimePicker,
+  MonthPickerInput,
+  TimeInput,
+  YearPickerInput,
+} from "@mantine/dates";
 import { Spotlight } from "@mantine/spotlight";
 import { IconLayoutDashboard, IconSearch } from "@tabler/icons-react";
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 import Realistic from "react-canvas-confetti/dist/presets/realistic";
 import type { TConductorInstance } from "react-canvas-confetti/dist/types";
+
+export const theme = createTheme({
+  components: {
+    Input: Input.extend({
+      defaultProps: {
+        size: "md",
+      },
+    }),
+    TextInput: TextInput.extend({
+      defaultProps: {
+        size: "md",
+      },
+    }),
+    Textarea: Textarea.extend({
+      defaultProps: {
+        size: "md",
+      },
+    }),
+    Select: Select.extend({
+      defaultProps: {
+        size: "md",
+      },
+    }),
+    Combobox: Combobox.extend({
+      defaultProps: {
+        size: "md",
+      },
+    }),
+
+    NumberInput: NumberInput.extend({
+      defaultProps: {
+        size: "md",
+      },
+    }),
+
+    DateInput: DateInput.extend({
+      defaultProps: {
+        size: "md",
+      },
+    }),
+    DateTimePicker: DateTimePicker.extend({
+      defaultProps: {
+        size: "md",
+      },
+    }),
+    DatePickerInput: DatePickerInput.extend({
+      defaultProps: {
+        size: "md",
+      },
+    }),
+    MonthPickerInput: MonthPickerInput.extend({
+      defaultProps: {
+        size: "md",
+      },
+    }),
+    YearPickerInput: YearPickerInput.extend({
+      defaultProps: {
+        size: "md",
+      },
+    }),
+    TimeInput: TimeInput.extend({
+      defaultProps: {
+        size: "md",
+      },
+    }),
+  },
+  primaryColor: "green",
+  // fontFamily: font.style.fontFamily,
+  defaultGradient: {
+    from: "green",
+    to: "#6BD731",
+    deg: 5,
+  },
+  colors: {
+    dark: [
+      "#C1C2C5",
+      "#A6A7AB",
+      "#909296",
+      "#5c5f66",
+      "#373A40",
+      "#2C2E33",
+      "#25262b",
+      "#1A1B1E",
+      "#141517",
+      "#101113",
+    ],
+    // Old dark mode. Changed in mantine@7.3.0
+  },
+});
 
 const confettiContext = createContext(
   {} as ReturnType<typeof useProvideConfetti>,

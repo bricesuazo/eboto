@@ -11,7 +11,7 @@ import {
   // Lexend,
   Poppins,
 } from "next/font/google";
-import { Providers } from "@/components/providers";
+import { Providers, theme } from "@/components/providers";
 import { siteConfig } from "@/config/site";
 import { getBaseUrl } from "@/trpc/shared";
 import TRPCProvider from "@/trpc/TRPCProvider";
@@ -159,32 +159,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         />
       </head>
       <body className={font.className}>
-        <MantineProvider
-          theme={{
-            primaryColor: "green",
-            fontFamily: font.style.fontFamily,
-            defaultGradient: {
-              from: "green",
-              to: "#6BD731",
-              deg: 5,
-            },
-            colors: {
-              dark: [
-                "#C1C2C5",
-                "#A6A7AB",
-                "#909296",
-                "#5c5f66",
-                "#373A40",
-                "#2C2E33",
-                "#25262b",
-                "#1A1B1E",
-                "#141517",
-                "#101113",
-              ],
-              // Old dark mode. Changed in mantine@7.3.0
-            },
-          }}
-        >
+        <MantineProvider theme={theme}>
           <TRPCProvider>
             <Notifications />
             <Providers>{children}</Providers>

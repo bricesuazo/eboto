@@ -20,7 +20,7 @@
     "@eboto/prettier-config": "workspace:*",
     "@eboto/tsconfig": "workspace:*",
     "@types/eslint": "^8.56.10",
-    "eslint": "^9.1.1",
+    "eslint": "^8.57.0",
     "typescript": "^5.4.5"
   },
   "prettier": "@eboto/prettier-config"
