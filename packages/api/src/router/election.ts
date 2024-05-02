@@ -1121,7 +1121,19 @@ export const electionRouter = createTRPCRouter({
 
     if (!elections) throw new TRPCError({ code: "NOT_FOUND" });
 
-    return elections;
+    return elections.map((election) => {
+      let logo_url: string | null = null;
+
+      if (election.logo_path) {
+        const { data: image } = ctx.supabase.storage
+          .from("elections")
+          .getPublicUrl(election.logo_path);
+
+        logo_url = image.publicUrl;
+      }
+
+      return { ...election, logo_url };
+    });
   }),
   getAllCommissionerByElectionSlug: protectedProcedure
     .input(z.object({ election_slug: z.string() }))

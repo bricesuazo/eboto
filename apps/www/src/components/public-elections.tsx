@@ -60,9 +60,9 @@ export default function PublicElections() {
                 <Flex direction="column" justify="space-between" h="100%">
                   <Stack gap="sm">
                     <Center>
-                      {election.logo_path ? (
+                      {election.logo_url ? (
                         <Image
-                          src={election.logo_path}
+                          src={election.logo_url}
                           alt={election.name + " logo"}
                           width={200}
                           height={200}
