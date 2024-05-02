@@ -108,7 +108,7 @@ export default function ElectionCandidate({
                     display: "block",
                     width: "100%",
                   }}
-                  client="ca-pub-5390007673890590"
+                  client="ca-pub-8867310433048493"
                   slot="6949415137"
                   format="auto"
                   responsive="true"
