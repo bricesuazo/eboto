@@ -7,7 +7,8 @@ import "@mantine/spotlight/styles.css";
 import "@mantine/carousel/styles.css";
 
 import type { Metadata } from "next";
-import { font, Providers, theme } from "@/components/providers";
+import { Poppins } from "next/font/google";
+import { Providers, theme } from "@/components/providers";
 import { siteConfig } from "@/config/site";
 import { getBaseUrl } from "@/trpc/shared";
 import TRPCProvider from "@/trpc/TRPCProvider";
@@ -16,6 +17,15 @@ import { Notifications } from "@mantine/notifications";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { env } from "env.mjs";
+
+const font = Poppins({
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  subsets: ["latin"],
+});
+
+// const font = Lexend({
+//   subsets: ["latin"],
+// });
 
 // export const runtime = "edge";
 

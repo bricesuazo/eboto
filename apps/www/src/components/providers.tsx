@@ -33,14 +33,10 @@ import { PostHogProvider } from "posthog-js/react";
 import Realistic from "react-canvas-confetti/dist/presets/realistic";
 import type { TConductorInstance } from "react-canvas-confetti/dist/types";
 
-export const font = Poppins({
+const font = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   subsets: ["latin"],
 });
-
-// const font = Lexend({
-//   subsets: ["latin"],
-// });
 
 export const theme = createTheme({
   components: {
