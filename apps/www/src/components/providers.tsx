@@ -10,6 +10,7 @@ import {
   Combobox,
   createTheme,
   Input,
+  InputBase,
   NumberInput,
   rem,
   Select,
@@ -34,6 +35,11 @@ import type { TConductorInstance } from "react-canvas-confetti/dist/types";
 export const theme = createTheme({
   components: {
     Input: Input.extend({
+      defaultProps: {
+        size: "md",
+      },
+    }),
+    InputBase: InputBase.extend({
       defaultProps: {
         size: "md",
       },

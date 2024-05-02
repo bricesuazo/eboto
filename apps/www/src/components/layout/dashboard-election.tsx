@@ -366,14 +366,10 @@ export default function DashboardElection({
                       disabled={!elections}
                     >
                       {currentElection?.name ? (
-                        <Text truncate size="sm">
-                          {currentElection?.name}
-                        </Text>
+                        <Text truncate>{currentElection?.name}</Text>
                       ) : (
                         <InputPlaceholder>
-                          <Text truncate size="sm">
-                            Select an election
-                          </Text>
+                          <Text truncate>Select an election</Text>
                         </InputPlaceholder>
                       )}
                     </InputBase>
