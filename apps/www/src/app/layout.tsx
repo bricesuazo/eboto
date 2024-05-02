@@ -82,7 +82,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         <ColorSchemeScript />
         <script
           async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8867310433048493"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5390007673890590"
           crossOrigin="anonymous"
         ></script>
         {/* TODO: Remove this once safari fix auto scale */}
