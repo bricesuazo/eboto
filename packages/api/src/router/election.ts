@@ -1352,13 +1352,14 @@ export const electionRouter = createTRPCRouter({
   getMyElectionAsVoter: protectedProcedure.query(async ({ ctx }) => {
     const { data: electionsThatICanVoteIn } = await ctx.supabase
       .from("elections")
-      .select("*, voters(*, votes(*))")
+      .select(
+        "*, positions(id, name), voters(*, votes(*, position:positions(id, name), candidate:candidates(id, first_name, middle_name, last_name)))",
+      )
       .neq("publicity", "PRIVATE")
       .is("deleted_at", null)
       .eq("voters.email", ctx.user.db.email)
       .is("voters.deleted_at", null)
-      .limit(1, { referencedTable: "voters" })
-      .limit(1, { referencedTable: "voters.votes" });
+      .limit(1, { referencedTable: "voters" });
 
     if (!electionsThatICanVoteIn) throw new TRPCError({ code: "NOT_FOUND" });
 
@@ -1378,9 +1379,7 @@ export const electionRouter = createTRPCRouter({
           ...election,
           logo_url,
           is_free: true,
-          is_voted: election.voters[0]
-            ? election.voters[0].votes.length > 0
-            : false,
+          votes: election.voters[0]?.votes ?? [],
         };
       })
       .sort(

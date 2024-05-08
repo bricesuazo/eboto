@@ -54,7 +54,7 @@ export function MyElectionsAsVoter({
             key={election.id}
             election={election}
             type="vote"
-            hasVoted={election.is_voted}
+            votes={election.votes}
           />
         ))
       )}

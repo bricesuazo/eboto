@@ -20,13 +20,13 @@
     "moment": "^2.30.1",
     "superjson": "^2.2.1",
     "uuid": "^9.0.1",
-    "zod": "^3.23.5"
+    "zod": "^3.23.7"
   },
   "devDependencies": {
     "@eboto/eslint-config": "workspace:*",
     "@eboto/prettier-config": "workspace:*",
     "@eboto/tsconfig": "workspace:*",
-    "@supabase/supabase-js": "^2.43.0",
+    "@supabase/supabase-js": "^2.43.1",
     "@types/uuid": "^9.0.8",
     "eslint": "^8.57.0",
     "prettier": "^3.2.5",

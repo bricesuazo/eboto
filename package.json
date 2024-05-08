@@ -25,7 +25,7 @@
     "@manypkg/cli": "^0.21.4",
     "@turbo/gen": "^1.13.3",
     "prettier": "^3.2.5",
-    "semver": "^7.6.0",
+    "semver": "^7.6.1",
     "turbo": "^1.13.3",
     "typescript": "^5.4.5"
   }
