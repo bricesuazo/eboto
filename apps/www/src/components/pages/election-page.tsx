@@ -75,12 +75,8 @@ export default function ElectionPage({
   const {
     data: { election, positions, hasVoted, myVoterData, isVoterCanMessage },
   } = api.election.getElectionPage.useQuery(
-    {
-      election_slug,
-    },
-    {
-      initialData: data,
-    },
+    { election_slug },
+    { initialData: data },
   );
 
   const form = useForm<Record<string, string>>({
@@ -278,7 +274,7 @@ export default function ElectionPage({
               {isElectionOngoing({ election }) && !hasVoted && myVoterData && (
                 <>
                   {(election.voter_fields.length > 0 && !myVoterData.field) ||
-                  Object.values(myVoterData.field).some(
+                  Object.values(myVoterData.field ?? {}).some(
                     (value) => !value || value.trim() === "",
                   ) ? (
                     <Button
