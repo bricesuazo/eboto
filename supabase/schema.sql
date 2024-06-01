@@ -14,10 +14,6 @@ CREATE EXTENSION IF NOT EXISTS "pg_net" WITH SCHEMA "extensions";
 
 CREATE EXTENSION IF NOT EXISTS "pgsodium" WITH SCHEMA "pgsodium";
 
-CREATE SCHEMA IF NOT EXISTS "public";
-
-ALTER SCHEMA "public" OWNER TO "pg_database_owner";
-
 COMMENT ON SCHEMA "public" IS 'standard public schema';
 
 CREATE EXTENSION IF NOT EXISTS "pg_graphql" WITH SCHEMA "graphql";
@@ -170,7 +166,7 @@ CREATE TABLE IF NOT EXISTS "public"."elections" (
     "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
     "slug" "text" NOT NULL,
     "name" "text" NOT NULL,
-    "description" "text",
+    "description" "text" DEFAULT ''::"text" NOT NULL,
     "start_date" timestamp with time zone NOT NULL,
     "end_date" timestamp with time zone NOT NULL,
     "voting_hour_start" smallint DEFAULT '7'::smallint NOT NULL,
@@ -602,6 +598,8 @@ ALTER TABLE "public"."voter_fields" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "public"."voters" ENABLE ROW LEVEL SECURITY;
 
 ALTER TABLE "public"."votes" ENABLE ROW LEVEL SECURITY;
+
+ALTER PUBLICATION "supabase_realtime" OWNER TO "postgres";
 
 GRANT USAGE ON SCHEMA "public" TO "postgres";
 GRANT USAGE ON SCHEMA "public" TO "anon";

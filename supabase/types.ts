@@ -380,7 +380,7 @@ export type Database = {
         Row: {
           created_at: string
           deleted_at: string | null
-          description: string | null
+          description: string
           end_date: string
           id: string
           is_candidates_visible_in_realtime_when_ongoing: boolean
@@ -400,7 +400,7 @@ export type Database = {
         Insert: {
           created_at?: string
           deleted_at?: string | null
-          description?: string | null
+          description?: string
           end_date: string
           id?: string
           is_candidates_visible_in_realtime_when_ongoing?: boolean
@@ -420,7 +420,7 @@ export type Database = {
         Update: {
           created_at?: string
           deleted_at?: string | null
-          description?: string | null
+          description?: string
           end_date?: string
           id?: string
           is_candidates_visible_in_realtime_when_ongoing?: boolean
