@@ -6,15 +6,18 @@ import UploadBulkVoter from "@/components/modals/upload-bulk-voter";
 import { api } from "@/trpc/client";
 import {
   ActionIcon,
+  Alert,
   Box,
   Button,
   Flex,
   Group,
+  Modal,
   Stack,
   Text,
   Tooltip,
 } from "@mantine/core";
-import { IconRefresh } from "@tabler/icons-react";
+import { useDisclosure } from "@mantine/hooks";
+import { IconInfoCircle, IconRefresh } from "@tabler/icons-react";
 import type { MRT_ColumnDef, MRT_RowSelectionState } from "mantine-react-table";
 import {
   MantineReactTable,
@@ -41,6 +44,7 @@ export default function DashboardVoter({
     { election_slug: data.election.slug },
     { initialData: data },
   );
+  const [infoOpened, { close, open }] = useDisclosure(false);
 
   const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
 
@@ -169,9 +173,9 @@ export default function DashboardVoter({
           </Tooltip>
         </Flex>
 
-        <Flex gap="xs">
-          <MRT_GlobalFilterTextInput table={table} />
-          <MRT_ToggleFiltersButton table={table} />
+        <Flex>
+          <MRT_GlobalFilterTextInput table={table} size="sm" />
+          <MRT_ToggleFiltersButton table={table} size={36} />
         </Flex>
       </Flex>
     ),
@@ -206,6 +210,20 @@ export default function DashboardVoter({
 
   return (
     <Box>
+      <Modal
+        opened={infoOpened}
+        onClose={close}
+        title="Additional informations"
+      >
+        <Alert variant="transparent" color="gray" icon={<IconInfoCircle />}>
+          An email will be sent to the voter&apos;s email address with a link to
+          vote when the election starts.
+        </Alert>
+
+        <Alert variant="transparent" color="gray" icon={<IconInfoCircle />}>
+          You can&apos;t change the group of voters once the election starts.
+        </Alert>
+      </Modal>
       <Stack>
         <Flex
           gap="xs"
@@ -233,6 +251,13 @@ export default function DashboardVoter({
               }
             />
           </Tooltip>
+
+          <Tooltip label="Additional informations">
+            <ActionIcon onClick={open} size={36} variant="subtle">
+              <IconInfoCircle size={20} />
+            </ActionIcon>
+          </Tooltip>
+
           {votersQuery.data.election.voter_domain && (
             <Tooltip label="Voter's email with this domain will be allowed to vote">
               <Text size="sm">

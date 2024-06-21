@@ -23,7 +23,6 @@ import {
   AppShellHeader,
   AppShellMain,
   AppShellNavbar,
-  Badge,
   Box,
   Button,
   Card,
@@ -45,7 +44,6 @@ import {
   InputBase,
   InputPlaceholder,
   Loader,
-  Modal,
   Popover,
   PopoverDropdown,
   PopoverTarget,
@@ -60,9 +58,6 @@ import {
   Text,
   Textarea,
   TextInput,
-  ThemeIcon,
-  Tooltip,
-  TooltipGroup,
   UnstyledButton,
   useCombobox,
 } from "@mantine/core";
@@ -72,7 +67,6 @@ import { notifications } from "@mantine/notifications";
 import {
   IconAlertCircle,
   IconAlertTriangle,
-  IconAt,
   IconCheck,
   IconChevronLeft,
   IconExternalLink,
@@ -81,8 +75,6 @@ import {
   IconMessage2X,
   IconPlus,
   IconSend,
-  IconUserMinus,
-  IconUserPlus,
 } from "@tabler/icons-react";
 import { zodResolver } from "mantine-form-zod-resolver";
 import moment from "moment";
@@ -118,7 +110,7 @@ export default function DashboardElection({
 
   const pathname = usePathname();
 
-  const [opened, { open, close }] = useDisclosure(false);
+  // const [opened, { open, close }] = useDisclosure(false);
 
   const getAllCommissionerByElectionSlugQuery =
     api.election.getAllCommissionerByElectionSlug.useQuery(
@@ -180,17 +172,17 @@ export default function DashboardElection({
     },
   });
 
-  useEffect(() => {
-    if (opened) {
-      form.reset();
-      addCommissionerMutation.reset();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [opened]);
+  // useEffect(() => {
+  //   if (opened) {
+  //     form.reset();
+  //     addCommissionerMutation.reset();
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [opened]);
 
   return (
     <>
-      <Modal
+      {/* <Modal
         opened={opened}
         onClose={close}
         title={`Commissioners of ${currentElection?.name}`}
@@ -217,7 +209,7 @@ export default function DashboardElection({
                 <ActionIcon
                   type="submit"
                   variant="light"
-                  size={36}
+                  size={42}
                   loading={addCommissionerMutation.isPending}
                 >
                   <IconUserPlus size="1.5rem" />
@@ -296,7 +288,7 @@ export default function DashboardElection({
             ))}
           </Box>
         </Stack>
-      </Modal>
+      </Modal> */}
       <AppShell
         header={{ height: 60 }}
         footer={{ height: 52 }}
@@ -491,7 +483,7 @@ export default function DashboardElection({
               </Stack>
             </Stack>
 
-            <Stack gap="xs">
+            {/* <Stack gap="xs">
               <Divider />
               <Stack gap="xs" mb={{ xs: "lg" }}>
                 <Group justify="space-between">
@@ -503,7 +495,7 @@ export default function DashboardElection({
                     size="sm"
                     variant="light"
                     radius="xl"
-                    aria-label="Settings"
+                    aria-label="Add commissioner"
                     disabled={getAllCommissionerByElectionSlugQuery.isLoading}
                   >
                     <IconPlus size={16} />
@@ -558,7 +550,7 @@ export default function DashboardElection({
                   </Group>
                 </TooltipGroup>
               </Stack>
-            </Stack>
+            </Stack> */}
 
             <Stack hiddenFrom="xs">
               <Divider />

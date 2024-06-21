@@ -64,7 +64,6 @@ export default function DashboardOverview({
       refetchOnReconnect: true,
     },
   );
-  console.log("🚀 ~ election:", election);
   const getVoterFieldsStatsQuery = api.election.getVoterFieldsStats.useQuery(
     {
       election_id: data.id,
