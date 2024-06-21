@@ -1028,15 +1028,17 @@ function Chat({ chat, onBack }: { chat: ChatType; onBack: () => void }) {
             error={!!form.errors.message}
             disabled={sendMessageAsCommissionerMutation.isPending}
           />
-          <ActionIcon
-            type="submit"
-            variant="default"
-            aria-label="Send"
-            size={36}
-            loading={sendMessageAsCommissionerMutation.isPending}
-          >
-            <IconSend stroke={1} />
-          </ActionIcon>
+          <div>
+            <ActionIcon
+              type="submit"
+              variant="default"
+              aria-label="Send"
+              size={42}
+              loading={sendMessageAsCommissionerMutation.isPending}
+            >
+              <IconSend stroke={1} />
+            </ActionIcon>
+          </div>
         </Flex>
       </form>
     </Stack>

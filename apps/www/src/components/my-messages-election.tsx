@@ -374,7 +374,7 @@ function Chat({
                 type="submit"
                 variant="default"
                 aria-label="Send"
-                size={36}
+                size={42}
                 loading={sendMessageAsVoterMutation.isPending}
               >
                 <IconSend stroke={1} />
