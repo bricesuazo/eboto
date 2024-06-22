@@ -52,7 +52,7 @@ export default async function VotePage({
 
   if (!election) notFound();
 
-  // if (!isElectionOngoing({ election })) redirect(`/${election.slug}`);
+  if (!isElectionOngoing({ election })) redirect(`/${election.slug}`);
 
   const { data: voter } = await supabaseAdmin
     .from("voters")
