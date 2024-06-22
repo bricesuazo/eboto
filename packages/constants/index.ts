@@ -7,7 +7,7 @@ import {
   IconUserSearch,
 } from "@tabler/icons-react";
 import type { Icon, IconProps } from "@tabler/icons-react";
-import moment from "moment";
+import { add, getHours, isAfter, isWithinInterval, sub } from "date-fns";
 import { z } from "zod";
 
 import { Database } from "./../../supabase/types";
@@ -61,9 +61,14 @@ export const isElectionEnded = ({
 }: {
   election: Database["public"]["Tables"]["elections"]["Row"];
 }) => {
-  return moment().isAfter(
-    moment(election.end_date).add(election.voting_hour_end, "hours"),
+  return isAfter(
+    new Date(),
+    add(election.end_date, { hours: election.voting_hour_end }),
   );
+
+  //   return moment().isAfter(
+  //   moment(election.end_date).add(election.voting_hour_end, "hours"),
+  // );
   // return (
   //   moment().isAfter(end_date, "day") &&
   //   now.getHours() >= election.voting_hour_end
@@ -85,20 +90,35 @@ export const isElectionOngoing = ({
   withoutHours?: true;
 }) => {
   if (withoutHours) {
-    return moment().isBetween(
-      moment(election.start_date),
-      moment(election.end_date).add(1, "day").subtract(1, "millisecond"),
-    );
+    return isWithinInterval(new Date(), {
+      start: election.start_date,
+      end: sub(add(election.end_date, { days: 1 }), { seconds: 1 }),
+    });
   }
 
+  // if (withoutHours) {
+  //   return moment().isBetween(
+  //     moment(election.start_date),
+  //     moment(election.end_date).add(1, "day").subtract(1, "millisecond"),
+  //   );
+  // }
+
   return (
-    moment().isBetween(
-      moment(election.start_date),
-      moment(election.end_date).add(1, "day").subtract(1, "millisecond"),
-    ) &&
-    moment().get("hours") >= election.voting_hour_start &&
-    moment().get("hours") < election.voting_hour_end
+    isWithinInterval(new Date(), {
+      start: election.start_date,
+      end: sub(add(election.end_date, { days: 1 }), { seconds: 1 }),
+    }) &&
+    getHours(new Date()) >= election.voting_hour_start &&
+    getHours(new Date()) < election.voting_hour_end
   );
+  // return (
+  //   moment().isBetween(
+  //     moment(election.start_date),
+  //     moment(election.end_date).add(1, "day").subtract(1, "millisecond"),
+  //   ) &&
+  //   moment().get("hours") >= election.voting_hour_start &&
+  //   moment().get("hours") < election.voting_hour_end
+  // );
 
   // if (withoutHours) {
   //   return (
