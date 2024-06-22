@@ -108,8 +108,20 @@ export const isElectionOngoing = ({
       start: election.start_date,
       end: sub(add(election.end_date, { days: 1 }), { seconds: 1 }),
     }) &&
-    getHours(new Date()) >= election.voting_hour_start &&
-    getHours(new Date()) < election.voting_hour_end
+    isWithinInterval(new Date(), {
+      start: new Date(
+        new Date().getFullYear(),
+        new Date().getMonth(),
+        new Date().getDate(),
+        election.voting_hour_start,
+      ),
+      end: new Date(
+        new Date().getFullYear(),
+        new Date().getMonth(),
+        new Date().getDate(),
+        election.voting_hour_end,
+      ),
+    })
   );
   // return (
   //   moment().isBetween(
