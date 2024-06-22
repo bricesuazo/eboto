@@ -8,7 +8,6 @@ import {
 } from "@tabler/icons-react";
 import type { Icon, IconProps } from "@tabler/icons-react";
 import { add, getHours, isAfter, isWithinInterval, sub } from "date-fns";
-import { el } from "date-fns/locale";
 import { z } from "zod";
 
 import { Database } from "./../../supabase/types";
@@ -62,25 +61,15 @@ export const isElectionEnded = ({
 }: {
   election: Database["public"]["Tables"]["elections"]["Row"];
 }) => {
+  const now =
+    is_local || is_client
+      ? new Date()
+      : add(new Date(), { hours: -new Date().getTimezoneOffset() / 60 });
+
   return isAfter(
-    new Date(),
+    now,
     add(election.end_date, { hours: election.voting_hour_end }),
   );
-
-  //   return moment().isAfter(
-  //   moment(election.end_date).add(election.voting_hour_end, "hours"),
-  // );
-  // return (
-  //   moment().isAfter(end_date, "day") &&
-  //   now.getHours() >= election.voting_hour_end
-  // );
-
-  // return (
-  //   now.getFullYear() >= end_date.getFullYear() &&
-  //   now.getMonth() >= end_date.getMonth() &&
-  //   now.getDate() >= end_date.getDate() &&
-  //   now.getHours() >= election.voting_hour_end
-  // );
 };
 
 export const isElectionOngoing = ({
@@ -96,64 +85,19 @@ export const isElectionOngoing = ({
       end: sub(add(election.end_date, { days: 1 }), { seconds: 1 }),
     });
   }
-
-  // if (withoutHours) {
-  //   return moment().isBetween(
-  //     moment(election.start_date),
-  //     moment(election.end_date).add(1, "day").subtract(1, "millisecond"),
-  //   );
-  // }
+  const now =
+    is_local || is_client
+      ? new Date()
+      : add(new Date(), { hours: -new Date().getTimezoneOffset() / 60 });
 
   return (
-    isWithinInterval(new Date(), {
+    isWithinInterval(now, {
       start: add(election.start_date, { hours: election.voting_hour_start }),
       end: add(election.end_date, { hours: election.voting_hour_end }),
     }) &&
-    isWithinInterval(new Date(), {
-      start: new Date(
-        new Date().getFullYear(),
-        new Date().getMonth(),
-        new Date().getDate(),
-        election.voting_hour_start,
-      ),
-      end: new Date(
-        new Date().getFullYear(),
-        new Date().getMonth(),
-        new Date().getDate(),
-        election.voting_hour_end,
-      ),
-    })
+    getHours(now) >= election.voting_hour_start &&
+    getHours(now) < election.voting_hour_end
   );
-  // return (
-  //   moment().isBetween(
-  //     moment(election.start_date),
-  //     moment(election.end_date).add(1, "day").subtract(1, "millisecond"),
-  //   ) &&
-  //   moment().get("hours") >= election.voting_hour_start &&
-  //   moment().get("hours") < election.voting_hour_end
-  // );
-
-  // if (withoutHours) {
-  //   return (
-  //     now.getFullYear() >= start_date.getFullYear() &&
-  //     now.getMonth() >= start_date.getMonth() &&
-  //     now.getDate() >= start_date.getDate() &&
-  //     now.getFullYear() <= end_date.getFullYear() &&
-  //     now.getMonth() <= end_date.getMonth() &&
-  //     now.getDate() <= end_date.getDate()
-  //   );
-  // }
-
-  // return (
-  //   now.getFullYear() >= start_date.getFullYear() &&
-  //   now.getMonth() >= start_date.getMonth() &&
-  //   now.getDate() >= start_date.getDate() &&
-  //   now.getHours() >= election.voting_hour_start &&
-  //   now.getFullYear() <= end_date.getFullYear() &&
-  //   now.getMonth() <= end_date.getMonth() &&
-  //   now.getDate() <= end_date.getDate() &&
-  //   now.getHours() < election.voting_hour_end
-  // );
 };
 
 export function formatName(
@@ -462,3 +406,7 @@ export const FAQs: { id: string; question: string; answer: string }[] = [
       "Yes, eBoto offers a template for SSG Elections, and you can customize it further in the dashboard page to suit your specific requirements.",
   },
 ];
+
+export const is_client = !!(typeof window != "undefined" && window.document);
+
+export const is_local = process.env.NODE_ENV === "development";
