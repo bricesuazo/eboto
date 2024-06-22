@@ -76,22 +76,30 @@ export const isElectionOngoing = ({
   election: Database["public"]["Tables"]["elections"]["Row"];
   withoutHours?: true;
 }) => {
-  const now = add(new Date(), { hours: -new Date().getTimezoneOffset() / 60 });
+  const timezoneOffset = new Date().getTimezoneOffset() / 60;
+  console.log("🚀 ~ timezoneOffset:", timezoneOffset);
+  console.log(
+    "🚀 ~ returnisWithinInterval ~ election.start_date:",
+    election.start_date,
+  );
+  console.log("🚀 ~ end:sub ~ election.end_date:", election.end_date);
 
   if (withoutHours) {
-    return isWithinInterval(now, {
+    return isWithinInterval(new Date(), {
       start: election.start_date,
       end: sub(add(election.end_date, { days: 1 }), { seconds: 1 }),
     });
   }
 
   return (
-    isWithinInterval(now, {
-      start: election.start_date,
-      end: sub(add(election.end_date, { days: 1 }), { seconds: 1 }),
+    isWithinInterval(new Date(), {
+      start: add(election.start_date, { hours: timezoneOffset }),
+      end: sub(add(election.end_date, { days: 1, hours: timezoneOffset }), {
+        seconds: 1,
+      }),
     }) &&
-    getHours(now) >= election.voting_hour_start &&
-    getHours(now) < election.voting_hour_end
+    getHours(new Date()) >= election.voting_hour_start &&
+    getHours(new Date()) < election.voting_hour_end
   );
 };
 
