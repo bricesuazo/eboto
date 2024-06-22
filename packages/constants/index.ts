@@ -61,7 +61,11 @@ export const isElectionEnded = ({
 }: {
   election: Database["public"]["Tables"]["elections"]["Row"];
 }) => {
-  const now = add(new Date(), { hours: -new Date().getTimezoneOffset() / 60 });
+  const endDateTimezoneOffset =
+    -new Date(election.end_date).getTimezoneOffset() / 60;
+  const now = add(new Date(), {
+    hours: is_server() || is_dev() ? 0 : endDateTimezoneOffset,
+  });
 
   return isAfter(
     now,
@@ -76,30 +80,26 @@ export const isElectionOngoing = ({
   election: Database["public"]["Tables"]["elections"]["Row"];
   withoutHours?: true;
 }) => {
-  const timezoneOffset = new Date().getTimezoneOffset() / 60;
-  console.log("🚀 ~ timezoneOffset:", timezoneOffset);
-  console.log(
-    "🚀 ~ returnisWithinInterval ~ election.start_date:",
-    election.start_date,
-  );
-  console.log("🚀 ~ end:sub ~ election.end_date:", election.end_date);
+  const startDateTimezoneOffset =
+    -new Date(election.start_date).getTimezoneOffset() / 60;
+  const now = add(new Date(), {
+    hours: is_server() || is_dev() ? 0 : startDateTimezoneOffset,
+  });
 
   if (withoutHours) {
-    return isWithinInterval(new Date(), {
+    return isWithinInterval(now, {
       start: election.start_date,
       end: sub(add(election.end_date, { days: 1 }), { seconds: 1 }),
     });
   }
 
   return (
-    isWithinInterval(new Date(), {
-      start: add(election.start_date, { hours: timezoneOffset }),
-      end: sub(add(election.end_date, { days: 1, hours: timezoneOffset }), {
-        seconds: 1,
-      }),
+    isWithinInterval(now, {
+      start: election.start_date,
+      end: sub(add(election.end_date, { days: 1 }), { seconds: 1 }),
     }) &&
-    getHours(new Date()) >= election.voting_hour_start &&
-    getHours(new Date()) < election.voting_hour_end
+    getHours(now) >= election.voting_hour_start &&
+    getHours(now) < election.voting_hour_end
   );
 };
 
@@ -409,3 +409,11 @@ export const FAQs: { id: string; question: string; answer: string }[] = [
       "Yes, eBoto offers a template for SSG Elections, and you can customize it further in the dashboard page to suit your specific requirements.",
   },
 ];
+
+export function is_server() {
+  return typeof window === "undefined";
+}
+
+export function is_dev() {
+  return process.env.NODE_ENV === "development";
+}
