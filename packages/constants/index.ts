@@ -61,10 +61,7 @@ export const isElectionEnded = ({
 }: {
   election: Database["public"]["Tables"]["elections"]["Row"];
 }) => {
-  const now =
-    is_development() || is_client()
-      ? new Date()
-      : add(new Date(), { hours: -new Date().getTimezoneOffset() / 60 });
+  const now = add(new Date(), { hours: -new Date().getTimezoneOffset() / 60 });
 
   return isAfter(
     now,
@@ -79,10 +76,7 @@ export const isElectionOngoing = ({
   election: Database["public"]["Tables"]["elections"]["Row"];
   withoutHours?: true;
 }) => {
-  const now =
-    is_development() || is_client()
-      ? new Date()
-      : add(new Date(), { hours: -new Date().getTimezoneOffset() / 60 });
+  const now = add(new Date(), { hours: -new Date().getTimezoneOffset() / 60 });
 
   if (withoutHours) {
     return isWithinInterval(now, {
@@ -407,11 +401,3 @@ export const FAQs: { id: string; question: string; answer: string }[] = [
       "Yes, eBoto offers a template for SSG Elections, and you can customize it further in the dashboard page to suit your specific requirements.",
   },
 ];
-
-export function is_client() {
-  return typeof window != "undefined" && window.document;
-}
-
-export function is_development() {
-  return process.env.NODE_ENV === "development";
-}
