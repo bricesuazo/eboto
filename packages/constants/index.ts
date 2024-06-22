@@ -62,7 +62,7 @@ export const isElectionEnded = ({
   election: Database["public"]["Tables"]["elections"]["Row"];
 }) => {
   const now =
-    is_local || is_client
+    is_development() || is_client()
       ? new Date()
       : add(new Date(), { hours: -new Date().getTimezoneOffset() / 60 });
 
@@ -79,21 +79,22 @@ export const isElectionOngoing = ({
   election: Database["public"]["Tables"]["elections"]["Row"];
   withoutHours?: true;
 }) => {
+  const now =
+    is_development() || is_client()
+      ? new Date()
+      : add(new Date(), { hours: -new Date().getTimezoneOffset() / 60 });
+
   if (withoutHours) {
-    return isWithinInterval(new Date(), {
+    return isWithinInterval(now, {
       start: election.start_date,
       end: sub(add(election.end_date, { days: 1 }), { seconds: 1 }),
     });
   }
-  const now =
-    is_local || is_client
-      ? new Date()
-      : add(new Date(), { hours: -new Date().getTimezoneOffset() / 60 });
 
   return (
     isWithinInterval(now, {
-      start: add(election.start_date, { hours: election.voting_hour_start }),
-      end: add(election.end_date, { hours: election.voting_hour_end }),
+      start: election.start_date,
+      end: sub(add(election.end_date, { days: 1 }), { seconds: 1 }),
     }) &&
     getHours(now) >= election.voting_hour_start &&
     getHours(now) < election.voting_hour_end
@@ -407,6 +408,10 @@ export const FAQs: { id: string; question: string; answer: string }[] = [
   },
 ];
 
-export const is_client = !!(typeof window != "undefined" && window.document);
+export function is_client() {
+  return typeof window != "undefined" && window.document;
+}
 
-export const is_local = process.env.NODE_ENV === "development";
+export function is_development() {
+  return process.env.NODE_ENV === "development";
+}
