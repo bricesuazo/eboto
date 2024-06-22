@@ -69,12 +69,13 @@ export default async function VotePage({
     .is("deleted_at", null);
 
   if (
-    !voter ||
-    !voter_fields ||
+    voter === null ||
+    voter_fields === null ||
     (voter_fields.length > 0 && !voter.field) ||
-    Object.values((voter.field ?? {}) as Record<string, string>).some(
-      (value) => !value || value.trim() === "",
-    )
+    (voter.field &&
+      Object.values(voter.field as Record<string, string>).some(
+        (value) => !value || value.trim() === "",
+      ))
   )
     redirect(`/${election.slug}`);
 
