@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
+import DashboardVoter from "@/components/pages/dashboard-voter";
 import VoteForm from "@/components/vote-form";
 import { api } from "@/trpc/server";
 import { createClient as createClientAdmin } from "@/utils/supabase/admin";
@@ -62,11 +63,11 @@ export default async function VotePage({
     .is("deleted_at", null)
     .single();
 
-  const { data: voter_fields } = await supabaseAdmin
-    .from("voter_fields")
-    .select()
-    .eq("election_id", election.id)
-    .is("deleted_at", null);
+  // const { data: voter_fields } = await supabaseAdmin
+  //   .from("voter_fields")
+  //   .select()
+  //   .eq("election_id", election.id)
+  //   .is("deleted_at", null);
 
   // if (
   //   voter === null
@@ -105,8 +106,8 @@ export default async function VotePage({
 
     if (!voter) redirect(`/${election.slug}/realtime`);
   } else if (
-    election.publicity === "VOTER" ||
-    election.publicity === "PUBLIC"
+    (election.publicity === "VOTER" || election.publicity === "PUBLIC") &&
+    voter
   ) {
     const { data: votes } = await supabaseAdmin
       .from("votes")
