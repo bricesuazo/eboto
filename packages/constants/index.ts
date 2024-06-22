@@ -80,11 +80,15 @@ export const isElectionOngoing = ({
   election: Database["public"]["Tables"]["elections"]["Row"];
   withoutHours?: true;
 }) => {
+  console.log("🚀 ~ election.start_date:", election.start_date);
   const startDateTimezoneOffset =
     -new Date(election.start_date).getTimezoneOffset() / 60;
+  console.log("🚀 ~ startDateTimezoneOffset:", startDateTimezoneOffset);
   const now = add(new Date(), {
     hours: is_server() || is_dev() ? 0 : startDateTimezoneOffset,
   });
+  console.log("🚀 ~ now ~ new Date():", new Date());
+  console.log("🚀 ~ now ~ now:", now);
 
   if (withoutHours) {
     return isWithinInterval(now, {
