@@ -5,6 +5,7 @@ import { api } from "@/trpc/client";
 import {
   Alert,
   Button,
+  Divider,
   Group,
   Modal,
   Stack,
@@ -84,68 +85,75 @@ export default function MessageCommissioner({
         onClose={close}
         title={<Text fw={600}>Message commissioners</Text>}
       >
-        <form
-          onSubmit={form.onSubmit((value) => {
-            messageCommissionerMutation.mutate({
-              message: value.message,
-              title: value.title,
-              election_id,
-            });
-          })}
-        >
-          <Stack gap="sm">
-            <TextInput
-              placeholder="Enter title"
-              label="Title"
-              required
-              withAsterisk
-              disabled={messageCommissionerMutation.isPending}
-              {...form.getInputProps("title")}
-              leftSection={<IconLetterCase size="1rem" />}
-            />
-
-            <Textarea
-              autosize
-              placeholder="Describe your message"
-              label="Message"
-              required
-              disabled={messageCommissionerMutation.isPending}
-              withAsterisk
-              minRows={3}
-              maxRows={6}
-              {...form.getInputProps("message")}
-              leftSection={<IconLetterCase size="1rem" />}
-            />
-
-            {messageCommissionerMutation.isError && (
-              <Alert
-                icon={<IconAlertCircle size="1rem" />}
-                color="red"
-                title="Error"
-                variant="filled"
-              >
-                {messageCommissionerMutation.error.message}
-              </Alert>
-            )}
-
-            <Group justify="right" gap="xs">
-              <Button
-                variant="default"
-                onClick={close}
+        <Stack>
+          <Text size="sm" c="gray">
+            Encountered a problem? A typogrammatical error? Need help? Message
+            the election commissioners.
+          </Text>
+          <Divider />
+          <form
+            onSubmit={form.onSubmit((value) => {
+              messageCommissionerMutation.mutate({
+                message: value.message,
+                title: value.title,
+                election_id,
+              });
+            })}
+          >
+            <Stack gap="sm">
+              <TextInput
+                placeholder="Enter title"
+                label="Title"
+                required
+                withAsterisk
                 disabled={messageCommissionerMutation.isPending}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={!form.isValid()}
-                loading={messageCommissionerMutation.isPending}
-              >
-                Send
-              </Button>
-            </Group>
-          </Stack>
-        </form>
+                {...form.getInputProps("title")}
+                leftSection={<IconLetterCase size="1rem" />}
+              />
+
+              <Textarea
+                autosize
+                placeholder="Describe your message"
+                label="Message"
+                required
+                disabled={messageCommissionerMutation.isPending}
+                withAsterisk
+                minRows={3}
+                maxRows={6}
+                {...form.getInputProps("message")}
+                leftSection={<IconLetterCase size="1rem" />}
+              />
+
+              {messageCommissionerMutation.isError && (
+                <Alert
+                  icon={<IconAlertCircle size="1rem" />}
+                  color="red"
+                  title="Error"
+                  variant="filled"
+                >
+                  {messageCommissionerMutation.error.message}
+                </Alert>
+              )}
+
+              <Group justify="right" gap="xs">
+                <Button
+                  variant="default"
+                  onClick={close}
+                  disabled={messageCommissionerMutation.isPending}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={!form.isValid()}
+                  loading={messageCommissionerMutation.isPending}
+                >
+                  Send
+                </Button>
+              </Group>
+            </Stack>
+          </form>
+        </Stack>
       </Modal>
     </>
   );

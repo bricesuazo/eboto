@@ -148,7 +148,7 @@ export default function Realtime({
                   </Text>
                 )}
               </Box>
-              <Center>
+              <Stack align="center">
                 <Button
                   component={Link}
                   href={`/${election.slug}`}
@@ -161,7 +161,7 @@ export default function Realtime({
                 {isVoterCanMessage && (
                   <MessageCommissioner election_id={election.id} />
                 )}
-              </Center>
+              </Stack>
             </Stack>
           </Center>
           {election.is_free && (
