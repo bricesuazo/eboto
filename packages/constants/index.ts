@@ -61,7 +61,7 @@ export const isElectionEnded = ({
 }: {
   election: Database["public"]["Tables"]["elections"]["Row"];
 }) => {
-  const now = add(new Date(), { hours: is_server() || is_dev() ? 0 : 8 });
+  const now = add(new Date(), { hours: is_client() || is_dev() ? 0 : 8 });
 
   return isAfter(
     now,
@@ -76,7 +76,7 @@ export const isElectionOngoing = ({
   election: Database["public"]["Tables"]["elections"]["Row"];
   withoutHours?: true;
 }) => {
-  const now = add(new Date(), { hours: is_server() || is_dev() ? 0 : 8 });
+  const now = add(new Date(), { hours: is_client() || is_dev() ? 0 : 8 });
 
   if (withoutHours) {
     return isWithinInterval(now, {
@@ -402,8 +402,8 @@ export const FAQs: { id: string; question: string; answer: string }[] = [
   },
 ];
 
-export function is_server() {
-  return typeof window === "undefined";
+export function is_client() {
+  return typeof window !== "undefined";
 }
 
 export function is_dev() {
