@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import DashboardVoter from "@/components/pages/dashboard-voter";
 import VoteForm from "@/components/vote-form";
 import { api } from "@/trpc/server";
 import { createClient as createClientAdmin } from "@/utils/supabase/admin";
@@ -53,7 +52,7 @@ export default async function VotePage({
 
   if (!election) notFound();
 
-  if (!isElectionOngoing({ election })) redirect(`/${election.slug}`);
+  // if (!isElectionOngoing({ election })) redirect(`/${election.slug}`);
 
   const { data: voter } = await supabaseAdmin
     .from("voters")
