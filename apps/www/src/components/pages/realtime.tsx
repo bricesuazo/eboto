@@ -31,7 +31,11 @@ import moment from "moment";
 import Balancer from "react-wrap-balancer";
 
 import type { RouterOutputs } from "@eboto/api";
-import { isElectionEnded, parseHourTo12HourFormat } from "@eboto/constants";
+import {
+  isElectionEnded,
+  isElectionOngoing,
+  parseHourTo12HourFormat,
+} from "@eboto/constants";
 
 import type { Database } from "../../../../../supabase/types";
 import AdModal from "../ad-modal";
@@ -61,7 +65,8 @@ export default function Realtime({
     election.slug,
     {
       enabled: !election.is_free,
-      refetchInterval: !election.is_free ? 1000 : false,
+      refetchInterval:
+        isElectionOngoing({ election }) && !election.is_free ? 1000 : false,
       initialData: positions,
       refetchOnMount: true,
       refetchOnWindowFocus: true,
@@ -143,7 +148,11 @@ export default function Realtime({
                   <Text ta="center" size="xs" c="dimmed">
                     <Balancer>
                       Realtime result as of{" "}
-                      {moment(time).format("MMMM Do YYYY, h:mm:ss A")}
+                      {isElectionOngoing({ election })
+                        ? moment(time).format("MMMM Do YYYY, h:mm:ss A")
+                        : moment(new Date().toDateString())
+                            .add(election.voting_hour_end, "hours")
+                            .format("MMMM Do YYYY, h:mm:ss A")}
                     </Balancer>
                   </Text>
                 )}
