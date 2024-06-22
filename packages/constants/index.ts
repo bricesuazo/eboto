@@ -90,19 +90,18 @@ export const isElectionOngoing = ({
       moment(election.end_date).add(1, "day").subtract(1, "millisecond"),
     );
   }
-  console.log(
-    "asdasdasdadd",
-    moment(election.end_date)
-      .add(1, "day")
-      .subtract(1, "millisecond")
-      .hours(election.voting_hour_end),
-  );
-  return moment().isBetween(
-    moment(election.start_date).hours(election.voting_hour_start),
-    moment(election.end_date)
-      .add(1, "day")
-      .subtract(1, "millisecond")
-      .hours(election.voting_hour_end),
+
+  const now = new Date();
+  return (
+    moment().isBetween(
+      moment(election.start_date).hours(election.voting_hour_start),
+      moment(election.end_date)
+        .add(1, "day")
+        .subtract(1, "millisecond")
+        .hours(election.voting_hour_end),
+    ) &&
+    now.getHours() >= election.voting_hour_start &&
+    now.getHours() < election.voting_hour_end
   );
 
   // if (withoutHours) {
