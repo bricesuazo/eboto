@@ -86,14 +86,20 @@ export default inngest.createFunction(
         ]),
       ];
 
+      await supabase
+        .from("generated_election_results")
+        .insert({ election_id, result });
+
       if (emails.length > 0)
-        await supabase
-          .from("generated_election_results")
-          .insert({ election_id, result }),
-          sendElectionResult({
-            emails,
-            election: result,
-          });
+        await Promise.all([
+          ...Array.from({ length: Math.ceil(emails.length / 50) }).map(
+            (_, index) =>
+              sendElectionResult({
+                emails: emails.slice(index * 50, (index + 1) * 50),
+                election: result,
+              }),
+          ),
+        ]);
     });
 
     return { success: true };

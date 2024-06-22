@@ -51,24 +51,33 @@ export default inngest.createFunction(
 
     await step.sleepUntil("election-start", start_date.toDate());
 
-    const voters = election.voters.map((voter) => voter.email);
-    const commissioners = election.commissioners
-      .filter((commissioner) => commissioner.user)
-      .map((commissioner) => commissioner.user!.email);
+    const voters = [
+      ...new Set(...[election.voters.map((voter) => voter.email)]),
+    ];
+    const commissioners = [
+      ...new Set([
+        ...election.commissioners
+          .filter((commissioner) => commissioner.user)
+          .map((commissioner) => commissioner.user!.email),
+      ]),
+    ];
 
     await step.run("send-election-start", async () => {
       await Promise.all([
         voters.length > 0 &&
-          sendElectionStart({
-            isForCommissioner: false,
-            election: {
-              name: election.name,
-              slug: election.slug,
-              start_date: new Date(election.start_date),
-              end_date: new Date(election.end_date),
-            },
-            emails: voters,
-          }),
+          Array.from({ length: Math.ceil(voters.length / 50) }).map(
+            (_, index) =>
+              sendElectionStart({
+                isForCommissioner: false,
+                election: {
+                  name: election.name,
+                  slug: election.slug,
+                  start_date: new Date(election.start_date),
+                  end_date: new Date(election.end_date),
+                },
+                emails: voters.slice(index * 50, (index + 1) * 50),
+              }),
+          ),
         commissioners.length > 0 &&
           sendElectionStart({
             isForCommissioner: true,

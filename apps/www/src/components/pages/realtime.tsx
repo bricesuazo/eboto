@@ -158,10 +158,10 @@ export default function Realtime({
                 >
                   Election Page
                 </Button>
+                {isVoterCanMessage && (
+                  <MessageCommissioner election_id={election.id} />
+                )}
               </Center>
-              {isVoterCanMessage && (
-                <MessageCommissioner election_id={election.id} />
-              )}
             </Stack>
           </Center>
           {election.is_free && (
