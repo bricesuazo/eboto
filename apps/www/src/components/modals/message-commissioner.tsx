@@ -87,8 +87,8 @@ export default function MessageCommissioner({
       >
         <Stack>
           <Text size="sm" c="gray">
-            Encountered a problem? A typogrammatical error? Need help? Message
-            the election commissioners.
+            Encountered a problem? A typographical error? Need help? Message the
+            election commissioners.
           </Text>
           <Divider />
           <form
