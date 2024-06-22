@@ -8,6 +8,7 @@ import {
 } from "@tabler/icons-react";
 import type { Icon, IconProps } from "@tabler/icons-react";
 import { add, getHours, isAfter, isWithinInterval, sub } from "date-fns";
+import { el } from "date-fns/locale";
 import { z } from "zod";
 
 import { Database } from "./../../supabase/types";
@@ -105,8 +106,8 @@ export const isElectionOngoing = ({
 
   return (
     isWithinInterval(new Date(), {
-      start: election.start_date,
-      end: sub(add(election.end_date, { days: 1 }), { seconds: 1 }),
+      start: add(election.start_date, { hours: election.voting_hour_start }),
+      end: add(election.end_date, { hours: election.voting_hour_end }),
     }) &&
     isWithinInterval(new Date(), {
       start: new Date(
