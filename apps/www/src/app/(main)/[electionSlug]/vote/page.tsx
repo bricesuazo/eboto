@@ -68,27 +68,29 @@ export default async function VotePage({
     .eq("election_id", election.id)
     .is("deleted_at", null);
 
-  if (
-    voter === null
-    // ||
-    // voter_fields === null ||
-    // (voter_fields.length > 0 && !voter.field) ||
-    // (voter.field &&
-    //   Object.values(voter.field as Record<string, string>).some(
-    //     (value) => !value || value.trim() === "",
-    //   ))
-  )
-    redirect(`/${election.slug}`);
+  // if (
+  //   voter === null
+  //   // ||
+  //   // voter_fields === null ||
+  //   // (voter_fields.length > 0 && !voter.field) ||
+  //   // (voter.field &&
+  //   //   Object.values(voter.field as Record<string, string>).some(
+  //   //     (value) => !value || value.trim() === "",
+  //   //   ))
+  // )
+  //   redirect(`/${election.slug}`);
 
-  const { data: votes, error: votes_error } = await supabaseAdmin
-    .from("votes")
-    .select()
-    .eq("voter_id", voter.id)
-    .eq("election_id", election.id);
+  if (voter) {
+    const { data: votes, error: votes_error } = await supabaseAdmin
+      .from("votes")
+      .select()
+      .eq("voter_id", voter.id)
+      .eq("election_id", election.id);
 
-  if (votes_error) notFound();
+    if (votes_error) notFound();
 
-  if (votes.length) redirect(`/${election.slug}/realtime`);
+    if (votes.length) redirect(`/${election.slug}/realtime`);
+  }
 
   if (election.publicity === "PRIVATE") {
     const { data: commissioner } = await supabaseAdmin
