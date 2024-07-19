@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import classes from "@/styles/Dashboard.module.css";
 import {
   ActionIcon,
   Box,
@@ -30,6 +29,8 @@ import moment from "moment";
 
 import type { RouterOutputs } from "@eboto/api";
 import { parseHourTo12HourFormat } from "@eboto/constants";
+
+import classes from "~/styles/Dashboard.module.css";
 
 export default function DashboardCard(
   props:

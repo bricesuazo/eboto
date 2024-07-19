@@ -7,12 +7,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ianvs/prettier-plugin-sort-imports": "^4.2.1",
-    "prettier": "^3.3.2"
+    "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
+    "prettier": "^3.3.3"
   },
   "devDependencies": {
     "@eboto/tsconfig": "workspace:*",
-    "typescript": "^5.5.2"
+    "typescript": "^5.5.3"
   },
   "prettier": "@eboto/prettier-config"
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { api } from "@/trpc/client";
 import {
   Alert,
   Button,
@@ -24,6 +23,8 @@ import {
 } from "@tabler/icons-react";
 import { zodResolver } from "mantine-form-zod-resolver";
 import { z } from "zod";
+
+import { api } from "~/trpc/client";
 
 export default function MessageCommissioner({
   election_id,

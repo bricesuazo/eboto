@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import ElectionCandidate from "@/components/pages/election-candidate";
-import { api } from "@/trpc/server";
-import { createClient as createClientAdmin } from "@/utils/supabase/admin";
-import { createClient as createClientServer } from "@/utils/supabase/server";
 import { env } from "env.mjs";
 
 import { formatName } from "@eboto/constants";
+
+import ElectionCandidate from "~/components/pages/election-candidate";
+import { createClient as createClientAdmin } from "~/supabase/admin";
+import { createClient as createClientServer } from "~/supabase/server";
+import { api } from "~/trpc/server";
 
 export async function generateMetadata({
   params: { electionSlug, candidateSlug },
@@ -118,7 +119,7 @@ export default async function CandidatePage({
 }: {
   params: { electionSlug: string; candidateSlug: string };
 }) {
-  const data = await api.candidate.getPageData.query({
+  const data = await api.candidate.getPageData({
     candidate_slug: candidateSlug,
     election_slug: electionSlug,
   });

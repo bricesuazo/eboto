@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { api } from "@/trpc/client";
 import {
   ActionIcon,
   Alert,
@@ -40,6 +39,8 @@ import {
 import { zodResolver } from "mantine-form-zod-resolver";
 import moment from "moment";
 import { z } from "zod";
+
+import { api } from "~/trpc/client";
 
 export default function MyMessagesElection({
   election_id,

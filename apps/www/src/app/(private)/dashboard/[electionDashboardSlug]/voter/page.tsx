@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import DashboardVoter from "@/components/pages/dashboard-voter";
-import { api } from "@/trpc/server";
+
+import DashboardVoter from "~/components/pages/dashboard-voter";
+import { api } from "~/trpc/server";
 
 export const metadata: Metadata = {
   title: "Voters",
@@ -12,8 +13,8 @@ export default async function Page({
 }: {
   params: { electionDashboardSlug: string };
 }) {
-  const data = await api.election.getVotersByElectionSlug
-    .query({
+  const data = await api.election
+    .getVotersByElectionSlug({
       election_slug: electionDashboardSlug,
     })
     .catch(() => notFound());

@@ -1,6 +1,7 @@
 import crypto from "crypto";
-import { createClient } from "@/utils/supabase/admin";
 import { env } from "env.mjs";
+
+import { createClient } from "~/supabase/admin";
 
 const isError = (error: unknown): error is Error => {
   return error instanceof Error;

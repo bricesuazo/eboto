@@ -3,10 +3,11 @@
 import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import classes from "@/styles/NotFound.module.css";
 import { Button, Center, Container, Group, Text, Title } from "@mantine/core";
 import * as Sentry from "@sentry/nextjs";
 import Balancer from "react-wrap-balancer";
+
+import classes from "~/styles/NotFound.module.css";
 
 export default function GlobalError({
   error,

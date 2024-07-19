@@ -1,3 +1,5 @@
+import { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
+
 import { authRouter } from "./router/auth";
 import { candidateRouter } from "./router/candidate";
 import { electionRouter } from "./router/election";
@@ -7,7 +9,7 @@ import { positionRouter } from "./router/position";
 import { systemRouter } from "./router/system";
 import { userRouter } from "./router/user";
 import { voterRouter } from "./router/voter";
-import { createTRPCRouter } from "./trpc";
+import { createCallerFactory, createTRPCRouter } from "./trpc";
 
 export const appRouter = createTRPCRouter({
   auth: authRouter,
@@ -23,3 +25,8 @@ export const appRouter = createTRPCRouter({
 
 // export type definition of API
 export type AppRouter = typeof appRouter;
+
+export type RouterInput = inferRouterInputs<AppRouter>;
+export type RouterOutput = inferRouterOutputs<AppRouter>;
+
+export const createCaller = createCallerFactory(appRouter);

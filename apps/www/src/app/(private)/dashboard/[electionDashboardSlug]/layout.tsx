@@ -1,8 +1,9 @@
 import { notFound, redirect } from "next/navigation";
-import DashboardElection from "@/components/layout/dashboard-election";
-import { createClient as creatClientAdmin } from "@/utils/supabase/admin";
-import { createClient as creatClientServer } from "@/utils/supabase/server";
 import { env } from "env.mjs";
+
+import DashboardElection from "~/components/layout/dashboard-election";
+import { createClient as creatClientAdmin } from "~/supabase/admin";
+import { createClient as creatClientServer } from "~/supabase/server";
 
 export default async function DashboardLayout(
   props: React.PropsWithChildren<{ params: { electionDashboardSlug: string } }>,

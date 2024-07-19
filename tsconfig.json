@@ -3,7 +3,7 @@
     "target": "ESNext",
     "lib": ["dom", "dom.iterable", "esnext"],
     "paths": {
-      "@/*": ["./src/*"]
+      "~/*": ["./src/*"]
     },
     "allowJs": true,
     "checkJs": true,

@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useStore } from "@/store";
 import {
   Box,
   Button,
@@ -14,6 +13,7 @@ import {
 } from "@mantine/core";
 import { IconCircleCheck, IconRocket } from "@tabler/icons-react";
 
+import { useStore } from "~/store";
 import ElectionBoost from "./modals/election-boost";
 
 export default function BoostCard({ election_id }: { election_id: string }) {

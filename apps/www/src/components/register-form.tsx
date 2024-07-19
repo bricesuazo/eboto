@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { createClient } from "@/utils/supabase/client";
 import {
   Alert,
   Anchor,
@@ -17,6 +16,8 @@ import {
 import { isEmail, isNotEmpty, useForm } from "@mantine/form";
 import { IconAt, IconCheck } from "@tabler/icons-react";
 import Balancer from "react-wrap-balancer";
+
+import { createClient } from "~/supabase/client";
 
 export default function RegisterForm() {
   const searchParams = useSearchParams();

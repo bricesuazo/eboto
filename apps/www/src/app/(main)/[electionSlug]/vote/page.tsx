@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import VoteForm from "@/components/vote-form";
-import { api } from "@/trpc/server";
-import { createClient as createClientAdmin } from "@/utils/supabase/admin";
-import { createClient as createClientServer } from "@/utils/supabase/server";
 import { Box, Container, Stack, Text, Title } from "@mantine/core";
 import moment from "moment";
 import Balancer from "react-wrap-balancer";
 
 import { isElectionOngoing, parseHourTo12HourFormat } from "@eboto/constants";
+
+import VoteForm from "~/components/vote-form";
+import { createClient as createClientAdmin } from "~/supabase/admin";
+import { createClient as createClientServer } from "~/supabase/server";
+import { api } from "~/trpc/server";
 
 export async function generateMetadata({
   params: { electionSlug },
@@ -124,7 +125,7 @@ export default async function VotePage({
       redirect(`/${election.slug}/realtime`);
   }
 
-  const positions = await api.election.getElectionVoting.query(election.id);
+  const positions = await api.election.getElectionVoting(election.id);
 
   return (
     <Container py="xl" size="md">

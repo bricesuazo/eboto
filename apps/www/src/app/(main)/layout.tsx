@@ -1,12 +1,13 @@
-import Footer from "@/components/footer";
-import Header from "@/components/header";
-import { createClient } from "@/utils/supabase/server";
 import {
   AppShell,
   AppShellFooter,
   AppShellHeader,
   AppShellMain,
 } from "@mantine/core";
+
+import Footer from "~/components/footer";
+import Header from "~/components/header";
+import { createClient } from "~/supabase/server";
 
 export default async function RootLayout({
   children,

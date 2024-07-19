@@ -1,6 +1,6 @@
 {
   "name": "eboto",
-  "packageManager": "pnpm@9.4.0",
+  "packageManager": "pnpm@9.5.0",
   "scripts": {
     "build": "turbo build",
     "clean": "git clean -xdf node_modules",
@@ -24,10 +24,9 @@
   "dependencies": {
     "@eboto/prettier-config": "workspace:^",
     "@manypkg/cli": "^0.21.4",
-    "@turbo/gen": "^2.0.4",
-    "prettier": "^3.3.2",
-    "semver": "^7.6.2",
-    "turbo": "^2.0.4",
-    "typescript": "^5.5.2"
+    "@turbo/gen": "^2.0.8",
+    "prettier": "^3.3.3",
+    "turbo": "^2.0.8",
+    "typescript": "^5.5.3"
   }
 }

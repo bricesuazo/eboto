@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import GenerateResult from "@/pdf/generate-result";
 import { Box, Button, Group, Text } from "@mantine/core";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { IconDownload } from "@tabler/icons-react";
 import moment from "moment";
 
+import GenerateResult from "~/pdf/generate-result";
 import type { GeneratedElectionResult } from "../../../../supabase/custom-types";
 
 export default function GenerateResultRow({

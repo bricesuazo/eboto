@@ -8,15 +8,15 @@ import "@mantine/carousel/styles.css";
 
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
-import { Providers, theme } from "@/components/providers";
-import { siteConfig } from "@/config/site";
-import { getBaseUrl } from "@/trpc/shared";
-import TRPCProvider from "@/trpc/TRPCProvider";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { env } from "env.mjs";
+
+import { Providers, theme } from "~/components/providers";
+import { siteConfig } from "~/config/site";
+import { TRPCReactProvider } from "~/trpc/client";
 
 const font = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     shortcut: "/images/favicon/favicon-16x16.png",
     apple: "/images/favicon/apple-touch-icon.png",
   },
-  manifest: `${getBaseUrl()}/site.webmanifest`,
+  // manifest: `${getBaseUrl()}/site.webmanifest`,
   metadataBase: new URL(siteConfig.url),
 };
 
@@ -158,12 +158,12 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
       </head>
       <body className={font.className}>
         <MantineProvider theme={theme}>
-          <TRPCProvider>
+          <TRPCReactProvider>
             <Notifications />
             <Providers>{children}</Providers>
             <Analytics />
             <SpeedInsights />
-          </TRPCProvider>
+          </TRPCReactProvider>
         </MantineProvider>
       </body>
     </html>

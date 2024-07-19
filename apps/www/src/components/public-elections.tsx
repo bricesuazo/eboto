@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { api } from "@/trpc/client";
 import { Carousel, CarouselSlide } from "@mantine/carousel";
 import {
   Box,
@@ -20,6 +19,8 @@ import moment from "moment";
 import Balancer from "react-wrap-balancer";
 
 import { parseHourTo12HourFormat } from "@eboto/constants";
+
+import { api } from "~/trpc/client";
 
 export default function PublicElections() {
   const getAllPublicElectionsQuery =

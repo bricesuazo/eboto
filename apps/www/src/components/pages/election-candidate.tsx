@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { api } from "@/trpc/client";
 import { Adsense } from "@ctrl/react-adsense";
 import {
   Anchor,
@@ -22,6 +21,7 @@ import moment from "moment";
 import type { RouterOutputs } from "@eboto/api";
 import { formatName } from "@eboto/constants";
 
+import { api } from "~/trpc/client";
 import AdModal from "../ad-modal";
 import MessageCommissioner from "../modals/message-commissioner";
 import MyMessagesElection from "../my-messages-election";

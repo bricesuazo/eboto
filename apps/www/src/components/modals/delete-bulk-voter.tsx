@@ -1,6 +1,5 @@
 "use client";
 
-import { api } from "@/trpc/client";
 import {
   ActionIcon,
   Alert,
@@ -15,6 +14,8 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconAlertCircle, IconCheck, IconUserMinus } from "@tabler/icons-react";
+
+import { api } from "~/trpc/client";
 
 export default function DeleteBulkVoter({
   voters,

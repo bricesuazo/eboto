@@ -2,13 +2,18 @@ import { createEnv } from "@t3-oss/env-nextjs";
 import * as z from "zod";
 
 export const env = createEnv({
-  shared: { APP_URL: z.string().url() },
+  shared: {
+    APP_URL: z.string().url(),
+    NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
+  },
   server: {
     DISCORD_WEBHOOK_URL: z.string().min(1),
     LEMONSQUEEZY_FREE_VARIANT_ID: z.number().min(1),
     LEMONSQUEEZY_BOOST_PRODUCT_ID: z.number().min(1),
     LEMONSQUEEZY_PLUS_VARIANT_ID: z.number().min(1),
     LEMONSQUEEZY_STORE_ID: z.number().min(1),
+
+    SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
   },
   client: {},
   // Client side variables gets destructured here due to Next.js static analysis
@@ -26,6 +31,8 @@ export const env = createEnv({
     ),
     LEMONSQUEEZY_STORE_ID: parseInt(process.env.LEMONSQUEEZY_STORE_ID ?? "-1"),
     APP_URL: process.env.APP_URL,
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });

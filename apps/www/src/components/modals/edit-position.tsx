@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { api } from "@/trpc/client";
 import {
   Alert,
   Button,
@@ -23,6 +22,7 @@ import {
   IconLetterCase,
 } from "@tabler/icons-react";
 
+import { api } from "~/trpc/client";
 import type { Database } from "../../../../../supabase/types";
 
 export default function EditPosition({

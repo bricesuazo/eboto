@@ -3,9 +3,6 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import classes from "@/styles/Candidate.module.css";
-import { api } from "@/trpc/client";
-import { transformUploadImage } from "@/utils";
 import {
   Alert,
   Box,
@@ -46,6 +43,9 @@ import {
 } from "@tabler/icons-react";
 import moment from "moment";
 
+import classes from "~/styles/Candidate.module.css";
+import { api } from "~/trpc/client";
+import { transformUploadImage } from "~/utils";
 import type { Database } from "../../../../../supabase/types";
 
 export default function CreateCandidate({

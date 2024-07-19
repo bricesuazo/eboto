@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import ElectionPageClient from "@/components/pages/election-page";
-import { api } from "@/trpc/server";
-import { createClient as createClientAdmin } from "@/utils/supabase/admin";
-import { createClient as createClientServer } from "@/utils/supabase/server";
 import { env } from "env.mjs";
 import moment from "moment";
+
+import ElectionPageClient from "~/components/pages/election-page";
+import { createClient as createClientAdmin } from "~/supabase/admin";
+import { createClient as createClientServer } from "~/supabase/server";
+import { api } from "~/trpc/server";
 
 export async function generateMetadata({
   params: { electionSlug },
@@ -103,7 +104,7 @@ export default async function ElectionPage({
 }: {
   params: { electionSlug: string };
 }) {
-  const getElectionPage = await api.election.getElectionPage.query({
+  const getElectionPage = await api.election.getElectionPage({
     election_slug: electionSlug,
   });
 

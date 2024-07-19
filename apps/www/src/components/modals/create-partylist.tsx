@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { api } from "@/trpc/client";
 import {
   Alert,
   Button,
@@ -20,6 +19,8 @@ import {
   IconFlag,
   IconLetterCase,
 } from "@tabler/icons-react";
+
+import { api } from "~/trpc/client";
 
 export default function CreatePartylist({
   election_id,

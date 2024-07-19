@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useStore } from "@/store";
-import { api } from "@/trpc/client";
 import {
   Alert,
   Box,
@@ -23,6 +21,8 @@ import { IconAlertCircle, IconRocket } from "@tabler/icons-react";
 
 import { PRICING } from "@eboto/constants";
 
+import { useStore } from "~/store";
+import { api } from "~/trpc/client";
 import KeyFeatures from "../key-features";
 
 export default function ElectionBoost({

@@ -1,9 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import CreateVoter from "@/components/modals/create-voter";
-import UploadBulkVoter from "@/components/modals/upload-bulk-voter";
-import { api } from "@/trpc/client";
 import {
   ActionIcon,
   Alert,
@@ -30,6 +27,9 @@ import moment from "moment";
 import type { RouterOutputs } from "@eboto/api";
 import { isElectionEnded, isElectionOngoing } from "@eboto/constants";
 
+import CreateVoter from "~/components/modals/create-voter";
+import UploadBulkVoter from "~/components/modals/upload-bulk-voter";
+import { api } from "~/trpc/client";
 import DeleteBulkVoter from "../modals/delete-bulk-voter";
 import DeleteVoter from "../modals/delete-voter";
 import EditVoter from "../modals/edit-voter";

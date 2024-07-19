@@ -1,6 +1,7 @@
-import ContactForm from "@/components/contact-form";
 import { Box, Container, Stack, Text, Title } from "@mantine/core";
 import Balancer from "react-wrap-balancer";
+
+import ContactForm from "~/components/contact-form";
 
 export const dynamic = "force-static";
 
