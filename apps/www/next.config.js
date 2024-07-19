@@ -7,7 +7,7 @@ module.exports = {
     optimizePackageImports: ["@mantine/core", "@mantine/hooks"],
   },
   images: {
-    unoptimized: true,
+    // unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
