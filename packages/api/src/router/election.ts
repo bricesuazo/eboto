@@ -11,7 +11,7 @@ import {
 } from "@eboto/constants";
 import { sendVoteCasted } from "@eboto/email/emails/vote-casted";
 
-import { env } from "../env.mjs";
+import { env } from "../../../../apps/www/env.mjs";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const electionRouter = createTRPCRouter({

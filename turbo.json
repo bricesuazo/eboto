@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["**/.env.*local", "**/.env"],
+  "globalDependencies": ["**/.env"],
   "ui": "stream",
   "tasks": {
     "build": {
@@ -24,7 +24,6 @@
     "EXPO_ROUTER_APP_ROOT",
     "NODE_ENV",
     "SKIP_ENV_VALIDATION",
-    "VERCEL_URL",
     "PORT",
     "AWS_SES_REGION",
     "AWS_ACCESS_KEY_ID",

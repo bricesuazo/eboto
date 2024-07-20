@@ -22,11 +22,11 @@
   },
   "prettier": "@eboto/prettier-config",
   "dependencies": {
-    "@eboto/prettier-config": "workspace:^",
+    "@eboto/prettier-config": "workspace:*",
     "@manypkg/cli": "^0.21.4",
-    "@turbo/gen": "^2.0.8",
+    "@turbo/gen": "^2.0.9",
     "prettier": "^3.3.3",
-    "turbo": "^2.0.8",
+    "turbo": "^2.0.9",
     "typescript": "^5.5.3"
   }
 }

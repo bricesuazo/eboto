@@ -5,10 +5,7 @@ import { env } from "env.mjs";
 import { appRouter, createTRPCContext } from "@eboto/api";
 
 import { createClient as createClientAdmin } from "~/supabase/admin";
-import {
-  createClient,
-  createClient as createClientServer,
-} from "~/supabase/server";
+import { createClient } from "~/supabase/server";
 import type { Database } from "../../../../../../../supabase/types";
 
 const createContext = async (req: NextRequest) => {

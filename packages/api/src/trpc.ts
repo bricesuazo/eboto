@@ -1,4 +1,5 @@
-import { createClient, type User } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
+import type { User } from "@supabase/supabase-js";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
@@ -6,8 +7,8 @@ import { ZodError } from "zod";
 import { inngest } from "@eboto/inngest";
 import * as payment from "@eboto/payment";
 
+import { env } from "../../../apps/www/env.mjs";
 import type { Database } from "./../../../supabase/types";
-import { env } from "./env.mjs";
 
 export function createTRPCContext(opts: {
   user: { auth: User; db: Database["public"]["Tables"]["users"]["Row"] } | null;
