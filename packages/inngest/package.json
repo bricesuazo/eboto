@@ -1,5 +1,6 @@
 {
   "name": "@eboto/inngest",
+  "type": "module",
   "main": "./index.ts",
   "scripts": {
     "dev": "npx inngest-cli@latest dev -u http://localhost:3000/api/inngest"
@@ -11,5 +12,8 @@
     "inngest": "^3.21.1",
     "moment": "^2.30.1",
     "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@eboto/tsconfig": "workspace:*"
   }
 }

@@ -1,8 +1,5 @@
 {
-  "extends": "@eboto0-mo/tsconfig/base.json",
-  "compilerOptions": {
-    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json"
-  },
+  "extends": "@eboto/tsconfig/base.json",
   "include": ["."],
   "exclude": ["node_modules"]
 }

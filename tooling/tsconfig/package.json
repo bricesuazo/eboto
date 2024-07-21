@@ -1,6 +1,6 @@
 {
   "name": "@eboto/tsconfig",
-  "publishConfig": {
-    "access": "public"
-  }
+  "files": [
+    "base.json"
+  ]
 }

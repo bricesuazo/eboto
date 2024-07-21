@@ -1,0 +1,3 @@
+{
+  "extends": "@eboto/tsconfig/base.json"
+}

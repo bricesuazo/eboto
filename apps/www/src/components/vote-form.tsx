@@ -330,7 +330,7 @@ export default function VoteForm({
           onClick={open}
           disabled={
             voteMutation.isPending ||
-            !Object.values(form.values).every((value) => value?.isValid)
+            !Object.values(form.values).every((value) => value.isValid)
           }
           leftSection={<IconFingerprint />}
           size="lg"

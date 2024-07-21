@@ -1,5 +1,6 @@
 {
   "name": "@eboto/email",
+  "type": "module",
   "main": "./index.tsx",
   "scripts": {
     "email:dev": "email dev --port 3002",
@@ -18,12 +19,6 @@
     "@eboto/tsconfig": "workspace:*",
     "@types/node": "^20.14.11",
     "typescript": "^5.5.3"
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "@eboto/eslint-config/base"
-    ]
   },
   "prettier": "@eboto/prettier-config"
 }

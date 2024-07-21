@@ -26,6 +26,7 @@ import {
 } from "@mantine/dates";
 import { Spotlight } from "@mantine/spotlight";
 import { IconLayoutDashboard, IconSearch } from "@tabler/icons-react";
+import { env } from "env.mjs";
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 import Realistic from "react-canvas-confetti/dist/presets/realistic";
@@ -138,8 +139,8 @@ const confettiContext = createContext(
 );
 
 if (typeof window !== "undefined") {
-  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-    api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+  posthog.init(env.NEXT_PUBLIC_POSTHOG_KEY, {
+    api_host: env.NEXT_PUBLIC_POSTHOG_HOST,
   });
 }
 

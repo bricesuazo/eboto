@@ -23,12 +23,6 @@ const font = Poppins({
   subsets: ["latin"],
 });
 
-// const font = Lexend({
-//   subsets: ["latin"],
-// });
-
-// export const runtime = "edge";
-
 export const metadata: Metadata = {
   title: {
     default: siteConfig.name,
@@ -85,7 +79,6 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8867310433048493"
           crossOrigin="anonymous"
         ></script>
-        {/* TODO: Remove this once safari fix auto scale */}
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
@@ -157,14 +150,14 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         />
       </head>
       <body className={font.className}>
-        <MantineProvider theme={theme}>
-          <TRPCReactProvider>
+        <TRPCReactProvider>
+          <MantineProvider theme={theme}>
             <Notifications />
             <Providers>{children}</Providers>
             <Analytics />
             <SpeedInsights />
-          </TRPCReactProvider>
-        </MantineProvider>
+          </MantineProvider>
+        </TRPCReactProvider>
       </body>
     </html>
   );

@@ -55,7 +55,6 @@ import { api } from "~/trpc/client";
 export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
   const utils = api.useUtils();
   const userQuery = api.auth.getUser.useQuery();
-  // console.log("🚀 ~ Header ~ userQuery:", userQuery.error);
   const params = useParams();
   const router = useRouter();
   const [logoutLoading, setLogoutLoading] = useState(false);

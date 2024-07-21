@@ -1,5 +1,6 @@
 {
   "name": "@eboto/api",
+  "type": "module",
   "main": "./index.ts",
   "types": "./index.ts",
   "scripts": {

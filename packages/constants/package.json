@@ -1,5 +1,6 @@
 {
   "name": "@eboto/constants",
+  "type": "module",
   "main": "./index.ts",
   "publishConfig": {
     "access": "public"
@@ -10,6 +11,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@eboto/tsconfig": "workspace:*",
     "@types/node": "^20.14.11"
   }
 }
