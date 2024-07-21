@@ -44,7 +44,6 @@ import moment from "moment";
 import type { RouterOutputs } from "@eboto/api";
 import { parseHourTo12HourFormat } from "@eboto/constants";
 
-import GenerateResultRow from "~/components/generated-result-row";
 import DashboardShowQRCode from "~/components/modals/dashboard-show-qr-code";
 import { api } from "~/trpc/client";
 
@@ -374,7 +373,7 @@ export default function DashboardOverview({
           </SimpleGrid>
         )}
       </Box>
-      <Box>
+      {/* <Box>
         <Title
           order={3}
           ta={{
@@ -401,7 +400,7 @@ export default function DashboardOverview({
             ))
           )}
         </Box>
-      </Box>
+      </Box> */}
     </Stack>
   );
 }
