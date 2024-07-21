@@ -3,8 +3,6 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { api } from "@/trpc/client";
-import { transformUploadImage } from "@/utils";
 import {
   Alert,
   Box,
@@ -42,6 +40,8 @@ import {
   parseHourTo12HourFormat,
 } from "@eboto/constants";
 
+import { api } from "~/trpc/client";
+import { transformUploadImage } from "~/utils";
 import type { Database } from "../../../../../supabase/types";
 
 export default function DashboardSettings({

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import SigninForm from "@/components/signin-form";
 import { Anchor, Text, Title } from "@mantine/core";
+
+import SigninForm from "~/components/signin-form";
 
 export const metadata: Metadata = {
   title: "Sign in to your account",

@@ -1,4 +1,7 @@
 {
+  "compilerOptions": {
+    "jsx": "preserve"
+  },
   "extends": "@eboto/tsconfig/base.json"
   // "include": ["emails"]
 }

@@ -1,29 +1,24 @@
 {
   "name": "@eboto/email",
+  "type": "module",
   "main": "./index.tsx",
   "scripts": {
     "email:dev": "email dev --port 3002",
     "export": "email export"
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.600.0",
+    "@aws-sdk/client-ses": "^3.616.0",
     "@eboto/constants": "workspace:*",
-    "@react-email/components": "0.0.19",
-    "@react-email/render": "0.0.15",
-    "react": "^18.3.1",
-    "react-email": "2.1.4"
+    "@react-email/components": "0.0.21",
+    "@react-email/render": "0.0.16",
+    "react": "^19.0.0-rc-fb9a90fa48-20240614",
+    "react-email": "2.1.5"
   },
   "devDependencies": {
     "@eboto/prettier-config": "workspace:*",
     "@eboto/tsconfig": "workspace:*",
-    "@types/node": "^20.14.7",
-    "typescript": "^5.5.2"
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "@eboto/eslint-config/base"
-    ]
+    "@types/node": "^20.14.11",
+    "typescript": "^5.5.3"
   },
   "prettier": "@eboto/prettier-config"
 }

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import classes from "@/styles/NotFound.module.css";
 import { Button, Center, Container, Group, Text, Title } from "@mantine/core";
 import Balancer from "react-wrap-balancer";
+
+import classes from "~/styles/NotFound.module.css";
 
 export const metadata: Metadata = {
   title: "404 – Page Not Found",

@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import { isElectionEnded, isElectionOngoing } from "@eboto/constants";
 
-import { env } from "../env.mjs";
+import { env } from "../../../../apps/www/env.mjs";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { LS_DATA_DEV, LS_DATA_PROD } from "./../../../../supabase/seed";
 

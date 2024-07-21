@@ -9,11 +9,6 @@ import {
   useRouter,
   useSearchParams,
 } from "next/navigation";
-import Footer from "@/components/footer";
-import Header from "@/components/header";
-import CreateElection from "@/components/modals/create-election";
-import { useStore } from "@/store";
-import { api } from "@/trpc/client";
 import {
   ActionIcon,
   Alert,
@@ -83,6 +78,11 @@ import { z } from "zod";
 
 import { electionDashboardNavbar, isElectionEnded } from "@eboto/constants";
 
+import Footer from "~/components/footer";
+import Header from "~/components/header";
+import CreateElection from "~/components/modals/create-election";
+import { useStore } from "~/store";
+import { api } from "~/trpc/client";
 import BoostCard from "../boost-card";
 
 export interface ChatType {

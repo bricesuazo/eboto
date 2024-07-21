@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import { api } from "@/trpc/client";
 import { Alert, Button, Group, Mark, Modal, Stack, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
 
+import { api } from "~/trpc/client";
 import type { Database } from "../../../../../supabase/types";
 
 export default function DeletePartylist({

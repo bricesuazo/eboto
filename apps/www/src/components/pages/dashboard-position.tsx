@@ -1,7 +1,5 @@
 "use client";
 
-import classes from "@/styles/Position.module.css";
-import { api } from "@/trpc/client";
 import {
   ActionIcon,
   Box,
@@ -17,6 +15,8 @@ import { IconInfoCircle } from "@tabler/icons-react";
 
 import type { RouterOutputs } from "@eboto/api";
 
+import classes from "~/styles/Position.module.css";
+import { api } from "~/trpc/client";
 import type { Database } from "../../../../../supabase/types";
 import CreatePosition from "../modals/create-position";
 import DeletePosition from "../modals/delete-position";

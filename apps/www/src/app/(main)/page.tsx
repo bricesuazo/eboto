@@ -1,10 +1,6 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import ContactForm from "@/components/contact-form";
-import ElectionBoost from "@/components/modals/election-boost";
-import PublicElections from "@/components/public-elections";
-import classes from "@/styles/Home.module.css";
 import {
   Accordion,
   AccordionControl,
@@ -25,9 +21,13 @@ import Balancer from "react-wrap-balancer";
 
 import { FAQs } from "@eboto/constants";
 
+import ContactForm from "~/components/contact-form";
+import ElectionBoost from "~/components/modals/election-boost";
+import PublicElections from "~/components/public-elections";
+import classes from "~/styles/Home.module.css";
 import { MainPricing } from "./pricing/page";
 
-const ReactPlayer = dynamic(() => import("@/components/react-player"), {
+const ReactPlayer = dynamic(() => import("~/components/react-player"), {
   ssr: false,
 });
 

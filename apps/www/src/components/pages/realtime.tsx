@@ -3,8 +3,6 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import ScrollToTopButton from "@/components/scroll-to-top";
-import { api } from "@/trpc/client";
 import { Adsense } from "@ctrl/react-adsense";
 import {
   Box,
@@ -37,6 +35,8 @@ import {
   parseHourTo12HourFormat,
 } from "@eboto/constants";
 
+import ScrollToTopButton from "~/components/scroll-to-top";
+import { api } from "~/trpc/client";
 import type { Database } from "../../../../../supabase/types";
 import AdModal from "../ad-modal";
 import MessageCommissioner from "../modals/message-commissioner";

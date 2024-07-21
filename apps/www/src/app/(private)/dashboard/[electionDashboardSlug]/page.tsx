@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import DashboardOverview from "@/components/pages/dashboard-overview";
-import { api } from "@/trpc/server";
+
+import DashboardOverview from "~/components/pages/dashboard-overview";
+import { api } from "~/trpc/server";
 
 export const metadata: Metadata = {
   title: "Overview",
@@ -11,7 +12,7 @@ export default async function Page({
 }: {
   params: { electionDashboardSlug: string };
 }) {
-  const election = await api.election.getDashboardOverviewData.query({
+  const election = await api.election.getDashboardOverviewData({
     election_slug: electionDashboardSlug,
   });
 

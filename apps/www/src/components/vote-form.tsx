@@ -3,9 +3,6 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useConfetti } from "@/components/providers";
-import { api } from "@/trpc/client";
-import toWords from "@/utils/toWords";
 import {
   Alert,
   Box,
@@ -39,6 +36,9 @@ import {
 import type { RouterOutputs } from "@eboto/api";
 import { formatName } from "@eboto/constants";
 
+import { useConfetti } from "~/components/providers";
+import { api } from "~/trpc/client";
+import toWords from "~/utils/toWords";
 import type { Database } from "../../../../supabase/types";
 
 export default function VoteForm({
@@ -330,7 +330,7 @@ export default function VoteForm({
           onClick={open}
           disabled={
             voteMutation.isPending ||
-            !Object.values(form.values).every((value) => value?.isValid)
+            !Object.values(form.values).every((value) => value.isValid)
           }
           leftSection={<IconFingerprint />}
           size="lg"

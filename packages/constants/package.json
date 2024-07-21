@@ -1,15 +1,17 @@
 {
   "name": "@eboto/constants",
+  "type": "module",
   "main": "./index.ts",
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@tabler/icons-react": "^3.6.0",
+    "@tabler/icons-react": "^3.11.0",
     "date-fns": "^3.6.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/node": "^20.14.7"
+    "@eboto/tsconfig": "workspace:*",
+    "@types/node": "^20.14.11"
   }
 }

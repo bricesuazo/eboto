@@ -1,8 +1,9 @@
 import { notFound, redirect } from "next/navigation";
-import { createClient as createClientAdmin } from "@/utils/supabase/admin";
-import { createClient as createClientServer } from "@/utils/supabase/server";
 
 import { isElectionOngoing } from "@eboto/constants";
+
+import { createClient as createClientAdmin } from "~/supabase/admin";
+import { createClient as createClientServer } from "~/supabase/server";
 
 export default async function ElectionLayout(
   props: React.PropsWithChildren<{ params: { electionSlug: string } }>,

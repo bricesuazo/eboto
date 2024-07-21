@@ -1,10 +1,10 @@
 "use client";
 
-import { api } from "@/trpc/client";
 import { Box, Text } from "@mantine/core";
 
 import type { RouterOutputs } from "@eboto/api";
 
+import { api } from "~/trpc/client";
 import DashboardCard from "./dashboard-card";
 
 export function MyElectionsAsCommissioner({

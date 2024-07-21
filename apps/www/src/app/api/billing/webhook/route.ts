@@ -1,6 +1,7 @@
 import crypto from "crypto";
-import { createClient } from "@/utils/supabase/admin";
 import { env } from "env.mjs";
+
+import { createClient } from "~/supabase/admin";
 
 const isError = (error: unknown): error is Error => {
   return error instanceof Error;
@@ -124,7 +125,9 @@ export async function POST(req: Request) {
     const digest = Buffer.from(hmac.update(rawBody).digest("hex"), "utf8");
     const signature = Buffer.from(req.headers.get("X-Signature") ?? "", "utf8");
 
-    if (!crypto.timingSafeEqual(digest, signature)) {
+    if (
+      !crypto.timingSafeEqual(new Uint8Array(digest), new Uint8Array(signature))
+    ) {
       throw new Error("Invalid signature.");
     }
 
@@ -151,7 +154,7 @@ export async function POST(req: Request) {
               variant_id: payload.data.attributes.first_order_item.variant_id,
             })
             .eq("id", election.id);
-        } else if (payload.meta.custom_data.type === "plus") {
+        } else {
           const { data: user } = await supabase
             .from("users")
             .select()

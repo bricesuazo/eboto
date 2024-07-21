@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { api } from "@/trpc/client";
 import {
   ActionIcon,
   Alert,
@@ -40,6 +39,8 @@ import {
 } from "@tabler/icons-react";
 import readXlsxFile from "read-excel-file";
 import * as XLSX from "xlsx";
+
+import { api } from "~/trpc/client";
 
 export default function UploadBulkVoter({
   election_id,

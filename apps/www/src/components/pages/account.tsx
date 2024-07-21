@@ -2,9 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { api } from "@/trpc/client";
-import { transformUploadImage } from "@/utils";
-import { createClient } from "@/utils/supabase/client";
 import {
   Box,
   Button,
@@ -21,6 +18,10 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconAt, IconLetterCase, IconLock, IconX } from "@tabler/icons-react";
 
 import type { RouterOutputs } from "@eboto/api";
+
+import { createClient } from "~/supabase/client";
+import { api } from "~/trpc/client";
+import { transformUploadImage } from "~/utils";
 
 export default function AccountPageClient(
   props: RouterOutputs["auth"]["getUserProtected"],

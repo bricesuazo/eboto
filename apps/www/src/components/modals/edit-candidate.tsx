@@ -3,8 +3,6 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { api } from "@/trpc/client";
-import { transformUploadImage } from "@/utils";
 import {
   ActionIcon,
   Alert,
@@ -47,6 +45,8 @@ import { v4 as uuid } from "uuid";
 
 import { formatName } from "@eboto/constants";
 
+import { api } from "~/trpc/client";
+import { transformUploadImage } from "~/utils";
 import type { Database } from "../../../../../supabase/types";
 
 export default function EditCandidate({

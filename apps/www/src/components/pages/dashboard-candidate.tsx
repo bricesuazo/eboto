@@ -4,11 +4,6 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, useRouter } from "next/navigation";
-import CreateCandidate from "@/components/modals/create-candidate";
-import DeleteCandidate from "@/components/modals/delete-candidate";
-import EditCandidate from "@/components/modals/edit-candidate";
-import classes from "@/styles/Candidate.module.css";
-import { api } from "@/trpc/client";
 import {
   Anchor,
   Box,
@@ -28,6 +23,11 @@ import Balancer from "react-wrap-balancer";
 import type { RouterOutputs } from "@eboto/api";
 import { formatName } from "@eboto/constants";
 
+import CreateCandidate from "~/components/modals/create-candidate";
+import DeleteCandidate from "~/components/modals/delete-candidate";
+import EditCandidate from "~/components/modals/edit-candidate";
+import classes from "~/styles/Candidate.module.css";
+import { api } from "~/trpc/client";
 import type { Database } from "../../../../../supabase/types";
 
 export default function DashboardCandidate({

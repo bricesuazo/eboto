@@ -3,11 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import KeyFeatures from "@/components/key-features";
-import ElectionBoost from "@/components/modals/election-boost";
-import { useStore } from "@/store";
-import classes from "@/styles/Pricing.module.css";
-import { api } from "@/trpc/client";
 import {
   Box,
   Button,
@@ -42,6 +37,12 @@ import {
 import Balancer from "react-wrap-balancer";
 
 import { PRICING } from "@eboto/constants";
+
+import KeyFeatures from "~/components/key-features";
+import ElectionBoost from "~/components/modals/election-boost";
+import { useStore } from "~/store";
+import classes from "~/styles/Pricing.module.css";
+import { api } from "~/trpc/client";
 
 export const dynamic = "force-static";
 

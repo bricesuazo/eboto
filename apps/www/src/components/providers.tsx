@@ -4,8 +4,6 @@ import { createContext, useContext, useState } from "react";
 import { Poppins } from "next/font/google";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { SPOTLIGHT_DATA } from "@/config/site";
-import { api } from "@/trpc/client";
 import {
   Center,
   Combobox,
@@ -28,10 +26,14 @@ import {
 } from "@mantine/dates";
 import { Spotlight } from "@mantine/spotlight";
 import { IconLayoutDashboard, IconSearch } from "@tabler/icons-react";
+import { env } from "env.mjs";
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 import Realistic from "react-canvas-confetti/dist/presets/realistic";
 import type { TConductorInstance } from "react-canvas-confetti/dist/types";
+
+import { SPOTLIGHT_DATA } from "~/config/site";
+import { api } from "~/trpc/client";
 
 const font = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -137,8 +139,8 @@ const confettiContext = createContext(
 );
 
 if (typeof window !== "undefined") {
-  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-    api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+  posthog.init(env.NEXT_PUBLIC_POSTHOG_KEY, {
+    api_host: env.NEXT_PUBLIC_POSTHOG_HOST,
   });
 }
 

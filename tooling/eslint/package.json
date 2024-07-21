@@ -1,26 +1,30 @@
 {
   "name": "@eboto/eslint-config",
-  "files": [
-    "./base.js",
-    "./nextjs.js",
-    "./react.js"
-  ],
+  "type": "module",
+  "exports": {
+    "./base": "./base.js",
+    "./nextjs": "./nextjs.js",
+    "./react": "./react.js"
+  },
+  "scripts": {
+    "clean": "rm -rf .turbo node_modules",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
-    "@next/eslint-plugin-next": "^14.2.4",
-    "@typescript-eslint/eslint-plugin": "^7.13.1",
-    "@typescript-eslint/parser": "^7.13.1",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-config-turbo": "^2.0.4",
+    "@next/eslint-plugin-next": "^15.0.0-rc.0",
     "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-jsx-a11y": "^6.9.0",
-    "eslint-plugin-react": "^7.34.3",
-    "eslint-plugin-react-hooks": "^4.6.2"
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-react": "^7.34.4",
+    "eslint-plugin-react-hooks": "rc",
+    "eslint-plugin-turbo": "^2.0.5",
+    "typescript-eslint": "rc-v8"
   },
   "devDependencies": {
     "@eboto/prettier-config": "workspace:*",
     "@eboto/tsconfig": "workspace:*",
-    "@types/eslint": "^8.56.10",
-    "eslint": "^9.5.0",
+    "eslint": "^9.7.0",
+    "prettier": "^3.3.3",
     "typescript": "^5.5.2"
   },
   "prettier": "@eboto/prettier-config"

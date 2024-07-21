@@ -4,10 +4,6 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useStore } from "@/store";
-import classes from "@/styles/Header.module.css";
-import { api } from "@/trpc/client";
-import { createClient } from "@/utils/supabase/client";
 import {
   ActionIcon,
   Box,
@@ -50,6 +46,11 @@ import {
   IconSun,
   IconUserCircle,
 } from "@tabler/icons-react";
+
+import { useStore } from "~/store";
+import classes from "~/styles/Header.module.css";
+import { createClient } from "~/supabase/client";
+import { api } from "~/trpc/client";
 
 export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
   const utils = api.useUtils();

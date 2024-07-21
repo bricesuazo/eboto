@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import Realtime from "@/components/pages/realtime";
-import { api } from "@/trpc/server";
-import { createClient as createClientAdmin } from "@/utils/supabase/admin";
-import { createClient as createClientServer } from "@/utils/supabase/server";
 import { env } from "env.mjs";
 import moment from "moment";
 
 import { isElectionEnded, isElectionOngoing } from "@eboto/constants";
+
+import Realtime from "~/components/pages/realtime";
+import { createClient as createClientAdmin } from "~/supabase/admin";
+import { createClient as createClientServer } from "~/supabase/server";
+import { api } from "~/trpc/server";
 
 export async function generateMetadata({
   params: { electionSlug },
@@ -102,7 +103,7 @@ export default async function RealtimePage({
   const {
     data: { user },
   } = await supabaseServer.auth.getUser();
-  const positions = await api.election.getElectionRealtime.query(electionSlug);
+  const positions = await api.election.getElectionRealtime(electionSlug);
 
   const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin

@@ -1,4 +1,5 @@
-import type { SupabaseClient, User } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
+import type { User } from "@supabase/supabase-js";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
@@ -6,28 +7,27 @@ import { ZodError } from "zod";
 import { inngest } from "@eboto/inngest";
 import * as payment from "@eboto/payment";
 
+import { env } from "../../../apps/www/env.mjs";
 import type { Database } from "./../../../supabase/types";
 
-interface CreateContextOptions {
-  user: { auth: User; db: Database["public"]["Tables"]["users"]["Row"] } | null;
-  payment: typeof payment;
-  inngest: typeof inngest;
-  supabase: SupabaseClient<Database>;
-}
-const createInnerTRPCContext = (opts: CreateContextOptions) => {
-  return { ...opts, payment };
-};
-
 export function createTRPCContext(opts: {
-  req?: Request;
   user: { auth: User; db: Database["public"]["Tables"]["users"]["Row"] } | null;
-  supabase: SupabaseClient<Database>;
+  headers: Headers;
 }) {
-  // const source = opts.req?.headers.get("x-trpc-source") ?? "unknown";
+  const supabase = createClient<Database>(
+    env.NEXT_PUBLIC_SUPABASE_URL,
+    env.SUPABASE_SERVICE_ROLE_KEY,
+  );
+  const source = opts.headers.get("x-trpc-source") ?? "unknown";
 
-  // console.log(">>> tRPC Request from", source, "by", opts.session?.user);
+  console.log(
+    ">>> tRPC Request from",
+    source,
+    "by",
+    opts.user?.auth.email ?? opts.user?.db.email,
+  );
 
-  return createInnerTRPCContext({ ...opts, payment, inngest });
+  return { ...opts, payment, inngest, supabase };
 }
 
 export type Context = Awaited<ReturnType<typeof createTRPCContext>>;
@@ -80,3 +80,5 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
 });
 
 export const protectedProcedure = t.procedure.use(enforceUserIsAuthed);
+
+export const createCallerFactory = t.createCallerFactory;

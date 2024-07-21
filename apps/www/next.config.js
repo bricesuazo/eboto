@@ -1,13 +1,12 @@
 /** @type {import('next').NextConfig} */
-
-module.exports = {
+export default {
   reactStrictMode: true,
   transpilePackages: ["@eboto/api"],
   experimental: {
     optimizePackageImports: ["@mantine/core", "@mantine/hooks"],
   },
   images: {
-    unoptimized: true,
+    // unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",

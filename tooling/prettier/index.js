@@ -1,5 +1,3 @@
-import { fileURLToPath } from "url";
-
 /** @typedef  {import("prettier").Config} PrettierConfig */
 /** @typedef  {import("@ianvs/prettier-plugin-sort-imports").PluginConfig} SortImportsConfig */
 

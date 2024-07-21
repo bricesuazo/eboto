@@ -1,7 +1,5 @@
 "use client";
 
-import classes from "@/styles/Home.module.css";
-import { api } from "@/trpc/client";
 import {
   Box,
   Button,
@@ -15,6 +13,9 @@ import {
 } from "@mantine/core";
 import { hasLength, isEmail, useForm } from "@mantine/form";
 import { IconAt, IconMapPin, IconPhone, IconSun } from "@tabler/icons-react";
+
+import classes from "~/styles/Home.module.css";
+import { api } from "~/trpc/client";
 
 export default function ContactForm() {
   const sendMessageMutation = api.system.sendMessage.useMutation({

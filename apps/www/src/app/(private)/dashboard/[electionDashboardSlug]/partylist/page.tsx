@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import DashboardPartylist from "@/components/pages/dashboard-partylist";
-import { api } from "@/trpc/server";
-import { createClient } from "@/utils/supabase/admin";
+
+import DashboardPartylist from "~/components/pages/dashboard-partylist";
+import { createClient } from "~/supabase/admin";
+import { api } from "~/trpc/server";
 
 export const metadata: Metadata = {
   title: "Partylists",
@@ -23,7 +24,7 @@ export default async function Page({
 
   if (!election) notFound();
 
-  const partylists = await api.partylist.getDashboardData.query({
+  const partylists = await api.partylist.getDashboardData({
     election_id: election.id,
   });
 

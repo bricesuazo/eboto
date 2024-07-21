@@ -1,9 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import GenerateResultRow from "@/components/generated-result-row";
-import DashboardShowQRCode from "@/components/modals/dashboard-show-qr-code";
-import { api } from "@/trpc/client";
 import {
   ActionIcon,
   Box,
@@ -46,6 +43,10 @@ import moment from "moment";
 
 import type { RouterOutputs } from "@eboto/api";
 import { parseHourTo12HourFormat } from "@eboto/constants";
+
+import GenerateResultRow from "~/components/generated-result-row";
+import DashboardShowQRCode from "~/components/modals/dashboard-show-qr-code";
+import { api } from "~/trpc/client";
 
 export default function DashboardOverview({
   data,

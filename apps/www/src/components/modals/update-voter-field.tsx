@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { api } from "@/trpc/client";
 import {
   ActionIcon,
   Alert,
@@ -24,6 +23,7 @@ import {
   IconUsersGroup,
 } from "@tabler/icons-react";
 
+import { api } from "~/trpc/client";
 import type { Database } from "../../../../../supabase/types";
 
 interface Field {

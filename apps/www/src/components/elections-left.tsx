@@ -1,7 +1,8 @@
 "use client";
 
-import { api } from "@/trpc/client";
 import { Badge } from "@mantine/core";
+
+import { api } from "~/trpc/client";
 
 export default function ElectionsLeft() {
   const getElectionsPlusLeftQuery =

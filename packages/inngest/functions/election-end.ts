@@ -80,9 +80,11 @@ export default inngest.createFunction(
       const emails = [
         ...new Set([
           ...election.voters.map((voter) => voter.email),
-          ...election.commissioners.map((commissioner) =>
-            commissioner.user ? commissioner.user.email : "",
-          ),
+          ...election.commissioners
+            .filter((commissioner) => commissioner.user)
+            .map((commissioner) =>
+              commissioner.user ? commissioner.user.email : "",
+            ),
         ]),
       ];
 
@@ -91,15 +93,15 @@ export default inngest.createFunction(
         .insert({ election_id, result });
 
       if (emails.length > 0)
-        await Promise.all([
-          ...Array.from({ length: Math.ceil(emails.length / 50) }).map(
+        await Promise.all(
+          Array.from({ length: Math.ceil(emails.length / 50) }).map(
             (_, index) =>
               sendElectionResult({
                 emails: emails.slice(index * 50, (index + 1) * 50),
                 election: result,
               }),
           ),
-        ]);
+        );
     });
 
     return { success: true };

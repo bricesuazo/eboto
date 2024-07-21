@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { env } from "../env.mjs";
+import { env } from "../../../../apps/www/env.mjs";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const paymentRouter = createTRPCRouter({

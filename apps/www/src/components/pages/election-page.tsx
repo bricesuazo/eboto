@@ -4,10 +4,6 @@ import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import ElectionShowQRCode from "@/components/modals/election-show-qr-code";
-import ScrollToTopButton from "@/components/scroll-to-top";
-import classes from "@/styles/Election.module.css";
-import { api } from "@/trpc/client";
 import { Adsense } from "@ctrl/react-adsense";
 import {
   ActionIcon,
@@ -47,6 +43,10 @@ import {
   parseHourTo12HourFormat,
 } from "@eboto/constants";
 
+import ElectionShowQRCode from "~/components/modals/election-show-qr-code";
+import ScrollToTopButton from "~/components/scroll-to-top";
+import classes from "~/styles/Election.module.css";
+import { api } from "~/trpc/client";
 import AdModal from "../ad-modal";
 import MessageCommissioner from "../modals/message-commissioner";
 import MyMessagesElection from "../my-messages-election";
