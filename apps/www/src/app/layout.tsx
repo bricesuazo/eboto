@@ -71,9 +71,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
-        <ColorSchemeScript />
+        <ColorSchemeScript suppressHydrationWarning />
         <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8867310433048493"
