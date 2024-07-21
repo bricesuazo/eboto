@@ -46,6 +46,7 @@ import { parseHourTo12HourFormat } from "@eboto/constants";
 
 import DashboardShowQRCode from "~/components/modals/dashboard-show-qr-code";
 import { api } from "~/trpc/client";
+import GenerateResultRow from "../generated-result-row";
 
 export default function DashboardOverview({
   data,
@@ -373,7 +374,7 @@ export default function DashboardOverview({
           </SimpleGrid>
         )}
       </Box>
-      {/* <Box>
+      <Box>
         <Title
           order={3}
           ta={{
@@ -400,7 +401,7 @@ export default function DashboardOverview({
             ))
           )}
         </Box>
-      </Box> */}
+      </Box>
     </Stack>
   );
 }

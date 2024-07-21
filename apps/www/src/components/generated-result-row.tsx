@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+// TODO: Change this import once @react-pdf/renderer is updated to support React 19
+// import { PDFDownloadLink } from "@react-pdf/renderer";
+import { PDFDownloadLink } from "@alexandernanberg/react-pdf-renderer";
 import { Box, Button, Group, Text } from "@mantine/core";
-import { PDFDownloadLink } from "@react-pdf/renderer";
 import { IconDownload } from "@tabler/icons-react";
 import moment from "moment";
 

@@ -1,12 +1,19 @@
 "use client";
 
+// import {
+//   Document,
+//   Page,
+//   Image as PdfImage,
+//   Text,
+//   View,
+// } from "@react-pdf/renderer";
 import {
   Document,
   Page,
   Image as PdfImage,
   Text,
   View,
-} from "@react-pdf/renderer";
+} from "@alexandernanberg/react-pdf-renderer";
 
 import { formatName } from "@eboto/constants";
 
@@ -58,7 +65,6 @@ export default function GenerateResult({
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            marginBottom: 20,
           }}
         >
           <View style={{ display: "flex", alignItems: "center" }}>
