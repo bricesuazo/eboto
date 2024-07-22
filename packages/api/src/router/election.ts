@@ -1231,10 +1231,31 @@ export const electionRouter = createTRPCRouter({
           message: "Commissioner already exists",
         });
 
-      await ctx.supabase.from("commissioners").insert({
-        election_id: election.id,
-        user_id: user.id,
-      });
+      const { data: has_election_plus } = await ctx.supabase
+        .from("elections_plus")
+        .select()
+        .eq("user_id", user.id)
+        .is("redeemed_at", null)
+        .single();
+
+      if (!has_election_plus)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User does not have enough election plus",
+        });
+
+      await Promise.all([
+        ctx.supabase.from("commissioners").insert({
+          election_id: election.id,
+          user_id: user.id,
+        }),
+        ctx.supabase
+          .from("elections_plus")
+          .update({
+            redeemed_at: new Date().toISOString(),
+          })
+          .eq("id", has_election_plus.id),
+      ]);
     }),
   deleteCommissioner: protectedProcedure
     .input(

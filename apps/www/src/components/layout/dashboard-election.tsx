@@ -18,6 +18,7 @@ import {
   AppShellHeader,
   AppShellMain,
   AppShellNavbar,
+  Badge,
   Box,
   Button,
   Card,
@@ -39,6 +40,7 @@ import {
   InputBase,
   InputPlaceholder,
   Loader,
+  Modal,
   Popover,
   PopoverDropdown,
   PopoverTarget,
@@ -53,6 +55,9 @@ import {
   Text,
   Textarea,
   TextInput,
+  ThemeIcon,
+  Tooltip,
+  TooltipGroup,
   UnstyledButton,
   useCombobox,
 } from "@mantine/core";
@@ -62,6 +67,7 @@ import { notifications } from "@mantine/notifications";
 import {
   IconAlertCircle,
   IconAlertTriangle,
+  IconAt,
   IconCheck,
   IconChevronLeft,
   IconExternalLink,
@@ -70,6 +76,8 @@ import {
   IconMessage2X,
   IconPlus,
   IconSend,
+  IconUserMinus,
+  IconUserPlus,
 } from "@tabler/icons-react";
 import { zodResolver } from "mantine-form-zod-resolver";
 import moment from "moment";
@@ -110,7 +118,7 @@ export default function DashboardElection({
 
   const pathname = usePathname();
 
-  // const [opened, { open, close }] = useDisclosure(false);
+  const [opened, { open, close }] = useDisclosure(false);
 
   const getAllCommissionerByElectionSlugQuery =
     api.election.getAllCommissionerByElectionSlug.useQuery(
@@ -145,7 +153,7 @@ export default function DashboardElection({
   const currentElectionUser =
     elections?.find(
       ({ election }) =>
-        election.slug === params?.electionDashboardSlug?.toString(),
+        election.slug === params.electionDashboardSlug?.toString(),
     ) ?? null;
 
   const currentElection = currentElectionUser?.election;
@@ -172,17 +180,17 @@ export default function DashboardElection({
     },
   });
 
-  // useEffect(() => {
-  //   if (opened) {
-  //     form.reset();
-  //     addCommissionerMutation.reset();
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [opened]);
+  useEffect(() => {
+    if (opened) {
+      form.reset();
+      addCommissionerMutation.reset();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [opened]);
 
   return (
     <>
-      {/* <Modal
+      <Modal
         opened={opened}
         onClose={close}
         title={`Commissioners of ${currentElection?.name}`}
@@ -230,7 +238,7 @@ export default function DashboardElection({
             {getAllCommissionerByElectionSlugQuery.data?.map((commissioner) => (
               <Group key={commissioner.id} p="xs" justify="space-between">
                 {!commissioner.user.name ? (
-                  <Flex>
+                  <Flex gap="xs">
                     <Text size="sm">{commissioner.user.email}</Text>
                     {commissioner.user.isTheCreator && <Badge>Creator</Badge>}
                   </Flex>
@@ -288,7 +296,7 @@ export default function DashboardElection({
             ))}
           </Box>
         </Stack>
-      </Modal> */}
+      </Modal>
       <AppShell
         header={{ height: 60 }}
         footer={{ height: 52 }}
@@ -358,7 +366,7 @@ export default function DashboardElection({
                       disabled={!elections}
                     >
                       {currentElection?.name ? (
-                        <Text truncate>{currentElection?.name}</Text>
+                        <Text truncate>{currentElection.name}</Text>
                       ) : (
                         <InputPlaceholder>
                           <Text truncate>Select an election</Text>
@@ -446,7 +454,7 @@ export default function DashboardElection({
                   w="100%"
                   rightSection={<IconExternalLink size="1rem" />}
                   component={Link}
-                  href={`/${params?.electionDashboardSlug?.toString()}`}
+                  href={`/${params.electionDashboardSlug?.toString()}`}
                   target="_blank"
                 >
                   Visit election
@@ -458,18 +466,19 @@ export default function DashboardElection({
                       component={Link}
                       justify="left"
                       color={
-                        item.path === pathname?.split("/")[3] ? "green" : "gray"
+                        item.path === pathname.split("/")[3] ? "green" : "gray"
                       }
                       fw="normal"
                       fz="sm"
-                      href={`/dashboard/${params?.electionDashboardSlug?.toString()}/${
+                      href={`/dashboard/${params.electionDashboardSlug?.toString()}/${
                         item.path ?? ""
                       }`}
                       onClick={() => {
-                        store.dashboardMenu && store.toggleDashboardMenu(false);
+                        if (store.dashboardMenu)
+                          store.toggleDashboardMenu(false);
                       }}
                       variant={
-                        item.path === pathname?.split("/")[3]
+                        item.path === pathname.split("/")[3]
                           ? "light"
                           : "subtle"
                       }
@@ -483,7 +492,7 @@ export default function DashboardElection({
               </Stack>
             </Stack>
 
-            {/* <Stack gap="xs">
+            <Stack gap="xs">
               <Divider />
               <Stack gap="xs" mb={{ xs: "lg" }}>
                 <Group justify="space-between">
@@ -550,7 +559,7 @@ export default function DashboardElection({
                   </Group>
                 </TooltipGroup>
               </Stack>
-            </Stack> */}
+            </Stack>
 
             <Stack hiddenFrom="xs">
               <Divider />
@@ -667,10 +676,12 @@ export default function DashboardElection({
                                   <Flex align="center" gap="sm">
                                     <Image
                                       src={
-                                        room.messages[0].user?.image_url ?? ""
+                                        room.messages[0].user.image_url
+                                          ? room.messages[0].user.image_url
+                                          : "/images/default-profile.png"
                                       }
                                       alt={
-                                        room.messages[0].user?.name + " image."
+                                        room.messages[0].user.name + " image."
                                       }
                                       width={20}
                                       height={20}
@@ -1046,7 +1057,7 @@ function AdminChat({
 }) {
   const getAllAdminCommissionerRoomsQuery =
     api.election.getAllAdminCommissionerRooms.useQuery(
-      { election_slug: election_slug! },
+      { election_slug: election_slug ?? "" },
       {
         enabled: !!election_slug,
       },
@@ -1064,7 +1075,7 @@ function AdminChat({
               here.
             </Text>
           </Balancer>
-          <CreateAdminMessagePopover election_slug={election_slug!} />
+          <CreateAdminMessagePopover election_slug={election_slug ?? ""} />
         </Stack>
       ) : (
         <>
@@ -1076,7 +1087,7 @@ function AdminChat({
                   Message us here.
                 </Text>
               </Balancer>
-              <CreateAdminMessagePopover election_slug={election_slug!} />
+              <CreateAdminMessagePopover election_slug={election_slug ?? ""} />
             </Stack>
           </Card>
           {getAllAdminCommissionerRoomsQuery.data.map((room) => {

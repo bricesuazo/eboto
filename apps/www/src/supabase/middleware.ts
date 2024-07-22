@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { env } from "env.mjs";
 
-import { Database } from "../../../../supabase/types";
+import type { Database } from "../../../../supabase/types";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({

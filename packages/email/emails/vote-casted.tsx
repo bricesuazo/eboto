@@ -47,7 +47,7 @@ interface VoteCastedProps {
 export async function sendVoteCasted(props: VoteCastedProps) {
   await ses.sendEmail({
     Source: "eBoto <contact@eboto.app>",
-    ReplyToAddresses: [process.env.EMAIL_FROM!],
+    ReplyToAddresses: [process.env.EMAIL_FROM ?? ""],
     Destination: {
       ToAddresses: [props.email],
     },
