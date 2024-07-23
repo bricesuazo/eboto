@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
   Box,
@@ -9,9 +10,13 @@ import {
   Group,
   Skeleton,
   Stack,
+  Tabs,
+  TabsList,
+  TabsTab,
   Text,
   Title,
 } from "@mantine/core";
+import { IconArrowDown, IconArrowUp, IconX } from "@tabler/icons-react";
 
 import ElectionsLeft from "~/components/elections-left";
 import Dashboard from "~/components/layout/dashboard";
@@ -28,13 +33,24 @@ export const metadata: Metadata = {
   description: "eBoto | Dashboard",
 };
 
-export default async function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Record<string, string | string[] | undefined>;
+}) {
   const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) redirect("/sign-in");
+
+  const manage = Array.isArray(searchParams.manage)
+    ? searchParams.manage[0]
+    : searchParams.manage;
+  const vote = Array.isArray(searchParams.vote)
+    ? searchParams.vote[0]
+    : searchParams.vote;
 
   return (
     <Dashboard>
@@ -46,6 +62,7 @@ export default async function Page() {
               <ElectionsLeft />
             </Center>
           </Flex>
+
           <Box>
             <Flex align="center" justify="space-between">
               <Title order={2}>My elections</Title>
@@ -59,19 +76,68 @@ export default async function Page() {
             <Text size="sm" c="grayText" mb="md">
               You can manage the elections below.
             </Text>
-            <Group>
-              <Suspense
-                fallback={
-                  <>
-                    {[...Array(3).keys()].map((i) => (
-                      <Skeleton key={i} maw={288} h={400} radius="md" />
-                    ))}
-                  </>
-                }
-              >
-                <MyElectionsAsCommissioner />
-              </Suspense>
-            </Group>
+
+            <Tabs
+              defaultValue={
+                (Array.isArray(searchParams.manage)
+                  ? searchParams.manage[0]
+                  : searchParams.manage) ?? "ongoing"
+              }
+              inverted
+            >
+              <Stack>
+                <TabsList grow>
+                  <TabsTab
+                    value="ongoing"
+                    leftSection={<IconArrowDown />}
+                    component={Link}
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
+                    href={`/dashboard?${
+                      vote ? `vote=${vote}&` : ""
+                    }manage=ongoing`}
+                  >
+                    Ongoing
+                  </TabsTab>
+                  <TabsTab
+                    value="upcoming"
+                    leftSection={<IconArrowUp />}
+                    component={Link}
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
+                    href={`/dashboard?${
+                      vote ? `vote=${vote}&` : ""
+                    }manage=upcoming`}
+                  >
+                    Upcoming
+                  </TabsTab>
+                  <TabsTab
+                    value="ended"
+                    leftSection={<IconX />}
+                    component={Link}
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
+                    href={`/dashboard?${
+                      vote ? `vote=${vote}&` : ""
+                    }manage=ended`}
+                  >
+                    Ended
+                  </TabsTab>
+                </TabsList>
+
+                <Suspense
+                  fallback={
+                    <Group>
+                      {[...Array(3).keys()].map((i) => (
+                        <Skeleton key={i} maw={288} h={400} radius="md" />
+                      ))}
+                    </Group>
+                  }
+                >
+                  <MyElectionsAsCommissioner />
+                </Suspense>
+              </Stack>
+            </Tabs>
           </Box>
 
           <Box>
@@ -82,19 +148,66 @@ export default async function Page() {
               election.
             </Text>
 
-            <Group>
-              <Suspense
-                fallback={
-                  <>
-                    {[...Array(3).keys()].map((i) => (
-                      <Skeleton key={i} maw={288} h={400} radius="md" />
-                    ))}
-                  </>
-                }
-              >
-                <MyElectionsAsVoter />
-              </Suspense>
-            </Group>
+            <Tabs
+              defaultValue={
+                (Array.isArray(searchParams.vote)
+                  ? searchParams.vote[0]
+                  : searchParams.vote) ?? "ongoing"
+              }
+              inverted
+            >
+              <Stack>
+                <TabsList grow>
+                  <TabsTab
+                    value="ongoing"
+                    leftSection={<IconArrowDown />}
+                    component={Link}
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
+                    href={`/dashboard?${
+                      manage ? `manage=${manage}&` : ""
+                    }vote=ongoing`}
+                  >
+                    Ongoing
+                  </TabsTab>
+                  <TabsTab
+                    value="upcoming"
+                    leftSection={<IconArrowUp />}
+                    component={Link}
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
+                    href={`/dashboard?${
+                      manage ? `manage=${manage}&` : ""
+                    }vote=upcoming`}
+                  >
+                    Upcoming
+                  </TabsTab>
+                  <TabsTab
+                    value="ended"
+                    leftSection={<IconX />}
+                    component={Link}
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
+                    href={`/dashboard?${
+                      manage ? `manage=${manage}&` : ""
+                    }vote=ended`}
+                  >
+                    Ended
+                  </TabsTab>
+                </TabsList>
+                <Suspense
+                  fallback={
+                    <Group>
+                      {[...Array(3).keys()].map((i) => (
+                        <Skeleton key={i} maw={288} h={400} radius="md" />
+                      ))}
+                    </Group>
+                  }
+                >
+                  <MyElectionsAsVoter />
+                </Suspense>
+              </Stack>
+            </Tabs>
           </Box>
         </Stack>
       </Container>
