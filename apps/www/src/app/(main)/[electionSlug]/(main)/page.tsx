@@ -53,7 +53,7 @@ export async function generateMetadata({
       .from("voters")
       .select()
       .eq("election_id", election.id)
-      .eq("email", user?.email ?? "")
+      .eq("email", user.email ?? "")
       .is("deleted_at", null);
 
     if (voters?.length === 0 && commissioners?.length === 0) notFound();

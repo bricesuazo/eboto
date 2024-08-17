@@ -25,7 +25,7 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useLocalStorage } from "@mantine/hooks";
 import {
   IconClock,
   IconFingerprint,
@@ -50,6 +50,7 @@ import { api } from "~/trpc/client";
 import AdModal from "../ad-modal";
 import MessageCommissioner from "../modals/message-commissioner";
 import MyMessagesElection from "../my-messages-election";
+import ReactPlayer from "../react-player";
 
 export default function ElectionPage({
   data,
@@ -83,7 +84,7 @@ export default function ElectionPage({
     initialValues: Object.fromEntries(
       election.voter_fields.map((field) => [
         field.id,
-        myVoterData?.field?.[field.id] ?? "",
+        myVoterData?.field[field.id] ?? "",
       ]),
     ),
     validate: (values) => {
@@ -103,6 +104,12 @@ export default function ElectionPage({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [opened]);
+
+  const [value, setValue] = useLocalStorage<boolean>({
+    key: `${election.id}_show_voter_tutorial`,
+    defaultValue: true,
+  });
+
   return (
     <>
       {is_free && <AdModal />}
@@ -163,6 +170,29 @@ export default function ElectionPage({
             </Group>
           </Stack>
         </form>
+      </Modal>
+
+      <Modal
+        opened={value}
+        onClose={() => setValue(false)}
+        title="Voter Tutorial"
+        size="lg"
+        closeOnClickOutside={false}
+      >
+        <Stack>
+          <Box style={{ aspectRatio: 16 / 9 }}>
+            <ReactPlayer
+              url="https://www.youtube.com/watch?v=soAqhLB5xLs"
+              width="100%"
+              height="100%"
+              controls
+            />
+          </Box>
+
+          <Button w="100%" onClick={() => setValue(false)}>
+            Close
+          </Button>
+        </Stack>
       </Modal>
 
       <Container pt={40} pb={80} size="md" mb={80}>
@@ -273,8 +303,9 @@ export default function ElectionPage({
               )}
               {isElectionOngoing({ election }) && !hasVoted && myVoterData && (
                 <>
+                  {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
                   {(election.voter_fields.length > 0 && !myVoterData.field) ||
-                  Object.values(myVoterData.field ?? {}).some(
+                  Object.values(myVoterData.field).some(
                     (value) => !value || value.trim() === "",
                   ) ? (
                     <Button
