@@ -23,7 +23,6 @@ import { FAQs } from "@eboto/constants";
 
 import ContactForm from "~/components/contact-form";
 import ElectionBoost from "~/components/modals/election-boost";
-import PublicElections from "~/components/public-elections";
 import classes from "~/styles/Home.module.css";
 import { MainPricing } from "./pricing/page";
 
@@ -113,9 +112,9 @@ export default function HomePage() {
             </Box>
           </Stack>
 
-          <Box id="public-elections">
+          {/* <Box id="public-elections">
             <PublicElections />
-          </Box>
+          </Box> */}
           <Flex direction="column" gap="md">
             <MainPricing />
           </Flex>
