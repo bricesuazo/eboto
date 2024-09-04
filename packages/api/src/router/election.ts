@@ -64,7 +64,7 @@ export const electionRouter = createTRPCRouter({
       let voted = false;
       let myVoterData: {
         id: string;
-        field: Record<string, string>;
+        field: Record<string, string> | null;
       } | null = null;
 
       if (ctx.user) {
@@ -81,7 +81,7 @@ export const electionRouter = createTRPCRouter({
             message: voters_error.message,
           });
 
-        const voter = voters?.[0];
+        const voter = voters[0];
 
         if (voter) {
           const { data: votes, error: votes_error } = await ctx.supabase
