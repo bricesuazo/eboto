@@ -301,36 +301,34 @@ export default function ElectionPage({
                   Realtime count
                 </Button>
               )}
-              {isElectionOngoing({ election }) &&
-                !hasVoted &&
-                myVoterData?.field && (
-                  <>
-                    {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
-                    {(election.voter_fields.length > 0 && !myVoterData.field) ||
+              {isElectionOngoing({ election }) && !hasVoted && (
+                <>
+                  {myVoterData?.field &&
+                  (election.voter_fields.length > 0 ||
                     Object.values(myVoterData.field).some(
                       (value) => !value || value.trim() === "",
-                    ) ? (
-                      <Button
-                        onClick={open}
-                        radius="xl"
-                        size="md"
-                        leftSection={<IconFingerprint />}
-                      >
-                        Vote now!
-                      </Button>
-                    ) : (
-                      <Button
-                        radius="xl"
-                        size="md"
-                        leftSection={<IconFingerprint />}
-                        component={Link}
-                        href={`/${election.slug}/vote`}
-                      >
-                        Vote now!
-                      </Button>
-                    )}
-                  </>
-                )}
+                    )) ? (
+                    <Button
+                      onClick={open}
+                      radius="xl"
+                      size="md"
+                      leftSection={<IconFingerprint />}
+                    >
+                      Vote now!
+                    </Button>
+                  ) : (
+                    <Button
+                      radius="xl"
+                      size="md"
+                      leftSection={<IconFingerprint />}
+                      component={Link}
+                      href={`/${election.slug}/vote`}
+                    >
+                      Vote now!
+                    </Button>
+                  )}
+                </>
+              )}
               <ElectionShowQRCode election={election} />
             </Flex>
             {isElectionEnded({ election }) ? (
