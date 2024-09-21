@@ -100,7 +100,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
         }
       },
       election_id: (value) => {
-        if (!value ?? !value?.length) {
+        if (!value?.length) {
           return "Election is required";
         }
       },
@@ -128,10 +128,12 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
             setReportAProblemLoading(true);
 
             void (async () => {
+              if (!values.election_id) return;
+
               await reportAProblemMutation.mutateAsync({
                 subject: values.subject,
                 description: values.description,
-                election_id: values.election_id!,
+                election_id: values.election_id,
               });
 
               notifications.show({
@@ -185,7 +187,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
           </Stack>
         </form>
       </Modal>
-      <Container h="100%" fluid={!!params?.electionDashboardSlug}>
+      <Container h="100%" fluid={!!params.electionDashboardSlug}>
         <Flex h="100%" align="center" justify="space-between" gap="xs">
           <Flex h="100%" align="center" gap="xs">
             <UnstyledButton
@@ -214,7 +216,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
                 color="gray.6"
                 py="xl"
                 h="100%"
-                hidden={!params?.electionDashboardSlug}
+                hidden={!params.electionDashboardSlug}
               />
             </Center>
           </Flex>
@@ -373,7 +375,6 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
 
                       await supabase.auth.signOut();
                       await utils.auth.invalidate();
-                      router.refresh();
                       router.push("/sign-in");
                     }}
                     closeMenuOnClick={false}
@@ -395,7 +396,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
                   </MenuItem>
                 </MenuDropdown>
               </Menu>
-              {params?.electionDashboardSlug && (
+              {params.electionDashboardSlug && (
                 <ActionIcon
                   variant={store.dashboardChatMenu ? "light" : "subtle"}
                   hiddenFrom="lg"

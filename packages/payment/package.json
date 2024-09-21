@@ -7,11 +7,11 @@
     "access": "public"
   },
   "dependencies": {
-    "@lemonsqueezy/lemonsqueezy.js": "^3.2.0",
+    "@lemonsqueezy/lemonsqueezy.js": "^3.3.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@eboto/tsconfig": "workspace:*",
-    "@types/node": "^20.14.11"
+    "@types/node": "^22.5.5"
   }
 }

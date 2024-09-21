@@ -10,7 +10,6 @@ import {
   Link,
   Preview,
   Section,
-  Tailwind,
   Text,
 } from "@react-email/components";
 import { renderAsync } from "@react-email/render";
@@ -18,7 +17,6 @@ import { renderAsync } from "@react-email/render";
 import { baseUrl } from "@eboto/constants";
 
 import { ses } from "../index";
-import { config } from "../tailwind.config";
 
 interface ElectionStartProps {
   isForCommissioner: boolean;
@@ -35,7 +33,7 @@ interface ElectionStartProps {
 export async function sendElectionStart(props: ElectionStartProps) {
   await ses.sendEmail({
     Source: "eBoto <contact@eboto.app>",
-    ReplyToAddresses: [process.env.EMAIL_FROM!],
+    ReplyToAddresses: process.env.EMAIL_FROM ? [process.env.EMAIL_FROM] : [],
     Destination: {
       BccAddresses: props.emails,
     },
@@ -59,70 +57,98 @@ export default function ElectionStart(props: ElectionStartProps) {
     <Html>
       <Head />
       <Preview>eBoto: Election Result for {props.election.name}</Preview>
-      <Tailwind config={config}>
-        <Body className="bg-white font-sans">
-          <Container className="mx-auto px-12 pt-5">
-            <Img
-              src={`https://eboto.app/images/logo.png`}
-              width="42"
-              height="42"
-              alt="eBoto"
-              className="aspect-square rounded-full"
-            />
-            <Heading as="h1" className="text-2xl font-bold text-gray-800">
-              Election has started for {props.election.name}
-            </Heading>
+      <Body
+        style={{
+          backgroundColor: "#ffffff",
+          fontFamily:
+            '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
+        }}
+      >
+        <Container
+          style={{
+            margin: "0 auto",
+            padding: "20px 48px 0 48px",
+          }}
+        >
+          <Img
+            src={`https://eboto.app/images/logo.png`}
+            width="42"
+            height="42"
+            alt="eBoto"
+            style={{
+              aspectRatio: "1 / 1",
+              borderRadius: 21,
+              width: 42,
+              height: 42,
+            }}
+          />
+          <Heading
+            as="h1"
+            style={{
+              fontSize: "24px",
+              letterSpacing: "-0.5px",
+              lineHeight: "1.3",
+              fontWeight: "600",
+              color: "#484848",
+              padding: "17px 0 0",
+            }}
+          >
+            Election has started for {props.election.name}
+          </Heading>
 
-            {props.isForCommissioner ? (
-              <Text>
-                Hello, you are receiving this email because you are a
-                commissioner for the election: {props.election.name}. The
-                election has started. Please inform the voters that they can now
-                vote.
-              </Text>
-            ) : (
-              <Text>
-                Hello, you are receiving this email because you are a voter for
-                the election: {props.election.name}. The election has started
-                and you can now vote.
-              </Text>
-            )}
-            <Section className="py-5">
-              <Button
-                style={{
-                  padding: "11px 23px",
-                  backgroundColor: "#5e6ad2",
-                  borderRadius: "3px",
-                  fontWeight: "600",
-                  color: "#fff",
-                  fontSize: "15px",
-                  textDecoration: "none",
-                  textAlign: "center",
-                  display: "block",
-                }}
-                href={`${baseUrl}/${props.election.slug}`}
-              >
-                View Election
-              </Button>
-            </Section>
-            <Hr
+          {props.isForCommissioner ? (
+            <Text>
+              Hello, you are receiving this email because you are a commissioner
+              for the election: {props.election.name}. The election has started.
+              Please inform the voters that they can now vote.
+            </Text>
+          ) : (
+            <Text>
+              Hello, you are receiving this email because you are a voter for
+              the election: {props.election.name}. The election has started and
+              you can now vote.
+            </Text>
+          )}
+          <Section
+            className="py-5"
+            style={{
+              padding: "0 20px",
+            }}
+          >
+            <Button
               style={{
-                borderColor: "#dfe1e4",
-                margin: "42px 0 26px",
+                padding: "11px 23px",
+                backgroundColor: "#5e6ad2",
+                borderRadius: "3px",
+                fontWeight: "600",
+                color: "#fff",
+                fontSize: "15px",
+                textDecoration: "none",
+                textAlign: "center",
+                display: "block",
               }}
-            />
-            <Link
-              href={baseUrl}
-              style={{
-                fontSize: "14px",
-                color: "#b4becc",
-              }}
+              href={`${baseUrl}/${props.election.slug}`}
             >
-              eBoto
-            </Link>
-          </Container>
-        </Body>
-      </Tailwind>
+              View Election
+            </Button>
+          </Section>
+          <Hr
+            style={{
+              borderColor: "#dfe1e4",
+              margin: "42px 0 26px",
+            }}
+          />
+          <Link
+            href={baseUrl}
+            style={{
+              fontSize: "14px",
+              color: "#b4becc",
+            }}
+          >
+            eBoto
+          </Link>
+        </Container>
+      </Body>
     </Html>
   );
 }

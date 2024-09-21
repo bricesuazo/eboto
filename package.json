@@ -1,10 +1,11 @@
 {
   "name": "eboto",
   "packageManager": "pnpm@9.5.0",
+  "private": true,
   "scripts": {
-    "build": "turbo build",
+    "build": "turbo run build",
     "clean": "git clean -xdf node_modules",
-    "clean:workspaces": "turbo clean",
+    "clean:workspaces": "turbo run clean",
     "db:cli": "pnpm db:dump && pnpm db:gen && pnpm db:diff",
     "db:push": "supabase db push",
     "db:diff": "supabase db diff --local -f",
@@ -14,19 +15,20 @@
     "email:dev": "pnpm turbo --filter=@eboto/email email:dev",
     "dev": "turbo dev --parallel",
     "start": "turbo start --parallel",
-    "format": "turbo format --continue -- --cache --cache-location='node_modules/.cache/.prettiercache'",
-    "format:fix": "turbo format --continue -- --write --cache --cache-location='node_modules/.cache/.prettiercache'",
-    "lint": "turbo lint --continue -- --cache --cache-location 'node_modules/.cache/.eslintcache' && manypkg check",
-    "lint:fix": "turbo lint --continue -- --fix --cache --cache-location 'node_modules/.cache/.eslintcache' && manypkg fix",
-    "typecheck": "turbo typecheck"
+    "postinstall": "pnpm lint:ws",
+    "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
+    "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache",
+    "lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",
+    "lint:fix": "turbo run lint --continue -- --fix --cache --cache-location .cache/.eslintcache",
+    "lint:ws": "pnpm dlx sherif@latest",
+    "typecheck": "turbo run typecheck"
   },
   "prettier": "@eboto/prettier-config",
-  "dependencies": {
+  "devDependencies": {
     "@eboto/prettier-config": "workspace:*",
-    "@manypkg/cli": "^0.21.4",
-    "@turbo/gen": "^2.0.9",
+    "@turbo/gen": "^2.1.2",
     "prettier": "^3.3.3",
-    "turbo": "^2.0.9",
-    "typescript": "^5.5.3"
+    "turbo": "^2.1.2",
+    "typescript": "^5.6.2"
   }
 }

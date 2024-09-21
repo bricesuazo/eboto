@@ -11,7 +11,6 @@ import {
   Preview,
   Row,
   Section,
-  Tailwind,
   Text,
 } from "@react-email/components";
 import { renderAsync } from "@react-email/render";
@@ -19,7 +18,6 @@ import { renderAsync } from "@react-email/render";
 import { baseUrl } from "@eboto/constants";
 
 import { ses } from "../index";
-import { config } from "../tailwind.config";
 
 interface VoteCastedProps {
   email: string;
@@ -73,114 +71,111 @@ export default function VoteCasted(props: VoteCastedProps) {
       <Preview>
         Resibo: You have successfully casted your vote in {props.election.name}
       </Preview>
-      <Tailwind config={config}>
-        <Body
-          className="bg-white"
+      <Body
+        style={{
+          backgroundColor: "#ffffff",
+          fontFamily:
+            '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
+        }}
+      >
+        <Container
           style={{
-            backgroundColor: "#ffffff",
-            fontFamily:
-              '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
+            margin: "0 auto",
+            padding: "20px 0 48px",
+            width: "560px",
           }}
         >
-          <Container
+          <Img
+            src={`https://eboto.app/images/logo.png`}
+            width="42"
+            height="42"
+            alt="eBoto"
             style={{
-              margin: "0 auto",
-              padding: "20px 0 48px",
-              width: "560px",
+              borderRadius: 21,
+              width: 42,
+              height: 42,
+            }}
+          />
+          <Heading
+            style={{
+              fontSize: "24px",
+              letterSpacing: "-0.5px",
+              lineHeight: "1.3",
+              fontWeight: "600",
+              color: "#484848",
+              padding: "17px 0 0",
             }}
           >
-            <Img
-              src={`https://eboto.app/images/logo.png`}
-              width="42"
-              height="42"
-              alt="eBoto"
-              style={{
-                borderRadius: 21,
-                width: 42,
-                height: 42,
-              }}
-            />
-            <Heading
-              style={{
-                fontSize: "24px",
-                letterSpacing: "-0.5px",
-                lineHeight: "1.3",
-                fontWeight: "600",
-                color: "#484848",
-                padding: "17px 0 0",
-              }}
-            >
-              eResibo: You have successfully casted your vote in{" "}
-              {props.election.name}
-            </Heading>
-            <Heading
-              as="h4"
-              style={{
-                fontSize: "20px",
-                letterSpacing: "-0.5px",
-                lineHeight: "1.3",
-                fontWeight: "600",
-                color: "#484848",
-                padding: "12px 0 0",
-              }}
-            >
-              Your votes:
-            </Heading>
-            <Row>
-              {props.election.positions.map((position) => (
-                <Section key={position.id}>
-                  <Heading as="h3">{position.name}:</Heading>
+            eResibo: You have successfully casted your vote in{" "}
+            {props.election.name}
+          </Heading>
+          <Heading
+            as="h4"
+            style={{
+              fontSize: "20px",
+              letterSpacing: "-0.5px",
+              lineHeight: "1.3",
+              fontWeight: "600",
+              color: "#484848",
+              padding: "12px 0 0",
+            }}
+          >
+            Your votes:
+          </Heading>
+          <Row>
+            {props.election.positions.map((position) => (
+              <Section key={position.id}>
+                <Heading as="h3">{position.name}:</Heading>
 
-                  {!position.vote.isAbstain ? (
-                    position.vote.candidates.map((candidate) => (
-                      <Text key={candidate.id}>- {candidate.name}</Text>
-                    ))
-                  ) : (
-                    <Text>Abstain</Text>
-                  )}
-                </Section>
-              ))}
-            </Row>
-            <Section
+                {!position.vote.isAbstain ? (
+                  position.vote.candidates.map((candidate) => (
+                    <Text key={candidate.id}>- {candidate.name}</Text>
+                  ))
+                ) : (
+                  <Text>Abstain</Text>
+                )}
+              </Section>
+            ))}
+          </Row>
+          <Section
+            style={{
+              padding: "27px 0 27px",
+            }}
+          >
+            <Button
               style={{
-                padding: "27px 0 27px",
+                padding: "11px 23px",
+                backgroundColor: "#5e6ad2",
+                borderRadius: "3px",
+                fontWeight: "600",
+                color: "#fff",
+                fontSize: "15px",
+                textDecoration: "none",
+                textAlign: "center" as const,
+                display: "block",
               }}
+              href={`${baseUrl}/${props.election.slug}`}
             >
-              <Button
-                style={{
-                  padding: "11px 23px",
-                  backgroundColor: "#5e6ad2",
-                  borderRadius: "3px",
-                  fontWeight: "600",
-                  color: "#fff",
-                  fontSize: "15px",
-                  textDecoration: "none",
-                  textAlign: "center" as const,
-                  display: "block",
-                }}
-                href={`${baseUrl}/${props.election.slug}`}
-              >
-                View Election
-              </Button>
-            </Section>
-            <Hr
-              style={{
-                borderColor: "#dfe1e4",
-                margin: "42px 0 26px",
-              }}
-            />
-            <Link
-              href={baseUrl}
-              style={{
-                fontSize: "14px",
-                color: "#b4becc",
-              }}
-            >
-              eBoto
-            </Link>
-          </Container>
-        </Body>
-      </Tailwind>
+              View Election
+            </Button>
+          </Section>
+          <Hr
+            style={{
+              borderColor: "#dfe1e4",
+              margin: "42px 0 26px",
+            }}
+          />
+          <Link
+            href={baseUrl}
+            style={{
+              fontSize: "14px",
+              color: "#b4becc",
+            }}
+          >
+            eBoto
+          </Link>
+        </Container>
+      </Body>
     </Html>
   );
 }

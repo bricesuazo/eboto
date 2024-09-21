@@ -64,7 +64,7 @@ export default function ElectionBoost({
     },
     validate: {
       election_id: (value) => {
-        if (!value ?? !value?.length) {
+        if (!value?.length) {
           return "Election is required";
         }
       },
