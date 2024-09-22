@@ -54,7 +54,7 @@ export async function generateMetadata({
       .from("voters")
       .select()
       .eq("election_id", election.id)
-      .eq("email", user?.email ?? "")
+      .eq("email", user.email ?? "")
       .is("deleted_at", null);
 
     if (commissioners?.length === 0 && voters?.length === 0) notFound();
@@ -98,7 +98,7 @@ export async function generateMetadata({
             candidate.first_name,
           )}${
             (candidate.middle_name &&
-              `%20${encodeURIComponent(candidate.middle_name ?? "")}`) ??
+              `%20${encodeURIComponent(candidate.middle_name)}`) ??
             ""
           }%20${encodeURIComponent(
             candidate.last_name,

@@ -53,7 +53,7 @@ export default function DashboardPosition({
                   {position.name}
                 </Text>
 
-                <Flex align="center" gap={4}>
+                <Flex align="center" justify="center" gap={4}>
                   <Text fz="sm" ta="center">
                     {`${
                       position.min === 0

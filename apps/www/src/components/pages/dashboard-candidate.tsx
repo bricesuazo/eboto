@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   Anchor,
   Box,
@@ -65,8 +65,6 @@ export default function DashboardCandidate({
         setNameArrangement(name_arrangement);
       },
     });
-
-  if (!election) notFound();
 
   return (
     <Stack gap="lg">
@@ -140,7 +138,7 @@ export default function DashboardCandidate({
                       const title = `${formatName(
                         election.name_arrangement,
                         candidate,
-                      )} (${candidate.partylist.acronym})`;
+                      )} (${candidate.partylist?.acronym})`;
                       return (
                         <Group
                           key={candidate.id}

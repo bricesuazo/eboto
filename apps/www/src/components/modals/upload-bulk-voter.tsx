@@ -123,17 +123,11 @@ export default function UploadBulkVoter({
                       <ActionIcon
                         title="Remove file"
                         aria-label="Remove file"
-                        onClick={() => {
-                          setSelectedFiles((prev) => {
-                            if (prev) {
-                              return prev.filter(
-                                (f) => f.fileName !== file.fileName,
-                              );
-                            } else {
-                              return [];
-                            }
-                          });
-                        }}
+                        onClick={() =>
+                          setSelectedFiles((prev) =>
+                            prev.filter((f) => f.fileName !== file.fileName),
+                          )
+                        }
                         disabled={selectedFiles.length === 0}
                         variant="outline"
                         color="red"

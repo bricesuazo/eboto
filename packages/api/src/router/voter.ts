@@ -107,7 +107,10 @@ export const voterRouter = createTRPCRouter({
 
         if (!is_free && isElectionExists.variant) {
           const no_of_voters = parseInt(
-            isElectionExists.variant.name.match(/[\d,]+/)![0].replace(",", ""),
+            (/[\d,]+/.exec(isElectionExists.variant.name)?.[0] ?? "").replace(
+              ",",
+              "",
+            ),
           );
 
           if (voters.length + 1 >= no_of_voters)
@@ -535,7 +538,10 @@ export const voterRouter = createTRPCRouter({
 
         if (!is_free && isElectionExists.variant) {
           const no_of_voters = parseInt(
-            isElectionExists.variant.name.match(/[\d,]+/)![0].replace(",", ""),
+            (/[\d,]+/.exec(isElectionExists.variant.name)?.[0] ?? "").replace(
+              ",",
+              "",
+            ),
           );
 
           if (voters.length + uniqueVoters.length >= no_of_voters)

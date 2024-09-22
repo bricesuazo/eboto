@@ -46,10 +46,10 @@ export default function EditPartylist({
     validate: {
       name: hasLength(
         {
-          min: 3,
+          min: 1,
           max: 50,
         },
-        "Name must be between 3 and 50 characters",
+        "Name must be between 1 and 50 characters",
       ),
       newAcronym: hasLength(
         {

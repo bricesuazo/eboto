@@ -227,7 +227,7 @@ export default function AccountPageClient(
           <TextInput
             placeholder="Email"
             label="Email"
-            value={getUserProtectedQuery.data.db.email ?? undefined}
+            value={getUserProtectedQuery.data.db.email}
             leftSection={<IconAt size="1rem" />}
             readOnly
             disabled

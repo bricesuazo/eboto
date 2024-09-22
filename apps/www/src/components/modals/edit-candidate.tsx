@@ -104,7 +104,7 @@ export default function EditCandidate({
     position_id: candidate.position_id,
     image: candidate.image_url,
 
-    platforms: candidate.platforms ?? [],
+    platforms: candidate.platforms,
 
     achievements: (candidate.credential?.achievements ?? []).map(
       (achievement) => ({
@@ -194,8 +194,8 @@ export default function EditCandidate({
         if (!/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/.test(value)) {
           return "Election slug must be alphanumeric and can contain dashes";
         }
-        if (value.length < 3 || value.length > 24) {
-          return "Election slug must be between 3 and 24 characters";
+        if (value.length < 1 || value.length > 24) {
+          return "Election slug must be between 1 and 24 characters";
         }
       },
       partylist_id: (value) => {

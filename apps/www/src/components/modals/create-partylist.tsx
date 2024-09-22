@@ -38,10 +38,10 @@ export default function CreatePartylist({
     validate: {
       name: hasLength(
         {
-          min: 3,
+          min: 1,
           max: 100,
         },
-        "Name must be between 3 and 100 characters",
+        "Name must be between 1 and 100 characters",
       ),
       acronym: hasLength(
         {

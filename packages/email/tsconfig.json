@@ -1,7 +1,9 @@
 {
+  "extends": "@eboto/tsconfig/internal-package.json",
   "compilerOptions": {
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "lib": ["dom"]
   },
-  "extends": "@eboto/tsconfig/base.json",
-  "include": ["emails"]
+  "include": ["emails"],
+  "exclude": ["dist"]
 }

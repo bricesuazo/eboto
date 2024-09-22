@@ -14,12 +14,12 @@ export function transformUploadImage(
           base64,
         });
       } else {
-        reject("Failed to read file as base64.");
+        reject(new Error("Failed to read file as base64."));
       }
     };
 
     reader.onerror = () => {
-      reject("Error occurred while reading the file.");
+      reject(new Error("Error occurred while reading the file."));
     };
   });
 }

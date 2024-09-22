@@ -147,8 +147,8 @@ export default function CreateCandidate({
         if (!/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/.test(value)) {
           return "Election slug must be alphanumeric and can contain dashes";
         }
-        if (value.length < 3 || value.length > 24) {
-          return "Election slug must be between 3 and 24 characters";
+        if (value.length <= 1 || value.length > 24) {
+          return "Election slug must be between 1 and 24 characters";
         }
       },
       partylist_id: (value) => {
@@ -310,7 +310,7 @@ export default function CreateCandidate({
                       <Text size="xs">
                         This will be used as the candidate&apos;s URL.
                         <br />
-                        eboto.app/{params?.electionDashboardSlug?.toString()}/
+                        eboto.app/{params.electionDashboardSlug?.toString()}/
                         {form.values.slug || "candidate-slug"}
                       </Text>
                     }

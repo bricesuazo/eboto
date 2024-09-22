@@ -89,7 +89,7 @@ export default function MyMessagesElection({
             <DrawerCloseButton />
           </DrawerHeader>
           <DrawerBody>
-            {!getAllMyMessagesQuery.data || getAllMyMessagesQuery.isLoading ? (
+            {getAllMyMessagesQuery.data === undefined ? (
               <Stack gap="xs" p="md">
                 {Array.from({ length: 3 }).map((_, index) => (
                   <Skeleton key={index} h={60} />
@@ -247,7 +247,7 @@ function Chat({
     });
 
   useEffect(() => {
-    if (chat) scrollIntoView();
+    scrollIntoView();
   }, [getMessagesAsVoterQuery.data, scrollIntoView, chat]);
 
   return (
