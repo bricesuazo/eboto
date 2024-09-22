@@ -100,9 +100,11 @@ export function formatName(
   candidate: Database["public"]["Tables"]["candidates"]["Row"],
   isMiddleInitialOnly?: true,
 ) {
-  const middle_name = isMiddleInitialOnly
-    ? candidate.middle_name?.charAt(0) + "."
-    : candidate.middle_name;
+  const middle_name = candidate.middle_name
+    ? isMiddleInitialOnly
+      ? candidate.middle_name.charAt(0) + "."
+      : candidate.middle_name
+    : null;
 
   if (arrangement === 0) {
     return `${candidate.first_name}${middle_name ? " " + middle_name : ""} ${
