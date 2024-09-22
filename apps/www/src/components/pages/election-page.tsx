@@ -303,11 +303,11 @@ export default function ElectionPage({
               )}
               {isElectionOngoing({ election }) && !hasVoted && (
                 <>
-                  {myVoterData?.field &&
-                  (election.voter_fields.length > 0 ||
-                    Object.values(myVoterData.field).some(
-                      (value) => !value || value.trim() === "",
-                    )) ? (
+                  {election.voter_fields.length > 0 &&
+                  !myVoterData?.field &&
+                  Object.values(myVoterData?.field ?? {}).every(
+                    (value) => value.trim() === "",
+                  ) ? (
                     <Button
                       onClick={open}
                       radius="xl"
