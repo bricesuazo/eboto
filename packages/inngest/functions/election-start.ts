@@ -4,13 +4,14 @@ import { z } from "zod";
 
 import { sendElectionStart } from "@eboto/email/emails/election-start";
 
-import { inngest } from "..";
+import { BCC_LIMIT, inngest } from "..";
 import { Database } from "../../../supabase/types";
 import { env } from "../env.mjs";
 
 export default inngest.createFunction(
   {
     id: "election-start",
+    retries: 0,
     cancelOn: [
       {
         event: "election",
@@ -34,7 +35,7 @@ export default inngest.createFunction(
     const { data: election } = await supabase
       .from("elections")
       .select(
-        "name, slug, voting_hour_start, start_date, end_date, publicity, commissioners(user: users(email)), voters(*)",
+        "name, slug, voting_hour_start, start_date, end_date, publicity, commissioners(user: users!inner(email)), voters(*)",
       )
       .eq("id", election_id)
       .is("deleted_at", null)
@@ -51,21 +52,19 @@ export default inngest.createFunction(
 
     await step.sleepUntil("election-start", start_date.toDate());
 
-    const voters = [
-      ...new Set(...[election.voters.map((voter) => voter.email)]),
-    ];
+    const voters = [...new Set(election.voters.map((voter) => voter.email))];
     const commissioners = [
-      ...new Set([
-        ...election.commissioners
+      ...new Set(
+        election.commissioners
           .filter((commissioner) => commissioner.user)
-          .map((commissioner) => commissioner.user!.email),
-      ]),
+          .map((commissioner) => commissioner.user.email),
+      ),
     ];
 
     await step.run("send-election-start", async () => {
       await Promise.all([
         voters.length > 0 &&
-          Array.from({ length: Math.ceil(voters.length / 50) }).map(
+          Array.from({ length: Math.ceil(voters.length / BCC_LIMIT) }).map(
             (_, index) =>
               sendElectionStart({
                 isForCommissioner: false,
@@ -75,7 +74,10 @@ export default inngest.createFunction(
                   start_date: new Date(election.start_date),
                   end_date: new Date(election.end_date),
                 },
-                emails: voters.slice(index * 50, (index + 1) * 50),
+                emails: voters.slice(
+                  index * BCC_LIMIT,
+                  (index + 1) * BCC_LIMIT,
+                ),
               }),
           ),
         commissioners.length > 0 &&

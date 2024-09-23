@@ -4,13 +4,14 @@ import { z } from "zod";
 
 import { sendElectionResult } from "@eboto/email/emails/election-result";
 
-import { inngest } from "..";
+import { BCC_LIMIT, inngest } from "..";
 import { Database } from "../../../supabase/types";
 import { env } from "../env.mjs";
 
 export default inngest.createFunction(
   {
     id: "election-end",
+    retries: 0,
     cancelOn: [
       {
         event: "election",
@@ -31,7 +32,7 @@ export default inngest.createFunction(
       env.SUPABASE_SERVICE_ROLE_KEY,
     );
 
-    const { data: election } = await supabase
+    const { data: election, error: election_error } = await supabase
       .from("elections")
       .select(
         "name, slug, voting_hour_end, logo_path, start_date, end_date, positions(*, votes(*), candidates(*, votes(*))), commissioners(user: users(email)), voters(*)",
@@ -44,7 +45,8 @@ export default inngest.createFunction(
       .is("voters.deleted_at", null)
       .single();
 
-    if (!election) throw new Error("Election not found");
+    if (election_error)
+      throw new Error("Failed to fetch election: " + election_error.message);
 
     const end_date = moment(election.end_date).add(
       election.voting_hour_end,
@@ -88,16 +90,24 @@ export default inngest.createFunction(
         ]),
       ];
 
-      await supabase
+      const { error: insert_error } = await supabase
         .from("generated_election_results")
         .insert({ election_id, result });
 
+      if (insert_error)
+        throw new Error(
+          "Failed to insert election results: " + insert_error.message,
+        );
+
       if (emails.length > 0)
         await Promise.all(
-          Array.from({ length: Math.ceil(emails.length / 50) }).map(
+          Array.from({ length: Math.ceil(emails.length / BCC_LIMIT) }).map(
             (_, index) =>
               sendElectionResult({
-                emails: emails.slice(index * 50, (index + 1) * 50),
+                emails: emails.slice(
+                  index * BCC_LIMIT,
+                  (index + 1) * BCC_LIMIT,
+                ),
                 election: result,
               }),
           ),
