@@ -52,6 +52,7 @@ export default function DashboardCard(
     },
   ] = useDisclosure(false);
   const { hovered, ref } = useHover<HTMLAnchorElement>();
+
   return (
     <>
       {props.type === "vote" && props.votes.length > 0 && (

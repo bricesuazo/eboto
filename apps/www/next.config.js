@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 export default {
   reactStrictMode: true,
-  transpilePackages: ["@eboto/api"],
+  transpilePackages: ["@eboto/api", "@eboto/email", "@eboto/inngest"],
   experimental: {
     optimizePackageImports: ["@mantine/core", "@mantine/hooks"],
   },

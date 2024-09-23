@@ -5,9 +5,16 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        ".cache/tsbuildinfo.json",
+        "dist/**"
+      ]
     },
     "lint": {},
+    "typecheck": {},
+    "format": {},
     "dev": {
       "cache": false,
       "persistent": true

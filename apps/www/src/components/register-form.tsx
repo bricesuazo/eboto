@@ -13,7 +13,7 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
-import { isEmail, isNotEmpty, useForm } from "@mantine/form";
+import { isEmail, useForm } from "@mantine/form";
 import { IconAt, IconCheck } from "@tabler/icons-react";
 import Balancer from "react-wrap-balancer";
 
@@ -36,7 +36,7 @@ export default function RegisterForm() {
       // password: "",
     },
     validate: {
-      email: isEmail("Invalid email") || isNotEmpty("Email is required"),
+      email: isEmail("Invalid email"),
       // password: hasLength({ min: 8 }, "Password must be at least 8 characters"),
     },
   });

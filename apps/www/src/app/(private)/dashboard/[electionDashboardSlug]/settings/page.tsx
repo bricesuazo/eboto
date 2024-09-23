@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 
 import DashboardSettings from "~/components/pages/dashboard-settings";
 import { api } from "~/trpc/server";
@@ -16,8 +15,6 @@ export default async function Page({
   const election = await api.election.getElectionBySlug({
     election_slug: electionDashboardSlug,
   });
-
-  if (!election) notFound();
 
   return <DashboardSettings election={election} />;
 }

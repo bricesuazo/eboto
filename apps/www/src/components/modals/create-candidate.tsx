@@ -147,8 +147,8 @@ export default function CreateCandidate({
         if (!/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/.test(value)) {
           return "Election slug must be alphanumeric and can contain dashes";
         }
-        if (value.length < 3 || value.length > 24) {
-          return "Election slug must be between 3 and 24 characters";
+        if (value.length <= 1 || value.length > 24) {
+          return "Election slug must be between 1 and 24 characters";
         }
       },
       partylist_id: (value) => {
@@ -310,7 +310,7 @@ export default function CreateCandidate({
                       <Text size="xs">
                         This will be used as the candidate&apos;s URL.
                         <br />
-                        eboto.app/{params?.electionDashboardSlug?.toString()}/
+                        eboto.app/{params.electionDashboardSlug?.toString()}/
                         {form.values.slug || "candidate-slug"}
                       </Text>
                     }
@@ -326,12 +326,10 @@ export default function CreateCandidate({
                     label="Partylist"
                     leftSection={<IconFlag size="1rem" />}
                     {...form.getInputProps("partylist_id")}
-                    data={partylistsQuery.data?.map((partylist) => {
-                      return {
-                        label: partylist.name,
-                        value: partylist.id,
-                      };
-                    })}
+                    data={partylistsQuery.data?.map((partylist) => ({
+                      label: partylist.name,
+                      value: partylist.id,
+                    }))}
                     disabled={createCandidateMutation.isPending}
                   />
 
@@ -340,12 +338,10 @@ export default function CreateCandidate({
                     label="Position"
                     leftSection={<IconUserSearch size="1rem" />}
                     {...form.getInputProps("position_id")}
-                    data={positionsQuery.data?.map((position) => {
-                      return {
-                        label: position.name,
-                        value: position.id,
-                      };
-                    })}
+                    data={positionsQuery.data?.map((position) => ({
+                      label: position.name,
+                      value: position.id,
+                    }))}
                     disabled={createCandidateMutation.isPending}
                   />
                 </Stack>
@@ -436,15 +432,14 @@ export default function CreateCandidate({
                           onChange={(e) => {
                             form.setValues({
                               ...form.values,
-                              platforms: form.values.platforms.map((p, i) => {
-                                if (i === index) {
-                                  return {
-                                    ...p,
-                                    title: e.target.value,
-                                  };
-                                }
-                                return p;
-                              }),
+                              platforms: form.values.platforms.map((p, i) =>
+                                i === index
+                                  ? {
+                                      ...p,
+                                      title: e.target.value,
+                                    }
+                                  : p,
+                              ),
                             });
                           }}
                         />
@@ -457,15 +452,14 @@ export default function CreateCandidate({
                           onChange={(e) => {
                             form.setValues({
                               ...form.values,
-                              platforms: form.values.platforms.map((p, i) => {
-                                if (i === index) {
-                                  return {
-                                    ...p,
-                                    description: e.target.value,
-                                  };
-                                }
-                                return p;
-                              }),
+                              platforms: form.values.platforms.map((p, i) =>
+                                i === index
+                                  ? {
+                                      ...p,
+                                      description: e.target.value,
+                                    }
+                                  : p,
+                              ),
                             });
                           }}
                         />

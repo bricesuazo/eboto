@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 import { env } from "env.mjs";
 
-import { Database } from "../../../../supabase/types";
+import type { Database } from "../../../../supabase/types";
 
 export const createClient = () => {
   const cookieStore = cookies();

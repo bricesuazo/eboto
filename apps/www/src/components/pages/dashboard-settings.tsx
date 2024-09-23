@@ -114,7 +114,7 @@ export default function DashboardSettings({
     initialValues: {
       name: getElectionBySlugQuery.data.name,
       newSlug: getElectionBySlugQuery.data.slug,
-      description: getElectionBySlugQuery.data.description ?? "",
+      description: getElectionBySlugQuery.data.description,
       // voter_domain: getElectionBySlugQuery.data.voter_domain,
       is_candidates_visible_in_realtime_when_ongoing:
         getElectionBySlugQuery.data
@@ -132,8 +132,8 @@ export default function DashboardSettings({
     },
     validate: {
       name: hasLength(
-        { min: 3 },
-        "Election name must be at least 3 characters",
+        { min: 1 },
+        "Election name must be at least 1 characters",
       ),
       newSlug: (value) => {
         if (!value) {
@@ -142,24 +142,16 @@ export default function DashboardSettings({
         if (!/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/.test(value)) {
           return "Election slug must be alphanumeric and can contain dashes";
         }
-        if (value.length < 3 || value.length > 24) {
-          return "Election slug must be between 3 and 24 characters";
+        if (value.length < 1 || value.length > 24) {
+          return "Election slug must be between 1 and 24 characters";
         }
       },
       date: (value) => {
-        if (!value[0] || !value[1])
-          return "Please enter an election start and end date";
-
         if (new Date(value[0]).getTime() > new Date(value[1]).getTime())
           return "Start date must be before end date";
 
         if (new Date(value[1]).getTime() < new Date(value[0]).getTime())
           return "End date must be after start date";
-      },
-      publicity: (value) => {
-        if (!value) {
-          return "Please select an election publicity";
-        }
       },
       // voter_domain: (value) => {
       //   if (
@@ -335,7 +327,7 @@ export default function DashboardSettings({
             error={
               form.errors.slug ??
               (editElectionMutation.error?.data?.code === "CONFLICT" &&
-                editElectionMutation.error?.message)
+                editElectionMutation.error.message)
             }
             disabled={editElectionMutation.isPending}
           />
@@ -352,7 +344,7 @@ export default function DashboardSettings({
             error={
               form.errors.description ??
               (editElectionMutation.error?.data?.code === "CONFLICT" &&
-                editElectionMutation.error?.message)
+                editElectionMutation.error.message)
             }
             disabled={editElectionMutation.isPending}
           />

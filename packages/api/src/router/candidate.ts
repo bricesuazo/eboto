@@ -26,7 +26,7 @@ export const candidateRouter = createTRPCRouter({
             deleted_at: new Date().toISOString(),
           })
           .eq("id", input.id);
-      } else if (input.type === "EVENTATTENDED") {
+      } else {
         return ctx.supabase
           .from("events_attended")
           .update({
@@ -522,8 +522,8 @@ export const candidateRouter = createTRPCRouter({
           *,
           candidates (
             *,
-            partylist: partylists(*),
-            credential:credentials (
+            partylist:partylists!inner(*),
+            credential:credentials!inner(
               *,
               achievements(*),
               affiliations(*),
@@ -565,7 +565,7 @@ export const candidateRouter = createTRPCRouter({
           return {
             ...candidate,
             image_url,
-            partylist: candidate.partylist!,
+            partylist: candidate.partylist,
           };
         }),
       }));
@@ -603,14 +603,14 @@ export const candidateRouter = createTRPCRouter({
         .select(
           `
           *,
-          partylist: partylists(*),
-          position: positions(*),
+          partylist: partylists!inner(*),
+          position: positions!inner(*),
           platforms: platforms(*),
-          credential: credentials (
+          credential: credentials!inner(
             *,
-            achievements: achievements(*),
-            affiliations: affiliations(*),
-            events_attended: events_attended(*)
+            achievements(*),
+            affiliations(*),
+            events_attended(*)
           )
         `,
         )
@@ -636,13 +636,13 @@ export const candidateRouter = createTRPCRouter({
         candidate: {
           ...candidate,
           image_url,
-          partylist: candidate.partylist!,
-          position: candidate.position!,
+          partylist: candidate.partylist,
+          position: candidate.position,
           credential: {
-            ...candidate.credential!,
-            achievements: candidate.credential!.achievements,
-            affiliations: candidate.credential!.affiliations,
-            eventsAttended: candidate.credential!.events_attended,
+            ...candidate.credential,
+            achievements: candidate.credential.achievements,
+            affiliations: candidate.credential.affiliations,
+            eventsAttended: candidate.credential.events_attended,
           },
         },
         isVoterCanMessage:
@@ -666,7 +666,7 @@ export const candidateRouter = createTRPCRouter({
         .select("*, commissioners: commissioners(*)")
         .eq("id", input.election_id)
         .is("deleted_at", null)
-        .eq("commissioners.user_id", ctx.user?.auth.id ?? "")
+        .eq("commissioners.user_id", ctx.user.auth.id)
         .is("commissioners.deleted_at", null)
         .single();
 
@@ -674,7 +674,7 @@ export const candidateRouter = createTRPCRouter({
 
       if (
         !election.commissioners.some(
-          (commissioner) => commissioner.user_id === ctx.user?.auth.id,
+          (commissioner) => commissioner.user_id === ctx.user.auth.id,
         )
       )
         throw new TRPCError({ code: "NOT_FOUND" });
@@ -698,7 +698,7 @@ export const candidateRouter = createTRPCRouter({
         .select("name_arrangement, commissioners: commissioners(user_id)")
         .eq("id", input.election_id)
         .is("deleted_at", null)
-        .eq("commissioners.user_id", ctx.user?.auth.id ?? "")
+        .eq("commissioners.user_id", ctx.user.auth.id)
         .is("commissioners.deleted_at", null)
         .single();
 
@@ -706,7 +706,7 @@ export const candidateRouter = createTRPCRouter({
 
       if (
         !election.commissioners.some(
-          (commissioner) => commissioner.user_id === ctx.user?.auth.id,
+          (commissioner) => commissioner.user_id === ctx.user.auth.id,
         )
       )
         throw new TRPCError({ code: "NOT_FOUND" });

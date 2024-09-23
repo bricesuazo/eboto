@@ -100,12 +100,7 @@ export default async function VotePage({
       .single();
 
     if (!commissioner) notFound();
-
-    if (!voter) redirect(`/${election.slug}/realtime`);
-  } else if (
-    election.publicity === "VOTER" ||
-    election.publicity === "PUBLIC"
-  ) {
+  } else {
     const { data: votes } = await supabaseAdmin
       .from("votes")
       .select()
@@ -121,7 +116,7 @@ export default async function VotePage({
       .eq("election_id", election.id)
       .single();
 
-    if (votes.length > 0 && commissioner && !voter && !voter)
+    if (votes.length > 0 && commissioner)
       redirect(`/${election.slug}/realtime`);
   }
 

@@ -56,7 +56,7 @@ export default function AccountPageLayoutClient({
               component={Link}
               href={`/account/${option.value}`}
               variant={
-                pathname?.split("/account")[1] === option.value
+                pathname.split("/account")[1] === option.value
                   ? "light"
                   : "subtle"
               }
@@ -89,7 +89,7 @@ export default function AccountPageLayoutClient({
                 hiddenFrom="xs"
               >
                 {options.find(
-                  (option) => option.value === pathname?.split("/account")[1],
+                  (option) => option.value === pathname.split("/account")[1],
                 )?.label ?? <InputPlaceholder>Select page</InputPlaceholder>}
               </InputBase>
             </ComboboxTarget>
@@ -103,14 +103,14 @@ export default function AccountPageLayoutClient({
                     active={
                       options.find(
                         (option) =>
-                          option.value === pathname?.split("/account")[1],
+                          option.value === pathname.split("/account")[1],
                       )?.value === option.value
                     }
                   >
                     <Group gap="xs">
                       {options.find(
                         (option) =>
-                          option.value === pathname?.split("/account")[1],
+                          option.value === pathname.split("/account")[1],
                       )?.value === option.value && <CheckIcon size={12} />}
                       <span>{option.label}</span>
                     </Group>

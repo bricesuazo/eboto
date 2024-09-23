@@ -2,11 +2,12 @@ import { cache } from "react";
 import { headers } from "next/headers";
 import { createHydrationHelpers } from "@trpc/react-query/rsc";
 
-import { AppRouter, createTRPCContext } from "@eboto/api";
+import type { AppRouter } from "@eboto/api";
+import { createTRPCContext } from "@eboto/api";
 import { createCaller } from "@eboto/api/src/root";
 
 import { createClient as createClientServer } from "~/supabase/server";
-import { Database } from "../../../../supabase/types";
+import type { Database } from "../../../../supabase/types";
 import { createQueryClient } from "./query-client";
 
 const createContext = cache(async () => {

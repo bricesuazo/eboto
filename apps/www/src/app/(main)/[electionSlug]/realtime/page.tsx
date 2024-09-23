@@ -35,13 +35,13 @@ export async function generateMetadata({
       .from("voters")
       .select("id")
       .eq("election_id", election.id)
-      .eq("email", user?.email ?? "");
+      .eq("email", user.email ?? "");
 
     const { data: commissioners } = await supabaseAdmin
       .from("commissioners")
       .select("id")
       .eq("election_id", election.id)
-      .eq("user_id", user?.id ?? "");
+      .eq("user_id", user.id);
 
     if (
       !voters ||
@@ -73,7 +73,7 @@ export async function generateMetadata({
       images: [
         {
           url: `${
-            process.env.NODE_ENV === "production"
+            env.NODE_ENV === "production"
               ? "https://eboto.app"
               : "http://localhost:3000"
           }/api/og?type=election&election_name=${encodeURIComponent(
@@ -165,8 +165,7 @@ export default async function RealtimePage({
 
     if (votes_error) notFound();
 
-    if (isVoter && votes.length && !isCommissioner)
-      redirect(`/${election.slug}`);
+    if (isVoter && votes.length) redirect(`/${election.slug}`);
   } else if (election.publicity === "VOTER") {
     if (!user) redirect(next);
 

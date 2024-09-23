@@ -145,73 +145,69 @@ export default function GenerateResult({
               alignItems: "center",
             }}
           >
-            {result.election.positions.map((position) => {
-              return (
-                <View
-                  key={position.id}
-                  style={{
-                    width: 400,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 8,
-                  }}
-                >
-                  <View>
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        textAlign: "center",
-                        fontFamily: "Helvetica-Bold",
-                      }}
-                    >
-                      {position.name}
-                    </Text>
-                    <Text
-                      style={{
-                        textAlign: "center",
-                      }}
-                    >
-                      Abstain Count - {position.abstain_count}
-                    </Text>
-                  </View>
+            {result.election.positions.map((position) => (
+              <View
+                key={position.id}
+                style={{
+                  width: 400,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                }}
+              >
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      textAlign: "center",
+                      fontFamily: "Helvetica-Bold",
+                    }}
+                  >
+                    {position.name}
+                  </Text>
+                  <Text
+                    style={{
+                      textAlign: "center",
+                    }}
+                  >
+                    Abstain Count - {position.abstain_count}
+                  </Text>
+                </View>
 
-                  <View>
-                    {position.candidates
-                      .sort((a, b) => b.vote_count - a.vote_count)
-                      .map((candidate, idx) => {
-                        return (
-                          <View
-                            key={candidate.id}
+                <View>
+                  {position.candidates
+                    .sort((a, b) => b.vote_count - a.vote_count)
+                    .map((candidate, idx) => (
+                      <View
+                        key={candidate.id}
+                        style={{
+                          marginBottom: 4,
+                          backgroundColor:
+                            idx === 0 ? "#90ee90" : "transparent",
+                          padding: 8,
+                        }}
+                      >
+                        <Text>
+                          {formatName(
+                            result.election.name_arrangement,
+                            candidate,
+                          )}
+                        </Text>
+                        <Text>
+                          <Text
                             style={{
-                              marginBottom: 4,
-                              backgroundColor:
-                                idx === 0 ? "#90ee90" : "transparent",
-                              padding: 8,
+                              fontFamily: "Helvetica-Bold",
                             }}
                           >
-                            <Text>
-                              {formatName(
-                                result.election.name_arrangement,
-                                candidate,
-                              )}
-                            </Text>
-                            <Text>
-                              <Text
-                                style={{
-                                  fontFamily: "Helvetica-Bold",
-                                }}
-                              >
-                                {candidate.vote_count}
-                              </Text>{" "}
-                              vote{candidate.vote_count > 1 && "s"}
-                            </Text>
-                          </View>
-                        );
-                      })}
-                  </View>
+                            {candidate.vote_count}
+                          </Text>{" "}
+                          vote{candidate.vote_count > 1 && "s"}
+                        </Text>
+                      </View>
+                    ))}
                 </View>
-              );
-            })}
+              </View>
+            ))}
           </View>
         </View>
       </Page>

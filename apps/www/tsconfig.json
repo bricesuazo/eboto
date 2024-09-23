@@ -12,6 +12,7 @@
     },
     "strictNullChecks": true,
     "lib": ["dom", "dom.iterable", "esnext"],
+    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json",
     "allowJs": true,
     "noEmit": true,
     "incremental": true,

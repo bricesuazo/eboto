@@ -191,6 +191,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             group: "Pages",
             actions: SPOTLIGHT_DATA.map((action) => ({
               ...action,
+              // id: action.id,
               onClick: () => router.push(action.link),
             })),
           },
@@ -198,6 +199,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             group: "Elections",
             actions: (elections ?? []).map((action) => ({
               ...action,
+              // id: action.id,
               onClick: () => router.push(action.link),
             })),
           },

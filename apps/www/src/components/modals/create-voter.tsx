@@ -87,6 +87,7 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
       <Modal
         opened={opened || createSingleVoterMutation.isPending}
         onClose={close}
+        closeOnClickOutside={false}
         title={<Text fw={600}>Add voter</Text>}
       >
         <form

@@ -125,18 +125,16 @@ export default function EditVoter({
                   new Date(a.created_at).getTime() -
                   new Date(b.created_at).getTime(),
               )
-              .map((field) => {
-                return (
-                  <TextInput
-                    key={field.id}
-                    placeholder={`Enter voter's ${field.name}`}
-                    leftSection={<IconLetterCase size="1rem" />}
-                    label={field.name}
-                    {...form.getInputProps(field.id)}
-                    disabled={editVoterMutation.isPending}
-                  />
-                );
-              })}
+              .map((field) => (
+                <TextInput
+                  key={field.id}
+                  placeholder={`Enter voter's ${field.name}`}
+                  leftSection={<IconLetterCase size="1rem" />}
+                  label={field.name}
+                  {...form.getInputProps(field.id)}
+                  disabled={editVoterMutation.isPending}
+                />
+              ))}
 
             {editVoterMutation.isError && (
               <Alert

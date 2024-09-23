@@ -106,10 +106,10 @@ export default function CreateElection({
     },
     validate: zodResolver(
       z.object({
-        name: z.string().min(3, "Election name must be at least 3 characters"),
+        name: z.string().min(1, "Election name must be at least 1 characters"),
         slug: z
           .string()
-          .min(3, "Election slug must be at least 3 characters")
+          .min(1, "Election slug must be at least 1 characters")
           .max(24, "Election slug must be at most 24 characters")
           .regex(
             /^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/,
@@ -140,7 +140,6 @@ export default function CreateElection({
           required_error: "Please select an election template",
           invalid_type_error: "Please select an election template",
         }),
-
         voting_hours: z
           .custom<[number, number]>()
           .refine(
@@ -328,7 +327,7 @@ export default function CreateElection({
               disabled={createElectionMutation.isPending}
               error={
                 createElectionMutation.error?.data?.code === "CONFLICT" &&
-                createElectionMutation.error?.message
+                createElectionMutation.error.message
               }
               {...formCreateElection.getInputProps("name")}
             />
@@ -349,7 +348,7 @@ export default function CreateElection({
               leftSection={<IconLetterCase size="1rem" />}
               error={
                 createElectionMutation.error?.data?.code === "CONFLICT" &&
-                createElectionMutation.error?.message
+                createElectionMutation.error.message
               }
               {...formCreateElection.getInputProps("slug")}
             />

@@ -1,4 +1,6 @@
 {
   "extends": "@eboto/tsconfig/base.json",
-  "include": ["src", "*.ts"]
+  "compilerOptions": { "lib": ["dom"] },
+  "include": ["src", "*.ts"],
+  "exclude": ["node_modules"]
 }

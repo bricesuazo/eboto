@@ -22,8 +22,8 @@ export default function ElectionPageLoading() {
         {[...(Array(8) as number[])].map((_, i) => (
           <Stack key={i} gap={8} align="center" w="100%">
             <Group justify="center" align="center" w="100%">
-              {[...(Array(2) as number[])].map((_, i) => (
-                <Fragment key={i}>
+              {[...(Array(2) as number[])].map((_, j) => (
+                <Fragment key={j}>
                   <Skeleton w="100%" h={260} radius="md" hiddenFrom="xs" />
                   <Skeleton w={220} h={260} radius="md" visibleFrom="xs" />
                 </Fragment>

@@ -230,7 +230,7 @@ export function GET(request: Request) {
         height: 600,
       },
     );
-  } else if (type === "election") {
+  } else {
     const electionName = searchParams.get("election_name");
     const electionDate = searchParams.get("election_date");
     const electionLogoUrl = searchParams.get("election_logo");
