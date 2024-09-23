@@ -522,8 +522,8 @@ export const candidateRouter = createTRPCRouter({
           *,
           candidates (
             *,
-            partylist: partylists(*),
-            credential:credentials (
+            partylist:partylists!inner(*),
+            credential:credentials!inner(
               *,
               achievements(*),
               affiliations(*),

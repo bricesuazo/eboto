@@ -402,7 +402,6 @@ export default function EditCandidate({
                   name: a.name,
                   year: a.year,
                 })),
-
                 affiliations: values.affiliations.map((a) => ({
                   id: a.id,
                   org_name: a.org_name,
@@ -507,12 +506,10 @@ export default function EditCandidate({
                     label="Partylist"
                     leftSection={<IconFlag size="1rem" />}
                     {...form.getInputProps("partylist_id")}
-                    data={partylistsQuery.data?.map((partylist) => {
-                      return {
-                        label: partylist.name,
-                        value: partylist.id,
-                      };
-                    })}
+                    data={partylistsQuery.data?.map((partylist) => ({
+                      label: partylist.name,
+                      value: partylist.id,
+                    }))}
                     disabled={editCandidateMutation.isPending}
                   />
 
@@ -522,12 +519,10 @@ export default function EditCandidate({
                     leftSection={<IconUserSearch size="1rem" />}
                     disabled={editCandidateMutation.isPending}
                     {...form.getInputProps("position_id")}
-                    data={positionsQuery.data?.map((position) => {
-                      return {
-                        label: position.name,
-                        value: position.id,
-                      };
-                    })}
+                    data={positionsQuery.data?.map((position) => ({
+                      label: position.name,
+                      value: position.id,
+                    }))}
                   />
                 </Stack>
               </TabsPanel>
@@ -661,15 +656,14 @@ export default function EditCandidate({
                           onChange={(e) => {
                             form.setValues({
                               ...form.values,
-                              platforms: form.values.platforms.map((p, i) => {
-                                if (i === index) {
-                                  return {
-                                    ...p,
-                                    title: e.target.value,
-                                  };
-                                }
-                                return p;
-                              }),
+                              platforms: form.values.platforms.map((p, i) =>
+                                i === index
+                                  ? {
+                                      ...p,
+                                      title: e.target.value,
+                                    }
+                                  : p,
+                              ),
                             });
                           }}
                         />
@@ -682,15 +676,14 @@ export default function EditCandidate({
                           onChange={(e) => {
                             form.setValues({
                               ...form.values,
-                              platforms: form.values.platforms.map((p, i) => {
-                                if (i === index) {
-                                  return {
-                                    ...p,
-                                    description: e.target.value,
-                                  };
-                                }
-                                return p;
-                              }),
+                              platforms: form.values.platforms.map((p, i) =>
+                                i === index
+                                  ? {
+                                      ...p,
+                                      description: e.target.value,
+                                    }
+                                  : p,
+                              ),
                             });
                           }}
                         />
@@ -748,65 +741,63 @@ export default function EditCandidate({
 
                   <TabsPanel value="achievements" pt="xs">
                     <Stack gap="md">
-                      {form.values.achievements.map((achievement, index) => {
-                        return (
-                          <Box key={index}>
-                            <Flex gap="xs" align="end">
-                              <TextInput
-                                w="100%"
-                                label="Achievement"
-                                placeholder="Enter achievement"
-                                required
-                                value={achievement.name}
-                                disabled={editCandidateMutation.isPending}
-                                onChange={(e) => {
-                                  form.setValues({
-                                    ...form.values,
-                                    achievements: form.values.achievements.map(
-                                      (achievement, i) =>
-                                        i === index
-                                          ? {
-                                              ...achievement,
-                                              name: e.target.value,
-                                            }
-                                          : achievement,
-                                    ),
-                                  });
-                                }}
-                              />
-                              <YearPickerInput
-                                label="Year"
-                                placeholder="Enter year"
-                                popoverProps={{
-                                  withinPortal: true,
-                                }}
-                                value={new Date(achievement.year)}
-                                disabled={editCandidateMutation.isPending}
-                                onChange={(date) => {
-                                  form.setValues({
-                                    ...form.values,
-                                    achievements: form.values.achievements.map(
-                                      (achievement, i) =>
-                                        i === index
-                                          ? {
-                                              ...achievement,
-                                              year: moment(date).format(),
-                                            }
-                                          : achievement,
-                                    ),
-                                  });
-                                }}
-                                required
-                              />
-                            </Flex>
-                            <DeleteCredentialButton
-                              type="ACHIEVEMENT"
-                              id={achievement.id}
+                      {form.values.achievements.map((achievement, index) => (
+                        <Box key={index}>
+                          <Flex gap="xs" align="end">
+                            <TextInput
+                              w="100%"
+                              label="Achievement"
+                              placeholder="Enter achievement"
+                              required
+                              value={achievement.name}
                               disabled={editCandidateMutation.isPending}
+                              onChange={(e) => {
+                                form.setValues({
+                                  ...form.values,
+                                  achievements: form.values.achievements.map(
+                                    (achievement, i) =>
+                                      i === index
+                                        ? {
+                                            ...achievement,
+                                            name: e.target.value,
+                                          }
+                                        : achievement,
+                                  ),
+                                });
+                              }}
                             />
-                          </Box>
-                        );
-                      })}
+                            <YearPickerInput
+                              label="Year"
+                              placeholder="Enter year"
+                              popoverProps={{
+                                withinPortal: true,
+                              }}
+                              value={new Date(achievement.year)}
+                              disabled={editCandidateMutation.isPending}
+                              onChange={(date) => {
+                                form.setValues({
+                                  ...form.values,
+                                  achievements: form.values.achievements.map(
+                                    (achievement, i) =>
+                                      i === index
+                                        ? {
+                                            ...achievement,
+                                            year: moment(date).format(),
+                                          }
+                                        : achievement,
+                                  ),
+                                });
+                              }}
+                              required
+                            />
+                          </Flex>
+                          <DeleteCredentialButton
+                            type="ACHIEVEMENT"
+                            id={achievement.id}
+                            disabled={editCandidateMutation.isPending}
+                          />
+                        </Box>
+                      ))}
 
                       <Button
                         leftSection={<IconPlus size="1.25rem" />}
@@ -832,114 +823,112 @@ export default function EditCandidate({
                   </TabsPanel>
                   <TabsPanel value="affiliations" pt="xs">
                     <Stack gap="md">
-                      {form.values.affiliations.map((affiliation, index) => {
-                        return (
-                          <Box key={index}>
-                            <TextInput
-                              w="100%"
-                              label="Organization name"
-                              placeholder="Enter organization name"
-                              required
-                              value={affiliation.org_name}
-                              disabled={editCandidateMutation.isPending}
-                              onChange={(e) => {
-                                form.setValues({
-                                  ...form.values,
-                                  affiliations: form.values.affiliations.map(
-                                    (affiliation, i) =>
-                                      i === index
-                                        ? {
-                                            ...affiliation,
-                                            org_name: e.target.value,
-                                          }
-                                        : affiliation,
-                                  ),
-                                });
-                              }}
-                            />
-                            <TextInput
-                              w="100%"
-                              label="Position"
-                              placeholder="Enter your position in the organization"
-                              required
-                              value={affiliation.org_position}
-                              disabled={editCandidateMutation.isPending}
-                              onChange={(e) => {
-                                form.setValues({
-                                  ...form.values,
-                                  affiliations: form.values.affiliations.map(
-                                    (affiliation, i) =>
-                                      i === index
-                                        ? {
-                                            ...affiliation,
-                                            org_position: e.target.value,
-                                          }
-                                        : affiliation,
-                                  ),
-                                });
-                              }}
-                            />
+                      {form.values.affiliations.map((affiliation, index) => (
+                        <Box key={index}>
+                          <TextInput
+                            w="100%"
+                            label="Organization name"
+                            placeholder="Enter organization name"
+                            required
+                            value={affiliation.org_name}
+                            disabled={editCandidateMutation.isPending}
+                            onChange={(e) => {
+                              form.setValues({
+                                ...form.values,
+                                affiliations: form.values.affiliations.map(
+                                  (affiliation, i) =>
+                                    i === index
+                                      ? {
+                                          ...affiliation,
+                                          org_name: e.target.value,
+                                        }
+                                      : affiliation,
+                                ),
+                              });
+                            }}
+                          />
+                          <TextInput
+                            w="100%"
+                            label="Position"
+                            placeholder="Enter your position in the organization"
+                            required
+                            value={affiliation.org_position}
+                            disabled={editCandidateMutation.isPending}
+                            onChange={(e) => {
+                              form.setValues({
+                                ...form.values,
+                                affiliations: form.values.affiliations.map(
+                                  (affiliation, i) =>
+                                    i === index
+                                      ? {
+                                          ...affiliation,
+                                          org_position: e.target.value,
+                                        }
+                                      : affiliation,
+                                ),
+                              });
+                            }}
+                          />
 
-                            <Flex gap="xs">
-                              <YearPickerInput
-                                label="Start year"
-                                placeholder="Enter start year"
-                                style={{ width: "100%" }}
-                                popoverProps={{
-                                  withinPortal: true,
-                                }}
-                                value={new Date(affiliation.start_year)}
-                                disabled={editCandidateMutation.isPending}
-                                onChange={(date) => {
-                                  form.setValues({
-                                    ...form.values,
-                                    affiliations: form.values.affiliations.map(
-                                      (affiliation, i) =>
-                                        i === index
-                                          ? {
-                                              ...affiliation,
-                                              start_year: moment(date).format(),
-                                            }
-                                          : affiliation,
-                                    ),
-                                  });
-                                }}
-                                required
-                              />
-                              <YearPickerInput
-                                label="End year"
-                                placeholder="Enter end year"
-                                style={{ width: "100%" }}
-                                popoverProps={{
-                                  withinPortal: true,
-                                }}
-                                value={new Date(affiliation.end_year)}
-                                disabled={editCandidateMutation.isPending}
-                                onChange={(date) => {
-                                  form.setValues({
-                                    ...form.values,
-                                    affiliations: form.values.affiliations.map(
-                                      (affiliation, i) =>
-                                        i === index
-                                          ? {
-                                              ...affiliation,
-                                              end_year: moment(date).format(),
-                                            }
-                                          : affiliation,
-                                    ),
-                                  });
-                                }}
-                                required
-                              />
-                            </Flex>
-                            <DeleteCredentialButton
-                              type="AFFILIATION"
-                              id={affiliation.id}
+                          <Flex gap="xs">
+                            <YearPickerInput
+                              label="Start year"
+                              placeholder="Enter start year"
+                              style={{ width: "100%" }}
+                              popoverProps={{
+                                withinPortal: true,
+                              }}
+                              value={new Date(affiliation.start_year)}
                               disabled={editCandidateMutation.isPending}
+                              onChange={(date) => {
+                                form.setValues({
+                                  ...form.values,
+                                  affiliations: form.values.affiliations.map(
+                                    (affiliation, i) =>
+                                      i === index
+                                        ? {
+                                            ...affiliation,
+                                            start_year: moment(date).format(),
+                                          }
+                                        : affiliation,
+                                  ),
+                                });
+                              }}
+                              required
                             />
-                          </Box>
-                        );
-                      })}
+                            <YearPickerInput
+                              label="End year"
+                              placeholder="Enter end year"
+                              style={{ width: "100%" }}
+                              popoverProps={{
+                                withinPortal: true,
+                              }}
+                              value={new Date(affiliation.end_year)}
+                              disabled={editCandidateMutation.isPending}
+                              onChange={(date) => {
+                                form.setValues({
+                                  ...form.values,
+                                  affiliations: form.values.affiliations.map(
+                                    (affiliation, i) =>
+                                      i === index
+                                        ? {
+                                            ...affiliation,
+                                            end_year: moment(date).format(),
+                                          }
+                                        : affiliation,
+                                  ),
+                                });
+                              }}
+                              required
+                            />
+                          </Flex>
+                          <DeleteCredentialButton
+                            type="AFFILIATION"
+                            id={affiliation.id}
+                            disabled={editCandidateMutation.isPending}
+                          />
+                        </Box>
+                      ))}
 
                       <Button
                         leftSection={<IconPlus size="1.25rem" />}
@@ -971,71 +960,68 @@ export default function EditCandidate({
                   <TabsPanel value="events-attended" pt="xs">
                     <Stack gap="md">
                       {form.values.events_attended.map(
-                        (events_attended, index) => {
-                          return (
-                            <Box key={index}>
-                              <Flex gap="xs" align="end">
-                                <TextInput
-                                  w="100%"
-                                  label="Seminars attended"
-                                  placeholder="Enter seminars attended"
-                                  required
-                                  value={
-                                    form.values.events_attended[index]?.name ??
-                                    ""
-                                  }
-                                  disabled={editCandidateMutation.isPending}
-                                  onChange={(e) => {
-                                    form.setValues({
-                                      ...form.values,
-                                      events_attended:
-                                        form.values.events_attended.map(
-                                          (achievement, i) =>
-                                            i === index
-                                              ? {
-                                                  ...achievement,
-                                                  name: e.target.value,
-                                                }
-                                              : achievement,
-                                        ),
-                                    });
-                                  }}
-                                />
-                                <YearPickerInput
-                                  label="Year"
-                                  required
-                                  placeholder="Enter year"
-                                  popoverProps={{
-                                    withinPortal: true,
-                                  }}
-                                  value={new Date(events_attended.year)}
-                                  disabled={editCandidateMutation.isPending}
-                                  onChange={(date) => {
-                                    form.setValues({
-                                      ...form.values,
-                                      events_attended:
-                                        form.values.events_attended.map(
-                                          (achievement, i) =>
-                                            i === index
-                                              ? {
-                                                  ...achievement,
-                                                  year: moment(date).format(),
-                                                }
-                                              : achievement,
-                                        ),
-                                    });
-                                  }}
-                                  // required
-                                />
-                              </Flex>
-                              <DeleteCredentialButton
-                                type="EVENTATTENDED"
-                                id={events_attended.id}
+                        (events_attended, index) => (
+                          <Box key={index}>
+                            <Flex gap="xs" align="end">
+                              <TextInput
+                                w="100%"
+                                label="Seminars attended"
+                                placeholder="Enter seminars attended"
+                                required
+                                value={
+                                  form.values.events_attended[index]?.name ?? ""
+                                }
                                 disabled={editCandidateMutation.isPending}
+                                onChange={(e) => {
+                                  form.setValues({
+                                    ...form.values,
+                                    events_attended:
+                                      form.values.events_attended.map(
+                                        (achievement, i) =>
+                                          i === index
+                                            ? {
+                                                ...achievement,
+                                                name: e.target.value,
+                                              }
+                                            : achievement,
+                                      ),
+                                  });
+                                }}
                               />
-                            </Box>
-                          );
-                        },
+                              <YearPickerInput
+                                label="Year"
+                                required
+                                placeholder="Enter year"
+                                popoverProps={{
+                                  withinPortal: true,
+                                }}
+                                value={new Date(events_attended.year)}
+                                disabled={editCandidateMutation.isPending}
+                                onChange={(date) => {
+                                  form.setValues({
+                                    ...form.values,
+                                    events_attended:
+                                      form.values.events_attended.map(
+                                        (achievement, i) =>
+                                          i === index
+                                            ? {
+                                                ...achievement,
+                                                year: moment(date).format(),
+                                              }
+                                            : achievement,
+                                      ),
+                                  });
+                                }}
+                                // required
+                              />
+                            </Flex>
+                            <DeleteCredentialButton
+                              type="EVENTATTENDED"
+                              id={events_attended.id}
+                              disabled={editCandidateMutation.isPending}
+                            />
+                          </Box>
+                        ),
                       )}
 
                       <Button

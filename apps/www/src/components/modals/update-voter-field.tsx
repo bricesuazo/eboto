@@ -242,15 +242,14 @@ function VoterFieldInput({
         onChange={(e) => {
           form.setFieldValue(
             "field",
-            form.values.field.map((f) => {
-              if (f.id === field.id) {
-                return {
-                  ...f,
-                  name: e.currentTarget.value,
-                };
-              }
-              return f;
-            }),
+            form.values.field.map((f) =>
+              f.id === field.id
+                ? {
+                    ...f,
+                    name: e.currentTarget.value,
+                  }
+                : f,
+            ),
           );
         }}
       />

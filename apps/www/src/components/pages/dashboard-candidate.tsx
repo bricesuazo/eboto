@@ -138,7 +138,7 @@ export default function DashboardCandidate({
                       const title = `${formatName(
                         election.name_arrangement,
                         candidate,
-                      )} (${candidate.partylist?.acronym})`;
+                      )} (${candidate.partylist.acronym})`;
                       return (
                         <Group
                           key={candidate.id}

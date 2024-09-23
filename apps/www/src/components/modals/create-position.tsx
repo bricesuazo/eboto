@@ -116,6 +116,7 @@ export default function CreatePosition({
       <Modal
         opened={opened || isPending}
         onClose={close}
+        closeOnClickOutside={false}
         title={<Text fw={600}>Create position</Text>}
       >
         <form

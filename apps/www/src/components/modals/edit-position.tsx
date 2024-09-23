@@ -130,6 +130,7 @@ export default function EditPosition({
       <Modal
         opened={opened || editPositionMutation.isPending}
         onClose={close}
+        closeOnClickOutside={false}
         title={<Text fw={600}>Edit Position - {position.name}</Text>}
       >
         <form

@@ -104,6 +104,7 @@ export default function UploadBulkVoter({
       <Modal
         onClose={close}
         opened={opened}
+        closeOnClickOutside={false}
         title={<Text fw={600}>Upload bulk voters</Text>}
       >
         <Stack gap="sm">
@@ -149,9 +150,7 @@ export default function UploadBulkVoter({
                         <TableTbody>
                           {file.voters.map((voter) => (
                             <TableTr key={voter.email}>
-                              <TableTd>
-                                <Text truncate>{voter.email}</Text>
-                              </TableTd>
+                              <TableTd>{voter.email}</TableTd>
 
                               <TableTd>
                                 <ActionIcon
@@ -231,19 +230,17 @@ export default function UploadBulkVoter({
                       ...prev,
                       {
                         fileName: file.name,
-                        voters: rows.slice(1).map((row) => {
-                          return {
-                            email: row[0]?.toString() ?? "",
-                            // field: voter_fields.reduce(
-                            //   (acc, val, i) => {
-                            //     acc[val.name] = row[i + 1]?.toString() ?? "";
+                        voters: rows.slice(1).map((row) => ({
+                          email: row[0]?.toString() ?? "",
+                          // field: voter_fields.reduce(
+                          //   (acc, val, i) => {
+                          //     acc[val.name] = row[i + 1]?.toString() ?? "";
 
-                            //     return acc;
-                            //   },
-                            //   {} as Record<string, string>,
-                            // ),
-                          };
-                        }),
+                          //     return acc;
+                          //   },
+                          //   {} as Record<string, string>,
+                          // ),
+                        })),
                       },
                     ]);
                   }))();

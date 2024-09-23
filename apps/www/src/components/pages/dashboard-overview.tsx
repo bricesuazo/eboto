@@ -247,34 +247,32 @@ export default function DashboardOverview({
               icon: IconUserSearch,
               href: "candidate",
             },
-          ].map((stat) => {
-            return (
-              <UnstyledButton
-                key={stat.id}
-                component={Link}
-                href={`/dashboard/${election.slug}/${stat.href}`}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  columnGap: "var(--mantine-spacing-md)",
-                  padding: "var(--mantine-spacing-md)",
-                  flex: 1,
-                }}
-              >
-                <Box>
-                  <stat.icon size="2rem" />
-                </Box>
-                <Box>
-                  <Title>
-                    <NumberFormatter thousandSeparator value={stat.count} />
-                  </Title>
-                  <Text tt="uppercase" fw={700} c="green">
-                    {stat.title}
-                  </Text>
-                </Box>
-              </UnstyledButton>
-            );
-          })}
+          ].map((stat) => (
+            <UnstyledButton
+              key={stat.id}
+              component={Link}
+              href={`/dashboard/${election.slug}/${stat.href}`}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                columnGap: "var(--mantine-spacing-md)",
+                padding: "var(--mantine-spacing-md)",
+                flex: 1,
+              }}
+            >
+              <Box>
+                <stat.icon size="2rem" />
+              </Box>
+              <Box>
+                <Title>
+                  <NumberFormatter thousandSeparator value={stat.count} />
+                </Title>
+                <Text tt="uppercase" fw={700} c="green">
+                  {stat.title}
+                </Text>
+              </Box>
+            </UnstyledButton>
+          ))}
         </Flex>
 
         <Flex
@@ -307,43 +305,41 @@ export default function DashboardOverview({
               title: "Voters",
               description: "Total number of voters",
             },
-          ].map((stat) => {
-            return (
-              <Box
-                key={stat.id}
-                p="md"
-                style={{
-                  flex: 1,
-                }}
-              >
-                <Title order={2}>
-                  <NumberFormatter thousandSeparator value={stat.count} />{" "}
-                  {stat.sub_count !== undefined &&
-                    (stat.sub_count > 0 ? (
-                      <>
-                        (
-                        <NumberFormatter
-                          thousandSeparator
-                          decimalScale={2}
-                          fixedDecimalScale
-                          value={stat.sub_count}
-                          suffix="%"
-                        />
-                        )
-                      </>
-                    ) : (
-                      "(0%)"
-                    ))}
-                </Title>
-                <Text tt="uppercase" fw={700} c="green">
-                  {stat.title}
-                </Text>
-                <Text fz="sm" c="dimmed">
-                  {stat.description}
-                </Text>
-              </Box>
-            );
-          })}
+          ].map((stat) => (
+            <Box
+              key={stat.id}
+              p="md"
+              style={{
+                flex: 1,
+              }}
+            >
+              <Title order={2}>
+                <NumberFormatter thousandSeparator value={stat.count} />{" "}
+                {stat.sub_count !== undefined &&
+                  (stat.sub_count > 0 ? (
+                    <>
+                      (
+                      <NumberFormatter
+                        thousandSeparator
+                        decimalScale={2}
+                        fixedDecimalScale
+                        value={stat.sub_count}
+                        suffix="%"
+                      />
+                      )
+                    </>
+                  ) : (
+                    "(0%)"
+                  ))}
+              </Title>
+              <Text tt="uppercase" fw={700} c="green">
+                {stat.title}
+              </Text>
+              <Text fz="sm" c="dimmed">
+                {stat.description}
+              </Text>
+            </Box>
+          ))}
         </Flex>
         <Box>
           <Title order={3}>Voter Stats</Title>

@@ -14,10 +14,7 @@
     },
     "./emails/*": {
       "types": "./dist/emails/*.d.ts",
-      "default": [
-        "./emails/*.ts",
-        "./emails/*.tsx"
-      ]
+      "default": "./emails/*.tsx"
     }
   },
   "dependencies": {

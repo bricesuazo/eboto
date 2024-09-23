@@ -89,6 +89,7 @@ export default function CreatePartylist({
       <Modal
         opened={opened || createPartylistMutation.isPending}
         onClose={close}
+        closeOnClickOutside={false}
         title={<Text fw={600}>Create partylist</Text>}
       >
         <form

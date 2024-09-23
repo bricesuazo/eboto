@@ -104,6 +104,7 @@ export default function EditPartylist({
           // || editPartylistMutation.isPending
         }
         onClose={close}
+        closeOnClickOutside={false}
         title={
           <Text fw={600}>
             Edit Partylist - {partylist.name} ({partylist.acronym})

@@ -192,138 +192,133 @@ export default function VoteForm({
       </Modal>
       <form style={{ marginBottom: 80 }}>
         <Stack>
-          {positionsQuery.data.map((position) => {
-            return (
-              <Box key={position.id}>
-                <Box
-                  py="xs"
-                  style={{
-                    position: "sticky",
-                    top: 60,
-                    backgroundColor: "var(--mantine-color-body)",
-                  }}
-                >
-                  <Text size="xl">{position.name}</Text>
-                  <Text size="sm" c="grayText">
-                    {position.min === 0 && position.max === 1
-                      ? "Select only one."
-                      : `Select ${
-                          position.min
-                            ? `at least ${toWords
-                                .convert(position.min)
-                                .toLowerCase()} and `
-                            : ""
-                        }at most ${toWords
-                          .convert(position.max)
-                          .toLowerCase()}. (${
-                          position.min ? `${position.min} - ` : ""
-                        }${position.max})`}
-                  </Text>
-                </Box>
+          {positionsQuery.data.map((position) => (
+            <Box key={position.id}>
+              <Box
+                py="xs"
+                style={{
+                  position: "sticky",
+                  top: 60,
+                  backgroundColor: "var(--mantine-color-body)",
+                }}
+              >
+                <Text size="xl">{position.name}</Text>
+                <Text size="sm" c="grayText">
+                  {position.min === 0 && position.max === 1
+                    ? "Select only one."
+                    : `Select ${
+                        position.min
+                          ? `at least ${toWords
+                              .convert(position.min)
+                              .toLowerCase()} and `
+                          : ""
+                      }at most ${toWords
+                        .convert(position.max)
+                        .toLowerCase()}. (${
+                        position.min ? `${position.min} - ` : ""
+                      }${position.max})`}
+                </Text>
+              </Box>
 
-                <Group>
-                  {position.min === 0 && position.max === 1 ? (
-                    <RadioGroup
-                      onChange={(e) => {
-                        form.setFieldValue(position.id, {
-                          votes: [e],
-                          min: position.min,
-                          max: position.max,
-                          isValid: true,
-                        });
-                      }}
-                    >
-                      <Group>
-                        {position.candidates.map((candidate) => (
+              <Group>
+                {position.min === 0 && position.max === 1 ? (
+                  <RadioGroup
+                    onChange={(e) => {
+                      form.setFieldValue(position.id, {
+                        votes: [e],
+                        min: position.min,
+                        max: position.max,
+                        isValid: true,
+                      });
+                    }}
+                  >
+                    <Group>
+                      {position.candidates.map((candidate) => (
+                        <VoteCard
+                          key={candidate.id}
+                          isSelected={
+                            form.values[position.id]?.votes.includes(
+                              candidate.id,
+                            ) ?? false
+                          }
+                          candidate={candidate}
+                          type="radio"
+                          value={candidate.id}
+                          name_arrangement={election.name_arrangement}
+                        />
+                      ))}
+                      <VoteCard
+                        type="radio"
+                        isSelected={
+                          form.values[position.id]?.votes.includes("abstain") ??
+                          false
+                        }
+                        value="abstain"
+                        name_arrangement={election.name_arrangement}
+                      />
+                    </Group>
+                  </RadioGroup>
+                ) : (
+                  <CheckboxGroup
+                    onChange={(e) => {
+                      const votes = e.includes("abstain")
+                        ? form.values[position.id]?.votes.includes("abstain")
+                          ? e.filter((e) => e !== "abstain")
+                          : ["abstain"]
+                        : e;
+
+                      form.setFieldValue(position.id, {
+                        votes,
+                        min: position.min,
+                        max: position.max,
+                        isValid:
+                          votes.length !== 0 &&
+                          ((votes.includes("abstain") && votes.length === 1) ||
+                            (votes.length >= position.min &&
+                              votes.length <= position.max)),
+                      });
+                    }}
+                    value={form.values[position.id]?.votes}
+                  >
+                    <Group>
+                      {position.candidates.map((candidate) => {
+                        return (
                           <VoteCard
+                            key={candidate.id}
+                            type="checkbox"
+                            candidate={candidate}
                             isSelected={
                               form.values[position.id]?.votes.includes(
                                 candidate.id,
                               ) ?? false
                             }
-                            candidate={candidate}
-                            type="radio"
-                            key={candidate.id}
                             value={candidate.id}
+                            disabled={
+                              (form.values[position.id]?.votes.length ?? 0) >=
+                                position.max &&
+                              !form.values[position.id]?.votes.includes(
+                                candidate.id,
+                              )
+                            }
                             name_arrangement={election.name_arrangement}
                           />
-                        ))}
-                        <VoteCard
-                          type="radio"
-                          isSelected={
-                            form.values[position.id]?.votes.includes(
-                              "abstain",
-                            ) ?? false
-                          }
-                          value="abstain"
-                          name_arrangement={election.name_arrangement}
-                        />
-                      </Group>
-                    </RadioGroup>
-                  ) : (
-                    <CheckboxGroup
-                      onChange={(e) => {
-                        const votes = e.includes("abstain")
-                          ? form.values[position.id]?.votes.includes("abstain")
-                            ? e.filter((e) => e !== "abstain")
-                            : ["abstain"]
-                          : e;
-
-                        form.setFieldValue(position.id, {
-                          votes,
-                          min: position.min,
-                          max: position.max,
-                          isValid:
-                            votes.length !== 0 &&
-                            ((votes.includes("abstain") &&
-                              votes.length === 1) ||
-                              (votes.length >= position.min &&
-                                votes.length <= position.max)),
-                        });
-                      }}
-                      value={form.values[position.id]?.votes}
-                    >
-                      <Group>
-                        {position.candidates.map((candidate) => {
-                          return (
-                            <VoteCard
-                              type="checkbox"
-                              candidate={candidate}
-                              isSelected={
-                                form.values[position.id]?.votes.includes(
-                                  candidate.id,
-                                ) ?? false
-                              }
-                              value={candidate.id}
-                              disabled={
-                                (form.values[position.id]?.votes.length ?? 0) >=
-                                  position.max &&
-                                !form.values[position.id]?.votes.includes(
-                                  candidate.id,
-                                )
-                              }
-                              key={candidate.id}
-                              name_arrangement={election.name_arrangement}
-                            />
-                          );
-                        })}
-                        <VoteCard
-                          type="checkbox"
-                          isSelected={
-                            form.values[position.id]?.votes.includes(
-                              "abstain",
-                            ) ?? false
-                          }
-                          value="abstain"
-                          name_arrangement={election.name_arrangement}
-                        />
-                      </Group>
-                    </CheckboxGroup>
-                  )}
-                </Group>
-              </Box>
-            );
-          })}
+                        );
+                      })}
+                      <VoteCard
+                        type="checkbox"
+                        isSelected={
+                          form.values[position.id]?.votes.includes("abstain") ??
+                          false
+                        }
+                        value="abstain"
+                        name_arrangement={election.name_arrangement}
+                      />
+                    </Group>
+                  </CheckboxGroup>
+                )}
+              </Group>
+            </Box>
+          ))}
         </Stack>
 
         <Button
