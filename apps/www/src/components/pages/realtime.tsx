@@ -227,11 +227,20 @@ export default function Realtime({
                   <TableTbody>
                     {position.candidates
                       .sort((a, b) => b.vote - a.vote)
-                      .map((candidate) => (
+                      .map((candidate, index) => (
                         <TableTr key={candidate.id}>
                           <TableTd>
-                            <Flex justify="space-between" align="center">
-                              <Text lineClamp={2}>{candidate.name}</Text>
+                            <Flex
+                              justify="space-between"
+                              gap="xs"
+                              align="center"
+                            >
+                              <Text size="sm" ta="center" w={12}>
+                                {index + 1}.
+                              </Text>
+                              <Text lineClamp={2} flex={1}>
+                                {candidate.name}
+                              </Text>
                               <Text>
                                 <NumberFormatter
                                   thousandSeparator

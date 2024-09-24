@@ -16,9 +16,6 @@ export async function generateMetadata({
   params: { electionSlug: string };
 }): Promise<Metadata> {
   const supabaseServer = createClientServer();
-  const {
-    data: { user },
-  } = await supabaseServer.auth.getUser();
 
   const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin
@@ -29,30 +26,6 @@ export async function generateMetadata({
     .single();
 
   if (!election) notFound();
-
-  if (user) {
-    const { data: voters } = await supabaseAdmin
-      .from("voters")
-      .select("id")
-      .eq("election_id", election.id)
-      .eq("email", user.email ?? "");
-
-    const { data: commissioners } = await supabaseAdmin
-      .from("commissioners")
-      .select("id")
-      .eq("election_id", election.id)
-      .eq("user_id", user.id);
-
-    if (
-      !voters ||
-      !commissioners ||
-      (election.publicity === "VOTER" &&
-        !voters.length &&
-        !commissioners.length) ||
-      (election.publicity === "PRIVATE" && !commissioners.length)
-    )
-      notFound();
-  }
 
   let logo_url: string | null = null;
 
@@ -171,13 +144,18 @@ export default async function RealtimePage({
 
     if (!voter && !commissioner) notFound();
 
-    const { data: votes, error: votes_error } = await supabaseAdmin
-      .from("votes")
-      .select("id")
-      .eq("election_id", election.id)
-      .eq("voter_id", voter?.id ?? "");
+    const votes: { id: string }[] = [];
+    if (voter) {
+      const { data, error: votes_error } = await supabaseAdmin
+        .from("votes")
+        .select("id")
+        .eq("election_id", election.id)
+        .eq("voter_id", voter.id);
 
-    if (votes_error) notFound();
+      if (votes_error) notFound();
+
+      votes.push(...data);
+    }
 
     if (
       !isElectionEnded({
@@ -186,7 +164,9 @@ export default async function RealtimePage({
       isElectionOngoing({
         election,
       }) &&
-      !votes.length
+      !voter &&
+      !votes.length &&
+      !commissioner
     )
       redirect(`/${election.slug}`);
   }
