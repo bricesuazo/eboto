@@ -63,20 +63,21 @@ export default async function VotePage({
     .is("deleted_at", null)
     .single();
 
-  const { data: voter_fields } = await supabaseAdmin
-    .from("voter_fields")
-    .select()
-    .eq("election_id", election.id)
-    .is("deleted_at", null);
+  // const { data: voter_fields } = await supabaseAdmin
+  //   .from("voter_fields")
+  //   .select()
+  //   .eq("election_id", election.id)
+  //   .is("deleted_at", null);
 
   if (
-    voter === null ||
-    voter_fields === null ||
-    (voter_fields.length > 0 && !voter.field) ||
-    (voter.field &&
-      Object.values(voter.field as Record<string, string>).some(
-        (value) => !value || value.trim() === "",
-      ))
+    voter === null
+    // ||
+    // voter_fields === null ||
+    // (voter_fields.length > 0 && !voter.field) ||
+    // (voter.field &&
+    //   Object.values(voter.field as Record<string, string>).some(
+    //     (value) => !value || value.trim() === "",
+    //   ))
   )
     redirect(`/${election.slug}`);
 
