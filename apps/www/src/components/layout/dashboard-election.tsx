@@ -678,7 +678,7 @@ export default function DashboardElection({
                                       src={
                                         room.messages[0].user.image_url
                                           ? room.messages[0].user.image_url
-                                          : "/images/default-profile.png"
+                                          : "/images/default-avatar.png"
                                       }
                                       alt={
                                         room.messages[0].user.name + " image."
