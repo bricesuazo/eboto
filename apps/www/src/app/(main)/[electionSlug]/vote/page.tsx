@@ -4,7 +4,7 @@ import { Box, Container, Stack, Text, Title } from "@mantine/core";
 import moment from "moment";
 import Balancer from "react-wrap-balancer";
 
-import { parseHourTo12HourFormat } from "@eboto/constants";
+import { isElectionOngoing, parseHourTo12HourFormat } from "@eboto/constants";
 
 import VoteForm from "~/components/vote-form";
 import { createClient as createClientAdmin } from "~/supabase/admin";
@@ -53,7 +53,7 @@ export default async function VotePage({
 
   if (!election) notFound();
 
-  // if (!isElectionOngoing({ election })) redirect(`/${election.slug}`);
+  if (!isElectionOngoing({ election })) redirect(`/${election.slug}`);
 
   const { data: voter } = await supabaseAdmin
     .from("voters")
