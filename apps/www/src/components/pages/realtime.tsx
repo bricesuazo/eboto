@@ -34,10 +34,10 @@ import {
   isElectionOngoing,
   parseHourTo12HourFormat,
 } from "@eboto/constants";
+import type { Database } from "@eboto/supabase/types";
 
 import ScrollToTopButton from "~/components/scroll-to-top";
 import { api } from "~/trpc/client";
-import type { Database } from "../../../../../supabase/types";
 import AdModal from "../ad-modal";
 import MessageCommissioner from "../modals/message-commissioner";
 import MyMessagesElection from "../my-messages-election";

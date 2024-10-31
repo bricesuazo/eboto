@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-import { createClient } from "~/supabase/server";
+import { createClient } from "@eboto/supabase/client/server";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
   redirectTo.searchParams.delete("token_hash");
 
   if (token_hash) {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     const { error } = await supabase.auth.verifyOtp({
       type: "magiclink",

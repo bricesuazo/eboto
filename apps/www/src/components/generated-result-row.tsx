@@ -8,8 +8,9 @@ import { Box, Button, Group, Text } from "@mantine/core";
 import { IconDownload } from "@tabler/icons-react";
 import moment from "moment";
 
+import type { GeneratedElectionResult } from "@eboto/supabase/custom-types";
+
 import GenerateResult from "~/pdf/generate-result";
-import type { GeneratedElectionResult } from "../../../../supabase/custom-types";
 
 export default function GenerateResultRow({
   result,

@@ -5,16 +5,17 @@ import {
   AppShellMain,
 } from "@mantine/core";
 
+import { createClient } from "@eboto/supabase/client/server";
+
 import Footer from "~/components/footer";
 import Header from "~/components/header";
-import { createClient } from "~/supabase/server";
 
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

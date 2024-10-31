@@ -4,13 +4,13 @@ import { Box, Flex, Group, Stack, Text, Title } from "@mantine/core";
 import { IconFlag } from "@tabler/icons-react";
 
 import type { RouterOutputs } from "@eboto/api";
+import type { Database } from "@eboto/supabase/types";
 
 import CreatePartylist from "~/components/modals/create-partylist";
 import DeletePartylist from "~/components/modals/delete-partylist";
 import EditPartylist from "~/components/modals/edit-partylist";
 import classes from "~/styles/Partylist.module.css";
 import { api } from "~/trpc/client";
-import type { Database } from "../../../../../supabase/types";
 
 export default function DashboardPartylist({
   election,

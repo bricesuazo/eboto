@@ -7,9 +7,9 @@ import { notifications } from "@mantine/notifications";
 import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
 
 import { formatName } from "@eboto/constants";
+import type { Database } from "@eboto/supabase/types";
 
 import { api } from "~/trpc/client";
-import type { Database } from "../../../../../supabase/types";
 
 export default function DeleteCandidate({
   candidate,

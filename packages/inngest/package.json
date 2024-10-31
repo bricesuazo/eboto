@@ -1,20 +1,39 @@
 {
   "name": "@eboto/inngest",
   "type": "module",
-  "main": "./index.ts",
   "scripts": {
-    "dev": "npx inngest-cli@latest dev -u http://localhost:3000/api/inngest",
-    "start": "npx inngest-cli@latest dev -u http://localhost:3000/api/inngest"
+    "dev": "tsc && npx inngest-cli@latest dev -u http://localhost:3000/api/inngest",
+    "start": "npx inngest-cli@latest dev -u http://localhost:3000/api/inngest",
+    "build": "tsc",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./functions/*": {
+      "types": "./dist/functions/*.d.ts",
+      "default": "./src/functions/*.ts"
+    }
   },
   "dependencies": {
     "@eboto/email": "workspace:*",
-    "@supabase/supabase-js": "^2.45.4",
-    "@t3-oss/env-nextjs": "^0.11.1",
-    "inngest": "^3.22.13",
-    "moment": "^2.30.1",
-    "zod": "^3.23.8"
+    "@eboto/supabase": "workspace:*",
+    "@supabase/supabase-js": "catalog:",
+    "@t3-oss/env-nextjs": "catalog:",
+    "inngest": "catalog:",
+    "moment": "2.30.1",
+    "zod": "catalog:"
   },
   "devDependencies": {
-    "@eboto/tsconfig": "workspace:*"
-  }
+    "@eboto/eslint-config": "workspace:*",
+    "@eboto/prettier-config": "workspace:*",
+    "@eboto/tsconfig": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:"
+  },
+  "prettier": "@eboto/prettier-config"
 }

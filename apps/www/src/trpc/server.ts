@@ -3,18 +3,17 @@ import { headers } from "next/headers";
 import { createHydrationHelpers } from "@trpc/react-query/rsc";
 
 import type { AppRouter } from "@eboto/api";
-import { createTRPCContext } from "@eboto/api";
-import { createCaller } from "@eboto/api/src/root";
+import { createCaller, createTRPCContext } from "@eboto/api";
+import { createClient as createClientServer } from "@eboto/supabase/client/server";
+import type { Database } from "@eboto/supabase/types";
 
-import { createClient as createClientServer } from "~/supabase/server";
-import type { Database } from "../../../../supabase/types";
 import { createQueryClient } from "./query-client";
 
 const createContext = cache(async () => {
-  const heads = new Headers(headers());
+  const heads = new Headers(await headers());
   heads.set("x-trpc-source", "rsc");
 
-  const supabase = createClientServer();
+  const supabase = await createClientServer();
   const {
     data: { user },
   } = await supabase.auth.getUser();

@@ -35,11 +35,11 @@ import {
 
 import type { RouterOutputs } from "@eboto/api";
 import { formatName } from "@eboto/constants";
+import type { Database } from "@eboto/supabase/types";
 
 import { useConfetti } from "~/components/providers";
 import { api } from "~/trpc/client";
 import toWords from "~/utils/toWords";
-import type { Database } from "../../../../supabase/types";
 
 export default function VoteForm({
   positions,

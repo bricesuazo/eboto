@@ -1,0 +1,47 @@
+{
+  "name": "@eboto/supabase",
+  "type": "module",
+  "exports": {
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "default": "./src/types.ts"
+    },
+    "./custom-types": {
+      "custom-types": "./dist/custom-types.d.ts",
+      "default": "./src/custom-types.ts"
+    },
+    "./seed": {
+      "types": "./dist/seed.d.ts",
+      "default": "./src/seed.ts"
+    },
+    "./client/*": {
+      "types": "./dist/client/*.d.ts",
+      "default": "./src/client/*.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf .turbo dist node_modules",
+    "dev": "tsc",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@supabase/ssr": "catalog:",
+    "@supabase/supabase-js": "catalog:",
+    "@t3-oss/env-nextjs": "catalog:",
+    "next": "catalog:",
+    "server-only": "0.0.1",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@eboto/eslint-config": "workspace:*",
+    "@eboto/prettier-config": "workspace:*",
+    "@eboto/tsconfig": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  },
+  "prettier": "@eboto/prettier-config"
+}

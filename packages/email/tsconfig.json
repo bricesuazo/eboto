@@ -4,6 +4,6 @@
     "jsx": "preserve",
     "lib": ["dom"]
   },
-  "include": ["emails"],
+  "include": ["src"],
   "exclude": ["dist"]
 }

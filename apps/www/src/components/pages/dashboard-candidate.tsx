@@ -22,13 +22,13 @@ import Balancer from "react-wrap-balancer";
 
 import type { RouterOutputs } from "@eboto/api";
 import { formatName } from "@eboto/constants";
+import type { Database } from "@eboto/supabase/types";
 
 import CreateCandidate from "~/components/modals/create-candidate";
 import DeleteCandidate from "~/components/modals/delete-candidate";
 import EditCandidate from "~/components/modals/edit-candidate";
 import classes from "~/styles/Candidate.module.css";
 import { api } from "~/trpc/client";
-import type { Database } from "../../../../../supabase/types";
 
 export default function DashboardCandidate({
   election,

@@ -10,7 +10,7 @@ import type { Icon, IconProps } from "@tabler/icons-react";
 import { add, getHours, isAfter, isWithinInterval, sub } from "date-fns";
 import { z } from "zod";
 
-import { Database } from "./../../supabase/types";
+import type { Database } from "@eboto/supabase/types";
 
 export const baseUrl =
   process.env.NODE_ENV === "production"
@@ -163,6 +163,7 @@ export const electionDashboardNavbar: {
   },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const positionTemplateSchema = z.array(
   z.object({
     order: z.number(),
@@ -303,6 +304,7 @@ export const positionTemplate: PositionTemplate = [
   },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const takenSlugsSchema = z.array(z.string());
 
 export type TakenSlugs = z.infer<typeof takenSlugsSchema>;

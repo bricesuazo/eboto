@@ -16,8 +16,7 @@ import {
 } from "@alexandernanberg/react-pdf-renderer";
 
 import { formatName } from "@eboto/constants";
-
-import type { GeneratedElectionResult } from "../../../../supabase/custom-types";
+import type { GeneratedElectionResult } from "@eboto/supabase/custom-types";
 
 export default function GenerateResult({
   result,

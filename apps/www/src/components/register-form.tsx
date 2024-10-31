@@ -17,7 +17,7 @@ import { isEmail, useForm } from "@mantine/form";
 import { IconAt, IconCheck } from "@tabler/icons-react";
 import Balancer from "react-wrap-balancer";
 
-import { createClient } from "~/supabase/client";
+import { createClient } from "@eboto/supabase/client/client";
 
 export default function RegisterForm() {
   const searchParams = useSearchParams();

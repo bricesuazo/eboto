@@ -1,17 +1,33 @@
 {
   "name": "@eboto/constants",
   "type": "module",
-  "main": "./index.ts",
-  "publishConfig": {
-    "access": "public"
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    }
   },
   "dependencies": {
-    "@tabler/icons-react": "^3.17.0",
-    "date-fns": "^4.1.0",
-    "zod": "^3.23.8"
+    "@eboto/supabase": "workspace:*",
+    "@t3-oss/env-nextjs": "catalog:",
+    "@tabler/icons-react": "catalog:",
+    "date-fns": "4.1.0",
+    "zod": "catalog:"
   },
   "devDependencies": {
+    "@eboto/eslint-config": "workspace:*",
+    "@eboto/prettier-config": "workspace:*",
     "@eboto/tsconfig": "workspace:*",
-    "@types/node": "^22.5.5"
-  }
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "prettier": "catalog:"
+  },
+  "prettier": "@eboto/prettier-config"
 }

@@ -3,10 +3,10 @@ import moment from "moment";
 import { z } from "zod";
 
 import { sendElectionStart } from "@eboto/email/emails/election-start";
+import type { Database } from "@eboto/supabase/types";
 
 import { BCC_LIMIT, inngest } from "..";
-import { Database } from "../../../supabase/types";
-import { env } from "../env.mjs";
+import { env } from "../env";
 
 export default inngest.createFunction(
   {
@@ -55,9 +55,7 @@ export default inngest.createFunction(
     const voters = [...new Set(election.voters.map((voter) => voter.email))];
     const commissioners = [
       ...new Set(
-        election.commissioners
-          .filter((commissioner) => commissioner.user)
-          .map((commissioner) => commissioner.user.email),
+        election.commissioners.map((commissioner) => commissioner.user.email),
       ),
     ];
 

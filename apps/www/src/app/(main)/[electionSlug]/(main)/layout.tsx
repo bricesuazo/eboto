@@ -1,14 +1,14 @@
 import { notFound, redirect } from "next/navigation";
 
 import { isElectionOngoing } from "@eboto/constants";
-
-import { createClient as createClientAdmin } from "~/supabase/admin";
-import { createClient as createClientServer } from "~/supabase/server";
+import { createClient as createClientAdmin } from "@eboto/supabase/client/admin";
+import { createClient as createClientServer } from "@eboto/supabase/client/server";
 
 export default async function ElectionLayout(
-  props: React.PropsWithChildren<{ params: { electionSlug: string } }>,
+  props: React.PropsWithChildren<{ params: Promise<{ electionSlug: string }> }>,
 ) {
-  const supabaseServer = createClientServer();
+  const params = await props.params;
+  const supabaseServer = await createClientServer();
   const {
     data: { user },
   } = await supabaseServer.auth.getUser();
@@ -17,7 +17,7 @@ export default async function ElectionLayout(
   const { data: election } = await supabaseAdmin
     .from("elections")
     .select()
-    .eq("slug", props.params.electionSlug)
+    .eq("slug", params.electionSlug)
     .is("deleted_at", null)
     .single();
 
@@ -38,7 +38,7 @@ export default async function ElectionLayout(
 
     if (!commissioner) notFound();
   } else if (election.publicity === "VOTER") {
-    const next = `/sign-in?next=/${props.params.electionSlug}`;
+    const next = `/sign-in?next=/${params.electionSlug}`;
 
     if (!user) redirect(next);
 

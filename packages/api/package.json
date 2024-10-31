@@ -1,42 +1,44 @@
 {
   "name": "@eboto/api",
   "type": "module",
-  "main": "./index.ts",
-  "types": "./index.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    }
+  },
   "scripts": {
-    "clean": "rm -rf .turbo node_modules",
-    "lint": "eslint .",
-    "format": "prettier --check \"**/*.{mjs,ts,md,json}\"",
-    "typecheck": "tsc --noEmit"
+    "build": "tsc",
+    "clean": "rm -rf .turbo dist node_modules",
+    "dev": "tsc",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
     "@eboto/constants": "workspace:*",
     "@eboto/email": "workspace:*",
     "@eboto/inngest": "workspace:*",
     "@eboto/payment": "workspace:*",
-    "@trpc/client": "11.0.0-rc.446",
-    "@trpc/server": "11.0.0-rc.446",
-    "@web-std/file": "^3.0.3",
-    "moment": "^2.30.1",
-    "superjson": "^2.2.1",
-    "uuid": "^10.0.0",
-    "zod": "^3.23.8"
+    "@eboto/supabase": "workspace:*",
+    "@t3-oss/env-nextjs": "catalog:",
+    "@trpc/client": "catalog:",
+    "@trpc/server": "catalog:",
+    "@web-std/file": "3.0.3",
+    "moment": "2.30.1",
+    "superjson": "catalog:",
+    "uuid": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@eboto/eslint-config": "workspace:*",
     "@eboto/prettier-config": "workspace:*",
     "@eboto/tsconfig": "workspace:*",
-    "@supabase/supabase-js": "^2.45.4",
-    "@types/uuid": "^10.0.0",
-    "eslint": "^9.11.0",
-    "prettier": "^3.3.3",
-    "typescript": "^5.6.2"
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "@eboto/eslint-config/base"
-    ]
+    "@supabase/supabase-js": "catalog:",
+    "@types/uuid": "catalog:",
+    "eslint": "catalog:",
+    "prettier": "3.3.3",
+    "typescript": "catalog:"
   },
   "prettier": "@eboto/prettier-config"
 }

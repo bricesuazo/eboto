@@ -1,4 +1,3 @@
-import { createClient } from "@supabase/supabase-js";
 import type { User } from "@supabase/supabase-js";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
@@ -6,18 +5,14 @@ import { ZodError } from "zod";
 
 import { inngest } from "@eboto/inngest";
 import * as payment from "@eboto/payment";
-
-import { env } from "../../../apps/www/env.mjs";
-import type { Database } from "./../../../supabase/types";
+import { createClient } from "@eboto/supabase/client/admin";
+import type { Database } from "@eboto/supabase/types";
 
 export function createTRPCContext(opts: {
   user: { auth: User; db: Database["public"]["Tables"]["users"]["Row"] } | null;
   headers: Headers;
 }) {
-  const supabase = createClient<Database>(
-    env.NEXT_PUBLIC_SUPABASE_URL,
-    env.SUPABASE_SERVICE_ROLE_KEY,
-  );
+  const supabase = createClient();
   const source = opts.headers.get("x-trpc-source") ?? "unknown";
 
   console.log(

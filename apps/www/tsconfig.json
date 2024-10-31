@@ -1,32 +1,15 @@
 {
   "extends": "@eboto/tsconfig/base.json",
   "compilerOptions": {
+    "lib": ["ES2022", "dom", "dom.iterable"],
+    "jsx": "preserve",
     "baseUrl": ".",
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
     "paths": {
       "~/*": ["./src/*"]
     },
-    "strictNullChecks": true,
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json",
-    "allowJs": true,
-    "noEmit": true,
-    "incremental": true,
-    "module": "esnext",
-    "resolveJsonModule": true,
-    "jsx": "preserve"
+    "plugins": [{ "name": "next" }],
+    "module": "esnext"
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.cjs",
-    "**/*.mjs",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": []
+  "include": [".", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
 }

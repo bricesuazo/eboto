@@ -43,10 +43,11 @@ import {
 } from "@tabler/icons-react";
 import moment from "moment";
 
+import type { Database } from "@eboto/supabase/types";
+
 import classes from "~/styles/Candidate.module.css";
 import { api } from "~/trpc/client";
 import { transformUploadImage } from "~/utils";
-import type { Database } from "../../../../../supabase/types";
 
 export default function CreateCandidate({
   position,

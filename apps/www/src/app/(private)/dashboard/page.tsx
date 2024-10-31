@@ -18,6 +18,8 @@ import {
 } from "@mantine/core";
 import { IconArrowDown, IconArrowUp, IconX } from "@tabler/icons-react";
 
+import { createClient } from "@eboto/supabase/client/server";
+
 import ElectionsLeft from "~/components/elections-left";
 import Dashboard from "~/components/layout/dashboard";
 import CreateElection from "~/components/modals/create-election";
@@ -25,7 +27,6 @@ import {
   MyElectionsAsCommissioner as MyElectionsAsCommissionerClient,
   MyElectionsAsVoter as MyElectionsAsVoterClient,
 } from "~/components/my-elections";
-import { createClient } from "~/supabase/server";
 import { api } from "~/trpc/server";
 
 export const metadata: Metadata = {
@@ -34,11 +35,13 @@ export const metadata: Metadata = {
 };
 
 export default async function Page({
-  searchParams,
+  searchParams: sP,
 }: {
-  searchParams: Record<string, string | string[] | undefined>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const supabase = createClient();
+  const searchParams = await sP;
+
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

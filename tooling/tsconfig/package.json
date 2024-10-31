@@ -1,6 +1,6 @@
 {
   "name": "@eboto/tsconfig",
   "files": [
-    "base.json"
+    "*.json"
   ]
 }

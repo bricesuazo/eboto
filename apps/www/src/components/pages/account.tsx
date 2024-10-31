@@ -18,8 +18,8 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconAt, IconLetterCase, IconLock, IconX } from "@tabler/icons-react";
 
 import type { RouterOutputs } from "@eboto/api";
+import { createClient } from "@eboto/supabase/client/client";
 
-import { createClient } from "~/supabase/client";
 import { api } from "~/trpc/client";
 import { transformUploadImage } from "~/utils";
 

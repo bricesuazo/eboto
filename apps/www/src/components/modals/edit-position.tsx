@@ -22,8 +22,9 @@ import {
   IconLetterCase,
 } from "@tabler/icons-react";
 
+import type { Database } from "@eboto/supabase/types";
+
 import { api } from "~/trpc/client";
-import type { Database } from "../../../../../supabase/types";
 
 export default function EditPosition({
   position,

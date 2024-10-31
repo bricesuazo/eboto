@@ -1,3 +1,5 @@
+"use client";
+
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,9 +24,9 @@ import Balancer from "react-wrap-balancer";
 import { FAQs } from "@eboto/constants";
 
 import ContactForm from "~/components/contact-form";
+import { MainPricing } from "~/components/main-pricing";
 import ElectionBoost from "~/components/modals/election-boost";
 import classes from "~/styles/Home.module.css";
-import { MainPricing } from "./pricing/page";
 
 const ReactPlayer = dynamic(() => import("~/components/react-player"), {
   ssr: false,

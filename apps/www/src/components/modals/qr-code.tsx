@@ -4,7 +4,7 @@ import { Button, Center, Modal, Stack, Text } from "@mantine/core";
 import { IconDownload } from "@tabler/icons-react";
 import { QRCodeCanvas } from "qrcode.react";
 
-import type { Database } from "../../../../../supabase/types";
+import type { Database } from "@eboto/supabase/types";
 
 export default function QRCodeModal({
   election,

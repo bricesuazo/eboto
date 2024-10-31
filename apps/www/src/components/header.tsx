@@ -47,9 +47,10 @@ import {
   IconUserCircle,
 } from "@tabler/icons-react";
 
+import { createClient } from "@eboto/supabase/client/client";
+
 import { useStore } from "~/store";
 import classes from "~/styles/Header.module.css";
-import { createClient } from "~/supabase/client";
 import { api } from "~/trpc/client";
 
 export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {

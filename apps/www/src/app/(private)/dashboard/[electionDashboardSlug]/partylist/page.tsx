@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { createClient } from "@eboto/supabase/client/admin";
+
 import DashboardPartylist from "~/components/pages/dashboard-partylist";
-import { createClient } from "~/supabase/admin";
 import { api } from "~/trpc/server";
 
 export const metadata: Metadata = {
@@ -10,10 +11,11 @@ export const metadata: Metadata = {
 };
 
 export default async function Page({
-  params: { electionDashboardSlug },
+  params,
 }: {
-  params: { electionDashboardSlug: string };
+  params: Promise<{ electionDashboardSlug: string }>;
 }) {
+  const { electionDashboardSlug } = await params;
   const supabase = createClient();
   const { data: election } = await supabase
     .from("elections")

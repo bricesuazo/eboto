@@ -5,32 +5,41 @@
     "build": "tsc",
     "dev": "tsc",
     "email:dev": "email dev --port 3002",
-    "export": "email export"
+    "dev:email": "pnpm with-env email dev --port=3004 --dir=src/emails",
+    "export": "email export",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "with-env": "dotenv -e ../../.env --"
   },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "default": "./index.ts"
+      "default": "./src/index.ts"
     },
     "./emails/*": {
       "types": "./dist/emails/*.d.ts",
-      "default": "./emails/*.tsx"
+      "default": "./src/emails/*.tsx"
     }
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.654.0",
+    "@aws-sdk/client-ses": "3.682.0",
     "@eboto/constants": "workspace:*",
-    "@react-email/components": "^0.0.25",
-    "@react-email/render": "^1.0.1",
-    "react": "^19.0.0-rc-fb9a90fa48-20240614",
-    "react-email": "^3.0.1"
+    "@react-email/components": "0.0.25",
+    "@react-email/render": "1.0.1",
+    "@t3-oss/env-nextjs": "catalog:",
+    "react": "catalog:",
+    "react-email": "3.0.1"
   },
   "devDependencies": {
+    "@eboto/eslint-config": "workspace:*",
     "@eboto/prettier-config": "workspace:*",
     "@eboto/tsconfig": "workspace:*",
-    "@types/node": "^22.5.5",
-    "@types/react": "^18.3.8",
-    "typescript": "^5.6.2"
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
   },
   "prettier": "@eboto/prettier-config"
 }

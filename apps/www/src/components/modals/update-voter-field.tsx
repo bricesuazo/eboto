@@ -23,8 +23,9 @@ import {
   IconUsersGroup,
 } from "@tabler/icons-react";
 
+import type { Database } from "@eboto/supabase/types";
+
 import { api } from "~/trpc/client";
-import type { Database } from "../../../../../supabase/types";
 
 interface Field {
   id: string;

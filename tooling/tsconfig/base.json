@@ -12,16 +12,15 @@
 
     "incremental": true,
     "disableSourceOfProjectReferenceRedirect": true,
+    "tsBuildInfoFile": "${configDir}/.cache/tsbuildinfo.json",
 
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "checkJs": true,
 
-    "strictNullChecks": true,
-
     "module": "Preserve",
     "moduleResolution": "Bundler",
     "noEmit": true
   },
-  "exclude": ["node_modules", "build", "dist", ".next", ".expo"]
+  "exclude": ["node_modules", "build", "dist", ".next"]
 }

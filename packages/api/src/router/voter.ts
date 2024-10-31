@@ -2,10 +2,10 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { isElectionEnded, isElectionOngoing } from "@eboto/constants";
+import { LS_DATA_DEV, LS_DATA_PROD } from "@eboto/supabase/seed";
 
-import { env } from "../../../../apps/www/env.mjs";
+import { env } from "../env";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { LS_DATA_DEV, LS_DATA_PROD } from "./../../../../supabase/seed";
 
 export const voterRouter = createTRPCRouter({
   createSingle: protectedProcedure

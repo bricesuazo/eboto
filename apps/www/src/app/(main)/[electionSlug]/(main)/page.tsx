@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { env } from "env.mjs";
 import moment from "moment";
 
+import { createClient as createClientAdmin } from "@eboto/supabase/client/admin";
+import { createClient as createClientServer } from "@eboto/supabase/client/server";
+
 import ElectionPageClient from "~/components/pages/election-page";
-import { createClient as createClientAdmin } from "~/supabase/admin";
-import { createClient as createClientServer } from "~/supabase/server";
+import { env } from "~/env";
 import { api } from "~/trpc/server";
 
 export async function generateMetadata({
-  params: { electionSlug },
+  params,
 }: {
-  params: { electionSlug: string };
+  params: Promise<{ electionSlug: string }>;
 }): Promise<Metadata> {
-  const supabaseServer = createClientServer();
+  const { electionSlug } = await params;
+  const supabaseServer = await createClientServer();
   const {
     data: { user },
   } = await supabaseServer.auth.getUser();
@@ -100,10 +102,11 @@ export async function generateMetadata({
 }
 
 export default async function ElectionPage({
-  params: { electionSlug },
+  params,
 }: {
-  params: { electionSlug: string };
+  params: Promise<{ electionSlug: string }>;
 }) {
+  const { electionSlug } = await params;
   const getElectionPage = await api.election.getElectionPage({
     election_slug: electionSlug,
   });

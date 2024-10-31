@@ -1,14 +1,18 @@
 import { notFound, redirect } from "next/navigation";
-import { env } from "env.mjs";
+
+import { createClient as creatClientAdmin } from "@eboto/supabase/client/admin";
+import { createClient as creatClientServer } from "@eboto/supabase/client/server";
 
 import DashboardElection from "~/components/layout/dashboard-election";
-import { createClient as creatClientAdmin } from "~/supabase/admin";
-import { createClient as creatClientServer } from "~/supabase/server";
+import { env } from "~/env";
 
 export default async function DashboardLayout(
-  props: React.PropsWithChildren<{ params: { electionDashboardSlug: string } }>,
+  props: React.PropsWithChildren<{
+    params: Promise<{ electionDashboardSlug: string }>;
+  }>,
 ) {
-  const supabaseServer = creatClientServer();
+  const params = await props.params;
+  const supabaseServer = await creatClientServer();
   const {
     data: { user },
   } = await supabaseServer.auth.getUser();
@@ -37,7 +41,7 @@ export default async function DashboardLayout(
   const { data: election } = await supabaseAdmin
     .from("elections")
     .select()
-    .eq("slug", props.params.electionDashboardSlug)
+    .eq("slug", params.electionDashboardSlug)
     .is("deleted_at", null)
     .single();
 

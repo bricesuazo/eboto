@@ -4,8 +4,9 @@ import { ActionIcon, Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconQrcode } from "@tabler/icons-react";
 
+import type { Database } from "@eboto/supabase/types";
+
 import QRCodeModal from "~/components/modals/qr-code";
-import type { Database } from "../../../../../supabase/types";
 
 export default function DashboardShowQRCode({
   election,

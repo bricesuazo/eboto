@@ -44,10 +44,10 @@ import moment from "moment";
 import { v4 as uuid } from "uuid";
 
 import { formatName } from "@eboto/constants";
+import type { Database } from "@eboto/supabase/types";
 
 import { api } from "~/trpc/client";
 import { transformUploadImage } from "~/utils";
-import type { Database } from "../../../../../supabase/types";
 
 export default function EditCandidate({
   candidate,
