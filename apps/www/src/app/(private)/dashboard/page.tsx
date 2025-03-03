@@ -34,11 +34,13 @@ export const metadata: Metadata = {
 };
 
 export default async function Page({
-  searchParams,
+  searchParams: searchParamsPromise,
 }: {
-  searchParams: Record<string, string | string[] | undefined>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const supabase = createClient();
+  const searchParams = await searchParamsPromise;
+
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

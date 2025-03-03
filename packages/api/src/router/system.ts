@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { env } from "../../../../apps/www/env.mjs";
+import { env } from "../../../../apps/www/env";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const systemRouter = createTRPCRouter({

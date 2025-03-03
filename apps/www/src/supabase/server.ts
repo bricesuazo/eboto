@@ -1,12 +1,12 @@
 import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
-import { env } from "env.mjs";
+import { env } from "env";
 
 import type { Database } from "../../../../supabase/types";
 
-export const createClient = () => {
-  const cookieStore = cookies();
+export const createClient = async () => {
+  const cookieStore = await cookies();
 
   return createServerClient<Database>(
     env.NEXT_PUBLIC_SUPABASE_URL,

@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
   redirectTo.searchParams.delete("token_hash");
 
   if (token_hash) {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     const { error } = await supabase.auth.verifyOtp({
       type: "magiclink",

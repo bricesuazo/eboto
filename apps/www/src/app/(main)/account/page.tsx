@@ -5,7 +5,7 @@ import { createClient } from "~/supabase/server";
 import { api } from "~/trpc/server";
 
 export default async function AccountPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

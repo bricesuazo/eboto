@@ -7,7 +7,7 @@ import { ZodError } from "zod";
 import { inngest } from "@eboto/inngest";
 import * as payment from "@eboto/payment";
 
-import { env } from "../../../apps/www/env.mjs";
+import { env } from "../../../apps/www/env";
 import type { Database } from "./../../../supabase/types";
 
 export function createTRPCContext(opts: {

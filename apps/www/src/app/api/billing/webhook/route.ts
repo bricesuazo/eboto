@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { env } from "env.mjs";
+import { env } from "env";
 
 import { createClient } from "~/supabase/admin";
 

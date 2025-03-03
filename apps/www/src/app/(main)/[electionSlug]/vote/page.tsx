@@ -12,10 +12,12 @@ import { createClient as createClientServer } from "~/supabase/server";
 import { api } from "~/trpc/server";
 
 export async function generateMetadata({
-  params: { electionSlug },
+  params,
 }: {
-  params: { electionSlug: string };
+  params: Promise<{ electionSlug: string }>;
 }): Promise<Metadata> {
+  const { electionSlug } = await params;
+
   const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin
     .from("elections")
@@ -32,11 +34,13 @@ export async function generateMetadata({
 }
 
 export default async function VotePage({
-  params: { electionSlug },
+  params,
 }: {
-  params: { electionSlug: string };
+  params: Promise<{ electionSlug: string }>;
 }) {
-  const supabaseServer = createClientServer();
+  const { electionSlug } = await params;
+
+  const supabaseServer = await createClientServer();
   const {
     data: { user },
   } = await supabaseServer.auth.getUser();

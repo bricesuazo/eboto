@@ -10,10 +10,12 @@ export const metadata: Metadata = {
 };
 
 export default async function Page({
-  params: { electionDashboardSlug },
+  params,
 }: {
-  params: { electionDashboardSlug: string };
+  params: Promise<{ electionDashboardSlug: string }>;
 }) {
+  const { electionDashboardSlug } = await params;
+
   const supabase = createClient();
   const { data: election } = await supabase
     .from("elections")

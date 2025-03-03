@@ -6,7 +6,7 @@ import { sendElectionStart } from "@eboto/email/emails/election-start";
 
 import { BCC_LIMIT, inngest } from "..";
 import { Database } from "../../../supabase/types";
-import { env } from "../env.mjs";
+import { env } from "../env";
 
 export default inngest.createFunction(
   {

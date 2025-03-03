@@ -374,8 +374,8 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
                       const supabase = createClient();
 
                       await supabase.auth.signOut();
-                      await utils.auth.invalidate();
                       router.push("/sign-in");
+                      await utils.auth.invalidate();
                     }}
                     closeMenuOnClick={false}
                     leftSection={

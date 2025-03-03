@@ -26,7 +26,7 @@ import {
 } from "@mantine/dates";
 import { Spotlight } from "@mantine/spotlight";
 import { IconLayoutDashboard, IconSearch } from "@tabler/icons-react";
-import { env } from "env.mjs";
+import { env } from "env";
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 import Realistic from "react-canvas-confetti/dist/presets/realistic";

@@ -6,12 +6,12 @@
     "access": "public"
   },
   "dependencies": {
-    "@tabler/icons-react": "^3.17.0",
-    "date-fns": "^4.1.0",
-    "zod": "^3.23.8"
+    "@tabler/icons-react": "catalog:",
+    "date-fns": "4.1.0",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@eboto/tsconfig": "workspace:*",
-    "@types/node": "^22.5.5"
+    "@types/node": "catalog:"
   }
 }

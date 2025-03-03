@@ -9,10 +9,12 @@ export const metadata: Metadata = {
 };
 
 export default async function Page({
-  params: { electionDashboardSlug },
+  params,
 }: {
-  params: { electionDashboardSlug: string };
+  params: Promise<{ electionDashboardSlug: string }>;
 }) {
+  const { electionDashboardSlug } = await params;
+
   const data = await api.election
     .getVotersByElectionSlug({
       election_slug: electionDashboardSlug,

@@ -8,13 +8,15 @@ export const metadata: Metadata = {
   title: "Sign in to your account",
 };
 
-export default function SignInPage({
-  searchParams: { next },
+export default async function SignInPage({
+  searchParams,
 }: {
-  searchParams: {
+  searchParams: Promise<{
     next?: string;
-  };
+  }>;
 }) {
+  const { next } = await searchParams;
+
   return (
     <>
       <Title ta="center" order={2}>

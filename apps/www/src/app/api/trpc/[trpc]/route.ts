@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
-import { env } from "env.mjs";
+import { env } from "env";
 
 import { appRouter, createTRPCContext } from "@eboto/api";
 
@@ -9,7 +9,7 @@ import { createClient } from "~/supabase/server";
 import type { Database } from "../../../../../../../supabase/types";
 
 const createContext = async (req: NextRequest) => {
-  const supabase = createClient();
+  const supabase = await createClient();
   const supabaseAdmin = createClientAdmin();
   const {
     data: { user },

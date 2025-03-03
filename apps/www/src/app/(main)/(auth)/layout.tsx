@@ -4,7 +4,7 @@ import { Container } from "@mantine/core";
 import { createClient } from "~/supabase/server";
 
 export default async function AuthLayout(props: React.PropsWithChildren) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

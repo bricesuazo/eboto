@@ -12,7 +12,7 @@ import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { env } from "env.mjs";
+import { env } from "env";
 
 import { Providers, theme } from "~/components/providers";
 import { siteConfig } from "~/config/site";

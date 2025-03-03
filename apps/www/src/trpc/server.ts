@@ -11,10 +11,10 @@ import type { Database } from "../../../../supabase/types";
 import { createQueryClient } from "./query-client";
 
 const createContext = cache(async () => {
-  const heads = new Headers(headers());
+  const heads = new Headers(await headers());
   heads.set("x-trpc-source", "rsc");
 
-  const supabase = createClientServer();
+  const supabase = await createClientServer();
   const {
     data: { user },
   } = await supabase.auth.getUser();

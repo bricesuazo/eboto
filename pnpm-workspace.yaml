@@ -2,3 +2,57 @@ packages:
   - apps/*
   - packages/*
   - tooling/*
+
+catalog:
+  "@emotion/react": 11.14.0
+  "@mantine/carousel": 7.17.1
+  "@mantine/charts": 7.17.1
+  "@mantine/code-highlight": 7.17.1
+  "@mantine/core": 7.17.1
+  "@mantine/dates": 7.17.1
+  "@mantine/dropzone": 7.17.1
+  "@mantine/form": 7.17.1
+  "@mantine/hooks": 7.17.1
+  "@mantine/modals": 7.17.1
+  "@mantine/notifications": 7.17.1
+  "@mantine/nprogress": 7.17.1
+  "@mantine/spotlight": 7.17.1
+  "@mantine/tiptap": 7.17.1
+  "@next/eslint-plugin-next": 15.2.0
+  "@supabase/supabase-js": 2.49.1
+  "@supabase/ssr": 0.5.2
+  "@t3-oss/env-nextjs": 0.12.0
+  "@tabler/icons-react": 3.30.0
+  "@tanstack/react-query": 5.66.11
+  "@tanstack/react-query-devtools": 5.66.11
+  "@tiptap/extension-link": 2.11.5
+  "@tiptap/react": 2.11.5
+  "@tiptap/starter-kit": 2.11.5
+  "@trpc/client": 11.0.0-rc.477
+  "@trpc/react-query": 11.0.0-rc.477
+  "@trpc/server": 11.0.0-rc.477
+  "@types/node": 22.13.8
+  "@types/react": 19.0.10
+  "@types/react-dom": 19.0.4
+  "@types/uuid": 10.0.0
+  "@vercel/analytics": 1.5.0
+  "@vercel/speed-insights": 1.2.0
+  dayjs: 1.11.13
+  dotenv-cli: 8.0.0
+  embla-carousel-react: 8.5.2
+  eslint: 9.21.0
+  inngest: 3.31.13
+  next: 15.2.0
+  posthog-js: 1.225.0
+  prettier: 3.5.3
+  react: 19.0.0
+  react-dom: 19.0.0
+  recharts: 2.15.1
+  superjson: 2.2.2
+  postcss: 8.5.3
+  postcss-preset-mantine: 1.17.0
+  postcss-simple-vars: 7.0.1
+  typescript-eslint: 8.6.0
+  typescript: 5.8.2
+  uuid: 11.1.0
+  zod: 3.24.2

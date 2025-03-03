@@ -649,7 +649,7 @@ export const candidateRouter = createTRPCRouter({
           election.publicity !== "PRIVATE" &&
           election.voters.some((voter) => voter.email === ctx.user?.db.email) &&
           !election.commissioners.some(
-            (commissioner) => commissioner.user?.email === ctx.user?.db.email,
+            (commissioner) => commissioner.user.email === ctx.user?.db.email,
           ),
       };
     }),

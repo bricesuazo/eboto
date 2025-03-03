@@ -1,4 +1,3 @@
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -23,12 +22,9 @@ import { FAQs } from "@eboto/constants";
 
 import ContactForm from "~/components/contact-form";
 import ElectionBoost from "~/components/modals/election-boost";
+import ReactPlayer from "~/components/react-player";
 import classes from "~/styles/Home.module.css";
 import { MainPricing } from "./pricing/page";
-
-const ReactPlayer = dynamic(() => import("~/components/react-player"), {
-  ssr: false,
-});
 
 export default function HomePage() {
   return (

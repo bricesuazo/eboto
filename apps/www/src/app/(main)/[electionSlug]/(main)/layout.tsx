@@ -6,9 +6,10 @@ import { createClient as createClientAdmin } from "~/supabase/admin";
 import { createClient as createClientServer } from "~/supabase/server";
 
 export default async function ElectionLayout(
-  props: React.PropsWithChildren<{ params: { electionSlug: string } }>,
+  props: React.PropsWithChildren<{ params: Promise<{ electionSlug: string }> }>,
 ) {
-  const supabaseServer = createClientServer();
+  const { electionSlug } = await props.params;
+  const supabaseServer = await createClientServer();
   const {
     data: { user },
   } = await supabaseServer.auth.getUser();
@@ -17,7 +18,7 @@ export default async function ElectionLayout(
   const { data: election } = await supabaseAdmin
     .from("elections")
     .select()
-    .eq("slug", props.params.electionSlug)
+    .eq("slug", electionSlug)
     .is("deleted_at", null)
     .single();
 
@@ -38,7 +39,7 @@ export default async function ElectionLayout(
 
     if (!commissioner) notFound();
   } else if (election.publicity === "VOTER") {
-    const next = `/sign-in?next=/${props.params.electionSlug}`;
+    const next = `/sign-in?next=/${electionSlug}`;
 
     if (!user) redirect(next);
 

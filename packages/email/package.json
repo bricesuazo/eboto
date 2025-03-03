@@ -18,19 +18,19 @@
     }
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "^3.654.0",
+    "@aws-sdk/client-ses": "3.758.0",
     "@eboto/constants": "workspace:*",
-    "@react-email/components": "^0.0.25",
-    "@react-email/render": "^1.0.1",
-    "react": "^19.0.0-rc-fb9a90fa48-20240614",
-    "react-email": "^3.0.1"
+    "@react-email/components": "0.0.33",
+    "@react-email/render": "1.0.5",
+    "react": "catalog:",
+    "react-email": "3.0.7"
   },
   "devDependencies": {
     "@eboto/prettier-config": "workspace:*",
     "@eboto/tsconfig": "workspace:*",
-    "@types/node": "^22.5.5",
-    "@types/react": "^18.3.8",
-    "typescript": "^5.6.2"
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "typescript": "catalog:"
   },
   "prettier": "@eboto/prettier-config"
 }

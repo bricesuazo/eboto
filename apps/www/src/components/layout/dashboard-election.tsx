@@ -549,7 +549,7 @@ export default function DashboardElection({
                                 variant="default"
                                 radius="xl"
                               >
-                                {commissioner.user.email?.slice(0, 2)}
+                                {commissioner.user.email.slice(0, 2)}
                               </ThemeIcon>
                             )}
                           </Tooltip>
@@ -592,9 +592,7 @@ export default function DashboardElection({
           ) : is_free ? (
             <ScrollArea h="100%" p="md">
               <AdminChat
-                election_slug={
-                  params.electionDashboardSlug as string | undefined
-                }
+                election_slug={params.electionDashboardSlug?.toString()}
                 setChat={setChat}
               />
             </ScrollArea>
@@ -623,9 +621,7 @@ export default function DashboardElection({
                 <ScrollArea h="100%">
                   <TabsPanel value="admin" p="md">
                     <AdminChat
-                      election_slug={
-                        params.electionDashboardSlug as string | undefined
-                      }
+                      election_slug={params.electionDashboardSlug?.toString()}
                       setChat={setChat}
                     />
                   </TabsPanel>

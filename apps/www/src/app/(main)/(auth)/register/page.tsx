@@ -8,13 +8,15 @@ export const metadata: Metadata = {
   title: "Create an account",
 };
 
-export default function RegisterPage({
-  searchParams: { next },
+export default async function RegisterPage({
+  searchParams,
 }: {
-  searchParams: {
+  searchParams: Promise<{
     next?: string;
-  };
+  }>;
 }) {
+  const { next } = await searchParams;
+
   return (
     <>
       <Title ta="center" order={2}>
