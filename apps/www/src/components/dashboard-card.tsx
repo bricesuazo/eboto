@@ -25,7 +25,7 @@ import {
   IconWorldWww,
   IconX,
 } from "@tabler/icons-react";
-import moment from "moment";
+import { DateUtils } from "~/utils/date";
 
 import type { RouterOutputs } from "@eboto/api";
 import { parseHourTo12HourFormat } from "@eboto/constants";
@@ -335,9 +335,9 @@ export default function DashboardCard(
               {props.election.name}
             </Text>
             <Text size="sm" c="GrayText" ta="center">
-              {moment(props.election.start_date).local().format("MMM DD, YYYY")}
+              {DateUtils.formatDateShort(props.election.start_date)}
               {" - "}
-              {moment(props.election.end_date).local().format("MMM DD, YYYY")}
+              {DateUtils.formatDateShort(props.election.end_date)}
             </Text>
             <Text size="sm" c="GrayText" ta="center">
               {props.election.voting_hour_start === 0 &&

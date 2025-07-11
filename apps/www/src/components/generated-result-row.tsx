@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 // TODO: Change this import once @react-pdf/renderer is updated to support React 19
 // import { PDFDownloadLink } from "@react-pdf/renderer";
-import { PDFDownloadLink } from "@alexandernanberg/react-pdf-renderer";
+// import { PDFDownloadLink } from "@alexandernanberg/react-pdf-renderer";
 import { Box, Button, Group, Text } from "@mantine/core";
 import { IconDownload } from "@tabler/icons-react";
-import moment from "moment";
+import { DateUtils } from "~/utils/date";
 
-import GenerateResult from "~/pdf/generate-result";
+import { PDFDownloadLinkLazy, GenerateResultLazy } from "~/components/pdf-lazy";
 import type { GeneratedElectionResult } from "../../../../supabase/custom-types";
 
 export default function GenerateResultRow({
@@ -42,21 +42,20 @@ export default function GenerateResultRow({
       <Box>
         <Text>{name}</Text>
         <Text size="sm" c="dimmed">
-          Generated {moment(result.created_at).fromNow()} (
-          {moment(result.created_at).format("MMMM DD, YYYY hh:mmA")})
+          Generated {DateUtils.fromNow(result.created_at)} (
+          {DateUtils.formatDateTimeShort(result.created_at)})
         </Text>
       </Box>
 
       {isMounted ? (
-        <Button
-          size="xs"
-          leftSection={<IconDownload size="1rem" />}
-          component={PDFDownloadLink}
-          document={<GenerateResult result={result} />}
+        <PDFDownloadLinkLazy
+          document={<GenerateResultLazy result={result} />}
           fileName={name}
         >
-          Download
-        </Button>
+          <Button leftSection={<IconDownload size={16} />} size="xs">
+            Download PDF
+          </Button>
+        </PDFDownloadLinkLazy>
       ) : (
         <Button size="xs" leftSection={<IconDownload size="1rem" />} loading>
           Download

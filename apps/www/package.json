@@ -54,7 +54,6 @@
     "inngest": "catalog:",
     "mantine-form-zod-resolver": "1.1.0",
     "mantine-react-table": "2.0.0-beta.0",
-    "moment": "2.30.1",
     "next": "catalog:",
     "posthog-js": "catalog:",
     "qrcode.react": "4.2.0",

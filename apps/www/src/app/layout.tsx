@@ -15,12 +15,14 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { env } from "env";
 
 import { Providers, theme } from "~/components/providers";
+import { DeferredAnalytics } from "~/components/analytics-lazy";
 import { siteConfig } from "~/config/site";
 import { TRPCReactProvider } from "~/trpc/client";
 
 const font = Poppins({
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600"],
   subsets: ["latin"],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -154,8 +156,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           <MantineProvider theme={theme}>
             <Notifications />
             <Providers>{children}</Providers>
-            <Analytics />
-            <SpeedInsights />
+            <DeferredAnalytics />
           </MantineProvider>
         </TRPCReactProvider>
       </body>
