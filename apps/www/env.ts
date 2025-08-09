@@ -1,11 +1,11 @@
-import { createEnv } from "@t3-oss/env-nextjs";
-import { vercel } from "@t3-oss/env-nextjs/presets-zod";
-import { z } from "zod";
+import { createEnv } from '@t3-oss/env-nextjs';
+import { vercel } from '@t3-oss/env-nextjs/presets-zod';
+import { z } from 'zod/v4';
 
 export const env = createEnv({
   extends: [vercel()],
   shared: {
-    NODE_ENV: z.enum(["development", "test", "production"]),
+    NODE_ENV: z.enum(['development', 'test', 'production']),
     PORT: z.coerce.number().default(3000),
     NEXT_PUBLIC_SUPABASE_URL: z.string().min(1).url(),
     NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
@@ -51,17 +51,17 @@ export const env = createEnv({
     INNGEST_EVENT_KEY: process.env.INNGEST_EVENT_KEY,
 
     LEMONSQUEEZY_WEBHOOK_SECRET: process.env.LEMONSQUEEZY_WEBHOOK_SECRET,
-    LEMONSQUEEZY_STORE_ID: parseInt(process.env.LEMONSQUEEZY_STORE_ID ?? "-1"),
+    LEMONSQUEEZY_STORE_ID: parseInt(process.env.LEMONSQUEEZY_STORE_ID ?? '-1'),
     NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
     LEMONSQUEEZY_API_KEY: process.env.LEMONSQUEEZY_API_KEY,
     LEMONSQUEEZY_FREE_VARIANT_ID: parseInt(
-      process.env.LEMONSQUEEZY_FREE_VARIANT_ID ?? "-1",
+      process.env.LEMONSQUEEZY_FREE_VARIANT_ID ?? '-1',
     ),
     LEMONSQUEEZY_BOOST_PRODUCT_ID: parseInt(
-      process.env.LEMONSQUEEZY_BOOST_PRODUCT_ID ?? "-1",
+      process.env.LEMONSQUEEZY_BOOST_PRODUCT_ID ?? '-1',
     ),
     LEMONSQUEEZY_PLUS_VARIANT_ID: parseInt(
-      process.env.LEMONSQUEEZY_PLUS_VARIANT_ID ?? "-1",
+      process.env.LEMONSQUEEZY_PLUS_VARIANT_ID ?? '-1',
     ),
   },
 });

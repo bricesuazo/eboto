@@ -52,8 +52,10 @@ export default function PublicElections() {
           slideSize={{ base: "100%", xs: "50%", md: "33.333333%" }}
           height={400}
           slideGap="md"
-          loop
-          align="start"
+          emblaOptions={{
+            loop: true,
+            align:"start"
+          }}
         >
           {getAllPublicElectionsQuery.data.map((election) => (
             <CarouselSlide key={election.id}>

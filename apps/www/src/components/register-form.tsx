@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useState } from 'react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import {
   Alert,
   Anchor,
@@ -12,12 +12,15 @@ import {
   Stack,
   Text,
   TextInput,
-} from "@mantine/core";
-import { isEmail, useForm } from "@mantine/form";
-import { IconAt, IconCheck } from "@tabler/icons-react";
-import Balancer from "react-wrap-balancer";
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { IconAt, IconCheck } from '@tabler/icons-react';
+import { zod4Resolver } from 'mantine-form-zod-resolver';
+import Balancer from 'react-wrap-balancer';
 
-import { createClient } from "~/supabase/client";
+import type { Auth } from '~/schema/auth';
+import { AuthSchema } from '~/schema/auth';
+import { createClient } from '~/supabase/client';
 
 export default function RegisterForm() {
   const searchParams = useSearchParams();
@@ -30,15 +33,12 @@ export default function RegisterForm() {
     credential: false,
   });
 
-  const form = useForm({
+  const form = useForm<Auth>({
     initialValues: {
-      email: "",
+      email: '',
       // password: "",
     },
-    validate: {
-      email: isEmail("Invalid email"),
-      // password: hasLength({ min: 8 }, "Password must be at least 8 characters"),
-    },
+    validate: zod4Resolver(AuthSchema),
   });
 
   return (
@@ -56,13 +56,13 @@ export default function RegisterForm() {
               const supabase = createClient();
               setLoadings((loadings) => ({ ...loadings, google: true }));
 
-              const next = searchParams.get("next");
+              const next = searchParams.get('next');
 
               await supabase.auth.signInWithOAuth({
-                provider: "google",
+                provider: 'google',
                 options: {
                   redirectTo: `${location.origin}/api/auth/callback${
-                    next ? `?next=${next}` : ""
+                    next ? `?next=${next}` : ''
                   }`,
                 },
               });
@@ -74,7 +74,7 @@ export default function RegisterForm() {
                 xmlns="http://www.w3.org/2000/svg"
                 preserveAspectRatio="xMidYMid"
                 viewBox="0 0 256 262"
-                style={{ width: "0.9rem", height: "0.9rem" }}
+                style={{ width: '0.9rem', height: '0.9rem' }}
               >
                 <path
                   fill="#4285F4"
@@ -112,7 +112,7 @@ export default function RegisterForm() {
                   await supabase.auth.signInWithOtp({
                     email: values.email,
                     options: {
-                      emailRedirectTo: searchParams.get("next") ?? "/dashboard",
+                      emailRedirectTo: searchParams.get('next') ?? '/dashboard',
                     },
                   });
 
@@ -131,7 +131,7 @@ export default function RegisterForm() {
                   withAsterisk
                   label="Email"
                   required
-                  {...form.getInputProps("email")}
+                  {...form.getInputProps('email')}
                   leftSection={<IconAt size="1rem" />}
                   disabled={loadings.credential || loadings.google}
                 />
@@ -148,7 +148,7 @@ export default function RegisterForm() {
                 <Button
                   type="submit"
                   loading={loadings.credential}
-                  disabled={!form.isValid("email")}
+                  disabled={!form.isValid('email')}
                 >
                   Send magic link
                 </Button>
@@ -161,11 +161,11 @@ export default function RegisterForm() {
           </Alert>
         )}
         <Text size="sm" ta="center">
-          By registering, you agree to our{" "}
+          By registering, you agree to our{' '}
           <Anchor component={Link} href="/terms" target="_blank">
             Terms of Service
-          </Anchor>{" "}
-          and{" "}
+          </Anchor>{' '}
+          and{' '}
           <Anchor component={Link} href="/privacy" target="_blank">
             Privacy Policy
           </Anchor>

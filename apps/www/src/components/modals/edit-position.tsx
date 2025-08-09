@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import {
   Alert,
   Button,
@@ -12,35 +12,38 @@ import {
   Stack,
   Text,
   TextInput,
-} from "@mantine/core";
-import { hasLength, useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconCheck,
   IconLetterCase,
-} from "@tabler/icons-react";
+} from '@tabler/icons-react';
+import { zod4Resolver } from 'mantine-form-zod-resolver';
 
-import { api } from "~/trpc/client";
-import type { Database } from "../../../../../supabase/types";
+import type { EditPosition } from '~/schema/position';
+import { EditPositionSchema } from '~/schema/position';
+import { api } from '~/trpc/client';
+import type { Database } from '../../../../../supabase/types';
 
 export default function EditPosition({
   position,
 }: {
-  position: Database["public"]["Tables"]["positions"]["Row"];
+  position: Database['public']['Tables']['positions']['Row'];
 }) {
   const [opened, { open, close }] = useDisclosure(false);
   const context = api.useUtils();
 
-  const initialValues = {
+  const initialValues: EditPosition = {
     name: position.name,
     isSingle: !(position.min === 0 && position.max === 1),
     min: position.min,
     max: position.max,
   };
 
-  const form = useForm({
+  const form = useForm<EditPosition>({
     initialValues,
     validateInputOnChange: true,
     validateInputOnBlur: true,
@@ -55,33 +58,7 @@ export default function EditPosition({
 
       return values;
     },
-    validate: {
-      name: hasLength(
-        {
-          min: 1,
-          max: 50,
-        },
-        "Name must be between 1 and 50 characters",
-      ),
-      min: (value, values) => {
-        if (value >= values.max) {
-          return "Minimum must be less than maximum";
-        }
-      },
-      max: (value, values) => {
-        if (value < form.values.min) {
-          return "Maximum must be greater than minimum";
-        }
-
-        if (values.isSingle && value === 1) {
-          return "Maximum must be greater than 1";
-        }
-
-        if (value < values.min) {
-          return "Maximum must be greater than minimum";
-        }
-      },
-    },
+    validate: zod4Resolver(EditPositionSchema),
   });
 
   const editPositionMutation = api.position.edit.useMutation({
@@ -92,7 +69,7 @@ export default function EditPosition({
       ]);
       notifications.show({
         title: `${form.values.name} updated!`,
-        message: "Successfully updated position",
+        message: 'Successfully updated position',
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
@@ -100,17 +77,17 @@ export default function EditPosition({
     },
     onError: (error) => {
       notifications.show({
-        title: "Error",
+        title: 'Error',
         message: error.message,
-        color: "red",
+        color: 'red',
         autoClose: 3000,
       });
     },
   });
 
   useEffect(() => {
-    form.validateField("min");
-    form.validateField("max");
+    form.validateField('min');
+    form.validateField('max');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values.min, form.values.max, form.values.isSingle]);
 
@@ -150,7 +127,7 @@ export default function EditPosition({
               label="Name"
               required
               withAsterisk
-              {...form.getInputProps("name")}
+              {...form.getInputProps('name')}
               leftSection={<IconLetterCase size="1rem" />}
               disabled={editPositionMutation.isPending}
             />
@@ -158,14 +135,14 @@ export default function EditPosition({
             <Checkbox
               label="Select multiple candidates?"
               description="If checked, you can select multiple candidates for this position when voting"
-              {...form.getInputProps("isSingle", { type: "checkbox" })}
+              {...form.getInputProps('isSingle', { type: 'checkbox' })}
               disabled={editPositionMutation.isPending}
             />
 
             {form.values.isSingle && (
               <Flex gap="sm">
                 <NumberInput
-                  {...form.getInputProps("min")}
+                  {...form.getInputProps('min')}
                   placeholder="Enter minimum"
                   label="Minimum"
                   withAsterisk
@@ -176,7 +153,7 @@ export default function EditPosition({
                   required={form.values.isSingle}
                 />
                 <NumberInput
-                  {...form.getInputProps("max")}
+                  {...form.getInputProps('max')}
                   placeholder="Enter maximum"
                   label="Maximum"
                   withAsterisk

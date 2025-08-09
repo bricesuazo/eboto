@@ -50,7 +50,7 @@ import { api } from "~/trpc/client";
 import AdModal from "../ad-modal";
 import MessageCommissioner from "../modals/message-commissioner";
 import MyMessagesElection from "../my-messages-election";
-import ReactPlayer from "../react-player";
+import ReactPlayer from "react-player";
 
 export default function ElectionPage({
   data,
@@ -182,7 +182,7 @@ export default function ElectionPage({
         <Stack>
           <Box style={{ aspectRatio: 16 / 9 }}>
             <ReactPlayer
-              url="https://www.youtube.com/watch?v=soAqhLB5xLs"
+              src="https://www.youtube.com/watch?v=soAqhLB5xLs"
               width="100%"
               height="100%"
               controls

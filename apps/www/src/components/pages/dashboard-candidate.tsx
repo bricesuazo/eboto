@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   Anchor,
   Box,
@@ -16,26 +16,26 @@ import {
   Select,
   Stack,
   Text,
-} from "@mantine/core";
-import { IconUser } from "@tabler/icons-react";
-import Balancer from "react-wrap-balancer";
+} from '@mantine/core';
+import { IconUser } from '@tabler/icons-react';
+import Balancer from 'react-wrap-balancer';
 
-import type { RouterOutputs } from "@eboto/api";
-import { formatName } from "@eboto/constants";
+import type { RouterOutputs } from '@eboto/api';
+import { formatName } from '@eboto/constants';
 
-import CreateCandidate from "~/components/modals/create-candidate";
-import DeleteCandidate from "~/components/modals/delete-candidate";
-import EditCandidate from "~/components/modals/edit-candidate";
-import classes from "~/styles/Candidate.module.css";
-import { api } from "~/trpc/client";
-import type { Database } from "../../../../../supabase/types";
+import CreateCandidate from '~/components/modals/create-candidate';
+import DeleteCandidate from '~/components/modals/delete-candidate';
+import EditCandidate from '~/components/modals/edit-candidate';
+import classes from '~/styles/Candidate.module.css';
+import { api } from '~/trpc/client';
+import type { Database } from '../../../../../supabase/types';
 
 export default function DashboardCandidate({
   election,
   positionsWithCandidates,
 }: {
-  election: Database["public"]["Tables"]["elections"]["Row"];
-  positionsWithCandidates: RouterOutputs["candidate"]["getDashboardData"];
+  election: Database['public']['Tables']['elections']['Row'];
+  positionsWithCandidates: RouterOutputs['candidate']['getDashboardData'];
 }) {
   const router = useRouter();
   const positionsWithCandidatesQuery = api.candidate.getDashboardData.useQuery(
@@ -82,20 +82,20 @@ export default function DashboardCandidate({
           });
         }}
         data={[
-          { value: "0", label: "First name Middle name Last name" },
-          { value: "1", label: "Last name, First name Middle name" },
+          { value: '0', label: 'First name Middle name Last name' },
+          { value: '1', label: 'Last name, First name Middle name' },
         ]}
       />
       {positionsWithCandidatesQuery.data.length === 0 ? (
         <Box>
           <Text>
-            No positions yet. Please add{" "}
+            No positions yet. Please add{' '}
             <Anchor
               component={Link}
               href={`/dashboard/${election.slug}/position`}
             >
               positions
-            </Anchor>{" "}
+            </Anchor>{' '}
             first.
           </Text>
         </Box>
@@ -106,7 +106,7 @@ export default function DashboardCandidate({
               fw="bold"
               size="xl"
               w="100%"
-              ta={{ base: "center", sm: "left" }}
+              ta={{ base: 'center', sm: 'left' }}
             >
               <Balancer>{position.name}</Balancer>
             </Text>
@@ -120,7 +120,7 @@ export default function DashboardCandidate({
                 <Flex
                   gap="xs"
                   style={{
-                    overflow: "auto",
+                    overflow: 'auto',
                     flex: 1,
                   }}
                   align="center"
@@ -142,7 +142,7 @@ export default function DashboardCandidate({
                       return (
                         <Group
                           key={candidate.id}
-                          className={classes["candidate-card"]}
+                          className={classes['candidate-card']}
                           // gap="xs"
                           px="md"
                         >
@@ -156,12 +156,12 @@ export default function DashboardCandidate({
                                     height={100}
                                     alt={
                                       candidate.first_name +
-                                      " " +
+                                      ' ' +
                                       candidate.last_name +
-                                      " image"
+                                      ' image'
                                     }
                                     priority
-                                    style={{ objectFit: "cover" }}
+                                    style={{ objectFit: 'cover' }}
                                   />
                                 ) : (
                                   <IconUser
@@ -179,7 +179,16 @@ export default function DashboardCandidate({
 
                             <Flex gap="xs" align="center">
                               <EditCandidate
-                                candidate={candidate}
+                                candidate={{
+                                  ...candidate,
+                                  platforms: candidate.platforms.map(
+                                    (platform) => ({
+                                      ...platform,
+                                      description:
+                                        platform.description ?? undefined,
+                                    }),
+                                  ),
+                                }}
                                 election={election}
                               />
                               <DeleteCandidate

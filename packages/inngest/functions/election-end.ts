@@ -1,25 +1,25 @@
-import { createClient } from "@supabase/supabase-js";
-import moment from "moment";
-import { z } from "zod";
+import { createClient } from '@supabase/supabase-js';
+import moment from 'moment';
+import { z } from 'zod/v4';
 
-import { sendElectionResult } from "@eboto/email/emails/election-result";
+import { sendElectionResult } from '@eboto/email/emails/election-result';
 
-import { BCC_LIMIT, inngest } from "..";
-import { Database } from "../../../supabase/types";
-import { env } from "../env";
+import { BCC_LIMIT, inngest } from '..';
+import { Database } from '../../../supabase/types';
+import { env } from '../env';
 
 export default inngest.createFunction(
   {
-    id: "election-end",
+    id: 'election-end',
     retries: 0,
     cancelOn: [
       {
-        event: "election",
-        match: "data.election_id",
+        event: 'election',
+        match: 'data.election_id',
       },
     ],
   },
-  { event: "election-end" },
+  { event: 'election-end' },
   async ({ event, step }) => {
     const { election_id } = z
       .object({
@@ -33,34 +33,34 @@ export default inngest.createFunction(
     );
 
     const { data: election, error: election_error } = await supabase
-      .from("elections")
+      .from('elections')
       .select(
-        "name, slug, voting_hour_end, logo_path, start_date, end_date, positions(*, votes(*), candidates(*, votes(*))), commissioners(user: users(email)), voters(*)",
+        'name, slug, voting_hour_end, logo_path, start_date, end_date, positions(*, votes(*), candidates(*, votes(*))), commissioners(user: users(email)), voters(*)',
       )
-      .eq("id", election_id)
-      .is("deleted_at", null)
-      .is("positions.deleted_at", null)
-      .is("positions.candidates.deleted_at", null)
-      .is("commissioners.deleted_at", null)
-      .is("voters.deleted_at", null)
+      .eq('id', election_id)
+      .is('deleted_at', null)
+      .is('positions.deleted_at', null)
+      .is('positions.candidates.deleted_at', null)
+      .is('commissioners.deleted_at', null)
+      .is('voters.deleted_at', null)
       .single();
 
     if (election_error)
-      throw new Error("Failed to fetch election: " + election_error.message);
+      throw new Error('Failed to fetch election: ' + election_error.message);
 
     const end_date = moment(election.end_date).add(
       election.voting_hour_end,
-      "hours",
+      'hours',
     );
 
-    await step.sleepUntil("election-end", end_date.toDate());
+    await step.sleepUntil('election-end', end_date.toDate());
 
-    await step.run("send-election-end", async () => {
+    await step.run('send-election-end', async () => {
       let logo_url: string | null = null;
 
       if (election.logo_path) {
         const { data: image } = supabase.storage
-          .from("elections")
+          .from('elections')
           .getPublicUrl(election.logo_path);
 
         logo_url = image.publicUrl;
@@ -85,18 +85,18 @@ export default inngest.createFunction(
           ...election.commissioners
             .filter((commissioner) => commissioner.user)
             .map((commissioner) =>
-              commissioner.user ? commissioner.user.email : "",
+              commissioner.user ? commissioner.user.email : '',
             ),
         ]),
       ];
 
       const { error: insert_error } = await supabase
-        .from("generated_election_results")
+        .from('generated_election_results')
         .insert({ election_id, result });
 
       if (insert_error)
         throw new Error(
-          "Failed to insert election results: " + insert_error.message,
+          'Failed to insert election results: ' + insert_error.message,
         );
 
       if (emails.length > 0)

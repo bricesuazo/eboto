@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Box,
@@ -10,12 +10,15 @@ import {
   Text,
   Textarea,
   TextInput,
-} from "@mantine/core";
-import { hasLength, isEmail, useForm } from "@mantine/form";
-import { IconAt, IconMapPin, IconPhone, IconSun } from "@tabler/icons-react";
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { IconAt, IconMapPin, IconPhone, IconSun } from '@tabler/icons-react';
+import { zod4Resolver } from 'mantine-form-zod-resolver';
 
-import classes from "~/styles/Home.module.css";
-import { api } from "~/trpc/client";
+import type { ContactForm } from '~/schema/contact';
+import { ContactFormSchema } from '~/schema/contact';
+import classes from '~/styles/Home.module.css';
+import { api } from '~/trpc/client';
 
 export default function ContactForm() {
   const sendMessageMutation = api.system.sendMessage.useMutation({
@@ -23,61 +26,46 @@ export default function ContactForm() {
       form.reset();
     },
   });
-  const form = useForm<{
-    name: string;
-    email: string;
-    subject: string;
-    message: string;
-  }>({
+  const form = useForm<ContactForm>({
     initialValues: {
-      name: "",
-      email: "",
-      subject: "",
-      message: "",
+      name: '',
+      email: '',
+      subject: '',
+      message: '',
     },
-    validate: {
-      email: isEmail("Please specify a valid email"),
-      message: hasLength(
-        { min: 10 },
-        "Message should be at least 10 characters long",
-      ),
-      subject: hasLength(
-        { min: 4 },
-        "Subject should be at least 4 characters long",
-      ),
-    },
+    validate: zod4Resolver(ContactFormSchema),
   });
   return (
     <Paper radius="lg" withBorder p="sm">
-      <Flex direction={{ base: "column", sm: "row" }}>
+      <Flex direction={{ base: 'column', sm: 'row' }}>
         <div
           className={classes.contacts}
           style={{ backgroundImage: `url(/images/bg.svg)` }}
         >
-          <Text fz="lg" fw={700} className={classes["title-parent"]} c="#fff">
+          <Text fz="lg" fw={700} className={classes['title-parent']} c="#fff">
             Contact information
           </Text>
 
           <Stack>
             {[
               {
-                title: "Email",
-                description: "contact@eboto.app",
+                title: 'Email',
+                description: 'contact@eboto.app',
                 icon: IconAt,
               },
               {
-                title: "Phone",
-                description: "+63 961 719 6607",
+                title: 'Phone',
+                description: '+63 961 719 6607',
                 icon: IconPhone,
               },
               {
-                title: "Address",
-                description: "Philippines",
+                title: 'Address',
+                description: 'Philippines',
                 icon: IconMapPin,
               },
               {
-                title: "Working hours",
-                description: "10AM – 7PM (PHT)",
+                title: 'Working hours',
+                description: '10AM – 7PM (PHT)',
                 icon: IconSun,
               },
             ].map((item, index) => (
@@ -87,7 +75,7 @@ export default function ContactForm() {
                 </Box>
 
                 <div>
-                  <Text size="xs" className={classes["title-contact"]}>
+                  <Text size="xs" className={classes['title-contact']}>
                     {item.title}
                   </Text>
                   <Text className={classes.description}>
@@ -105,18 +93,18 @@ export default function ContactForm() {
             sendMessageMutation.mutate(values),
           )}
         >
-          <Text fz="lg" fw={700} className={classes["title-parent"]}>
+          <Text fz="lg" fw={700} className={classes['title-parent']}>
             Get in touch
           </Text>
 
           <div className={classes.fields}>
-            <Flex gap="md" direction={{ base: "column", sm: "row" }}>
+            <Flex gap="md" direction={{ base: 'column', sm: 'row' }}>
               <TextInput
                 label="Name"
                 placeholder="Your name"
                 disabled={sendMessageMutation.isPending}
                 w="100%"
-                {...form.getInputProps("name")}
+                {...form.getInputProps('name')}
               />
               <TextInput
                 label="Email Address"
@@ -124,7 +112,7 @@ export default function ContactForm() {
                 w="100%"
                 disabled={sendMessageMutation.isPending}
                 required
-                {...form.getInputProps("email")}
+                {...form.getInputProps('email')}
               />
             </Flex>
 
@@ -134,7 +122,7 @@ export default function ContactForm() {
               placeholder="Subject"
               disabled={sendMessageMutation.isPending}
               required
-              {...form.getInputProps("subject")}
+              {...form.getInputProps('subject')}
             />
 
             <Textarea
@@ -146,13 +134,13 @@ export default function ContactForm() {
               minRows={2}
               maxRows={5}
               disabled={sendMessageMutation.isPending}
-              {...form.getInputProps("message")}
+              {...form.getInputProps('message')}
             />
 
             <Group justify="flex-end" mt="md">
               <Button
                 type="submit"
-                w={{ base: "100%", sm: "fit-content" }}
+                w={{ base: '100%', sm: 'fit-content' }}
                 loading={sendMessageMutation.isPending}
               >
                 Send message

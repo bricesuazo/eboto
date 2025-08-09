@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import {
   Alert,
   Button,
@@ -9,56 +9,44 @@ import {
   Stack,
   Text,
   TextInput,
-} from "@mantine/core";
-import { hasLength, useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconCheck,
   IconLetterCase,
-} from "@tabler/icons-react";
+} from '@tabler/icons-react';
+import { zod4Resolver } from 'mantine-form-zod-resolver';
 
-import { api } from "~/trpc/client";
-import type { Database } from "../../../../../supabase/types";
+import type { EditPartylist } from '~/schema/partylist';
+import { EditPartylistSchema } from '~/schema/partylist';
+import { api } from '~/trpc/client';
+import type { Database } from '../../../../../supabase/types';
 
 export default function EditPartylist({
   partylist,
 }: {
-  partylist: Database["public"]["Tables"]["partylists"]["Row"] & {
+  partylist: Database['public']['Tables']['partylists']['Row'] & {
     logo_url: string | null;
   };
 }) {
   const [opened, { open, close }] = useDisclosure(false);
   const context = api.useUtils();
-  const initialValues = {
+  const initialValues: EditPartylist = {
     id: partylist.id,
     election_id: partylist.election_id,
     name: partylist.name,
     oldAcronym: partylist.acronym,
     newAcronym: partylist.acronym,
-    description: partylist.description,
-    logo_url: partylist.logo_url,
+    description: partylist.description ?? undefined,
+    logo_url: partylist.logo_url ?? undefined,
   };
-  const form = useForm({
+  const form = useForm<EditPartylist>({
     initialValues,
 
-    validate: {
-      name: hasLength(
-        {
-          min: 1,
-          max: 50,
-        },
-        "Name must be between 1 and 50 characters",
-      ),
-      newAcronym: hasLength(
-        {
-          min: 1,
-          max: 24,
-        },
-        "Acronym must be between 1 and 24 characters",
-      ),
-    },
+    validate: zod4Resolver(EditPartylistSchema),
   });
 
   const editPartylistMutation = api.partylist.edit.useMutation({
@@ -66,7 +54,7 @@ export default function EditPartylist({
       notifications.show({
         title: `${form.values.name} (${form.values.newAcronym}) updated.`,
         icon: <IconCheck size="1.1rem" />,
-        message: "Your changes have been saved.",
+        message: 'Your changes have been saved.',
         autoClose: 3000,
       });
       close();
@@ -76,9 +64,9 @@ export default function EditPartylist({
     },
     onError: (error) => {
       notifications.show({
-        title: "Error",
+        title: 'Error',
         message: error.message,
-        color: "red",
+        color: 'red',
         autoClose: 3000,
       });
     },
@@ -131,7 +119,7 @@ export default function EditPartylist({
               required
               withAsterisk
               disabled={editPartylistMutation.isPending}
-              {...form.getInputProps("name")}
+              {...form.getInputProps('name')}
               leftSection={<IconLetterCase size="1rem" />}
             />
 
@@ -141,7 +129,7 @@ export default function EditPartylist({
               required
               withAsterisk
               disabled={editPartylistMutation.isPending}
-              {...form.getInputProps("newAcronym")}
+              {...form.getInputProps('newAcronym')}
               leftSection={<IconLetterCase size="1rem" />}
             />
 

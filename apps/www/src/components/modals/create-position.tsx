@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import {
   Alert,
   Button,
@@ -12,18 +12,21 @@ import {
   Stack,
   Text,
   TextInput,
-} from "@mantine/core";
-import { hasLength, useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconCheck,
   IconLetterCase,
   IconReplace,
-} from "@tabler/icons-react";
+} from '@tabler/icons-react';
+import { zod4Resolver } from 'mantine-form-zod-resolver';
 
-import { api } from "~/trpc/client";
+import type { CreatePosition } from '~/schema/position';
+import { CreatePositionSchema } from '~/schema/position';
+import { api } from '~/trpc/client';
 
 export default function CreatePosition({
   election_id,
@@ -40,7 +43,7 @@ export default function CreatePosition({
         ]);
         notifications.show({
           title: `${form.values.name} created!`,
-          message: "Successfully created position",
+          message: 'Successfully created position',
           icon: <IconCheck size="1.1rem" />,
           autoClose: 5000,
         });
@@ -49,40 +52,14 @@ export default function CreatePosition({
     });
 
   const [opened, { open, close }] = useDisclosure(false);
-  const form = useForm({
+  const form = useForm<CreatePosition>({
     initialValues: {
-      name: "",
+      name: '',
       isSingle: false,
       min: 0,
       max: 1,
     },
-    validate: {
-      name: hasLength(
-        {
-          min: 1,
-          max: 50,
-        },
-        "Name must be between 3 and 50 characters",
-      ),
-      min: (value, values) => {
-        if (value >= values.max) {
-          return "Minimum must be less than maximum";
-        }
-      },
-      max: (value, values) => {
-        if (value < form.values.min) {
-          return "Maximum must be greater than minimum";
-        }
-
-        if (values.isSingle && value === 1) {
-          return "Maximum must be greater than 1";
-        }
-
-        if (value < values.min) {
-          return "Maximum must be greater than minimum";
-        }
-      },
-    },
+    validate: zod4Resolver(CreatePositionSchema),
   });
 
   useEffect(() => {
@@ -106,7 +83,7 @@ export default function CreatePosition({
     <>
       <Button
         style={() => ({
-          width: "fit-content",
+          width: 'fit-content',
         })}
         onClick={open}
         leftSection={<IconReplace size="1rem" />}
@@ -135,19 +112,19 @@ export default function CreatePosition({
               label="Name"
               required
               withAsterisk
-              {...form.getInputProps("name")}
+              {...form.getInputProps('name')}
               leftSection={<IconLetterCase size="1rem" />}
             />
             <Checkbox
               label="Select multiple candidates?"
               description="If checked, you can select multiple candidates for this position when voting"
-              {...form.getInputProps("isSingle", { type: "checkbox" })}
+              {...form.getInputProps('isSingle', { type: 'checkbox' })}
             />
 
             {form.values.isSingle && (
               <Flex gap="sm">
                 <NumberInput
-                  {...form.getInputProps("min")}
+                  {...form.getInputProps('min')}
                   placeholder="Enter minimum"
                   label="Minimum"
                   withAsterisk
@@ -156,7 +133,7 @@ export default function CreatePosition({
                   required={form.values.isSingle}
                 />
                 <NumberInput
-                  {...form.getInputProps("max")}
+                  {...form.getInputProps('max')}
                   placeholder="Enter maximum"
                   label="Maximum"
                   withAsterisk

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import {
   ActionIcon,
   Alert,
@@ -25,9 +25,9 @@ import {
   Text,
   Textarea,
   UnstyledButton,
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
 import {
   IconAlertCircle,
   IconAlertTriangle,
@@ -35,12 +35,13 @@ import {
   IconMessage2,
   IconSend,
   IconX,
-} from "@tabler/icons-react";
-import { zodResolver } from "mantine-form-zod-resolver";
-import moment from "moment";
-import { z } from "zod";
+} from '@tabler/icons-react';
+import { zod4Resolver } from 'mantine-form-zod-resolver';
+import moment from 'moment';
 
-import { api } from "~/trpc/client";
+import type { Chat as ChatType } from '~/schema/chat';
+import { ChatSchema } from '~/schema/chat';
+import { api } from '~/trpc/client';
 
 export default function MyMessagesElection({
   election_id,
@@ -68,12 +69,12 @@ export default function MyMessagesElection({
   return (
     <>
       <ActionIcon
-        variant={!opened ? "filled" : "light"}
+        variant={!opened ? 'filled' : 'light'}
         radius="xl"
         size={60}
         onClick={toggle}
         style={{
-          position: "fixed",
+          position: 'fixed',
           bottom: rem(80),
           left: rem(20),
           zIndex: 100,
@@ -121,14 +122,14 @@ export default function MyMessagesElection({
                       key={room.id}
                       p="md"
                       style={{
-                        border: "1px solid #80808050",
+                        border: '1px solid #80808050',
                         borderRadius: 8,
                       }}
                       w="100%"
                       onClick={() =>
                         setChat({
                           id: room.id,
-                          name: room.messages[0]?.user?.name ?? "",
+                          name: room.messages[0]?.user.name ?? '',
                           title: room.name,
                         })
                       }
@@ -138,7 +139,7 @@ export default function MyMessagesElection({
                           <Text
                             lineClamp={1}
                             style={{
-                              wordBreak: "break-all",
+                              wordBreak: 'break-all',
                             }}
                           >
                             {room.name}
@@ -146,19 +147,19 @@ export default function MyMessagesElection({
                           {room.messages[0] && (
                             <Flex align="center" gap="sm">
                               <Image
-                                src={room.messages[0].user.image_url ?? ""}
-                                alt={room.messages[0].user.name + " image."}
+                                src={room.messages[0].user.image_url ?? ''}
+                                alt={room.messages[0].user.name + ' image.'}
                                 width={20}
                                 height={20}
                                 style={{
-                                  borderRadius: "50%",
+                                  borderRadius: '50%',
                                 }}
                               />
                               <Text
                                 size="sm"
                                 lineClamp={1}
                                 style={{
-                                  wordBreak: "break-all",
+                                  wordBreak: 'break-all',
                                 }}
                               >
                                 {room.messages[0].message}
@@ -213,17 +214,13 @@ function Chat({
   scrollIntoView: () => void;
 }) {
   const context = api.useUtils();
-  const form = useForm({
+  const form = useForm<ChatType>({
     validateInputOnBlur: true,
     initialValues: {
-      message: "",
+      message: '',
     },
 
-    validate: zodResolver(
-      z.object({
-        message: z.string().min(3, "Message must be at least 3 characters"),
-      }),
-    ),
+    validate: zod4Resolver(ChatSchema),
   });
 
   const getMessagesAsVoterQuery = api.election.getMessagesAsVoter.useQuery(
@@ -256,7 +253,7 @@ function Chat({
         justify="space-between"
         gap="md"
         // align="center"
-        style={{ position: "sticky", top: 0 }}
+        style={{ position: 'sticky', top: 0 }}
       >
         <ActionIcon
           variant="default"
@@ -265,7 +262,7 @@ function Chat({
           onClick={onBack}
         >
           <IconChevronLeft
-            style={{ width: "70%", height: "70%" }}
+            style={{ width: '70%', height: '70%' }}
             stroke={1.5}
           />
         </ActionIcon>
@@ -304,20 +301,20 @@ function Chat({
             {getMessagesAsVoterQuery.data.map((message) => (
               <Box
                 key={message.id}
-                ml={message.user.isMe ? "auto" : undefined}
-                mr={!message.user.isMe ? "auto" : undefined}
+                ml={message.user.isMe ? 'auto' : undefined}
+                mr={!message.user.isMe ? 'auto' : undefined}
                 maw="75%"
               >
                 <Box
                   p="xs"
                   style={{
-                    border: "1px solid #cccccc25",
+                    border: '1px solid #cccccc25',
                     borderRadius: 8,
                   }}
                 >
                   <Text
                     style={{
-                      wordBreak: "break-word",
+                      wordBreak: 'break-word',
                     }}
                   >
                     {message.message}
@@ -329,16 +326,16 @@ function Chat({
                       size="xs"
                       c="gray"
                       w="fit-content"
-                      ml={message.user.isMe ? "auto" : undefined}
+                      ml={message.user.isMe ? 'auto' : undefined}
                       mb="xs"
                     >
-                      {moment(message.created_at).format("hh:mm A")}
+                      {moment(message.created_at).format('hh:mm A')}
                     </Text>
                   </HoverCardTarget>
                   <HoverCardDropdown>
                     <Text size="xs" c="gray">
                       {moment(message.created_at).format(
-                        "MMMM D, YYYY hh:mm A",
+                        'MMMM D, YYYY hh:mm A',
                       )}
                     </Text>
                   </HoverCardDropdown>
@@ -349,7 +346,7 @@ function Chat({
         )}
         <Box
           style={{
-            position: "sticky",
+            position: 'sticky',
             bottom: 0,
           }}
         >
@@ -367,7 +364,7 @@ function Chat({
                 placeholder="Type your message here"
                 style={{ flex: 1 }}
                 maxRows={4}
-                {...form.getInputProps("message")}
+                {...form.getInputProps('message')}
                 error={!!form.errors.message}
                 disabled={sendMessageAsVoterMutation.isPending}
               />

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import {
   Alert,
   Button,
@@ -11,20 +11,20 @@ import {
   Text,
   Textarea,
   TextInput,
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconCheck,
   IconLetterCase,
   IconMessagePlus,
-} from "@tabler/icons-react";
-import { zodResolver } from "mantine-form-zod-resolver";
-import { z } from "zod";
+} from '@tabler/icons-react';
+import { zodResolver } from 'mantine-form-zod-resolver';
+import { z } from 'zod/v4';
 
-import { api } from "~/trpc/client";
+import { api } from '~/trpc/client';
 
 export default function MessageCommissioner({
   election_id,
@@ -38,13 +38,13 @@ export default function MessageCommissioner({
     validateInputOnBlur: true,
     validateInputOnChange: true,
     initialValues: {
-      title: "",
-      message: "",
+      title: '',
+      message: '',
     },
     validate: zodResolver(
       z.object({
-        title: z.string().min(3, "Title must be at least 3 characters"),
-        message: z.string().min(10, "Message must be at least 10 characters"),
+        title: z.string().min(3, 'Title must be at least 3 characters'),
+        message: z.string().min(10, 'Message must be at least 10 characters'),
       }),
     ),
   });
@@ -54,8 +54,8 @@ export default function MessageCommissioner({
       onSuccess: async () => {
         await context.election.getAllMyMessages.invalidate();
         notifications.show({
-          title: "Message sent!",
-          message: "Successfully sent message to commissioners",
+          title: 'Message sent!',
+          message: 'Successfully sent message to commissioners',
           icon: <IconCheck size="1.1rem" />,
           autoClose: 5000,
         });
@@ -108,7 +108,7 @@ export default function MessageCommissioner({
                 required
                 withAsterisk
                 disabled={messageCommissionerMutation.isPending}
-                {...form.getInputProps("title")}
+                {...form.getInputProps('title')}
                 leftSection={<IconLetterCase size="1rem" />}
               />
 
@@ -121,7 +121,7 @@ export default function MessageCommissioner({
                 withAsterisk
                 minRows={3}
                 maxRows={6}
-                {...form.getInputProps("message")}
+                {...form.getInputProps('message')}
                 leftSection={<IconLetterCase size="1rem" />}
               />
 

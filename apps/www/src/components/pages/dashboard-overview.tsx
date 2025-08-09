@@ -50,7 +50,7 @@ import { parseHourTo12HourFormat } from "@eboto/constants";
 import DashboardShowQRCode from "~/components/modals/dashboard-show-qr-code";
 import { api } from "~/trpc/client";
 import GenerateResultRow from "../generated-result-row";
-import ReactPlayer from "../react-player";
+import ReactPlayer from "react-player";
 
 export default function DashboardOverview({
   data,
@@ -105,7 +105,7 @@ export default function DashboardOverview({
         <Stack>
           <Box style={{ aspectRatio: 16 / 9 }}>
             <ReactPlayer
-              url="https://www.youtube.com/watch?v=mfSCYzL5_LU"
+              src="https://www.youtube.com/watch?v=mfSCYzL5_LU"
               width="100%"
               height="100%"
               controls

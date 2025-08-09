@@ -1,25 +1,25 @@
-import { createClient } from "@supabase/supabase-js";
-import moment from "moment";
-import { z } from "zod";
+import { createClient } from '@supabase/supabase-js';
+import moment from 'moment';
+import { z } from 'zod/v4';
 
-import { sendElectionStart } from "@eboto/email/emails/election-start";
+import { sendElectionStart } from '@eboto/email/emails/election-start';
 
-import { BCC_LIMIT, inngest } from "..";
-import { Database } from "../../../supabase/types";
-import { env } from "../env";
+import { BCC_LIMIT, inngest } from '..';
+import { Database } from '../../../supabase/types';
+import { env } from '../env';
 
 export default inngest.createFunction(
   {
-    id: "election-start",
+    id: 'election-start',
     retries: 0,
     cancelOn: [
       {
-        event: "election",
-        match: "data.election_id",
+        event: 'election',
+        match: 'data.election_id',
       },
     ],
   },
-  { event: "election-start" },
+  { event: 'election-start' },
   async ({ event, step }) => {
     const { election_id } = z
       .object({
@@ -33,24 +33,24 @@ export default inngest.createFunction(
     );
 
     const { data: election } = await supabase
-      .from("elections")
+      .from('elections')
       .select(
-        "name, slug, voting_hour_start, start_date, end_date, publicity, commissioners(user: users!inner(email)), voters(*)",
+        'name, slug, voting_hour_start, start_date, end_date, publicity, commissioners(user: users!inner(email)), voters(*)',
       )
-      .eq("id", election_id)
-      .is("deleted_at", null)
-      .is("commissioners.deleted_at", null)
-      .is("voters.deleted_at", null)
+      .eq('id', election_id)
+      .is('deleted_at', null)
+      .is('commissioners.deleted_at', null)
+      .is('voters.deleted_at', null)
       .single();
 
-    if (!election) throw new Error("Election not found");
+    if (!election) throw new Error('Election not found');
 
     const start_date = moment(election.start_date).add(
       election.voting_hour_start,
-      "hours",
+      'hours',
     );
 
-    await step.sleepUntil("election-start", start_date.toDate());
+    await step.sleepUntil('election-start', start_date.toDate());
 
     const voters = [...new Set(election.voters.map((voter) => voter.email))];
     const commissioners = [
@@ -61,7 +61,7 @@ export default inngest.createFunction(
       ),
     ];
 
-    await step.run("send-election-start", async () => {
+    await step.run('send-election-start', async () => {
       await Promise.all([
         voters.length > 0 &&
           Array.from({ length: Math.ceil(voters.length / BCC_LIMIT) }).map(
@@ -93,13 +93,13 @@ export default inngest.createFunction(
           }),
       ]);
 
-      if (election.publicity === "PRIVATE") {
+      if (election.publicity === 'PRIVATE') {
         await supabase
-          .from("elections")
+          .from('elections')
           .update({
-            publicity: "VOTER",
+            publicity: 'VOTER',
           })
-          .eq("id", election_id);
+          .eq('id', election_id);
       }
     });
 

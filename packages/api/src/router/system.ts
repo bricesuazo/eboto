@@ -1,7 +1,7 @@
-import { z } from "zod";
+import { z } from 'zod/v4';
 
-import { env } from "../../../../apps/www/env";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { env } from '../../../../apps/www/env';
+import { createTRPCRouter, publicProcedure } from '../trpc';
 
 export const systemRouter = createTRPCRouter({
   sendMessage: publicProcedure
@@ -10,27 +10,27 @@ export const systemRouter = createTRPCRouter({
         name: z.string().optional(),
         message: z.string(),
         subject: z.string(),
-        email: z.string().email(),
+        email: z.email(),
       }),
     )
     .mutation(async ({ input }) => {
       const embed = {
-        title: "📩 New message from eboto.app",
+        title: '📩 New message from eboto.app',
         description: `>>> ${input.message.toString().trim()}`,
         color: 5759645,
         fields: [
           {
-            name: "📨 Subject",
+            name: '📨 Subject',
             value: `\`\`\`${input.subject.trim()}\`\`\``,
             inline: true,
           },
           {
-            name: "🧑‍🦱 Name",
-            value: `\`\`\`${input.name ? input.name.trim() : "n/a"}\`\`\``,
+            name: '🧑‍🦱 Name',
+            value: `\`\`\`${input.name ? input.name.trim() : 'n/a'}\`\`\``,
             inline: true,
           },
           {
-            name: "📨 Email",
+            name: '📨 Email',
             value: `\`\`\`${input.email.trim()}\`\`\``,
             inline: true,
           },
@@ -38,10 +38,10 @@ export const systemRouter = createTRPCRouter({
       };
 
       await fetch(`${env.DISCORD_WEBHOOK_URL}?wait=true`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          avatar_url: "https://bricesuazo.com/favicon.ico",
+          avatar_url: 'https://bricesuazo.com/favicon.ico',
           embeds: [embed],
         }),
       });

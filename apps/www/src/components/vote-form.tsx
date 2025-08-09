@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useRef } from "react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRef } from 'react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import {
   Alert,
   Box,
@@ -20,10 +20,10 @@ import {
   Text,
   UnstyledButton,
   useMantineColorScheme,
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconCheck,
@@ -31,39 +31,32 @@ import {
   IconUser,
   IconUserQuestion,
   IconX,
-} from "@tabler/icons-react";
+} from '@tabler/icons-react';
+import { zod4Resolver } from 'mantine-form-zod-resolver';
 
-import type { RouterOutputs } from "@eboto/api";
-import { formatName } from "@eboto/constants";
+import type { RouterOutputs } from '@eboto/api';
+import { formatName } from '@eboto/constants';
 
-import { useConfetti } from "~/components/providers";
-import { api } from "~/trpc/client";
-import toWords from "~/utils/toWords";
-import type { Database } from "../../../../supabase/types";
+import { useConfetti } from '~/components/providers';
+import type { Vote } from '~/schema/vote';
+import { VoteSchema } from '~/schema/vote';
+import { api } from '~/trpc/client';
+import toWords from '~/utils/toWords';
+import type { Database } from '../../../../supabase/types';
 
 export default function VoteForm({
   positions,
   election,
 }: {
-  election: Database["public"]["Tables"]["elections"]["Row"];
-  positions: RouterOutputs["election"]["getElectionVoting"];
+  election: Database['public']['Tables']['elections']['Row'];
+  positions: RouterOutputs['election']['getElectionVoting'];
 }) {
   const positionsQuery = api.election.getElectionVoting.useQuery(election.id, {
     initialData: positions,
   });
   const router = useRouter();
   const { fireConfetti } = useConfetti();
-  const form = useForm<
-    Record<
-      string,
-      {
-        votes: string[];
-        min: number;
-        max: number;
-        isValid: boolean;
-      }
-    >
-  >({
+  const form = useForm<Vote>({
     initialValues: Object.fromEntries(
       positionsQuery.data.map((position) => [
         position.id,
@@ -75,6 +68,7 @@ export default function VoteForm({
         },
       ]),
     ),
+    validate: zod4Resolver(VoteSchema),
   });
 
   const [opened, { open, close }] = useDisclosure(false);
@@ -83,8 +77,8 @@ export default function VoteForm({
     onSuccess: () => {
       router.push(`/${election.slug}/realtime`);
       notifications.show({
-        title: "Vote casted successfully!",
-        message: "You can now view the realtime results",
+        title: 'Vote casted successfully!',
+        message: 'You can now view the realtime results',
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
@@ -92,10 +86,10 @@ export default function VoteForm({
     },
     onError: () => {
       notifications.show({
-        title: "Error casting vote",
+        title: 'Error casting vote',
         message: voteMutation.error?.message,
         icon: <IconX size="1.1rem" />,
-        color: "red",
+        color: 'red',
         autoClose: 5000,
       });
     },
@@ -114,7 +108,7 @@ export default function VoteForm({
               votes: Object.entries(values).map(([key, value]) => ({
                 position_id: key,
                 votes:
-                  value.votes[0] === "abstain"
+                  value.votes[0] === 'abstain'
                     ? { isAbstain: true }
                     : {
                         isAbstain: false,
@@ -148,7 +142,7 @@ export default function VoteForm({
                               election.name_arrangement,
                               candidate,
                               true,
-                            )}{" "}
+                            )}{' '}
                             ({candidate.partylist.acronym})
                           </ListItem>
                         ) : (
@@ -197,25 +191,25 @@ export default function VoteForm({
               <Box
                 py="xs"
                 style={{
-                  position: "sticky",
+                  position: 'sticky',
                   top: 60,
-                  backgroundColor: "var(--mantine-color-body)",
+                  backgroundColor: 'var(--mantine-color-body)',
                 }}
               >
                 <Text size="xl">{position.name}</Text>
                 <Text size="sm" c="grayText">
                   {position.min === 0 && position.max === 1
-                    ? "Select only one."
+                    ? 'Select only one.'
                     : `Select ${
                         position.min
                           ? `at least ${toWords
                               .convert(position.min)
                               .toLowerCase()} and `
-                          : ""
+                          : ''
                       }at most ${toWords
                         .convert(position.max)
                         .toLowerCase()}. (${
-                        position.min ? `${position.min} - ` : ""
+                        position.min ? `${position.min} - ` : ''
                       }${position.max})`}
                 </Text>
               </Box>
@@ -250,7 +244,7 @@ export default function VoteForm({
                       <VoteCard
                         type="radio"
                         isSelected={
-                          form.values[position.id]?.votes.includes("abstain") ??
+                          form.values[position.id]?.votes.includes('abstain') ??
                           false
                         }
                         value="abstain"
@@ -261,10 +255,10 @@ export default function VoteForm({
                 ) : (
                   <CheckboxGroup
                     onChange={(e) => {
-                      const votes = e.includes("abstain")
-                        ? form.values[position.id]?.votes.includes("abstain")
-                          ? e.filter((e) => e !== "abstain")
-                          : ["abstain"]
+                      const votes = e.includes('abstain')
+                        ? form.values[position.id]?.votes.includes('abstain')
+                          ? e.filter((e) => e !== 'abstain')
+                          : ['abstain']
                         : e;
 
                       form.setFieldValue(position.id, {
@@ -273,7 +267,7 @@ export default function VoteForm({
                         max: position.max,
                         isValid:
                           votes.length !== 0 &&
-                          ((votes.includes("abstain") && votes.length === 1) ||
+                          ((votes.includes('abstain') && votes.length === 1) ||
                             (votes.length >= position.min &&
                               votes.length <= position.max)),
                       });
@@ -307,7 +301,7 @@ export default function VoteForm({
                       <VoteCard
                         type="checkbox"
                         isSelected={
-                          form.values[position.id]?.votes.includes("abstain") ??
+                          form.values[position.id]?.votes.includes('abstain') ??
                           false
                         }
                         value="abstain"
@@ -331,10 +325,10 @@ export default function VoteForm({
           size="lg"
           radius="xl"
           style={{
-            position: "fixed",
+            position: 'fixed',
             bottom: 100,
-            left: "50%",
-            transform: "translateX(-50%)",
+            left: '50%',
+            transform: 'translateX(-50%)',
           }}
         >
           Cast Vote
@@ -352,12 +346,12 @@ function VoteCard({
   type,
   name_arrangement,
 }: {
-  type: "radio" | "checkbox";
+  type: 'radio' | 'checkbox';
   value: string;
   disabled?: boolean;
-  candidate?: Database["public"]["Tables"]["candidates"]["Row"] & {
+  candidate?: Database['public']['Tables']['candidates']['Row'] & {
     image_url: string | null;
-    partylist: Database["public"]["Tables"]["partylists"]["Row"];
+    partylist: Database['public']['Tables']['partylists']['Row'];
   };
   isSelected: boolean;
   name_arrangement: number;
@@ -366,22 +360,22 @@ function VoteCard({
   const { colorScheme } = useMantineColorScheme();
   return (
     <>
-      {type === "radio" && (
+      {type === 'radio' && (
         <Radio
           value={value}
           ref={ref}
           style={{
-            display: "none",
+            display: 'none',
           }}
           disabled={disabled}
         />
       )}
-      {type === "checkbox" && (
+      {type === 'checkbox' && (
         <Checkbox
           ref={ref}
           value={value}
           style={{
-            display: "none",
+            display: 'none',
           }}
           disabled={disabled}
         />
@@ -389,38 +383,38 @@ function VoteCard({
       <UnstyledButton
         onClick={() => ref.current?.click()}
         disabled={disabled}
-        w={{ base: "100%", sm: 140 }}
+        w={{ base: '100%', sm: 140 }}
         h="auto"
         style={(theme) => ({
-          cursor: disabled ? "not-allowed" : "pointer",
-          transition: "all 0.2s ease",
+          cursor: disabled ? 'not-allowed' : 'pointer',
+          transition: 'all 0.2s ease',
           width: candidate ? 200 : 120,
           opacity: disabled ? 0.5 : 1,
           padding: theme.spacing.md,
           borderWidth: 2,
-          borderStyle: "solid",
+          borderStyle: 'solid',
           borderColor: isSelected
-            ? colorScheme === "light"
+            ? colorScheme === 'light'
               ? theme.colors.green[6]
               : theme.colors.green[8]
-            : colorScheme === "light"
+            : colorScheme === 'light'
               ? theme.colors.gray[3]
               : theme.colors.gray[7],
           backgroundColor: isSelected
-            ? colorScheme === "light"
+            ? colorScheme === 'light'
               ? theme.colors.gray[1]
               : theme.colors.dark[5]
-            : "transparent",
+            : 'transparent',
           color: isSelected
-            ? colorScheme === "light"
+            ? colorScheme === 'light'
               ? theme.colors.green[6]
               : theme.colors.green[8]
             : theme.colors.gray[6],
           borderRadius: theme.radius.md,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
           columnGap: theme.spacing.sm,
         })}
       >
@@ -435,7 +429,7 @@ function VoteCard({
             width={80}
             height={80}
             style={{
-              objectFit: "cover",
+              objectFit: 'cover',
             }}
             priority
           />
@@ -447,7 +441,7 @@ function VoteCard({
         {candidate ? (
           <Text
             w="100%"
-            ta={{ base: "left", sm: "center" }}
+            ta={{ base: 'left', sm: 'center' }}
             lineClamp={2}
             h={50}
           >

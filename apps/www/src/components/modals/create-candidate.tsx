@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
-import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useEffect, useRef } from 'react';
+import Image from 'next/image';
+import { useParams } from 'next/navigation';
 import {
   Alert,
   Box,
@@ -22,13 +22,12 @@ import {
   Textarea,
   TextInput,
   UnstyledButton,
-} from "@mantine/core";
-import { YearPickerInput } from "@mantine/dates";
-import { Dropzone, DropzoneReject, IMAGE_MIME_TYPE } from "@mantine/dropzone";
-import type { FileWithPath } from "@mantine/dropzone";
-import { hasLength, useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
+} from '@mantine/core';
+import { YearPickerInput } from '@mantine/dates';
+import { Dropzone, DropzoneReject, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import { useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconCheck,
@@ -40,18 +39,21 @@ import {
   IconUserPlus,
   IconUserSearch,
   IconX,
-} from "@tabler/icons-react";
-import moment from "moment";
+} from '@tabler/icons-react';
+import { zod4Resolver } from 'mantine-form-zod-resolver';
+import moment from 'moment';
 
-import classes from "~/styles/Candidate.module.css";
-import { api } from "~/trpc/client";
-import { transformUploadImage } from "~/utils";
-import type { Database } from "../../../../../supabase/types";
+import type { CreateCandidate as CreateCandidateType } from '~/schema/candidate';
+import { CreateCandidateSchema } from '~/schema/candidate';
+import classes from '~/styles/Candidate.module.css';
+import { api } from '~/trpc/client';
+import { transformUploadImage } from '~/utils';
+import type { Database } from '../../../../../supabase/types';
 
 export default function CreateCandidate({
   position,
 }: {
-  position: Database["public"]["Tables"]["positions"]["Row"];
+  position: Database['public']['Tables']['positions']['Row'];
 }) {
   const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure(false);
@@ -70,7 +72,7 @@ export default function CreateCandidate({
       await context.candidate.getDashboardData.invalidate();
       notifications.show({
         title: `${form.values.first_name} ${form.values.last_name} created!`,
-        message: "Successfully created position",
+        message: 'Successfully created position',
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
@@ -78,50 +80,22 @@ export default function CreateCandidate({
     },
     onError: (error) => {
       notifications.show({
-        title: "Error creating candidate",
+        title: 'Error creating candidate',
         message: error.message,
         icon: <IconAlertCircle size="1.1rem" />,
-        color: "red",
+        color: 'red',
         autoClose: 5000,
       });
     },
   });
 
-  const form = useForm<{
-    first_name: string;
-    last_name: string;
-    slug: string;
-    partylist_id: string;
-    middle_name: string;
-    position_id: string;
-    image: FileWithPath | null;
-
-    platforms: {
-      title: string;
-      description: string;
-    }[];
-
-    achievements: {
-      name: string;
-      year: string;
-    }[];
-    affiliations: {
-      org_name: string;
-      org_position: string;
-      start_year: string;
-      end_year: string;
-    }[];
-    eventsAttended: {
-      name: string;
-      year: string;
-    }[];
-  }>({
+  const form = useForm<CreateCandidateType>({
     initialValues: {
-      first_name: "",
-      last_name: "",
-      slug: "",
-      partylist_id: partylistsQuery.data?.[0]?.id ?? "",
-      middle_name: "",
+      first_name: '',
+      last_name: '',
+      slug: '',
+      partylist_id: partylistsQuery.data?.[0]?.id ?? '',
+      middle_name: '',
       position_id: position.id,
       image: null,
 
@@ -129,39 +103,9 @@ export default function CreateCandidate({
 
       achievements: [],
       affiliations: [],
-      eventsAttended: [],
+      events_attended: [],
     },
-    validate: {
-      first_name: hasLength(
-        { min: 1 },
-        "First name must be at least 1 characters",
-      ),
-      last_name: hasLength(
-        { min: 1 },
-        "Last name must be at least 1 characters",
-      ),
-      slug: (value) => {
-        if (!value) {
-          return "Please enter an election slug";
-        }
-        if (!/^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/.test(value)) {
-          return "Election slug must be alphanumeric and can contain dashes";
-        }
-        if (value.length <= 1 || value.length > 24) {
-          return "Election slug must be between 1 and 24 characters";
-        }
-      },
-      partylist_id: (value) => {
-        if (!value) {
-          return "Please select a partylist";
-        }
-      },
-      position_id: (value) => {
-        if (!value) {
-          return "Please select a position";
-        }
-      },
-    },
+    validate: zod4Resolver(CreateCandidateSchema),
   });
 
   useEffect(() => {
@@ -169,11 +113,11 @@ export default function CreateCandidate({
       ...form.values,
       slug: `${form.values.first_name} ${form.values.middle_name} ${form.values.last_name}`
         .toLowerCase()
-        .replace(/[^a-z0-9 ]/g, "")
-        .replace(/\s+/g, " ")
+        .replace(/[^a-z0-9 ]/g, '')
+        .replace(/\s+/g, ' ')
         .trim()
-        .split(" ")
-        .join("-"),
+        .split(' ')
+        .join('-'),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.values.first_name, form.values.middle_name, form.values.last_name]);
@@ -190,7 +134,7 @@ export default function CreateCandidate({
     <>
       <UnstyledButton
         onClick={open}
-        className={classes["create-candidate-button"]}
+        className={classes['create-candidate-button']}
       >
         <IconUserPlus />
 
@@ -236,7 +180,7 @@ export default function CreateCandidate({
                   start_year: a.start_year,
                   end_year: a.end_year,
                 })),
-                eventsAttended: values.eventsAttended.map((a) => ({
+                events_attended: values.events_attended.map((a) => ({
                   name: a.name,
                   year: a.year,
                 })),
@@ -281,7 +225,7 @@ export default function CreateCandidate({
                     placeholder="Enter first name"
                     required
                     withAsterisk
-                    {...form.getInputProps("first_name")}
+                    {...form.getInputProps('first_name')}
                     leftSection={<IconLetterCase size="1rem" />}
                     disabled={createCandidateMutation.isPending}
                   />
@@ -289,7 +233,7 @@ export default function CreateCandidate({
                   <TextInput
                     label="Middle name"
                     placeholder="Enter middle name"
-                    {...form.getInputProps("middle_name")}
+                    {...form.getInputProps('middle_name')}
                     leftSection={<IconLetterCase size="1rem" />}
                     disabled={createCandidateMutation.isPending}
                   />
@@ -298,7 +242,7 @@ export default function CreateCandidate({
                     placeholder="Enter last name"
                     required
                     withAsterisk
-                    {...form.getInputProps("last_name")}
+                    {...form.getInputProps('last_name')}
                     leftSection={<IconLetterCase size="1rem" />}
                     disabled={createCandidateMutation.isPending}
                   />
@@ -311,12 +255,12 @@ export default function CreateCandidate({
                         This will be used as the candidate&apos;s URL.
                         <br />
                         eboto.app/{params.electionDashboardSlug?.toString()}/
-                        {form.values.slug || "candidate-slug"}
+                        {form.values.slug || 'candidate-slug'}
                       </Text>
                     }
                     required
                     withAsterisk
-                    {...form.getInputProps("slug")}
+                    {...form.getInputProps('slug')}
                     leftSection={<IconLetterCase size="1rem" />}
                     disabled={createCandidateMutation.isPending}
                   />
@@ -325,7 +269,7 @@ export default function CreateCandidate({
                     placeholder="Select partylist"
                     label="Partylist"
                     leftSection={<IconFlag size="1rem" />}
-                    {...form.getInputProps("partylist_id")}
+                    {...form.getInputProps('partylist_id')}
                     data={partylistsQuery.data?.map((partylist) => ({
                       label: partylist.name,
                       value: partylist.id,
@@ -337,7 +281,7 @@ export default function CreateCandidate({
                     placeholder="Select position"
                     label="Position"
                     leftSection={<IconUserSearch size="1rem" />}
-                    {...form.getInputProps("position_id")}
+                    {...form.getInputProps('position_id')}
                     data={positionsQuery.data?.map((position) => ({
                       label: position.name,
                       value: position.id,
@@ -352,7 +296,7 @@ export default function CreateCandidate({
                     id="image"
                     onDrop={(files) => {
                       if (!files[0]) return;
-                      form.setFieldValue("image", files[0]);
+                      form.setFieldValue('image', files[0]);
                     }}
                     openRef={openRef}
                     maxSize={5 * 1024 ** 2}
@@ -363,7 +307,7 @@ export default function CreateCandidate({
                     <Group
                       justify="center"
                       gap="xl"
-                      style={{ minHeight: rem(140), pointerEvents: "none" }}
+                      style={{ minHeight: rem(140), pointerEvents: 'none' }}
                     >
                       {form.values.image ? (
                         <Group justify="center">
@@ -376,7 +320,7 @@ export default function CreateCandidate({
                           >
                             <Image
                               src={
-                                typeof form.values.image === "string"
+                                typeof form.values.image === 'string'
                                   ? form.values.image
                                   : URL.createObjectURL(form.values.image)
                               }
@@ -384,7 +328,7 @@ export default function CreateCandidate({
                               fill
                               sizes="100%"
                               priority
-                              style={{ objectFit: "cover" }}
+                              style={{ objectFit: 'cover' }}
                             />
                           </Box>
                           <Text>{form.values.image.name}</Text>
@@ -407,7 +351,7 @@ export default function CreateCandidate({
                   </Dropzone>
                   <Button
                     onClick={() => {
-                      form.setFieldValue("image", null);
+                      form.setFieldValue('image', null);
                     }}
                     disabled={
                       !form.values.image || createCandidateMutation.isPending
@@ -495,8 +439,8 @@ export default function CreateCandidate({
                         platforms: [
                           ...form.values.platforms,
                           {
-                            title: "",
-                            description: "",
+                            title: '',
+                            description: '',
                           },
                         ],
                       });
@@ -609,8 +553,8 @@ export default function CreateCandidate({
                             achievements: [
                               ...form.values.achievements,
                               {
-                                name: "",
-                                year: moment().format("YYYY"),
+                                name: '',
+                                year: moment().format('YYYY'),
                               },
                             ],
                           });
@@ -753,12 +697,12 @@ export default function CreateCandidate({
                             affiliations: [
                               ...form.values.affiliations,
                               {
-                                org_name: "",
-                                org_position: "",
+                                org_name: '',
+                                org_position: '',
                                 start_year: moment()
-                                  .subtract(1, "years")
-                                  .format("YYYY"),
-                                end_year: moment().format("YYYY"),
+                                  .subtract(1, 'years')
+                                  .format('YYYY'),
+                                end_year: moment().format('YYYY'),
                               },
                             ],
                           });
@@ -770,8 +714,8 @@ export default function CreateCandidate({
                   </TabsPanel>
                   <TabsPanel value="events-attended" pt="xs">
                     <Stack gap="md">
-                      {form.values.eventsAttended.map(
-                        (eventAttended, index) => (
+                      {form.values.events_attended.map(
+                        (event_attended, index) => (
                           <Box key={index}>
                             <Flex gap="xs" align="end">
                               <TextInput
@@ -779,13 +723,13 @@ export default function CreateCandidate({
                                 label="Seminars attended"
                                 placeholder="Enter seminars attended"
                                 required
-                                value={eventAttended.name}
+                                value={event_attended.name}
                                 disabled={createCandidateMutation.isPending}
                                 onChange={(e) => {
                                   form.setValues({
                                     ...form.values,
-                                    eventsAttended:
-                                      form.values.eventsAttended.map(
+                                    events_attended:
+                                      form.values.events_attended.map(
                                         (achievement, i) =>
                                           i === index
                                             ? {
@@ -803,13 +747,13 @@ export default function CreateCandidate({
                                 popoverProps={{
                                   withinPortal: true,
                                 }}
-                                value={new Date(eventAttended.year)}
+                                value={new Date(event_attended.year)}
                                 disabled={createCandidateMutation.isPending}
                                 onChange={(date) => {
                                   form.setValues({
                                     ...form.values,
-                                    eventsAttended:
-                                      form.values.eventsAttended.map(
+                                    events_attended:
+                                      form.values.events_attended.map(
                                         (achievement, i) =>
                                           i === index
                                             ? {
@@ -834,8 +778,8 @@ export default function CreateCandidate({
                                 form.setValues({
                                   ...form.values,
 
-                                  eventsAttended:
-                                    form.values.eventsAttended.filter(
+                                  events_attended:
+                                    form.values.events_attended.filter(
                                       (_, i) => i !== index,
                                     ),
                                 });
@@ -854,11 +798,11 @@ export default function CreateCandidate({
                           form.setValues({
                             ...form.values,
 
-                            eventsAttended: [
-                              ...form.values.eventsAttended,
+                            events_attended: [
+                              ...form.values.events_attended,
                               {
-                                name: "",
-                                year: moment().format("YYYY"),
+                                name: '',
+                                year: moment().format('YYYY'),
                               },
                             ],
                           });

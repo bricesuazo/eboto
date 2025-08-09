@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import {
   Alert,
   Button,
@@ -9,18 +9,21 @@ import {
   Stack,
   Text,
   TextInput,
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconAt,
   IconCheck,
   IconUserPlus,
-} from "@tabler/icons-react";
+} from '@tabler/icons-react';
+import { zod4Resolver } from 'mantine-form-zod-resolver';
 
-import { api } from "~/trpc/client";
+import type { CreateVoter } from '~/schema/voter';
+import { CreateVoterSchema } from '~/schema/voter';
+import { api } from '~/trpc/client';
 
 export default function CreateVoter({ election_id }: { election_id: string }) {
   const context = api.useUtils();
@@ -31,7 +34,7 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
       await context.election.getVotersByElectionSlug.invalidate();
       notifications.show({
         title: `${form.values.email} added!`,
-        message: "Successfully added voter",
+        message: 'Successfully added voter',
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
@@ -39,26 +42,19 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
     },
     onError: (error) => {
       notifications.show({
-        title: "Error",
+        title: 'Error',
         message: error.message,
-        color: "red",
+        color: 'red',
         autoClose: 3000,
       });
     },
   });
 
-  const form = useForm<{
-    email: string;
-  }>({
+  const form = useForm<CreateVoter>({
     initialValues: {
-      email: "",
+      email: '',
     },
-    validate: {
-      email: (value) =>
-        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-          ? "Please enter a valid email"
-          : null,
-    },
+    validate: zod4Resolver(CreateVoterSchema),
   });
 
   useEffect(() => {
@@ -105,7 +101,7 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
               required
               disabled={createSingleVoterMutation.isPending}
               withAsterisk
-              {...form.getInputProps("email")}
+              {...form.getInputProps('email')}
               leftSection={<IconAt size="1rem" />}
             />
 

@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import {
   useParams,
   usePathname,
   useRouter,
   useSearchParams,
-} from "next/navigation";
+} from 'next/navigation';
 import {
   ActionIcon,
   Alert,
@@ -60,10 +60,10 @@ import {
   TooltipGroup,
   UnstyledButton,
   useCombobox,
-} from "@mantine/core";
-import { isEmail, useForm } from "@mantine/form";
-import { useDisclosure, useScrollIntoView } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useDisclosure, useScrollIntoView } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconAlertTriangle,
@@ -78,23 +78,26 @@ import {
   IconSend,
   IconUserMinus,
   IconUserPlus,
-} from "@tabler/icons-react";
-import { zodResolver } from "mantine-form-zod-resolver";
-import moment from "moment";
-import Balancer from "react-wrap-balancer";
-import { z } from "zod";
+} from '@tabler/icons-react';
+import { zod4Resolver } from 'mantine-form-zod-resolver';
+import moment from 'moment';
+import Balancer from 'react-wrap-balancer';
 
-import { electionDashboardNavbar, isElectionEnded } from "@eboto/constants";
+import { electionDashboardNavbar, isElectionEnded } from '@eboto/constants';
 
-import Footer from "~/components/footer";
-import Header from "~/components/header";
-import CreateElection from "~/components/modals/create-election";
-import { useStore } from "~/store";
-import { api } from "~/trpc/client";
-import BoostCard from "../boost-card";
+import Footer from '~/components/footer';
+import Header from '~/components/header';
+import CreateElection from '~/components/modals/create-election';
+import type { Chat, CreateAdminMessage } from '~/schema/chat';
+import { ChatSchema, CreateAdminMessageSchema } from '~/schema/chat';
+import type { AddCommissioner } from '~/schema/commissioner';
+import { AddCommissionerSchema } from '~/schema/commissioner';
+import { useStore } from '~/store';
+import { api } from '~/trpc/client';
+import BoostCard from '../boost-card';
 
 export interface ChatType {
-  type: "admin" | "voters";
+  type: 'admin' | 'voters';
   id: string;
   name: string;
   title: string;
@@ -113,7 +116,7 @@ export default function DashboardElection({
   const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
-  const [tab, setTab] = useState(searchParams.get("t") ?? "voters");
+  const [tab, setTab] = useState(searchParams.get('t') ?? 'voters');
   const [chat, setChat] = useState<ChatType | null>(null);
 
   const pathname = usePathname();
@@ -161,23 +164,21 @@ export default function DashboardElection({
   const combobox = useCombobox({
     onDropdownOpen: (eventSource) => {
       store.toggleDashboardMenu(true);
-      if (eventSource === "keyboard") {
+      if (eventSource === 'keyboard') {
         combobox.selectActiveOption();
       } else {
-        combobox.updateSelectedOptionIndex("active");
+        combobox.updateSelectedOptionIndex('active');
       }
     },
   });
   const store = useStore();
 
-  const form = useForm({
+  const form = useForm<AddCommissioner>({
     initialValues: {
-      email: "",
+      email: '',
     },
 
-    validate: {
-      email: isEmail("Invalid email address"),
-    },
+    validate: zod4Resolver(AddCommissionerSchema),
   });
 
   useEffect(() => {
@@ -212,7 +213,7 @@ export default function DashboardElection({
                   leftSection={<IconAt size="1rem" />}
                   style={{ flex: 1 }}
                   disabled={addCommissionerMutation.isPending}
-                  {...form.getInputProps("email")}
+                  {...form.getInputProps('email')}
                 />
                 <ActionIcon
                   type="submit"
@@ -279,7 +280,7 @@ export default function DashboardElection({
                             color="red"
                             onClick={() =>
                               deleteCommissionerMutation.mutate({
-                                election_id: currentElection?.id ?? "",
+                                election_id: currentElection?.id ?? '',
                                 commissioner_id: commissioner.id,
                               })
                             }
@@ -301,7 +302,7 @@ export default function DashboardElection({
         header={{ height: 60 }}
         footer={{ height: 52 }}
         navbar={{
-          breakpoint: "xs",
+          breakpoint: 'xs',
           width: { base: 250, lg: 300 },
           collapsed: {
             desktop: false,
@@ -309,7 +310,7 @@ export default function DashboardElection({
           },
         }}
         aside={{
-          breakpoint: "lg",
+          breakpoint: 'lg',
           width: { md: 280, xl: 320 },
           collapsed: {
             desktop: false,
@@ -327,14 +328,14 @@ export default function DashboardElection({
         <AppShellNavbar
           p="md"
           style={{
-            overflow: "auto",
+            overflow: 'auto',
           }}
         >
           {/* <ScrollArea p="md" scrollHideDelay={0}> */}
           <Stack justify="space-between">
             <Stack>
               {!is_free ? (
-                <CreateElection style={{ width: "100%" }} />
+                <CreateElection style={{ width: '100%' }} />
               ) : (
                 <BoostCard election_id={election_id} />
               )}
@@ -352,7 +353,7 @@ export default function DashboardElection({
                     if (currentElection?.slug === val) return;
 
                     router.push(`/dashboard/${val}`);
-                    combobox.updateSelectedOptionIndex("active");
+                    combobox.updateSelectedOptionIndex('active');
 
                     if (store.dashboardMenu) store.toggleDashboardMenu(false);
                   }}
@@ -381,17 +382,17 @@ export default function DashboardElection({
                         {elections &&
                           [
                             {
-                              group: "Ongoing",
+                              group: 'Ongoing',
                               elections: elections
                                 .filter(({ election }) =>
                                   moment().isBetween(
                                     moment(election.start_date).add(
                                       election.voting_hour_start,
-                                      "hours",
+                                      'hours',
                                     ),
                                     moment(election.end_date).add(
                                       election.voting_hour_end,
-                                      "hours",
+                                      'hours',
                                     ),
                                   ),
                                 )
@@ -402,7 +403,7 @@ export default function DashboardElection({
                                 ),
                             },
                             {
-                              group: "Upcoming",
+                              group: 'Upcoming',
                               elections: elections
                                 .filter(({ election }) =>
                                   moment().isBefore(election.start_date),
@@ -414,7 +415,7 @@ export default function DashboardElection({
                                 ),
                             },
                             {
-                              group: "Completed",
+                              group: 'Completed',
                               elections: elections
                                 .filter(({ election }) =>
                                   isElectionEnded({ election }),
@@ -466,21 +467,21 @@ export default function DashboardElection({
                       component={Link}
                       justify="left"
                       color={
-                        item.path === pathname.split("/")[3] ? "green" : "gray"
+                        item.path === pathname.split('/')[3] ? 'green' : 'gray'
                       }
                       fw="normal"
                       fz="sm"
                       href={`/dashboard/${params.electionDashboardSlug?.toString()}/${
-                        item.path ?? ""
+                        item.path ?? ''
                       }`}
                       onClick={() => {
                         if (store.dashboardMenu)
                           store.toggleDashboardMenu(false);
                       }}
                       variant={
-                        item.path === pathname.split("/")[3]
-                          ? "light"
-                          : "subtle"
+                        item.path === pathname.split('/')[3]
+                          ? 'light'
+                          : 'subtle'
                       }
                       size="md"
                       leftSection={<item.icon size="1.25rem" />}
@@ -494,7 +495,7 @@ export default function DashboardElection({
 
             <Stack gap="xs">
               <Divider />
-              <Stack gap="xs" mb={{ xs: "lg" }}>
+              <Stack gap="xs" mb={{ xs: 'lg' }}>
                 <Group justify="space-between">
                   <Text size="xs" fw={500}>
                     Commissioners
@@ -538,8 +539,8 @@ export default function DashboardElection({
                                   width={24}
                                   height={24}
                                   style={{
-                                    borderRadius: "50%",
-                                    objectFit: "cover",
+                                    borderRadius: '50%',
+                                    objectFit: 'cover',
                                   }}
                                 />
                               </ThemeIcon>
@@ -600,9 +601,9 @@ export default function DashboardElection({
             <Tabs
               value={tab}
               onChange={(value) => {
-                setTab(value ?? "");
+                setTab(value ?? '');
                 router.push(
-                  value === "voters" ? pathname : `${pathname}?t=admin`,
+                  value === 'voters' ? pathname : `${pathname}?t=admin`,
                   {
                     scroll: false,
                   },
@@ -645,15 +646,15 @@ export default function DashboardElection({
                             key={room.id}
                             p="md"
                             style={{
-                              border: "1px solid #80808050",
+                              border: '1px solid #80808050',
                               borderRadius: 8,
                             }}
                             w="100%"
                             onClick={() =>
                               setChat({
-                                type: "voters",
+                                type: 'voters',
                                 id: room.id,
-                                name: room.messages[0]?.user?.name ?? "",
+                                name: room.messages[0]?.user.name ?? 'Voter',
                                 title: room.name,
                               })
                             }
@@ -663,7 +664,7 @@ export default function DashboardElection({
                                 <Text
                                   lineClamp={1}
                                   style={{
-                                    wordBreak: "break-all",
+                                    wordBreak: 'break-all',
                                   }}
                                 >
                                   {room.name}
@@ -672,24 +673,23 @@ export default function DashboardElection({
                                   <Flex align="center" gap="sm">
                                     <Image
                                       src={
-                                        room.messages[0].user.image_url
-                                          ? room.messages[0].user.image_url
-                                          : "/images/default-avatar.png"
+                                        room.messages[0].user.image_url ??
+                                        '/images/default-avatar.png'
                                       }
                                       alt={
-                                        room.messages[0].user.name + " image."
+                                        room.messages[0].user.name + ' image.'
                                       }
                                       width={20}
                                       height={20}
                                       style={{
-                                        borderRadius: "50%",
+                                        borderRadius: '50%',
                                       }}
                                     />
                                     <Text
                                       size="sm"
                                       lineClamp={1}
                                       style={{
-                                        wordBreak: "break-all",
+                                        wordBreak: 'break-all',
                                       }}
                                     >
                                       {room.messages[0].message}
@@ -703,7 +703,7 @@ export default function DashboardElection({
                                     size="xs"
                                     c="gray"
                                     aria-label={moment(room.created_at).format(
-                                      "MMMM D, YYYY hh:mm A",
+                                      'MMMM D, YYYY hh:mm A',
                                     )}
                                     miw="fit-content"
                                   >
@@ -713,7 +713,7 @@ export default function DashboardElection({
                                 <HoverCardDropdown>
                                   <Text size="xs" c="gray">
                                     {moment(room.created_at).format(
-                                      "MMMM D, YYYY hh:mm A",
+                                      'MMMM D, YYYY hh:mm A',
                                     )}
                                   </Text>
                                 </HoverCardDropdown>
@@ -746,26 +746,21 @@ function CreateAdminMessagePopover({
   const context = api.useUtils();
   const [opened, { close, toggle }] = useDisclosure(false);
 
-  const form = useForm({
+  const form = useForm<CreateAdminMessage>({
     validateInputOnChange: true,
     initialValues: {
-      title: "",
-      message: "",
+      title: '',
+      message: '',
     },
-    validate: zodResolver(
-      z.object({
-        title: z.string().min(3, "Title must be at least 3 characters"),
-        message: z.string().min(10, "Message must be at least 10 characters"),
-      }),
-    ),
+    validate: zod4Resolver(CreateAdminMessageSchema),
   });
 
   const messageAdminMutation = api.election.messageAdmin.useMutation({
     onSuccess: async () => {
       await context.election.getAllAdminCommissionerRooms.refetch();
       notifications.show({
-        title: "Message sent!",
-        message: "Successfully sent message to admin",
+        title: 'Message sent!',
+        message: 'Successfully sent message to admin',
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
@@ -817,7 +812,7 @@ function CreateAdminMessagePopover({
               placeholder="Bug found in voting page"
               required
               disabled={messageAdminMutation.isPending}
-              {...form.getInputProps("title")}
+              {...form.getInputProps('title')}
             />
             <Textarea
               label="Message"
@@ -827,7 +822,7 @@ function CreateAdminMessagePopover({
               maxRows={6}
               required
               disabled={messageAdminMutation.isPending}
-              {...form.getInputProps("message")}
+              {...form.getInputProps('message')}
             />
             {messageAdminMutation.isError && (
               <Alert
@@ -874,17 +869,13 @@ function Chat({ chat, onBack }: { chat: ChatType; onBack: () => void }) {
     duration: 0,
   });
   const context = api.useUtils();
-  const form = useForm({
+  const form = useForm<Chat>({
     validateInputOnBlur: true,
     initialValues: {
-      message: "",
+      message: '',
     },
 
-    validate: zodResolver(
-      z.object({
-        message: z.string().min(3, "Message must be at least 3 characters"),
-      }),
-    ),
+    validate: zod4Resolver(ChatSchema),
   });
 
   const getMessagesAsComissionerQuery =
@@ -905,7 +896,7 @@ function Chat({ chat, onBack }: { chat: ChatType; onBack: () => void }) {
           await getMessagesAsComissionerQuery
             .refetch()
             .then(() => form.reset()),
-          chat.type === "admin"
+          chat.type === 'admin'
             ? await context.election.getAllAdminCommissionerRooms.invalidate()
             : await context.election.getAllCommissionerVoterRooms.invalidate(),
         ]);
@@ -927,14 +918,14 @@ function Chat({ chat, onBack }: { chat: ChatType; onBack: () => void }) {
           onClick={onBack}
         >
           <IconChevronLeft
-            style={{ width: "70%", height: "70%" }}
+            style={{ width: '70%', height: '70%' }}
             stroke={1.5}
           />
         </ActionIcon>
 
         <Box style={{ flex: 1 }}>
           <Text ta="center" size="sm">
-            {chat.type === "admin" ? "Admin" : chat.name}
+            {chat.type === 'admin' ? 'Admin' : chat.name}
           </Text>
           <Text size="xs" lineClamp={1} ta="center">
             {chat.title}
@@ -965,20 +956,20 @@ function Chat({ chat, onBack }: { chat: ChatType; onBack: () => void }) {
           {getMessagesAsComissionerQuery.data.map((message) => (
             <Box
               key={message.id}
-              ml={message.user.isMe ? "auto" : undefined}
-              mr={!message.user.isMe ? "auto" : undefined}
-              maw={{ base: "75%", xs: "50%", sm: "40%", md: 200, xl: 300 }}
+              ml={message.user.isMe ? 'auto' : undefined}
+              mr={!message.user.isMe ? 'auto' : undefined}
+              maw={{ base: '75%', xs: '50%', sm: '40%', md: 200, xl: 300 }}
             >
               <Box
                 p="xs"
                 style={{
-                  border: "1px solid #cccccc25",
+                  border: '1px solid #cccccc25',
                   borderRadius: 8,
                 }}
               >
                 <Text
                   style={{
-                    wordBreak: "break-word",
+                    wordBreak: 'break-word',
                   }}
                 >
                   {message.message}
@@ -990,15 +981,15 @@ function Chat({ chat, onBack }: { chat: ChatType; onBack: () => void }) {
                     size="xs"
                     c="gray"
                     w="fit-content"
-                    ml={message.user.isMe ? "auto" : undefined}
+                    ml={message.user.isMe ? 'auto' : undefined}
                     mb="xs"
                   >
-                    {moment(message.created_at).format("hh:mm A")}
+                    {moment(message.created_at).format('hh:mm A')}
                   </Text>
                 </HoverCardTarget>
                 <HoverCardDropdown>
                   <Text size="xs" c="gray">
-                    {moment(message.created_at).format("MMMM D, YYYY hh:mm A")}
+                    {moment(message.created_at).format('MMMM D, YYYY hh:mm A')}
                   </Text>
                 </HoverCardDropdown>
               </HoverCard>
@@ -1023,7 +1014,7 @@ function Chat({ chat, onBack }: { chat: ChatType; onBack: () => void }) {
             placeholder="Type your message here"
             style={{ flex: 1 }}
             maxRows={4}
-            {...form.getInputProps("message")}
+            {...form.getInputProps('message')}
             error={!!form.errors.message}
             disabled={sendMessageAsCommissionerMutation.isPending}
           />
@@ -1053,7 +1044,7 @@ function AdminChat({
 }) {
   const getAllAdminCommissionerRoomsQuery =
     api.election.getAllAdminCommissionerRooms.useQuery(
-      { election_slug: election_slug ?? "" },
+      { election_slug: election_slug ?? '' },
       {
         enabled: !!election_slug,
       },
@@ -1071,7 +1062,7 @@ function AdminChat({
               here.
             </Text>
           </Balancer>
-          <CreateAdminMessagePopover election_slug={election_slug ?? ""} />
+          <CreateAdminMessagePopover election_slug={election_slug ?? ''} />
         </Stack>
       ) : (
         <>
@@ -1083,7 +1074,7 @@ function AdminChat({
                   Message us here.
                 </Text>
               </Balancer>
-              <CreateAdminMessagePopover election_slug={election_slug ?? ""} />
+              <CreateAdminMessagePopover election_slug={election_slug ?? ''} />
             </Stack>
           </Card>
           {getAllAdminCommissionerRoomsQuery.data.map((room) => {
@@ -1093,15 +1084,15 @@ function AdminChat({
                 key={room.id}
                 p="md"
                 style={{
-                  border: "1px solid #80808050",
+                  border: '1px solid #80808050',
                   borderRadius: 8,
                 }}
                 w="100%"
                 onClick={() =>
                   setChat({
-                    type: "admin",
+                    type: 'admin',
                     id: room.id,
-                    name: user?.name ?? "",
+                    name: user?.name ?? '',
                     title: room.name,
                   })
                 }
@@ -1111,7 +1102,7 @@ function AdminChat({
                     <Text
                       lineClamp={1}
                       style={{
-                        wordBreak: "break-all",
+                        wordBreak: 'break-all',
                       }}
                     >
                       {room.name}
@@ -1122,20 +1113,20 @@ function AdminChat({
                           ? user.image_url && (
                               <Image
                                 src={user.image_url}
-                                alt={user.name + " image."}
+                                alt={user.name + ' image.'}
                                 width={20}
                                 height={20}
                                 style={{
-                                  borderRadius: "50%",
+                                  borderRadius: '50%',
                                 }}
                               />
                             )
-                          : "Admin"}
+                          : 'Admin'}
                         <Text
                           size="sm"
                           lineClamp={1}
                           style={{
-                            wordBreak: "break-all",
+                            wordBreak: 'break-all',
                           }}
                         >
                           {room.messages[0].message}
@@ -1149,7 +1140,7 @@ function AdminChat({
                         size="xs"
                         c="gray"
                         aria-label={moment(room.created_at).format(
-                          "MMMM D, YYYY hh:mm A",
+                          'MMMM D, YYYY hh:mm A',
                         )}
                         miw="fit-content"
                       >
@@ -1158,7 +1149,7 @@ function AdminChat({
                     </HoverCardTarget>
                     <HoverCardDropdown>
                       <Text size="xs" c="gray">
-                        {moment(room.created_at).format("MMMM D, YYYY hh:mm A")}
+                        {moment(room.created_at).format('MMMM D, YYYY hh:mm A')}
                       </Text>
                     </HoverCardDropdown>
                   </HoverCard>

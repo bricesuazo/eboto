@@ -1,7 +1,7 @@
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod/v4';
 
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from '../trpc';
 
 export const positionRouter = createTRPCRouter({
   getDashboardData: protectedProcedure
@@ -12,15 +12,15 @@ export const positionRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const { data: positions, error: positions_error } = await ctx.supabase
-        .from("positions")
-        .select("*")
-        .eq("election_id", input.election_id)
-        .is("deleted_at", null)
-        .order("order", { ascending: true });
+        .from('positions')
+        .select('*')
+        .eq('election_id', input.election_id)
+        .is('deleted_at', null)
+        .order('order', { ascending: true });
 
       if (positions_error)
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+          code: 'INTERNAL_SERVER_ERROR',
           message: positions_error.message,
         });
 
@@ -37,38 +37,38 @@ export const positionRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       const { data: election } = await ctx.supabase
-        .from("elections")
-        .select("*")
-        .eq("id", input.election_id)
-        .is("deleted_at", null)
+        .from('elections')
+        .select('*')
+        .eq('id', input.election_id)
+        .is('deleted_at', null)
         .single();
 
-      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!election) throw new TRPCError({ code: 'NOT_FOUND' });
 
       const { data: commissioner } = await ctx.supabase
-        .from("commissioners")
-        .select("*")
-        .eq("user_id", ctx.user.auth.id)
-        .eq("election_id", election.id)
-        .is("deleted_at", null)
+        .from('commissioners')
+        .select('*')
+        .eq('user_id', ctx.user.auth.id)
+        .eq('election_id', election.id)
+        .is('deleted_at', null)
         .single();
 
-      if (!commissioner) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!commissioner) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
       const { data: positions, error: positions_error } = await ctx.supabase
-        .from("positions")
-        .select("id")
-        .eq("election_id", input.election_id)
-        .is("deleted_at", null)
-        .order("order", { ascending: true });
+        .from('positions')
+        .select('id')
+        .eq('election_id', input.election_id)
+        .is('deleted_at', null)
+        .order('order', { ascending: true });
 
       if (positions_error)
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+          code: 'INTERNAL_SERVER_ERROR',
           message: positions_error.message,
         });
 
-      await ctx.supabase.from("positions").insert({
+      await ctx.supabase.from('positions').insert({
         name: input.name,
         order: positions.length,
         min: input.min,
@@ -85,39 +85,39 @@ export const positionRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       const { data: election } = await ctx.supabase
-        .from("elections")
-        .select("*")
-        .eq("id", input.election_id)
-        .is("deleted_at", null)
+        .from('elections')
+        .select('*')
+        .eq('id', input.election_id)
+        .is('deleted_at', null)
         .single();
 
-      if (!election) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!election) throw new TRPCError({ code: 'NOT_FOUND' });
 
       const { data: commissioner } = await ctx.supabase
-        .from("commissioners")
-        .select("*")
-        .eq("user_id", ctx.user.auth.id)
-        .eq("election_id", election.id)
-        .is("deleted_at", null)
+        .from('commissioners')
+        .select('*')
+        .eq('user_id', ctx.user.auth.id)
+        .eq('election_id', election.id)
+        .is('deleted_at', null)
         .single();
 
-      if (!commissioner) throw new TRPCError({ code: "UNAUTHORIZED" });
+      if (!commissioner) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
       const { data: position } = await ctx.supabase
-        .from("positions")
-        .select("*")
-        .eq("id", input.position_id)
-        .eq("election_id", input.election_id)
-        .is("deleted_at", null)
+        .from('positions')
+        .select('*')
+        .eq('id', input.position_id)
+        .eq('election_id', input.election_id)
+        .is('deleted_at', null)
         .single();
 
-      if (!position) throw new TRPCError({ code: "NOT_FOUND" });
+      if (!position) throw new TRPCError({ code: 'NOT_FOUND' });
 
       await ctx.supabase
-        .from("positions")
+        .from('positions')
         .update({ deleted_at: new Date().toISOString() })
-        .eq("id", input.position_id)
-        .eq("election_id", input.election_id);
+        .eq('id', input.position_id)
+        .eq('election_id', input.election_id);
     }),
   edit: protectedProcedure
     .input(
@@ -140,14 +140,14 @@ export const positionRouter = createTRPCRouter({
       // });
 
       await ctx.supabase
-        .from("positions")
+        .from('positions')
         .update({
           name: input.name,
           description: input.description,
           min: input.min,
           max: input.max,
         })
-        .eq("id", input.id)
-        .eq("election_id", input.election_id);
+        .eq('id', input.id)
+        .eq('election_id', input.election_id);
     }),
 });

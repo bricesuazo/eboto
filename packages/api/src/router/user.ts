@@ -1,7 +1,7 @@
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod/v4';
 
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure } from '../trpc';
 
 export const userRouter = createTRPCRouter({
   updateProfile: protectedProcedure
@@ -23,12 +23,12 @@ export const userRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       if (ctx.user.db.image_path && (input.image === null || input.image)) {
         await ctx.supabase.storage
-          .from("users")
+          .from('users')
           .remove([ctx.user.db.image_path]);
       }
 
       const { data, error } = await ctx.supabase
-        .from("users")
+        .from('users')
         .update({
           //   first_name: input.firstName,
           //   middle_name: input.middleName,
@@ -39,24 +39,24 @@ export const userRouter = createTRPCRouter({
                 .then((res) => res.blob())
                 .then(async (blob) => {
                   const { data } = await ctx.supabase.storage
-                    .from("users")
+                    .from('users')
                     .upload(`${ctx.user.auth.id}/avatar/${Date.now()}`, blob);
 
                   return data?.path;
                 })
             : input.image,
         })
-        .eq("id", ctx.user.auth.id)
+        .eq('id', ctx.user.auth.id)
         .select()
         .single();
 
-      if (error) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+      if (error) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
 
       let image_url: string | null = null;
 
       if (data.image_path) {
         const { data: image } = ctx.supabase.storage
-          .from("users")
+          .from('users')
           .getPublicUrl(data.image_path);
 
         image_url = image.publicUrl;

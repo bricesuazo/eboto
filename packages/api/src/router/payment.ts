@@ -1,8 +1,8 @@
-import { TRPCError } from "@trpc/server";
-import { z } from "zod";
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod/v4';
 
-import { env } from "../../../../apps/www/env";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { env } from '../../../../apps/www/env';
+import { createTRPCRouter, protectedProcedure } from '../trpc';
 
 export const paymentRouter = createTRPCRouter({
   boost: protectedProcedure
@@ -15,21 +15,21 @@ export const paymentRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const [electionQuery, boostQuery, userQuery] = await Promise.all([
         await ctx.supabase
-          .from("elections")
+          .from('elections')
           .select()
-          .eq("id", input.election_id)
-          .is("deleted_at", null)
+          .eq('id', input.election_id)
+          .is('deleted_at', null)
           .single(),
         await ctx.supabase
-          .from("variants")
+          .from('variants')
           .select()
-          .eq("product_id", env.LEMONSQUEEZY_BOOST_PRODUCT_ID)
-          .eq("price", 499 + (input.price / 25) * 200)
+          .eq('product_id', env.LEMONSQUEEZY_BOOST_PRODUCT_ID)
+          .eq('price', 499 + (input.price / 25) * 200)
           .single(),
         await ctx.supabase
-          .from("users")
+          .from('users')
           .select()
-          .eq("id", ctx.user.auth.id)
+          .eq('id', ctx.user.auth.id)
           .single(),
       ]);
 
@@ -39,27 +39,27 @@ export const paymentRouter = createTRPCRouter({
 
       if (!boost)
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "No boost found",
+          code: 'BAD_REQUEST',
+          message: 'No boost found',
         });
 
       if (!election)
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "No election found",
+          code: 'BAD_REQUEST',
+          message: 'No election found',
         });
 
       if (!user)
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "No user found",
+          code: 'BAD_REQUEST',
+          message: 'No user found',
         });
 
       const checkout = await ctx.payment
         .createCheckout(env.LEMONSQUEEZY_STORE_ID, boost.id, {
           productOptions: {
-            redirectUrl: env.APP_URL + "/dashboard/" + election.slug,
-            receiptLinkUrl: env.APP_URL + "/account/billing",
+            redirectUrl: env.APP_URL + '/dashboard/' + election.slug,
+            receiptLinkUrl: env.APP_URL + '/account/billing',
           },
           checkoutData: {
             email: ctx.user.auth.email?.length
@@ -69,14 +69,14 @@ export const paymentRouter = createTRPCRouter({
             custom: {
               user_id: ctx.user.auth.id,
               election_id: input.election_id,
-              type: "boost",
+              type: 'boost',
             },
           },
         })
         .catch((err) => {
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Failed to create checkout",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Failed to create checkout',
             cause: err,
           });
         });
@@ -86,18 +86,18 @@ export const paymentRouter = createTRPCRouter({
   plus: protectedProcedure
     .input(
       z.object({
-        quantity: z.number().min(1, "Quantity must be at least 1"),
+        quantity: z.number().min(1, 'Quantity must be at least 1'),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const { data: user } = await ctx.supabase
-        .from("users")
+        .from('users')
         .select()
-        .eq("id", ctx.user.auth.id)
+        .eq('id', ctx.user.auth.id)
         .single();
 
       if (!user)
-        throw new TRPCError({ code: "BAD_REQUEST", message: "No user found" });
+        throw new TRPCError({ code: 'BAD_REQUEST', message: 'No user found' });
 
       const checkout = await ctx.payment
         .createCheckout(
@@ -105,8 +105,8 @@ export const paymentRouter = createTRPCRouter({
           env.LEMONSQUEEZY_PLUS_VARIANT_ID,
           {
             productOptions: {
-              redirectUrl: env.APP_URL + "/dashboard",
-              receiptLinkUrl: env.APP_URL + "/account/billing",
+              redirectUrl: env.APP_URL + '/dashboard',
+              receiptLinkUrl: env.APP_URL + '/account/billing',
             },
             checkoutData: {
               email: ctx.user.db.email.length ? ctx.user.db.email : undefined,
@@ -119,15 +119,15 @@ export const paymentRouter = createTRPCRouter({
               ],
               custom: {
                 user_id: ctx.user.auth.id,
-                type: "plus",
+                type: 'plus',
               },
             },
           },
         )
         .catch((err) => {
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Failed to create checkout",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Failed to create checkout',
             cause: err,
           });
         });

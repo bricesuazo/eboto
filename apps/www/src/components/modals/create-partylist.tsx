@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import {
   Alert,
   Button,
@@ -9,18 +9,21 @@ import {
   Stack,
   Text,
   TextInput,
-} from "@mantine/core";
-import { hasLength, useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconCheck,
   IconFlag,
   IconLetterCase,
-} from "@tabler/icons-react";
+} from '@tabler/icons-react';
+import { zod4Resolver } from 'mantine-form-zod-resolver';
 
-import { api } from "~/trpc/client";
+import type { CreatePartylist } from '~/schema/partylist';
+import { CreatePartylistSchema } from '~/schema/partylist';
+import { api } from '~/trpc/client';
 
 export default function CreatePartylist({
   election_id,
@@ -30,34 +33,19 @@ export default function CreatePartylist({
   const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure(false);
 
-  const form = useForm({
+  const form = useForm<CreatePartylist>({
     initialValues: {
-      name: "",
-      acronym: "",
+      name: '',
+      acronym: '',
     },
-    validate: {
-      name: hasLength(
-        {
-          min: 1,
-          max: 100,
-        },
-        "Name must be between 1 and 100 characters",
-      ),
-      acronym: hasLength(
-        {
-          min: 1,
-          max: 24,
-        },
-        "Acronym must be between 1 and 24 characters",
-      ),
-    },
+    validate: zod4Resolver(CreatePartylistSchema),
   });
 
   const createPartylistMutation = api.partylist.create.useMutation({
     onSuccess: async () => {
       notifications.show({
         title: `${form.values.name} (${form.values.acronym}) created!`,
-        message: "Successfully created partylist",
+        message: 'Successfully created partylist',
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
@@ -80,7 +68,7 @@ export default function CreatePartylist({
       <Button
         onClick={open}
         style={() => ({
-          width: "fit-content",
+          width: 'fit-content',
         })}
         leftSection={<IconFlag size="1rem" />}
       >
@@ -108,7 +96,7 @@ export default function CreatePartylist({
               required
               withAsterisk
               disabled={createPartylistMutation.isPending}
-              {...form.getInputProps("name")}
+              {...form.getInputProps('name')}
               leftSection={<IconLetterCase size="1rem" />}
             />
 
@@ -118,7 +106,7 @@ export default function CreatePartylist({
               required
               disabled={createPartylistMutation.isPending}
               withAsterisk
-              {...form.getInputProps("acronym")}
+              {...form.getInputProps('acronym')}
               leftSection={<IconLetterCase size="1rem" />}
             />
 

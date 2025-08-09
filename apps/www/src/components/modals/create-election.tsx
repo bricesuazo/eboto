@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import type { MantineStyleProp } from "@mantine/core";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import type { MantineStyleProp } from '@mantine/core';
 import {
   ActionIcon,
   Alert,
@@ -20,11 +20,11 @@ import {
   Text,
   TextInput,
   Title,
-} from "@mantine/core";
-import { DatePickerInput } from "@mantine/dates";
-import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
+} from '@mantine/core';
+import { DatePickerInput } from '@mantine/dates';
+import { useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconCalendar,
@@ -33,14 +33,17 @@ import {
   IconMinus,
   IconPlus,
   IconTemplate,
-} from "@tabler/icons-react";
-import { zodResolver } from "mantine-form-zod-resolver";
-import { z } from "zod";
+} from '@tabler/icons-react';
+import { zod4Resolver } from 'mantine-form-zod-resolver';
 
-import { parseHourTo12HourFormat, positionTemplate } from "@eboto/constants";
+import { parseHourTo12HourFormat, positionTemplate } from '@eboto/constants';
 
-import { useConfetti } from "~/components/providers";
-import { api } from "~/trpc/client";
+import { useConfetti } from '~/components/providers';
+import type { CreateElection as CreateElectionType } from '~/schema/election';
+import { CreateElectionSchema } from '~/schema/election';
+import type { GetPlus } from '~/schema/plus';
+import { GetPlusSchema } from '~/schema/plus';
+import { api } from '~/trpc/client';
 
 export default function CreateElection({
   style,
@@ -67,9 +70,9 @@ export default function CreateElection({
     },
     onError: (error) => {
       notifications.show({
-        title: "Error",
+        title: 'Error',
         message: error.message,
-        color: "red",
+        color: 'red',
         autoClose: 3000,
       });
     },
@@ -80,8 +83,8 @@ export default function CreateElection({
       router.push(`/dashboard/${formCreateElection.values.slug}`);
       closeCreateElection();
       notifications.show({
-        title: "Election created!",
-        message: "Successfully created election",
+        title: 'Election created!',
+        message: 'Successfully created election',
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
@@ -89,78 +92,24 @@ export default function CreateElection({
     },
   });
 
-  const formCreateElection = useForm<{
-    name: string;
-    slug: string;
-    date: [Date | null, Date | null];
-    template: string;
-    voting_hours: [number, number];
-  }>({
+  const formCreateElection = useForm<CreateElectionType>({
     validateInputOnBlur: true,
     initialValues: {
-      name: "",
-      slug: "",
+      name: '',
+      slug: '',
       date: [null, null],
-      template: "none",
+      template: 'none',
       voting_hours: [7, 19],
     },
-    validate: zodResolver(
-      z.object({
-        name: z.string().min(1, "Election name must be at least 1 characters"),
-        slug: z
-          .string()
-          .min(1, "Election slug must be at least 1 characters")
-          .max(24, "Election slug must be at most 24 characters")
-          .regex(
-            /^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$/,
-            "Election slug must be alphanumeric and can contain dashes",
-          ),
-        date: z
-          .custom<[Date | null, Date | null]>()
-          .refine(
-            (value) =>
-              value[0] && value[1] && value[0].getTime() <= value[1].getTime(),
-            "Start date must be before end date",
-          )
-          .refine(
-            (value) =>
-              value[0] && value[1] && value[1].getTime() >= value[0].getTime(),
-            "End date must be after start date",
-          )
-          .refine(
-            (value) =>
-              value[0] && value[1] && value[1].getTime() > new Date().getTime(),
-            "End date must be in the future",
-          )
-          .refine(
-            (value) => !!value[0] || !!value[1],
-            "Please select an election start and end date",
-          ),
-        template: z.string({
-          required_error: "Please select an election template",
-          invalid_type_error: "Please select an election template",
-        }),
-        voting_hours: z
-          .custom<[number, number]>()
-          .refine(
-            (value) => value[0] < value[1],
-            "Start hour must be before end hour",
-          ),
-      }),
-    ),
+    validate: zod4Resolver(CreateElectionSchema),
   });
-  const formGetPlus = useForm<{
-    quantity: number;
-  }>({
+
+  const formGetPlus = useForm<GetPlus>({
     validateInputOnBlur: true,
     initialValues: {
       quantity: 1,
     },
-    validate: zodResolver(
-      z.object({
-        quantity: z.number().min(1, "Quantity must be at least 1"),
-      }),
-    ),
+    validate: zod4Resolver(GetPlusSchema),
   });
 
   useEffect(() => {
@@ -168,11 +117,11 @@ export default function CreateElection({
       ...formCreateElection.values,
       slug: formCreateElection.values.name
         .toLowerCase()
-        .replace(/[^a-z0-9 ]/g, "")
-        .replace(/\s+/g, " ")
+        .replace(/[^a-z0-9 ]/g, '')
+        .replace(/\s+/g, ' ')
         .trim()
-        .split(" ")
-        .join("-"),
+        .split(' ')
+        .join('-'),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formCreateElection.values.name]);
@@ -244,9 +193,9 @@ export default function CreateElection({
               readOnly
               styles={{
                 input: {
-                  textAlign: "center",
-                  fontSize: "2rem",
-                  padding: "0.5rem",
+                  textAlign: 'center',
+                  fontSize: '2rem',
+                  padding: '0.5rem',
                 },
               }}
             />
@@ -265,10 +214,10 @@ export default function CreateElection({
           <Text ta="center">Get Plus to create more elections!</Text>
           <Flex direction="column" gap="xs" justify="center" align="center">
             <Button
-              w={{ base: "100%", md: "auto" }}
+              w={{ base: '100%', md: 'auto' }}
               size="lg"
               radius="xl"
-              style={{ marginBottom: "auto" }}
+              style={{ marginBottom: 'auto' }}
               loading={plusMutation.isPending}
               onClick={() =>
                 plusMutation.mutate({ quantity: formGetPlus.values.quantity })
@@ -276,7 +225,7 @@ export default function CreateElection({
               rightSection={!isRedirecting ? <IconPlus /> : undefined}
               disabled={isRedirecting}
             >
-              {isRedirecting ? "Redirecting..." : "Get Plus"}
+              {isRedirecting ? 'Redirecting...' : 'Get Plus'}
             </Button>
             <Button
               variant="subtle"
@@ -306,9 +255,9 @@ export default function CreateElection({
               name: value.name.trim(),
               slug: value.slug.trim(),
               date: [
-                value.date[0]?.toISOString() ??
+                value.date[0] ??
                   new Date(now.setDate(now.getDate() + 1)).toISOString(),
-                value.date[1]?.toISOString() ??
+                value.date[1] ??
                   new Date(now.setDate(now.getDate() + 5)).toISOString(),
               ],
               template: value.template,
@@ -326,10 +275,10 @@ export default function CreateElection({
               leftSection={<IconLetterCase size="1rem" />}
               disabled={createElectionMutation.isPending}
               error={
-                createElectionMutation.error?.data?.code === "CONFLICT" &&
+                createElectionMutation.error?.data?.code === 'CONFLICT' &&
                 createElectionMutation.error.message
               }
-              {...formCreateElection.getInputProps("name")}
+              {...formCreateElection.getInputProps('name')}
             />
 
             <TextInput
@@ -338,7 +287,7 @@ export default function CreateElection({
                 <>
                   This will be used as the URL for your election
                   <br />
-                  eboto.app/{formCreateElection.values.slug || "election-slug"}
+                  eboto.app/{formCreateElection.values.slug || 'election-slug'}
                 </>
               }
               disabled={createElectionMutation.isPending}
@@ -347,10 +296,10 @@ export default function CreateElection({
               placeholder="Enter election slug"
               leftSection={<IconLetterCase size="1rem" />}
               error={
-                createElectionMutation.error?.data?.code === "CONFLICT" &&
+                createElectionMutation.error?.data?.code === 'CONFLICT' &&
                 createElectionMutation.error.message
               }
-              {...formCreateElection.getInputProps("slug")}
+              {...formCreateElection.getInputProps('slug')}
             />
 
             <DatePickerInput
@@ -364,7 +313,7 @@ export default function CreateElection({
               firstDayOfWeek={0}
               required
               disabled={createElectionMutation.isPending}
-              {...formCreateElection.getInputProps("date")}
+              {...formCreateElection.getInputProps('date')}
             />
 
             <Box>
@@ -373,11 +322,11 @@ export default function CreateElection({
                 Voters can only vote within the specified hours (
                 {formCreateElection.values.voting_hours[0] === 0 &&
                 formCreateElection.values.voting_hours[1] === 24
-                  ? "Whole day"
+                  ? 'Whole day'
                   : parseHourTo12HourFormat(
                       formCreateElection.values.voting_hours[0],
                     ) +
-                    " - " +
+                    ' - ' +
                     parseHourTo12HourFormat(
                       formCreateElection.values.voting_hours[1],
                     )}
@@ -391,11 +340,11 @@ export default function CreateElection({
                 minRange={1}
                 maxRange={24}
                 marks={[
-                  { value: 7, label: "7AM" },
-                  { value: 19, label: "7PM" },
+                  { value: 7, label: '7AM' },
+                  { value: 19, label: '7PM' },
                 ]}
                 label={parseHourTo12HourFormat}
-                {...formCreateElection.getInputProps("voting_hours")}
+                {...formCreateElection.getInputProps('voting_hours')}
               />
             </Box>
 
@@ -405,7 +354,7 @@ export default function CreateElection({
               placeholder="Select a template"
               withAsterisk
               required
-              {...formCreateElection.getInputProps("template")}
+              {...formCreateElection.getInputProps('template')}
               data={positionTemplate
                 .sort((a, b) => a.order - b.order)
                 .map((template) => ({

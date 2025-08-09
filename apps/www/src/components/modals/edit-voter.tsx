@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import {
   ActionIcon,
   Alert,
@@ -10,20 +10,23 @@ import {
   Stack,
   Text,
   TextInput,
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconAt,
   IconCheck,
   IconEdit,
   IconLetterCase,
-} from "@tabler/icons-react";
+} from '@tabler/icons-react';
+import { zod4Resolver } from 'mantine-form-zod-resolver';
 
-import { api } from "~/trpc/client";
-import type { Database } from "../../../../../supabase/types";
+import type { EditVoter } from '~/schema/voter';
+import { EditVoterSchema } from '~/schema/voter';
+import { api } from '~/trpc/client';
+import type { Database } from '../../../../../supabase/types';
 
 export default function EditVoter({
   election_id,
@@ -36,36 +39,27 @@ export default function EditVoter({
     email: string;
     field: Record<string, string> | null;
   };
-  voter_fields: Database["public"]["Tables"]["voter_fields"]["Row"][];
+  voter_fields: Database['public']['Tables']['voter_fields']['Row'][];
 }) {
   const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure(false);
 
-  const initialValues = {
+  const initialValues: EditVoter = {
     email: voter.email,
     ...voter.field,
   };
 
-  const form = useForm<
-    {
-      email: string;
-    } & (Record<string, string> | null)
-  >({
+  const form = useForm<EditVoter>({
     initialValues,
-    validate: {
-      email: (value) =>
-        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-          ? "Please enter a valid email"
-          : null,
-    },
+    validate: zod4Resolver(EditVoterSchema),
   });
 
   const editVoterMutation = api.voter.edit.useMutation({
     onSuccess: async () => {
       await context.election.getVotersByElectionSlug.invalidate();
       notifications.show({
-        title: "Success",
-        message: "Successfully updated voter!",
+        title: 'Success',
+        message: 'Successfully updated voter!',
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
@@ -111,11 +105,11 @@ export default function EditVoter({
               label="Email address"
               required
               withAsterisk
-              {...form.getInputProps("email")}
+              {...form.getInputProps('email')}
               leftSection={<IconAt size="1rem" />}
               disabled={editVoterMutation.isPending}
               description={
-                "You can only edit the email address of a voter if they have not yet accepted their invitation."
+                'You can only edit the email address of a voter if they have not yet accepted their invitation.'
               }
             />
 

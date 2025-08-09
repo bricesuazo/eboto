@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
 import {
   ActionIcon,
   Box,
@@ -29,11 +29,11 @@ import {
   UnstyledButton,
   useComputedColorScheme,
   useMantineColorScheme,
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { spotlight } from "@mantine/spotlight";
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import { spotlight } from '@mantine/spotlight';
 import {
   IconAlertCircle,
   IconChartBar,
@@ -45,12 +45,15 @@ import {
   IconSparkles,
   IconSun,
   IconUserCircle,
-} from "@tabler/icons-react";
+} from '@tabler/icons-react';
+import { zod4Resolver } from 'mantine-form-zod-resolver';
 
-import { useStore } from "~/store";
-import classes from "~/styles/Header.module.css";
-import { createClient } from "~/supabase/client";
-import { api } from "~/trpc/client";
+import type { ReportAProblem } from '~/schema/report';
+import { ReportAProblemSchema } from '~/schema/report';
+import { useStore } from '~/store';
+import classes from '~/styles/Header.module.css';
+import { createClient } from '~/supabase/client';
+import { api } from '~/trpc/client';
 
 export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
   const utils = api.useUtils();
@@ -73,38 +76,19 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
 
   const [openedMenu, { toggle }] = useDisclosure(false);
 
-  const computedColorScheme = useComputedColorScheme("light", {
+  const computedColorScheme = useComputedColorScheme('light', {
     getInitialValueInEffect: true,
   });
 
   const store = useStore();
 
-  const formReportAProblem = useForm<{
-    subject: string;
-    description: string;
-    election_id?: string;
-  }>({
+  const formReportAProblem = useForm<ReportAProblem>({
     initialValues: {
-      subject: "",
-      description: "",
+      subject: '',
+      description: '',
+      election_id: '',
     },
-    validate: {
-      subject: (value) => {
-        if (!value.trim() || !value.length) {
-          return "Subject is required";
-        }
-      },
-      description: (value) => {
-        if (!value.trim() || !value.length) {
-          return "Description is required";
-        }
-      },
-      election_id: (value) => {
-        if (!value?.length) {
-          return "Election is required";
-        }
-      },
-    },
+    validate: zod4Resolver(ReportAProblemSchema),
   });
 
   useEffect(() => {
@@ -137,7 +121,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
               });
 
               notifications.show({
-                title: "Problem reported!",
+                title: 'Problem reported!',
 
                 message: "We'll get back to you as soon as possible.",
               });
@@ -152,7 +136,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
               label="Subject"
               placeholder="What's the problem?"
               disabled={reportAProblemLoading}
-              {...formReportAProblem.getInputProps("subject")}
+              {...formReportAProblem.getInputProps('subject')}
             />
             <Textarea
               rows={5}
@@ -160,7 +144,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
               label="Description"
               placeholder="Explain your concern..."
               disabled={reportAProblemLoading}
-              {...formReportAProblem.getInputProps("description")}
+              {...formReportAProblem.getInputProps('description')}
             />
             <Select
               label="Election"
@@ -173,7 +157,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
                 })) ?? []
               }
               disabled={reportAProblemLoading}
-              {...formReportAProblem.getInputProps("election_id")}
+              {...formReportAProblem.getInputProps('election_id')}
             />
             <Group justify="flex-end" mt="md">
               <Button
@@ -192,7 +176,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
           <Flex h="100%" align="center" gap="xs">
             <UnstyledButton
               component={Link}
-              href={isLoggedIn ? "/dashboard" : "/"}
+              href={isLoggedIn ? '/dashboard' : '/'}
             >
               <Flex gap="xs" align="center">
                 <Image
@@ -225,8 +209,8 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
             <Flex
               align="center"
               gap={{
-                base: "sm",
-                xs: "lg",
+                base: 'sm',
+                xs: 'lg',
               }}
             >
               <TextInput
@@ -262,9 +246,9 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
                     <Flex gap="xs" align="center">
                       <Box
                         style={{
-                          position: "relative",
-                          borderRadius: "50%",
-                          overflow: "hidden",
+                          position: 'relative',
+                          borderRadius: '50%',
+                          overflow: 'hidden',
                           width: 24,
                           height: 24,
                         }}
@@ -278,7 +262,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
                               sizes="100%"
                               priority
                               style={{
-                                objectFit: "cover",
+                                objectFit: 'cover',
                               }}
                             />
                           ) : (
@@ -310,8 +294,8 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
                       <IconChevronDown
                         size={16}
                         style={{
-                          rotate: openedMenu ? "-180deg" : "0deg",
-                          transition: "all 0.25s",
+                          rotate: openedMenu ? '-180deg' : '0deg',
+                          transition: 'all 0.25s',
                         }}
                       />
                     </Flex>
@@ -345,7 +329,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
 
                   <MenuItem
                     leftSection={
-                      computedColorScheme === "light" ? (
+                      computedColorScheme === 'light' ? (
                         <IconMoon size={16} />
                       ) : (
                         <IconSun size={16} />
@@ -353,14 +337,14 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
                     }
                     onClick={() =>
                       setColorScheme(
-                        computedColorScheme === "light" ? "dark" : "light",
+                        computedColorScheme === 'light' ? 'dark' : 'light',
                       )
                     }
                     closeMenuOnClick={false}
                   >
-                    {computedColorScheme === "light"
-                      ? "Dark mode"
-                      : "Light mode"}
+                    {computedColorScheme === 'light'
+                      ? 'Dark mode'
+                      : 'Light mode'}
                   </MenuItem>
                   <MenuItem
                     leftSection={<IconAlertCircle size={16} />}
@@ -374,7 +358,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
                       const supabase = createClient();
 
                       await supabase.auth.signOut();
-                      router.push("/sign-in");
+                      router.push('/sign-in');
                       await utils.auth.invalidate();
                     }}
                     closeMenuOnClick={false}
@@ -384,7 +368,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
                       ) : (
                         <IconLogout
                           style={{
-                            transform: "translateX(2px)",
+                            transform: 'translateX(2px)',
                           }}
                           size={16}
                         />
@@ -398,7 +382,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
               </Menu>
               {params.electionDashboardSlug && (
                 <ActionIcon
-                  variant={store.dashboardChatMenu ? "light" : "subtle"}
+                  variant={store.dashboardChatMenu ? 'light' : 'subtle'}
                   hiddenFrom="lg"
                   size="lg"
                   onClick={() => store.toggleDashboardChatMenu()}
@@ -414,7 +398,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
                 size={36}
                 onClick={() =>
                   setColorScheme(
-                    computedColorScheme === "light" ? "dark" : "light",
+                    computedColorScheme === 'light' ? 'dark' : 'light',
                   )
                 }
               >

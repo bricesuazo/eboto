@@ -22,7 +22,7 @@ import { FAQs } from "@eboto/constants";
 
 import ContactForm from "~/components/contact-form";
 import ElectionBoost from "~/components/modals/election-boost";
-import ReactPlayer from "~/components/react-player";
+import ReactPlayer from "react-player";
 import classes from "~/styles/Home.module.css";
 import { MainPricing } from "./pricing/page";
 
@@ -100,7 +100,7 @@ export default function HomePage() {
 
             <Box className={classes.playerContainer}>
               <ReactPlayer
-                url="https://www.youtube.com/watch?v=BKud553RTbk"
+                src="https://www.youtube.com/watch?v=BKud553RTbk"
                 width="100%"
                 height="100%"
                 controls
