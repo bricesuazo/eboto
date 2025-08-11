@@ -25,20 +25,29 @@ export const partylistRouter = createTRPCRouter({
   getDashboardData: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_slug: z.string(),
       }),
     )
     .query(async ({ ctx, input }) => {
+      const { data: election, error: election_error } = await ctx.supabase
+        .from('elections')
+        .select()
+        .eq('slug', input.election_slug)
+        .is('deleted_at', null)
+        .single();
+
+      if (election_error) throw new TRPCError({ code: 'NOT_FOUND' });
+
       const { data: partylists } = await ctx.supabase
         .from('partylists')
         .select()
-        .eq('election_id', input.election_id)
+        .eq('election_id', election.id)
         .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
       if (!partylists) throw new TRPCError({ code: 'NOT_FOUND' });
 
-      return partylists;
+      return { election: { id: election.id }, partylists };
     }),
   create: protectedProcedure
     .input(

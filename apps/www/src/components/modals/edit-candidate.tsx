@@ -93,7 +93,7 @@ export default function EditCandidate({
     election_id: election.id,
   });
   const positionsQuery = api.position.getDashboardData.useQuery({
-    election_id: election.id,
+    election_slug: election.slug,
   });
 
   const initialValues: EditCandidate = {
@@ -459,7 +459,7 @@ export default function EditCandidate({
                     leftSection={<IconUserSearch size="1rem" />}
                     disabled={editCandidateMutation.isPending}
                     {...form.getInputProps('position_id')}
-                    data={positionsQuery.data?.map((position) => ({
+                    data={positionsQuery.data?.positions.map((position) => ({
                       label: position.name,
                       value: position.id,
                     }))}

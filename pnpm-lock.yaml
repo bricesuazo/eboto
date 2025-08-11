@@ -321,6 +321,9 @@ importers:
       encoding:
         specifier: 0.1.13
         version: 0.1.13
+      eslint:
+        specifier: 'catalog:'
+        version: 9.33.0(jiti@2.4.2)
       import-in-the-middle:
         specifier: ^1.14.2
         version: 1.14.2
@@ -9807,7 +9810,7 @@ snapshots:
 
   '@types/minimatch@6.0.0':
     dependencies:
-      minimatch: 9.0.5
+      minimatch: 10.0.3
 
   '@types/ms@2.1.0': {}
 

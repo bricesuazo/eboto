@@ -434,7 +434,7 @@ export const candidateRouter = createTRPCRouter({
   getDashboardData: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_slug: z.string(),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -496,14 +496,14 @@ export const candidateRouter = createTRPCRouter({
       //   },
       // });
 
-      const { data: election } = await ctx.supabase
+      const { data: election, error: election_error } = await ctx.supabase
         .from('elections')
         .select()
-        .eq('id', input.election_id)
+        .eq('slug', input.election_slug)
         .is('deleted_at', null)
         .single();
 
-      if (!election) throw new TRPCError({ code: 'NOT_FOUND' });
+      if (election_error) throw new TRPCError({ code: 'NOT_FOUND' });
 
       const { data: commissioner } = await ctx.supabase
         .from('commissioners')
@@ -533,7 +533,7 @@ export const candidateRouter = createTRPCRouter({
           )
           `,
         )
-        .eq('election_id', input.election_id)
+        .eq('election_id', election.id)
         .is('deleted_at', null)
         .is('candidates.deleted_at', null)
         .is('candidates.platforms.deleted_at', null)
@@ -549,26 +549,29 @@ export const candidateRouter = createTRPCRouter({
           message: 'No positions found',
         });
 
-      return positionsWithCandidates.map((position) => ({
-        ...position,
-        candidates: position.candidates.map((candidate) => {
-          let image_url: string | null = null;
+      return {
+        election,
+        positionsWithCandidates: positionsWithCandidates.map((position) => ({
+          ...position,
+          candidates: position.candidates.map((candidate) => {
+            let image_url: string | null = null;
 
-          if (candidate.image_path) {
-            const { data: image } = ctx.supabase.storage
-              .from('candidates')
-              .getPublicUrl(candidate.image_path);
+            if (candidate.image_path) {
+              const { data: image } = ctx.supabase.storage
+                .from('candidates')
+                .getPublicUrl(candidate.image_path);
 
-            image_url = image.publicUrl;
-          }
+              image_url = image.publicUrl;
+            }
 
-          return {
-            ...candidate,
-            image_url,
-            partylist: candidate.partylist,
-          };
-        }),
-      }));
+            return {
+              ...candidate,
+              image_url,
+              partylist: candidate.partylist,
+            };
+          }),
+        })),
+      };
     }),
   getPageData: publicProcedure
     .input(

@@ -7,14 +7,27 @@ export const positionRouter = createTRPCRouter({
   getDashboardData: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_slug: z.string(),
       }),
     )
     .query(async ({ ctx, input }) => {
+      const { data: election, error: election_error } = await ctx.supabase
+        .from('elections')
+        .select('*')
+        .eq('slug', input.election_slug)
+        .is('deleted_at', null)
+        .single();
+
+      if (election_error)
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: election_error.message,
+        });
+
       const { data: positions, error: positions_error } = await ctx.supabase
         .from('positions')
         .select('*')
-        .eq('election_id', input.election_id)
+        .eq('election_id', election.id)
         .is('deleted_at', null)
         .order('order', { ascending: true });
 
@@ -24,7 +37,7 @@ export const positionRouter = createTRPCRouter({
           message: positions_error.message,
         });
 
-      return positions;
+      return { election: { id: election.id }, positions };
     }),
   create: protectedProcedure
     .input(

@@ -1,4 +1,4 @@
-import AccountPageLayoutClient from "~/components/layout/account";
+import AccountPageLayoutClient from '~/components/layout/account';
 
 export default function AccountPageLayout({
   children,

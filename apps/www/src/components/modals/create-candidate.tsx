@@ -52,8 +52,10 @@ import type { Database } from '../../../../../supabase/types';
 
 export default function CreateCandidate({
   position,
+  election_slug,
 }: {
   position: Database['public']['Tables']['positions']['Row'];
+  election_slug: string;
 }) {
   const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure(false);
@@ -61,7 +63,7 @@ export default function CreateCandidate({
     election_id: position.election_id,
   });
   const positionsQuery = api.position.getDashboardData.useQuery({
-    election_id: position.election_id,
+    election_slug,
   });
 
   const params = useParams();
@@ -282,7 +284,7 @@ export default function CreateCandidate({
                     label="Position"
                     leftSection={<IconUserSearch size="1rem" />}
                     {...form.getInputProps('position_id')}
-                    data={positionsQuery.data?.map((position) => ({
+                    data={positionsQuery.data?.positions.map((position) => ({
                       label: position.name,
                       value: position.id,
                     }))}

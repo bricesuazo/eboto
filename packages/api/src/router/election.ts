@@ -12,6 +12,7 @@ import {
 import { sendVoteCasted } from '@eboto/email/emails/vote-casted';
 
 import { env } from '../../../../apps/www/env';
+import type { Database } from '../../../../supabase/types';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
 
 export const electionRouter = createTRPCRouter({
@@ -948,7 +949,12 @@ export const electionRouter = createTRPCRouter({
 
       if (!election || !voters) throw new TRPCError({ code: 'NOT_FOUND' });
 
-      const fields = [];
+      const fields: (Omit<
+        Database['public']['Tables']['voter_fields']['Row'],
+        'deleted_at' | 'election_id'
+      > & {
+        options: { name: string; vote_count: number }[];
+      })[] = [];
 
       for (const field of election.voter_fields) {
         const fieldOptions = [] as {

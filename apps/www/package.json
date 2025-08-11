@@ -81,6 +81,7 @@
     "@types/react-dom": "catalog:",
     "@types/uuid": "catalog:",
     "encoding": "0.1.13",
+    "eslint": "catalog:",
     "import-in-the-middle": "^1.14.2",
     "postcss-preset-mantine": "1.18.0",
     "postcss-simple-vars": "7.0.1",
