@@ -45,7 +45,6 @@ export default function Page({
 
               {partylist.acronym !== 'IND' && (
                 <Flex gap="xs" justify="center">
-                  {/* TODO: fix this */}
                   <EditPartylist partylist={{ ...partylist, logo_url: null }} />
                   <DeletePartylist partylist={partylist} />
                 </Flex>

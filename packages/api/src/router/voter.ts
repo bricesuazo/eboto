@@ -105,6 +105,7 @@ export const voterRouter = createTRPCRouter({
               'Maximum number of voters reached. Maximum no. of voters is 500.',
           });
 
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (!is_free && isElectionExists.variant) {
           const no_of_voters = parseInt(
             (/[\d,]+/.exec(isElectionExists.variant.name)?.[0] ?? '').replace(
@@ -536,6 +537,7 @@ export const voterRouter = createTRPCRouter({
               'Maximum number of voters reached. Maximum no. of voters is 500.',
           });
 
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (!is_free && isElectionExists.variant) {
           const no_of_voters = parseInt(
             (/[\d,]+/.exec(isElectionExists.variant.name)?.[0] ?? '').replace(

@@ -1,23 +1,16 @@
-"use client";
+'use client';
 
-// import {
-//   Document,
-//   Page,
-//   Image as PdfImage,
-//   Text,
-//   View,
-// } from "@react-pdf/renderer";
 import {
   Document,
   Page,
   Image as PdfImage,
   Text,
   View,
-} from "@alexandernanberg/react-pdf-renderer";
+} from '@react-pdf/renderer';
 
-import { formatName } from "@eboto/constants";
+import { formatName } from '@eboto/constants';
 
-import type { GeneratedElectionResult } from "../../../../supabase/custom-types";
+import type { GeneratedElectionResult } from '../../../../supabase/custom-types';
 
 export default function GenerateResult({
   result,
@@ -25,21 +18,21 @@ export default function GenerateResult({
   result: GeneratedElectionResult;
 }) {
   const dateConfig: Intl.DateTimeFormatOptions = {
-    timeZone: "Asia/Manila",
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "numeric",
+    timeZone: 'Asia/Manila',
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
     hour12: true,
-    minute: "numeric",
+    minute: 'numeric',
   };
   return (
     <Document>
       <Page
         size="A4"
         style={{
-          fontFamily: "Helvetica",
+          fontFamily: 'Helvetica',
           padding: 40,
           fontSize: 12,
           paddingBottom: 80,
@@ -47,13 +40,13 @@ export default function GenerateResult({
       >
         <Text
           style={{
-            position: "absolute",
+            position: 'absolute',
             fontSize: 9,
             bottom: 32,
             left: 0,
             right: 0,
-            textAlign: "center",
-            color: "grey",
+            textAlign: 'center',
+            color: 'grey',
           }}
           render={({ pageNumber, totalPages }) =>
             `${pageNumber} / ${totalPages}`
@@ -62,26 +55,26 @@ export default function GenerateResult({
         />
         <View
           style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}
         >
-          <View style={{ display: "flex", alignItems: "center" }}>
+          <View style={{ display: 'flex', alignItems: 'center' }}>
             <PdfImage
               src="https://eboto.app/images/logo.png"
               style={{
                 width: 32,
                 height: 32,
                 aspectRatio: 1,
-                objectFit: "cover",
+                objectFit: 'cover',
               }}
             />
             <Text
               style={{
                 fontWeight: 20,
-                fontFamily: "Helvetica-Bold",
-                color: "#2f9e44",
+                fontFamily: 'Helvetica-Bold',
+                color: '#2f9e44',
               }}
             >
               eBoto
@@ -91,8 +84,8 @@ export default function GenerateResult({
         <View>
           <View
             style={{
-              flexDirection: "column",
-              textAlign: "center",
+              flexDirection: 'column',
+              textAlign: 'center',
               marginBottom: 20,
             }}
           >
@@ -100,18 +93,18 @@ export default function GenerateResult({
               <PdfImage
                 src={result.election.logo_url}
                 style={{
-                  display: "flex",
+                  display: 'flex',
                   width: 80,
                   height: 80,
-                  alignSelf: "center",
+                  alignSelf: 'center',
                   aspectRatio: 1,
-                  objectFit: "cover",
+                  objectFit: 'cover',
                 }}
               />
             )}
             <Text
               style={{
-                fontFamily: "Helvetica-Bold",
+                fontFamily: 'Helvetica-Bold',
                 fontSize: 18,
               }}
             >
@@ -120,29 +113,29 @@ export default function GenerateResult({
             <Text>https://eboto.app/{result.election.slug}</Text>
             <Text>
               {new Date(result.election.start_date).toLocaleString(
-                "en-US",
+                'en-US',
                 dateConfig,
               )}
-              {" - "}
+              {' - '}
               {new Date(result.election.end_date).toLocaleString(
-                "en-US",
+                'en-US',
                 dateConfig,
               )}
             </Text>
             <View style={{ marginVertical: 8 }}>
               <Text>Generated on:</Text>
 
-              <Text>{new Date().toLocaleString("en-US", dateConfig)}</Text>
+              <Text>{new Date().toLocaleString('en-US', dateConfig)}</Text>
             </View>
-            <Text style={{ fontFamily: "Helvetica-Bold" }}>Results</Text>
+            <Text style={{ fontFamily: 'Helvetica-Bold' }}>Results</Text>
           </View>
 
           <View
             style={{
-              display: "flex",
-              flexDirection: "column",
+              display: 'flex',
+              flexDirection: 'column',
               gap: 20,
-              alignItems: "center",
+              alignItems: 'center',
             }}
           >
             {result.election.positions.map((position) => (
@@ -150,8 +143,8 @@ export default function GenerateResult({
                 key={position.id}
                 style={{
                   width: 400,
-                  display: "flex",
-                  flexDirection: "column",
+                  display: 'flex',
+                  flexDirection: 'column',
                   gap: 8,
                 }}
               >
@@ -159,15 +152,15 @@ export default function GenerateResult({
                   <Text
                     style={{
                       fontSize: 14,
-                      textAlign: "center",
-                      fontFamily: "Helvetica-Bold",
+                      textAlign: 'center',
+                      fontFamily: 'Helvetica-Bold',
                     }}
                   >
                     {position.name}
                   </Text>
                   <Text
                     style={{
-                      textAlign: "center",
+                      textAlign: 'center',
                     }}
                   >
                     Abstain Count - {position.abstain_count}
@@ -183,7 +176,7 @@ export default function GenerateResult({
                         style={{
                           marginBottom: 4,
                           backgroundColor:
-                            idx === 0 ? "#90ee90" : "transparent",
+                            idx === 0 ? '#90ee90' : 'transparent',
                           padding: 8,
                         }}
                       >
@@ -196,12 +189,12 @@ export default function GenerateResult({
                         <Text>
                           <Text
                             style={{
-                              fontFamily: "Helvetica-Bold",
+                              fontFamily: 'Helvetica-Bold',
                             }}
                           >
                             {candidate.vote_count}
-                          </Text>{" "}
-                          vote{candidate.vote_count > 1 && "s"}
+                          </Text>{' '}
+                          vote{candidate.vote_count > 1 && 's'}
                         </Text>
                       </View>
                     ))}

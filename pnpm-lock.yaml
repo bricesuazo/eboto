@@ -119,9 +119,6 @@ importers:
 
   apps/www:
     dependencies:
-      '@alexandernanberg/react-pdf-renderer':
-        specifier: 4.0.0-canary-5
-        version: 4.0.0-canary-5(react@19.1.1)
       '@ctrl/react-adsense':
         specifier: 2.0.0
         version: 2.0.0
@@ -566,11 +563,6 @@ importers:
   tooling/tsconfig: {}
 
 packages:
-
-  '@alexandernanberg/react-pdf-renderer@4.0.0-canary-5':
-    resolution: {integrity: sha512-IV/EN2gUF37AimkfUsn89Jnsywyn+zKDbL1jcysPbAm4MmtKDtW0rv401hhoPufFSIClicvhzn80twZNe6ZzSg==}
-    peerDependencies:
-      react: ^19.0.0
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -2234,9 +2226,6 @@ packages:
 
   '@react-pdf/fns@3.1.2':
     resolution: {integrity: sha512-qTKGUf0iAMGg2+OsUcp9ffKnKi41RukM/zYIWMDJ4hRVYSr89Q7e3wSDW/Koqx3ea3Uy/z3h2y3wPX6Bdfxk6g==}
-
-  '@react-pdf/font@3.1.0':
-    resolution: {integrity: sha512-5q+r3DhZK41gVZp2Uw5M69FEVWeoasnM/HscW3kdpYnwjcB2bhCRWmBGCjm8fmuwQstwNPM1ZxyCWZRTRchwnA==}
 
   '@react-pdf/font@4.0.2':
     resolution: {integrity: sha512-/dAWu7Y2RD1RxarDZ9SkYPHgBYOhmcDnet4W/qN/m8k+A2Hr3ja54GymSR7GGxWBtxjKtNauVKrTa9LS1n8WUw==}
@@ -5816,9 +5805,6 @@ packages:
   sax@1.2.1:
     resolution: {integrity: sha512-8I2a3LovHTOpm7NV5yOyO8IHqgVsfK4+UuySrXU8YXkSRX7k6hCV9b3HrkKCr3nMpgj+0bmocaJJWpvp1oc7ZA==}
 
-  scheduler@0.25.0:
-    resolution: {integrity: sha512-xFVuu11jh+xcO7JOAGJNOXld8/TcEHK/4CituBUeUb5hqxJLj9YuemAEuvm9gQ/+pgXYfbQuqAkiYu+u7YEsNA==}
-
   scheduler@0.25.0-rc-603e6108-20241029:
     resolution: {integrity: sha512-pFwF6H1XrSdYYNLfOcGlM28/j8CGLu8IvdrxqhjWULe2bPcKiKW4CV+OWqR/9fT52mywx65l7ysNkjLKBda7eA==}
 
@@ -6615,20 +6601,6 @@ packages:
         optional: true
 
 snapshots:
-
-  '@alexandernanberg/react-pdf-renderer@4.0.0-canary-5(react@19.1.1)':
-    dependencies:
-      '@babel/runtime': 7.28.2
-      '@react-pdf/font': 3.1.0
-      '@react-pdf/layout': 4.4.0
-      '@react-pdf/pdfkit': 4.0.3
-      '@react-pdf/primitives': 4.1.1
-      '@react-pdf/render': 4.3.0
-      '@react-pdf/types': 2.9.0
-      events: 3.3.0
-      queue: 6.0.2
-      react: 19.1.1
-      scheduler: 0.25.0
 
   '@ampproject/remapping@2.3.0':
     dependencies:
@@ -8727,12 +8699,6 @@ snapshots:
       react: 19.1.1
 
   '@react-pdf/fns@3.1.2': {}
-
-  '@react-pdf/font@3.1.0':
-    dependencies:
-      '@react-pdf/types': 2.9.0
-      fontkit: 2.0.4
-      is-url: 1.2.4
 
   '@react-pdf/font@4.0.2':
     dependencies:
@@ -12972,8 +12938,6 @@ snapshots:
   safer-buffer@2.1.2: {}
 
   sax@1.2.1: {}
-
-  scheduler@0.25.0: {}
 
   scheduler@0.25.0-rc-603e6108-20241029: {}
 

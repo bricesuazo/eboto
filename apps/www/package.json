@@ -12,7 +12,6 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@alexandernanberg/react-pdf-renderer": "4.0.0-canary-5",
     "@ctrl/react-adsense": "2.0.0",
     "@eboto/api": "workspace:*",
     "@eboto/constants": "workspace:*",
