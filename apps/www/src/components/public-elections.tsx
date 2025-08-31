@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import { Carousel, CarouselSlide } from "@mantine/carousel";
+import Image from 'next/image';
+import Link from 'next/link';
+import { Carousel, CarouselSlide } from '@mantine/carousel';
 import {
   Box,
   Button,
@@ -13,14 +13,14 @@ import {
   Stack,
   Text,
   Title,
-} from "@mantine/core";
-import { IconArrowRight, IconFlag3 } from "@tabler/icons-react";
-import moment from "moment";
-import Balancer from "react-wrap-balancer";
+} from '@mantine/core';
+import { IconArrowRight, IconFlag3 } from '@tabler/icons-react';
+import moment from 'moment';
+import Balancer from 'react-wrap-balancer';
 
-import { parseHourTo12HourFormat } from "@eboto/constants";
+import { parseHourTo12HourFormat } from '@eboto/constants';
 
-import { api } from "~/trpc/client";
+import { api } from '~/trpc/client';
 
 export default function PublicElections() {
   const getAllPublicElectionsQuery =
@@ -49,12 +49,12 @@ export default function PublicElections() {
       ) : (
         <Carousel
           withIndicators
-          slideSize={{ base: "100%", xs: "50%", md: "33.333333%" }}
+          slideSize={{ base: '100%', xs: '50%', md: '33.333333%' }}
           height={400}
           slideGap="md"
           emblaOptions={{
             loop: true,
-            align:"start"
+            align: 'start',
           }}
         >
           {getAllPublicElectionsQuery.data.map((election) => (
@@ -66,13 +66,13 @@ export default function PublicElections() {
                       {election.logo_url ? (
                         <Image
                           src={election.logo_url}
-                          alt={election.name + " logo"}
+                          alt={election.name + ' logo'}
                           width={200}
                           height={200}
                           style={{
-                            objectFit: "cover",
-                            marginLeft: "auto",
-                            marginRight: "auto",
+                            objectFit: 'cover',
+                            marginLeft: 'auto',
+                            marginRight: 'auto',
                           }}
                           priority
                         />
@@ -100,27 +100,27 @@ export default function PublicElections() {
                       <Text size="sm" c="GrayText" ta="center">
                         {moment(election.start_date)
                           .local()
-                          .format("MMM DD, YYYY")}
-                        {" - "}
+                          .format('MMM DD, YYYY')}
+                        {' - '}
                         {moment(election.end_date)
                           .local()
-                          .format("MMM DD, YYYY")}
+                          .format('MMM DD, YYYY')}
                       </Text>
                       <Text size="sm" c="GrayText" ta="center">
                         {election.voting_hour_start === 0 &&
                         election.voting_hour_end === 24
-                          ? "Whole day"
+                          ? 'Whole day'
                           : parseHourTo12HourFormat(
                               election.voting_hour_start,
                             ) +
-                            " - " +
+                            ' - ' +
                             parseHourTo12HourFormat(election.voting_hour_end)}
                       </Text>
                     </Box>
                   </Stack>
                   <Button
                     component={Link}
-                    href={`/${election.slug}`}
+                    href={{ pathname: `/${election.slug}` }}
                     radius="xl"
                     variant="default"
                     rightSection={<IconArrowRight size="1rem" />}

@@ -12,12 +12,12 @@ import {
   Row,
   Section,
   Text,
-} from "@react-email/components";
-import { render } from "@react-email/render";
+} from '@react-email/components';
+import { render } from '@react-email/render';
 
-import { baseUrl } from "@eboto/constants";
+import { baseUrl } from '@eboto/constants';
 
-import { ses } from "../index";
+import { ses } from '../index';
 
 interface VoteCastedProps {
   email: string;
@@ -44,19 +44,19 @@ interface VoteCastedProps {
 
 export async function sendVoteCasted(props: VoteCastedProps) {
   await ses.sendEmail({
-    Source: "eBoto <contact@eboto.app>",
-    ReplyToAddresses: [process.env.EMAIL_FROM ?? ""],
+    Source: 'eBoto <contact@eboto.app>',
+    ReplyToAddresses: [process.env.EMAIL_FROM ?? ''],
     Destination: {
       ToAddresses: [props.email],
     },
     Message: {
       Subject: {
-        Charset: "UTF-8",
+        Charset: 'UTF-8',
         Data: `eResibo: You have successfully casted your vote in ${props.election.name}`,
       },
       Body: {
         Html: {
-          Charset: "UTF-8",
+          Charset: 'UTF-8',
           Data: await render(<VoteCasted {...props} />),
         },
       },
@@ -73,16 +73,16 @@ export default function VoteCasted(props: VoteCastedProps) {
       </Preview>
       <Body
         style={{
-          backgroundColor: "#ffffff",
+          backgroundColor: '#ffffff',
           fontFamily:
             '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
         }}
       >
         <Container
           style={{
-            margin: "0 auto",
-            padding: "20px 0 48px",
-            width: "560px",
+            margin: '0 auto',
+            padding: '20px 0 48px',
+            width: '560px',
           }}
         >
           <Img
@@ -98,26 +98,26 @@ export default function VoteCasted(props: VoteCastedProps) {
           />
           <Heading
             style={{
-              fontSize: "24px",
-              letterSpacing: "-0.5px",
-              lineHeight: "1.3",
-              fontWeight: "600",
-              color: "#484848",
-              padding: "17px 0 0",
+              fontSize: '24px',
+              letterSpacing: '-0.5px',
+              lineHeight: '1.3',
+              fontWeight: '600',
+              color: '#484848',
+              padding: '17px 0 0',
             }}
           >
-            eResibo: You have successfully casted your vote in{" "}
+            eResibo: You have successfully casted your vote in{' '}
             {props.election.name}
           </Heading>
           <Heading
             as="h4"
             style={{
-              fontSize: "20px",
-              letterSpacing: "-0.5px",
-              lineHeight: "1.3",
-              fontWeight: "600",
-              color: "#484848",
-              padding: "12px 0 0",
+              fontSize: '20px',
+              letterSpacing: '-0.5px',
+              lineHeight: '1.3',
+              fontWeight: '600',
+              color: '#484848',
+              padding: '12px 0 0',
             }}
           >
             Your votes:
@@ -139,20 +139,20 @@ export default function VoteCasted(props: VoteCastedProps) {
           </Row>
           <Section
             style={{
-              padding: "27px 0 27px",
+              padding: '27px 0 27px',
             }}
           >
             <Button
               style={{
-                padding: "11px 23px",
-                backgroundColor: "#5e6ad2",
-                borderRadius: "3px",
-                fontWeight: "600",
-                color: "#fff",
-                fontSize: "15px",
-                textDecoration: "none",
-                textAlign: "center" as const,
-                display: "block",
+                padding: '11px 23px',
+                backgroundColor: '#5e6ad2',
+                borderRadius: '3px',
+                fontWeight: '600',
+                color: '#fff',
+                fontSize: '15px',
+                textDecoration: 'none',
+                textAlign: 'center' as const,
+                display: 'block',
               }}
               href={`${baseUrl}/${props.election.slug}`}
             >
@@ -161,15 +161,15 @@ export default function VoteCasted(props: VoteCastedProps) {
           </Section>
           <Hr
             style={{
-              borderColor: "#dfe1e4",
-              margin: "42px 0 26px",
+              borderColor: '#dfe1e4',
+              margin: '42px 0 26px',
             }}
           />
           <Link
             href={baseUrl}
             style={{
-              fontSize: "14px",
-              color: "#b4becc",
+              fontSize: '14px',
+              color: '#b4becc',
             }}
           >
             eBoto

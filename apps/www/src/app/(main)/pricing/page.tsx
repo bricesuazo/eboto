@@ -1,8 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import type { Dispatch, SetStateAction } from 'react';
+import { useEffect, useState } from 'react';
+import type { Route } from 'next';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   Box,
   Button,
@@ -25,26 +27,26 @@ import {
   Text,
   ThemeIcon,
   Title,
-} from "@mantine/core";
-import { notifications } from "@mantine/notifications";
+} from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import {
   IconCircleCheck,
   IconCircleX,
   IconMail,
   IconPlus,
   IconRocket,
-} from "@tabler/icons-react";
-import Balancer from "react-wrap-balancer";
+} from '@tabler/icons-react';
+import Balancer from 'react-wrap-balancer';
 
-import { PRICING } from "@eboto/constants";
+import { PRICING } from '@eboto/constants';
 
-import KeyFeatures from "~/components/key-features";
-import ElectionBoost from "~/components/modals/election-boost";
-import { useStore } from "~/store";
-import classes from "~/styles/Pricing.module.css";
-import { api } from "~/trpc/client";
+import KeyFeatures from '~/components/key-features';
+import ElectionBoost from '~/components/modals/election-boost';
+import { useStore } from '~/store';
+import classes from '~/styles/Pricing.module.css';
+import { api } from '~/trpc/client';
 
-export const dynamic = "force-static";
+export const dynamic = 'force-static';
 
 export default function PricingPage() {
   const [value, setValue] = useState(0);
@@ -54,7 +56,7 @@ export default function PricingPage() {
       <ElectionBoost value={value} />
 
       <Container py="xl">
-        <MainPricing initialValue={value} setInitialValue={setValue} />
+        <MainPricing initialValue={value} setInitialValueAction={setValue} />
 
         <Box mt={128}>
           <Title ta="center">Compare</Title>
@@ -93,7 +95,7 @@ export default function PricingPage() {
                   <TableTd fw="bold">
                     {PRICING.find((item) => item.value === value)?.label ===
                     -1 ? (
-                      "Contact us"
+                      'Contact us'
                     ) : (
                       <NumberFormatter
                         prefix="₱ "
@@ -114,10 +116,10 @@ export default function PricingPage() {
                   <TableTd fw="bold">
                     {PRICING.find((item) => item.value === value)?.label ===
                     -1 ? (
-                      "Unlimited"
+                      'Unlimited'
                     ) : (
                       <>
-                        Up to{" "}
+                        Up to{' '}
                         <NumberFormatter
                           value={
                             PRICING.find((item) => item.value === value)?.label
@@ -136,7 +138,7 @@ export default function PricingPage() {
                       label={(value) =>
                         PRICING.find((item) => item.value === value)?.label ===
                         -1 ? (
-                          "Unlimited"
+                          'Unlimited'
                         ) : (
                           <NumberFormatter
                             value={
@@ -264,10 +266,10 @@ export default function PricingPage() {
 
 export function MainPricing({
   initialValue,
-  setInitialValue,
+  setInitialValueAction,
 }: {
   initialValue?: number;
-  setInitialValue?: (value: number) => void;
+  setInitialValueAction?: Dispatch<SetStateAction<number>>;
 }) {
   const [value, setValue] = useState(initialValue ?? 0);
   const router = useRouter();
@@ -279,13 +281,13 @@ export function MainPricing({
       if (!url) return;
 
       setIsRedirecting(true);
-      router.push(url);
+      router.push(url as Route);
     },
     onError: (error) => {
       notifications.show({
-        title: "Error",
+        title: 'Error',
         message: error.message,
-        color: "red",
+        color: 'red',
         autoClose: 3000,
       });
     },
@@ -296,10 +298,10 @@ export function MainPricing({
   }, [initialValue]);
 
   useEffect(() => {
-    if (!setInitialValue) return;
+    if (!setInitialValueAction) return;
 
-    setInitialValue(value);
-  }, [value, setInitialValue]);
+    setInitialValueAction(value);
+  }, [value, setInitialValueAction]);
   return (
     <>
       <Title ta="center">Pricing</Title>
@@ -311,10 +313,10 @@ export function MainPricing({
         <Flex
           mt="xl"
           gap="md"
-          align={{ md: "center" }}
-          direction={{ base: "column", md: "row" }}
+          align={{ md: 'center' }}
+          direction={{ base: 'column', md: 'row' }}
         >
-          <Box mih={{ base: "20rem", sm: "28rem" }} className={classes.card}>
+          <Box mih={{ base: '20rem', sm: '28rem' }} className={classes.card}>
             <Box>
               <Title order={2}>Free</Title>
               <Text>For a lifetime</Text>
@@ -352,14 +354,14 @@ export function MainPricing({
             </Button>
           </Box>
           <Box
-            mih={{ base: "20rem", sm: "32rem" }}
-            className={classes.card + " " + classes.boost}
+            mih={{ base: '20rem', sm: '32rem' }}
+            className={classes.card + ' ' + classes.boost}
           >
             <Box>
               <Title order={2}>Boost</Title>
               <Title>
                 {PRICING.find((item) => item.value === value)?.label === -1 ? (
-                  "Contact us"
+                  'Contact us'
                 ) : (
                   <NumberFormatter
                     prefix="₱ "
@@ -375,15 +377,15 @@ export function MainPricing({
               </Title>
               <Text>Per Election</Text>
               <Text>
-                with up to{" "}
+                with up to{' '}
                 {PRICING.find((item) => item.value === value)?.label === -1 ? (
-                  "Unlimited"
+                  'Unlimited'
                 ) : (
                   <NumberFormatter
                     value={PRICING.find((item) => item.value === value)?.label}
                     thousandSeparator
                   />
-                )}{" "}
+                )}{' '}
                 voters
               </Text>
               <Slider
@@ -394,7 +396,7 @@ export function MainPricing({
                 step={20}
                 label={(value) =>
                   PRICING.find((item) => item.value === value)?.label === -1 ? (
-                    "Unlimited"
+                    'Unlimited'
                   ) : (
                     <NumberFormatter
                       value={
@@ -413,7 +415,7 @@ export function MainPricing({
             </Box>
             <GetBoostButton value={value} />
           </Box>
-          <Box mih={{ base: "20rem", sm: "28rem" }} className={classes.card}>
+          <Box mih={{ base: '20rem', sm: '28rem' }} className={classes.card}>
             <Box>
               <Title order={2}>Custom</Title>
               <Text>Want us to host your election locally?</Text>
@@ -451,7 +453,7 @@ export function MainPricing({
           </Box>
         </Flex>
         <Flex
-          direction={{ base: "column", md: "row" }}
+          direction={{ base: 'column', md: 'row' }}
           justify="space-between"
           className={classes.card}
         >
@@ -488,26 +490,26 @@ export function MainPricing({
             </List>
           </Box>
 
-          <Flex style={{ flex: 4 }} justify={{ md: "end" }}>
+          <Flex style={{ flex: 4 }} justify={{ md: 'end' }}>
             {userQuery.data ? (
               <Button
-                w={{ base: "100%", md: "auto" }}
+                w={{ base: '100%', md: 'auto' }}
                 size="lg"
                 radius="xl"
-                style={{ marginBottom: "auto" }}
+                style={{ marginBottom: 'auto' }}
                 loading={plusMutation.isPending}
                 onClick={() => plusMutation.mutate({ quantity: 1 })}
                 rightSection={!isRedirecting ? <IconPlus /> : undefined}
                 disabled={isRedirecting}
               >
-                {isRedirecting ? "Redirecting..." : "Get Plus"}
+                {isRedirecting ? 'Redirecting...' : 'Get Plus'}
               </Button>
             ) : (
               <Button
-                w={{ base: "100%", md: "auto" }}
+                w={{ base: '100%', md: 'auto' }}
                 size="lg"
                 radius="xl"
-                style={{ marginBottom: "auto" }}
+                style={{ marginBottom: 'auto' }}
                 rightSection={<IconPlus />}
                 component={Link}
                 href="/sign-in"

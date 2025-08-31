@@ -1,6 +1,6 @@
 {
   "name": "eboto",
-  "packageManager": "pnpm@10.10.0",
+  "packageManager": "pnpm@10.15.0",
   "private": true,
   "scripts": {
     "build": "turbo run build",
@@ -27,9 +27,9 @@
   "prettier": "@eboto/prettier-config",
   "devDependencies": {
     "@eboto/prettier-config": "workspace:*",
-    "@turbo/gen": "2.5.5",
+    "@turbo/gen": "2.5.6",
     "prettier": "catalog:",
-    "turbo": "2.5.5",
+    "turbo": "2.5.6",
     "typescript": "catalog:"
   }
 }

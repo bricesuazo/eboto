@@ -1013,7 +1013,7 @@ export default function EditCandidate({
                   leftSection={<IconExternalLink size="1.25rem" />}
                   variant="outline"
                   component={Link}
-                  href={`/${election.slug}/${candidate.slug}`}
+                  href={{ pathname: `/${election.slug}/${candidate.slug}` }}
                   target="_blank"
                 >
                   Visit

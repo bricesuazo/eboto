@@ -48,10 +48,7 @@ export const t = initTRPC.context<Context>().create({
     };
   },
 });
-/**
- * Export reusable router and procedure helpers
- * that can be used throughout the router
- */
+
 export const createTRPCRouter = t.router;
 export const publicProcedure = t.procedure;
 

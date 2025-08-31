@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Adsense } from "@ctrl/react-adsense";
+import { useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Adsense } from '@ctrl/react-adsense';
 import {
   ActionIcon,
   Anchor,
@@ -23,41 +23,41 @@ import {
   TextInput,
   Title,
   UnstyledButton,
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useDisclosure, useLocalStorage } from "@mantine/hooks";
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useDisclosure, useLocalStorage } from '@mantine/hooks';
 import {
   IconClock,
   IconFingerprint,
   IconInfoCircle,
   IconUser,
-} from "@tabler/icons-react";
-import moment from "moment";
-import Balancer from "react-wrap-balancer";
+} from '@tabler/icons-react';
+import moment from 'moment';
+import ReactPlayer from 'react-player';
+import Balancer from 'react-wrap-balancer';
 
-import type { RouterOutputs } from "@eboto/api";
+import type { RouterOutputs } from '@eboto/api';
 import {
   formatName,
   isElectionEnded,
   isElectionOngoing,
   parseHourTo12HourFormat,
-} from "@eboto/constants";
+} from '@eboto/constants';
 
-import ElectionShowQRCode from "~/components/modals/election-show-qr-code";
-import ScrollToTopButton from "~/components/scroll-to-top";
-import classes from "~/styles/Election.module.css";
-import { api } from "~/trpc/client";
-import AdModal from "../ad-modal";
-import MessageCommissioner from "../modals/message-commissioner";
-import MyMessagesElection from "../my-messages-election";
-import ReactPlayer from "react-player";
+import ElectionShowQRCode from '~/components/modals/election-show-qr-code';
+import ScrollToTopButton from '~/components/scroll-to-top';
+import classes from '~/styles/Election.module.css';
+import { api } from '~/trpc/client';
+import AdModal from '../ad-modal';
+import MessageCommissioner from '../modals/message-commissioner';
+import MyMessagesElection from '../my-messages-election';
 
 export default function ElectionPage({
   data,
   election_slug,
   is_free,
 }: {
-  data: RouterOutputs["election"]["getElectionPage"];
+  data: RouterOutputs['election']['getElectionPage'];
   election_slug: string;
   is_free: boolean;
 }) {
@@ -84,7 +84,7 @@ export default function ElectionPage({
     initialValues: Object.fromEntries(
       election.voter_fields.map((field) => [
         field.id,
-        myVoterData?.field?.[field.id] ?? "",
+        myVoterData?.field?.[field.id] ?? '',
       ]),
     ),
     validate: (values) => {
@@ -128,7 +128,7 @@ export default function ElectionPage({
           onSubmit={form.onSubmit((value) =>
             addVoterFieldToVoterMutation.mutate({
               election_id: election.id,
-              voter_id: myVoterData?.id ?? "",
+              voter_id: myVoterData?.id ?? '',
               fields: Object.entries(value).map(([key, value]) => ({
                 id: key,
                 value,
@@ -207,7 +207,7 @@ export default function ElectionPage({
                   height={128}
                   priority
                   sizes="100%"
-                  style={{ objectFit: "cover" }}
+                  style={{ objectFit: 'cover' }}
                 />
               ) : (
                 <IconFingerprint size={128} style={{ padding: 8 }} />
@@ -220,25 +220,25 @@ export default function ElectionPage({
             </Title>
             <Text ta="center">
               <Balancer>
-                {moment(election.start_date).local().format("MMMM DD, YYYY")}
-                {" - "}
-                {moment(election.end_date).local().format("MMMM DD, YYYY")}
+                {moment(election.start_date).local().format('MMMM DD, YYYY')}
+                {' - '}
+                {moment(election.end_date).local().format('MMMM DD, YYYY')}
               </Balancer>
             </Text>
             <Text ta="center">
-              Voting hours:{" "}
+              Voting hours:{' '}
               {election.voting_hour_start === 0 &&
               election.voting_hour_end === 24
-                ? "Whole day"
+                ? 'Whole day'
                 : parseHourTo12HourFormat(election.voting_hour_start) +
-                  " - " +
+                  ' - ' +
                   parseHourTo12HourFormat(election.voting_hour_end)}
             </Text>
             <Flex align="center" justify="center" gap="xs">
               <Text ta="center">
-                Publicity:{" "}
+                Publicity:{' '}
                 {election.publicity.charAt(0) +
-                  election.publicity.slice(1).toLowerCase()}{" "}
+                  election.publicity.slice(1).toLowerCase()}{' '}
               </Text>
               <HoverCard width={180} shadow="md">
                 <HoverCardTarget>
@@ -257,12 +257,12 @@ export default function ElectionPage({
                     <Balancer>
                       {(() => {
                         switch (election.publicity) {
-                          case "PRIVATE":
-                            return "Only commissioners can see this election";
-                          case "VOTER":
-                            return "Only voters and commissioners can see this election";
-                          case "PUBLIC":
-                            return "Everyone can see this election";
+                          case 'PRIVATE':
+                            return 'Only commissioners can see this election';
+                          case 'VOTER':
+                            return 'Only voters and commissioners can see this election';
+                          case 'PUBLIC':
+                            return 'Everyone can see this election';
                           default:
                             return null;
                         }
@@ -282,13 +282,13 @@ export default function ElectionPage({
                   <Anchor
                     onClick={spoilerOpened ? setSpoilerClose : setSpoilerOpen}
                   >
-                    {spoilerOpened ? "Show less" : "Show more"}
+                    {spoilerOpened ? 'Show less' : 'Show more'}
                   </Anchor>
                 )}
               </Box>
             )}
             <Flex justify="center" gap="sm" mt={8} align="center">
-              {(election.publicity === "PUBLIC" ||
+              {(election.publicity === 'PUBLIC' ||
                 hasVoted ||
                 isElectionEnded({ election })) && (
                 <Button
@@ -296,7 +296,7 @@ export default function ElectionPage({
                   size="md"
                   component={Link}
                   leftSection={<IconClock />}
-                  href={`/${election.slug}/realtime`}
+                  href={{ pathname: `/${election.slug}/realtime` }}
                 >
                   Realtime count
                 </Button>
@@ -306,7 +306,7 @@ export default function ElectionPage({
                   {election.voter_fields.length > 0 &&
                   !myVoterData?.field &&
                   Object.values(myVoterData?.field ?? {}).every(
-                    (value) => value.trim() === "",
+                    (value) => value.trim() === '',
                   ) ? (
                     <Button
                       onClick={open}
@@ -322,7 +322,7 @@ export default function ElectionPage({
                       size="md"
                       leftSection={<IconFingerprint />}
                       component={Link}
-                      href={`/${election.slug}/vote`}
+                      href={{ pathname: `/${election.slug}/vote` }}
                     >
                       Vote now!
                     </Button>
@@ -351,8 +351,8 @@ export default function ElectionPage({
           {is_free && (
             <Adsense
               style={{
-                display: "block",
-                width: "100%",
+                display: 'block',
+                width: '100%',
               }}
               client="ca-pub-8867310433048493"
               slot="6949415137"
@@ -378,17 +378,17 @@ export default function ElectionPage({
                     gap="xs"
                     py="xs"
                     style={{
-                      position: "sticky",
+                      position: 'sticky',
                       top: 60,
                       zIndex: 1,
-                      backgroundColor: "var(--mantine-color-body)",
+                      backgroundColor: 'var(--mantine-color-body)',
                     }}
                   >
                     <Title
                       order={2}
                       tw="bold"
                       ta="center"
-                      style={{ lineClamp: 2, wordBreak: "break-word" }}
+                      style={{ lineClamp: 2, wordBreak: 'break-word' }}
                     >
                       <Balancer>{position.name}</Balancer>
                     </Title>
@@ -432,8 +432,10 @@ export default function ElectionPage({
                           <UnstyledButton
                             key={candidate.id}
                             component={Link}
-                            href={`/${election.slug}/${candidate.slug}`}
-                            className={classes["candidate-card"]}
+                            href={{
+                              pathname: `/${election.slug}/${candidate.slug}`,
+                            }}
+                            className={classes['candidate-card']}
                             h="100%"
                           >
                             <Center
@@ -441,8 +443,8 @@ export default function ElectionPage({
                               style={{
                                 aspectRatio: 1,
                                 flex: 1,
-                                height: "100%",
-                                width: "100%",
+                                height: '100%',
+                                width: '100%',
                               }}
                             >
                               {candidate.image_url ? (
@@ -451,7 +453,7 @@ export default function ElectionPage({
                                   alt="Candidate's image"
                                   fill
                                   sizes="100%"
-                                  style={{ objectFit: "cover" }}
+                                  style={{ objectFit: 'cover' }}
                                   priority
                                 />
                               ) : (

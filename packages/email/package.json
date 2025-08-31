@@ -18,10 +18,10 @@
     }
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "3.864.0",
+    "@aws-sdk/client-ses": "3.879.0",
     "@eboto/constants": "workspace:*",
-    "@react-email/components": "0.5.0",
-    "@react-email/render": "1.2.0",
+    "@react-email/components": "0.5.1",
+    "@react-email/render": "1.2.1",
     "react": "catalog:",
     "react-email": "4.2.8"
   },

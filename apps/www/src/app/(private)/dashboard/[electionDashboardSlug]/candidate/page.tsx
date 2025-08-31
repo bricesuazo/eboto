@@ -1,6 +1,7 @@
 'use client';
 
 import { use, useState } from 'react';
+import type { Route } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -88,7 +89,7 @@ export default function Page({
             No positions yet. Please add{' '}
             <Anchor
               component={Link}
-              href={`/dashboard/${electionDashboardSlug}/position`}
+              href={`/dashboard/${electionDashboardSlug}/position` as Route}
             >
               positions
             </Anchor>{' '}

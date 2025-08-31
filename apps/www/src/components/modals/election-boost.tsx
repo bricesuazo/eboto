@@ -1,7 +1,8 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from 'react';
+import type { Route } from 'next';
+import { useRouter } from 'next/navigation';
 import {
   Alert,
   Box,
@@ -14,16 +15,16 @@ import {
   Stack,
   Text,
   Title,
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { notifications } from "@mantine/notifications";
-import { IconAlertCircle, IconRocket } from "@tabler/icons-react";
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { notifications } from '@mantine/notifications';
+import { IconAlertCircle, IconRocket } from '@tabler/icons-react';
 
-import { PRICING } from "@eboto/constants";
+import { PRICING } from '@eboto/constants';
 
-import { useStore } from "~/store";
-import { api } from "~/trpc/client";
-import KeyFeatures from "../key-features";
+import { useStore } from '~/store';
+import { api } from '~/trpc/client';
+import KeyFeatures from '../key-features';
 
 export default function ElectionBoost({
   value: initialValue,
@@ -43,13 +44,13 @@ export default function ElectionBoost({
       if (!url) return;
 
       setIsRedirecting(true);
-      router.push(url);
+      router.push(url as Route);
     },
     onError: (error) => {
       notifications.show({
-        title: "Error",
+        title: 'Error',
         message: error.message,
-        color: "red",
+        color: 'red',
         autoClose: 3000,
       });
     },
@@ -65,12 +66,12 @@ export default function ElectionBoost({
     validate: {
       election_id: (value) => {
         if (!value?.length) {
-          return "Election is required";
+          return 'Election is required';
         }
       },
       price: (value) => {
         if (value < 0 || value > 100) {
-          return "Invalid price";
+          return 'Invalid price';
         }
       },
     },
@@ -79,11 +80,11 @@ export default function ElectionBoost({
   useEffect(() => {
     if (!store.electionBoostElectionId) return;
 
-    form.setFieldValue("election_id", store.electionBoostElectionId);
+    form.setFieldValue('election_id', store.electionBoostElectionId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [store.electionBoostElectionId]);
   useEffect(() => {
-    form.setFieldValue("price", ((initialValue ?? 0) / 20) * 25);
+    form.setFieldValue('price', ((initialValue ?? 0) / 20) * 25);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialValue]);
 
@@ -130,7 +131,7 @@ export default function ElectionBoost({
             />
           </Title>
           <Text>
-            with up to{" "}
+            with up to{' '}
             <NumberFormatter
               value={
                 PRICING_WITHOUT_UNLI.find(
@@ -138,13 +139,13 @@ export default function ElectionBoost({
                 )?.label
               }
               thousandSeparator
-            />{" "}
+            />{' '}
             voters
           </Text>
         </Flex>
 
         <Slider
-          px={{ xs: "xl" }}
+          px={{ xs: 'xl' }}
           mt="xl"
           mb="md"
           thumbSize={20}
@@ -160,7 +161,7 @@ export default function ElectionBoost({
           marks={PRICING_WITHOUT_UNLI.map((item) => ({
             value: item.value,
           }))}
-          {...form.getInputProps("price")}
+          {...form.getInputProps('price')}
         />
 
         <Box w="fit-content" mb="xl" mx="auto">
@@ -181,7 +182,7 @@ export default function ElectionBoost({
               })) ?? []
             }
             disabled={electionsQuery.isLoading || boostMutation.isPending}
-            {...form.getInputProps("election_id")}
+            {...form.getInputProps('election_id')}
           />
 
           {boostMutation.isError && (
@@ -205,7 +206,7 @@ export default function ElectionBoost({
                 !isRedirecting ? <IconRocket size="1.75rem" /> : undefined
               }
             >
-              {isRedirecting ? "Redirecting..." : "Get Boost!"}
+              {isRedirecting ? 'Redirecting...' : 'Get Boost!'}
             </Button>
             <Button
               variant="subtle"

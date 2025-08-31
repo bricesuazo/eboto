@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import type { Route } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -455,7 +456,9 @@ export default function DashboardElection({
                   w="100%"
                   rightSection={<IconExternalLink size="1rem" />}
                   component={Link}
-                  href={`/${params.electionDashboardSlug?.toString()}`}
+                  href={{
+                    pathname: `/${params.electionDashboardSlug?.toString()}`,
+                  }}
                   target="_blank"
                 >
                   Visit election
@@ -471,9 +474,11 @@ export default function DashboardElection({
                       }
                       fw="normal"
                       fz="sm"
-                      href={`/dashboard/${params.electionDashboardSlug?.toString()}/${
-                        item.path ?? ''
-                      }`}
+                      href={{
+                        pathname: `/dashboard/${params.electionDashboardSlug?.toString()}/${
+                          item.path ?? ''
+                        }`,
+                      }}
                       onClick={() => {
                         if (store.dashboardMenu)
                           store.toggleDashboardMenu(false);
@@ -603,7 +608,9 @@ export default function DashboardElection({
               onChange={(value) => {
                 setTab(value ?? '');
                 router.push(
-                  value === 'voters' ? pathname : `${pathname}?t=admin`,
+                  (value === 'voters'
+                    ? pathname
+                    : `${pathname}?t=admin`) as Route,
                   {
                     scroll: false,
                   },

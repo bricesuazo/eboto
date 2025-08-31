@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Body,
   Button,
@@ -13,12 +12,12 @@ import {
   Row,
   Section,
   Text,
-} from "@react-email/components";
-import { render } from "@react-email/render";
+} from '@react-email/components';
+import { render } from '@react-email/render';
 
-import { baseUrl } from "@eboto/constants";
+import { baseUrl } from '@eboto/constants';
 
-import { ses } from "../index";
+import { ses } from '../index';
 
 interface ElectionResultProps {
   emails: string[];
@@ -45,19 +44,19 @@ interface ElectionResultProps {
 
 export async function sendElectionResult(props: ElectionResultProps) {
   await ses.sendEmail({
-    Source: "eBoto <contact@eboto.app>",
+    Source: 'eBoto <contact@eboto.app>',
     ReplyToAddresses: process.env.EMAIL_FROM ? [process.env.EMAIL_FROM] : [],
     Destination: {
       BccAddresses: props.emails,
     },
     Message: {
       Subject: {
-        Charset: "UTF-8",
+        Charset: 'UTF-8',
         Data: `eBoto: Election Result for ${props.election.name}`,
       },
       Body: {
         Html: {
-          Charset: "UTF-8",
+          Charset: 'UTF-8',
           Data: await render(<ElectionResult {...props} />),
         },
       },
@@ -72,16 +71,16 @@ export default function ElectionResult(props: ElectionResultProps) {
       <Preview>eBoto: Election Result for {props.election.name}</Preview>
       <Body
         style={{
-          backgroundColor: "#ffffff",
+          backgroundColor: '#ffffff',
           fontFamily:
             '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
         }}
       >
         <Container
           style={{
-            margin: "0 auto",
-            padding: "20px 0 48px",
-            width: "560px",
+            margin: '0 auto',
+            padding: '20px 0 48px',
+            width: '560px',
           }}
         >
           <Img
@@ -97,12 +96,12 @@ export default function ElectionResult(props: ElectionResultProps) {
           />
           <Heading
             style={{
-              fontSize: "24px",
-              letterSpacing: "-0.5px",
-              lineHeight: "1.3",
-              fontWeight: "600",
-              color: "#484848",
-              padding: "17px 0 0",
+              fontSize: '24px',
+              letterSpacing: '-0.5px',
+              lineHeight: '1.3',
+              fontWeight: '600',
+              color: '#484848',
+              padding: '17px 0 0',
             }}
           >
             Election Result for {props.election.name}
@@ -110,12 +109,12 @@ export default function ElectionResult(props: ElectionResultProps) {
           <Heading
             as="h4"
             style={{
-              fontSize: "20px",
-              letterSpacing: "-0.5px",
-              lineHeight: "1.3",
-              fontWeight: "600",
-              color: "#484848",
-              padding: "12px 0 0",
+              fontSize: '20px',
+              letterSpacing: '-0.5px',
+              lineHeight: '1.3',
+              fontWeight: '600',
+              color: '#484848',
+              padding: '12px 0 0',
             }}
           >
             Result
@@ -127,8 +126,8 @@ export default function ElectionResult(props: ElectionResultProps) {
 
                 {position.candidates.map((candidate) => (
                   <Text key={candidate.id}>
-                    {candidate.first_name}{" "}
-                    {candidate.middle_name ? candidate.middle_name + " " : ""}{" "}
+                    {candidate.first_name}{' '}
+                    {candidate.middle_name ? candidate.middle_name + ' ' : ''}{' '}
                     {candidate.last_name} - ({candidate.vote_count} votes)
                   </Text>
                 ))}
@@ -138,20 +137,20 @@ export default function ElectionResult(props: ElectionResultProps) {
           </Row>
           <Section
             style={{
-              padding: "27px 0 27px",
+              padding: '27px 0 27px',
             }}
           >
             <Button
               style={{
-                padding: "11px 23px",
-                backgroundColor: "#5e6ad2",
-                borderRadius: "3px",
-                fontWeight: "600",
-                color: "#fff",
-                fontSize: "15px",
-                textDecoration: "none",
-                textAlign: "center" as const,
-                display: "block",
+                padding: '11px 23px',
+                backgroundColor: '#5e6ad2',
+                borderRadius: '3px',
+                fontWeight: '600',
+                color: '#fff',
+                fontSize: '15px',
+                textDecoration: 'none',
+                textAlign: 'center' as const,
+                display: 'block',
               }}
               href={`${baseUrl}/${props.election.slug}`}
             >
@@ -160,15 +159,15 @@ export default function ElectionResult(props: ElectionResultProps) {
           </Section>
           <Hr
             style={{
-              borderColor: "#dfe1e4",
-              margin: "42px 0 26px",
+              borderColor: '#dfe1e4',
+              margin: '42px 0 26px',
             }}
           />
           <Link
             href={baseUrl}
             style={{
-              fontSize: "14px",
-              color: "#b4becc",
+              fontSize: '14px',
+              color: '#b4becc',
             }}
           >
             eBoto

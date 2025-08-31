@@ -1,14 +1,14 @@
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
 import {
   AppShell,
   AppShellFooter,
   AppShellHeader,
   AppShellMain,
-} from "@mantine/core";
+} from '@mantine/core';
 
-import { api } from "~/trpc/server";
-import Footer from "../footer";
-import Header from "../header";
+import { api } from '~/trpc/server';
+import Footer from '../footer';
+import Header from '../header';
 
 export default async function Dashboard(props: React.PropsWithChildren) {
   const user = await api.auth.getUser();

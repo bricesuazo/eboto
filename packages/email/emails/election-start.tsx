@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Body,
   Button,
@@ -12,12 +11,12 @@ import {
   Preview,
   Section,
   Text,
-} from "@react-email/components";
-import { render } from "@react-email/render";
+} from '@react-email/components';
+import { render } from '@react-email/render';
 
-import { baseUrl } from "@eboto/constants";
+import { baseUrl } from '@eboto/constants';
 
-import { ses } from "../index";
+import { ses } from '../index';
 
 interface ElectionStartProps {
   isForCommissioner: boolean;
@@ -33,19 +32,19 @@ interface ElectionStartProps {
 
 export async function sendElectionStart(props: ElectionStartProps) {
   await ses.sendEmail({
-    Source: "eBoto <contact@eboto.app>",
+    Source: 'eBoto <contact@eboto.app>',
     ReplyToAddresses: process.env.EMAIL_FROM ? [process.env.EMAIL_FROM] : [],
     Destination: {
       BccAddresses: props.emails,
     },
     Message: {
       Subject: {
-        Charset: "UTF-8",
+        Charset: 'UTF-8',
         Data: `eBoto: Election has started for ${props.election.name}`,
       },
       Body: {
         Html: {
-          Charset: "UTF-8",
+          Charset: 'UTF-8',
           Data: await render(<ElectionStart {...props} />),
         },
       },
@@ -60,15 +59,15 @@ export default function ElectionStart(props: ElectionStartProps) {
       <Preview>eBoto: Election Result for {props.election.name}</Preview>
       <Body
         style={{
-          backgroundColor: "#ffffff",
+          backgroundColor: '#ffffff',
           fontFamily:
             '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
         }}
       >
         <Container
           style={{
-            margin: "0 auto",
-            padding: "20px 48px 0 48px",
+            margin: '0 auto',
+            padding: '20px 48px 0 48px',
           }}
         >
           <Img
@@ -77,7 +76,7 @@ export default function ElectionStart(props: ElectionStartProps) {
             height="42"
             alt="eBoto"
             style={{
-              aspectRatio: "1 / 1",
+              aspectRatio: '1 / 1',
               borderRadius: 21,
               width: 42,
               height: 42,
@@ -86,12 +85,12 @@ export default function ElectionStart(props: ElectionStartProps) {
           <Heading
             as="h1"
             style={{
-              fontSize: "24px",
-              letterSpacing: "-0.5px",
-              lineHeight: "1.3",
-              fontWeight: "600",
-              color: "#484848",
-              padding: "17px 0 0",
+              fontSize: '24px',
+              letterSpacing: '-0.5px',
+              lineHeight: '1.3',
+              fontWeight: '600',
+              color: '#484848',
+              padding: '17px 0 0',
             }}
           >
             Election has started for {props.election.name}
@@ -113,20 +112,20 @@ export default function ElectionStart(props: ElectionStartProps) {
           <Section
             className="py-5"
             style={{
-              padding: "0 20px",
+              padding: '0 20px',
             }}
           >
             <Button
               style={{
-                padding: "11px 23px",
-                backgroundColor: "#5e6ad2",
-                borderRadius: "3px",
-                fontWeight: "600",
-                color: "#fff",
-                fontSize: "15px",
-                textDecoration: "none",
-                textAlign: "center",
-                display: "block",
+                padding: '11px 23px',
+                backgroundColor: '#5e6ad2',
+                borderRadius: '3px',
+                fontWeight: '600',
+                color: '#fff',
+                fontSize: '15px',
+                textDecoration: 'none',
+                textAlign: 'center',
+                display: 'block',
               }}
               href={`${baseUrl}/${props.election.slug}`}
             >
@@ -135,15 +134,15 @@ export default function ElectionStart(props: ElectionStartProps) {
           </Section>
           <Hr
             style={{
-              borderColor: "#dfe1e4",
-              margin: "42px 0 26px",
+              borderColor: '#dfe1e4',
+              margin: '42px 0 26px',
             }}
           />
           <Link
             href={baseUrl}
             style={{
-              fontSize: "14px",
-              color: "#b4becc",
+              fontSize: '14px',
+              color: '#b4becc',
             }}
           >
             eBoto

@@ -1,10 +1,10 @@
-import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
-import { createServerClient } from "@supabase/ssr";
-import { env } from "env";
+import type { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
+import { env } from 'env';
 
-import type { Database } from "../../../../supabase/types";
+import type { Database } from '../../../../supabase/types';
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -42,9 +42,9 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user && !request.nextUrl.pathname.startsWith("/")) {
+  if (!user && !request.nextUrl.pathname.startsWith('/')) {
     const url = request.nextUrl.clone();
-    url.pathname = "/";
+    url.pathname = '/';
     return NextResponse.redirect(url);
   }
 

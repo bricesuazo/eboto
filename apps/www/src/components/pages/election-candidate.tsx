@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import { Adsense } from "@ctrl/react-adsense";
+import Image from 'next/image';
+import Link from 'next/link';
+import { Adsense } from '@ctrl/react-adsense';
 import {
   Anchor,
   Box,
@@ -14,17 +14,17 @@ import {
   Stack,
   Text,
   Title,
-} from "@mantine/core";
-import { IconUser } from "@tabler/icons-react";
-import moment from "moment";
+} from '@mantine/core';
+import { IconUser } from '@tabler/icons-react';
+import moment from 'moment';
 
-import type { RouterOutputs } from "@eboto/api";
-import { formatName } from "@eboto/constants";
+import type { RouterOutputs } from '@eboto/api';
+import { formatName } from '@eboto/constants';
 
-import { api } from "~/trpc/client";
-import AdModal from "../ad-modal";
-import MessageCommissioner from "../modals/message-commissioner";
-import MyMessagesElection from "../my-messages-election";
+import { api } from '~/trpc/client';
+import AdModal from '../ad-modal';
+import MessageCommissioner from '../modals/message-commissioner';
+import MyMessagesElection from '../my-messages-election';
 
 export default function ElectionCandidate({
   data,
@@ -32,7 +32,7 @@ export default function ElectionCandidate({
   election_slug,
   is_free,
 }: {
-  data: RouterOutputs["candidate"]["getPageData"];
+  data: RouterOutputs['candidate']['getPageData'];
   candidate_slug: string;
   election_slug: string;
   is_free: boolean;
@@ -59,7 +59,7 @@ export default function ElectionCandidate({
           <Breadcrumbs w="100%">
             <Anchor
               component={Link}
-              href={`/${election.slug}`}
+              href={{ pathname: `/${election.slug}` }}
               truncate
               maw={300}
             >
@@ -70,12 +70,12 @@ export default function ElectionCandidate({
               {formatName(election.name_arrangement, candidate)}
             </Text>
           </Breadcrumbs>
-          <Flex gap="md" direction={{ base: "column", xs: "row" }}>
-            <Box pos={{ base: "initial", xs: "sticky" }} top={76} h="100%">
+          <Flex gap="md" direction={{ base: 'column', xs: 'row' }}>
+            <Box pos={{ base: 'initial', xs: 'sticky' }} top={76} h="100%">
               <Box
                 pos="relative"
-                w={{ base: "100%", xs: 200, sm: 280 }}
-                style={{ aspectRatio: "1/1" }}
+                w={{ base: '100%', xs: 200, sm: 280 }}
+                style={{ aspectRatio: '1/1' }}
               >
                 {candidate.image_url ? (
                   <Image
@@ -84,7 +84,7 @@ export default function ElectionCandidate({
                     fill
                     sizes="100%"
                     priority
-                    style={{ objectFit: "cover" }}
+                    style={{ objectFit: 'cover' }}
                   />
                 ) : (
                   <IconUser width="100%" height="100%" stroke={1.5} />
@@ -105,8 +105,8 @@ export default function ElectionCandidate({
               {is_free && (
                 <Adsense
                   style={{
-                    display: "block",
-                    width: "100%",
+                    display: 'block',
+                    width: '100%',
                   }}
                   client="ca-pub-8867310433048493"
                   slot="6949415137"
@@ -118,7 +118,7 @@ export default function ElectionCandidate({
               {candidate.platforms.length ? (
                 <Stack mt="xl" gap="xs">
                   <Title order={3}>
-                    Platform{candidate.platforms.length > 1 ? "s" : ""}
+                    Platform{candidate.platforms.length > 1 ? 's' : ''}
                   </Title>
                   <List withPadding listStyleType="none">
                     {candidate.platforms.map((platform) => (
@@ -142,15 +142,15 @@ export default function ElectionCandidate({
                       <Title order={5}>
                         Achievement
                         {candidate.credential.achievements.length > 1
-                          ? "s"
-                          : ""}
+                          ? 's'
+                          : ''}
                       </Title>
                       <List withPadding listStyleType="none">
                         {candidate.credential.achievements.map(
                           (achievement) => (
                             <ListItem key={achievement.id}>
                               {achievement.name} - (
-                              {moment(achievement.year).format("YYYY")})
+                              {moment(achievement.year).format('YYYY')})
                             </ListItem>
                           ),
                         )}
@@ -163,17 +163,17 @@ export default function ElectionCandidate({
                       <Title order={5}>
                         Affiliation
                         {candidate.credential.affiliations.length > 1
-                          ? "s"
-                          : ""}
+                          ? 's'
+                          : ''}
                       </Title>
                       <List withPadding listStyleType="none">
                         {candidate.credential.affiliations.map(
                           (affiliation) => (
                             <ListItem key={affiliation.id}>
-                              {affiliation.org_name} -{" "}
+                              {affiliation.org_name} -{' '}
                               {affiliation.org_position} (
-                              {moment(affiliation.start_year).format("YYYY")}-
-                              {moment(affiliation.end_year).format("YYYY")})
+                              {moment(affiliation.start_year).format('YYYY')}-
+                              {moment(affiliation.end_year).format('YYYY')})
                             </ListItem>
                           ),
                         )}
@@ -186,12 +186,12 @@ export default function ElectionCandidate({
                       <Title order={5}>
                         Seminar
                         {candidate.credential.events_attended.length > 1
-                          ? "s"
-                          : ""}
+                          ? 's'
+                          : ''}
                         /Event
                         {candidate.credential.events_attended.length > 1
-                          ? "s"
-                          : ""}{" "}
+                          ? 's'
+                          : ''}{' '}
                         Attended
                       </Title>
 
@@ -200,7 +200,7 @@ export default function ElectionCandidate({
                           (event_attended) => (
                             <ListItem key={event_attended.id}>
                               {event_attended.name} (
-                              {moment(event_attended.year).format("YYYY")})
+                              {moment(event_attended.year).format('YYYY')})
                             </ListItem>
                           ),
                         )}

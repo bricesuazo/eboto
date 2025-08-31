@@ -1,6 +1,7 @@
 'use client';
 
 import { use } from 'react';
+import type { Route } from 'next';
 import Link from 'next/link';
 import {
   ActionIcon,
@@ -190,7 +191,7 @@ export default function Page({
               <ActionIcon
                 variant="subtle"
                 component={Link}
-                href={`/${election.slug}`}
+                href={`/${election.slug}` as Route}
                 target="_blank"
                 radius="50%"
                 size="lg"
@@ -262,7 +263,7 @@ export default function Page({
             <UnstyledButton
               key={stat.id}
               component={Link}
-              href={`/dashboard/${election.slug}/${stat.href}`}
+              href={`/dashboard/${election.slug}/${stat.href}` as Route}
               style={{
                 display: 'flex',
                 alignItems: 'center',

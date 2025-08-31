@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { Adsense } from "@ctrl/react-adsense";
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Adsense } from '@ctrl/react-adsense';
 import {
   Box,
   Button,
@@ -23,24 +23,24 @@ import {
   TableTr,
   Text,
   Title,
-} from "@mantine/core";
-import { IconFingerprint } from "@tabler/icons-react";
-import moment from "moment";
-import Balancer from "react-wrap-balancer";
+} from '@mantine/core';
+import { IconFingerprint } from '@tabler/icons-react';
+import moment from 'moment';
+import Balancer from 'react-wrap-balancer';
 
-import type { RouterOutputs } from "@eboto/api";
+import type { RouterOutputs } from '@eboto/api';
 import {
   isElectionEnded,
   isElectionOngoing,
   parseHourTo12HourFormat,
-} from "@eboto/constants";
+} from '@eboto/constants';
 
-import ScrollToTopButton from "~/components/scroll-to-top";
-import { api } from "~/trpc/client";
-import type { Database } from "../../../../../supabase/types";
-import AdModal from "../ad-modal";
-import MessageCommissioner from "../modals/message-commissioner";
-import MyMessagesElection from "../my-messages-election";
+import ScrollToTopButton from '~/components/scroll-to-top';
+import { api } from '~/trpc/client';
+import type { Database } from '../../../../../supabase/types';
+import AdModal from '../ad-modal';
+import MessageCommissioner from '../modals/message-commissioner';
+import MyMessagesElection from '../my-messages-election';
 
 const date = new Date();
 const rounded_off_date = new Date();
@@ -52,10 +52,10 @@ export default function Realtime({
   election,
   isVoterCanMessage,
 }: {
-  positions: RouterOutputs["election"]["getElectionRealtime"];
-  election: Database["public"]["Tables"]["elections"]["Row"] & {
+  positions: RouterOutputs['election']['getElectionRealtime'];
+  election: Database['public']['Tables']['elections']['Row'] & {
     logo_url: string | null;
-    voter_fields: Database["public"]["Tables"]["voter_fields"]["Row"][];
+    voter_fields: Database['public']['Tables']['voter_fields']['Row'][];
     is_free: boolean;
   };
   isVoterCanMessage: boolean;
@@ -116,7 +116,7 @@ export default function Realtime({
                       width={92}
                       height={92}
                       priority
-                      style={{ objectFit: "cover" }}
+                      style={{ objectFit: 'cover' }}
                     />
                   ) : (
                     <IconFingerprint size={92} style={{ padding: 8 }} />
@@ -126,17 +126,17 @@ export default function Realtime({
                   {election.name} (@{election.slug})
                 </Title>
                 <Text ta="center">
-                  {moment(election.start_date).format("MMMM D, YYYY")}
-                  {" - "}
-                  {moment(election.end_date).format("MMMM D, YYYY")}
+                  {moment(election.start_date).format('MMMM D, YYYY')}
+                  {' - '}
+                  {moment(election.end_date).format('MMMM D, YYYY')}
                 </Text>
                 <Text ta="center">
-                  Voting hours:{" "}
+                  Voting hours:{' '}
                   {election.voting_hour_start === 0 &&
                   election.voting_hour_end === 24
-                    ? "Whole day"
+                    ? 'Whole day'
                     : parseHourTo12HourFormat(election.voting_hour_start) +
-                      " - " +
+                      ' - ' +
                       parseHourTo12HourFormat(election.voting_hour_end)}
                 </Text>
 
@@ -147,12 +147,12 @@ export default function Realtime({
                 ) : (
                   <Text ta="center" size="xs" c="dimmed">
                     <Balancer>
-                      Realtime result as of{" "}
+                      Realtime result as of{' '}
                       {isElectionOngoing({ election })
-                        ? moment(time).format("MMMM Do YYYY, h:mm:ss A")
+                        ? moment(time).format('MMMM Do YYYY, h:mm:ss A')
                         : moment(new Date().toDateString())
-                            .add(election.voting_hour_end, "hours")
-                            .format("MMMM Do YYYY, h:mm:ss A")}
+                            .add(election.voting_hour_end, 'hours')
+                            .format('MMMM Do YYYY, h:mm:ss A')}
                     </Balancer>
                   </Text>
                 )}
@@ -160,7 +160,7 @@ export default function Realtime({
               <Stack align="center">
                 <Button
                   component={Link}
-                  href={`/${election.slug}`}
+                  href={{ pathname: `/${election.slug}` }}
                   radius="xl"
                   variant="outline"
                   size="md"
@@ -176,8 +176,8 @@ export default function Realtime({
           {election.is_free && (
             <Adsense
               style={{
-                display: "block",
-                width: "100%",
+                display: 'block',
+                width: '100%',
               }}
               client="ca-pub-8867310433048493"
               slot="6949415137"
@@ -194,8 +194,8 @@ export default function Realtime({
                 sm: 3,
               }}
               spacing={{
-                base: "lg",
-                xs: "md",
+                base: 'lg',
+                xs: 'md',
               }}
             >
               {positionsQuery.data.positions.map((position) => (
@@ -272,8 +272,8 @@ export default function Realtime({
             {election.is_free && (
               <Adsense
                 style={{
-                  display: "block",
-                  width: "100%",
+                  display: 'block',
+                  width: '100%',
                 }}
                 client="ca-pub-8867310433048493"
                 slot="6949415137"
@@ -301,7 +301,7 @@ export default function Realtime({
                       md: 2,
                     }}
                     style={{
-                      alignItems: "start",
+                      alignItems: 'start',
                     }}
                   >
                     {getVoterFieldsStatsInRealtimeQuery.data.map(

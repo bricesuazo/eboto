@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { Anchor, Text, Title } from "@mantine/core";
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { Anchor, Text, Title } from '@mantine/core';
 
-import RegisterForm from "~/components/register-form";
+import RegisterForm from '~/components/register-form';
 
 export const metadata: Metadata = {
-  title: "Create an account",
+  title: 'Create an account',
 };
 
 export default async function RegisterPage({
@@ -24,11 +24,11 @@ export default async function RegisterPage({
       </Title>
 
       <Text c="dimmed" size="sm" ta="center" mt={5} mb={30}>
-        Already have an account?{" "}
+        Already have an account?{' '}
         <Anchor
           size="sm"
           component={Link}
-          href={"/sign-in" + (next ? `?next=${next}` : "")}
+          href={{ pathname: '/sign-in', query: { next } }}
           truncate
         >
           Sign in

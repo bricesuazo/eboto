@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   Box,
   Button,
@@ -19,8 +19,8 @@ import {
   InputPlaceholder,
   Stack,
   useCombobox,
-} from "@mantine/core";
-import { IconUser } from "@tabler/icons-react";
+} from '@mantine/core';
+import { IconUser } from '@tabler/icons-react';
 
 export default function AccountPageLayoutClient({
   children,
@@ -34,8 +34,8 @@ export default function AccountPageLayoutClient({
   const options = [
     {
       id: 0,
-      label: "Account",
-      value: "",
+      label: 'Account',
+      value: '',
       icon: IconUser,
     },
     // {
@@ -49,16 +49,18 @@ export default function AccountPageLayoutClient({
   return (
     <Container h="100%" p="md">
       <Flex h="100%" gap="md">
-        <Stack gap={4} w={{ base: "12rem", sm: "16rem" }} visibleFrom="xs">
+        <Stack gap={4} w={{ base: '12rem', sm: '16rem' }} visibleFrom="xs">
           {options.map((option) => (
             <Button
               key={option.id}
               component={Link}
-              href={`/account/${option.value}`}
+              href={{
+                pathname: `/account/${option.value}`,
+              }}
               variant={
-                pathname.split("/account")[1] === option.value
-                  ? "light"
-                  : "subtle"
+                pathname.split('/account')[1] === option.value
+                  ? 'light'
+                  : 'subtle'
               }
               size="md"
               justify="left"
@@ -89,7 +91,7 @@ export default function AccountPageLayoutClient({
                 hiddenFrom="xs"
               >
                 {options.find(
-                  (option) => option.value === pathname.split("/account")[1],
+                  (option) => option.value === pathname.split('/account')[1],
                 )?.label ?? <InputPlaceholder>Select page</InputPlaceholder>}
               </InputBase>
             </ComboboxTarget>
@@ -103,14 +105,14 @@ export default function AccountPageLayoutClient({
                     active={
                       options.find(
                         (option) =>
-                          option.value === pathname.split("/account")[1],
+                          option.value === pathname.split('/account')[1],
                       )?.value === option.value
                     }
                   >
                     <Group gap="xs">
                       {options.find(
                         (option) =>
-                          option.value === pathname.split("/account")[1],
+                          option.value === pathname.split('/account')[1],
                       )?.value === option.value && <CheckIcon size={12} />}
                       <span>{option.label}</span>
                     </Group>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import type { Route } from 'next';
 import { useRouter } from 'next/navigation';
 import type { MantineStyleProp } from '@mantine/core';
 import {
@@ -66,7 +67,7 @@ export default function CreateElection({
       if (!url) return;
 
       setIsRedirecting(true);
-      router.push(url);
+      router.push(url as Route);
     },
     onError: (error) => {
       notifications.show({

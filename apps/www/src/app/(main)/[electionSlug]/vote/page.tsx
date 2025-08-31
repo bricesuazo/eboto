@@ -1,15 +1,15 @@
-import type { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
-import { Box, Container, Stack, Text, Title } from "@mantine/core";
-import moment from "moment";
-import Balancer from "react-wrap-balancer";
+import type { Metadata } from 'next';
+import { notFound, redirect } from 'next/navigation';
+import { Box, Container, Stack, Text, Title } from '@mantine/core';
+import moment from 'moment';
+import Balancer from 'react-wrap-balancer';
 
-import { isElectionOngoing, parseHourTo12HourFormat } from "@eboto/constants";
+import { isElectionOngoing, parseHourTo12HourFormat } from '@eboto/constants';
 
-import VoteForm from "~/components/vote-form";
-import { createClient as createClientAdmin } from "~/supabase/admin";
-import { createClient as createClientServer } from "~/supabase/server";
-import { api } from "~/trpc/server";
+import VoteForm from '~/components/vote-form';
+import { createClient as createClientAdmin } from '~/supabase/admin';
+import { createClient as createClientServer } from '~/supabase/server';
+import { api } from '~/trpc/server';
 
 export async function generateMetadata({
   params,
@@ -20,10 +20,10 @@ export async function generateMetadata({
 
   const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin
-    .from("elections")
-    .select("name")
-    .eq("slug", electionSlug)
-    .is("deleted_at", null)
+    .from('elections')
+    .select('name')
+    .eq('slug', electionSlug)
+    .is('deleted_at', null)
     .single();
 
   if (!election) return notFound();
@@ -49,10 +49,10 @@ export default async function VotePage({
 
   const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin
-    .from("elections")
+    .from('elections')
     .select()
-    .eq("slug", electionSlug)
-    .is("deleted_at", null)
+    .eq('slug', electionSlug)
+    .is('deleted_at', null)
     .single();
 
   if (!election) notFound();
@@ -60,18 +60,18 @@ export default async function VotePage({
   if (!isElectionOngoing({ election })) redirect(`/${election.slug}`);
 
   const { data: voter } = await supabaseAdmin
-    .from("voters")
-    .select("id, field")
-    .eq("email", user.email ?? "")
-    .eq("election_id", election.id)
-    .is("deleted_at", null)
+    .from('voters')
+    .select('id, field')
+    .eq('email', user.email ?? '')
+    .eq('election_id', election.id)
+    .is('deleted_at', null)
     .single();
 
   const { data: voter_fields } = await supabaseAdmin
-    .from("voter_fields")
+    .from('voter_fields')
     .select()
-    .eq("election_id", election.id)
-    .is("deleted_at", null);
+    .eq('election_id', election.id)
+    .is('deleted_at', null);
 
   if (
     voter === null ||
@@ -79,45 +79,45 @@ export default async function VotePage({
     (voter_fields.length > 0 && !voter.field) ||
     (voter.field &&
       Object.values(voter.field as Record<string, string>).some(
-        (value) => !value || value.trim() === "",
+        (value) => !value || value.trim() === '',
       ))
   )
     redirect(`/${election.slug}`);
 
   const { data: votes, error: votes_error } = await supabaseAdmin
-    .from("votes")
+    .from('votes')
     .select()
-    .eq("voter_id", voter.id)
-    .eq("election_id", election.id);
+    .eq('voter_id', voter.id)
+    .eq('election_id', election.id);
 
   if (votes_error) notFound();
 
   if (votes.length) redirect(`/${election.slug}/realtime`);
 
-  if (election.publicity === "PRIVATE") {
+  if (election.publicity === 'PRIVATE') {
     const { data: commissioner } = await supabaseAdmin
-      .from("commissioners")
+      .from('commissioners')
       .select()
-      .eq("user_id", user.id)
-      .eq("election_id", election.id)
-      .is("deleted_at", null)
+      .eq('user_id', user.id)
+      .eq('election_id', election.id)
+      .is('deleted_at', null)
       .single();
 
     if (!commissioner) notFound();
   } else {
     const { data: votes } = await supabaseAdmin
-      .from("votes")
+      .from('votes')
       .select()
-      .eq("voter_id", voter.id)
-      .eq("election_id", election.id);
+      .eq('voter_id', voter.id)
+      .eq('election_id', election.id);
 
     if (!votes) notFound();
 
     const { data: commissioner } = await supabaseAdmin
-      .from("commissioners")
+      .from('commissioners')
       .select()
-      .eq("user_id", user.id)
-      .eq("election_id", election.id)
+      .eq('user_id', user.id)
+      .eq('election_id', election.id)
       .single();
 
     if (votes.length > 0 && commissioner)
@@ -138,17 +138,17 @@ export default async function VotePage({
           </Text>
           <Text ta="center">
             <Balancer>
-              {moment(election.start_date).local().format("MMMM DD, YYYY")}
-              {" - "}
-              {moment(election.end_date).local().format("MMMM DD, YYYY")}
+              {moment(election.start_date).local().format('MMMM DD, YYYY')}
+              {' - '}
+              {moment(election.end_date).local().format('MMMM DD, YYYY')}
             </Balancer>
           </Text>
           <Text ta="center">
-            Voting hours:{" "}
+            Voting hours:{' '}
             {election.voting_hour_start === 0 && election.voting_hour_end === 24
-              ? "Whole day"
+              ? 'Whole day'
               : parseHourTo12HourFormat(election.voting_hour_start) +
-                " - " +
+                ' - ' +
                 parseHourTo12HourFormat(election.voting_hour_end)}
           </Text>
         </Box>

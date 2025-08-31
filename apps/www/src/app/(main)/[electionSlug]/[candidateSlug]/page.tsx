@@ -1,13 +1,13 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { env } from "env";
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { env } from 'env';
 
-import { formatName } from "@eboto/constants";
+import { formatName } from '@eboto/constants';
 
-import ElectionCandidate from "~/components/pages/election-candidate";
-import { createClient as createClientAdmin } from "~/supabase/admin";
-import { createClient as createClientServer } from "~/supabase/server";
-import { api } from "~/trpc/server";
+import ElectionCandidate from '~/components/pages/election-candidate';
+import { createClient as createClientAdmin } from '~/supabase/admin';
+import { createClient as createClientServer } from '~/supabase/server';
+import { api } from '~/trpc/server';
 
 export async function generateMetadata({
   params,
@@ -23,51 +23,51 @@ export async function generateMetadata({
 
   const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin
-    .from("elections")
+    .from('elections')
     .select()
-    .eq("slug", electionSlug)
-    .is("deleted_at", null)
+    .eq('slug', electionSlug)
+    .is('deleted_at', null)
     .single();
 
   if (!election) notFound();
 
-  if (election.publicity === "PRIVATE") {
+  if (election.publicity === 'PRIVATE') {
     if (!user) notFound();
 
     const { data: commissioners } = await supabaseAdmin
-      .from("commissioners")
+      .from('commissioners')
       .select()
-      .eq("election_id", election.id)
-      .eq("user_id", user.id)
-      .is("deleted_at", null);
+      .eq('election_id', election.id)
+      .eq('user_id', user.id)
+      .is('deleted_at', null);
 
     if (commissioners?.length === 0) notFound();
-  } else if (election.publicity === "VOTER") {
+  } else if (election.publicity === 'VOTER') {
     if (!user) notFound();
 
     const { data: commissioners } = await supabaseAdmin
-      .from("commissioners")
+      .from('commissioners')
       .select()
-      .eq("election_id", election.id)
-      .eq("user_id", user.id)
-      .is("deleted_at", null);
+      .eq('election_id', election.id)
+      .eq('user_id', user.id)
+      .is('deleted_at', null);
 
     const { data: voters } = await supabaseAdmin
-      .from("voters")
+      .from('voters')
       .select()
-      .eq("election_id", election.id)
-      .eq("email", user.email ?? "")
-      .is("deleted_at", null);
+      .eq('election_id', election.id)
+      .eq('email', user.email ?? '')
+      .is('deleted_at', null);
 
     if (commissioners?.length === 0 && voters?.length === 0) notFound();
   }
 
   const { data: candidate } = await supabaseAdmin
-    .from("candidates")
-    .select("*, position: positions(name)")
-    .eq("election_id", election.id)
-    .eq("slug", candidateSlug)
-    .is("deleted_at", null)
+    .from('candidates')
+    .select('*, position: positions(name)')
+    .eq('election_id', election.id)
+    .eq('slug', candidateSlug)
+    .is('deleted_at', null)
     .single();
 
   if (!candidate?.position) return notFound();
@@ -76,7 +76,7 @@ export async function generateMetadata({
 
   if (candidate.image_path) {
     const { data: image } = supabaseServer.storage
-      .from("candidates")
+      .from('candidates')
       .getPublicUrl(candidate.image_path);
 
     image_url = image.publicUrl;
@@ -93,20 +93,20 @@ export async function generateMetadata({
       images: [
         {
           url: `${
-            env.NODE_ENV === "production"
-              ? "https://eboto.app"
-              : "http://localhost:3000"
+            env.NODE_ENV === 'production'
+              ? 'https://eboto.app'
+              : 'http://localhost:3000'
           }/api/og?type=candidate&candidate_name=${encodeURIComponent(
             candidate.first_name,
           )}${
             (candidate.middle_name &&
               `%20${encodeURIComponent(candidate.middle_name)}`) ??
-            ""
+            ''
           }%20${encodeURIComponent(
             candidate.last_name,
           )}&candidate_position=${encodeURIComponent(
             candidate.position.name,
-          )}&candidate_img=${encodeURIComponent(image_url ?? "")}`,
+          )}&candidate_img=${encodeURIComponent(image_url ?? '')}`,
           width: 1200,
           height: 630,
           alt: election.name,
