@@ -46,7 +46,9 @@ export default function EditVoter({
 
   const initialValues: EditVoter = {
     email: voter.email,
-    ...voter.field,
+    voter_fields: Object.fromEntries(
+      voter_fields.map((field) => [field.id, voter.field?.[field.id] ?? '']),
+    ),
   };
 
   const form = useForm<EditVoter>({
@@ -94,7 +96,7 @@ export default function EditVoter({
               email: values.email,
               voter_fields: voter_fields.map((field) => ({
                 id: field.id,
-                value: values[field.id],
+                value: values.voter_fields[field.id],
               })),
             });
           })}
@@ -125,7 +127,7 @@ export default function EditVoter({
                   placeholder={`Enter voter's ${field.name}`}
                   leftSection={<IconLetterCase size="1rem" />}
                   label={field.name}
-                  {...form.getInputProps(field.id)}
+                  {...form.getInputProps(`voter_fields.${field.id}`)}
                   disabled={editVoterMutation.isPending}
                 />
               ))}

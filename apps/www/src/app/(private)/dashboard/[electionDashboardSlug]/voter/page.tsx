@@ -247,6 +247,7 @@ export default function Page({
           <Group gap="xs" grow preventGrowOverflow={false}>
             <CreateVoter
               election_id={getVotersByElectionSlugQeury.data.election.id}
+              voter_fields={votersQuery.data?.election.voter_fields ?? []}
             />
             <UploadBulkVoter
               election_id={getVotersByElectionSlugQeury.data.election.id}

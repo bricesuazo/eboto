@@ -13,6 +13,12 @@ export const voterRouter = createTRPCRouter({
       z.object({
         email: z.string().min(1),
         election_id: z.string().min(1),
+        voter_fields: z.array(
+          z.object({
+            id: z.string(),
+            value: z.string(),
+          }),
+        ),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -128,6 +134,13 @@ export const voterRouter = createTRPCRouter({
       await ctx.supabase.from('voters').insert({
         email: input.email,
         election_id: isElectionExists.id,
+        field: input.voter_fields.reduce(
+          (acc, field) => {
+            acc[field.id] = field.value;
+            return acc;
+          },
+          {} as Record<string, string>,
+        ),
       });
     }),
   getAllVoterField: protectedProcedure

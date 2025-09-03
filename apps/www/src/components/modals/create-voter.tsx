@@ -17,6 +17,7 @@ import {
   IconAlertCircle,
   IconAt,
   IconCheck,
+  IconLetterCase,
   IconUserPlus,
 } from '@tabler/icons-react';
 import { zod4Resolver } from 'mantine-form-zod-resolver';
@@ -24,8 +25,15 @@ import { zod4Resolver } from 'mantine-form-zod-resolver';
 import type { CreateVoter } from '~/schema/voter';
 import { CreateVoterSchema } from '~/schema/voter';
 import { api } from '~/trpc/client';
+import type { Database } from '../../../../../supabase/types';
 
-export default function CreateVoter({ election_id }: { election_id: string }) {
+export default function CreateVoter({
+  election_id,
+  voter_fields,
+}: {
+  election_id: string;
+  voter_fields: Database['public']['Tables']['voter_fields']['Row'][];
+}) {
   const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -53,6 +61,9 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
   const form = useForm<CreateVoter>({
     initialValues: {
       email: '',
+      voter_fields: Object.fromEntries(
+        voter_fields.map((field) => [field.id, '']),
+      ),
     },
     validate: zod4Resolver(CreateVoterSchema),
   });
@@ -91,6 +102,12 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
             createSingleVoterMutation.mutate({
               election_id,
               email: value.email,
+              voter_fields: Object.entries(value.voter_fields).map(
+                ([key, value]) => ({
+                  id: key,
+                  value,
+                }),
+              ),
             });
           })}
         >
@@ -104,6 +121,17 @@ export default function CreateVoter({ election_id }: { election_id: string }) {
               {...form.getInputProps('email')}
               leftSection={<IconAt size="1rem" />}
             />
+
+            {voter_fields.map((field) => (
+              <TextInput
+                key={field.id}
+                placeholder={`Enter voter's ${field.name.toLowerCase()}`}
+                leftSection={<IconLetterCase size="1rem" />}
+                label={field.name}
+                {...form.getInputProps(`voter_fields.${field.id}`)}
+                disabled={createSingleVoterMutation.isPending}
+              />
+            ))}
 
             {createSingleVoterMutation.isError && (
               <Alert
