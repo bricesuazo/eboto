@@ -1,4 +1,5 @@
 import { TRPCError } from '@trpc/server';
+import { v4 } from 'uuid';
 import { z } from 'zod/v4';
 
 import { isElectionEnded, isElectionOngoing } from '@eboto/constants';
@@ -239,16 +240,13 @@ export const voterRouter = createTRPCRouter({
           message: 'Field cannot be added',
         });
 
-      await ctx.supabase
-        .from('voter_fields')
-        .delete()
-        .eq('election_id', input.election_id);
-
-      await ctx.supabase.from('voter_fields').insert(
+      await ctx.supabase.from('voter_fields').upsert(
         input.fields.map((field) => ({
+          id: field.type === 'fromDb' ? field.id : v4(),
           name: field.name,
           election_id: input.election_id,
         })),
+        { ignoreDuplicates: true, onConflict: 'id' },
       );
     }),
   deleteSingleVoterField: protectedProcedure
@@ -438,6 +436,7 @@ export const voterRouter = createTRPCRouter({
         voters: z.array(
           z.object({
             email: z.string().min(1),
+            field: z.record(z.string(), z.string()),
           }),
         ),
       }),
@@ -577,6 +576,7 @@ export const voterRouter = createTRPCRouter({
             uniqueVoters.map((voter) => ({
               election_id: isElectionExists.id,
               email: voter.email,
+              field: voter.field,
             })),
           )
           .select();

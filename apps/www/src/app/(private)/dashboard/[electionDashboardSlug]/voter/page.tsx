@@ -251,6 +251,7 @@ export default function Page({
             />
             <UploadBulkVoter
               election_id={getVotersByElectionSlugQeury.data.election.id}
+              voter_fields={votersQuery.data?.election.voter_fields ?? []}
             />
           </Group>
           {!votersQuery.isLoading && votersQuery.data?.election && (

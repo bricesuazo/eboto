@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import {
   ActionIcon,
   Alert,
@@ -11,25 +11,25 @@ import {
   Stack,
   Text,
   TextInput,
-} from "@mantine/core";
-import type { UseFormReturnType } from "@mantine/form";
-import { useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
+} from '@mantine/core';
+import type { UseFormReturnType } from '@mantine/form';
+import { useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconCheck,
   IconTrash,
   IconUsersGroup,
-} from "@tabler/icons-react";
+} from '@tabler/icons-react';
 
-import { api } from "~/trpc/client";
-import type { Database } from "../../../../../supabase/types";
+import { api } from '~/trpc/client';
+import type { Database } from '../../../../../supabase/types';
 
 interface Field {
   id: string;
   name: string;
-  type: "fromDb" | "fromInput";
+  type: 'fromDb' | 'fromInput';
 }
 interface FormType {
   field: Field[];
@@ -39,19 +39,15 @@ export default function UpdateVoterField({
   election,
   isDisabled,
 }: {
-  election: Database["public"]["Tables"]["elections"]["Row"] & {
-    voter_fields: Database["public"]["Tables"]["voter_fields"]["Row"][];
+  election: Database['public']['Tables']['elections']['Row'] & {
+    voter_fields: Database['public']['Tables']['voter_fields']['Row'][];
   };
   isDisabled: boolean;
 }) {
   const context = api.useUtils();
   const getAllVoterFieldQuery = api.voter.getAllVoterField.useQuery(
-    {
-      election_id: election.id,
-    },
-    {
-      initialData: election.voter_fields,
-    },
+    { election_id: election.id },
+    { initialData: election.voter_fields },
   );
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -60,8 +56,8 @@ export default function UpdateVoterField({
       await getAllVoterFieldQuery.refetch();
       await context.election.getVotersByElectionSlug.invalidate();
       notifications.show({
-        title: ``,
-        message: "Voter field updated successfully",
+        title: `${getAllVoterFieldQuery.data.length} voter field updated!`,
+        message: 'Voter field updated successfully',
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
@@ -69,9 +65,9 @@ export default function UpdateVoterField({
     },
     onError: (error) => {
       notifications.show({
-        title: "Error",
+        title: 'Error',
         message: error.message,
-        color: "red",
+        color: 'red',
         autoClose: 3000,
       });
     },
@@ -80,20 +76,20 @@ export default function UpdateVoterField({
   const form = useForm<FormType>({
     initialValues: {
       field: getAllVoterFieldQuery.data.map((field) => ({
-        type: "fromDb",
+        type: 'fromDb',
         id: field.id,
         name: field.name,
       })),
     },
     validate: {
       field: (value) => {
-        if (value.length === 0) return "At least one field is required";
+        if (value.length === 0) return 'At least one field is required';
 
-        if (value.some((field) => field.name.trim() === ""))
-          return "Field name is required";
+        if (value.some((field) => field.name.trim() === ''))
+          return 'Field name is required';
 
-        if (value.some((field) => field.name.toLowerCase().trim() === "email"))
-          return "Email field cannot be added";
+        if (value.some((field) => field.name.toLowerCase().trim() === 'email'))
+          return 'Email field cannot be added';
       },
     },
   });
@@ -105,7 +101,7 @@ export default function UpdateVoterField({
         (field) => ({
           id: field.id,
           name: field.name,
-          type: "fromDb",
+          type: 'fromDb',
         }),
       );
 
@@ -148,7 +144,7 @@ export default function UpdateVoterField({
                 election_id={election.id}
                 onDelete={() => {
                   form.setFieldValue(
-                    "field",
+                    'field',
                     form.values.field.filter((f) => f.id !== field.id),
                   );
                   form.resetDirty({
@@ -161,15 +157,15 @@ export default function UpdateVoterField({
             <Button
               disabled={
                 form.values.field[form.values.field.length - 1]?.name.trim() ===
-                ""
+                ''
               }
               onClick={() => {
-                form.setFieldValue("field", [
+                form.setFieldValue('field', [
                   ...form.values.field,
                   {
                     id: Math.random().toString(),
-                    name: "",
-                    type: "fromInput",
+                    name: '',
+                    type: 'fromInput',
                   },
                 ]);
               }}
@@ -241,7 +237,7 @@ function VoterFieldInput({
         withAsterisk
         onChange={(e) => {
           form.setFieldValue(
-            "field",
+            'field',
             form.values.field.map((f) =>
               f.id === field.id
                 ? {
@@ -262,14 +258,14 @@ function VoterFieldInput({
           w: 18,
         }}
         onClick={() => {
-          if (field.type === "fromDb") {
+          if (field.type === 'fromDb') {
             deleteSingleVoterField.mutate({
               election_id,
               field_id: field.id,
             });
           } else {
             form.setFieldValue(
-              "field",
+              'field',
               form.values.field.filter((f) => f.id !== field.id),
             );
           }

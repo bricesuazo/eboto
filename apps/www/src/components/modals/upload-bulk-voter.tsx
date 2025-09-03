@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 import {
   ActionIcon,
   Alert,
@@ -18,16 +18,16 @@ import {
   TableThead,
   TableTr,
   Text,
-} from "@mantine/core";
+} from '@mantine/core';
 import {
   Dropzone,
   DropzoneAccept,
   DropzoneIdle,
   DropzoneReject,
   MS_EXCEL_MIME_TYPE,
-} from "@mantine/dropzone";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
+} from '@mantine/dropzone';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import {
   IconAlertCircle,
   IconCheck,
@@ -36,16 +36,19 @@ import {
   IconTrash,
   IconUpload,
   IconX,
-} from "@tabler/icons-react";
-import readXlsxFile from "read-excel-file";
-import * as XLSX from "xlsx";
+} from '@tabler/icons-react';
+import readXlsxFile from 'read-excel-file';
+import * as XLSX from 'xlsx';
 
-import { api } from "~/trpc/client";
+import { api } from '~/trpc/client';
+import type { Database } from '../../../../../supabase/types';
 
 export default function UploadBulkVoter({
   election_id,
+  voter_fields,
 }: {
   election_id: string;
+  voter_fields: Database['public']['Tables']['voter_fields']['Row'][];
 }) {
   const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure();
@@ -55,7 +58,7 @@ export default function UploadBulkVoter({
       await context.election.getVotersByElectionSlug.invalidate();
       notifications.show({
         title: `${count} voter(s) added!`,
-        message: "Successfully added voters",
+        message: 'Successfully added voters',
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
@@ -68,6 +71,7 @@ export default function UploadBulkVoter({
       fileName: string;
       voters: {
         email: string;
+        field: Record<string, string>;
       }[];
     }[]
   >([]);
@@ -141,9 +145,9 @@ export default function UploadBulkVoter({
                         <TableThead>
                           <TableTr>
                             <TableTh>Email</TableTh>
-                            {/* {voter_fields.map((field) => (
-                            <th key={field.name}>{field.name}</th>
-                          ))} */}
+                            {voter_fields.map((field) => (
+                              <TableTh key={field.name}>{field.name}</TableTh>
+                            ))}
                             <th />
                           </TableTr>
                         </TableThead>
@@ -151,6 +155,12 @@ export default function UploadBulkVoter({
                           {file.voters.map((voter) => (
                             <TableTr key={voter.email}>
                               <TableTd>{voter.email}</TableTd>
+
+                              {voter_fields.map((field) => (
+                                <TableTd key={field.id}>
+                                  {voter.field[field.id]}
+                                </TableTd>
+                              ))}
 
                               <TableTd>
                                 <ActionIcon
@@ -213,11 +223,10 @@ export default function UploadBulkVoter({
 
                     if (
                       rows[0] &&
-                      rows[0][0] !== "Email"
-                      // &&
-                      // !voter_fields.some(
-                      //   (val, i) => rows[0] && val.name === rows[0][i + 1],
-                      // )
+                      rows[0][0] !== 'Email' &&
+                      !voter_fields.some(
+                        (val, i) => rows[0] && val.name === rows[0][i + 1],
+                      )
                     ) {
                       return;
                     }
@@ -231,15 +240,15 @@ export default function UploadBulkVoter({
                       {
                         fileName: file.name,
                         voters: rows.slice(1).map((row) => ({
-                          email: row[0]?.toString() ?? "",
-                          // field: voter_fields.reduce(
-                          //   (acc, val, i) => {
-                          //     acc[val.name] = row[i + 1]?.toString() ?? "";
+                          email: row[0]?.toString() ?? '',
+                          field: voter_fields.reduce(
+                            (acc, val, i) => {
+                              acc[val.id] = row[i + 1]?.toString() ?? '';
 
-                          //     return acc;
-                          //   },
-                          //   {} as Record<string, string>,
-                          // ),
+                              return acc;
+                            },
+                            {} as Record<string, string>,
+                          ),
                         })),
                       },
                     ]);
@@ -248,14 +257,14 @@ export default function UploadBulkVoter({
             }}
           >
             <Flex
-              direction={{ base: "column", md: "row" }}
+              direction={{ base: 'column', md: 'row' }}
               align="center"
               justify="center"
               gap={{
                 base: 0,
-                md: "md",
+                md: 'md',
               }}
-              style={{ minHeight: rem(140), pointerEvents: "none" }}
+              style={{ minHeight: rem(140), pointerEvents: 'none' }}
             >
               <div>
                 <DropzoneAccept>
@@ -269,7 +278,7 @@ export default function UploadBulkVoter({
                 </DropzoneIdle>
               </div>
               <div>
-                <Text size="xl" ta={{ base: "center", md: "left" }} maw={240}>
+                <Text size="xl" ta={{ base: 'center', md: 'left' }} maw={240}>
                   Drag excel file here or click to select files.
                 </Text>
               </div>
@@ -293,27 +302,27 @@ export default function UploadBulkVoter({
             onClick={() => {
               const worksheet = XLSX.utils.json_to_sheet([
                 {
-                  Email: "juan.delacruz@cvsu.edu.ph",
-                  // ...voter_fields.reduce((prev, curr) => {
-                  //   return {
-                  //     ...prev,
-                  //     [curr.name]: "",
-                  //   };
-                  // }, {}),
+                  Email: 'juan.delacruz@cvsu.edu.ph',
+                  ...voter_fields.reduce((prev, curr) => {
+                    return {
+                      ...prev,
+                      [curr.name]: 'Sample value for ' + curr.name,
+                    };
+                  }, {}),
                 },
                 {
-                  Email: "pedro.penduko@cvsu.edu.ph",
-                  // ...voter_fields.reduce((prev, curr) => {
-                  //   return {
-                  //     ...prev,
-                  //     [curr.name]: "",
-                  //   };
-                  // }, {}),
+                  Email: 'pedro.penduko@cvsu.edu.ph',
+                  ...voter_fields.reduce((prev, curr) => {
+                    return {
+                      ...prev,
+                      [curr.name]: 'Sample value for ' + curr.name,
+                    };
+                  }, {}),
                 },
               ]);
               const workbook = XLSX.utils.book_new();
-              XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-              XLSX.writeFile(workbook, "voters.xlsx");
+              XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+              XLSX.writeFile(workbook, 'voters.xlsx');
             }}
           >
             Download sample excel file
