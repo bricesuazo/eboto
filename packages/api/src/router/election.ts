@@ -366,7 +366,7 @@ export const electionRouter = createTRPCRouter({
       z.object({
         subject: z.string().min(1),
         description: z.string().min(1),
-        election_id: z.string().min(1),
+        election_id: z.uuid().optional(),
       }),
     )
     .mutation(async ({ input, ctx }) => {

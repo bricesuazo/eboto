@@ -48,12 +48,12 @@ export default inngest.createFunction(
     if (election_error)
       throw new Error('Failed to fetch election: ' + election_error.message);
 
-    const end_date = moment(election.end_date).add(
-      election.voting_hour_end,
-      'hours',
-    );
+    const end_date = moment
+      .utc(election.end_date)
+      .add(election.voting_hour_end, 'hours')
+      .subtract(8, 'hours');
 
-    await step.sleepUntil('election-end', end_date.toDate());
+    await step.sleepUntil('election-end', end_date.toISOString());
 
     await step.run('send-election-end', async () => {
       let logo_url: string | null = null;

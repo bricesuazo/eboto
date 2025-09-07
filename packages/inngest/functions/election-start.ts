@@ -45,12 +45,12 @@ export default inngest.createFunction(
 
     if (!election) throw new Error('Election not found');
 
-    const start_date = moment(election.start_date).add(
-      election.voting_hour_start,
-      'hours',
-    );
+    const start_date = moment
+      .utc(election.start_date)
+      .add(election.voting_hour_start, 'hours')
+      .subtract(8, 'hours');
 
-    await step.sleepUntil('election-start', start_date.toDate());
+    await step.sleepUntil('election-start', start_date.toISOString());
 
     const voters = [...new Set(election.voters.map((voter) => voter.email))];
     const commissioners = [

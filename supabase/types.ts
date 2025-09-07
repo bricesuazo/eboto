@@ -698,7 +698,7 @@ export type Database = {
           created_at: string
           deleted_at: string | null
           description: string
-          election_id: string
+          election_id: string | null
           id: string
           subject: string
           user_id: string
@@ -707,7 +707,7 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           description: string
-          election_id: string
+          election_id?: string | null
           id?: string
           subject: string
           user_id: string
@@ -716,7 +716,7 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           description?: string
-          election_id?: string
+          election_id?: string | null
           id?: string
           subject?: string
           user_id?: string

@@ -30,6 +30,7 @@ import {
   IconClock,
   IconFingerprint,
   IconInfoCircle,
+  IconQrcode,
   IconUser,
 } from '@tabler/icons-react';
 import moment from 'moment';
@@ -44,12 +45,12 @@ import {
   parseHourTo12HourFormat,
 } from '@eboto/constants';
 
-import ElectionShowQRCode from '~/components/modals/election-show-qr-code';
 import ScrollToTopButton from '~/components/scroll-to-top';
 import classes from '~/styles/Election.module.css';
 import { api } from '~/trpc/client';
 import AdModal from '../ad-modal';
 import MessageCommissioner from '../modals/message-commissioner';
+import QRCodeModal from '../modals/qr-code';
 import MyMessagesElection from '../my-messages-election';
 
 export default function ElectionPage({
@@ -64,6 +65,8 @@ export default function ElectionPage({
   const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
   const [spoilerOpened, { open: setSpoilerOpen, close: setSpoilerClose }] =
+    useDisclosure(false);
+  const [openedQrCode, { open: openQrCode, close: closeQrCode }] =
     useDisclosure(false);
 
   const addVoterFieldToVoterMutation =
@@ -195,6 +198,12 @@ export default function ElectionPage({
         </Stack>
       </Modal>
 
+      <QRCodeModal
+        election={election}
+        closeAction={closeQrCode}
+        opened={openedQrCode}
+      />
+
       <Container pt={40} pb={80} size="md" mb={80}>
         <Stack align="center" gap="md">
           <Box>
@@ -215,7 +224,16 @@ export default function ElectionPage({
             </Flex>
             <Title order={1} ta="center" maw={600} mb={4}>
               <Balancer>
-                {election.name} (@{election.slug})
+                {election.name} (@{election.slug}){' '}
+                <ActionIcon
+                  onClick={openQrCode}
+                  variant="outline"
+                  color="#2f9e44"
+                  size="lg"
+                  radius="xl"
+                >
+                  <IconQrcode size={20} />
+                </ActionIcon>
               </Balancer>
             </Title>
             <Text ta="center">
@@ -287,7 +305,7 @@ export default function ElectionPage({
                 )}
               </Box>
             )}
-            <Flex justify="center" gap="sm" mt={8} align="center">
+            <Flex justify="center" gap="xs" wrap="wrap" mt={8} align="center">
               {(election.publicity === 'PUBLIC' ||
                 hasVoted ||
                 isElectionEnded({ election })) && (
@@ -328,7 +346,6 @@ export default function ElectionPage({
                   )}
                 </>
               )}
-              <ElectionShowQRCode election={election} />
             </Flex>
             {isElectionEnded({ election }) ? (
               <Text ta="center" p="md">

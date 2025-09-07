@@ -13,6 +13,7 @@ import {
   Container,
   Flex,
   Group,
+  InputLabel,
   Loader,
   Menu,
   MenuDropdown,
@@ -61,11 +62,19 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
   const params = useParams();
   const router = useRouter();
   const [logoutLoading, setLogoutLoading] = useState(false);
-  const [reportAProblemLoading, setReportAProblemLoading] = useState(false);
-  const reportAProblemMutation = api.election.reportAProblem.useMutation();
+  const reportAProblemMutation = api.election.reportAProblem.useMutation({
+    onSuccess: () => {
+      notifications.show({
+        title: 'Problem reported!',
+
+        message: "We'll get back to you as soon as possible.",
+      });
+      closeReportAProblem();
+    },
+  });
 
   const electionsQuery = api.election.getAllMyElections.useQuery(undefined, {
-    enabled: !!userQuery.data && reportAProblemLoading,
+    enabled: !!userQuery.data && reportAProblemMutation.isPending,
   });
 
   const { setColorScheme } = useMantineColorScheme();
@@ -86,7 +95,6 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
     initialValues: {
       subject: '',
       description: '',
-      election_id: '',
     },
     validate: zod4Resolver(ReportAProblemSchema),
   });
@@ -106,36 +114,20 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
         title="Report a problem"
       >
         <form
-          onSubmit={formReportAProblem.onSubmit((values) => {
-            if (!values.election_id) return;
-
-            setReportAProblemLoading(true);
-
-            void (async () => {
-              if (!values.election_id) return;
-
-              await reportAProblemMutation.mutateAsync({
-                subject: values.subject,
-                description: values.description,
-                election_id: values.election_id,
-              });
-
-              notifications.show({
-                title: 'Problem reported!',
-
-                message: "We'll get back to you as soon as possible.",
-              });
-              closeReportAProblem();
-              setReportAProblemLoading(false);
-            })();
-          })}
+          onSubmit={formReportAProblem.onSubmit((values) =>
+            reportAProblemMutation.mutate({
+              subject: values.subject,
+              description: values.description,
+              election_id: values.election_id,
+            }),
+          )}
         >
           <Stack>
             <TextInput
               withAsterisk
               label="Subject"
               placeholder="What's the problem?"
-              disabled={reportAProblemLoading}
+              disabled={reportAProblemMutation.isPending}
               {...formReportAProblem.getInputProps('subject')}
             />
             <Textarea
@@ -143,27 +135,33 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
               withAsterisk
               label="Description"
               placeholder="Explain your concern..."
-              disabled={reportAProblemLoading}
+              disabled={reportAProblemMutation.isPending}
               {...formReportAProblem.getInputProps('description')}
             />
             <Select
-              label="Election"
+              label={
+                <InputLabel>
+                  Election{' '}
+                  <Text component="span" size="sm" c="gray">
+                    (optional)
+                  </Text>
+                </InputLabel>
+              }
               placeholder="Select an election"
-              withAsterisk
               data={
                 electionsQuery.data?.map(({ election }) => ({
                   value: election.id,
                   label: election.name,
                 })) ?? []
               }
-              disabled={reportAProblemLoading}
+              disabled={reportAProblemMutation.isPending}
               {...formReportAProblem.getInputProps('election_id')}
             />
             <Group justify="flex-end" mt="md">
               <Button
                 type="submit"
                 disabled={!formReportAProblem.isValid()}
-                loading={reportAProblemLoading}
+                loading={reportAProblemMutation.isPending}
               >
                 Submit
               </Button>
