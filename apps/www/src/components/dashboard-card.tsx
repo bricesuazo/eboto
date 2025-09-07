@@ -120,7 +120,6 @@ export default function DashboardCard(
             ? `/${props.election.slug}`
             : `/dashboard/${props.election.slug}`) as Route
         }
-        target={props.type === 'vote' ? '_blank' : undefined}
         style={{
           borderColor:
             props.election.is_free === false && props.type === 'manage'

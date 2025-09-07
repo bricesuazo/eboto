@@ -54,7 +54,7 @@ export const candidateRouter = createTRPCRouter({
         first_name: z.string().min(1),
         middle_name: z.string().nullable(),
         last_name: z.string().min(1),
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
         position_id: z.string().min(1),
         partylist_id: z.string().min(1),
         image: z
@@ -225,7 +225,7 @@ export const candidateRouter = createTRPCRouter({
         first_name: z.string().min(1),
         middle_name: z.string().nullable(),
         last_name: z.string().min(1),
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
         position_id: z.string().min(1),
         partylist_id: z.string().min(1),
         image: z
@@ -386,7 +386,7 @@ export const candidateRouter = createTRPCRouter({
     .input(
       z.object({
         candidate_id: z.string().min(1),
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -659,7 +659,7 @@ export const candidateRouter = createTRPCRouter({
   editNameArrangement: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
         name_arrangement: z.number(),
       }),
     )
@@ -692,7 +692,7 @@ export const candidateRouter = createTRPCRouter({
   getNameArrangement: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
       }),
     )
     .query(async ({ ctx, input }) => {

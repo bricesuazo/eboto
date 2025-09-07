@@ -7,7 +7,7 @@ export const partylistRouter = createTRPCRouter({
   getAllPartylistsByElectionId: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -54,7 +54,7 @@ export const partylistRouter = createTRPCRouter({
       z.object({
         name: z.string().min(1),
         acronym: z.string().min(1),
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -100,7 +100,7 @@ export const partylistRouter = createTRPCRouter({
         name: z.string().min(1),
         oldAcronym: z.string().optional(),
         newAcronym: z.string().min(1),
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
         description: z.string().optional(),
         logo_url: z.string().optional(),
       }),
@@ -162,7 +162,7 @@ export const partylistRouter = createTRPCRouter({
     .input(
       z.object({
         partylist_id: z.string().min(1),
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
       }),
     )
     .mutation(async ({ input, ctx }) => {

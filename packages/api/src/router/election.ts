@@ -141,7 +141,7 @@ export const electionRouter = createTRPCRouter({
   vote: protectedProcedure
     .input(
       z.object({
-        election_id: z.string(),
+        election_id: z.uuid(),
         votes: z.array(
           z.object({
             position_id: z.string(),
@@ -895,11 +895,10 @@ export const electionRouter = createTRPCRouter({
   delete: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      // TODO: use transaction
       await ctx.supabase
         .from('commissioners')
         .update({
@@ -912,11 +911,16 @@ export const electionRouter = createTRPCRouter({
           deleted_at: new Date().toISOString(),
         })
         .eq('id', input.election_id);
+
+      await ctx.inngest.send({
+        name: 'election',
+        data: { election_id: input.election_id },
+      });
     }),
   getVoterFieldsStats: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -979,7 +983,7 @@ export const electionRouter = createTRPCRouter({
   getVoterFieldsStatsInRealtime: publicProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -1055,7 +1059,7 @@ export const electionRouter = createTRPCRouter({
   getElectionProgress: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
       }),
     )
     .query(async ({ ctx, input }) => {
@@ -1171,7 +1175,7 @@ export const electionRouter = createTRPCRouter({
   addCommissioner: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
         email: z.email(),
       }),
     )
@@ -1248,7 +1252,7 @@ export const electionRouter = createTRPCRouter({
   deleteCommissioner: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
         commissioner_id: z.string().min(1),
       }),
     )
@@ -1400,7 +1404,7 @@ export const electionRouter = createTRPCRouter({
   messageCommissioner: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
         title: z.string().min(1),
         message: z.string().min(1),
       }),
@@ -1476,7 +1480,7 @@ export const electionRouter = createTRPCRouter({
   getAllMyMessages: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
       }),
     )
     .query(async ({ ctx, input }) => {

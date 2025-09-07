@@ -253,7 +253,7 @@ export default function CreateCandidate({
                     label="Slug"
                     placeholder="Enter slug"
                     description={
-                      <Text size="xs">
+                      <Text size="xs" component="span">
                         This will be used as the candidate&apos;s URL.
                         <br />
                         eboto.app/{params.electionDashboardSlug?.toString()}/

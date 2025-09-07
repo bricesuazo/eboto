@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import {
   Box,
   Button,
@@ -11,20 +11,20 @@ import {
   Stack,
   Text,
   TextInput,
-} from "@mantine/core";
-import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
-import { hasLength, useForm } from "@mantine/form";
-import { useDisclosure } from "@mantine/hooks";
-import { IconAt, IconLetterCase, IconLock, IconX } from "@tabler/icons-react";
+} from '@mantine/core';
+import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import { hasLength, useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { IconAt, IconLetterCase, IconLock, IconX } from '@tabler/icons-react';
 
-import type { RouterOutputs } from "@eboto/api";
+import type { RouterOutputs } from '@eboto/api';
 
-import { createClient } from "~/supabase/client";
-import { api } from "~/trpc/client";
-import { transformUploadImage } from "~/utils";
+import { createClient } from '~/supabase/client';
+import { api } from '~/trpc/client';
+import { transformUploadImage } from '~/utils';
 
 export default function AccountPageClient(
-  props: RouterOutputs["auth"]["getUserProtected"],
+  props: RouterOutputs['auth']['getUserProtected'],
 ) {
   const utils = api.useUtils();
   const openRef = useRef<() => void>(null);
@@ -70,12 +70,12 @@ export default function AccountPageClient(
     password: string;
   }>({
     initialValues: {
-      password: "",
+      password: '',
     },
     validate: {
       password: hasLength(
         { min: 8 },
-        "Password must be at least 8 characters long",
+        'Password must be at least 8 characters long',
       ),
     },
   });
@@ -156,7 +156,7 @@ export default function AccountPageClient(
                 required
                 withAsterisk
                 type="password"
-                {...confirmationForm.getInputProps("password")}
+                {...confirmationForm.getInputProps('password')}
                 leftSection={<IconLock size="1rem" />}
                 error={
                   confirmationForm.errors.password
@@ -194,7 +194,7 @@ export default function AccountPageClient(
                   deleteAccountMutation.isPending
                 }
               >
-                {page === 0 ? "Confirm" : "Yes, delete my account"}
+                {page === 0 ? 'Confirm' : 'Yes, delete my account'}
               </Button>
             </Group>
           </Stack>
@@ -210,9 +210,9 @@ export default function AccountPageClient(
               // firstName: values.firstName,
               // middleName: values.middleName || null,
               // lastName: values.lastName,
-              name: values.name ?? "",
+              name: values.name ?? '',
               image:
-                values.image !== null && typeof values.image !== "string"
+                values.image !== null && typeof values.image !== 'string'
                   ? values.image
                     ? await transformUploadImage(values.image)
                     : undefined
@@ -237,7 +237,7 @@ export default function AccountPageClient(
             withAsterisk
             label="Full name"
             required
-            {...accountForm.getInputProps("name")}
+            {...accountForm.getInputProps('name')}
             leftSection={<IconLetterCase size="1rem" />}
             disabled={loading}
           />
@@ -250,7 +250,7 @@ export default function AccountPageClient(
                 id="image"
                 onDrop={(files) => {
                   if (!files[0]) return;
-                  accountForm.setFieldValue("image", files[0]);
+                  accountForm.setFieldValue('image', files[0]);
                 }}
                 openRef={openRef}
                 maxSize={5 * 1024 ** 2}
@@ -261,10 +261,10 @@ export default function AccountPageClient(
                 <Group
                   justify="center"
                   gap="xl"
-                  style={{ minHeight: rem(140), pointerEvents: "none" }}
+                  style={{ minHeight: rem(140), pointerEvents: 'none' }}
                 >
                   {accountForm.values.image ? (
-                    typeof accountForm.values.image !== "string" ? (
+                    typeof accountForm.values.image !== 'string' ? (
                       <Group>
                         <Box pos="relative" w={rem(120)} h={rem(120)}>
                           <Image
@@ -273,7 +273,7 @@ export default function AccountPageClient(
                             fill
                             sizes="100%"
                             priority
-                            style={{ objectFit: "cover" }}
+                            style={{ objectFit: 'cover' }}
                           />
                         </Box>
                         <Text>{accountForm.values.name}</Text>
@@ -294,7 +294,7 @@ export default function AccountPageClient(
                               fill
                               sizes="100%"
                               priority
-                              style={{ objectFit: "cover" }}
+                              style={{ objectFit: 'cover' }}
                             />
                           </Box>
                           <Text>Current image</Text>
@@ -310,7 +310,7 @@ export default function AccountPageClient(
                           fill
                           sizes="100%"
                           priority
-                          style={{ objectFit: "cover" }}
+                          style={{ objectFit: 'cover' }}
                         />
                       </Box>
                       <Text>Current image</Text>

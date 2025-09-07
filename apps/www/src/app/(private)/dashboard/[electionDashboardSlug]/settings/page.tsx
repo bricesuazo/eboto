@@ -67,7 +67,52 @@ export default function Page({
         router.push(`/dashboard/${form.values.newSlug}/settings`);
       }
       if (form.values.name !== getElectionBySlugQuery.data?.name) {
-        await context.election.getAllMyElections.invalidate();
+        const updatedFields = {
+          name: form.values.name,
+          slug: form.values.newSlug,
+          description: form.values.description,
+          publicity: form.values.publicity,
+          voting_hour_start: form.values.voting_hours[0],
+          voting_hour_end: form.values.voting_hours[1],
+          is_candidates_visible_in_realtime_when_ongoing:
+            form.values.is_candidates_visible_in_realtime_when_ongoing,
+        } as const;
+
+        const electionId = getElectionBySlugQuery.data?.id;
+
+        context.election.getAllMyElections.setData(
+          undefined,
+          (old) =>
+            old?.map((commissioner) =>
+              commissioner.election.id === electionId
+                ? {
+                    ...commissioner,
+                    election: {
+                      ...commissioner.election,
+                      ...updatedFields,
+                    },
+                  }
+                : commissioner,
+            ) ?? old,
+        );
+        context.election.getMyElectionAsCommissioner.setData(
+          undefined,
+          (old) =>
+            old?.map((election) =>
+              election.id === electionId
+                ? { ...election, ...updatedFields }
+                : election,
+            ) ?? old,
+        );
+        context.election.getMyElectionAsVoter.setData(
+          undefined,
+          (old) =>
+            old?.map((election) =>
+              election.id === electionId
+                ? { ...election, ...updatedFields }
+                : election,
+            ) ?? old,
+        );
       }
 
       notifications.show({
@@ -130,6 +175,20 @@ export default function Page({
 
   const deleteElectionMutation = api.election.delete.useMutation({
     onSuccess: () => {
+      const deletedId = getElectionBySlugQuery.data?.id;
+
+      context.election.getMyElectionAsCommissioner.setData(
+        undefined,
+        (old) => old?.filter((election) => election.id !== deletedId) ?? old,
+      );
+      context.election.getAllMyElections.setData(
+        undefined,
+        (old) =>
+          old?.filter(
+            (commissioner) => commissioner.election.id !== deletedId,
+          ) ?? old,
+      );
+
       router.push('/dashboard');
       notifications.show({
         title: 'Election deleted.',

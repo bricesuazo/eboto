@@ -23,7 +23,7 @@ export default inngest.createFunction(
   async ({ event, step }) => {
     const { election_id } = z
       .object({
-        election_id: z.string(),
+        election_id: z.uuid(),
       })
       .parse(event.data);
 

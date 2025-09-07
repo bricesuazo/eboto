@@ -8,7 +8,7 @@ export const paymentRouter = createTRPCRouter({
   boost: protectedProcedure
     .input(
       z.object({
-        election_id: z.string(),
+        election_id: z.uuid(),
         price: z.number(),
       }),
     )

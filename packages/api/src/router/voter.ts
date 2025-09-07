@@ -13,7 +13,7 @@ export const voterRouter = createTRPCRouter({
     .input(
       z.object({
         email: z.string().min(1),
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
         voter_fields: z.array(
           z.object({
             id: z.string(),
@@ -147,7 +147,7 @@ export const voterRouter = createTRPCRouter({
   getAllVoterField: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
       }),
     )
     .query(async ({ input, ctx }) => {
@@ -203,7 +203,7 @@ export const voterRouter = createTRPCRouter({
             type: z.enum(['fromDb', 'fromInput']),
           }),
         ),
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -252,7 +252,7 @@ export const voterRouter = createTRPCRouter({
   deleteSingleVoterField: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
         field_id: z.string().min(1),
       }),
     )
@@ -268,7 +268,7 @@ export const voterRouter = createTRPCRouter({
       z.object({
         id: z.string().min(1),
         email: z.string().min(1),
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
         voter_fields: z.array(
           z.object({
             id: z.string().min(1),
@@ -331,7 +331,7 @@ export const voterRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string().min(1),
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -385,7 +385,7 @@ export const voterRouter = createTRPCRouter({
   deleteBulk: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
         voters: z.array(
           z.object({
             id: z.string().min(1),
@@ -432,7 +432,7 @@ export const voterRouter = createTRPCRouter({
   uploadBulk: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
         voters: z.array(
           z.object({
             email: z.string().min(1),
@@ -595,7 +595,7 @@ export const voterRouter = createTRPCRouter({
   addVoterFieldToVoter: protectedProcedure
     .input(
       z.object({
-        election_id: z.string().min(1),
+        election_id: z.uuid(),
         voter_id: z.string().min(1),
         fields: z.array(
           z.object({
