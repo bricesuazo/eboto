@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { ActionIcon, Button } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { IconQrcode } from "@tabler/icons-react";
+import { ActionIcon, Button } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { IconQrcode } from '@tabler/icons-react';
 
-import QRCodeModal from "~/components/modals/qr-code";
-import type { Database } from "../../../../../supabase/types";
+import QRCodeModal from '~/components/modals/qr-code';
+import type { Database } from '../../../../../supabase/types';
 
 export default function DashboardShowQRCode({
   election,
 }: {
-  election: Database["public"]["Tables"]["elections"]["Row"];
+  election: Database['public']['Tables']['elections']['Row'];
 }) {
   const [opened, { open, close }] = useDisclosure(false);
   return (
@@ -28,7 +28,7 @@ export default function DashboardShowQRCode({
         Download/Scan QR Code
       </Button>
 
-      <QRCodeModal election={election} close={close} opened={opened} />
+      <QRCodeModal election={election} closeAction={close} opened={opened} />
     </>
   );
 }

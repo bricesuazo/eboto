@@ -32,17 +32,19 @@ export const electionRouter = createTRPCRouter({
 
       if (!election) throw new TRPCError({ code: 'NOT_FOUND' });
 
-      const { data: voter_fields } = await ctx.supabase
-        .from('voter_fields')
-        .select()
-        .eq('election_id', election.id)
-        .is('deleted_at', null);
-
-      const { data: commissioners } = await ctx.supabase
-        .from('commissioners')
-        .select('*, user: users(*)')
-        .eq('election_id', election.id)
-        .is('deleted_at', null);
+      const [{ data: voter_fields }, { data: commissioners }] =
+        await Promise.all([
+          ctx.supabase
+            .from('voter_fields')
+            .select()
+            .eq('election_id', election.id)
+            .is('deleted_at', null),
+          ctx.supabase
+            .from('commissioners')
+            .select('*, user: users(*)')
+            .eq('election_id', election.id)
+            .is('deleted_at', null),
+        ]);
 
       if (!voter_fields || !commissioners)
         throw new TRPCError({ code: 'NOT_FOUND' });
@@ -69,35 +71,19 @@ export const electionRouter = createTRPCRouter({
       } | null = null;
 
       if (ctx.user) {
-        const { data: voters, error: voters_error } = await ctx.supabase
+        const { data: voters } = await ctx.supabase
           .from('voters')
-          .select()
+          .select('*, votes(*)')
           .eq('election_id', election.id)
           .eq('email', ctx.user.db.email)
-          .is('deleted_at', null);
+          .is('deleted_at', null)
+          .order('created_at', { ascending: false })
+          .limit(1);
 
-        if (voters_error)
-          throw new TRPCError({
-            code: 'UNAUTHORIZED',
-            message: voters_error.message,
-          });
-
-        const voter = voters[0];
+        const voter = voters?.[0];
 
         if (voter) {
-          const { data: votes, error: votes_error } = await ctx.supabase
-            .from('votes')
-            .select()
-            .eq('voter_id', voter.id)
-            .eq('election_id', election.id);
-
-          if (votes_error)
-            throw new TRPCError({
-              code: 'INTERNAL_SERVER_ERROR',
-              message: votes_error.message,
-            });
-
-          voted = !!votes.length;
+          voted = voter.votes.length > 0;
           myVoterData = {
             id: voter.id,
             field: voter.field as Record<string, string>,

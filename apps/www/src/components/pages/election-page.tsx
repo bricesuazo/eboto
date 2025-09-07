@@ -165,7 +165,7 @@ export default function ElectionPage({
                 disabled={!form.isValid()}
                 loading={addVoterFieldToVoterMutation.isPending}
               >
-                Vote now!
+                Start voting
               </Button>
             </Group>
           </Stack>
@@ -304,7 +304,6 @@ export default function ElectionPage({
               {isElectionOngoing({ election }) && !hasVoted && (
                 <>
                   {election.voter_fields.length > 0 &&
-                  !myVoterData?.field &&
                   Object.values(myVoterData?.field ?? {}).every(
                     (value) => value.trim() === '',
                   ) ? (

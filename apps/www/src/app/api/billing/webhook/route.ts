@@ -1,7 +1,7 @@
-import crypto from "crypto";
-import { env } from "env";
+import crypto from 'crypto';
+import { env } from 'env';
 
-import { createClient } from "~/supabase/admin";
+import { createClient } from '~/supabase/admin';
 
 const isError = (error: unknown): error is Error => {
   return error instanceof Error;
@@ -12,12 +12,12 @@ interface WebhookPayload {
     event_name: string;
     custom_data:
       | {
-          type: "boost";
+          type: 'boost';
           election_id: string;
           user_id: string;
         }
       | {
-          type: "plus";
+          type: 'plus';
           user_id: string;
         };
   };
@@ -84,7 +84,7 @@ interface WebhookPayload {
           self: string;
         };
       };
-      "order-items": {
+      'order-items': {
         links: {
           related: string;
           self: string;
@@ -96,13 +96,13 @@ interface WebhookPayload {
           self: string;
         };
       };
-      "license-keys": {
+      'license-keys': {
         links: {
           related: string;
           self: string;
         };
       };
-      "discount-redemptions": {
+      'discount-redemptions': {
         links: {
           related: string;
           self: string;
@@ -121,73 +121,72 @@ export async function POST(req: Request) {
     const rawBody = await req.text();
 
     const secret = env.LEMONSQUEEZY_WEBHOOK_SECRET;
-    const hmac = crypto.createHmac("sha256", secret);
-    const digest = Buffer.from(hmac.update(rawBody).digest("hex"), "utf8");
-    const signature = Buffer.from(req.headers.get("X-Signature") ?? "", "utf8");
+    const hmac = crypto.createHmac('sha256', secret);
+    const digest = Buffer.from(hmac.update(rawBody).digest('hex'), 'utf8');
+    const signature = Buffer.from(req.headers.get('X-Signature') ?? '', 'utf8');
 
     if (
       !crypto.timingSafeEqual(new Uint8Array(digest), new Uint8Array(signature))
     ) {
-      throw new Error("Invalid signature.");
+      throw new Error('Invalid signature.');
     }
 
     const payload = JSON.parse(rawBody) as WebhookPayload;
 
     // TODO: add transaction
     switch (payload.meta.event_name) {
-      case "order_created":
-        if (payload.meta.custom_data.type === "boost") {
+      case 'order_created':
+        if (payload.meta.custom_data.type === 'boost') {
           const { data: election } = await supabase
-            .from("elections")
+            .from('elections')
             .select()
-            .eq("id", payload.meta.custom_data.election_id)
-            .is("deleted_at", null)
+            .eq('id', payload.meta.custom_data.election_id)
+            .is('deleted_at', null)
             .single();
 
           if (!election) {
-            throw new Error("Election not found");
+            throw new Error('Election not found');
           }
 
           await supabase
-            .from("elections")
+            .from('elections')
             .update({
               variant_id: payload.data.attributes.first_order_item.variant_id,
             })
-            .eq("id", election.id);
+            .eq('id', election.id);
         } else {
           const { data: user } = await supabase
-            .from("users")
+            .from('users')
             .select()
-            .eq("id", payload.meta.custom_data.user_id)
-            .is("deleted_at", null)
+            .eq('id', payload.meta.custom_data.user_id)
+            .is('deleted_at', null)
             .single();
 
           if (!user) {
-            throw new Error("User not found");
+            throw new Error('User not found');
           }
 
-          await supabase.from("elections_plus").insert(
-            [
-              ...(Array(
-                payload.data.attributes.first_order_item.quantity,
-              ) as void[]),
-            ].map(() => ({
-              user_id: user.id,
-            })),
+          await supabase.from('elections_plus').insert(
+            Array.from(
+              { length: payload.data.attributes.first_order_item.quantity },
+              () => ({
+                user_id: user.id,
+              }),
+            ),
           );
         }
 
         break;
-      case "order_refunded":
-      case "subscription_created":
-      case "subscription_cancelled":
-      case "subscription_resumed":
-      case "subscription_expired":
-      case "subscription_paused":
-      case "subscription_unpaused":
-      case "subscription_payment_failed":
-      case "subscription_payment_success":
-      case "subscription_payment_recovered":
+      case 'order_refunded':
+      case 'subscription_created':
+      case 'subscription_cancelled':
+      case 'subscription_resumed':
+      case 'subscription_expired':
+      case 'subscription_paused':
+      case 'subscription_unpaused':
+      case 'subscription_payment_failed':
+      case 'subscription_payment_success':
+      case 'subscription_payment_recovered':
       default:
         throw new Error(`🤷‍♀️ Unhandled event: ${payload.meta.event_name}`);
     }
@@ -198,7 +197,7 @@ export async function POST(req: Request) {
       });
     }
 
-    return new Response("Webhook error", {
+    return new Response('Webhook error', {
       status: 400,
     });
   }

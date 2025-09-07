@@ -14,9 +14,9 @@ export const CreatePositionSchema = z
     path: ['max'],
     message: 'Maximum must be greater than minimum',
   })
-  .refine((data) => !(data.isSingle && data.max === 1), {
+  .refine((data) => !(data.isSingle && data.max > 1), {
     path: ['max'],
-    message: 'Maximum must be greater than 1',
+    message: 'Maximum must be 1 for single position',
   });
 export type CreatePosition = z.infer<typeof CreatePositionSchema>;
 

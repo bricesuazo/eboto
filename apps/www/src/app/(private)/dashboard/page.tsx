@@ -14,12 +14,7 @@ import DashboardTab from '~/components/dashboard-tab';
 import ElectionsLeft from '~/components/elections-left';
 import Dashboard from '~/components/layout/dashboard';
 import CreateElection from '~/components/modals/create-election';
-import {
-  MyElectionsAsCommissioner as MyElectionsAsCommissionerClient,
-  MyElectionsAsVoter as MyElectionsAsVoterClient,
-} from '~/components/my-elections';
 import { createClient } from '~/supabase/server';
-import { api } from '~/trpc/server';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -72,9 +67,7 @@ export default async function Page({
                   ? searchParams.manage[0]
                   : searchParams.manage) ?? 'ongoing'
               }
-            >
-              <MyElectionsAsCommissioner />
-            </DashboardTab>
+            />
           </Box>
 
           <Box>
@@ -90,25 +83,10 @@ export default async function Page({
                   ? searchParams.vote[0]
                   : searchParams.vote) ?? 'ongoing'
               }
-            >
-              <MyElectionsAsVoter />
-            </DashboardTab>
+            />
           </Box>
         </Stack>
       </Container>
     </Dashboard>
   );
-}
-
-async function MyElectionsAsCommissioner() {
-  const electionsAsCommissioner =
-    await api.election.getMyElectionAsCommissioner();
-
-  return (
-    <MyElectionsAsCommissionerClient initialData={electionsAsCommissioner} />
-  );
-}
-async function MyElectionsAsVoter() {
-  const electionsAsVoter = await api.election.getMyElectionAsVoter();
-  return <MyElectionsAsVoterClient initialData={electionsAsVoter} />;
 }

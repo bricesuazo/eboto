@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import { Button, Center, Modal, Stack, Text } from "@mantine/core";
-import { IconDownload } from "@tabler/icons-react";
-import { QRCodeCanvas } from "qrcode.react";
+import { Button, Center, Modal, Stack, Text } from '@mantine/core';
+import { IconDownload } from '@tabler/icons-react';
+import { QRCodeCanvas } from 'qrcode.react';
 
-import type { Database } from "../../../../../supabase/types";
+import type { Database } from '../../../../../supabase/types';
 
 export default function QRCodeModal({
   election,
   opened,
-  close,
+  closeAction,
 }: {
-  election: Database["public"]["Tables"]["elections"]["Row"];
+  election: Database['public']['Tables']['elections']['Row'];
   opened: boolean;
-  close: () => void;
+  closeAction: () => void;
 }) {
   return (
     <Modal
       opened={opened}
-      onClose={close}
+      onClose={closeAction}
       title={
         <Text fw={600}>Download or scan your QR Code for {election.name}</Text>
       }
@@ -31,7 +31,7 @@ export default function QRCodeModal({
             includeMargin
             size={256}
             imageSettings={{
-              src: "/images/eboto-pfp.png",
+              src: '/images/eboto-pfp.png',
               x: undefined,
               y: undefined,
               height: 54,
@@ -47,7 +47,7 @@ export default function QRCodeModal({
             includeMargin
             size={408}
             imageSettings={{
-              src: "/images/eboto-pfp.png",
+              src: '/images/eboto-pfp.png',
               x: undefined,
               y: undefined,
               height: 86,
@@ -60,15 +60,15 @@ export default function QRCodeModal({
         <Button
           onClick={() => {
             const canvas = document.getElementById(
-              "qr-gen",
+              'qr-gen',
             ) as HTMLCanvasElement | null;
 
             if (canvas) {
               const pngUrl = canvas
-                .toDataURL("image/png")
-                .replace("image/png", "image/octet-stream");
+                .toDataURL('image/png')
+                .replace('image/png', 'image/octet-stream');
 
-              const downloadLink = document.createElement("a");
+              const downloadLink = document.createElement('a');
               downloadLink.href = pngUrl;
               downloadLink.download = `${election.name} (@${election.slug}) - QR Code.png`;
 
@@ -77,8 +77,6 @@ export default function QRCodeModal({
               downloadLink.click();
 
               document.body.removeChild(downloadLink);
-            } else {
-              console.log("Could not find QR code element");
             }
           }}
           leftSection={<IconDownload size="1rem" />}
