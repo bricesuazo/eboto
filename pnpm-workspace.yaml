@@ -9,7 +9,7 @@ catalog:
   '@t3-oss/env-nextjs': 0.13.8
   '@tabler/icons-react': 3.34.1
   '@tanstack/react-query': 5.87.1
-  '@tanstack/react-query-devtools': 5.87.1
+  '@tanstack/react-query-devtools': 5.87.3
   '@tiptap/extension-link': 3.4.1
   '@tiptap/react': 3.4.1
   '@tiptap/starter-kit': 3.4.1

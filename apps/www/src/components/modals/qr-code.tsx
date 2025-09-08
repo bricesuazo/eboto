@@ -11,7 +11,10 @@ export default function QRCodeModal({
   opened,
   closeAction,
 }: {
-  election: Database['public']['Tables']['elections']['Row'];
+  election: Pick<
+    Database['public']['Tables']['elections']['Row'],
+    'id' | 'name' | 'slug'
+  >;
   opened: boolean;
   closeAction: () => void;
 }) {

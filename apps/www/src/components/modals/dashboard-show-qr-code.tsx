@@ -10,7 +10,10 @@ import type { Database } from '../../../../../supabase/types';
 export default function DashboardShowQRCode({
   election,
 }: {
-  election: Database['public']['Tables']['elections']['Row'];
+  election: Pick<
+    Database['public']['Tables']['elections']['Row'],
+    'id' | 'name' | 'slug'
+  >;
 }) {
   const [opened, { open, close }] = useDisclosure(false);
   return (

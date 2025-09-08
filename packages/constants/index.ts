@@ -59,7 +59,10 @@ export const parseHourTo12HourFormat = (hour: number) => {
 export const isElectionEnded = ({
   election,
 }: {
-  election: Database['public']['Tables']['elections']['Row'];
+  election: Pick<
+    Database['public']['Tables']['elections']['Row'],
+    'end_date' | 'voting_hour_end'
+  >;
 }) => {
   const now = add(new Date(), { hours: is_client() || is_dev() ? 0 : 8 });
 
@@ -73,7 +76,10 @@ export const isElectionOngoing = ({
   election,
   withoutHours,
 }: {
-  election: Database['public']['Tables']['elections']['Row'];
+  election: Pick<
+    Database['public']['Tables']['elections']['Row'],
+    'start_date' | 'end_date' | 'voting_hour_start' | 'voting_hour_end'
+  >;
   withoutHours?: true;
 }) => {
   const now = add(new Date(), { hours: is_client() || is_dev() ? 0 : 8 });
@@ -97,7 +103,10 @@ export const isElectionOngoing = ({
 
 export function formatName(
   arrangement: number,
-  candidate: Database['public']['Tables']['candidates']['Row'],
+  candidate: Pick<
+    Database['public']['Tables']['candidates']['Row'],
+    'first_name' | 'middle_name' | 'last_name'
+  >,
   isMiddleInitialOnly?: true,
 ) {
   const middle_name = candidate.middle_name

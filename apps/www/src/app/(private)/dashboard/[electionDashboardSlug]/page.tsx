@@ -240,21 +240,21 @@ export default function Page({
           {[
             {
               id: 0,
-              count: election.partylists.length,
+              count: election.partylistsCount,
               title: 'Partylists',
               icon: IconFlag,
               href: 'partylist',
             },
             {
               id: 1,
-              count: election.positions.length,
+              count: election.positionsCount,
               title: 'Positions',
               icon: IconReplace,
               href: 'position',
             },
             {
               id: 2,
-              count: election.candidates.length,
+              count: election.candidatesCount,
               title: 'Candidates',
               icon: IconUserSearch,
               href: 'candidate',
@@ -301,19 +301,15 @@ export default function Page({
           {[
             {
               id: 0,
-              count: election.voters.filter((voter) => voter.votes.length > 0)
-                .length,
+              count: election.votersVotedCount,
               sub_count:
-                (election.voters.filter((voter) => voter.votes.length > 0)
-                  .length /
-                  election.voters.length) *
-                100,
+                (election.votersVotedCount / election.votersCount) * 100,
               title: 'Voted',
               description: 'Total number of voters who already voted',
             },
             {
               id: 1,
-              count: election.voters.length,
+              count: election.votersCount,
               title: 'Voters',
               description: 'Total number of voters',
             },

@@ -318,8 +318,8 @@ export const electionRouter = createTRPCRouter({
           positions(*),
           partylists(*),
           voters(*, votes(*)),
-          generated_election_results(*, election: elections!inner(*, positions(*, votes(*), candidates(*, votes(*))))),
-          candidates(*)
+          candidates(*),
+          generated_election_results(*, election: elections!inner(*, positions(*, votes(*), candidates(*, votes(*)))))
         `,
         )
         .eq('slug', input.election_slug)
@@ -333,29 +333,57 @@ export const electionRouter = createTRPCRouter({
       if (!election) throw new TRPCError({ code: 'NOT_FOUND' });
 
       return {
-        ...election,
+        id: election.id,
+        name: election.name,
+        slug: election.slug,
+        start_date: election.start_date,
+        end_date: election.end_date,
+        voting_hour_start: election.voting_hour_start,
+        voting_hour_end: election.voting_hour_end,
+        publicity: election.publicity,
+        created_at: election.created_at,
+        partylistsCount: election.partylists.length,
+        positionsCount: election.positions.length,
+        candidatesCount: election.candidates.length,
+
+        votersCount: election.voters.length,
+        votersVotedCount: election.voters.filter(
+          (voter) => voter.votes.length > 0,
+        ).length,
+
         generated_election_results: election.generated_election_results.map(
           (result) => {
             let logo_url: string | null = null;
 
             if (result.election.logo_path) {
               const { data: image } = ctx.supabase.storage
-                .from('partylists')
+                .from('elections')
                 .getPublicUrl(result.election.logo_path);
 
               logo_url = image.publicUrl;
             }
 
             return {
-              ...result,
+              id: result.id,
+              created_at: result.created_at,
+
               election: {
-                ...result.election,
+                name: result.election.name,
+                slug: result.election.slug,
+                start_date: result.election.start_date,
+                end_date: result.election.end_date,
                 logo_url,
+                name_arrangement: result.election.name_arrangement,
+
                 positions: result.election.positions.map((position) => ({
-                  ...position,
+                  id: position.id,
+                  name: position.name,
                   abstain_count: position.votes.length,
                   candidates: position.candidates.map((candidate) => ({
-                    ...candidate,
+                    id: candidate.id,
+                    first_name: candidate.first_name,
+                    middle_name: candidate.middle_name,
+                    last_name: candidate.last_name,
                     vote_count: candidate.votes.length,
                   })),
                 })),
@@ -500,7 +528,9 @@ export const electionRouter = createTRPCRouter({
 
       return {
         positions: realtime_result.map((position) => ({
-          ...position,
+          id: position.id,
+          name: position.name,
+
           votes: position.votes.length,
           candidates: position.candidates
             .sort((a, b) => b.votes.length - a.votes.length)
@@ -1394,10 +1424,23 @@ export const electionRouter = createTRPCRouter({
           logo_url = url.publicUrl;
         }
         return {
-          ...election,
+          id: election.id,
+          name: election.name,
+          publicity: election.publicity,
+          slug: election.slug,
+          start_date: election.start_date,
+          end_date: election.end_date,
+          voting_hour_start: election.voting_hour_start,
+          voting_hour_end: election.voting_hour_end,
+          created_at: election.created_at,
           logo_url,
-          is_free: true,
+          is_free: election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID,
           votes: election.voters[0]?.votes ?? [],
+
+          positions: election.positions.map((position) => ({
+            id: position.id,
+            name: position.name,
+          })),
         };
       })
       .sort(
