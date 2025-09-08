@@ -1,0 +1,16 @@
+{
+  "name": "@eboto/env",
+  "type": "module",
+  "main": "./index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@t3-oss/env-nextjs": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@eboto/tsconfig": "workspace:*",
+    "@types/node": "catalog:"
+  }
+}

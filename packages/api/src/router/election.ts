@@ -10,8 +10,8 @@ import {
   takenSlugs,
 } from '@eboto/constants';
 import { sendVoteCasted } from '@eboto/email/emails/vote-casted';
+import { env } from '@eboto/env';
 
-import { env } from '../../../../apps/www/env';
 import type { Database } from '../../../../supabase/types';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
 
@@ -130,6 +130,9 @@ export const electionRouter = createTRPCRouter({
         })),
         myVoterData,
         hasVoted: voted,
+        isFree:
+          election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID &&
+          election.no_of_voters === null,
         isVoterCanMessage:
           election.publicity !== 'PRIVATE' &&
           !!myVoterData &&

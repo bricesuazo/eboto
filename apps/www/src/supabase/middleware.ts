@@ -2,7 +2,8 @@ import type { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
-import { env } from 'env';
+
+import { env } from '@eboto/env';
 
 import type { Database } from '../../../../supabase/types';
 

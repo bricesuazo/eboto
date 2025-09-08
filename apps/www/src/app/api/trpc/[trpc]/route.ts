@@ -1,12 +1,12 @@
-import type { NextRequest } from "next/server";
-import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
-import { env } from "env";
+import type { NextRequest } from 'next/server';
+import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 
-import { appRouter, createTRPCContext } from "@eboto/api";
+import { appRouter, createTRPCContext } from '@eboto/api';
+import { env } from '@eboto/env';
 
-import { createClient as createClientAdmin } from "~/supabase/admin";
-import { createClient } from "~/supabase/server";
-import type { Database } from "../../../../../../../supabase/types";
+import { createClient as createClientAdmin } from '~/supabase/admin';
+import { createClient } from '~/supabase/server';
+import type { Database } from '../../../../../../../supabase/types';
 
 const createContext = async (req: NextRequest) => {
   const supabase = await createClient();
@@ -15,13 +15,13 @@ const createContext = async (req: NextRequest) => {
     data: { user },
   } = await supabase.auth.getUser();
 
-  let user_db: Database["public"]["Tables"]["users"]["Row"] | null = null;
+  let user_db: Database['public']['Tables']['users']['Row'] | null = null;
 
   if (user) {
     const { data } = await supabaseAdmin
-      .from("users")
+      .from('users')
       .select()
-      .eq("id", user.id)
+      .eq('id', user.id)
       .single();
 
     user_db = data;
@@ -41,15 +41,15 @@ const createContext = async (req: NextRequest) => {
 
 const handler = (req: NextRequest) =>
   fetchRequestHandler({
-    endpoint: "/api/trpc",
+    endpoint: '/api/trpc',
     req,
     router: appRouter,
     createContext: () => createContext(req),
     onError:
-      env.NODE_ENV === "development"
+      env.NODE_ENV === 'development'
         ? ({ path, error }) => {
             console.error(
-              `❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`,
+              `❌ tRPC failed on ${path ?? '<no-path>'}: ${error.message}`,
             );
           }
         : undefined,

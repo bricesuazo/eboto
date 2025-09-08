@@ -1,6 +1,8 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod/v4';
 
+import { env } from '@eboto/env';
+
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
 
 export const candidateRouter = createTRPCRouter({
@@ -654,6 +656,7 @@ export const candidateRouter = createTRPCRouter({
           !election.commissioners.some(
             (commissioner) => commissioner.user.email === ctx.user?.db.email,
           ),
+        is_free: election.variant_id === env.LEMONSQUEEZY_FREE_VARIANT_ID,
       };
     }),
   editNameArrangement: protectedProcedure

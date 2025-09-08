@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod/v4';
 
-import { env } from '../../../../apps/www/env';
+import { env } from '../../../env';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 
 export const paymentRouter = createTRPCRouter({

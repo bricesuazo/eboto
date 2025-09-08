@@ -1,9 +1,10 @@
-import { notFound, redirect } from "next/navigation";
-import { env } from "env";
+import { notFound, redirect } from 'next/navigation';
 
-import DashboardElection from "~/components/layout/dashboard-election";
-import { createClient as creatClientAdmin } from "~/supabase/admin";
-import { createClient as creatClientServer } from "~/supabase/server";
+import { env } from '@eboto/env';
+
+import DashboardElection from '~/components/layout/dashboard-election';
+import { createClient as creatClientAdmin } from '~/supabase/admin';
+import { createClient as creatClientServer } from '~/supabase/server';
 
 export default async function DashboardLayout(
   props: React.PropsWithChildren<{
@@ -17,7 +18,7 @@ export default async function DashboardLayout(
     data: { user },
   } = await supabaseServer.auth.getUser();
 
-  if (!user) redirect("/sign-in");
+  if (!user) redirect('/sign-in');
 
   // const election = await db.query.elections.findFirst({
   //   where: (elections, { eq, and, isNull }) =>
@@ -39,20 +40,20 @@ export default async function DashboardLayout(
   const supabaseAdmin = creatClientAdmin();
 
   const { data: election } = await supabaseAdmin
-    .from("elections")
+    .from('elections')
     .select()
-    .eq("slug", electionDashboardSlug)
-    .is("deleted_at", null)
+    .eq('slug', electionDashboardSlug)
+    .is('deleted_at', null)
     .single();
 
   if (!election) notFound();
 
   const { data: commissioners } = await supabaseAdmin
-    .from("commissioners")
+    .from('commissioners')
     .select()
-    .eq("election_id", election.id)
-    .eq("user_id", user.id)
-    .is("deleted_at", null);
+    .eq('election_id', election.id)
+    .eq('user_id', user.id)
+    .is('deleted_at', null);
 
   if (!commissioners || commissioners.length === 0) notFound();
 

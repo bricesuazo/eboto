@@ -1,6 +1,6 @@
-import { Center, Loader } from "@mantine/core";
+import { Center, Loader } from '@mantine/core';
 
-export default function Loading() {
+export default function CandidatePageLoading() {
   return (
     <Center h="100vh">
       <Loader />

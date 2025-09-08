@@ -12,6 +12,7 @@
   "dependencies": {
     "@eboto/constants": "workspace:*",
     "@eboto/email": "workspace:*",
+    "@eboto/env": "workspace:*",
     "@eboto/inngest": "workspace:*",
     "@eboto/payment": "workspace:*",
     "@trpc/client": "catalog:",

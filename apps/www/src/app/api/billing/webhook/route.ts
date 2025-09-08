@@ -1,5 +1,6 @@
 import crypto from 'crypto';
-import { env } from 'env';
+
+import { env } from '@eboto/env';
 
 import { createClient } from '~/supabase/admin';
 

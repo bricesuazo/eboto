@@ -131,6 +131,9 @@ importers:
       '@eboto/email':
         specifier: workspace:*
         version: link:../../packages/email
+      '@eboto/env':
+        specifier: workspace:*
+        version: link:../../packages/env
       '@eboto/inngest':
         specifier: workspace:*
         version: link:../../packages/inngest
@@ -188,9 +191,6 @@ importers:
       '@supabase/supabase-js':
         specifier: 'catalog:'
         version: 2.57.2
-      '@t3-oss/env-nextjs':
-        specifier: 'catalog:'
-        version: 0.13.8(typescript@5.9.2)(zod@4.1.5)
       '@tabler/icons-react':
         specifier: 'catalog:'
         version: 3.34.1(react@19.1.1)
@@ -345,6 +345,9 @@ importers:
       '@eboto/email':
         specifier: workspace:*
         version: link:../email
+      '@eboto/env':
+        specifier: workspace:*
+        version: link:../env
       '@eboto/inngest':
         specifier: workspace:*
         version: link:../inngest
@@ -454,17 +457,33 @@ importers:
         specifier: 'catalog:'
         version: 5.9.2
 
+  packages/env:
+    dependencies:
+      '@t3-oss/env-nextjs':
+        specifier: 'catalog:'
+        version: 0.13.8(typescript@5.9.2)(zod@4.1.5)
+      zod:
+        specifier: 'catalog:'
+        version: 4.1.5
+    devDependencies:
+      '@eboto/tsconfig':
+        specifier: workspace:*
+        version: link:../../tooling/tsconfig
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.3.1
+
   packages/inngest:
     dependencies:
       '@eboto/email':
         specifier: workspace:*
         version: link:../email
+      '@eboto/env':
+        specifier: workspace:*
+        version: link:../env
       '@supabase/supabase-js':
         specifier: 'catalog:'
         version: 2.57.2
-      '@t3-oss/env-nextjs':
-        specifier: 'catalog:'
-        version: 0.13.8(typescript@5.9.2)(zod@4.1.5)
       inngest:
         specifier: 'catalog:'
         version: 3.40.2(encoding@0.1.13)(next@15.5.2(@babel/core@7.28.0)(@opentelemetry/api@1.9.0)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(typescript@5.9.2)
@@ -3190,9 +3209,6 @@ packages:
 
   '@types/node@22.13.8':
     resolution: {integrity: sha512-G3EfaZS+iOGYWLLRCEAXdWK9my08oHNZ+FHluRiggIYJPOXzhOiDgpVCUHaUvyIC5/fj7C/p637jdzC666AOKQ==}
-
-  '@types/node@24.3.0':
-    resolution: {integrity: sha512-aPTXCrfwnDLj4VvXrm+UUCQjNEvJgNA8s5F1cvwQU+3KNltTOkBm1j30uNLyqqPNe7gE3KFzImYoZEfLhp4Yow==}
 
   '@types/node@24.3.1':
     resolution: {integrity: sha512-3vXmQDXy+woz+gnrTvuvNrPzekOi+Ds0ReMxw0LzBiK3a+1k0kQn9f2NWk+lgD4rJehFUmYy2gMhJ2ZI+7YP9g==}
@@ -10021,7 +10037,7 @@ snapshots:
   '@types/glob@7.2.0':
     dependencies:
       '@types/minimatch': 6.0.0
-      '@types/node': 24.3.0
+      '@types/node': 24.3.1
 
   '@types/inquirer@6.5.0':
     dependencies:
@@ -10063,10 +10079,6 @@ snapshots:
     dependencies:
       undici-types: 6.20.0
 
-  '@types/node@24.3.0':
-    dependencies:
-      undici-types: 7.10.0
-
   '@types/node@24.3.1':
     dependencies:
       undici-types: 7.10.0
@@ -10107,7 +10119,7 @@ snapshots:
 
   '@types/through@0.0.33':
     dependencies:
-      '@types/node': 24.3.0
+      '@types/node': 24.3.1
 
   '@types/tinycolor2@1.4.6': {}
 
@@ -12062,7 +12074,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 24.3.0
+      '@types/node': 24.3.1
       merge-stream: 2.0.0
       supports-color: 8.1.1
 

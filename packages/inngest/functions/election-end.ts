@@ -3,10 +3,10 @@ import moment from 'moment';
 import { z } from 'zod/v4';
 
 import { sendElectionResult } from '@eboto/email/emails/election-result';
+import { env } from '@eboto/env';
 
 import { BCC_LIMIT, inngest } from '..';
 import { Database } from '../../../supabase/types';
-import { env } from '../env';
 
 export default inngest.createFunction(
   {

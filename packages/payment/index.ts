@@ -1,7 +1,7 @@
-import { lemonSqueezySetup } from "@lemonsqueezy/lemonsqueezy.js";
+import { lemonSqueezySetup } from '@lemonsqueezy/lemonsqueezy.js';
 
-import { env } from "../../apps/www/env";
+import { env } from '../env';
 
 lemonSqueezySetup({ apiKey: env.LEMONSQUEEZY_API_KEY });
 
-export * from "@lemonsqueezy/lemonsqueezy.js";
+export * from '@lemonsqueezy/lemonsqueezy.js';

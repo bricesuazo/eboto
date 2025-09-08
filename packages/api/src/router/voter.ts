@@ -4,7 +4,7 @@ import { z } from 'zod/v4';
 
 import { isElectionEnded, isElectionOngoing } from '@eboto/constants';
 
-import { env } from '../../../../apps/www/env';
+import { env } from '../../../env';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
 import { LS_DATA_DEV, LS_DATA_PROD } from './../../../../supabase/seed';
 

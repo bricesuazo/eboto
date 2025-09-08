@@ -1,9 +1,9 @@
 import type { Metadata, Route } from 'next';
 import { notFound, redirect } from 'next/navigation';
-import { env } from 'env';
 import moment from 'moment';
 
 import { isElectionEnded, isElectionOngoing } from '@eboto/constants';
+import { env } from '@eboto/env';
 
 import Realtime from '~/components/pages/realtime';
 import { createClient as createClientAdmin } from '~/supabase/admin';

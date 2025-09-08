@@ -1,9 +1,10 @@
-import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
-import { cookies } from "next/headers";
-import { createServerClient } from "@supabase/ssr";
-import { env } from "env";
+import type { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
+import { cookies } from 'next/headers';
+import { createServerClient } from '@supabase/ssr';
 
-import type { Database } from "../../../../supabase/types";
+import { env } from '@eboto/env';
+
+import type { Database } from '../../../../supabase/types';
 
 export const createClient = async () => {
   const cookieStore = await cookies();
