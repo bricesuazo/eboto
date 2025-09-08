@@ -337,34 +337,45 @@ export default function ElectionPage() {
                 election: getElectionPageQuery.data.election,
               }) &&
                 !getElectionPageQuery.data.hasVoted && (
-                  <>
-                    {getElectionPageQuery.data.election.voter_fields.length >
-                      0 &&
-                    Object.values(
-                      getElectionPageQuery.data.myVoterData?.field ?? {},
-                    ).every((value) => value.trim() === '') ? (
-                      <Button
-                        onClick={open}
-                        radius="xl"
-                        size="md"
-                        leftSection={<IconFingerprint />}
-                      >
-                        Vote now!
-                      </Button>
-                    ) : (
-                      <Button
-                        radius="xl"
-                        size="md"
-                        leftSection={<IconFingerprint />}
-                        component={Link}
-                        href={{
-                          pathname: `/${getElectionPageQuery.data.election.slug}/vote`,
-                        }}
-                      >
-                        Vote now!
-                      </Button>
-                    )}
-                  </>
+                  <Button
+                    radius="xl"
+                    size="md"
+                    leftSection={<IconFingerprint />}
+                    component={Link}
+                    href={{
+                      pathname: `/${getElectionPageQuery.data.election.slug}/vote`,
+                    }}
+                  >
+                    Vote now!
+                  </Button>
+                  // <>
+                  //   {getElectionPageQuery.data.election.voter_fields.length >
+                  //     0 &&
+                  //   Object.values(
+                  //     getElectionPageQuery.data.myVoterData?.field ?? {},
+                  //   ).every((value) => value.trim() === '') ? (
+                  //     <Button
+                  //       onClick={open}
+                  //       radius="xl"
+                  //       size="md"
+                  //       leftSection={<IconFingerprint />}
+                  //     >
+                  //       Vote now!
+                  //     </Button>
+                  //   ) : (
+                  //     <Button
+                  //       radius="xl"
+                  //       size="md"
+                  //       leftSection={<IconFingerprint />}
+                  //       component={Link}
+                  //       href={{
+                  //         pathname: `/${getElectionPageQuery.data.election.slug}/vote`,
+                  //       }}
+                  //     >
+                  //       Vote now!
+                  //     </Button>
+                  //   )}
+                  // </>
                 )}
             </Flex>
             {isElectionEnded({
