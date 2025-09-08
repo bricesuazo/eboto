@@ -1,6 +1,6 @@
 import { z } from 'zod/v4';
 
-import { EmailSchema } from './constants';
+import { EmailSchema } from '@eboto/constants/schema';
 
 export const AuthSchema = z.object({
   email: EmailSchema,

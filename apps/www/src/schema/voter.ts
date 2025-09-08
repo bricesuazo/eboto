@@ -1,6 +1,6 @@
 import { z } from 'zod/v4';
 
-import { EmailSchema } from './constants';
+import { EmailSchema } from '@eboto/constants/schema';
 
 const VoterFieldsSchema = z.record(z.string(), z.string());
 

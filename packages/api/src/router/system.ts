@@ -1,5 +1,7 @@
 import { z } from 'zod/v4';
 
+import { EmailSchema } from '@eboto/constants/schema';
+
 import { env } from '../../../env';
 import { createTRPCRouter, publicProcedure } from '../trpc';
 
@@ -10,7 +12,7 @@ export const systemRouter = createTRPCRouter({
         name: z.string().optional(),
         message: z.string(),
         subject: z.string(),
-        email: z.email(),
+        email: EmailSchema,
       }),
     )
     .mutation(async ({ input }) => {

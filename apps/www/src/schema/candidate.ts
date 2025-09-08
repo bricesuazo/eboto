@@ -1,7 +1,7 @@
 import type { FileWithPath } from '@mantine/dropzone';
 import { z } from 'zod/v4';
 
-import { SlugSchema } from './constants';
+import { SlugSchema } from '@eboto/constants/schema';
 
 export const CreateCandidateSchema = z.object({
   first_name: z.string().min(1, 'First name must be at least 1 characters'),

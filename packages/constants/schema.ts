@@ -9,4 +9,7 @@ export const SlugSchema = z
     'Slug must be alphanumeric and can contain dashes',
   );
 
-export const EmailSchema = z.email('Invalid email address');
+export const EmailSchema = z
+  .string()
+  .transform((s) => s.replace(/\s+/g, ''))
+  .pipe(z.email('Invalid email address'));

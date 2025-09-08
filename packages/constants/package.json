@@ -2,6 +2,10 @@
   "name": "@eboto/constants",
   "type": "module",
   "main": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./schema": "./schema.ts"
+  },
   "publishConfig": {
     "access": "public"
   },

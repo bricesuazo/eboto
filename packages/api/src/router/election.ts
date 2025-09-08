@@ -9,6 +9,7 @@ import {
   positionTemplate,
   takenSlugs,
 } from '@eboto/constants';
+import { EmailSchema } from '@eboto/constants/schema';
 import { sendVoteCasted } from '@eboto/email/emails/vote-casted';
 import { env } from '@eboto/env';
 
@@ -1179,7 +1180,7 @@ export const electionRouter = createTRPCRouter({
     .input(
       z.object({
         election_id: z.uuid(),
-        email: z.email(),
+        email: EmailSchema,
       }),
     )
     .mutation(async ({ ctx, input }) => {

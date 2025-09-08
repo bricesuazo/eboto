@@ -3,6 +3,7 @@ import { v4 } from 'uuid';
 import { z } from 'zod/v4';
 
 import { isElectionEnded, isElectionOngoing } from '@eboto/constants';
+import { EmailSchema } from '@eboto/constants/schema';
 
 import { env } from '../../../env';
 import { createTRPCRouter, protectedProcedure } from '../trpc';
@@ -12,7 +13,7 @@ export const voterRouter = createTRPCRouter({
   createSingle: protectedProcedure
     .input(
       z.object({
-        email: z.string().min(1),
+        email: EmailSchema,
         election_id: z.uuid(),
         voter_fields: z.array(
           z.object({
@@ -86,7 +87,9 @@ export const voterRouter = createTRPCRouter({
           message: voters_error.message,
         });
 
-      if (voters.find((voter) => voter.email === input.email))
+      if (
+        voters.find((voter) => voter.email.replace(/\s+/g, '') === input.email)
+      )
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: 'Email is already a voter',
@@ -267,7 +270,7 @@ export const voterRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string().min(1),
-        email: z.string().min(1),
+        email: EmailSchema,
         election_id: z.uuid(),
         voter_fields: z.array(
           z.object({
@@ -389,7 +392,7 @@ export const voterRouter = createTRPCRouter({
         voters: z.array(
           z.object({
             id: z.string().min(1),
-            email: z.string().min(1),
+            email: EmailSchema,
           }),
         ),
       }),
@@ -435,7 +438,7 @@ export const voterRouter = createTRPCRouter({
         election_id: z.uuid(),
         voters: z.array(
           z.object({
-            email: z.string().min(1),
+            email: EmailSchema,
             field: z.record(z.string(), z.string()),
           }),
         ),
@@ -522,7 +525,8 @@ export const voterRouter = createTRPCRouter({
       const uniqueVoters = input.voters.filter(
         (voter) =>
           !votersFromDb.some(
-            (voterFromDb) => voterFromDb.email === voter.email,
+            (voterFromDb) =>
+              voterFromDb.email.replace(/\s+/g, '') === voter.email,
           ),
       );
 

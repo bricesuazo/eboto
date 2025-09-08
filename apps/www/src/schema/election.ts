@@ -1,7 +1,8 @@
 import { z } from 'zod/v4';
 
+import { SlugSchema } from '@eboto/constants/schema';
+
 import { Constants } from '../../../../supabase/types';
-import { SlugSchema } from './constants';
 
 export const CreateElectionSchema = z.object({
   name: z.string().min(1, 'Election name must be at least 1 characters'),
