@@ -57,7 +57,7 @@ export default function ElectionPage() {
   const { electionSlug } = useParams<{ electionSlug: string }>();
 
   const router = useRouter();
-  const [opened, { open, close }] = useDisclosure(false);
+  const [opened, { close }] = useDisclosure(false);
   const [spoilerOpened, { open: setSpoilerOpen, close: setSpoilerClose }] =
     useDisclosure(false);
   const [openedQrCode, { open: openQrCode, close: closeQrCode }] =
