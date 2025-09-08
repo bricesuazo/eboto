@@ -146,7 +146,7 @@ export default function MessageCommissioner({
                 </Button>
                 <Button
                   type="submit"
-                  disabled={!form.isValid()}
+                  // disabled={!form.isValid()}
                   loading={messageCommissionerMutation.isPending}
                 >
                   Send
