@@ -579,6 +579,10 @@ CREATE INDEX "candidates_id_election_id_idx" ON "public"."candidates" USING "btr
 
 
 
+CREATE INDEX "candidates_partylist_id_idx" ON "public"."candidates" USING "btree" ("partylist_id");
+
+
+
 CREATE INDEX "candidates_position_id_idx" ON "public"."candidates" USING "btree" ("position_id");
 
 
