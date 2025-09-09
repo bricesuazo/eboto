@@ -959,47 +959,41 @@ function Chat({ chat, onBack }: { chat: ChatType; onBack: () => void }) {
           <Loader />
         </Center>
       ) : (
-        <ScrollArea px="md" style={{ flex: 1 }} viewportRef={scrollableRef}>
+        <ScrollArea
+          px="md"
+          style={{ flex: 1, gap: '0.25rem' }}
+          viewportRef={scrollableRef}
+        >
           {getMessagesAsComissionerQuery.data.map((message) => (
             <Box
               key={message.id}
+              mb="xs"
               ml={message.user.isMe ? 'auto' : undefined}
               mr={!message.user.isMe ? 'auto' : undefined}
-              maw={{ base: '75%', xs: '50%', sm: '40%', md: 200, xl: 300 }}
+              maw={{ base: '75%', xs: '50%', sm: '40%', md: 400, xl: 300 }}
+              p="xs"
+              style={{
+                border: '1px solid #cccccc25',
+                borderRadius: 8,
+              }}
             >
-              <Box
-                p="xs"
-                style={{
-                  border: '1px solid #cccccc25',
-                  borderRadius: 8,
-                }}
-              >
-                <Text
-                  style={{
-                    wordBreak: 'break-word',
-                  }}
-                >
-                  {message.message}
+              <Stack gap={0} mb="xs">
+                <Text size="xs" c="gray" lineClamp={4}>
+                  {message.user.email}
                 </Text>
-              </Box>
-              <HoverCard openDelay={500}>
-                <HoverCardTarget>
-                  <Text
-                    size="xs"
-                    c="gray"
-                    w="fit-content"
-                    ml={message.user.isMe ? 'auto' : undefined}
-                    mb="xs"
-                  >
-                    {moment(message.created_at).format('hh:mm A')}
-                  </Text>
-                </HoverCardTarget>
-                <HoverCardDropdown>
-                  <Text size="xs" c="gray">
-                    {moment(message.created_at).format('MMMM D, YYYY hh:mm A')}
-                  </Text>
-                </HoverCardDropdown>
-              </HoverCard>
+
+                <Text size="xs" c="gray" w="fit-content">
+                  {moment(message.created_at).format('hh:mm A')}
+                </Text>
+              </Stack>
+              <Text
+                style={{
+                  wordBreak: 'break-word',
+                }}
+                size="sm"
+              >
+                {message.message}
+              </Text>
             </Box>
           ))}
           <div ref={targetRef} />
