@@ -41,6 +41,7 @@ import type { Database } from '../../../../../supabase/types';
 import AdModal from '../ad-modal';
 import MessageCommissioner from '../modals/message-commissioner';
 import MyMessagesElection from '../my-messages-election';
+import VoterStat from '../voter-stat';
 
 const date = new Date();
 const rounded_off_date = new Date();
@@ -307,39 +308,10 @@ export default function Realtime({
                   >
                     {getVoterFieldsStatsInRealtimeQuery.data.map(
                       (voterFieldStat) => (
-                        <Table
-                          key={voterFieldStat.name}
-                          withColumnBorders
-                          withTableBorder
-                        >
-                          <TableThead>
-                            <TableTr>
-                              <TableTh>{voterFieldStat.name}</TableTh>
-                              <TableTh>Voted</TableTh>
-                            </TableTr>
-                          </TableThead>
-                          <TableTbody>
-                            {voterFieldStat.options.length ? (
-                              voterFieldStat.options.map((option) => (
-                                <TableTr key={option.name}>
-                                  <TableTd>{option.name}</TableTd>
-                                  <TableTd>
-                                    <NumberFormatter
-                                      thousandSeparator
-                                      value={option.vote_count}
-                                    />
-                                  </TableTd>
-                                </TableTr>
-                              ))
-                            ) : (
-                              <TableTr>
-                                <TableTd>
-                                  <Text>No answer yet</Text>
-                                </TableTd>
-                              </TableTr>
-                            )}
-                          </TableTbody>
-                        </Table>
+                        <VoterStat
+                          key={voterFieldStat.id}
+                          voterFieldStat={voterFieldStat}
+                        />
                       ),
                     )}
                   </SimpleGrid>

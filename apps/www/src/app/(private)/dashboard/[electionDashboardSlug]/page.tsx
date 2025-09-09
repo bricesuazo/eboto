@@ -16,12 +16,6 @@ import {
   Stack,
   Stepper,
   StepperStep,
-  Table,
-  TableTbody,
-  TableTd,
-  TableTh,
-  TableThead,
-  TableTr,
   Text,
   Title,
   UnstyledButton,
@@ -52,6 +46,7 @@ import { parseHourTo12HourFormat } from '@eboto/constants';
 import CenterLoader from '~/components/center-loader';
 import GenerateResultRow from '~/components/generated-result-row';
 import DashboardShowQRCode from '~/components/modals/dashboard-show-qr-code';
+import VoterStat from '~/components/voter-stat';
 import { api } from '~/trpc/client';
 
 export default function Page({
@@ -372,43 +367,10 @@ export default function Page({
               }}
             >
               {getVoterFieldsStatsQuery.data.map((voterFieldStat) => (
-                <Table
-                  key={voterFieldStat.name}
-                  withColumnBorders
-                  withTableBorder
-                >
-                  <TableThead>
-                    <TableTr>
-                      <TableTh>{voterFieldStat.name}</TableTh>
-                      <TableTh>Voted</TableTh>
-                    </TableTr>
-                  </TableThead>
-                  <TableTbody>
-                    {voterFieldStat.options.length ? (
-                      voterFieldStat.options.map((option) => (
-                        <TableTr key={option.name}>
-                          <TableTd>
-                            {option.name.length
-                              ? option.name
-                              : 'No answer yet...'}
-                          </TableTd>
-                          <TableTd>
-                            <NumberFormatter
-                              thousandSeparator
-                              value={option.vote_count}
-                            />
-                          </TableTd>
-                        </TableTr>
-                      ))
-                    ) : (
-                      <TableTr>
-                        <TableTd>
-                          <Text>No answer yet</Text>
-                        </TableTd>
-                      </TableTr>
-                    )}
-                  </TableTbody>
-                </Table>
+                <VoterStat
+                  key={voterFieldStat.id}
+                  voterFieldStat={voterFieldStat}
+                />
               ))}
             </SimpleGrid>
           )}
