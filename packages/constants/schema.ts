@@ -12,4 +12,5 @@ export const SlugSchema = z
 export const EmailSchema = z
   .string()
   .transform((s) => s.replace(/\s+/g, ''))
+  .transform((s) => s.toLowerCase())
   .pipe(z.email('Invalid email address'));
