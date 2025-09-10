@@ -174,11 +174,11 @@ export const electionRouter = createTRPCRouter({
 
       if (!election) throw new TRPCError({ code: 'NOT_FOUND' });
 
-      if (!isElectionOngoing({ election }))
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'Election is not ongoing',
-        });
+      // if (!isElectionOngoing({ election }))
+      //   throw new TRPCError({
+      //     code: 'UNAUTHORIZED',
+      //     message: 'Election is not ongoing',
+      //   });
 
       const { data: existingVotes } = await ctx.supabase
         .from('votes')
