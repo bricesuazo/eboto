@@ -1952,4 +1952,75 @@ export const electionRouter = createTRPCRouter({
 
     return elections_plus.length;
   }),
+  getMyVotes: protectedProcedure
+    .input(
+      z.object({
+        election_slug: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { data: election } = await ctx.supabase
+        .from('elections')
+        .select('*')
+        .eq('slug', input.election_slug)
+        .is('deleted_at', null)
+        .single();
+
+      if (!election) return [];
+
+      const { data: positions } = await ctx.supabase
+        .from('positions')
+        .select('*')
+        .eq('election_id', election.id)
+        .is('deleted_at', null)
+        .order('created_at', { ascending: true });
+
+      if (!positions) return [];
+
+      const { data: voter } = await ctx.supabase
+        .from('voters')
+        .select('*')
+        .eq('election_id', election.id)
+        .eq('email', ctx.user.db.email)
+        .is('deleted_at', null)
+        .single();
+
+      if (!voter) return [];
+
+      const { data: votes } = await ctx.supabase
+        .from('votes')
+        .select(
+          `
+          *,
+          candidate:candidates(*, position:positions!inner(id, name), partylist:partylists!inner(id, name, acronym))
+        `,
+        )
+        .eq('voter_id', voter.id)
+        .eq('election_id', election.id);
+
+      if (!votes) return [];
+
+      if (!votes.length) return [];
+
+      return positions.map((position) => ({
+        id: position.id,
+        name: position.name,
+        is_abstain: votes.find((vote) => vote.position_id === position.id),
+        candidates: votes
+          .filter((vote) => vote.candidate?.position_id === position.id)
+          .map((vote) => ({
+            id: vote.id,
+            name: vote.candidate
+              ? vote.candidate.first_name + ' ' + vote.candidate.last_name
+              : 'Abstain',
+            partylist: vote.candidate?.partylist
+              ? {
+                  id: vote.candidate.partylist_id,
+                  name: vote.candidate.partylist.name,
+                  acronym: vote.candidate.partylist.acronym,
+                }
+              : null,
+          })),
+      }));
+    }),
 });

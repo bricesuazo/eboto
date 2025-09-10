@@ -62,6 +62,8 @@ export default function ElectionPage() {
     useDisclosure(false);
   const [openedQrCode, { open: openQrCode, close: closeQrCode }] =
     useDisclosure(false);
+  const [openedMyVotes, { open: openMyVotes, close: closeMyVotes }] =
+    useDisclosure(false);
 
   const addVoterFieldToVoterMutation =
     api.voter.addVoterFieldToVoter.useMutation({
@@ -71,6 +73,9 @@ export default function ElectionPage() {
       },
     });
   const getElectionPageQuery = api.election.getElectionPage.useQuery({
+    election_slug: electionSlug,
+  });
+  const getMyVotesQuery = api.election.getMyVotes.useQuery({
     election_slug: electionSlug,
   });
 
@@ -195,6 +200,34 @@ export default function ElectionPage() {
         </Stack>
       </Modal>
 
+      {getMyVotesQuery.data && getMyVotesQuery.data.length > 0 && (
+        <Modal
+          opened={openedMyVotes}
+          onClose={closeMyVotes}
+          title="My Votes"
+          closeOnClickOutside={false}
+        >
+          <Stack gap="xs">
+            {getMyVotesQuery.data.map((position) => (
+              <Box key={position.id}>
+                <Text>{position.name}</Text>
+                <Text>
+                  {position.is_abstain
+                    ? 'Abstain'
+                    : position.candidates.map((candidate) => (
+                        <Text key={candidate.id}>
+                          - {candidate.name} ({candidate.partylist?.acronym})
+                        </Text>
+                      ))}
+                </Text>
+              </Box>
+            ))}
+            <Button w="100%" onClick={closeMyVotes}>
+              Close
+            </Button>
+          </Stack>
+        </Modal>
+      )}
       <QRCodeModal
         election={getElectionPageQuery.data.election}
         closeAction={closeQrCode}
@@ -378,6 +411,20 @@ export default function ElectionPage() {
                   // </>
                 )}
             </Flex>
+
+            {getMyVotesQuery.data && getMyVotesQuery.data.length > 0 && (
+              <Flex mt="sm" justify="center" gap="xs">
+                <Button
+                  radius="xl"
+                  size="sm"
+                  variant="outline"
+                  leftSection={<IconFingerprint />}
+                  onClick={openMyVotes}
+                >
+                  eResibo
+                </Button>
+              </Flex>
+            )}
             {isElectionEnded({
               election: getElectionPageQuery.data.election,
             }) ? (
