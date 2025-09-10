@@ -553,10 +553,10 @@ export const electionRouter = createTRPCRouter({
                 id: candidate.id,
                 name:
                   !election.is_candidates_visible_in_realtime_when_ongoing &&
-                  !is_commissioner
-                    ? // isElectionOngoing({ election }) &&
-                      // !isElectionEnded({ election })
-                      `Candidate ${index + 1}`
+                  !is_commissioner &&
+                  isElectionOngoing({ election }) &&
+                  !isElectionEnded({ election })
+                    ? `Candidate ${index + 1}`
                     : `${formatName(election.name_arrangement, candidate)} (${
                         candidate.partylist.acronym
                       })`,
