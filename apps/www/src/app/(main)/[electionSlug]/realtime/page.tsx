@@ -134,15 +134,13 @@ export default async function RealtimePage({
       .is('deleted_at', null)
       .single();
 
-    const { data: votes, error: votes_error } = await supabaseAdmin
+    const { data: votes } = await supabaseAdmin
       .from('votes')
       .select('id')
       .eq('election_id', election.id)
       .eq('voter_id', isVoter?.id ?? '');
 
-    if (votes_error) notFound();
-
-    if (isVoter && votes.length) redirect(`/${election.slug}`);
+    if (isVoter && votes?.length) redirect(`/${election.slug}`);
   } else if (election.publicity === 'VOTER') {
     if (!user) redirect(next as Route);
 
