@@ -526,6 +526,20 @@ export const electionRouter = createTRPCRouter({
           message: realtime_result_error.message,
         });
 
+      let is_commissioner = false;
+
+      if (ctx.user?.auth.id) {
+        const { data: commissioner } = await ctx.supabase
+          .from('commissioners')
+          .select()
+          .eq('election_id', election.id)
+          .eq('user_id', ctx.user.auth.id)
+          .is('deleted_at', null)
+          .single();
+
+        is_commissioner = !!commissioner;
+      }
+
       return {
         positions: realtime_result.map((position) => ({
           id: position.id,
@@ -537,13 +551,15 @@ export const electionRouter = createTRPCRouter({
             .map((candidate, index) => {
               return {
                 id: candidate.id,
-                name: !election.is_candidates_visible_in_realtime_when_ongoing
-                  ? // isElectionOngoing({ election }) &&
-                    // !isElectionEnded({ election })
-                    `Candidate ${index + 1}`
-                  : `${formatName(election.name_arrangement, candidate)} (${
-                      candidate.partylist.acronym
-                    })`,
+                name:
+                  !election.is_candidates_visible_in_realtime_when_ongoing &&
+                  !is_commissioner
+                    ? // isElectionOngoing({ election }) &&
+                      // !isElectionEnded({ election })
+                      `Candidate ${index + 1}`
+                    : `${formatName(election.name_arrangement, candidate)} (${
+                        candidate.partylist.acronym
+                      })`,
                 vote: candidate.votes.length,
               };
             }),
