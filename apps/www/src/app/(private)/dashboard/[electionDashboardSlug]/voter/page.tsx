@@ -14,7 +14,7 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconInfoCircle, IconRefresh } from '@tabler/icons-react';
+import { IconDownload, IconInfoCircle, IconRefresh } from '@tabler/icons-react';
 import type { MRT_ColumnDef, MRT_RowSelectionState } from 'mantine-react-table';
 import {
   MantineReactTable,
@@ -23,6 +23,7 @@ import {
   useMantineReactTable,
 } from 'mantine-react-table';
 import moment from 'moment';
+import * as XLSX from 'xlsx';
 
 import type { RouterOutputs } from '@eboto/api';
 import { isElectionEnded, isElectionOngoing } from '@eboto/constants';
@@ -155,6 +156,44 @@ export default function Page({
                 Refresh
               </Button>
             </div>
+          </Tooltip>
+
+          <Tooltip withArrow label="Export to Excel">
+            <Button
+              variant="light"
+              leftSection={<IconDownload size="1.25rem" />}
+              onClick={() => {
+                if (!votersQuery.data) return;
+                const voterFields = votersQuery.data.election.voter_fields;
+                const rows = votersQuery.data.voters.map((voter) => {
+                  const fieldByName = voterFields.reduce<
+                    Record<string, string>
+                  >((acc, vf) => {
+                    acc[vf.name] =
+                      (voter.field as Record<string, string> | null)?.[vf.id] ??
+                      '';
+                    return acc;
+                  }, {});
+
+                  return {
+                    Email: voter.email,
+                    ...fieldByName,
+                    'Voted?': voter.has_voted ? 'Yes' : 'No',
+                  };
+                });
+
+                const worksheet = XLSX.utils.json_to_sheet(rows);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, 'Voters');
+                const filename = `${votersQuery.data.election.name} (@${votersQuery.data.election.slug}) - Voters.xlsx`;
+                XLSX.writeFile(workbook, filename);
+              }}
+              disabled={
+                !votersQuery.data || votersQuery.data.voters.length === 0
+              }
+            >
+              Export
+            </Button>
           </Tooltip>
 
           <Tooltip withArrow label="Delete selected">
