@@ -140,7 +140,7 @@ export default async function RealtimePage({
       .eq('election_id', election.id)
       .eq('voter_id', isVoter?.id ?? '');
 
-    if (isVoter && votes?.length) redirect(`/${election.slug}`);
+    if (isVoter && !votes?.length) redirect(`/${election.slug}`);
   } else if (election.publicity === 'VOTER') {
     if (!user) redirect(next as Route);
 
