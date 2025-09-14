@@ -507,12 +507,14 @@ export const electionRouter = createTRPCRouter({
           .select(
             `
           *, votes(*),
-          candidates(*, votes(*, candidates(*)), partylist:partylists(*))
+          candidates(*, votes(*, voter:voters(*), candidates(*)), partylist:partylists(*))
         `,
           )
           .eq('election_id', election.id)
           .is('deleted_at', null)
+          // .is('candidates.votes.voters.deleted_at', null)
           .order('order', { ascending: true });
+
       // .eq("votes.election_id", election.id)
       // .lte("votes.created_at", date)
       // .eq("candidates.election_id", election.id)
@@ -560,7 +562,9 @@ export const electionRouter = createTRPCRouter({
                     : `${formatName(election.name_arrangement, candidate)} (${
                         candidate.partylist.acronym
                       })`,
-                vote: candidate.votes.length,
+                vote: candidate.votes.filter(
+                  (vote) => vote.voter.deleted_at === null,
+                ).length,
               };
             }),
         })),
