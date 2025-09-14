@@ -506,7 +506,7 @@ export const electionRouter = createTRPCRouter({
           .from('positions')
           .select(
             `
-          *, votes(*),
+          *, votes(*, voter:voters(*)),
           candidates(*, votes(*, voter:voters(*), candidates(*)), partylist:partylists(*))
         `,
           )
@@ -547,7 +547,8 @@ export const electionRouter = createTRPCRouter({
           id: position.id,
           name: position.name,
 
-          votes: position.votes.length,
+          votes: position.votes.filter((vote) => vote.voter.deleted_at === null)
+            .length,
           candidates: position.candidates
             .sort((a, b) => b.votes.length - a.votes.length)
             .map((candidate, index) => {
@@ -631,10 +632,21 @@ export const electionRouter = createTRPCRouter({
 
       const { data: votersFromDb } = await ctx.supabase
         .from('voters')
-        .select('*, votes:votes(*)')
+        .select(
+          `
+          *,
+          votes:votes(
+            *,
+            candidate:candidates(
+              *,
+              position:positions!inner(id, name),
+              partylist:partylists!inner(id, name, acronym)
+            )
+          )
+        `,
+        )
         .eq('election_id', election.id)
-        .is('deleted_at', null)
-        .limit(1, { referencedTable: 'votes' });
+        .is('deleted_at', null);
 
       if (!votersFromDb) throw new TRPCError({ code: 'NOT_FOUND' });
 
@@ -646,6 +658,28 @@ export const electionRouter = createTRPCRouter({
           created_at: voter.created_at,
           field: voter.field,
           has_voted: !!voter.votes.length,
+          votes: voter.votes.map((vote) => ({
+            id: vote.id,
+            created_at: vote.created_at,
+            candidate: vote.candidate
+              ? {
+                  id: vote.candidate.id,
+                  slug: vote.candidate.slug,
+                  first_name: vote.candidate.first_name,
+                  last_name: vote.candidate.last_name,
+                  middle_name: vote.candidate.middle_name,
+                  position: {
+                    id: vote.candidate.position.id,
+                    name: vote.candidate.position.name,
+                  },
+                  partylist: {
+                    id: vote.candidate.partylist.id,
+                    name: vote.candidate.partylist.name,
+                    acronym: vote.candidate.partylist.acronym,
+                  },
+                }
+              : null,
+          })),
         })),
       };
     }),
