@@ -18,12 +18,12 @@
     }
   },
   "dependencies": {
-    "@aws-sdk/client-ses": "3.883.0",
+    "@aws-sdk/client-ses": "3.890.0",
     "@eboto/constants": "workspace:*",
     "@react-email/components": "0.5.3",
     "@react-email/render": "1.2.3",
     "react": "catalog:",
-    "react-email": "4.2.10"
+    "react-email": "4.2.11"
   },
   "devDependencies": {
     "@eboto/prettier-config": "workspace:*",

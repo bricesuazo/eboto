@@ -241,8 +241,8 @@ function Chat({
     api.election.sendMessageAsVoter.useMutation({
       onSuccess: async () => {
         await Promise.allSettled([
-          await getMessagesAsVoterQuery.refetch().then(() => form.reset()),
-          await context.election.getAllMyMessages.invalidate(),
+          getMessagesAsVoterQuery.refetch().then(() => form.reset()),
+          context.election.getAllMyMessages.invalidate(),
         ]);
         scrollIntoView();
       },

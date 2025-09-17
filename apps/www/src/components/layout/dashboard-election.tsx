@@ -900,12 +900,10 @@ function Chat({ chat, onBack }: { chat: ChatType; onBack: () => void }) {
     api.election.sendMessageAsCommissioner.useMutation({
       onSuccess: async () => {
         await Promise.allSettled([
-          await getMessagesAsComissionerQuery
-            .refetch()
-            .then(() => form.reset()),
+          getMessagesAsComissionerQuery.refetch().then(() => form.reset()),
           chat.type === 'admin'
-            ? await context.election.getAllAdminCommissionerRooms.invalidate()
-            : await context.election.getAllCommissionerVoterRooms.invalidate(),
+            ? context.election.getAllAdminCommissionerRooms.invalidate()
+            : context.election.getAllCommissionerVoterRooms.invalidate(),
         ]);
         scrollIntoView();
       },

@@ -28,7 +28,6 @@
     "@eboto/prettier-config": "workspace:*",
     "@eboto/tsconfig": "workspace:*",
     "@supabase/supabase-js": "catalog:",
-    "@types/uuid": "catalog:",
     "eslint": "catalog:",
     "prettier": "catalog:",
     "typescript": "catalog:"
