@@ -92,7 +92,7 @@ export default async function VotePage({
     .eq('voter_id', voter.id)
     .eq('election_id', election.id);
 
-  if (votes_count) redirect(`/${election.slug}/realtime`);
+  if (votes_count) redirect(`/${election.slug}/result`);
 
   if (election.publicity === 'PRIVATE') {
     const { count: commissioner_count } = await supabaseAdmin
@@ -119,7 +119,7 @@ export default async function VotePage({
       .eq('election_id', election.id);
 
     if (votes_count > 0 && commissioner_count)
-      redirect(`/${election.slug}/realtime`);
+      redirect(`/${election.slug}/result`);
   }
 
   const positions = await api.election.getElectionVoting({

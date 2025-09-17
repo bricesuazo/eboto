@@ -360,7 +360,7 @@ export default function ElectionPage() {
                   component={Link}
                   leftSection={<IconClock />}
                   href={{
-                    pathname: `/${getElectionPageQuery.data.election.slug}/realtime`,
+                    pathname: `/${getElectionPageQuery.data.election.slug}/result`,
                   }}
                 >
                   Realtime count

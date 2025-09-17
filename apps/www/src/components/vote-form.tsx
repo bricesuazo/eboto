@@ -81,7 +81,7 @@ export default function VoteForm({
 
   const voteMutation = api.election.vote.useMutation({
     onSuccess: () => {
-      router.push(`/${election.slug}/realtime`);
+      router.push(`/${election.slug}/result`);
       notifications.show({
         title: 'Vote casted successfully!',
         message: 'You can now view the realtime results',

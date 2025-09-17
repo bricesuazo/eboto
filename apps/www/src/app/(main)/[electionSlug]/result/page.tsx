@@ -5,7 +5,7 @@ import moment from 'moment';
 import { isElectionEnded, isElectionOngoing } from '@eboto/constants';
 import { env } from '@eboto/env';
 
-import Realtime from '~/components/pages/realtime';
+import Result from '~/components/pages/result';
 import { createClient as createClientAdmin } from '~/supabase/admin';
 import { createClient as createClientServer } from '~/supabase/server';
 import { api } from '~/trpc/server';
@@ -69,7 +69,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function RealtimePage({
+export default async function ResultPage({
   params,
 }: {
   params: Promise<{ electionSlug: string }>;
@@ -113,7 +113,7 @@ export default async function RealtimePage({
 
   let isVoterCanMessage = !!voter && !commissioner;
 
-  const next = `/sign-in?next=/${election.slug}/realtime`;
+  const next = `/sign-in?next=/${election.slug}/result`;
 
   if (election.publicity === 'PRIVATE') {
     isVoterCanMessage = false;
@@ -186,7 +186,7 @@ export default async function RealtimePage({
     logo_url = image.publicUrl;
   }
   return (
-    <Realtime
+    <Result
       positions={positions}
       election={{
         ...election,

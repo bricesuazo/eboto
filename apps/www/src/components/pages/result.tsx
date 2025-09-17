@@ -48,7 +48,7 @@ const rounded_off_date = new Date();
 rounded_off_date.setMinutes(0);
 rounded_off_date.setSeconds(0);
 
-export default function Realtime({
+export default function Result({
   positions,
   election,
   isVoterCanMessage,
