@@ -1,5 +1,5 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 import {
   Accordion,
   AccordionControl,
@@ -14,17 +14,17 @@ import {
   Stack,
   Text,
   Title,
-} from "@mantine/core";
-import { IconArrowRight } from "@tabler/icons-react";
-import Balancer from "react-wrap-balancer";
+} from '@mantine/core';
+import { IconArrowRight } from '@tabler/icons-react';
+import ReactPlayer from 'react-player';
+import Balancer from 'react-wrap-balancer';
 
-import { FAQs } from "@eboto/constants";
+import { FAQs } from '@eboto/constants';
 
-import ContactForm from "~/components/contact-form";
-import ElectionBoost from "~/components/modals/election-boost";
-import ReactPlayer from "react-player";
-import classes from "~/styles/Home.module.css";
-import { MainPricing } from "./pricing/page";
+import ContactForm from '~/components/contact-form';
+import ElectionBoost from '~/components/modals/election-boost';
+import classes from '~/styles/Home.module.css';
+import { MainPricing } from './pricing/page';
 
 export default function HomePage() {
   return (
@@ -39,25 +39,25 @@ export default function HomePage() {
         <Stack gap={80}>
           <Box pos="relative" py={156}>
             <Title
-              ta={{ base: "left", sm: "center" }}
-              fz={{ base: "2.25rem", sm: "3rem" }}
+              ta={{ base: 'left', sm: 'center' }}
+              fz={{ base: '2.25rem', sm: '3rem' }}
               mb="md"
               lts={-1}
               className={classes.title}
             >
               <Balancer>
-                Your{" "}
+                Your{' '}
                 <Text component="span" className={classes.highlight} inherit>
                   One-Stop
-                </Text>{" "}
+                </Text>{' '}
                 Online Voting Solution
               </Balancer>
             </Title>
 
             <Container p={0} size="md">
               <Text
-                fz={{ base: "md", sm: "lg", md: "xl" }}
-                ta={{ base: "left", sm: "center" }}
+                fz={{ base: 'md', sm: 'lg', md: 'xl' }}
+                ta={{ base: 'left', sm: 'center' }}
               >
                 <Balancer>
                   Empower your elections with eBoto, the versatile and web-based
@@ -71,7 +71,7 @@ export default function HomePage() {
               justify="center"
               mt="lg"
               gap="sm"
-              direction={{ base: "column", sm: "row" }}
+              direction={{ base: 'column', sm: 'row' }}
             >
               <Button
                 component={Link}
@@ -88,7 +88,7 @@ export default function HomePage() {
                 className={classes.control}
                 size="md"
               >
-                Get started
+                Register
               </Button>
             </Flex>
           </Box>
@@ -132,17 +132,17 @@ export default function HomePage() {
             <Box
               top={60}
               style={{
-                aspectRatio: "3/2",
+                aspectRatio: '3/2',
               }}
-              pos={{ base: "inherit", sm: "sticky" }}
+              pos={{ base: 'inherit', sm: 'sticky' }}
             >
               <Image
                 src="/images/faq.svg"
                 fill
                 alt="Frequently Asked Questions"
                 style={{
-                  userSelect: "none",
-                  pointerEvents: "none",
+                  userSelect: 'none',
+                  pointerEvents: 'none',
                   zIndex: -1,
                 }}
               />
@@ -158,7 +158,7 @@ export default function HomePage() {
 
               <Accordion
                 chevronPosition="right"
-                defaultValue={FAQs[0]?.id ?? ""}
+                defaultValue={FAQs[0]?.id ?? ''}
                 variant="separated"
               >
                 {FAQs.map((item) => (
@@ -192,7 +192,7 @@ export default function HomePage() {
   );
 }
 
-interface DotsProps extends React.ComponentPropsWithoutRef<"svg"> {
+interface DotsProps extends React.ComponentPropsWithoutRef<'svg'> {
   size?: number;
   radius?: number;
 }

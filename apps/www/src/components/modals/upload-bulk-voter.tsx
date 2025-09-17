@@ -48,7 +48,10 @@ export default function UploadBulkVoter({
   voter_fields,
 }: {
   election_id: string;
-  voter_fields: Database['public']['Tables']['voter_fields']['Row'][];
+  voter_fields: Pick<
+    Database['public']['Tables']['voter_fields']['Row'],
+    'id' | 'name'
+  >[];
 }) {
   const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure();

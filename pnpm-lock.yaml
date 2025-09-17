@@ -475,6 +475,9 @@ importers:
 
   packages/inngest:
     dependencies:
+      '@eboto/constants':
+        specifier: workspace:*
+        version: link:../constants
       '@eboto/email':
         specifier: workspace:*
         version: link:../email

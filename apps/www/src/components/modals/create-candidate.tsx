@@ -54,7 +54,10 @@ export default function CreateCandidate({
   position,
   election_slug,
 }: {
-  position: Database['public']['Tables']['positions']['Row'];
+  position: Pick<
+    Database['public']['Tables']['positions']['Row'],
+    'id' | 'election_id'
+  >;
   election_slug: string;
 }) {
   const context = api.useUtils();
@@ -273,8 +276,8 @@ export default function CreateCandidate({
                     leftSection={<IconFlag size="1rem" />}
                     {...form.getInputProps('partylist_id')}
                     data={partylistsQuery.data?.map((partylist) => ({
-                      label: partylist.name,
                       value: partylist.id,
+                      label: partylist.name,
                     }))}
                     disabled={createCandidateMutation.isPending}
                   />

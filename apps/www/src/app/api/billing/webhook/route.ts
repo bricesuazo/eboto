@@ -140,7 +140,7 @@ export async function POST(req: Request) {
         if (payload.meta.custom_data.type === 'boost') {
           const { data: election } = await supabase
             .from('elections')
-            .select()
+            .select('id')
             .eq('id', payload.meta.custom_data.election_id)
             .is('deleted_at', null)
             .single();
@@ -158,7 +158,7 @@ export async function POST(req: Request) {
         } else {
           const { data: user } = await supabase
             .from('users')
-            .select()
+            .select('id')
             .eq('id', payload.meta.custom_data.user_id)
             .is('deleted_at', null)
             .single();

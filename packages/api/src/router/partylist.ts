@@ -13,7 +13,7 @@ export const partylistRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { data: partylists } = await ctx.supabase
         .from('partylists')
-        .select()
+        .select('id, name')
         .eq('election_id', input.election_id)
         .is('deleted_at', null)
         .order('created_at', { ascending: true });
@@ -31,7 +31,7 @@ export const partylistRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { data: election, error: election_error } = await ctx.supabase
         .from('elections')
-        .select()
+        .select('id')
         .eq('slug', input.election_slug)
         .is('deleted_at', null)
         .single();
@@ -40,7 +40,7 @@ export const partylistRouter = createTRPCRouter({
 
       const { data: partylists } = await ctx.supabase
         .from('partylists')
-        .select()
+        .select('id, name, acronym, description, election_id')
         .eq('election_id', election.id)
         .is('deleted_at', null)
         .order('created_at', { ascending: false });
@@ -60,7 +60,7 @@ export const partylistRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { data: election } = await ctx.supabase
         .from('elections')
-        .select()
+        .select('id')
         .eq('id', input.election_id)
         .is('deleted_at', null)
         .single();
@@ -69,7 +69,7 @@ export const partylistRouter = createTRPCRouter({
 
       const { data: commissioner } = await ctx.supabase
         .from('commissioners')
-        .select()
+        .select('id')
         .eq('user_id', ctx.user.auth.id)
         .eq('election_id', election.id)
         .is('deleted_at', null)
@@ -79,7 +79,7 @@ export const partylistRouter = createTRPCRouter({
 
       const { data: isAcronymExists } = await ctx.supabase
         .from('partylists')
-        .select()
+        .select('id')
         .eq('election_id', input.election_id)
         .eq('acronym', input.acronym)
         .is('deleted_at', null)
@@ -102,13 +102,12 @@ export const partylistRouter = createTRPCRouter({
         newAcronym: z.string().min(1),
         election_id: z.uuid(),
         description: z.string().optional(),
-        logo_url: z.string().optional(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
       const { data: election } = await ctx.supabase
         .from('elections')
-        .select()
+        .select('id')
         .eq('id', input.election_id)
         .is('deleted_at', null)
         .single();
@@ -117,7 +116,7 @@ export const partylistRouter = createTRPCRouter({
 
       const { data: commissioner } = await ctx.supabase
         .from('commissioners')
-        .select()
+        .select('id')
         .eq('user_id', ctx.user.auth.id)
         .eq('election_id', election.id)
         .is('deleted_at', null)
@@ -134,7 +133,7 @@ export const partylistRouter = createTRPCRouter({
       if (input.oldAcronym !== input.newAcronym) {
         const { data: isAcronymExists } = await ctx.supabase
           .from('partylists')
-          .select()
+          .select('id')
           .eq('election_id', input.election_id)
           .eq('acronym', input.newAcronym)
           .is('deleted_at', null)
@@ -168,7 +167,7 @@ export const partylistRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { data: election } = await ctx.supabase
         .from('elections')
-        .select()
+        .select('id')
         .eq('id', input.election_id)
         .is('deleted_at', null)
         .single();
@@ -177,7 +176,7 @@ export const partylistRouter = createTRPCRouter({
 
       const { data: commissioner } = await ctx.supabase
         .from('commissioners')
-        .select()
+        .select('id')
         .eq('user_id', ctx.user.auth.id)
         .eq('election_id', election.id)
         .is('deleted_at', null)

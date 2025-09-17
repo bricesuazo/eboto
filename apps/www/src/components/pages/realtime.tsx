@@ -54,9 +54,25 @@ export default function Realtime({
   isVoterCanMessage,
 }: {
   positions: RouterOutputs['election']['getElectionRealtime'];
-  election: Database['public']['Tables']['elections']['Row'] & {
+  election: Pick<
+    Database['public']['Tables']['elections']['Row'],
+    | 'id'
+    | 'slug'
+    | 'name'
+    | 'logo_path'
+    | 'publicity'
+    | 'variant_id'
+    | 'no_of_voters'
+    | 'start_date'
+    | 'end_date'
+    | 'voting_hour_start'
+    | 'voting_hour_end'
+  > & {
     logo_url: string | null;
-    voter_fields: Database['public']['Tables']['voter_fields']['Row'][];
+    voter_fields: Pick<
+      Database['public']['Tables']['voter_fields']['Row'],
+      'name'
+    >[];
     is_free: boolean;
   };
   isVoterCanMessage: boolean;
@@ -230,7 +246,7 @@ export default function Realtime({
                     {position.candidates
                       .sort((a, b) => b.vote - a.vote)
                       .map((candidate, index) => (
-                        <TableTr key={candidate.id}>
+                        <TableTr key={candidate.name}>
                           <TableTd>
                             <Flex
                               justify="space-between"

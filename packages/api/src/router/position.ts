@@ -13,7 +13,7 @@ export const positionRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const { data: election, error: election_error } = await ctx.supabase
         .from('elections')
-        .select('*')
+        .select('id')
         .eq('slug', input.election_slug)
         .is('deleted_at', null)
         .single();
@@ -26,7 +26,7 @@ export const positionRouter = createTRPCRouter({
 
       const { data: positions, error: positions_error } = await ctx.supabase
         .from('positions')
-        .select('*')
+        .select('id, name, min, max, description, order, election_id')
         .eq('election_id', election.id)
         .is('deleted_at', null)
         .order('order', { ascending: true });
@@ -51,7 +51,7 @@ export const positionRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { data: election } = await ctx.supabase
         .from('elections')
-        .select('*')
+        .select('id')
         .eq('id', input.election_id)
         .is('deleted_at', null)
         .single();
@@ -60,7 +60,7 @@ export const positionRouter = createTRPCRouter({
 
       const { data: commissioner } = await ctx.supabase
         .from('commissioners')
-        .select('*')
+        .select('id')
         .eq('user_id', ctx.user.auth.id)
         .eq('election_id', election.id)
         .is('deleted_at', null)
@@ -99,7 +99,7 @@ export const positionRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { data: election } = await ctx.supabase
         .from('elections')
-        .select('*')
+        .select('id')
         .eq('id', input.election_id)
         .is('deleted_at', null)
         .single();
@@ -108,7 +108,7 @@ export const positionRouter = createTRPCRouter({
 
       const { data: commissioner } = await ctx.supabase
         .from('commissioners')
-        .select('*')
+        .select('id')
         .eq('user_id', ctx.user.auth.id)
         .eq('election_id', election.id)
         .is('deleted_at', null)
@@ -118,7 +118,7 @@ export const positionRouter = createTRPCRouter({
 
       const { data: position } = await ctx.supabase
         .from('positions')
-        .select('*')
+        .select('id')
         .eq('id', input.position_id)
         .eq('election_id', input.election_id)
         .is('deleted_at', null)

@@ -47,7 +47,7 @@ export const userRouter = createTRPCRouter({
             : input.image,
         })
         .eq('id', ctx.user.auth.id)
-        .select()
+        .select('image_path')
         .single();
 
       if (error) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });

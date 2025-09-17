@@ -39,7 +39,10 @@ export default function EditVoter({
     email: string;
     field: Record<string, string> | null;
   };
-  voter_fields: Database['public']['Tables']['voter_fields']['Row'][];
+  voter_fields: Pick<
+    Database['public']['Tables']['voter_fields']['Row'],
+    'id' | 'name' | 'created_at'
+  >[];
 }) {
   const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure(false);

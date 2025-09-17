@@ -28,9 +28,10 @@ import type { Database } from '../../../../../supabase/types';
 export default function EditPartylist({
   partylist,
 }: {
-  partylist: Database['public']['Tables']['partylists']['Row'] & {
-    logo_url: string | null;
-  };
+  partylist: Pick<
+    Database['public']['Tables']['partylists']['Row'],
+    'id' | 'election_id' | 'name' | 'acronym' | 'description'
+  >;
 }) {
   const [opened, { open, close }] = useDisclosure(false);
   const context = api.useUtils();
@@ -41,7 +42,6 @@ export default function EditPartylist({
     oldAcronym: partylist.acronym,
     newAcronym: partylist.acronym,
     description: partylist.description ?? undefined,
-    logo_url: partylist.logo_url ?? undefined,
   };
   const form = useForm<EditPartylist>({
     initialValues,
@@ -108,7 +108,6 @@ export default function EditPartylist({
               newAcronym: value.newAcronym,
               election_id: partylist.election_id,
               description: value.description,
-              logo_url: value.logo_url,
             });
           })}
         >

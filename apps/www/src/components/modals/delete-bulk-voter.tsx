@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   ActionIcon,
@@ -10,12 +10,12 @@ import {
   Modal,
   Stack,
   Text,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconAlertCircle, IconCheck, IconUserMinus } from "@tabler/icons-react";
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import { IconAlertCircle, IconCheck, IconUserMinus } from '@tabler/icons-react';
 
-import { api } from "~/trpc/client";
+import { api } from '~/trpc/client';
 
 export default function DeleteBulkVoter({
   voters,
@@ -28,7 +28,7 @@ export default function DeleteBulkVoter({
   }[];
   election_id: string;
   isDisabled: boolean;
-  onSuccess?: () => void;
+  onSuccess: (() => void) | undefined;
 }) {
   const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure();

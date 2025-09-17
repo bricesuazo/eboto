@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import moment from 'moment';
 import { z } from 'zod/v4';
 
+import { filterVotes } from '@eboto/constants';
 import { sendElectionResult } from '@eboto/email/emails/election-result';
 import { env } from '@eboto/env';
 
@@ -35,7 +36,14 @@ export default inngest.createFunction(
     const { data: election, error: election_error } = await supabase
       .from('elections')
       .select(
-        'name, slug, voting_hour_end, logo_path, start_date, end_date, positions(*, votes(*), candidates(*, votes(*))), commissioners(user: users(email)), voters(*)',
+        `name, slug, voting_hour_end, logo_path, start_date, end_date, 
+        positions(id, name, 
+          votes(voters(deleted_at)), 
+          candidates(id, first_name, middle_name, last_name, 
+            votes(voters(deleted_at))
+          )
+        ),
+        commissioners(user: users(email)), voters(email)`,
       )
       .eq('id', election_id)
       .is('deleted_at', null)
@@ -67,14 +75,21 @@ export default inngest.createFunction(
       }
 
       const result = {
-        ...election,
+        name: election.name,
+        slug: election.slug,
+        start_date: election.start_date,
+        end_date: election.end_date,
         logo_url,
         positions: election.positions.map((position) => ({
-          ...position,
-          abstain_count: position.votes.length,
+          id: position.id,
+          name: position.name,
+          abstain_count: filterVotes(position.votes).length,
           candidates: position.candidates.map((candidate) => ({
-            ...candidate,
-            vote_count: candidate.votes.length,
+            id: candidate.id,
+            first_name: candidate.first_name,
+            middle_name: candidate.middle_name,
+            last_name: candidate.last_name,
+            vote_count: filterVotes(candidate.votes).length,
           })),
         })),
       };

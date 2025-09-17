@@ -1,18 +1,21 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { Alert, Button, Group, Mark, Modal, Stack, Text } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
+import { useEffect } from 'react';
+import { Alert, Button, Group, Mark, Modal, Stack, Text } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
 
-import { api } from "~/trpc/client";
-import type { Database } from "../../../../../supabase/types";
+import { api } from '~/trpc/client';
+import type { Database } from '../../../../../supabase/types';
 
 export default function DeletePosition({
   position,
 }: {
-  position: Database["public"]["Tables"]["positions"]["Row"];
+  position: Pick<
+    Database['public']['Tables']['positions']['Row'],
+    'id' | 'election_id' | 'name'
+  >;
 }) {
   const [opened, { open, close }] = useDisclosure(false);
   const context = api.useUtils();
@@ -26,7 +29,7 @@ export default function DeletePosition({
         ]);
         notifications.show({
           title: `${position.name} deleted!`,
-          message: "Successfully deleted position",
+          message: 'Successfully deleted position',
           icon: <IconCheck size="1.1rem" />,
           autoClose: 5000,
         });
@@ -34,9 +37,9 @@ export default function DeletePosition({
       },
       onError: (error) => {
         notifications.show({
-          title: "Error",
+          title: 'Error',
           message: error.message,
-          color: "red",
+          color: 'red',
           autoClose: 3000,
         });
       },

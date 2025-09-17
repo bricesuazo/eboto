@@ -41,21 +41,21 @@ export default async function DashboardLayout(
 
   const { data: election } = await supabaseAdmin
     .from('elections')
-    .select()
+    .select('id, variant_id, no_of_voters')
     .eq('slug', electionDashboardSlug)
     .is('deleted_at', null)
     .single();
 
   if (!election) notFound();
 
-  const { data: commissioners } = await supabaseAdmin
+  const { count: commissioners_count } = await supabaseAdmin
     .from('commissioners')
-    .select()
+    .select('id', { count: 'exact' })
     .eq('election_id', election.id)
     .eq('user_id', user.id)
     .is('deleted_at', null);
 
-  if (!commissioners || commissioners.length === 0) notFound();
+  if (!commissioners_count) notFound();
 
   return (
     <DashboardElection

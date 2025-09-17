@@ -85,7 +85,10 @@ export default async function RealtimePage({
   const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin
     .from('elections')
-    .select('*, voter_fields(*)')
+    .select(
+      `id, name, slug, publicity, logo_path, variant_id, no_of_voters, start_date, end_date, voting_hour_start, voting_hour_end,
+      voter_fields(name)`,
+    )
     .eq('slug', electionSlug)
     .is('deleted_at', null)
     .single();

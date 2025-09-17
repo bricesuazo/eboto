@@ -26,6 +26,11 @@ import { z } from 'zod/v4';
 
 import { api } from '~/trpc/client';
 
+const MessageCommissionerSchema = z.object({
+  title: z.string().min(3, 'Title must be at least 3 characters'),
+  message: z.string().min(10, 'Message must be at least 10 characters'),
+});
+
 export default function MessageCommissioner({
   election_id,
 }: {
@@ -34,19 +39,14 @@ export default function MessageCommissioner({
   const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure(false);
 
-  const form = useForm({
+  const form = useForm<z.infer<typeof MessageCommissionerSchema>>({
     validateInputOnBlur: true,
     validateInputOnChange: true,
     initialValues: {
       title: '',
       message: '',
     },
-    validate: zodResolver(
-      z.object({
-        title: z.string().min(3, 'Title must be at least 3 characters'),
-        message: z.string().min(10, 'Message must be at least 10 characters'),
-      }),
-    ),
+    validate: zodResolver(MessageCommissionerSchema),
   });
 
   const messageCommissionerMutation =

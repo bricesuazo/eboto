@@ -48,12 +48,18 @@ export default function VoteForm({
   positions,
   election,
 }: {
-  election: Database['public']['Tables']['elections']['Row'];
+  election: Pick<
+    Database['public']['Tables']['elections']['Row'],
+    'id' | 'slug' | 'name_arrangement'
+  >;
   positions: RouterOutputs['election']['getElectionVoting'];
 }) {
-  const positionsQuery = api.election.getElectionVoting.useQuery(election.id, {
-    initialData: positions,
-  });
+  const positionsQuery = api.election.getElectionVoting.useQuery(
+    { election_id: election.id },
+    {
+      initialData: positions,
+    },
+  );
   const router = useRouter();
   const { fireConfetti } = useConfetti();
   const form = useForm<Vote>({
@@ -349,9 +355,15 @@ function VoteCard({
   type: 'radio' | 'checkbox';
   value: string;
   disabled?: boolean;
-  candidate?: Database['public']['Tables']['candidates']['Row'] & {
+  candidate?: Pick<
+    Database['public']['Tables']['candidates']['Row'],
+    'first_name' | 'middle_name' | 'last_name'
+  > & {
     image_url: string | null;
-    partylist: Database['public']['Tables']['partylists']['Row'];
+    partylist: Pick<
+      Database['public']['Tables']['partylists']['Row'],
+      'name' | 'acronym'
+    >;
   };
   isSelected: boolean;
   name_arrangement: number;

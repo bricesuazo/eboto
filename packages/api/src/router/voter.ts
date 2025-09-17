@@ -24,49 +24,44 @@ export const voterRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { data: isElectionExists } = await ctx.supabase
+      const { data: election } = await ctx.supabase
         .from('elections')
-        .select('*, commissioners(*), variant: variants(*)')
+        .select(
+          'id, variant:variants(id, name), no_of_voters, commissioners(id)',
+        )
         .eq('id', input.election_id)
         .is('deleted_at', null)
         .eq('commissioners.user_id', ctx.user.auth.id)
         .single();
 
-      if (!isElectionExists)
+      if (!election)
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: 'Election does not exists',
         });
 
-      if (isElectionExists.commissioners.length === 0)
+      if (election.commissioners.length === 0)
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Unauthorized',
         });
 
-      const { data: voters_length, error: voters_length_error } =
-        await ctx.supabase
-          .from('voters')
-          .select('*')
-          .eq('election_id', input.election_id)
-          .is('deleted_at', null);
-
-      if (voters_length_error)
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: voters_length_error.message,
-        });
+      const { count: voters_count } = await ctx.supabase
+        .from('voters')
+        .select('id', { count: 'exact' })
+        .eq('election_id', input.election_id)
+        .is('deleted_at', null);
 
       const data =
         process.env.NODE_ENV === 'development' ? LS_DATA_DEV : LS_DATA_PROD;
 
       const variant = data.products
         .flatMap((product) => product.variants)
-        .find((variant) => variant.id === isElectionExists.variant_id);
+        .find((variant) => variant.id === election.variant.id);
 
       if (!variant) throw new TRPCError({ code: 'NOT_FOUND' });
 
-      if (voters_length.length >= variant.voters)
+      if ((voters_count ?? 0) >= variant.voters)
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message:
@@ -77,7 +72,7 @@ export const voterRouter = createTRPCRouter({
 
       const { data: voters, error: voters_error } = await ctx.supabase
         .from('voters')
-        .select('*')
+        .select('email')
         .eq('election_id', input.election_id)
         .is('deleted_at', null);
 
@@ -95,18 +90,18 @@ export const voterRouter = createTRPCRouter({
           message: 'Email is already a voter',
         });
 
-      if (isElectionExists.no_of_voters) {
-        if (voters.length + 1 >= isElectionExists.no_of_voters)
+      if (election.no_of_voters) {
+        if (voters.length + 1 >= election.no_of_voters)
           throw new TRPCError({
             code: 'BAD_REQUEST',
             message:
               'Maximum number of voters reached. Maximum no. of voters is ' +
-              isElectionExists.no_of_voters +
+              election.no_of_voters +
               '.',
           });
       } else {
         const is_free =
-          env.LEMONSQUEEZY_FREE_VARIANT_ID === isElectionExists.variant_id;
+          env.LEMONSQUEEZY_FREE_VARIANT_ID === election.variant.id;
 
         if (is_free && voters.length + 1 >= 500)
           throw new TRPCError({
@@ -115,13 +110,9 @@ export const voterRouter = createTRPCRouter({
               'Maximum number of voters reached. Maximum no. of voters is 500.',
           });
 
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        if (!is_free && isElectionExists.variant) {
+        if (!is_free) {
           const no_of_voters = parseInt(
-            (/[\d,]+/.exec(isElectionExists.variant.name)?.[0] ?? '').replace(
-              ',',
-              '',
-            ),
+            (/[\d,]+/.exec(election.variant.name)?.[0] ?? '').replace(',', ''),
           );
 
           if (voters.length + 1 >= no_of_voters)
@@ -137,7 +128,7 @@ export const voterRouter = createTRPCRouter({
 
       await ctx.supabase.from('voters').insert({
         email: input.email,
-        election_id: isElectionExists.id,
+        election_id: election.id,
         field: input.voter_fields.reduce(
           (acc, field) => {
             acc[field.id] = field.value;
@@ -156,7 +147,7 @@ export const voterRouter = createTRPCRouter({
     .query(async ({ input, ctx }) => {
       const { data: isElectionExists } = await ctx.supabase
         .from('elections')
-        .select('*')
+        .select('id')
         .eq('id', input.election_id)
         .is('deleted_at', null)
         .single();
@@ -169,7 +160,7 @@ export const voterRouter = createTRPCRouter({
 
       const { data: isElectionCommissionerExists } = await ctx.supabase
         .from('commissioners')
-        .select('*')
+        .select('id')
         .eq('election_id', input.election_id)
         .eq('user_id', ctx.user.auth.id)
         .is('deleted_at', null)
@@ -184,7 +175,7 @@ export const voterRouter = createTRPCRouter({
       const { data: voter_fields, error: voter_fields_error } =
         await ctx.supabase
           .from('voter_fields')
-          .select('*')
+          .select('id, name')
           .eq('election_id', input.election_id)
           .is('deleted_at', null);
 
@@ -212,7 +203,7 @@ export const voterRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { data: election } = await ctx.supabase
         .from('elections')
-        .select('*')
+        .select('start_date, end_date, voting_hour_start, voting_hour_end')
         .eq('id', input.election_id)
         .is('deleted_at', null)
         .single();
@@ -283,7 +274,7 @@ export const voterRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { data: election } = await ctx.supabase
         .from('elections')
-        .select('*')
+        .select('id')
         .eq('id', input.election_id)
         .is('deleted_at', null)
         .single();
@@ -292,7 +283,7 @@ export const voterRouter = createTRPCRouter({
 
       const { data: commissioner } = await ctx.supabase
         .from('commissioners')
-        .select('*')
+        .select('id')
         .eq('user_id', ctx.user.auth.id)
         .eq('election_id', election.id)
         .is('deleted_at', null)
@@ -302,7 +293,7 @@ export const voterRouter = createTRPCRouter({
 
       const { data: isElectionCommissionerExists } = await ctx.supabase
         .from('commissioners')
-        .select('*')
+        .select('id')
         .eq('election_id', input.election_id)
         .eq('user_id', ctx.user.auth.id)
         .is('deleted_at', null)
@@ -340,7 +331,7 @@ export const voterRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { data: isElectionExists } = await ctx.supabase
         .from('elections')
-        .select('*')
+        .select('id')
         .eq('id', input.election_id)
         .is('deleted_at', null)
         .single();
@@ -353,7 +344,7 @@ export const voterRouter = createTRPCRouter({
 
       const { data: isElectionCommissionerExists } = await ctx.supabase
         .from('commissioners')
-        .select('*')
+        .select('id')
         .eq('election_id', input.election_id)
         .eq('user_id', ctx.user.auth.id)
         .is('deleted_at', null)
@@ -367,7 +358,7 @@ export const voterRouter = createTRPCRouter({
 
       const { data: voter } = await ctx.supabase
         .from('voters')
-        .select('*')
+        .select('id')
         .eq('id', input.id)
         .eq('election_id', input.election_id)
         .is('deleted_at', null)
@@ -400,7 +391,7 @@ export const voterRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const { data: election } = await ctx.supabase
         .from('elections')
-        .select('*')
+        .select('id')
         .eq('id', input.election_id)
         .is('deleted_at', null)
         .single();
@@ -409,7 +400,7 @@ export const voterRouter = createTRPCRouter({
 
       const { data: commissioner } = await ctx.supabase
         .from('commissioners')
-        .select('*')
+        .select('id')
         .eq('user_id', ctx.user.auth.id)
         .eq('election_id', election.id)
         .is('deleted_at', null)
@@ -447,7 +438,7 @@ export const voterRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { data: election } = await ctx.supabase
         .from('elections')
-        .select('*')
+        .select('id')
         .eq('id', input.election_id)
         .is('deleted_at', null)
         .single();
@@ -456,7 +447,7 @@ export const voterRouter = createTRPCRouter({
 
       const { data: commissioner } = await ctx.supabase
         .from('commissioners')
-        .select('*')
+        .select('id')
         .eq('user_id', ctx.user.auth.id)
         .eq('election_id', election.id)
         .is('deleted_at', null)
@@ -466,22 +457,24 @@ export const voterRouter = createTRPCRouter({
 
       // await ctx.db.transaction(async (db) => {
       // TODO: use transaction
-      const { data: isElectionExists } = await ctx.supabase
+      const { data: myElection } = await ctx.supabase
         .from('elections')
-        .select('*, commissioners(*), variant: variants(*)')
+        .select(
+          'id, no_of_voters, commissioners(id), variant: variants(id, name)',
+        )
         .eq('id', input.election_id)
         .is('deleted_at', null)
         .eq('commissioners.user_id', ctx.user.auth.id)
         .single();
 
-      if (!isElectionExists) throw new Error('Election does not exists');
+      if (!myElection) throw new Error('Election does not exists');
 
-      if (isElectionExists.commissioners.length === 0)
+      if (myElection.commissioners.length === 0)
         throw new Error('Unauthorized');
 
       const { data: voters, error: voters_length_error } = await ctx.supabase
         .from('voters')
-        .select('*')
+        .select('id')
         .eq('election_id', input.election_id)
         .is('deleted_at', null);
 
@@ -496,7 +489,7 @@ export const voterRouter = createTRPCRouter({
 
       const variant = data.products
         .flatMap((product) => product.variants)
-        .find((variant) => variant.id === isElectionExists.variant_id);
+        .find((variant) => variant.id === myElection.variant.id);
 
       if (!variant) throw new TRPCError({ code: 'NOT_FOUND' });
 
@@ -512,7 +505,7 @@ export const voterRouter = createTRPCRouter({
       const { data: votersFromDb, error: votersFromDbError } =
         await ctx.supabase
           .from('voters')
-          .select('*')
+          .select('email')
           .eq('election_id', input.election_id)
           .is('deleted_at', null);
 
@@ -530,21 +523,18 @@ export const voterRouter = createTRPCRouter({
           ),
       );
 
-      if (isElectionExists.no_of_voters) {
-        if (
-          voters.length + uniqueVoters.length >=
-          isElectionExists.no_of_voters
-        )
+      if (myElection.no_of_voters) {
+        if (voters.length + uniqueVoters.length >= myElection.no_of_voters)
           throw new TRPCError({
             code: 'BAD_REQUEST',
             message:
               'Maximum number of voters reached. Maximum no. of voters is ' +
-              isElectionExists.no_of_voters +
+              myElection.no_of_voters +
               '.',
           });
       } else {
         const is_free =
-          env.LEMONSQUEEZY_FREE_VARIANT_ID === isElectionExists.variant_id;
+          env.LEMONSQUEEZY_FREE_VARIANT_ID === myElection.variant.id;
 
         if (is_free && voters.length + uniqueVoters.length >= 500)
           throw new TRPCError({
@@ -553,10 +543,9 @@ export const voterRouter = createTRPCRouter({
               'Maximum number of voters reached. Maximum no. of voters is 500.',
           });
 
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        if (!is_free && isElectionExists.variant) {
+        if (!is_free) {
           const no_of_voters = parseInt(
-            (/[\d,]+/.exec(isElectionExists.variant.name)?.[0] ?? '').replace(
+            (/[\d,]+/.exec(myElection.variant.name)?.[0] ?? '').replace(
               ',',
               '',
             ),
@@ -578,12 +567,12 @@ export const voterRouter = createTRPCRouter({
           .from('voters')
           .insert(
             uniqueVoters.map((voter) => ({
-              election_id: isElectionExists.id,
+              election_id: myElection.id,
               email: voter.email,
               field: voter.field,
             })),
           )
-          .select();
+          .select('id');
 
       if (uploaded_voters_error)
         throw new TRPCError({
@@ -610,34 +599,34 @@ export const voterRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const { data: isElectionExists } = await ctx.supabase
+      const { data: election } = await ctx.supabase
         .from('elections')
-        .select('*')
+        .select('publicity')
         .eq('id', input.election_id)
         .is('deleted_at', null)
         .single();
 
-      if (!isElectionExists)
+      if (!election)
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: 'Election does not exists',
         });
 
-      if (isElectionExists.publicity === 'PRIVATE')
+      if (election.publicity === 'PRIVATE')
         throw new TRPCError({
           code: 'UNAUTHORIZED',
           message: 'Unauthorized',
         });
 
-      const { data: isVoterExists } = await ctx.supabase
+      const { data: voter } = await ctx.supabase
         .from('voters')
-        .select('*')
+        .select('id')
         .eq('id', input.voter_id)
         .eq('election_id', input.election_id)
         .is('deleted_at', null)
         .single();
 
-      if (!isVoterExists)
+      if (!voter)
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: 'Voter does not exists',

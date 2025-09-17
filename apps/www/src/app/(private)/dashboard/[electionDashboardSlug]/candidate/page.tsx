@@ -181,16 +181,7 @@ export default function Page({
 
                               <Flex gap="xs" align="center">
                                 <EditCandidate
-                                  candidate={{
-                                    ...candidate,
-                                    platforms: candidate.platforms.map(
-                                      (platform) => ({
-                                        ...platform,
-                                        description:
-                                          platform.description ?? undefined,
-                                      }),
-                                    ),
-                                  }}
+                                  candidate={candidate}
                                   election={
                                     positionsWithCandidatesQuery.data.election
                                   }

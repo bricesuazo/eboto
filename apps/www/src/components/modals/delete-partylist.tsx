@@ -1,18 +1,21 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { Alert, Button, Group, Mark, Modal, Stack, Text } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
+import { useEffect } from 'react';
+import { Alert, Button, Group, Mark, Modal, Stack, Text } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
 
-import { api } from "~/trpc/client";
-import type { Database } from "../../../../../supabase/types";
+import { api } from '~/trpc/client';
+import type { Database } from '../../../../../supabase/types';
 
 export default function DeletePartylist({
   partylist,
 }: {
-  partylist: Database["public"]["Tables"]["partylists"]["Row"];
+  partylist: Pick<
+    Database['public']['Tables']['partylists']['Row'],
+    'id' | 'election_id' | 'name' | 'acronym'
+  >;
 }) {
   const context = api.useUtils();
   const { mutate, isPending, isError, error, reset } =
@@ -20,7 +23,7 @@ export default function DeletePartylist({
       onSuccess: async () => {
         notifications.show({
           title: `${partylist.name} (${partylist.acronym}) deleted!`,
-          message: "Successfully deleted partylist",
+          message: 'Successfully deleted partylist',
           icon: <IconCheck size="1.1rem" />,
           autoClose: 5000,
         });
@@ -29,9 +32,9 @@ export default function DeletePartylist({
       },
       onError: (error) => {
         notifications.show({
-          title: "Error",
+          title: 'Error',
           message: error.message,
-          color: "red",
+          color: 'red',
           autoClose: 3000,
         });
       },

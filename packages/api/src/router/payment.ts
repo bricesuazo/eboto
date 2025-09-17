@@ -16,19 +16,19 @@ export const paymentRouter = createTRPCRouter({
       const [electionQuery, boostQuery, userQuery] = await Promise.all([
         await ctx.supabase
           .from('elections')
-          .select()
+          .select('slug')
           .eq('id', input.election_id)
           .is('deleted_at', null)
           .single(),
         await ctx.supabase
           .from('variants')
-          .select()
+          .select('id')
           .eq('product_id', env.LEMONSQUEEZY_BOOST_PRODUCT_ID)
           .eq('price', 499 + (input.price / 25) * 200)
           .single(),
         await ctx.supabase
           .from('users')
-          .select()
+          .select('name')
           .eq('id', ctx.user.auth.id)
           .single(),
       ]);
@@ -92,7 +92,7 @@ export const paymentRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { data: user } = await ctx.supabase
         .from('users')
-        .select()
+        .select('name')
         .eq('id', ctx.user.auth.id)
         .single();
 

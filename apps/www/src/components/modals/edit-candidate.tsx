@@ -44,6 +44,7 @@ import { zod4Resolver } from 'mantine-form-zod-resolver';
 import moment from 'moment';
 import { v4 as uuid } from 'uuid';
 
+import type { RouterOutput } from '@eboto/api/src/root';
 import { formatName } from '@eboto/constants';
 
 import type { EditCandidate } from '~/schema/candidate';
@@ -56,35 +57,11 @@ export default function EditCandidate({
   candidate,
   election,
 }: {
-  election: Database['public']['Tables']['elections']['Row'];
-  candidate: Database['public']['Tables']['candidates']['Row'] & {
-    image_url: string | null;
-    credential: {
-      id: string;
-      affiliations: {
-        id: string;
-        org_name: string;
-        org_position: string;
-        start_year: string;
-        end_year: string;
-      }[];
-      achievements: {
-        id: string;
-        name: string;
-        year: string;
-      }[];
-      events_attended: {
-        id: string;
-        name: string;
-        year: string;
-      }[];
-    } | null;
-    platforms: {
-      id: string;
-      title: string;
-      description: string | undefined;
-    }[];
-  };
+  election: Pick<
+    Database['public']['Tables']['elections']['Row'],
+    'id' | 'slug' | 'name_arrangement'
+  >;
+  candidate: RouterOutput['candidate']['getDashboardData']['positionsWithCandidates'][number]['candidates'][number];
 }) {
   const context = api.useUtils();
   const [opened, { open, close }] = useDisclosure(false);
@@ -109,25 +86,9 @@ export default function EditCandidate({
 
     platforms: candidate.platforms,
 
-    achievements: (candidate.credential?.achievements ?? []).map(
-      (achievement) => ({
-        ...achievement,
-        year: achievement.year,
-      }),
-    ),
-    affiliations: (candidate.credential?.affiliations ?? []).map(
-      (affiliation) => ({
-        ...affiliation,
-        start_year: affiliation.start_year,
-        end_year: affiliation.end_year,
-      }),
-    ),
-    events_attended: (candidate.credential?.events_attended ?? []).map(
-      (event) => ({
-        ...event,
-        year: event.year,
-      }),
-    ),
+    achievements: candidate.credential.achievements,
+    affiliations: candidate.credential.affiliations,
+    events_attended: candidate.credential.events_attended,
   };
 
   const editCandidateMutation = api.candidate.edit.useMutation({
@@ -236,7 +197,7 @@ export default function EditCandidate({
             }
           } else if (type === 'ACHIEVEMENT') {
             if (
-              candidate.credential?.achievements.find((a) => a.id === id) &&
+              candidate.credential.achievements.find((a) => a.id === id) &&
               typeof id === 'string'
             ) {
               await deleteCredentialMutation.mutateAsync({ id, type });
@@ -250,7 +211,7 @@ export default function EditCandidate({
             }
           } else if (type === 'AFFILIATION') {
             if (
-              candidate.credential?.affiliations.find((a) => a.id === id) &&
+              candidate.credential.affiliations.find((a) => a.id === id) &&
               typeof id === 'string'
             ) {
               await deleteCredentialMutation.mutateAsync({ id, type });
@@ -264,7 +225,7 @@ export default function EditCandidate({
             }
           } else {
             if (
-              candidate.credential?.events_attended.find((a) => a.id === id) &&
+              candidate.credential.events_attended.find((a) => a.id === id) &&
               typeof id === 'string'
             ) {
               await deleteCredentialMutation.mutateAsync({ id, type });

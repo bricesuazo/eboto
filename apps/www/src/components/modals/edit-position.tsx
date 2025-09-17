@@ -31,7 +31,10 @@ import type { Database } from '../../../../../supabase/types';
 export default function EditPosition({
   position,
 }: {
-  position: Database['public']['Tables']['positions']['Row'];
+  position: Pick<
+    Database['public']['Tables']['positions']['Row'],
+    'id' | 'election_id' | 'name' | 'min' | 'max' | 'description'
+  >;
 }) {
   const [opened, { open, close }] = useDisclosure(false);
   const context = api.useUtils();
@@ -47,16 +50,16 @@ export default function EditPosition({
     initialValues,
     validateInputOnChange: true,
     validateInputOnBlur: true,
-    transformValues: (values) => {
-      if (!values.isSingle) {
-        return {
-          ...values,
-          min: 0,
-          max: 1,
-        };
+    onValuesChange: (values, prevValues) => {
+      if (!values.isSingle && prevValues.isSingle) {
+        form.setFieldValue('min', 0);
+        form.setFieldValue('max', 1);
       }
 
-      return values;
+      if (values.isSingle && !prevValues.isSingle) {
+        form.resetField('min');
+        form.resetField('max');
+      }
     },
     validate: zod4Resolver(EditPositionSchema),
   });

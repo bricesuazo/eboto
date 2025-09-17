@@ -35,7 +35,7 @@ export default inngest.createFunction(
     const { data: election } = await supabase
       .from('elections')
       .select(
-        'name, slug, voting_hour_start, start_date, end_date, publicity, commissioners(user: users!inner(email)), voters(*)',
+        'name, slug, voting_hour_start, start_date, end_date, publicity, commissioners(user: users!inner(email)), voters(email)',
       )
       .eq('id', election_id)
       .is('deleted_at', null)

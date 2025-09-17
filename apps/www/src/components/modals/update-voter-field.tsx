@@ -39,8 +39,11 @@ export default function UpdateVoterField({
   election,
   isDisabled,
 }: {
-  election: Database['public']['Tables']['elections']['Row'] & {
-    voter_fields: Database['public']['Tables']['voter_fields']['Row'][];
+  election: Pick<Database['public']['Tables']['elections']['Row'], 'id'> & {
+    voter_fields: Pick<
+      Database['public']['Tables']['voter_fields']['Row'],
+      'id' | 'name'
+    >[];
   };
   isDisabled: boolean;
 }) {

@@ -20,6 +20,5 @@ export const EditPartylistSchema = CreatePartylistSchema.omit({
   oldAcronym: z.string(),
   newAcronym: z.string(),
   description: z.string().optional(),
-  logo_url: z.string().optional(),
 });
 export type EditPartylist = z.infer<typeof EditPartylistSchema>;

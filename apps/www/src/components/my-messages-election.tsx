@@ -34,6 +34,7 @@ import {
   IconChevronLeft,
   IconMessage2,
   IconSend,
+  IconUser,
   IconX,
 } from '@tabler/icons-react';
 import { zod4Resolver } from 'mantine-form-zod-resolver';
@@ -146,15 +147,19 @@ export default function MyMessagesElection({
                           </Text>
                           {room.messages[0] && (
                             <Flex align="center" gap="sm">
-                              <Image
-                                src={room.messages[0].user.image_url ?? ''}
-                                alt={room.messages[0].user.name + ' image.'}
-                                width={20}
-                                height={20}
-                                style={{
-                                  borderRadius: '50%',
-                                }}
-                              />
+                              {room.messages[0].user.image_url ? (
+                                <Image
+                                  src={room.messages[0].user.image_url}
+                                  alt={room.messages[0].user.name + ' image.'}
+                                  width={20}
+                                  height={20}
+                                  style={{
+                                    borderRadius: '50%',
+                                  }}
+                                />
+                              ) : (
+                                <IconUser size={20} />
+                              )}
                               <Text
                                 size="sm"
                                 lineClamp={1}

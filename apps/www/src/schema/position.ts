@@ -12,9 +12,9 @@ export const CreatePositionSchema = z
   })
   .refine((data) => data.min <= data.max, {
     path: ['max'],
-    message: 'Maximum must be greater than minimum',
+    message: 'Maximum must be greater than or equal to minimum',
   })
-  .refine((data) => !(data.isSingle && data.max > 1), {
+  .refine((data) => !(!data.isSingle && data.max > 1), {
     path: ['max'],
     message: 'Maximum must be 1 for single position',
   });

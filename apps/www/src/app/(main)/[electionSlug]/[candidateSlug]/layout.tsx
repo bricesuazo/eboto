@@ -22,7 +22,7 @@ export async function generateMetadata({
   const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin
     .from('elections')
-    .select()
+    .select('id, name, name_arrangement, publicity')
     .eq('slug', electionSlug)
     .is('deleted_at', null)
     .single();
@@ -34,7 +34,7 @@ export async function generateMetadata({
 
     const { data: commissioners } = await supabaseAdmin
       .from('commissioners')
-      .select()
+      .select('id')
       .eq('election_id', election.id)
       .eq('user_id', user.id)
       .is('deleted_at', null);
@@ -45,14 +45,14 @@ export async function generateMetadata({
 
     const { data: commissioners } = await supabaseAdmin
       .from('commissioners')
-      .select()
+      .select('id')
       .eq('election_id', election.id)
       .eq('user_id', user.id)
       .is('deleted_at', null);
 
     const { data: voters } = await supabaseAdmin
       .from('voters')
-      .select()
+      .select('id')
       .eq('election_id', election.id)
       .eq('email', user.email ?? '')
       .is('deleted_at', null);
@@ -62,7 +62,9 @@ export async function generateMetadata({
 
   const { data: candidate } = await supabaseAdmin
     .from('candidates')
-    .select('*, position: positions(name)')
+    .select(
+      'first_name, middle_name, last_name, image_path, position: positions(name)',
+    )
     .eq('election_id', election.id)
     .eq('slug', candidateSlug)
     .is('deleted_at', null)

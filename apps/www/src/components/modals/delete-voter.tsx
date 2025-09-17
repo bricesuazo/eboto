@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
+import { useEffect } from 'react';
 import {
   ActionIcon,
   Alert,
@@ -9,12 +9,12 @@ import {
   Modal,
   Stack,
   Text,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconAlertCircle, IconCheck, IconTrash } from "@tabler/icons-react";
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import { IconAlertCircle, IconCheck, IconTrash } from '@tabler/icons-react';
 
-import { api } from "~/trpc/client";
+import { api } from '~/trpc/client';
 
 export default function DeleteVoter({
   voter,
@@ -33,7 +33,7 @@ export default function DeleteVoter({
     onSuccess: async () => {
       await context.election.getVotersByElectionSlug.invalidate();
       notifications.show({
-        title: "Success!",
+        title: 'Success!',
         message: `Successfully deleted ${voter.email}`,
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
@@ -42,9 +42,9 @@ export default function DeleteVoter({
     },
     onError: (error) => {
       notifications.show({
-        title: "Error",
+        title: 'Error',
         message: error.message,
-        color: "red",
+        color: 'red',
         autoClose: 3000,
       });
     },

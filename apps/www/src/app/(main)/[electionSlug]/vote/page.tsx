@@ -50,7 +50,9 @@ export default async function VotePage({
   const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin
     .from('elections')
-    .select()
+    .select(
+      'id, name, slug, publicity, name_arrangement, start_date, end_date, voting_hour_start, voting_hour_end',
+    )
     .eq('slug', electionSlug)
     .is('deleted_at', null)
     .single();
@@ -67,16 +69,16 @@ export default async function VotePage({
     .is('deleted_at', null)
     .single();
 
-  const { data: voter_fields } = await supabaseAdmin
+  const { count: voter_fields_count } = await supabaseAdmin
     .from('voter_fields')
-    .select()
+    .select('id', { count: 'exact' })
     .eq('election_id', election.id)
     .is('deleted_at', null);
 
   if (
     voter === null ||
-    voter_fields === null ||
-    (voter_fields.length > 0 && !voter.field) ||
+    voter_fields_count === null ||
+    (voter_fields_count > 0 && !voter.field) ||
     (voter.field &&
       Object.values(voter.field as Record<string, string>).some(
         (value) => !value || value.trim() === '',
@@ -84,47 +86,45 @@ export default async function VotePage({
   )
     redirect(`/${election.slug}`);
 
-  const { data: votes, error: votes_error } = await supabaseAdmin
+  const { count: votes_count } = await supabaseAdmin
     .from('votes')
-    .select()
+    .select('id', { count: 'exact' })
     .eq('voter_id', voter.id)
     .eq('election_id', election.id);
 
-  if (votes_error) notFound();
-
-  if (votes.length) redirect(`/${election.slug}/realtime`);
+  if (votes_count) redirect(`/${election.slug}/realtime`);
 
   if (election.publicity === 'PRIVATE') {
-    const { data: commissioner } = await supabaseAdmin
+    const { count: commissioner_count } = await supabaseAdmin
       .from('commissioners')
-      .select()
+      .select('id', { count: 'exact' })
       .eq('user_id', user.id)
       .eq('election_id', election.id)
-      .is('deleted_at', null)
-      .single();
+      .is('deleted_at', null);
 
-    if (!commissioner) notFound();
+    if (!commissioner_count) notFound();
   } else {
-    const { data: votes } = await supabaseAdmin
+    const { count: votes_count } = await supabaseAdmin
       .from('votes')
-      .select()
+      .select('id', { count: 'exact' })
       .eq('voter_id', voter.id)
       .eq('election_id', election.id);
 
-    if (!votes) notFound();
+    if (!votes_count) notFound();
 
-    const { data: commissioner } = await supabaseAdmin
+    const { count: commissioner_count } = await supabaseAdmin
       .from('commissioners')
-      .select()
+      .select('id', { count: 'exact' })
       .eq('user_id', user.id)
-      .eq('election_id', election.id)
-      .single();
+      .eq('election_id', election.id);
 
-    if (votes.length > 0 && commissioner)
+    if (votes_count > 0 && commissioner_count)
       redirect(`/${election.slug}/realtime`);
   }
 
-  const positions = await api.election.getElectionVoting(election.id);
+  const positions = await api.election.getElectionVoting({
+    election_id: election.id,
+  });
 
   return (
     <Container py="xl" size="md">

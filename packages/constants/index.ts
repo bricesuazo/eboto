@@ -420,3 +420,9 @@ export function is_client() {
 export function is_dev() {
   return process.env.NODE_ENV === 'development';
 }
+
+export function filterVotes(
+  votes: { voters: { deleted_at: string | null } }[],
+) {
+  return votes.filter((vote) => vote.voters.deleted_at === null);
+}

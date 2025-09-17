@@ -417,7 +417,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn?: boolean }) {
               </Button>
 
               <Button visibleFrom="sm" component={Link} href="/register">
-                Get Started
+                Register
               </Button>
             </Group>
           )}

@@ -23,7 +23,7 @@ export async function generateMetadata({
   const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin
     .from('elections')
-    .select()
+    .select('id, name, publicity, logo_path, start_date, end_date')
     .eq('slug', electionSlug)
     .is('deleted_at', null)
     .single();
@@ -35,7 +35,7 @@ export async function generateMetadata({
 
     const { data: commissioners } = await supabaseAdmin
       .from('commissioners')
-      .select()
+      .select('id')
       .eq('election_id', election.id)
       .eq('user_id', user.id)
       .is('deleted_at', null);
@@ -46,14 +46,14 @@ export async function generateMetadata({
 
     const { data: commissioners } = await supabaseAdmin
       .from('commissioners')
-      .select()
+      .select('id')
       .eq('election_id', election.id)
       .eq('user_id', user.id)
       .is('deleted_at', null);
 
     const { data: voters } = await supabaseAdmin
       .from('voters')
-      .select()
+      .select('id')
       .eq('election_id', election.id)
       .eq('email', user.email ?? '')
       .is('deleted_at', null);
@@ -113,7 +113,9 @@ export default async function ElectionLayout(
   const supabaseAdmin = createClientAdmin();
   const { data: election } = await supabaseAdmin
     .from('elections')
-    .select()
+    .select(
+      'id, publicity, start_date, end_date, voting_hour_start, voting_hour_end',
+    )
     .eq('slug', electionSlug)
     .is('deleted_at', null)
     .single();
@@ -127,7 +129,7 @@ export default async function ElectionLayout(
 
     const { data: commissioner } = await supabaseAdmin
       .from('commissioners')
-      .select()
+      .select('id')
       .eq('election_id', election.id)
       .eq('user_id', user.id)
       .is('deleted_at', null)
@@ -141,7 +143,7 @@ export default async function ElectionLayout(
 
     const { data: voter } = await supabaseAdmin
       .from('voters')
-      .select()
+      .select('id')
       .eq('election_id', election.id)
       .eq('email', user.email ?? '')
       .is('deleted_at', null)
@@ -149,7 +151,7 @@ export default async function ElectionLayout(
 
     const { data: commissioner } = await supabaseAdmin
       .from('commissioners')
-      .select()
+      .select('id')
       .eq('election_id', election.id)
       .eq('user_id', user.id)
       .is('deleted_at', null)

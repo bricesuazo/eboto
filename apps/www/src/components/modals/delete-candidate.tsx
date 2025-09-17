@@ -1,21 +1,24 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { Alert, Button, Group, Modal, Stack, Text } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
-import { IconAlertCircle, IconCheck } from "@tabler/icons-react";
+import { useEffect } from 'react';
+import { Alert, Button, Group, Modal, Stack, Text } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
+import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
 
-import { formatName } from "@eboto/constants";
+import { formatName } from '@eboto/constants';
 
-import { api } from "~/trpc/client";
-import type { Database } from "../../../../../supabase/types";
+import { api } from '~/trpc/client';
+import type { Database } from '../../../../../supabase/types';
 
 export default function DeleteCandidate({
   candidate,
   name_arrangement,
 }: {
-  candidate: Database["public"]["Tables"]["candidates"]["Row"];
+  candidate: Pick<
+    Database['public']['Tables']['candidates']['Row'],
+    'id' | 'election_id' | 'first_name' | 'middle_name' | 'last_name'
+  >;
   name_arrangement: number;
 }) {
   const context = api.useUtils();
@@ -25,16 +28,16 @@ export default function DeleteCandidate({
       await context.candidate.getDashboardData.invalidate();
       notifications.show({
         title: `${formatName(name_arrangement, candidate, true)} deleted!`,
-        message: "Successfully deleted partylist",
+        message: 'Successfully deleted partylist',
         icon: <IconCheck size="1.1rem" />,
         autoClose: 5000,
       });
     },
     onError: (error) => {
       notifications.show({
-        title: "Error",
+        title: 'Error',
         message: error.message,
-        color: "red",
+        color: 'red',
         autoClose: 3000,
       });
     },
@@ -63,7 +66,7 @@ export default function DeleteCandidate({
         onClose={close}
         title={
           <Text fw={600}>
-            Confirm Delete Candidate -{" "}
+            Confirm Delete Candidate -{' '}
             {formatName(name_arrangement, candidate, true)}
           </Text>
         }
