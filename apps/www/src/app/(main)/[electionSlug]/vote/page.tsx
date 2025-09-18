@@ -104,21 +104,21 @@ export default async function VotePage({
 
     if (!commissioner_count) notFound();
   } else {
-    const { count: votes_count } = await supabaseAdmin
-      .from('votes')
-      .select('id', { count: 'exact' })
-      .eq('voter_id', voter.id)
-      .eq('election_id', election.id);
+    const [{ count: votes_count }, { count: commissioner_count }] =
+      await Promise.all([
+        supabaseAdmin
+          .from('votes')
+          .select('id', { count: 'exact' })
+          .eq('voter_id', voter.id)
+          .eq('election_id', election.id),
+        supabaseAdmin
+          .from('commissioners')
+          .select('id', { count: 'exact' })
+          .eq('user_id', user.id)
+          .eq('election_id', election.id),
+      ]);
 
-    if (!votes_count) notFound();
-
-    const { count: commissioner_count } = await supabaseAdmin
-      .from('commissioners')
-      .select('id', { count: 'exact' })
-      .eq('user_id', user.id)
-      .eq('election_id', election.id);
-
-    if (votes_count > 0 && commissioner_count)
+    if ((votes_count ?? 0) > 0 && commissioner_count)
       redirect(`/${election.slug}/result`);
   }
 

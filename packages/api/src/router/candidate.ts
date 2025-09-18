@@ -460,9 +460,11 @@ export const candidateRouter = createTRPCRouter({
         )
         .eq('slug', input.election_slug)
         .is('deleted_at', null)
+
         .eq('commissioners.user_id', ctx.user.auth.id)
         .is('commissioners.deleted_at', null)
 
+        .is('positions.deleted_at', null)
         .is('positions.candidates.deleted_at', null)
         .is('positions.candidates.platforms.deleted_at', null)
         .is('positions.candidates.credential.deleted_at', null)

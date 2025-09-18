@@ -27,6 +27,7 @@ import {
 import { IconFingerprint } from '@tabler/icons-react';
 import moment from 'moment';
 import Balancer from 'react-wrap-balancer';
+import z from 'zod';
 
 import type { RouterOutputs } from '@eboto/api';
 import {
@@ -36,6 +37,7 @@ import {
 } from '@eboto/constants';
 
 import ScrollToTopButton from '~/components/scroll-to-top';
+import { createClient } from '~/supabase/client';
 import { api } from '~/trpc/client';
 import type { Database } from '../../../../../supabase/types';
 import AdModal from '../ad-modal';
@@ -77,17 +79,13 @@ export default function Result({
   };
   isVoterCanMessage: boolean;
 }) {
+  const utils = api.useUtils();
   const [time, setTime] = useState(!election.is_free ? date : rounded_off_date);
   const positionsQuery = api.election.getElectionRealtime.useQuery(
     election.slug,
     {
       enabled: !election.is_free,
-      refetchInterval:
-        isElectionOngoing({ election }) && !election.is_free ? 1000 : false,
       initialData: positions,
-      refetchOnMount: true,
-      refetchOnWindowFocus: true,
-      refetchOnReconnect: true,
     },
   );
   const getVoterFieldsStatsInRealtimeQuery =
@@ -97,11 +95,6 @@ export default function Result({
       },
       {
         enabled: election.voter_fields.length > 0,
-        refetchInterval:
-          isElectionOngoing({ election }) && !election.is_free ? 1000 : false,
-        refetchOnMount: true,
-        refetchOnWindowFocus: true,
-        refetchOnReconnect: true,
       },
     );
 
@@ -114,6 +107,100 @@ export default function Result({
 
     return () => clearInterval(interval);
   }, [election.is_free]);
+
+  useEffect(() => {
+    const supabase = createClient();
+    const channel = supabase.channel('election_' + election.id);
+
+    channel
+      .on('broadcast', { event: 'vote' }, ({ payload }) => {
+        const PayloadSchema = z.object({
+          voter_field: z.record(z.string(), z.string()),
+          votes: z.array(
+            z.object({
+              position_id: z.string(),
+              votes: z
+                .object({
+                  isAbstain: z.literal(true),
+                })
+                .or(
+                  z.object({
+                    isAbstain: z.literal(false),
+                    candidates: z.array(z.string()),
+                  }),
+                ),
+            }),
+          ),
+        });
+
+        const parsedPayload = PayloadSchema.parse(payload);
+
+        utils.election.getElectionRealtime.setData(election.slug, (old) => {
+          if (!old) return old;
+
+          return {
+            ...old,
+            positions: old.positions.map((position) => {
+              const vote = parsedPayload.votes.find(
+                (vote) => vote.position_id === position.id,
+              );
+
+              if (!vote) {
+                return position;
+              }
+
+              if (vote.votes.isAbstain) {
+                return { ...position, votes: position.votes + 1 };
+              } else {
+                return {
+                  ...position,
+                  candidates: position.candidates.map((candidate) => {
+                    if (vote.votes.isAbstain) return candidate;
+
+                    const isVotedFor = vote.votes.candidates.includes(
+                      candidate.id,
+                    );
+
+                    return {
+                      ...candidate,
+                      votes: isVotedFor ? candidate.votes + 1 : candidate.votes,
+                    };
+                  }),
+                };
+              }
+            }),
+          };
+        });
+
+        utils.election.getVoterFieldsStatsInRealtime.setData(
+          { election_id: election.id },
+          (old) => {
+            if (!old) return old;
+
+            return old.map((voter_field) => {
+              const vote = parsedPayload.voter_field[voter_field.id];
+
+              if (!vote) return voter_field;
+
+              return {
+                ...voter_field,
+                options: voter_field.options.map((option) => {
+                  if (option.name !== vote) return option;
+
+                  return { ...option, vote_count: option.vote_count + 1 };
+                }),
+              };
+            });
+          },
+        );
+      })
+      .subscribe();
+
+    return () => {
+      void channel.unsubscribe();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [election.id]);
 
   return (
     <>
@@ -244,7 +331,7 @@ export default function Result({
 
                   <TableTbody>
                     {position.candidates
-                      .sort((a, b) => b.vote - a.vote)
+                      .sort((a, b) => b.votes - a.votes)
                       .map((candidate, index) => (
                         <TableTr key={candidate.name}>
                           <TableTd>
@@ -262,7 +349,7 @@ export default function Result({
                               <Text>
                                 <NumberFormatter
                                   thousandSeparator
-                                  value={candidate.vote}
+                                  value={candidate.votes}
                                 />
                               </Text>
                             </Flex>

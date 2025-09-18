@@ -64,7 +64,7 @@ export const isElectionEnded = ({
     'end_date' | 'voting_hour_end'
   >;
 }) => {
-  const now = add(new Date(), { hours: is_client() || is_dev() ? 0 : 8 });
+  const now = new Date();
 
   return isAfter(
     now,
@@ -82,7 +82,7 @@ export const isElectionOngoing = ({
   >;
   withoutHours?: true;
 }) => {
-  const now = add(new Date(), { hours: is_client() || is_dev() ? 0 : 8 });
+  const now = new Date();
 
   if (withoutHours) {
     return isWithinInterval(now, {
@@ -412,14 +412,6 @@ export const FAQs: { id: string; question: string; answer: string }[] = [
       'Yes, eBoto offers a template for SSG Elections, and you can customize it further in the dashboard page to suit your specific requirements.',
   },
 ];
-
-export function is_client() {
-  return typeof window !== 'undefined';
-}
-
-export function is_dev() {
-  return process.env.NODE_ENV === 'development';
-}
 
 export function filterVotes(
   votes: { voters: { deleted_at: string | null } }[],
