@@ -10,13 +10,13 @@ catalog:
   '@tabler/icons-react': 3.35.0
   '@tanstack/react-query': 5.89.0
   '@tanstack/react-query-devtools': 5.89.0
-  '@tiptap/extension-link': 3.4.3
-  '@tiptap/react': 3.4.3
-  '@tiptap/starter-kit': 3.4.3
+  '@tiptap/extension-link': 3.4.4
+  '@tiptap/react': 3.4.4
+  '@tiptap/starter-kit': 3.4.4
   '@trpc/client': 11.5.1
   '@trpc/react-query': 11.5.1
   '@trpc/server': 11.5.1
-  '@types/node': 24.5.1
+  '@types/node': 24.5.2
   '@types/react': 19.1.13
   '@types/react-dom': 19.1.9
   '@vercel/analytics': 1.5.0
