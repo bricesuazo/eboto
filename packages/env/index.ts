@@ -11,10 +11,11 @@ export const env = createEnv({
     NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
   },
   server: {
-    APP_URL: z.string().url(),
+    APP_URL: z.url(),
     SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+    TRANSACTION_POOLER_URL: z.url(),
 
-    DISCORD_WEBHOOK_URL: z.string().min(1),
+    DISCORD_WEBHOOK_URL: z.url(),
 
     INNGEST_SIGNING_KEY: z.string().min(1),
     INNGEST_EVENT_KEY: z.string().min(1),
@@ -41,6 +42,8 @@ export const env = createEnv({
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+
+    TRANSACTION_POOLER_URL: process.env.TRANSACTION_POOLER_URL,
 
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
     NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,

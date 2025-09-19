@@ -169,89 +169,135 @@ export const electionRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      // TODO: use transaction
-      const { data: election } = await ctx.supabase
-        .from('elections')
-        .select(
-          'id, name, slug, name_arrangement, start_date, end_date, voting_hour_start, voting_hour_end',
-        )
-        .eq('id', input.election_id)
-        .is('deleted_at', null)
-        .single();
+      const transactionResult = await ctx.sql.begin(async (sql) => {
+        const [election] = await sql<
+          Pick<
+            Database['public']['Tables']['elections']['Row'],
+            | 'id'
+            | 'name'
+            | 'slug'
+            | 'name_arrangement'
+            | 'start_date'
+            | 'end_date'
+            | 'voting_hour_start'
+            | 'voting_hour_end'
+          >[]
+        >`
+          SELECT id, name, slug, name_arrangement, start_date, end_date, voting_hour_start, voting_hour_end
+          FROM elections 
+          WHERE id = ${input.election_id} 
+            AND deleted_at IS NULL
+        `;
 
-      if (!election) throw new TRPCError({ code: 'NOT_FOUND' });
+        if (!election) throw new TRPCError({ code: 'NOT_FOUND' });
 
-      if (!isElectionOngoing({ election }))
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'Election is not ongoing',
-        });
+        if (!isElectionOngoing({ election }))
+          throw new TRPCError({
+            code: 'UNAUTHORIZED',
+            message: 'Election is not ongoing',
+          });
 
-      const { count: existing_votes_count } = await ctx.supabase
-        .from('votes')
-        .select('id', { count: 'exact' })
-        .eq('voter_id', ctx.user.auth.id)
-        .eq('election_id', election.id);
+        const [voter] = await sql<
+          Pick<Database['public']['Tables']['voters']['Row'], 'id' | 'field'>[]
+        >`
+          SELECT id, field 
+          FROM voters 
+          WHERE election_id = ${election.id} 
+            AND email = ${ctx.user.db.email} 
+            AND deleted_at IS NULL
+        `;
 
-      if (existing_votes_count)
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'You have already voted in this election',
-        });
+        if (!voter)
+          throw new TRPCError({
+            code: 'UNAUTHORIZED',
+            message: 'You are not a voter in this election',
+          });
 
-      const { data: isVoterExists } = await ctx.supabase
-        .from('voters')
-        .select('id, field')
-        .eq('election_id', election.id)
-        .eq('email', ctx.user.db.email)
-        .is('deleted_at', null)
-        .single();
+        const [existingVote] = await sql<
+          Pick<Database['public']['Tables']['votes']['Row'], 'id'>[]
+        >`
+          SELECT id FROM votes 
+          WHERE voter_id = ${voter.id} 
+            AND election_id = ${election.id}
+          LIMIT 1
+        `;
 
-      if (!isVoterExists)
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'You are not a voter in this election',
-        });
+        if (existingVote)
+          throw new TRPCError({
+            code: 'UNAUTHORIZED',
+            message: 'You have already voted in this election',
+          });
 
-      const { data: positions } = await ctx.supabase
-        .from('positions')
-        .select('id, name')
-        .eq('election_id', input.election_id)
-        .is('deleted_at', null)
-        .order('order', { ascending: true });
+        const positions = await sql<
+          Pick<
+            Database['public']['Tables']['positions']['Row'],
+            'id' | 'name'
+          >[]
+        >`
+          SELECT id, name 
+          FROM positions 
+          WHERE election_id = ${input.election_id} 
+            AND deleted_at IS NULL 
+          ORDER BY "order" ASC
+        `;
 
-      const { data: candidates } = await ctx.supabase
-        .from('candidates')
-        .select('id, first_name, middle_name, last_name')
-        .eq('election_id', input.election_id)
-        .is('deleted_at', null);
+        const candidates = await sql<
+          Pick<
+            Database['public']['Tables']['candidates']['Row'],
+            'id' | 'first_name' | 'middle_name' | 'last_name'
+          >[]
+        >`
+          SELECT id, first_name, middle_name, last_name 
+          FROM candidates 
+          WHERE election_id = ${input.election_id} 
+            AND deleted_at IS NULL
+        `;
 
-      if (!positions || !candidates) throw new TRPCError({ code: 'NOT_FOUND' });
+        if (!positions.length || !candidates.length)
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Positions or candidates not found',
+          });
 
-      await ctx.supabase.from('votes').insert(
-        input.votes
-          .map((vote) =>
-            vote.votes.isAbstain
-              ? {
-                  position_id: vote.position_id,
-                  voter_id: isVoterExists.id,
-                  election_id: input.election_id,
-                }
-              : vote.votes.candidates.map((candidate_id) => ({
-                  candidate_id,
-                  voter_id: isVoterExists.id,
-                  election_id: input.election_id,
-                })),
-          )
-          .flat(),
-      );
+        await sql`
+          INSERT INTO votes ${sql(
+            input.votes
+              .map((vote) =>
+                vote.votes.isAbstain
+                  ? [
+                      {
+                        election_id: input.election_id,
+                        voter_id: voter.id,
+                        position_id: vote.position_id,
+                        candidate_id: null,
+                      },
+                    ]
+                  : vote.votes.candidates.map((candidate_id) => ({
+                      election_id: input.election_id,
+                      voter_id: voter.id,
+                      position_id: null,
+                      candidate_id,
+                    })),
+              )
+              .flat(),
+          )}
+        `;
 
+        return {
+          election,
+          voter,
+          positions,
+          candidates,
+        };
+      });
+
+      const { election, voter, positions, candidates } = transactionResult;
       const channel = ctx.supabase.channel('election_' + election.id);
 
       await channel.send({
         type: 'broadcast',
         event: 'vote',
-        payload: { votes: input.votes, voter_field: isVoterExists.field },
+        payload: { votes: input.votes, voter_field: voter.field },
       });
 
       await ctx.supabase.removeChannel(channel);
@@ -261,7 +307,6 @@ export const electionRouter = createTRPCRouter({
         election: {
           name: election.name,
           slug: election.slug,
-
           positions: input.votes.map((vote) => ({
             id: vote.position_id,
             name:

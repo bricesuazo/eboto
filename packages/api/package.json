@@ -19,6 +19,7 @@
     "@trpc/server": "catalog:",
     "@web-std/file": "3.0.3",
     "moment": "2.30.1",
+    "postgres": "3.4.7",
     "superjson": "catalog:",
     "uuid": "catalog:",
     "zod": "catalog:"

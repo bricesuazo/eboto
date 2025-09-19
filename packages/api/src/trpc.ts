@@ -1,6 +1,7 @@
 import type { User } from '@supabase/supabase-js';
 import { createClient } from '@supabase/supabase-js';
 import { initTRPC, TRPCError } from '@trpc/server';
+import postgres from 'postgres';
 import superjson from 'superjson';
 import { ZodError } from 'zod/v4';
 
@@ -18,6 +19,9 @@ export function createTRPCContext(opts: {
     env.NEXT_PUBLIC_SUPABASE_URL,
     env.SUPABASE_SERVICE_ROLE_KEY,
   );
+
+  const sql = postgres(env.TRANSACTION_POOLER_URL);
+
   const source = opts.headers.get('x-trpc-source') ?? 'unknown';
 
   console.log(
@@ -27,7 +31,7 @@ export function createTRPCContext(opts: {
     opts.user?.auth.email ?? opts.user?.db.email,
   );
 
-  return { ...opts, payment, inngest, supabase };
+  return { ...opts, payment, inngest, supabase, sql };
 }
 
 export type Context = Awaited<ReturnType<typeof createTRPCContext>>;
