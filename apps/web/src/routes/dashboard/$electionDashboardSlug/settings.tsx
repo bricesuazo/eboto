@@ -1,0 +1,350 @@
+import { createFileRoute, notFound, useNavigate } from '@tanstack/react-router';
+import { useQuery } from '@tanstack/react-query';
+import { convexQuery } from '@convex-dev/react-query';
+import { useMutation } from 'convex/react';
+import { DashboardPending } from '~/components/dashboard-pending';
+import { ConvexError } from 'convex/values';
+import { api } from '@eboto/backend/api';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { toast } from 'sonner';
+import dayjs from 'dayjs';
+import { useState } from 'react';
+import { Trash2 } from 'lucide-react';
+import { Button } from '~/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '~/components/ui/card';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
+import { Textarea } from '~/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '~/components/ui/select';
+import { Switch } from '~/components/ui/switch';
+
+export const Route = createFileRoute(
+  '/dashboard/$electionDashboardSlug/settings',
+)({
+  beforeLoad: async ({ context, params }) => {
+    const election = await context.queryClient.ensureQueryData(
+      convexQuery(api.elections.getDashboardBySlug, {
+        slug: params.electionDashboardSlug,
+      }),
+    );
+    if (!election) throw notFound();
+  },
+  pendingComponent: DashboardPending,
+  component: SettingsPage,
+});
+
+const schema = z
+  .object({
+    name: z.string().min(1, 'Required'),
+    description: z.string().default(''),
+    startDate: z.string().min(1),
+    endDate: z.string().min(1),
+    votingHourStart: z.coerce.number().int().min(0).max(23),
+    votingHourEnd: z.coerce.number().int().min(1).max(24),
+    publicity: z.enum(['PRIVATE', 'VOTER', 'PUBLIC']),
+    nameArrangement: z.coerce.number().int().min(0).max(1),
+    isCandidatesVisibleInRealtimeWhenOngoing: z.boolean(),
+  })
+  .refine((d) => new Date(d.endDate) > new Date(d.startDate), {
+    path: ['endDate'],
+    message: 'End must be after start',
+  })
+  .refine((d) => d.votingHourEnd > d.votingHourStart, {
+    path: ['votingHourEnd'],
+    message: 'End hour must be after start hour',
+  });
+
+type FormValues = z.infer<typeof schema>;
+
+function SettingsPage() {
+  const { electionDashboardSlug } = Route.useParams();
+  const navigate = useNavigate();
+  const { data: election } = useQuery(
+    convexQuery(api.elections.getDashboardBySlug, {
+      slug: electionDashboardSlug,
+    }),
+  );
+  if (!election) throw notFound();
+  const electionId = election._id;
+  const update = useMutation(api.elections.update);
+  const softDelete = useMutation(api.elections.softDelete);
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      name: election.name,
+      description: election.description ?? '',
+      startDate: dayjs(election.startDate).format('YYYY-MM-DD'),
+      endDate: dayjs(election.endDate).format('YYYY-MM-DD'),
+      votingHourStart: election.votingHourStart,
+      votingHourEnd: election.votingHourEnd,
+      publicity: election.publicity,
+      nameArrangement: 0,
+      isCandidatesVisibleInRealtimeWhenOngoing: false,
+    },
+  });
+
+  async function onSubmit(values: FormValues) {
+    try {
+      await update({
+        id: electionId,
+        ...values,
+        startDate: new Date(values.startDate).getTime(),
+        endDate: new Date(values.endDate).getTime(),
+      });
+      toast.success('Settings saved');
+    } catch (err) {
+      toast.error(
+        err instanceof ConvexError
+          ? (err.data as { message?: string }).message ?? 'Failed'
+          : 'Failed',
+      );
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold">Settings</h1>
+        <p className="text-muted-foreground text-sm">
+          Tune election timing, visibility, and danger zone.
+        </p>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>General</CardTitle>
+          <CardDescription>Basics shown on the public page.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-5"
+            >
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea rows={4} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-3">
+                <FormField
+                  control={form.control}
+                  name="startDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Start date</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="endDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>End date</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="votingHourStart"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Voting starts</FormLabel>
+                      <FormControl>
+                        <Input type="number" min={0} max={23} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="votingHourEnd"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Voting ends</FormLabel>
+                      <FormControl>
+                        <Input type="number" min={1} max={24} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="publicity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Publicity</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="PRIVATE">
+                          Private — commissioners only
+                        </SelectItem>
+                        <SelectItem value="VOTER">
+                          Voter — registered voters only
+                        </SelectItem>
+                        <SelectItem value="PUBLIC">
+                          Public — anyone can view
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="isCandidatesVisibleInRealtimeWhenOngoing"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start gap-3 space-y-0 rounded-md border p-3">
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>
+                        Show real candidate names during the live result
+                      </FormLabel>
+                      <FormDescription>
+                        When off, candidates show as "Candidate 1, 2, …" until
+                        the election ends.
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              <Button
+                type="submit"
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting ? 'Saving…' : 'Save changes'}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-destructive">Danger zone</CardTitle>
+          <CardDescription>
+            Deleting an election hides it from voters and the dashboard. Votes
+            are preserved server-side but become inaccessible.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DeleteElectionButton
+            electionId={election._id}
+            onDeleted={() => navigate({ to: '/dashboard' })}
+          />
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function DeleteElectionButton({
+  electionId,
+  onDeleted,
+}: {
+  electionId: string;
+  onDeleted: () => void;
+}) {
+  const softDelete = useMutation(api.elections.softDelete);
+  const [pending, setPending] = useState(false);
+  return (
+    <Button
+      variant="destructive"
+      disabled={pending}
+      onClick={async () => {
+        if (!confirm('Delete this election? This cannot be undone.')) return;
+        setPending(true);
+        try {
+          await softDelete({ id: electionId as never });
+          toast.success('Election deleted');
+          onDeleted();
+        } catch (err) {
+          toast.error(
+            err instanceof ConvexError
+              ? (err.data as { message?: string }).message ?? 'Failed'
+              : 'Failed',
+          );
+        } finally {
+          setPending(false);
+        }
+      }}
+    >
+      <Trash2 className="mr-2 size-4" />
+      Delete election
+    </Button>
+  );
+}

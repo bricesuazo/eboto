@@ -1,9 +1,0 @@
-{
-  "extends": "@eboto/tsconfig/internal-package.json",
-  "compilerOptions": {
-    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json",
-    "lib": ["dom"]
-  },
-  "include": ["."],
-  "exclude": ["node_modules"]
-}

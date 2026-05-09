@@ -1,0 +1,9 @@
+node_modules
+.output
+.vinxi
+.nitro
+.turbo
+.cache
+
+# TanStack Router auto-generated
+src/routeTree.gen.ts

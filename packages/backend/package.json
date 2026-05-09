@@ -1,0 +1,59 @@
+{
+  "name": "@eboto/backend",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./api": "./convex/_generated/api.js",
+    "./data-model": "./convex/_generated/dataModel.js",
+    "./schema": "./convex/schema.ts",
+    "./auth": "./convex/auth.ts"
+  },
+  "typesVersions": {
+    "*": {
+      "api": [
+        "./convex/_generated/api.d.ts"
+      ],
+      "data-model": [
+        "./convex/_generated/dataModel.d.ts"
+      ],
+      "schema": [
+        "./convex/schema.ts"
+      ],
+      "auth": [
+        "./convex/auth.ts"
+      ]
+    }
+  },
+  "scripts": {
+    "clean": "git clean -xdf .turbo node_modules convex/_generated",
+    "dev": "pnpm with-env convex dev",
+    "deploy": "pnpm with-env convex deploy",
+    "codegen": "pnpm with-env convex codegen",
+    "lint": "eslint",
+    "format": "prettier --check \"**/*.{mjs,ts,md,json}\"",
+    "typecheck": "tsc --noEmit",
+    "with-env": "dotenv -e ../../.env --"
+  },
+  "dependencies": {
+    "@auth/core": "^0.37.0",
+    "@convex-dev/auth": "^0.0.91",
+    "convex": "^1.27.3"
+  },
+  "devDependencies": {
+    "@eboto/eslint-config": "workspace:*",
+    "@eboto/prettier-config": "workspace:*",
+    "@eboto/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "dotenv-cli": "10.0.0",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@eboto/eslint-config/base"
+    ]
+  },
+  "prettier": "@eboto/prettier-config"
+}
