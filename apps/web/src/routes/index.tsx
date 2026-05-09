@@ -59,13 +59,11 @@ function Hero() {
                   <ArrowRight className="size-4" />
                 </Link>
               }
-              size="lg"
-            />
+              size="lg"            />
             <Button
               render={<Link to="/pricing">View pricing</Link>}
               size="lg"
-              variant="outline"
-            />
+              variant="outline"            />
           </div>
         </div>
       </div>
@@ -165,6 +163,7 @@ function Pricing() {
                   render={<Link to={tier.cta.to}>{tier.cta.label}</Link>}
                   variant={tier.highlighted ? 'default' : 'outline'}
                   className="mt-6 w-full"
+                  nativeButton={false}
                 />
               </CardContent>
             </Card>
@@ -237,11 +236,13 @@ function FinalCta() {
                   </Link>
                 }
                 size="lg"
+                nativeButton={false}
               />
               <Button
                 render={<Link to="/contact">Talk to us</Link>}
                 size="lg"
                 variant="outline"
+                nativeButton={false}
               />
             </div>
             <Separator className="bg-border/60 mt-2" />

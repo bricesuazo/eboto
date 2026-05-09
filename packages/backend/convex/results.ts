@@ -2,7 +2,7 @@ import { getAuthUserId } from '@convex-dev/auth/server';
 import { v } from 'convex/values';
 
 import { query } from './_generated/server';
-import { isElectionInProgress } from './_helpers/election-timing';
+import { isElectionInProgress } from './_helpers/election_timing';
 
 /**
  * Live election tally. Candidates are anonymized as `Candidate N` while the

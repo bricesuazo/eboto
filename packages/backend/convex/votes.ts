@@ -3,7 +3,7 @@ import { ConvexError, v } from 'convex/values';
 
 import type { Id } from './_generated/dataModel';
 import { mutation, query } from './_generated/server';
-import { isVotingOpen } from './_helpers/election-timing';
+import { isVotingOpen } from './_helpers/election_timing';
 
 /**
  * Loads everything the ballot UI needs in one query: election timing/meta,

@@ -22,8 +22,12 @@ export function SiteHeader() {
   return (
     <header className="bg-background/80 sticky top-0 z-20 border-b backdrop-blur">
       <div className="container mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
-        <Link to="/" className="font-bold tracking-tight">
-          eBoto
+        <Link
+          to={user ? '/dashboard' : '/'}
+          className=" gap-2 items-center  flex"
+        >
+          <img src="/logo.png" alt="eBoto" width={32} height={32} />
+          <span className="font-semibold">eBoto</span>
         </Link>
 
         <nav className="flex items-center gap-2">
@@ -104,16 +108,13 @@ function UserMenu({ user }: { user: UserShape }) {
                 My elections
               </Link>
             }
+            nativeButton={false}
           />
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            render={
-              <button onClick={handleSignOut} className="w-full">
-                <LogOut className="size-4" />
-                Sign out
-              </button>
-            }
-          />
+          <DropdownMenuItem onClick={handleSignOut}>
+            <LogOut className="size-4" />
+            Sign out
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </>

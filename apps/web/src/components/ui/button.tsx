@@ -1,6 +1,7 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
 import type { VariantProps } from 'class-variance-authority';
 import { cva } from 'class-variance-authority';
+import { isValidElement } from 'react';
 
 import { cn } from '~/lib/utils';
 
@@ -45,12 +46,20 @@ function Button({
   className,
   variant = 'default',
   size = 'default',
+  nativeButton,
+  render,
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+  // Infer nativeButton from the render element so callers don't need to pass
+  // it explicitly when slotting in a Link or other non-button.
+  const resolvedNativeButton =
+    nativeButton ?? (isValidElement(render) ? render.type === 'button' : true);
   return (
     <ButtonPrimitive
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      nativeButton={resolvedNativeButton}
+      render={render}
       {...props}
     />
   );

@@ -7,7 +7,8 @@
     "./data-model": "./convex/_generated/dataModel.js",
     "./schema": "./convex/schema.ts",
     "./auth": "./convex/auth.ts",
-    "./election-timing": "./convex/_helpers/election-timing.ts"
+    "./election-timing": "./convex/_helpers/election_timing.ts",
+    "./slugs": "./convex/_helpers/slugs.ts"
   },
   "typesVersions": {
     "*": {
@@ -24,7 +25,10 @@
         "./convex/auth.ts"
       ],
       "election-timing": [
-        "./convex/_helpers/election-timing.ts"
+        "./convex/_helpers/election_timing.ts"
+      ],
+      "slugs": [
+        "./convex/_helpers/slugs.ts"
       ]
     }
   },

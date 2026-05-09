@@ -1,12 +1,15 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useMutation } from 'convex/react';
-import { api } from '@eboto/backend/api';
 import { ConvexError } from 'convex/values';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { toast } from 'sonner';
 import dayjs from 'dayjs';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
+
+import { api } from '@eboto/backend/api';
+import { isSlugReserved } from '@eboto/backend/slugs';
+
 import { Button } from '~/components/ui/button';
 import {
   Card,
@@ -42,7 +45,8 @@ const schema = z
       .string()
       .min(1, 'Required')
       .toLowerCase()
-      .regex(slugRegex, 'Lowercase letters, digits, dashes only'),
+      .regex(slugRegex, 'Lowercase letters, digits, dashes only')
+      .refine((s) => !isSlugReserved(s), 'That slug is reserved'),
     startDate: z.string().min(1, 'Required'),
     endDate: z.string().min(1, 'Required'),
     votingHourStart: z.coerce.number().int().min(0).max(23),
@@ -93,7 +97,7 @@ function NewElectionPage() {
         template: values.template,
       });
       toast.success('Election created');
-      navigate({
+      await navigate({
         to: '/dashboard/$electionDashboardSlug',
         params: { electionDashboardSlug: result.slug },
       });
@@ -117,10 +121,7 @@ function NewElectionPage() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-5"
-            >
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
               <FormField
                 control={form.control}
                 name="name"
@@ -145,7 +146,9 @@ function NewElectionPage() {
                     </FormControl>
                     <FormDescription>
                       Voters will visit{' '}
-                      <span className="font-mono">eboto.app/{field.value || 'your-slug'}</span>
+                      <span className="font-mono">
+                        eboto.app/{field.value || 'your-slug'}
+                      </span>
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

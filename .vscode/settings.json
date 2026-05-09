@@ -6,6 +6,7 @@
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
+  "prettier.configPath": "tooling/prettier/index.js",
   "eslint.rules.customizations": [{ "rule": "*", "severity": "warn" }],
   "eslint.useFlatConfig": true,
   "editor.snippetSuggestions": "bottom",
