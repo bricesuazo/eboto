@@ -20,11 +20,11 @@ export function SiteHeader() {
   const { user } = useRouteContext({ from: '__root__' });
 
   return (
-    <header className="bg-background/80 sticky top-0 z-20 border-b backdrop-blur">
+    <header className="sticky top-0 z-20 border-b bg-background/80 backdrop-blur">
       <div className="container mx-auto flex h-14 max-w-6xl items-center justify-between px-6">
         <Link
           to={user ? '/dashboard' : '/'}
-          className=" gap-2 items-center  flex"
+          className="flex items-center gap-2"
         >
           <img src="/logo.png" alt="eBoto" width={32} height={32} />
           <span className="font-semibold">eBoto</span>
@@ -80,7 +80,7 @@ function UserMenu({ user }: { user: UserShape }) {
         <DropdownMenuTrigger
           render={
             <button
-              className="rounded-full focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2"
+              className="rounded-full focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               aria-label="Account menu"
             >
               <Avatar>
@@ -95,7 +95,7 @@ function UserMenu({ user }: { user: UserShape }) {
           <DropdownMenuGroup>
             <DropdownMenuLabel className="font-normal">
               <p className="truncate text-sm">{user.name ?? 'Account'}</p>
-              <p className="text-muted-foreground truncate text-xs">
+              <p className="truncate text-xs text-muted-foreground">
                 {user.email ?? ''}
               </p>
             </DropdownMenuLabel>

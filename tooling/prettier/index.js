@@ -12,7 +12,6 @@ const config = {
   plugins: [
     '@ianvs/prettier-plugin-sort-imports',
     'prettier-plugin-tailwindcss',
-    'prettier-plugin-merge',
   ],
   tailwindStylesheet: path.join(
     __dirname,
