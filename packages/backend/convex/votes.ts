@@ -41,6 +41,13 @@ export const getVotingPage = query({
       });
     }
 
+    if (!isVotingOpen(election)) {
+      throw new ConvexError({
+        code: 'voting_closed',
+        message: 'Voting is not open for this election',
+      });
+    }
+
     const voter = await ctx.db
       .query('voters')
       .withIndex('by_election_email', (q) =>
@@ -48,6 +55,7 @@ export const getVotingPage = query({
       )
       .filter((q) => q.eq(q.field('deletedAt'), undefined))
       .first();
+
     if (!voter) {
       throw new ConvexError({
         code: 'forbidden',
@@ -192,6 +200,7 @@ export const cast = mutation({
       )
       .filter((q) => q.eq(q.field('deletedAt'), undefined))
       .first();
+
     if (!voter) {
       throw new ConvexError({
         code: 'forbidden',
@@ -343,7 +352,6 @@ export const myBallot = query({
         q.eq('deletedAt', undefined).eq('electionId', election._id),
       )
       .collect();
-    const positionsById = new Map(positions.map((p) => [p._id, p]));
 
     const candidates = await ctx.db
       .query('candidates')

@@ -1,20 +1,35 @@
-import { createFileRoute, notFound } from '@tanstack/react-router';
+import { createFileRoute, notFound, redirect } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { convexQuery } from '@convex-dev/react-query';
+import { ConvexError } from 'convex/values';
 import { api } from '@eboto/backend/api';
 import dayjs from 'dayjs';
 
 import { PagePending } from '~/components/page-pending';
+import { CONVEX_ERROR_FORBIDDEN } from '~/lib/constants';
 import { formatName } from '~/lib/election';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Badge } from '~/components/ui/badge';
 
 export const Route = createFileRoute('/$electionSlug/result')({
   beforeLoad: async ({ context, params }) => {
-    const data = await context.queryClient.ensureQueryData(
-      convexQuery(api.results.getBySlug, { slug: params.electionSlug }),
-    );
-    if (!data) throw notFound();
+    try {
+      const data = await context.queryClient.ensureQueryData(
+        convexQuery(api.results.getBySlug, { slug: params.electionSlug }),
+      );
+      if (!data) throw notFound();
+    } catch (err) {
+      if (err instanceof ConvexError) {
+        const data = err.data as { code?: string };
+        if (data.code === CONVEX_ERROR_FORBIDDEN) {
+          throw redirect({
+            to: '/$electionSlug',
+            params: { electionSlug: params.electionSlug },
+          });
+        }
+      }
+      throw err;
+    }
   },
   pendingComponent: PagePending,
   component: ResultPage,

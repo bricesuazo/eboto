@@ -7,3 +7,4 @@
 export const CONVEX_ERROR_UNAUTHORIZED = 'unauthorized';
 export const CONVEX_ERROR_FORBIDDEN = 'forbidden';
 export const CONVEX_ERROR_NOT_FOUND = 'not_found';
+export const CONVEX_ERROR_VOTING_CLOSED = 'voting_closed';

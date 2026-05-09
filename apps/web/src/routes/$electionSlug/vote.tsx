@@ -5,6 +5,7 @@ import {
   createFileRoute,
   Link,
   notFound,
+  redirect,
   useNavigate,
 } from '@tanstack/react-router';
 import { useMutation } from 'convex/react';
@@ -19,8 +20,12 @@ import { PagePending } from '~/components/page-pending';
 import { Button } from '~/components/ui/button';
 import { Checkbox } from '~/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group';
-import { CONVEX_ERROR_NOT_FOUND } from '~/lib/constants';
-import { formatName } from '~/lib/election';
+import {
+  CONVEX_ERROR_FORBIDDEN,
+  CONVEX_ERROR_NOT_FOUND,
+  CONVEX_ERROR_VOTING_CLOSED,
+} from '~/lib/constants';
+import { formatName, isVotingOpen } from '~/lib/election';
 import type { Choice } from '~/lib/stores/ballot';
 import { useBallotStore } from '~/lib/stores/ballot';
 import { cn } from '~/lib/utils';
@@ -28,13 +33,28 @@ import { cn } from '~/lib/utils';
 export const Route = createFileRoute('/$electionSlug/vote')({
   beforeLoad: async ({ context, params }) => {
     try {
-      await context.queryClient.ensureQueryData(
+      const data = await context.queryClient.ensureQueryData(
         convexQuery(api.votes.getVotingPage, { slug: params.electionSlug }),
       );
+      if (!isVotingOpen(data.election)) {
+        throw redirect({
+          to: '/$electionSlug',
+          params: { electionSlug: params.electionSlug },
+        });
+      }
     } catch (err) {
       if (err instanceof ConvexError) {
         const data = err.data as { code?: string; message?: string };
         if (data.code === CONVEX_ERROR_NOT_FOUND) throw notFound();
+        if (
+          data.code === CONVEX_ERROR_VOTING_CLOSED ||
+          data.code === CONVEX_ERROR_FORBIDDEN
+        ) {
+          throw redirect({
+            to: '/$electionSlug',
+            params: { electionSlug: params.electionSlug },
+          });
+        }
       }
       throw err;
     }
@@ -86,7 +106,7 @@ function BallotPage() {
     return (
       <main className="container mx-auto max-w-xl px-6 py-16 text-center">
         <h1 className="text-2xl font-bold">You've already voted</h1>
-        <p className="text-muted-foreground mt-2">
+        <p className="mt-2 text-muted-foreground">
           Each voter gets one ballot per election.
         </p>
         <Button
@@ -143,7 +163,7 @@ function BallotPage() {
   return (
     <main className="container mx-auto max-w-2xl px-6 py-12">
       <h1 className="text-3xl font-bold">{election.name}</h1>
-      <p className="text-muted-foreground mt-1">
+      <p className="mt-1 text-muted-foreground">
         Cast your ballot. You can review your selections before submitting.
       </p>
 
@@ -155,14 +175,14 @@ function BallotPage() {
           return (
             <section key={position._id}>
               <h2 className="text-2xl font-semibold">{position.name}</h2>
-              <p className="text-muted-foreground text-sm">
+              <p className="text-sm text-muted-foreground">
                 {isSingle
                   ? 'Pick 1 candidate (or abstain)'
                   : `Pick ${position.min}–${position.max} candidate${position.max > 1 ? 's' : ''}`}
               </p>
 
               {position.candidates.length === 0 ? (
-                <p className="text-muted-foreground mt-3 text-sm">
+                <p className="mt-3 text-sm text-muted-foreground">
                   No candidates running for this position.
                 </p>
               ) : isSingle ? (
@@ -277,7 +297,7 @@ function CandidatePreview({
 }) {
   return (
     <>
-      <div className="bg-muted relative size-16 overflow-hidden rounded-md">
+      <div className="relative size-16 overflow-hidden rounded-md bg-muted">
         {candidate.imageUrl ? (
           <img
             src={candidate.imageUrl}
@@ -285,7 +305,7 @@ function CandidatePreview({
             className="absolute inset-0 size-full object-cover"
           />
         ) : (
-          <User className="text-muted-foreground absolute inset-0 m-auto size-8" />
+          <User className="absolute inset-0 m-auto size-8 text-muted-foreground" />
         )}
       </div>
       <span className="text-center text-xs">

@@ -146,6 +146,7 @@ export default defineSchema({
     deletedAt: v.optional(v.number()),
   })
     .index('by_election', ['electionId'])
+    .index('by_email', ['email'])
     .index('by_election_email', ['electionId', 'email']),
 
   votes: defineTable({

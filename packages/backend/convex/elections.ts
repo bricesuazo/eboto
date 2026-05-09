@@ -106,9 +106,47 @@ export const getBySlug = query({
         ),
       }));
 
+    let isCommissioner = false;
+    if (user) {
+      const commissioner = await ctx.db
+        .query('commissioners')
+        .withIndex('by_user_election', (q) =>
+          q.eq('userId', user._id).eq('electionId', election._id),
+        )
+        .filter((q) => q.eq(q.field('deletedAt'), undefined))
+        .first();
+      isCommissioner = Boolean(commissioner);
+    }
+
+    let isVoter = false;
+    let hasVoted = false;
+    const userEmail = user?.email;
+    if (userEmail) {
+      const voter = await ctx.db
+        .query('voters')
+        .withIndex('by_election_email', (q) =>
+          q.eq('electionId', election._id).eq('email', userEmail),
+        )
+        .filter((q) => q.eq(q.field('deletedAt'), undefined))
+        .first();
+      isVoter = Boolean(voter);
+      if (voter) {
+        const existingVote = await ctx.db
+          .query('votes')
+          .withIndex('by_election_voter', (q) =>
+            q.eq('electionId', election._id).eq('voterId', voter._id),
+          )
+          .first();
+        hasVoted = Boolean(existingVote);
+      }
+    }
+
     return {
       election: { ...election, logoUrl, voterFields },
       positions: positionsWithCandidates,
+      isCommissioner,
+      isVoter,
+      hasVoted,
     };
   },
 });

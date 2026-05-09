@@ -46,12 +46,6 @@ import {
 } from '~/lib/election';
 
 export const Route = createFileRoute('/$electionSlug/')({
-  beforeLoad: async ({ context, params }) => {
-    const data = await context.queryClient.ensureQueryData(
-      convexQuery(api.elections.getBySlug, { slug: params.electionSlug }),
-    );
-    if (!data) throw notFound();
-  },
   pendingComponent: PagePending,
   head: ({ params }) => ({
     meta: [
@@ -73,7 +67,7 @@ function ElectionPage() {
   );
   if (!data) throw notFound();
 
-  const { election, positions } = data;
+  const { election, positions, isVoter, hasVoted, isCommissioner } = data;
   const ongoing = isElectionOngoing(election);
   const ended = isElectionEnded(election);
   const dateRange =
@@ -95,14 +89,14 @@ function ElectionPage() {
             <Fingerprint className="size-24 text-muted-foreground" />
           )}
         </div>
-        <h1 className="text-balance text-3xl font-bold sm:text-4xl">
+        <h1 className="text-3xl font-bold text-balance sm:text-4xl">
           {election.name}{' '}
-          <span className="text-muted-foreground font-normal">
+          <span className="font-normal text-muted-foreground">
             (@{election.slug})
           </span>
         </h1>
-        <p className="text-muted-foreground mt-1">{dateRange}</p>
-        <p className="text-muted-foreground text-sm">
+        <p className="mt-1 text-muted-foreground">{dateRange}</p>
+        <p className="text-sm text-muted-foreground">
           Voting hours:{' '}
           {election.votingHourStart === 0 && election.votingHourEnd === 24
             ? 'Whole day'
@@ -132,13 +126,16 @@ function ElectionPage() {
         </div>
 
         {election.description && (
-          <p className="text-muted-foreground mt-4 max-w-prose text-pretty">
+          <p className="mt-4 max-w-prose text-pretty text-muted-foreground">
             {election.description}
           </p>
         )}
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-          {(election.publicity === 'PUBLIC' || ended) && (
+          {(isCommissioner ||
+            election.publicity === 'PUBLIC' ||
+            ended ||
+            (election.publicity === 'VOTER' && hasVoted)) && (
             <Button
               render={
                 <Link
@@ -153,7 +150,7 @@ function ElectionPage() {
               className="rounded-full"
             />
           )}
-          {ongoing && (
+          {ongoing && (!user || (isVoter && !hasVoted)) && (
             <Button
               render={
                 user ? (
@@ -179,7 +176,7 @@ function ElectionPage() {
         </div>
 
         {ended ? (
-          <p className="text-muted-foreground mt-6 text-sm">
+          <p className="mt-6 text-sm text-muted-foreground">
             This election has ended.
           </p>
         ) : (
@@ -193,15 +190,15 @@ function ElectionPage() {
 
       <section className="mt-12 space-y-12">
         {positions.length === 0 ? (
-          <p className="text-muted-foreground text-center">
+          <p className="text-center text-muted-foreground">
             This election has no positions yet. Contact the election
             commissioner for more information.
           </p>
         ) : (
           positions.map((position) => (
             <div key={position._id}>
-              <div className="bg-background/80 sticky top-14 z-10 flex items-center justify-center gap-2 py-3 backdrop-blur">
-                <h2 className="text-balance text-2xl font-semibold">
+              <div className="sticky top-14 z-10 flex items-center justify-center gap-2 bg-background/80 py-3 backdrop-blur">
+                <h2 className="text-2xl font-semibold text-balance">
                   {position.name}
                 </h2>
                 <HoverCard>
@@ -224,7 +221,7 @@ function ElectionPage() {
               </div>
 
               {position.candidates.length === 0 ? (
-                <p className="text-muted-foreground text-center text-lg">
+                <p className="text-center text-lg text-muted-foreground">
                   No candidates for {position.name} yet.
                 </p>
               ) : (
@@ -243,9 +240,9 @@ function ElectionPage() {
                           electionSlug: election.slug,
                           candidateSlug: candidate.slug,
                         }}
-                        className="hover:bg-accent rounded-lg border p-3 transition-colors"
+                        className="rounded-lg border p-3 transition-colors hover:bg-accent"
                       >
-                        <div className="bg-muted relative aspect-square overflow-hidden rounded-md">
+                        <div className="relative aspect-square overflow-hidden rounded-md bg-muted">
                           {candidate.imageUrl ? (
                             <img
                               src={candidate.imageUrl}
@@ -253,10 +250,10 @@ function ElectionPage() {
                               className="absolute inset-0 size-full object-cover"
                             />
                           ) : (
-                            <UserIcon className="text-muted-foreground absolute inset-0 m-auto size-16" />
+                            <UserIcon className="absolute inset-0 m-auto size-16 text-muted-foreground" />
                           )}
                         </div>
-                        <p className="line-clamp-2 mt-2 text-center text-sm">
+                        <p className="mt-2 line-clamp-2 text-center text-sm">
                           {name}
                         </p>
                       </Link>
@@ -322,7 +319,7 @@ function ShareQrButton({
             />
           </div>
         </div>
-        <div className="text-muted-foreground break-all rounded-md border bg-muted/40 px-3 py-2 text-center text-xs">
+        <div className="rounded-md border bg-muted/40 px-3 py-2 text-center text-xs break-all text-muted-foreground">
           {url}
         </div>
         <DialogFooter className="sm:justify-center">

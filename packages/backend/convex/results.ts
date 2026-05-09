@@ -1,5 +1,5 @@
 import { getAuthUserId } from '@convex-dev/auth/server';
-import { v } from 'convex/values';
+import { ConvexError, v } from 'convex/values';
 
 import { query } from './_generated/server';
 import { isElectionInProgress } from './_helpers/election_timing';
@@ -24,6 +24,7 @@ export const getBySlug = query({
     if (!election) return null;
 
     const userId = await getAuthUserId(ctx);
+    const user = userId ? await ctx.db.get(userId) : null;
     let isCommissioner = false;
     if (userId) {
       const commissioner = await ctx.db
@@ -34,6 +35,37 @@ export const getBySlug = query({
         .filter((q) => q.eq(q.field('deletedAt'), undefined))
         .first();
       isCommissioner = Boolean(commissioner);
+    }
+
+    // VOTER-publicity results are gated on participation: voters can only see
+    // tallies once they've cast a ballot. Commissioners always see results.
+    if (election.publicity === 'VOTER' && !isCommissioner) {
+      let hasVoted = false;
+      const userEmail = user?.email;
+      if (userEmail) {
+        const voter = await ctx.db
+          .query('voters')
+          .withIndex('by_election_email', (q) =>
+            q.eq('electionId', election._id).eq('email', userEmail),
+          )
+          .filter((q) => q.eq(q.field('deletedAt'), undefined))
+          .first();
+        if (voter) {
+          const existingVote = await ctx.db
+            .query('votes')
+            .withIndex('by_election_voter', (q) =>
+              q.eq('electionId', election._id).eq('voterId', voter._id),
+            )
+            .first();
+          hasVoted = Boolean(existingVote);
+        }
+      }
+      if (!hasVoted) {
+        throw new ConvexError({
+          code: 'forbidden',
+          message: 'Cast your ballot to view results',
+        });
+      }
     }
 
     const positions = await ctx.db
