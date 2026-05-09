@@ -1,5 +1,5 @@
 import { convexQuery } from '@convex-dev/react-query';
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import {
   createFileRoute,
   Link,
@@ -10,21 +10,19 @@ import { ExternalLink } from 'lucide-react';
 
 import { api } from '@eboto/backend/api';
 
-import { PagePending } from '~/components/page-pending';
 import { Separator } from '~/components/ui/separator';
 import {
   CONVEX_ERROR_FORBIDDEN,
   CONVEX_ERROR_NOT_FOUND,
-  DASHBOARD_NAV_ITEMS,
 } from '~/lib/constants';
+import { DASHBOARD_NAV_ITEMS } from '~/lib/constants/nav';
 import { getConvexErrorCode } from '~/lib/convex-error';
-import { cn } from '~/lib/utils';
 
 export const Route = createFileRoute('/dashboard/$electionDashboardSlug')({
-  beforeLoad: async ({ context, params }) => {
+  loader: async ({ context, params }) => {
     // The parent `/dashboard` route's `beforeLoad` has already verified the
-    // viewer is signed in, so this only needs to handle the ownership check
-    // (`requireCommissioner` → forbidden) and 404s.
+    // viewer is signed in, so this loader only needs to handle the
+    // ownership check (`requireCommissioner` → forbidden) and 404s.
     try {
       const data = await context.queryClient.ensureQueryData(
         convexQuery(api.elections.getDashboardBySlug, {
@@ -42,13 +40,12 @@ export const Route = createFileRoute('/dashboard/$electionDashboardSlug')({
       throw err;
     }
   },
-  pendingComponent: PagePending,
   component: DashboardElectionShell,
 });
 
 function DashboardElectionShell() {
   const { electionDashboardSlug } = Route.useParams();
-  const { data: election } = useQuery(
+  const { data: election } = useSuspenseQuery(
     convexQuery(api.elections.getDashboardBySlug, {
       slug: electionDashboardSlug,
     }),
@@ -113,14 +110,12 @@ function NavLink({
     <Link
       to={target}
       activeOptions={{ exact: exact ?? false }}
-      className={({ isActive }: { isActive?: boolean }) =>
-        cn(
-          'flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors',
-          isActive
-            ? 'bg-secondary text-foreground'
-            : 'text-muted-foreground hover:bg-accent hover:text-foreground',
-        )
-      }
+      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors"
+      activeProps={{ className: 'bg-secondary text-foreground' }}
+      inactiveProps={{
+        className:
+          'text-muted-foreground hover:bg-accent hover:text-foreground',
+      }}
     >
       {icon}
       {label}

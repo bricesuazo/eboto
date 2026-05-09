@@ -4,6 +4,10 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
+  --font-sans:
+    'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));

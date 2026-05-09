@@ -13,10 +13,11 @@ import { AnalyticsBootstrap } from '~/components/analytics-bootstrap';
 import { DefaultCatchBoundary } from '~/components/default-catch-boundary';
 import { NotFound } from '~/components/not-found';
 import { SiteHeader } from '~/components/site-header';
+import { ThemeProvider } from '~/components/theme-provider';
 import type { AuthServerState } from '~/lib/auth/provider';
 import { ConvexAuthProvider } from '~/lib/auth/provider';
 import { getServerAuth } from '~/lib/auth/server-fns';
-import { AUTH_QUERY_KEY } from '~/lib/constants';
+import { AUTH_QUERY_KEY, THEME_BOOTSTRAP } from '~/lib/constants';
 import appCss from '~/styles/globals.css?url';
 
 interface RouterContext {
@@ -49,7 +50,19 @@ export const Route = createRootRouteWithContext<RouterContext>()({
           'Empower your elections with eBoto, the versatile and web-based voting platform that offers secure online elections for any type of organization.',
       },
     ],
-    links: [{ rel: 'stylesheet', href: appCss }],
+    links: [
+      { rel: 'stylesheet', href: appCss },
+      { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+      {
+        rel: 'preconnect',
+        href: 'https://fonts.gstatic.com',
+        crossOrigin: 'anonymous',
+      },
+      {
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap',
+      },
+    ],
   }),
   errorComponent: DefaultCatchBoundary,
   notFoundComponent: () => <NotFound />,
@@ -89,12 +102,14 @@ function RootComponent() {
   const { auth, convexClient } = Route.useRouteContext();
   return (
     <RootDocument>
-      <ConvexAuthProvider client={convexClient} serverState={auth}>
-        <AnalyticsBootstrap />
-        <SiteHeader />
-        <Outlet />
-        <Toaster richColors position="top-right" />
-      </ConvexAuthProvider>
+      <ThemeProvider defaultTheme="system">
+        <ConvexAuthProvider client={convexClient} serverState={auth}>
+          <AnalyticsBootstrap />
+          <SiteHeader />
+          <Outlet />
+          <Toaster richColors position="top-right" />
+        </ConvexAuthProvider>
+      </ThemeProvider>
     </RootDocument>
   );
 }
@@ -104,6 +119,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP }} />
       </head>
       <body>
         {children}

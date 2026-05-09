@@ -1,6 +1,7 @@
 import { Link, useRouteContext, useRouter } from '@tanstack/react-router';
 import { LogOut, User } from 'lucide-react';
 
+import { ModeToggle } from '~/components/mode-toggle';
 import {
   Avatar,
   AvatarFallback,
@@ -29,6 +30,7 @@ export function SiteHeader() {
         </Link>
 
         <nav className="flex items-center gap-2">
+          <ModeToggle />
           {user ? <UserMenu user={user} /> : <SignedOutNav />}
         </nav>
       </div>
