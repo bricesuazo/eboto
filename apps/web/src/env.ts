@@ -14,10 +14,10 @@ import { z } from 'zod';
 export const env = createEnv({
   clientPrefix: 'VITE_',
   client: {
-    VITE_CONVEX_URL: z.string().url(),
+    VITE_CONVEX_URL: z.url(),
     VITE_POSTHOG_KEY: z.string().min(1).optional(),
-    VITE_POSTHOG_HOST: z.string().url().optional(),
-    VITE_SENTRY_DSN: z.string().url().optional(),
+    VITE_POSTHOG_HOST: z.url().optional(),
+    VITE_SENTRY_DSN: z.url().optional(),
   },
   shared: {
     MODE: z.enum(['development', 'test', 'production']).default('development'),

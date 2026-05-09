@@ -6,6 +6,7 @@ import { User as UserIcon } from 'lucide-react';
 import dayjs from 'dayjs';
 
 import { PagePending } from '~/components/page-pending';
+import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, SITE_URL } from '~/lib/constants';
 import { formatName } from '~/lib/election';
 
 export const Route = createFileRoute('/$electionSlug/$candidateSlug')({
@@ -17,6 +18,45 @@ export const Route = createFileRoute('/$electionSlug/$candidateSlug')({
       }),
     );
     if (!data) throw notFound();
+  },
+  loader: ({ context, params }) =>
+    context.queryClient.ensureQueryData(
+      convexQuery(api.candidates.getBySlug, {
+        electionSlug: params.electionSlug,
+        candidateSlug: params.candidateSlug,
+      }),
+    ),
+  head: ({ loaderData }) => {
+    if (!loaderData) return { meta: [{ title: 'eBoto' }] };
+    const { election, candidate } = loaderData;
+    const fullName = formatName(election.nameArrangement, candidate);
+    const description = `See information about ${candidate.firstName} ${candidate.lastName} | eBoto`;
+    const namePart =
+      encodeURIComponent(candidate.firstName) +
+      (candidate.middleName
+        ? `%20${encodeURIComponent(candidate.middleName)}`
+        : '') +
+      `%20${encodeURIComponent(candidate.lastName)}`;
+    const ogImageUrl = `${SITE_URL}/api/og?type=candidate&candidate_name=${namePart}&candidate_position=${encodeURIComponent(
+      candidate.position?.name ?? '',
+    )}&candidate_img=${encodeURIComponent(candidate.imageUrl ?? '')}`;
+    const ogTitle = `${fullName} - ${election.name}`;
+    return {
+      meta: [
+        { title: `${ogTitle} | eBoto` },
+        { name: 'description', content: description },
+        { property: 'og:title', content: ogTitle },
+        { property: 'og:description', content: description },
+        { property: 'og:image', content: ogImageUrl },
+        { property: 'og:image:width', content: String(OG_IMAGE_WIDTH) },
+        { property: 'og:image:height', content: String(OG_IMAGE_HEIGHT) },
+        { property: 'og:image:alt', content: fullName },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: ogTitle },
+        { name: 'twitter:description', content: description },
+        { name: 'twitter:image', content: ogImageUrl },
+      ],
+    };
   },
   pendingComponent: PagePending,
   component: CandidatePage,

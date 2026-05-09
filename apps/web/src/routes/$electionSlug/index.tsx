@@ -47,15 +47,6 @@ import {
 
 export const Route = createFileRoute('/$electionSlug/')({
   pendingComponent: PagePending,
-  head: ({ params }) => ({
-    meta: [
-      { title: `${params.electionSlug} | eBoto` },
-      {
-        name: 'description',
-        content: `View details about the ${params.electionSlug} election on eBoto.`,
-      },
-    ],
-  }),
   component: ElectionPage,
 });
 
