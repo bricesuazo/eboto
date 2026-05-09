@@ -14,6 +14,7 @@ import { DefaultCatchBoundary } from '~/components/default-catch-boundary';
 import { NotFound } from '~/components/not-found';
 import { SiteHeader } from '~/components/site-header';
 import { ThemeProvider } from '~/components/theme-provider';
+import { TooltipProvider } from '~/components/ui/tooltip';
 import type { AuthServerState } from '~/lib/auth/provider';
 import { ConvexAuthProvider } from '~/lib/auth/provider';
 import { getServerAuth } from '~/lib/auth/server-fns';
@@ -103,12 +104,14 @@ function RootComponent() {
   return (
     <RootDocument>
       <ThemeProvider defaultTheme="system">
-        <ConvexAuthProvider client={convexClient} serverState={auth}>
-          <AnalyticsBootstrap />
-          <SiteHeader />
-          <Outlet />
-          <Toaster richColors position="top-right" />
-        </ConvexAuthProvider>
+        <TooltipProvider>
+          <ConvexAuthProvider client={convexClient} serverState={auth}>
+            <AnalyticsBootstrap />
+            <SiteHeader />
+            <Outlet />
+            <Toaster richColors position="top-right" />
+          </ConvexAuthProvider>
+        </TooltipProvider>
       </ThemeProvider>
     </RootDocument>
   );

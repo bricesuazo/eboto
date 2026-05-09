@@ -1,16 +1,18 @@
 import { useState } from 'react';
-import { createFileRoute, notFound } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
 import { convexQuery } from '@convex-dev/react-query';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useQuery } from '@tanstack/react-query';
+import { createFileRoute, notFound } from '@tanstack/react-router';
 import { useMutation } from 'convex/react';
 import { ConvexError } from 'convex/values';
+import { Pencil, Plus, Trash2, User } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
+
 import { api } from '@eboto/backend/api';
 import type { Doc } from '@eboto/backend/data-model';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { toast } from 'sonner';
-import { Pencil, Plus, Trash2, User } from 'lucide-react';
+
 import { DashboardPending } from '~/components/dashboard-pending';
 import { Button } from '~/components/ui/button';
 import {
@@ -80,7 +82,10 @@ const schema = z.object({
     .string()
     .min(1, 'Required')
     .toLowerCase()
-    .regex(/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/, 'Lowercase letters/digits/dashes only'),
+    .regex(
+      /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/,
+      'Lowercase letters/digits/dashes only',
+    ),
   positionId: z.string().min(1, 'Required'),
   partylistId: z.string().min(1, 'Required'),
 });
@@ -123,12 +128,14 @@ function CandidatePage() {
           </p>
         </div>
         <Dialog open={creating} onOpenChange={setCreating}>
-          <DialogTrigger asChild>
-            <Button disabled={noDeps}>
-              <Plus className="mr-2 size-4" />
-              New candidate
-            </Button>
-          </DialogTrigger>
+          <DialogTrigger
+            render={
+              <Button disabled={noDeps}>
+                <Plus className="mr-2 size-4" />
+                New candidate
+              </Button>
+            }
+          />
           <CandidateDialog
             mode="create"
             electionId={election._id}
@@ -262,7 +269,7 @@ function CandidateDialog({
     } catch (err) {
       toast.error(
         err instanceof ConvexError
-          ? (err.data as { message?: string }).message ?? 'Failed'
+          ? ((err.data as { message?: string }).message ?? 'Failed')
           : 'Failed',
       );
     }
@@ -343,10 +350,10 @@ function CandidateDialog({
                   <FormLabel>Position</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    value={field.value}
+                    value={positions.find((p) => p._id === field.value)?.name}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select" />
                       </SelectTrigger>
                     </FormControl>
@@ -370,10 +377,12 @@ function CandidateDialog({
                   <FormLabel>Partylist</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    value={field.value}
+                    value={
+                      partylists.find((p) => p._id === field.value)?.acronym
+                    }
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select" />
                       </SelectTrigger>
                     </FormControl>
@@ -430,7 +439,7 @@ function DeleteCandidateButton({ id }: { id: Doc<'candidates'>['_id'] }) {
         } catch (err) {
           toast.error(
             err instanceof ConvexError
-              ? (err.data as { message?: string }).message ?? 'Failed'
+              ? ((err.data as { message?: string }).message ?? 'Failed')
               : 'Failed',
           );
         } finally {

@@ -89,11 +89,14 @@ function BallotPage() {
         <p className="text-muted-foreground mt-2">
           Each voter gets one ballot per election.
         </p>
-        <Button asChild className="mt-6">
-          <Link to="/$electionSlug" params={{ electionSlug: election.slug }}>
-            Back to election
-          </Link>
-        </Button>
+        <Button
+          render={
+            <Link to="/$electionSlug" params={{ electionSlug: election.slug }}>
+              Back to election
+            </Link>
+          }
+          className="mt-6"
+        />
       </main>
     );
   }
@@ -243,11 +246,14 @@ function BallotPage() {
       </div>
 
       <div className="mt-12 flex justify-end gap-3">
-        <Button asChild variant="outline">
-          <Link to="/$electionSlug" params={{ electionSlug: election.slug }}>
-            Cancel
-          </Link>
-        </Button>
+        <Button
+          render={
+            <Link to="/$electionSlug" params={{ electionSlug: election.slug }}>
+              Cancel
+            </Link>
+          }
+          variant="outline"
+        />
         <Button disabled={submitting} onClick={submit}>
           {submitting ? 'Submitting…' : 'Submit ballot'}
         </Button>

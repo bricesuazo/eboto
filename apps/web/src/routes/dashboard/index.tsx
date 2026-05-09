@@ -1,6 +1,6 @@
 import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
-import { Link, createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { Fingerprint, Plus } from 'lucide-react';
 
@@ -41,12 +41,14 @@ function DashboardHome() {
             Elections you commission. Click one to manage it.
           </p>
         </div>
-        <Button asChild>
-          <Link to="/dashboard/new">
-            <Plus className="mr-2 size-4" />
-            New election
-          </Link>
-        </Button>
+        <Button
+          render={
+            <Link to="/dashboard/new">
+              <Plus className="mr-2 size-4" />
+              New election
+            </Link>
+          }
+        />
       </div>
 
       {isError ? (
@@ -60,9 +62,11 @@ function DashboardHome() {
             <p className="text-muted-foreground">
               You don't commission any elections yet.
             </p>
-            <Button asChild>
-              <Link to="/dashboard/new">Create your first election</Link>
-            </Button>
+            <Button
+              render={
+                <Link to="/dashboard/new">Create your first election</Link>
+              }
+            />
           </CardContent>
         </Card>
       ) : (

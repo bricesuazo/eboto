@@ -1,24 +1,18 @@
 import { useState } from 'react';
-import { createFileRoute, notFound } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
 import { convexQuery } from '@convex-dev/react-query';
+import { useQuery } from '@tanstack/react-query';
+import { createFileRoute, notFound } from '@tanstack/react-router';
 import { useMutation } from 'convex/react';
-import { DashboardPending } from '~/components/dashboard-pending';
 import { ConvexError } from 'convex/values';
+import { CheckCircle2, Plus, Trash2, Upload } from 'lucide-react';
+import { toast } from 'sonner';
+
 import { api } from '@eboto/backend/api';
 import type { Doc } from '@eboto/backend/data-model';
-import { toast } from 'sonner';
-import { CheckCircle2, Plus, Trash2, Upload } from 'lucide-react';
+
+import { DashboardPending } from '~/components/dashboard-pending';
 import { Button } from '~/components/ui/button';
-import { Input } from '~/components/ui/input';
-import { Textarea } from '~/components/ui/textarea';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '~/components/ui/card';
+import { Card, CardContent } from '~/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -28,25 +22,27 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '~/components/ui/dialog';
+import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
+import { Textarea } from '~/components/ui/textarea';
 
-export const Route = createFileRoute(
-  '/dashboard/$electionDashboardSlug/voter',
-)({
-  beforeLoad: async ({ context, params }) => {
-    const election = await context.queryClient.ensureQueryData(
-      convexQuery(api.elections.getDashboardBySlug, {
-        slug: params.electionDashboardSlug,
-      }),
-    );
-    if (!election) throw notFound();
-    await context.queryClient.ensureQueryData(
-      convexQuery(api.voters.list, { electionId: election._id }),
-    );
+export const Route = createFileRoute('/dashboard/$electionDashboardSlug/voter')(
+  {
+    beforeLoad: async ({ context, params }) => {
+      const election = await context.queryClient.ensureQueryData(
+        convexQuery(api.elections.getDashboardBySlug, {
+          slug: params.electionDashboardSlug,
+        }),
+      );
+      if (!election) throw notFound();
+      await context.queryClient.ensureQueryData(
+        convexQuery(api.voters.list, { electionId: election._id }),
+      );
+    },
+    pendingComponent: DashboardPending,
+    component: VoterPage,
   },
-  pendingComponent: DashboardPending,
-  component: VoterPage,
-});
+);
 
 function VoterPage() {
   const { electionDashboardSlug } = Route.useParams();
@@ -127,11 +123,14 @@ function SingleAddDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 size-4" /> Add voter
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button>
+            <Plus className="mr-2 size-4" /> Add voter
+          </Button>
+        }
+      />
+
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add a voter</DialogTitle>
@@ -151,7 +150,7 @@ function SingleAddDialog({
             } catch (err) {
               toast.error(
                 err instanceof ConvexError
-                  ? (err.data as { message?: string }).message ?? 'Failed'
+                  ? ((err.data as { message?: string }).message ?? 'Failed')
                   : 'Failed',
               );
             } finally {
@@ -198,11 +197,14 @@ function BulkImportDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline">
-          <Upload className="mr-2 size-4" /> Bulk import
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button variant="outline">
+            <Upload className="mr-2 size-4" /> Bulk import
+          </Button>
+        }
+      />
+
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Bulk import voters</DialogTitle>
@@ -228,7 +230,7 @@ function BulkImportDialog({
             } catch (err) {
               toast.error(
                 err instanceof ConvexError
-                  ? (err.data as { message?: string }).message ?? 'Failed'
+                  ? ((err.data as { message?: string }).message ?? 'Failed')
                   : 'Failed',
               );
             } finally {
@@ -278,7 +280,7 @@ function DeleteVoterButton({ id }: { id: Doc<'voters'>['_id'] }) {
         } catch (err) {
           toast.error(
             err instanceof ConvexError
-              ? (err.data as { message?: string }).message ?? 'Failed'
+              ? ((err.data as { message?: string }).message ?? 'Failed')
               : 'Failed',
           );
         } finally {

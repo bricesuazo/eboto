@@ -92,12 +92,14 @@ function PartylistPage() {
           </p>
         </div>
         <Dialog open={creating} onOpenChange={setCreating}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 size-4" />
-              New partylist
-            </Button>
-          </DialogTrigger>
+          <DialogTrigger
+            render={
+              <Button>
+                <Plus className="mr-2 size-4" />
+                New partylist
+              </Button>
+            }
+          />
           <PartylistDialog
             mode="create"
             electionId={election._id}

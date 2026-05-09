@@ -1,14 +1,8 @@
 import * as React from 'react';
-import * as LabelPrimitive from '@radix-ui/react-label';
-import { Slot } from '@radix-ui/react-slot';
-import {
-  Controller,
-  type ControllerProps,
-  type FieldPath,
-  type FieldValues,
-  FormProvider,
-  useFormContext,
-} from 'react-hook-form';
+import { useRender } from '@base-ui/react/use-render';
+import type { ControllerProps, FieldPath, FieldValues } from 'react-hook-form';
+import { Controller, FormProvider, useFormContext } from 'react-hook-form';
+
 import { cn } from '~/lib/utils';
 import { Label } from './label';
 
@@ -73,8 +67,8 @@ export function useFormField() {
 }
 
 export const FormLabel = React.forwardRef<
-  React.ElementRef<typeof LabelPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
+  HTMLLabelElement,
+  React.ComponentPropsWithoutRef<'label'>
 >(({ className, ...props }, ref) => {
   const { error, formItemId } = useFormField();
   return (
@@ -88,25 +82,28 @@ export const FormLabel = React.forwardRef<
 });
 FormLabel.displayName = 'FormLabel';
 
-export const FormControl = React.forwardRef<
-  React.ElementRef<typeof Slot>,
-  React.ComponentPropsWithoutRef<typeof Slot>
->(({ ...props }, ref) => {
-  const { error, formItemId, formDescriptionId, formMessageId } = useFormField();
-  return (
-    <Slot
-      ref={ref}
-      id={formItemId}
-      aria-describedby={
-        !error
+interface FormControlProps extends React.HTMLAttributes<HTMLElement> {
+  children: React.ReactElement;
+}
+
+export const FormControl = React.forwardRef<HTMLElement, FormControlProps>(
+  ({ children, ...props }, ref) => {
+    const { error, formItemId, formDescriptionId, formMessageId } =
+      useFormField();
+    return useRender({
+      render: children,
+      ref,
+      props: {
+        id: formItemId,
+        'aria-describedby': !error
           ? formDescriptionId
-          : `${formDescriptionId} ${formMessageId}`
-      }
-      aria-invalid={!!error}
-      {...props}
-    />
-  );
-});
+          : `${formDescriptionId} ${formMessageId}`,
+        'aria-invalid': !!error,
+        ...props,
+      },
+    });
+  },
+);
 FormControl.displayName = 'FormControl';
 
 export const FormDescription = React.forwardRef<
@@ -130,7 +127,7 @@ export const FormMessage = React.forwardRef<
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
   const { error, formMessageId } = useFormField();
-  const body = error ? String(error?.message) : children;
+  const body = error ? String(error.message) : children;
   if (!body) return null;
   return (
     <p

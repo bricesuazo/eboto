@@ -11,11 +11,7 @@ import {
   CardTitle,
 } from '~/components/ui/card';
 import { Separator } from '~/components/ui/separator';
-import {
-  HOME_FAQS,
-  HOME_FEATURES,
-  HOME_PRICING,
-} from '~/lib/constants/home';
+import { HOME_FAQS, HOME_FEATURES, HOME_PRICING } from '~/lib/constants/home';
 import { cn } from '~/lib/utils';
 
 export const Route = createFileRoute('/')({
@@ -56,15 +52,20 @@ function Hero() {
             between.
           </p>
           <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-            <Button asChild size="lg">
-              <Link to="/sign-in">
-                Get started
-                <ArrowRight className="size-4" />
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <Link to="/pricing">View pricing</Link>
-            </Button>
+            <Button
+              render={
+                <Link to="/sign-in">
+                  Get started
+                  <ArrowRight className="size-4" />
+                </Link>
+              }
+              size="lg"
+            />
+            <Button
+              render={<Link to="/pricing">View pricing</Link>}
+              size="lg"
+              variant="outline"
+            />
           </div>
         </div>
       </div>
@@ -161,12 +162,10 @@ function Pricing() {
                 </ul>
                 <div className="mt-6 flex-1" />
                 <Button
-                  asChild
+                  render={<Link to={tier.cta.to}>{tier.cta.label}</Link>}
                   variant={tier.highlighted ? 'default' : 'outline'}
                   className="mt-6 w-full"
-                >
-                  <Link to={tier.cta.to}>{tier.cta.label}</Link>
-                </Button>
+                />
               </CardContent>
             </Card>
           ))}
@@ -230,15 +229,20 @@ function FinalCta() {
               student elections — upgrade only when you need more.
             </p>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="lg">
-                <Link to="/sign-in">
-                  Create free account
-                  <ArrowRight className="size-4" />
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link to="/contact">Talk to us</Link>
-              </Button>
+              <Button
+                render={
+                  <Link to="/sign-in">
+                    Create free account
+                    <ArrowRight className="size-4" />
+                  </Link>
+                }
+                size="lg"
+              />
+              <Button
+                render={<Link to="/contact">Talk to us</Link>}
+                size="lg"
+                variant="outline"
+              />
             </div>
             <Separator className="bg-border/60 mt-2" />
             <p className="text-muted-foreground text-xs">

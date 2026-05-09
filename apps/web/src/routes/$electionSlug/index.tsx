@@ -1,13 +1,13 @@
 import { useState } from 'react';
+import { convexQuery } from '@convex-dev/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
-  Link,
   createFileRoute,
+  Link,
   notFound,
   useRouteContext,
 } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
-import { convexQuery } from '@convex-dev/react-query';
-import { api } from '@eboto/backend/api';
+import dayjs from 'dayjs';
 import {
   Clock3,
   Copy,
@@ -16,19 +16,14 @@ import {
   QrCode,
   User as UserIcon,
 } from 'lucide-react';
-import dayjs from 'dayjs';
 import { QRCodeSVG } from 'qrcode.react';
 import { toast } from 'sonner';
-import {
-  describePublicity,
-  formatName,
-  isElectionEnded,
-  isElectionOngoing,
-  parseHourTo12HourFormat,
-} from '~/lib/election';
+
+import { api } from '@eboto/backend/api';
+
 import { PagePending } from '~/components/page-pending';
-import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -42,6 +37,13 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from '~/components/ui/hover-card';
+import {
+  describePublicity,
+  formatName,
+  isElectionEnded,
+  isElectionOngoing,
+  parseHourTo12HourFormat,
+} from '~/lib/election';
 
 export const Route = createFileRoute('/$electionSlug/')({
   beforeLoad: async ({ context, params }) => {
@@ -113,14 +115,16 @@ function ElectionPage() {
               election.publicity.slice(1).toLowerCase()}
           </Badge>
           <HoverCard>
-            <HoverCardTrigger asChild>
-              <button
-                aria-label="Publicity info"
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <Info className="size-4" />
-              </button>
-            </HoverCardTrigger>
+            <HoverCardTrigger
+              render={
+                <button
+                  aria-label="Publicity info"
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <Info className="size-4" />
+                </button>
+              }
+            />
             <HoverCardContent className="text-sm">
               {describePublicity(election.publicity)}
             </HoverCardContent>
@@ -135,36 +139,41 @@ function ElectionPage() {
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
           {(election.publicity === 'PUBLIC' || ended) && (
-            <Button asChild size="lg" className="rounded-full">
-              <Link
-                to="/$electionSlug/result"
-                params={{ electionSlug: election.slug }}
-              >
-                <Clock3 className="mr-2 size-4" />
-                Realtime count
-              </Link>
-            </Button>
-          )}
-          {ongoing && (
-            <Button asChild size="lg" className="rounded-full">
-              {user ? (
+            <Button
+              render={
                 <Link
-                  to="/$electionSlug/vote"
+                  to="/$electionSlug/result"
                   params={{ electionSlug: election.slug }}
                 >
-                  <Fingerprint className="mr-2 size-4" />
-                  Vote now!
+                  <Clock3 className="mr-2 size-4" />
+                  Realtime count
                 </Link>
-              ) : (
-                <Link
-                  to="/sign-in"
-                  search={{ to: `/${election.slug}/vote` }}
-                >
-                  <Fingerprint className="mr-2 size-4" />
-                  Vote now!
-                </Link>
-              )}
-            </Button>
+              }
+              size="lg"
+              className="rounded-full"
+            />
+          )}
+          {ongoing && (
+            <Button
+              render={
+                user ? (
+                  <Link
+                    to="/$electionSlug/vote"
+                    params={{ electionSlug: election.slug }}
+                  >
+                    <Fingerprint className="mr-2 size-4" />
+                    Vote now!
+                  </Link>
+                ) : (
+                  <Link to="/sign-in" search={{ to: `/${election.slug}/vote` }}>
+                    <Fingerprint className="mr-2 size-4" />
+                    Vote now!
+                  </Link>
+                )
+              }
+              size="lg"
+              className="rounded-full"
+            />
           )}
           <ShareQrButton election={election} />
         </div>
@@ -196,14 +205,16 @@ function ElectionPage() {
                   {position.name}
                 </h2>
                 <HoverCard>
-                  <HoverCardTrigger asChild>
-                    <button
-                      aria-label="Position rules"
-                      className="text-muted-foreground hover:text-foreground"
-                    >
-                      <Info className="size-4" />
-                    </button>
-                  </HoverCardTrigger>
+                  <HoverCardTrigger
+                    render={
+                      <button
+                        aria-label="Position rules"
+                        className="text-muted-foreground hover:text-foreground"
+                      >
+                        <Info className="size-4" />
+                      </button>
+                    }
+                  />
                   <HoverCardContent className="text-sm">
                     {position.min === 0 && position.max === 1
                       ? `Voters can only vote 1 candidate for ${position.name}.`
@@ -315,7 +326,11 @@ function ShareQrButton({
           {url}
         </div>
         <DialogFooter className="sm:justify-center">
-          <Button variant="outline" onClick={handleCopy} className="w-full sm:w-auto">
+          <Button
+            variant="outline"
+            onClick={handleCopy}
+            className="w-full sm:w-auto"
+          >
             <Copy className="mr-2 size-4" />
             Copy link
           </Button>

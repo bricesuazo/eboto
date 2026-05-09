@@ -2,15 +2,12 @@ import { Link, useRouteContext, useRouter } from '@tanstack/react-router';
 import { LogOut, User } from 'lucide-react';
 
 import { ModeToggle } from '~/components/mode-toggle';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '~/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -39,11 +36,7 @@ export function SiteHeader() {
 }
 
 function SignedOutNav() {
-  return (
-    <Button asChild size="sm">
-      <Link to="/sign-in">Sign in</Link>
-    </Button>
-  );
+  return <Button render={<Link to="/sign-in">Sign in</Link>} size="sm" />;
 }
 
 interface UserShape {
@@ -74,40 +67,53 @@ function UserMenu({ user }: { user: UserShape }) {
 
   return (
     <>
-      <Button asChild variant="ghost" size="sm">
-        <Link to="/dashboard">Dashboard</Link>
-      </Button>
+      <Button
+        render={<Link to="/dashboard">Dashboard</Link>}
+        variant="ghost"
+        size="sm"
+      />
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button
-            className="rounded-full focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2"
-            aria-label="Account menu"
-          >
-            <Avatar>
-              {user.image && <AvatarImage src={user.image} alt="" />}
-              <AvatarFallback>{initials}</AvatarFallback>
-            </Avatar>
-          </button>
-        </DropdownMenuTrigger>
+        <DropdownMenuTrigger
+          render={
+            <button
+              className="rounded-full focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2"
+              aria-label="Account menu"
+            >
+              <Avatar>
+                {user.image && <AvatarImage src={user.image} alt="" />}
+                <AvatarFallback>{initials}</AvatarFallback>
+              </Avatar>
+            </button>
+          }
+        />
+
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel className="font-normal">
-            <p className="truncate text-sm">{user.name ?? 'Account'}</p>
-            <p className="text-muted-foreground truncate text-xs">
-              {user.email ?? ''}
-            </p>
-          </DropdownMenuLabel>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className="font-normal">
+              <p className="truncate text-sm">{user.name ?? 'Account'}</p>
+              <p className="text-muted-foreground truncate text-xs">
+                {user.email ?? ''}
+              </p>
+            </DropdownMenuLabel>
+          </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Link to="/dashboard">
-              <User className="size-4" />
-              My elections
-            </Link>
-          </DropdownMenuItem>
+          <DropdownMenuItem
+            render={
+              <Link to="/dashboard">
+                <User className="size-4" />
+                My elections
+              </Link>
+            }
+          />
           <DropdownMenuSeparator />
-          <DropdownMenuItem onSelect={handleSignOut}>
-            <LogOut className="size-4" />
-            Sign out
-          </DropdownMenuItem>
+          <DropdownMenuItem
+            render={
+              <button onClick={handleSignOut} className="w-full">
+                <LogOut className="size-4" />
+                Sign out
+              </button>
+            }
+          />
         </DropdownMenuContent>
       </DropdownMenu>
     </>

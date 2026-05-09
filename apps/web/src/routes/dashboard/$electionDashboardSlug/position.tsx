@@ -1,18 +1,27 @@
 import { useState } from 'react';
-import { createFileRoute, notFound } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
 import { convexQuery } from '@convex-dev/react-query';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useQuery } from '@tanstack/react-query';
+import { createFileRoute, notFound } from '@tanstack/react-router';
 import { useMutation } from 'convex/react';
-import { DashboardPending } from '~/components/dashboard-pending';
 import { ConvexError } from 'convex/values';
+import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
+
 import { api } from '@eboto/backend/api';
 import type { Doc } from '@eboto/backend/data-model';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { toast } from 'sonner';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
+
+import { DashboardPending } from '~/components/dashboard-pending';
 import { Button } from '~/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '~/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -33,13 +42,6 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '~/components/ui/card';
 
 export const Route = createFileRoute(
   '/dashboard/$electionDashboardSlug/position',
@@ -98,12 +100,14 @@ function PositionPage() {
           </p>
         </div>
         <Dialog open={creating} onOpenChange={setCreating}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 size-4" />
-              New position
-            </Button>
-          </DialogTrigger>
+          <DialogTrigger
+            render={
+              <Button>
+                <Plus className="mr-2 size-4" />
+                New position
+              </Button>
+            }
+          />
           <PositionDialog
             mode="create"
             electionId={election._id}
@@ -211,7 +215,7 @@ function PositionDialog({
     } catch (err) {
       toast.error(
         err instanceof ConvexError
-          ? (err.data as { message?: string }).message ?? 'Failed'
+          ? ((err.data as { message?: string }).message ?? 'Failed')
           : 'Failed',
       );
     }
@@ -223,9 +227,7 @@ function PositionDialog({
         <DialogTitle>
           {mode === 'create' ? 'New position' : 'Edit position'}
         </DialogTitle>
-        <DialogDescription>
-          Voters cast a vote per position.
-        </DialogDescription>
+        <DialogDescription>Voters cast a vote per position.</DialogDescription>
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -324,7 +326,7 @@ function DeletePositionButton({ id }: { id: Doc<'positions'>['_id'] }) {
         } catch (err) {
           toast.error(
             err instanceof ConvexError
-              ? (err.data as { message?: string }).message ?? 'Failed'
+              ? ((err.data as { message?: string }).message ?? 'Failed')
               : 'Failed',
           );
         } finally {
