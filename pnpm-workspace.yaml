@@ -8,9 +8,10 @@ catalog:
   '@types/node': 24.5.2
   '@types/react': 19.1.13
   '@types/react-dom': 19.1.9
+  convex: ^1.27.3
   dayjs: 1.11.18
   eslint: 9.35.0
-  inngest: 3.40.3
+  inngest: 3.54.2
   prettier: 3.6.2
   react: 19.1.1
   react-dom: 19.1.1

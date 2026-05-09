@@ -45,7 +45,8 @@
   "dependencies": {
     "@auth/core": "^0.37.0",
     "@convex-dev/auth": "^0.0.91",
-    "convex": "^1.27.3"
+    "convex": "catalog:",
+    "pdf-lib": "^1.17.1"
   },
   "devDependencies": {
     "@eboto/eslint-config": "workspace:*",

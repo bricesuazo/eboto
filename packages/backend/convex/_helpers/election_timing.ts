@@ -84,3 +84,19 @@ export function isElectionEnded(
     election.endDate + election.votingHourEnd * HOUR_MS;
   return t > closingMoment;
 }
+
+/**
+ * Absolute unix-ms moment voting opens (start day + opening hour).
+ * Use this to schedule "election started" side-effects.
+ */
+export function votingStartAt(election: ElectionTiming): number {
+  return election.startDate + election.votingHourStart * HOUR_MS;
+}
+
+/**
+ * Absolute unix-ms moment voting closes (end day + closing hour).
+ * Use this to schedule "election ended" side-effects.
+ */
+export function votingEndAt(election: ElectionTiming): number {
+  return election.endDate + election.votingHourEnd * HOUR_MS;
+}

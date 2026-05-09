@@ -371,9 +371,13 @@ export const myBallot = query({
       .sort((a, b) => a.order - b.order)
       .map((position) => {
         const candidateVotes = votes
-          .filter((v) => v.candidateId)
-          .map((v) => candidatesById.get(v.candidateId!))
-          .filter((c) => c && c.positionId === position._id);
+          .map((v) =>
+            v.candidateId ? candidatesById.get(v.candidateId) : undefined,
+          )
+          .filter(
+            (c): c is NonNullable<typeof c> =>
+              !!c && c.positionId === position._id,
+          );
         const isAbstain = votes.some(
           (v) => v.positionId === position._id && !v.candidateId,
         );
@@ -382,11 +386,11 @@ export const myBallot = query({
           name: position.name,
           isAbstain,
           candidates: candidateVotes.map((c) => ({
-            id: c?._id,
-            firstName: c?.firstName,
-            middleName: c?.middleName,
-            lastName: c?.lastName,
-            partylistAcronym: partylistsById.get(c?.partylistId)?.acronym ?? '',
+            id: c._id,
+            firstName: c.firstName,
+            middleName: c.middleName,
+            lastName: c.lastName,
+            partylistAcronym: partylistsById.get(c.partylistId)?.acronym ?? '',
           })),
         };
       });

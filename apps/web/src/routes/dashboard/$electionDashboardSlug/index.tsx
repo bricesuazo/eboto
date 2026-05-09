@@ -1,11 +1,28 @@
+import { useState } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, notFound } from '@tanstack/react-router';
+import { useAction } from 'convex/react';
+import { ConvexError } from 'convex/values';
 import dayjs from 'dayjs';
+import {
+  CheckCircle2,
+  Circle,
+  Download,
+  FileText,
+  Flag,
+  Loader2,
+  Replace,
+  Users,
+  UserSearch,
+} from 'lucide-react';
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+import { toast } from 'sonner';
 
 import { api } from '@eboto/backend/api';
 
 import { DashboardPending } from '~/components/dashboard-pending';
+import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
@@ -13,16 +30,34 @@ import {
   CardHeader,
   CardTitle,
 } from '~/components/ui/card';
+import { cn } from '~/lib/utils';
 
-export const Route = createFileRoute(
-  '/dashboard/$electionDashboardSlug/',
-)({
+const TURNOUT_COLORS = ['#16a34a', '#e5e7eb'];
+
+export const Route = createFileRoute('/dashboard/$electionDashboardSlug/')({
   beforeLoad: async ({ context, params }) => {
-    await context.queryClient.ensureQueryData(
+    const election = await context.queryClient.ensureQueryData(
       convexQuery(api.elections.getDashboardBySlug, {
         slug: params.electionDashboardSlug,
       }),
     );
+    const tasks: Promise<unknown>[] = [
+      context.queryClient.ensureQueryData(
+        convexQuery(api.elections.getDashboardStats, {
+          slug: params.electionDashboardSlug,
+        }),
+      ),
+    ];
+    if (election) {
+      tasks.push(
+        context.queryClient.ensureQueryData(
+          convexQuery(api.results.listGeneratedReports, {
+            electionId: election._id,
+          }),
+        ),
+      );
+    }
+    await Promise.all(tasks);
   },
   pendingComponent: DashboardPending,
   component: OverviewPage,
@@ -35,7 +70,44 @@ function OverviewPage() {
       slug: electionDashboardSlug,
     }),
   );
-  if (!election) throw notFound();
+  const { data: stats } = useQuery(
+    convexQuery(api.elections.getDashboardStats, {
+      slug: electionDashboardSlug,
+    }),
+  );
+  const { data: reports = [] } = useQuery({
+    ...convexQuery(api.results.listGeneratedReports, {
+      electionId: election?._id ?? ('' as never),
+    }),
+    enabled: Boolean(election),
+  });
+  const generatePdf = useAction(api.results.generateTurnoutPdf);
+  const [generating, setGenerating] = useState(false);
+
+  async function handleGenerate() {
+    if (!election) return;
+    setGenerating(true);
+    try {
+      await generatePdf({ electionId: election._id });
+      toast.success('Report generated');
+    } catch (err) {
+      toast.error(
+        err instanceof ConvexError
+          ? ((err.data as { message?: string }).message ?? 'Failed')
+          : 'Failed',
+      );
+    } finally {
+      setGenerating(false);
+    }
+  }
+
+  if (!election || !stats) throw notFound();
+
+  const turnoutData = [
+    { name: 'Voted', value: stats.turnout.voted },
+    { name: 'Not voted', value: stats.turnout.notVoted },
+  ];
+  const noVoters = stats.turnout.total === 0;
 
   return (
     <div className="space-y-6">
@@ -78,10 +150,253 @@ function OverviewPage() {
         </Card>
       </div>
 
-      <p className="text-muted-foreground text-sm">
-        More dashboards (turnout, recent votes, message inbox) land in the
-        next phase.
-      </p>
+      <div className="grid gap-4 lg:grid-cols-[1fr_1.4fr]">
+        <Card>
+          <CardHeader>
+            <CardTitle>Voter turnout</CardTitle>
+            <CardDescription>
+              {noVoters
+                ? 'Add voters to start tracking turnout.'
+                : `${stats.turnout.voted.toLocaleString()} of ${stats.turnout.total.toLocaleString()} voters cast a ballot.`}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative h-48 w-48">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={
+                        noVoters
+                          ? [{ name: 'No voters', value: 1 }]
+                          : turnoutData
+                      }
+                      dataKey="value"
+                      innerRadius={56}
+                      outerRadius={88}
+                      paddingAngle={noVoters ? 0 : 2}
+                      stroke="none"
+                    >
+                      {(noVoters
+                        ? [{ name: 'No voters', value: 1 }]
+                        : turnoutData
+                      ).map((_, i) => (
+                        <Cell
+                          key={i}
+                          fill={
+                            noVoters ? '#e5e7eb' : (TURNOUT_COLORS[i] ?? '#ccc')
+                          }
+                        />
+                      ))}
+                    </Pie>
+                    {!noVoters && (
+                      <Tooltip
+                        formatter={(value) => {
+                          const n = Number(value);
+                          return `${n.toLocaleString()} voter${n === 1 ? '' : 's'}`;
+                        }}
+                      />
+                    )}
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-3xl font-bold">
+                    {stats.turnout.percent}%
+                  </span>
+                  <span className="text-muted-foreground text-xs">turnout</span>
+                </div>
+              </div>
+              <div className="flex gap-4 text-xs">
+                <LegendDot color={TURNOUT_COLORS[0]!} label="Voted" />
+                <LegendDot color={TURNOUT_COLORS[1]!} label="Not voted" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <StatCard
+            label="Partylists"
+            value={stats.counts.partylists}
+            icon={<Flag className="size-4" />}
+          />
+          <StatCard
+            label="Positions"
+            value={stats.counts.positions}
+            icon={<Replace className="size-4" />}
+          />
+          <StatCard
+            label="Candidates"
+            value={stats.counts.candidates}
+            icon={<UserSearch className="size-4" />}
+          />
+          <StatCard
+            label="Voters"
+            value={stats.counts.voters}
+            icon={<Users className="size-4" />}
+          />
+        </div>
+      </div>
+
+      <Card>
+        <CardHeader className="flex-row items-start justify-between gap-4">
+          <div>
+            <CardTitle>Voter turnout report</CardTitle>
+            <CardDescription>
+              {stats.checklist.hasEnded
+                ? 'PDF reports auto-generate when the election ends. Download a fresh copy or trigger one manually.'
+                : 'Available after the election ends. Generate one anyway if you need a snapshot now.'}
+            </CardDescription>
+          </div>
+          <Button
+            type="button"
+            onClick={handleGenerate}
+            disabled={generating}
+            size="sm"
+          >
+            {generating ? (
+              <>
+                <Loader2 className="mr-1.5 size-4 animate-spin" /> Generating…
+              </>
+            ) : (
+              <>
+                <FileText className="mr-1.5 size-4" /> Generate report
+              </>
+            )}
+          </Button>
+        </CardHeader>
+        <CardContent>
+          {reports.length === 0 ? (
+            <p className="text-muted-foreground text-sm">
+              No reports yet.
+            </p>
+          ) : (
+            <ul className="divide-y rounded-md border">
+              {reports.map((r) => (
+                <li
+                  key={r._id}
+                  className="flex items-center justify-between px-3 py-2 text-sm"
+                >
+                  <div>
+                    <div className="font-medium">
+                      {r.summary.percent}% turnout —{' '}
+                      {r.summary.voted.toLocaleString()} of{' '}
+                      {r.summary.total.toLocaleString()}
+                    </div>
+                    <div className="text-muted-foreground text-xs">
+                      Generated {dayjs(r.summary.generatedAt).format('MMM D, YYYY h:mm A')}
+                    </div>
+                  </div>
+                  {r.url && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      render={
+                        <a
+                          href={r.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          download
+                        >
+                          <Download className="mr-1.5 size-4" /> Download
+                        </a>
+                      }
+                    />
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Setup</CardTitle>
+          <CardDescription>
+            Items to complete before voters can cast their ballot.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-2 sm:grid-cols-2">
+          <ChecklistItem done={stats.checklist.hasPartylist}>
+            Add at least one partylist
+          </ChecklistItem>
+          <ChecklistItem done={stats.checklist.hasPosition}>
+            Add at least one position
+          </ChecklistItem>
+          <ChecklistItem done={stats.checklist.hasCandidate}>
+            Add at least one candidate
+          </ChecklistItem>
+          <ChecklistItem done={stats.checklist.hasVoter}>
+            Register at least one voter
+          </ChecklistItem>
+          <ChecklistItem done={stats.checklist.hasStarted}>
+            Election has started
+          </ChecklistItem>
+          <ChecklistItem done={stats.checklist.hasEnded}>
+            Election has ended
+          </ChecklistItem>
+        </CardContent>
+      </Card>
     </div>
+  );
+}
+
+function StatCard({
+  label,
+  value,
+  icon,
+}: {
+  label: string;
+  value: number;
+  icon: React.ReactNode;
+}) {
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardDescription className="flex items-center gap-1.5">
+          {icon}
+          {label}
+        </CardDescription>
+        <CardTitle className="text-3xl">{value.toLocaleString()}</CardTitle>
+      </CardHeader>
+    </Card>
+  );
+}
+
+function ChecklistItem({
+  done,
+  children,
+}: {
+  done: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className={cn(
+        'flex items-center gap-2 text-sm',
+        done ? 'text-foreground' : 'text-muted-foreground',
+      )}
+    >
+      {done ? (
+        <CheckCircle2 className="size-4 text-primary" />
+      ) : (
+        <Circle className="size-4" />
+      )}
+      <span className={cn(done && 'line-through')}>{children}</span>
+    </div>
+  );
+}
+
+function LegendDot({ color, label }: { color: string; label: string }) {
+  return (
+    <span className="flex items-center gap-1.5">
+      <span
+        className="inline-block size-2.5 rounded-full"
+        style={{ backgroundColor: color }}
+      />
+      <span className="text-muted-foreground">{label}</span>
+    </span>
   );
 }

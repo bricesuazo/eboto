@@ -12,10 +12,15 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { api } from '@eboto/backend/api';
+import {
+  votingEndAt,
+  votingStartAt,
+} from '@eboto/backend/election-timing';
 
 import { DashboardPending } from '~/components/dashboard-pending';
 import { ImageUpload } from '~/components/image-upload';
 import { Button } from '~/components/ui/button';
+import { scheduleElectionLifecycleFn } from '~/lib/inngest/server-fns';
 import { useImageUpload } from '~/lib/use-image-upload';
 import {
   Card,
@@ -116,14 +121,43 @@ function SettingsPage() {
   async function onSubmit(values: FormValues) {
     try {
       const logoStorageId = await logo.commit();
+      const startDate = new Date(values.startDate).getTime();
+      const endDate = new Date(values.endDate).getTime();
       await update({
         id: electionId,
         ...values,
-        startDate: new Date(values.startDate).getTime(),
-        endDate: new Date(values.endDate).getTime(),
+        startDate,
+        endDate,
       });
       if (logoStorageId !== undefined) {
         await setLogo({ id: electionId, storageId: logoStorageId });
+      }
+      // Re-emit lifecycle on any timing change. Inngest's `cancelOn`
+      // (matched on `electionId`) aborts any prior in-flight runs, so the
+      // new event becomes the source of truth.
+      const prev = election;
+      if (prev) {
+        const timingChanged =
+          startDate !== prev.startDate ||
+          endDate !== prev.endDate ||
+          values.votingHourStart !== prev.votingHourStart ||
+          values.votingHourEnd !== prev.votingHourEnd;
+        if (timingChanged) {
+          const timing = {
+            startDate,
+            endDate,
+            votingHourStart: values.votingHourStart,
+            votingHourEnd: values.votingHourEnd,
+          };
+          void scheduleElectionLifecycleFn({
+            data: {
+              electionId: electionId as unknown as string,
+              slug: prev.slug,
+              startAt: votingStartAt(timing),
+              endAt: votingEndAt(timing),
+            },
+          });
+        }
       }
       toast.success('Settings saved');
     } catch (err) {

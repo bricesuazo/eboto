@@ -188,6 +188,114 @@ async function viewerHasAccess(
 export type ElectionId = Id<'elections'>;
 
 /**
+ * Minimal lookup used by Inngest functions to re-validate election dates
+ * before firing side-effects (so a moved start/end can cancel out a stale
+ * scheduled run). No auth — Inngest runs server-side in our infra.
+ */
+export const getPublicById = query({
+  args: { id: v.id('elections') },
+  handler: async (ctx, { id }) => {
+    const election = await ctx.db.get(id);
+    if (!election || election.deletedAt) return null;
+    return {
+      _id: election._id,
+      slug: election.slug,
+      name: election.name,
+      startDate: election.startDate,
+      endDate: election.endDate,
+    };
+  },
+});
+
+/**
+ * Aggregate stats for the dashboard overview: turnout breakdown, entity
+ * counts, and a setup checklist. Caller must be a commissioner.
+ */
+export const getDashboardStats = query({
+  args: { slug: v.string() },
+  handler: async (ctx, { slug }) => {
+    const election = await ctx.db
+      .query('elections')
+      .withIndex('by_slug', (q) => q.eq('slug', slug))
+      .filter((q) => q.eq(q.field('deletedAt'), undefined))
+      .first();
+    if (!election) return null;
+    await requireCommissioner(ctx, election._id);
+
+    const [voters, partylists, positions, candidates, voteRows] =
+      await Promise.all([
+        ctx.db
+          .query('voters')
+          .withIndex('by_election', (q) => q.eq('electionId', election._id))
+          .filter((q) => q.eq(q.field('deletedAt'), undefined))
+          .collect(),
+        ctx.db
+          .query('partylists')
+          .withIndex('by_deleted_election', (q) =>
+            q.eq('deletedAt', undefined).eq('electionId', election._id),
+          )
+          .collect(),
+        ctx.db
+          .query('positions')
+          .withIndex('by_deleted_election', (q) =>
+            q.eq('deletedAt', undefined).eq('electionId', election._id),
+          )
+          .collect(),
+        ctx.db
+          .query('candidates')
+          .withIndex('by_election', (q) => q.eq('electionId', election._id))
+          .filter((q) => q.eq(q.field('deletedAt'), undefined))
+          .collect(),
+        ctx.db
+          .query('votes')
+          .withIndex('by_election_voter', (q) =>
+            q.eq('electionId', election._id),
+          )
+          .collect(),
+      ]);
+
+    const votedVoterIds = new Set(voteRows.map((v) => v.voterId));
+    const totalVoters = voters.length;
+    const totalVoted = voters.filter((v) => votedVoterIds.has(v._id)).length;
+
+    const now = Date.now();
+    return {
+      election: {
+        _id: election._id,
+        name: election.name,
+        slug: election.slug,
+        startDate: election.startDate,
+        endDate: election.endDate,
+        publicity: election.publicity,
+      },
+      turnout: {
+        total: totalVoters,
+        voted: totalVoted,
+        notVoted: Math.max(totalVoters - totalVoted, 0),
+        percent:
+          totalVoters === 0
+            ? 0
+            : Math.round((totalVoted / totalVoters) * 1000) / 10,
+      },
+      counts: {
+        partylists: partylists.length,
+        positions: positions.length,
+        candidates: candidates.length,
+        voters: totalVoters,
+      },
+      checklist: {
+        hasPartylist: partylists.length > 0,
+        hasPosition: positions.length > 0,
+        hasCandidate: candidates.length > 0,
+        hasVoter: voters.length > 0,
+        hasStarted: now >= election.startDate,
+        hasEnded: now >= election.endDate,
+      },
+    };
+  },
+});
+
+/**
  * Dashboard query — loads the election shell data for the commissioner UI
  * (id, slug, name, voter quota fields). Throws not_found when the caller
  * isn't a commissioner of this election.

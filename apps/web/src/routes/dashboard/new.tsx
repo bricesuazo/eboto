@@ -8,9 +8,14 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { api } from '@eboto/backend/api';
+import {
+  votingEndAt,
+  votingStartAt,
+} from '@eboto/backend/election-timing';
 import { isSlugReserved } from '@eboto/backend/slugs';
 
 import { ImageUpload } from '~/components/image-upload';
+import { scheduleElectionLifecycleFn } from '~/lib/inngest/server-fns';
 import { useImageUpload } from '~/lib/use-image-upload';
 import { Button } from '~/components/ui/button';
 import {
@@ -91,15 +96,34 @@ function NewElectionPage() {
   async function onSubmit(values: FormValues) {
     try {
       const logoStorageId = await logo.commit();
+      const startDate = new Date(values.startDate).getTime();
+      const endDate = new Date(values.endDate).getTime();
       const result = await createElection({
         name: values.name,
         slug: values.slug,
-        startDate: new Date(values.startDate).getTime(),
-        endDate: new Date(values.endDate).getTime(),
+        startDate,
+        endDate,
         votingHourStart: values.votingHourStart,
         votingHourEnd: values.votingHourEnd,
         template: values.template,
         logoStorageId: logoStorageId ?? undefined,
+      });
+      // Fire-and-forget — Inngest scheduling shouldn't block the redirect.
+      // Failures are logged server-side and the schedule can be backfilled
+      // by editing the election (which re-emits the event).
+      const timing = {
+        startDate,
+        endDate,
+        votingHourStart: values.votingHourStart,
+        votingHourEnd: values.votingHourEnd,
+      };
+      void scheduleElectionLifecycleFn({
+        data: {
+          electionId: result.electionId,
+          slug: result.slug,
+          startAt: votingStartAt(timing),
+          endAt: votingEndAt(timing),
+        },
       });
       toast.success('Election created');
       await navigate({
