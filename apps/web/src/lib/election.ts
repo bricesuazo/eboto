@@ -1,35 +1,38 @@
-import { add, getHours, isAfter, isWithinInterval, sub } from 'date-fns';
+import type { ElectionTiming } from '@eboto/backend/election-timing';
+import {
+  isElectionEnded as isElectionEndedShared,
+  isElectionInProgress,
+  isVotingOpen,
+} from '@eboto/backend/election-timing';
 
-interface ElectionTiming {
-  startDate: number;
-  endDate: number;
-  votingHourStart: number;
-  votingHourEnd: number;
-}
+// Re-export the shared helpers so existing imports from `~/lib/election`
+// keep working. The single source of truth lives in
+// `@eboto/backend/election-timing` and is shared between the web app and
+// Convex.
+export {
+  isElectionEndedShared as isElectionEnded,
+  isElectionInProgress,
+  isVotingOpen,
+};
+export type { ElectionTiming };
 
-export function isElectionEnded(election: ElectionTiming) {
-  const now = new Date();
-  return isAfter(
-    now,
-    add(election.endDate, { hours: election.votingHourEnd }),
-  );
-}
-
+/**
+ * Backward-compatible wrapper: existing call sites use this name. With no
+ * options it returns whether voting is currently open (date + hour). With
+ * `{ withoutHours: true }` it returns whether the election period is in
+ * progress (date only).
+ */
 export function isElectionOngoing(
   election: ElectionTiming,
   opts: { withoutHours?: boolean } = {},
-) {
-  const now = new Date();
-  const within = isWithinInterval(now, {
-    start: election.startDate,
-    end: sub(add(election.endDate, { days: 1 }), { seconds: 1 }),
-  });
-  if (opts.withoutHours) return within;
-  return (
-    within &&
-    getHours(now) >= election.votingHourStart &&
-    getHours(now) < election.votingHourEnd
-  );
+): boolean {
+  // Locally retype the cross-package imports so the eslint type-resolver
+  // doesn't see them as `error`/`any` — `@eboto/backend/election-timing`
+  // points at a `.ts` source file and the type-aware lint rules sometimes
+  // give up on it.
+  const inProgress = isElectionInProgress as (e: ElectionTiming) => boolean;
+  const open = isVotingOpen as (e: ElectionTiming) => boolean;
+  return opts.withoutHours ? inProgress(election) : open(election);
 }
 
 export function parseHourTo12HourFormat(hour: number) {

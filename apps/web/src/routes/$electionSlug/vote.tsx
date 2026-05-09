@@ -1,25 +1,28 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { convexQuery } from '@convex-dev/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
-  Link,
   createFileRoute,
+  Link,
   notFound,
   useNavigate,
 } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
-import { convexQuery } from '@convex-dev/react-query';
 import { useMutation } from 'convex/react';
 import { ConvexError } from 'convex/values';
+import { User } from 'lucide-react';
+import { toast } from 'sonner';
+
 import { api } from '@eboto/backend/api';
 import type { Id } from '@eboto/backend/data-model';
-import { toast } from 'sonner';
-import { User } from 'lucide-react';
 
 import { PagePending } from '~/components/page-pending';
-import { CONVEX_ERROR_NOT_FOUND } from '~/lib/constants';
-import { formatName } from '~/lib/election';
 import { Button } from '~/components/ui/button';
 import { Checkbox } from '~/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group';
+import { CONVEX_ERROR_NOT_FOUND } from '~/lib/constants';
+import { formatName } from '~/lib/election';
+import type { Choice } from '~/lib/stores/ballot';
+import { useBallotStore } from '~/lib/stores/ballot';
 import { cn } from '~/lib/utils';
 
 export const Route = createFileRoute('/$electionSlug/vote')({
@@ -40,10 +43,6 @@ export const Route = createFileRoute('/$electionSlug/vote')({
   component: BallotPage,
 });
 
-type Choice =
-  | { kind: 'abstain' }
-  | { kind: 'candidates'; candidateIds: Id<'candidates'>[] };
-
 function BallotPage() {
   const { electionSlug } = Route.useParams();
   const navigate = useNavigate();
@@ -55,16 +54,32 @@ function BallotPage() {
   const { election, positions, hasVoted } = data;
   const cast = useMutation(api.votes.cast);
 
-  const [selections, setSelections] = useState<Record<string, Choice>>(() => {
+  const stored = useBallotStore((s) => s.ballots[election._id]);
+  const setStoreChoice = useBallotStore((s) => s.setChoice);
+  const toggleStoreCandidate = useBallotStore((s) => s.toggleCandidate);
+  const clearBallot = useBallotStore((s) => s.clearBallot);
+
+  const selections = useMemo<Record<string, Choice>>(() => {
     const init: Record<string, Choice> = {};
     for (const p of positions) {
-      init[p._id] =
-        p.min === 0 && p.max === 1
-          ? { kind: 'abstain' }
-          : { kind: 'candidates', candidateIds: [] };
+      const cur = stored?.[p._id];
+      if (cur?.kind === 'abstain') {
+        init[p._id] = { kind: 'abstain' };
+      } else if (cur?.kind === 'candidates') {
+        const valid = new Set(p.candidates.map((c) => c._id));
+        init[p._id] = {
+          kind: 'candidates',
+          candidateIds: cur.candidateIds
+            .filter((id) => valid.has(id))
+            .slice(0, p.max),
+        };
+      } else {
+        init[p._id] = { kind: 'candidates', candidateIds: [] };
+      }
     }
     return init;
-  });
+  }, [positions, stored]);
+
   const [submitting, setSubmitting] = useState(false);
 
   if (hasVoted) {
@@ -75,10 +90,7 @@ function BallotPage() {
           Each voter gets one ballot per election.
         </p>
         <Button asChild className="mt-6">
-          <Link
-            to="/$electionSlug"
-            params={{ electionSlug: election.slug }}
-          >
+          <Link to="/$electionSlug" params={{ electionSlug: election.slug }}>
             Back to election
           </Link>
         </Button>
@@ -87,7 +99,7 @@ function BallotPage() {
   }
 
   function setChoice(positionId: string, choice: Choice) {
-    setSelections((prev) => ({ ...prev, [positionId]: choice }));
+    setStoreChoice(election._id, positionId, choice);
   }
 
   function toggleCandidate(
@@ -95,20 +107,7 @@ function BallotPage() {
     candidateId: Id<'candidates'>,
     max: number,
   ) {
-    setSelections((prev) => {
-      const cur = prev[positionId];
-      const ids =
-        cur && cur.kind === 'candidates' ? cur.candidateIds : [];
-      const next = ids.includes(candidateId)
-        ? ids.filter((c) => c !== candidateId)
-        : ids.length < max
-          ? [...ids, candidateId]
-          : ids;
-      return {
-        ...prev,
-        [positionId]: { kind: 'candidates', candidateIds: next },
-      };
-    });
+    toggleStoreCandidate(election._id, positionId, candidateId, max);
   }
 
   async function submit() {
@@ -121,8 +120,9 @@ function BallotPage() {
           choice: selections[p._id]!,
         })),
       });
+      clearBallot(election._id);
       toast.success('Ballot submitted!');
-      navigate({
+      await navigate({
         to: '/$electionSlug',
         params: { electionSlug: election.slug },
       });
@@ -196,8 +196,7 @@ function BallotPage() {
                     <label
                       className={cn(
                         'flex cursor-pointer items-center gap-2 rounded-lg border p-3 text-sm',
-                        sel.kind === 'abstain' &&
-                          'border-primary bg-primary/5',
+                        sel.kind === 'abstain' && 'border-primary bg-primary/5',
                       )}
                     >
                       <RadioGroupItem value="__abstain" />
@@ -245,10 +244,7 @@ function BallotPage() {
 
       <div className="mt-12 flex justify-end gap-3">
         <Button asChild variant="outline">
-          <Link
-            to="/$electionSlug"
-            params={{ electionSlug: election.slug }}
-          >
+          <Link to="/$electionSlug" params={{ electionSlug: election.slug }}>
             Cancel
           </Link>
         </Button>
@@ -314,7 +310,10 @@ function CandidateOption({
   return (
     <label className="flex cursor-pointer flex-col items-center gap-2 rounded-lg border p-3">
       <RadioGroupItem value={value} className="self-end" />
-      <CandidatePreview candidate={candidate} nameArrangement={nameArrangement} />
+      <CandidatePreview
+        candidate={candidate}
+        nameArrangement={nameArrangement}
+      />
     </label>
   );
 }

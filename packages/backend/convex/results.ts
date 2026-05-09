@@ -2,6 +2,7 @@ import { getAuthUserId } from '@convex-dev/auth/server';
 import { v } from 'convex/values';
 
 import { query } from './_generated/server';
+import { isElectionInProgress } from './_helpers/election-timing';
 
 /**
  * Live election tally. Candidates are anonymized as `Candidate N` while the
@@ -88,17 +89,14 @@ export const getBySlug = query({
       }
     }
 
-    const now = Date.now();
-    const oneDayMs = 24 * 60 * 60 * 1000;
-    const isOngoing =
-      now >= election.startDate &&
-      now < election.endDate + oneDayMs &&
-      new Date(now).getHours() >= election.votingHourStart &&
-      new Date(now).getHours() < election.votingHourEnd;
+    // For hiding real names we use the date-only "in progress" check —
+    // viewers outside voting hours but still within the election window
+    // must continue to see anonymized candidates when the commissioner
+    // has chosen to hide them.
     const showRealNames =
       election.isCandidatesVisibleInRealtimeWhenOngoing ||
       isCommissioner ||
-      !isOngoing;
+      !isElectionInProgress(election);
 
     return {
       election: {
@@ -119,11 +117,15 @@ export const getBySlug = query({
             .filter((c) => c.positionId === position._id)
             .map((c) => ({
               id: c._id,
-              firstName: c.firstName,
-              middleName: c.middleName,
-              lastName: c.lastName,
-              partylistAcronym:
-                partylistsById.get(c.partylistId)?.acronym ?? '',
+              // Real name fields are emitted only when the viewer is allowed
+              // to see them — otherwise the response carries no PII at all
+              // and the Network tab can't be used to bypass anonymization.
+              firstName: showRealNames ? c.firstName : '',
+              middleName: showRealNames ? c.middleName : undefined,
+              lastName: showRealNames ? c.lastName : '',
+              partylistAcronym: showRealNames
+                ? (partylistsById.get(c.partylistId)?.acronym ?? '')
+                : '',
               votes: candidateVoteCounts.get(c._id) ?? 0,
             }))
             .sort((a, b) => b.votes - a.votes)

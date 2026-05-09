@@ -180,6 +180,9 @@ export const getDashboardBySlug = query({
       votingHourStart: election.votingHourStart,
       votingHourEnd: election.votingHourEnd,
       publicity: election.publicity,
+      nameArrangement: election.nameArrangement,
+      isCandidatesVisibleInRealtimeWhenOngoing:
+        election.isCandidatesVisibleInRealtimeWhenOngoing,
       noOfVoters: election.noOfVoters,
       variantId: election.variantId,
       logoUrl,

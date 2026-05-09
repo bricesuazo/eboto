@@ -1,17 +1,19 @@
-import { createFileRoute, notFound, useNavigate } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
-import { convexQuery } from '@convex-dev/react-query';
-import { useMutation } from 'convex/react';
-import { DashboardPending } from '~/components/dashboard-pending';
-import { ConvexError } from 'convex/values';
-import { api } from '@eboto/backend/api';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { toast } from 'sonner';
-import dayjs from 'dayjs';
 import { useState } from 'react';
+import { convexQuery } from '@convex-dev/react-query';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useQuery } from '@tanstack/react-query';
+import { createFileRoute, notFound, useNavigate } from '@tanstack/react-router';
+import { useMutation } from 'convex/react';
+import { ConvexError } from 'convex/values';
+import dayjs from 'dayjs';
 import { Trash2 } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
+
+import { api } from '@eboto/backend/api';
+
+import { DashboardPending } from '~/components/dashboard-pending';
 import { Button } from '~/components/ui/button';
 import {
   Card,
@@ -30,7 +32,6 @@ import {
   FormMessage,
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import { Textarea } from '~/components/ui/textarea';
 import {
   Select,
   SelectContent,
@@ -39,6 +40,7 @@ import {
   SelectValue,
 } from '~/components/ui/select';
 import { Switch } from '~/components/ui/switch';
+import { Textarea } from '~/components/ui/textarea';
 
 export const Route = createFileRoute(
   '/dashboard/$electionDashboardSlug/settings',
@@ -95,14 +97,15 @@ function SettingsPage() {
     resolver: zodResolver(schema),
     defaultValues: {
       name: election.name,
-      description: election.description ?? '',
+      description: election.description,
       startDate: dayjs(election.startDate).format('YYYY-MM-DD'),
       endDate: dayjs(election.endDate).format('YYYY-MM-DD'),
       votingHourStart: election.votingHourStart,
       votingHourEnd: election.votingHourEnd,
       publicity: election.publicity,
-      nameArrangement: 0,
-      isCandidatesVisibleInRealtimeWhenOngoing: false,
+      nameArrangement: election.nameArrangement,
+      isCandidatesVisibleInRealtimeWhenOngoing:
+        election.isCandidatesVisibleInRealtimeWhenOngoing,
     },
   });
 
@@ -118,7 +121,7 @@ function SettingsPage() {
     } catch (err) {
       toast.error(
         err instanceof ConvexError
-          ? (err.data as { message?: string }).message ?? 'Failed'
+          ? ((err.data as { message?: string }).message ?? 'Failed')
           : 'Failed',
       );
     }
@@ -140,10 +143,7 @@ function SettingsPage() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-5"
-            >
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
               <FormField
                 control={form.control}
                 name="name"
@@ -232,10 +232,7 @@ function SettingsPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Publicity</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                    >
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue />
@@ -282,10 +279,7 @@ function SettingsPage() {
                 )}
               />
 
-              <Button
-                type="submit"
-                disabled={form.formState.isSubmitting}
-              >
+              <Button type="submit" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting ? 'Saving…' : 'Save changes'}
               </Button>
             </form>
@@ -335,7 +329,7 @@ function DeleteElectionButton({
         } catch (err) {
           toast.error(
             err instanceof ConvexError
-              ? (err.data as { message?: string }).message ?? 'Failed'
+              ? ((err.data as { message?: string }).message ?? 'Failed')
               : 'Failed',
           );
         } finally {

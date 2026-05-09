@@ -6,7 +6,8 @@
     "./api": "./convex/_generated/api.js",
     "./data-model": "./convex/_generated/dataModel.js",
     "./schema": "./convex/schema.ts",
-    "./auth": "./convex/auth.ts"
+    "./auth": "./convex/auth.ts",
+    "./election-timing": "./convex/_helpers/election-timing.ts"
   },
   "typesVersions": {
     "*": {
@@ -21,6 +22,9 @@
       ],
       "auth": [
         "./convex/auth.ts"
+      ],
+      "election-timing": [
+        "./convex/_helpers/election-timing.ts"
       ]
     }
   },

@@ -1,15 +1,24 @@
-import { Link, createFileRoute, notFound } from '@tanstack/react-router';
+import { useState } from 'react';
+import {
+  Link,
+  createFileRoute,
+  notFound,
+  useRouteContext,
+} from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { convexQuery } from '@convex-dev/react-query';
 import { api } from '@eboto/backend/api';
 import {
   Clock3,
+  Copy,
   Fingerprint,
   Info,
   QrCode,
   User as UserIcon,
 } from 'lucide-react';
 import dayjs from 'dayjs';
+import { QRCodeSVG } from 'qrcode.react';
+import { toast } from 'sonner';
 import {
   describePublicity,
   formatName,
@@ -20,6 +29,14 @@ import {
 import { PagePending } from '~/components/page-pending';
 import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '~/components/ui/dialog';
 import {
   HoverCard,
   HoverCardContent,
@@ -48,6 +65,7 @@ export const Route = createFileRoute('/$electionSlug/')({
 
 function ElectionPage() {
   const { electionSlug } = Route.useParams();
+  const { user } = useRouteContext({ from: '__root__' });
   const { data } = useQuery(
     convexQuery(api.elections.getBySlug, { slug: electionSlug }),
   );
@@ -129,19 +147,26 @@ function ElectionPage() {
           )}
           {ongoing && (
             <Button asChild size="lg" className="rounded-full">
-              <Link
-                to="/$electionSlug/vote"
-                params={{ electionSlug: election.slug }}
-              >
-                <Fingerprint className="mr-2 size-4" />
-                Vote now!
-              </Link>
+              {user ? (
+                <Link
+                  to="/$electionSlug/vote"
+                  params={{ electionSlug: election.slug }}
+                >
+                  <Fingerprint className="mr-2 size-4" />
+                  Vote now!
+                </Link>
+              ) : (
+                <Link
+                  to="/sign-in"
+                  search={{ to: `/${election.slug}/vote` }}
+                >
+                  <Fingerprint className="mr-2 size-4" />
+                  Vote now!
+                </Link>
+              )}
             </Button>
           )}
-          <Button variant="outline" size="lg" className="rounded-full">
-            <QrCode className="mr-2 size-4" />
-            Share QR
-          </Button>
+          <ShareQrButton election={election} />
         </div>
 
         {ended ? (
@@ -233,5 +258,69 @@ function ElectionPage() {
         )}
       </section>
     </main>
+  );
+}
+
+function ShareQrButton({
+  election,
+}: {
+  election: { name: string; slug: string };
+}) {
+  const [open, setOpen] = useState(false);
+  // Build the absolute URL on the client; SSR can't know the host reliably.
+  const url =
+    typeof window === 'undefined'
+      ? `/${election.slug}`
+      : `${window.location.origin}/${election.slug}`;
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success('Link copied');
+    } catch {
+      toast.error('Could not copy link');
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <Button
+        variant="outline"
+        size="lg"
+        className="rounded-full"
+        onClick={() => setOpen(true)}
+      >
+        <QrCode className="mr-2 size-4" />
+        Share QR
+      </Button>
+      <DialogContent className="sm:max-w-sm">
+        <DialogHeader>
+          <DialogTitle>Share this election</DialogTitle>
+          <DialogDescription>
+            Scan to open {election.name}, or copy the link.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="flex justify-center py-2">
+          <div className="rounded-lg border bg-white p-4">
+            <QRCodeSVG
+              value={url}
+              size={224}
+              level="M"
+              marginSize={0}
+              aria-label={`QR code for ${election.name}`}
+            />
+          </div>
+        </div>
+        <div className="text-muted-foreground break-all rounded-md border bg-muted/40 px-3 py-2 text-center text-xs">
+          {url}
+        </div>
+        <DialogFooter className="sm:justify-center">
+          <Button variant="outline" onClick={handleCopy} className="w-full sm:w-auto">
+            <Copy className="mr-2 size-4" />
+            Copy link
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

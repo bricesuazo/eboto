@@ -1,7 +1,9 @@
-import { ConvexError, v } from 'convex/values';
 import { getAuthUserId } from '@convex-dev/auth/server';
-import { mutation, query } from './_generated/server';
+import { ConvexError, v } from 'convex/values';
+
 import type { Id } from './_generated/dataModel';
+import { mutation, query } from './_generated/server';
+import { isVotingOpen } from './_helpers/election-timing';
 
 /**
  * Loads everything the ballot UI needs in one query: election timing/meta,
@@ -14,7 +16,10 @@ export const getVotingPage = query({
   handler: async (ctx, { slug }) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) {
-      throw new ConvexError({ code: 'unauthorized', message: 'Sign in to vote' });
+      throw new ConvexError({
+        code: 'unauthorized',
+        message: 'Sign in to vote',
+      });
     }
     const user = await ctx.db.get(userId);
     if (!user?.email) {
@@ -30,7 +35,10 @@ export const getVotingPage = query({
       .filter((q) => q.eq(q.field('deletedAt'), undefined))
       .first();
     if (!election) {
-      throw new ConvexError({ code: 'not_found', message: 'Election not found' });
+      throw new ConvexError({
+        code: 'not_found',
+        message: 'Election not found',
+      });
     }
 
     const voter = await ctx.db
@@ -149,7 +157,10 @@ export const cast = mutation({
   handler: async (ctx, { electionId, selections }) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) {
-      throw new ConvexError({ code: 'unauthorized', message: 'Sign in to vote' });
+      throw new ConvexError({
+        code: 'unauthorized',
+        message: 'Sign in to vote',
+      });
     }
     const user = await ctx.db.get(userId);
     if (!user?.email) {
@@ -161,19 +172,13 @@ export const cast = mutation({
 
     const election = await ctx.db.get(electionId);
     if (!election || election.deletedAt) {
-      throw new ConvexError({ code: 'not_found', message: 'Election not found' });
+      throw new ConvexError({
+        code: 'not_found',
+        message: 'Election not found',
+      });
     }
 
-    // Date + hour window check.
-    const now = Date.now();
-    const oneDayMs = 24 * 60 * 60 * 1000;
-    const hour = new Date(now).getHours();
-    const ongoing =
-      now >= election.startDate &&
-      now < election.endDate + oneDayMs &&
-      hour >= election.votingHourStart &&
-      hour < election.votingHourEnd;
-    if (!ongoing) {
+    if (!isVotingOpen(election)) {
       throw new ConvexError({
         code: 'forbidden',
         message: 'Voting is not open for this election',
@@ -369,12 +374,11 @@ export const myBallot = query({
           name: position.name,
           isAbstain,
           candidates: candidateVotes.map((c) => ({
-            id: c!._id,
-            firstName: c!.firstName,
-            middleName: c!.middleName,
-            lastName: c!.lastName,
-            partylistAcronym:
-              partylistsById.get(c!.partylistId)?.acronym ?? '',
+            id: c?._id,
+            firstName: c?.firstName,
+            middleName: c?.middleName,
+            lastName: c?.lastName,
+            partylistAcronym: partylistsById.get(c?.partylistId)?.acronym ?? '',
           })),
         };
       });

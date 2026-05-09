@@ -6,14 +6,24 @@ import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { useAuthActions } from '~/lib/auth/provider';
+import { safeInternalPath } from '~/lib/redirect';
+
+interface SignInSearch {
+  to?: string;
+}
 
 export const Route = createFileRoute('/(auth)/sign-in')({
+  validateSearch: (search: Record<string, unknown>): SignInSearch => ({
+    to: safeInternalPath(search.to) ?? undefined,
+  }),
   component: SignInPage,
 });
 
 function SignInPage() {
   const { signIn } = useAuthActions();
   const router = useRouter();
+  const { to } = Route.useSearch();
+  const redirectTo = to ?? '/dashboard';
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [oauthLoading, setOauthLoading] = useState(false);
@@ -21,7 +31,7 @@ function SignInPage() {
   async function handleGoogle() {
     setOauthLoading(true);
     try {
-      const result = await signIn('google', { redirectTo: '/dashboard' });
+      const result = await signIn('google', { redirectTo });
       if (result.redirect) {
         window.location.href = result.redirect.toString();
       }
@@ -51,7 +61,7 @@ function SignInPage() {
             e.preventDefault();
             setSubmitting(true);
             try {
-              const result = await signIn('resend', { email });
+              const result = await signIn('resend', { email, redirectTo });
               if (result.signingIn) {
                 await router.invalidate();
               }

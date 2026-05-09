@@ -44,13 +44,15 @@
     "inngest": "catalog:",
     "lucide-react": "^0.474.0",
     "posthog-js": "1.266.0",
+    "qrcode.react": "^4.2.0",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-hook-form": "^7.55.0",
     "sonner": "^1.7.4",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "zustand": "^5.0.13"
   },
   "devDependencies": {
     "@eboto/eslint-config": "workspace:*",
