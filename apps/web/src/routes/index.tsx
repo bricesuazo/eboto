@@ -1,5 +1,12 @@
+import { useState } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { ArrowRight, Check, ChevronDown, Sparkles } from 'lucide-react';
+import {
+  ArrowRight,
+  Check,
+  ChevronDown,
+  Rocket,
+  Sparkles,
+} from 'lucide-react';
 
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -11,7 +18,14 @@ import {
   CardTitle,
 } from '~/components/ui/card';
 import { Separator } from '~/components/ui/separator';
+import { Slider } from '~/components/ui/slider';
 import { HOME_FAQS, HOME_FEATURES, HOME_PRICING } from '~/lib/constants/home';
+import {
+  BOOST_BASE_PRICE,
+  num,
+  peso,
+  tierAt,
+} from '~/lib/constants/pricing';
 import { cn } from '~/lib/utils';
 
 export const Route = createFileRoute('/')({
@@ -23,10 +37,88 @@ function HomePage() {
     <main>
       <Hero />
       <Features />
+      <BoostPreview />
       <Pricing />
       <Faq />
       <FinalCta />
     </main>
+  );
+}
+
+function BoostPreview() {
+  const [value, setValue] = useState(0);
+  const tier = tierAt(value);
+  const isUnlimited = tier.label === -1;
+
+  return (
+    <section className="border-b">
+      <div className="container mx-auto max-w-4xl px-6 py-20 sm:py-24">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            Scale up only when you need to
+          </h2>
+          <p className="text-muted-foreground mt-4">
+            Drag the slider to see how Boost pricing scales with your voter
+            count.
+          </p>
+        </div>
+
+        <Card className="mt-10 border-emerald-500/40 dark:border-emerald-800">
+          <CardContent className="p-6 sm:p-8">
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <div className="text-muted-foreground text-sm font-medium uppercase tracking-wide">
+                  Boost · per election
+                </div>
+                <div className="mt-2 text-5xl font-bold tracking-tight">
+                  {isUnlimited
+                    ? 'Contact us'
+                    : peso.format(BOOST_BASE_PRICE + tier.priceAdded)}
+                </div>
+                <p className="text-muted-foreground mt-2">
+                  Up to{' '}
+                  <span className="text-foreground font-semibold">
+                    {isUnlimited ? 'Unlimited' : num.format(tier.label)}
+                  </span>{' '}
+                  voters
+                </p>
+              </div>
+
+              <Button
+                render={
+                  <Link to={isUnlimited ? '/contact' : '/pricing'}>
+                    {isUnlimited ? 'Contact us' : 'See full pricing'}
+                    <Rocket className="size-4" />
+                  </Link>
+                }
+                size="lg"
+                className="rounded-full"
+              />
+            </div>
+
+            <Slider
+              value={[value]}
+              onValueChange={(v) =>
+                setValue(Array.isArray(v) ? (v[0] ?? 0) : 0)
+              }
+              min={0}
+              max={100}
+              step={20}
+              className="mt-8"
+            />
+
+            <div className="text-muted-foreground mt-3 flex justify-between text-xs">
+              <span>1.5K</span>
+              <span>2.5K</span>
+              <span>5K</span>
+              <span>7.5K</span>
+              <span>10K</span>
+              <span>Unlimited</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </section>
   );
 }
 

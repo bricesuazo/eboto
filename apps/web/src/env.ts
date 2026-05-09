@@ -19,10 +19,13 @@ export const env = createEnv({
     VITE_POSTHOG_HOST: z.url().optional(),
     VITE_SENTRY_DSN: z.url().optional(),
   },
+  server: {
+    DISCORD_WEBHOOK_URL: z.url(),
+  },
   shared: {
     MODE: z.enum(['development', 'test', 'production']).default('development'),
   },
-  runtimeEnv: import.meta.env,
+  runtimeEnv: { ...import.meta.env, ...process.env },
   emptyStringAsUndefined: true,
   skipValidation: process.env.SKIP_ENV_VALIDATION === 'true',
 });

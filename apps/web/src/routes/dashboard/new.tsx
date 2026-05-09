@@ -8,15 +8,10 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { api } from '@eboto/backend/api';
-import {
-  votingEndAt,
-  votingStartAt,
-} from '@eboto/backend/election-timing';
+import { votingEndAt, votingStartAt } from '@eboto/backend/election-timing';
 import { isSlugReserved } from '@eboto/backend/slugs';
 
 import { ImageUpload } from '~/components/image-upload';
-import { scheduleElectionLifecycleFn } from '~/lib/inngest/server-fns';
-import { useImageUpload } from '~/lib/use-image-upload';
 import { Button } from '~/components/ui/button';
 import {
   Card,
@@ -42,6 +37,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
+import { parseHourTo12HourFormat } from '~/lib/election';
+import { scheduleElectionLifecycleFn } from '~/lib/inngest/server-fns';
+import { useImageUpload } from '~/lib/use-image-upload';
 
 const slugRegex = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
 
@@ -56,8 +54,8 @@ const schema = z
       .refine((s) => !isSlugReserved(s), 'That slug is reserved'),
     startDate: z.string().min(1, 'Required'),
     endDate: z.string().min(1, 'Required'),
-    votingHourStart: z.coerce.number().int().min(0).max(23),
-    votingHourEnd: z.coerce.number().int().min(1).max(24),
+    votingHourStart: z.number().int().min(0).max(23),
+    votingHourEnd: z.number().int().min(1).max(24),
     template: z.string(),
   })
   .refine((d) => new Date(d.endDate) > new Date(d.startDate), {
@@ -227,9 +225,23 @@ function NewElectionPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Voting starts at</FormLabel>
-                      <FormControl>
-                        <Input type="number" min={0} max={23} {...field} />
-                      </FormControl>
+                      <Select
+                        onValueChange={(v) => field.onChange(Number(v))}
+                        value={parseHourTo12HourFormat(field.value)}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Array.from({ length: 24 }, (_, h) => (
+                            <SelectItem key={h} value={String(h)}>
+                              {parseHourTo12HourFormat(h)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -240,9 +252,23 @@ function NewElectionPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Voting ends at</FormLabel>
-                      <FormControl>
-                        <Input type="number" min={1} max={24} {...field} />
-                      </FormControl>
+                      <Select
+                        onValueChange={(v) => field.onChange(Number(v))}
+                        value={parseHourTo12HourFormat(field.value)}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Array.from({ length: 24 }, (_, i) => i).map((h) => (
+                            <SelectItem key={h} value={String(h)}>
+                              {parseHourTo12HourFormat(h)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}

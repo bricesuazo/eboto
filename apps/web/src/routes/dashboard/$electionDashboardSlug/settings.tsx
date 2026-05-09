@@ -12,16 +12,12 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { api } from '@eboto/backend/api';
-import {
-  votingEndAt,
-  votingStartAt,
-} from '@eboto/backend/election-timing';
+import { votingEndAt, votingStartAt } from '@eboto/backend/election-timing';
+import { isSlugReserved } from '@eboto/backend/slugs';
 
 import { DashboardPending } from '~/components/dashboard-pending';
 import { ImageUpload } from '~/components/image-upload';
 import { Button } from '~/components/ui/button';
-import { scheduleElectionLifecycleFn } from '~/lib/inngest/server-fns';
-import { useImageUpload } from '~/lib/use-image-upload';
 import {
   Card,
   CardContent,
@@ -48,6 +44,9 @@ import {
 } from '~/components/ui/select';
 import { Switch } from '~/components/ui/switch';
 import { Textarea } from '~/components/ui/textarea';
+import { parseHourTo12HourFormat } from '~/lib/election';
+import { scheduleElectionLifecycleFn } from '~/lib/inngest/server-fns';
+import { useImageUpload } from '~/lib/use-image-upload';
 
 export const Route = createFileRoute(
   '/dashboard/$electionDashboardSlug/settings',
@@ -64,16 +63,24 @@ export const Route = createFileRoute(
   component: SettingsPage,
 });
 
+const slugRegex = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+
 const schema = z
   .object({
     name: z.string().min(1, 'Required'),
-    description: z.string().default(''),
+    slug: z
+      .string()
+      .min(1, 'Required')
+      .toLowerCase()
+      .regex(slugRegex, 'Lowercase letters, digits, dashes only')
+      .refine((s) => !isSlugReserved(s), 'That slug is reserved'),
+    description: z.string(),
     startDate: z.string().min(1),
     endDate: z.string().min(1),
-    votingHourStart: z.coerce.number().int().min(0).max(23),
-    votingHourEnd: z.coerce.number().int().min(1).max(24),
+    votingHourStart: z.number().int().min(0).max(23),
+    votingHourEnd: z.number().int().min(1).max(24),
     publicity: z.enum(['PRIVATE', 'VOTER', 'PUBLIC']),
-    nameArrangement: z.coerce.number().int().min(0).max(1),
+    nameArrangement: z.number().int().min(0).max(1),
     isCandidatesVisibleInRealtimeWhenOngoing: z.boolean(),
   })
   .refine((d) => new Date(d.endDate) > new Date(d.startDate), {
@@ -99,13 +106,13 @@ function SettingsPage() {
   const electionId = election._id;
   const update = useMutation(api.elections.update);
   const setLogo = useMutation(api.elections.setLogo);
-  const softDelete = useMutation(api.elections.softDelete);
   const logo = useImageUpload(election.logoUrl);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       name: election.name,
+      slug: election.slug,
       description: election.description,
       startDate: dayjs(election.startDate).format('YYYY-MM-DD'),
       endDate: dayjs(election.endDate).format('YYYY-MM-DD'),
@@ -123,7 +130,7 @@ function SettingsPage() {
       const logoStorageId = await logo.commit();
       const startDate = new Date(values.startDate).getTime();
       const endDate = new Date(values.endDate).getTime();
-      await update({
+      const result = await update({
         id: electionId,
         ...values,
         startDate,
@@ -152,7 +159,7 @@ function SettingsPage() {
           void scheduleElectionLifecycleFn({
             data: {
               electionId: electionId as unknown as string,
-              slug: prev.slug,
+              slug: result.slug,
               startAt: votingStartAt(timing),
               endAt: votingEndAt(timing),
             },
@@ -160,6 +167,13 @@ function SettingsPage() {
         }
       }
       toast.success('Settings saved');
+      if (result.slug !== electionDashboardSlug) {
+        await navigate({
+          to: '/dashboard/$electionDashboardSlug/settings',
+          params: { electionDashboardSlug: result.slug },
+          replace: true,
+        });
+      }
     } catch (err) {
       toast.error(
         err instanceof ConvexError
@@ -173,7 +187,7 @@ function SettingsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Settings</h1>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           Tune election timing, visibility, and danger zone.
         </p>
       </div>
@@ -202,6 +216,25 @@ function SettingsPage() {
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="slug"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>URL slug</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Voters will visit{' '}
+                      <span className="font-mono">
+                        eboto.app/{field.value || 'your-slug'}
+                      </span>
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -253,9 +286,23 @@ function SettingsPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Voting starts</FormLabel>
-                      <FormControl>
-                        <Input type="number" min={0} max={23} {...field} />
-                      </FormControl>
+                      <Select
+                        onValueChange={(v) => field.onChange(Number(v))}
+                        value={parseHourTo12HourFormat(field.value)}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Array.from({ length: 24 }, (_, h) => (
+                            <SelectItem key={h} value={String(h)}>
+                              {parseHourTo12HourFormat(h)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -266,9 +313,23 @@ function SettingsPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Voting ends</FormLabel>
-                      <FormControl>
-                        <Input type="number" min={1} max={24} {...field} />
-                      </FormControl>
+                      <Select
+                        onValueChange={(v) => field.onChange(Number(v))}
+                        value={parseHourTo12HourFormat(field.value)}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Array.from({ length: 24 }, (_, i) => i).map((h) => (
+                            <SelectItem key={h} value={String(h)}>
+                              {parseHourTo12HourFormat(h)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}

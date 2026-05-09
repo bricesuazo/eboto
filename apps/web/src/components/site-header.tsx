@@ -1,4 +1,4 @@
-import { Link, useRouteContext, useRouter } from '@tanstack/react-router';
+import { Link, useRouteContext } from '@tanstack/react-router';
 import { LogOut, User } from 'lucide-react';
 
 import { ModeToggle } from '~/components/mode-toggle';
@@ -14,7 +14,6 @@ import {
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
 import { useAuthActions } from '~/lib/auth/provider';
-import { AUTH_QUERY_KEY } from '~/lib/constants';
 
 export function SiteHeader() {
   const { user } = useRouteContext({ from: '__root__' });
@@ -32,15 +31,15 @@ export function SiteHeader() {
 
         <nav className="flex items-center gap-2">
           <ModeToggle />
-          {user ? <UserMenu user={user} /> : <SignedOutNav />}
+          {user ? (
+            <UserMenu user={user} />
+          ) : (
+            <Button render={<Link to="/sign-in">Sign in</Link>} size="sm" />
+          )}
         </nav>
       </div>
     </header>
   );
-}
-
-function SignedOutNav() {
-  return <Button render={<Link to="/sign-in">Sign in</Link>} size="sm" />;
 }
 
 interface UserShape {
@@ -51,8 +50,6 @@ interface UserShape {
 
 function UserMenu({ user }: { user: UserShape }) {
   const { signOut } = useAuthActions();
-  const router = useRouter();
-  const { queryClient } = useRouteContext({ from: '__root__' });
 
   const initials = (user.name ?? user.email ?? '?')
     .split(/[\s@]/)
@@ -63,10 +60,7 @@ function UserMenu({ user }: { user: UserShape }) {
 
   async function handleSignOut() {
     await signOut();
-    // Bust the cached server-auth lookup so the next navigation re-fetches
-    // and reflects the signed-out state.
-    await queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY });
-    await router.invalidate();
+    window.location.href = '/sign-in';
   }
 
   return (

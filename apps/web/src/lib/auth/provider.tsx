@@ -56,7 +56,7 @@ interface InternalAuthState {
 const InternalAuthContext = createContext<InternalAuthState>({
   isLoading: true,
   isAuthenticated: false,
-  fetchAccessToken: async () => null,
+  fetchAccessToken: () => Promise.resolve(null),
 });
 
 async function callAuthApi(

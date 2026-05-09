@@ -440,6 +440,7 @@ export const update = mutation({
   args: {
     id: v.id('elections'),
     name: v.string(),
+    slug: v.string(),
     description: v.string(),
     startDate: v.number(),
     endDate: v.number(),
@@ -476,8 +477,30 @@ export const update = mutation({
       });
     }
 
+    const slug = args.slug.trim().toLowerCase();
+    if (!slug || isSlugReserved(slug)) {
+      throw new ConvexError({
+        code: 'conflict',
+        message: 'That slug is reserved. Please choose another.',
+      });
+    }
+    if (slug !== election.slug) {
+      const collision = await ctx.db
+        .query('elections')
+        .withIndex('by_slug', (q) => q.eq('slug', slug))
+        .filter((q) => q.eq(q.field('deletedAt'), undefined))
+        .first();
+      if (collision && collision._id !== election._id) {
+        throw new ConvexError({
+          code: 'conflict',
+          message: 'An election with that slug already exists.',
+        });
+      }
+    }
+
     await ctx.db.patch(args.id, {
       name: args.name.trim(),
+      slug,
       description: args.description.trim(),
       startDate: args.startDate,
       endDate: args.endDate,
@@ -488,6 +511,8 @@ export const update = mutation({
       isCandidatesVisibleInRealtimeWhenOngoing:
         args.isCandidatesVisibleInRealtimeWhenOngoing,
     });
+
+    return { slug };
   },
 });
 

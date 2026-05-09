@@ -42,18 +42,18 @@ function DashboardHome() {
   const voterElections = voterData ?? [];
 
   return (
-    <main className="container mx-auto max-w-5xl px-6 py-12">
+    <main className="container mx-auto max-w-6xl px-6 py-12">
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">My elections</h1>
-          <p className="text-muted-foreground mt-1 text-sm">
+          <p className="mt-1 text-sm text-muted-foreground">
             Elections you commission. Click one to manage it.
           </p>
         </div>
         <Button
           render={
             <Link to="/dashboard/new">
-              <Plus className="mr-2 size-4" />
+              <Plus className="size-4" />
               New election
             </Link>
           }
@@ -67,7 +67,7 @@ function DashboardHome() {
       ) : elections.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center gap-3 py-12 text-center">
-            <Fingerprint className="text-muted-foreground size-10" />
+            <Fingerprint className="size-10 text-muted-foreground" />
             <p className="text-muted-foreground">
               You don't commission any elections yet.
             </p>
@@ -86,7 +86,7 @@ function DashboardHome() {
               to="/dashboard/$electionDashboardSlug"
               params={{ electionDashboardSlug: election.slug }}
             >
-              <Card className="hover:bg-accent transition-colors h-full">
+              <Card className="h-full transition-colors hover:bg-accent">
                 <CardHeader>
                   <div className="flex items-center gap-3">
                     {election.logoUrl ? (
@@ -96,8 +96,8 @@ function DashboardHome() {
                         className="size-12 shrink-0 rounded-md object-cover"
                       />
                     ) : (
-                      <div className="bg-muted flex size-12 shrink-0 items-center justify-center rounded-md">
-                        <Fingerprint className="text-muted-foreground size-6" />
+                      <div className="flex size-12 shrink-0 items-center justify-center rounded-md bg-muted">
+                        <Fingerprint className="size-6 text-muted-foreground" />
                       </div>
                     )}
                     <div className="min-w-0">
@@ -111,7 +111,7 @@ function DashboardHome() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground text-sm">
+                  <p className="text-sm text-muted-foreground">
                     {dayjs(election.startDate).format('MMM D, YYYY')} –{' '}
                     {dayjs(election.endDate).format('MMM D, YYYY')}
                   </p>
@@ -126,7 +126,7 @@ function DashboardHome() {
         <div className="mt-12">
           <div className="mb-6">
             <h2 className="text-2xl font-bold">Elections you can vote in</h2>
-            <p className="text-muted-foreground mt-1 text-sm">
+            <p className="mt-1 text-sm text-muted-foreground">
               Elections that have invited you as a voter. Click one to view it.
             </p>
           </div>
@@ -137,7 +137,7 @@ function DashboardHome() {
                 to="/$electionSlug"
                 params={{ electionSlug: election.slug }}
               >
-                <Card className="hover:bg-accent transition-colors h-full">
+                <Card className="h-full transition-colors hover:bg-accent">
                   <CardHeader>
                     <div className="flex items-center gap-3">
                       {election.logoUrl ? (
@@ -147,8 +147,8 @@ function DashboardHome() {
                           className="size-12 shrink-0 rounded-md object-cover"
                         />
                       ) : (
-                        <div className="bg-muted flex size-12 shrink-0 items-center justify-center rounded-md">
-                          <Vote className="text-muted-foreground size-6" />
+                        <div className="flex size-12 shrink-0 items-center justify-center rounded-md bg-muted">
+                          <Vote className="size-6 text-muted-foreground" />
                         </div>
                       )}
                       <div className="min-w-0">
@@ -162,7 +162,7 @@ function DashboardHome() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-muted-foreground text-sm">
+                    <p className="text-sm text-muted-foreground">
                       {dayjs(election.startDate).format('MMM D, YYYY')} –{' '}
                       {dayjs(election.endDate).format('MMM D, YYYY')}
                     </p>
