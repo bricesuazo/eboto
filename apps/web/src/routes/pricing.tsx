@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createFileRoute, Link, useRouteContext } from '@tanstack/react-router';
 import { CheckCircle2, Mail, Plus, Rocket, XCircle } from 'lucide-react';
 
@@ -85,10 +85,10 @@ function PricingPage() {
                     <>Up to {num.format(tierAt(value).label)}</>
                   )}
                   <Slider
-                    // value={[value]}
-                    // onValueChange={(v) =>
-                    //   setValue(Array.isArray(v) ? (v[0] ?? 0) : 0)
-                    // }
+                    value={[value]}
+                    onValueChange={(v: number | readonly number[]) =>
+                      setValue(typeof v === 'number' ? v : (v[0] ?? 0))
+                    }
                     min={0}
                     max={100}
                     step={20}
@@ -246,14 +246,9 @@ function BoostCard({
 }) {
   const [internal, setInternal] = useState(value);
 
-  // useEffect(() => {
-  //   setInternal(value);
-  // }, [value]);
-
-  // function handleChange(next: number) {
-  //   setInternal(next);
-  //   setValue(next);
-  // }
+  useEffect(() => {
+    setInternal(value);
+  }, [value]);
 
   const tier = tierAt(internal);
 
@@ -279,12 +274,13 @@ function BoostCard({
 
         <Slider
           value={[internal]}
-          onValueChange={(v) =>
-            handleChange(Array.isArray(v) ? (v[0] ?? 0) : 0)
-          }
+          onValueChange={(v: number | readonly number[]) => {
+            const next = typeof v === 'number' ? v : (v[0] ?? 0);
+            setValue(next);
+          }}
           min={0}
           max={100}
-          // step={20}
+          step={20}
           className="mt-6"
         />
 

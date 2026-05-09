@@ -32,7 +32,7 @@ import {
 } from '~/components/ui/card';
 import { cn } from '~/lib/utils';
 
-const TURNOUT_COLORS = ['#16a34a', '#e5e7eb'];
+const TURNOUT_COLORS = ['#16a34a', '#e5e7eb'] as const;
 
 export const Route = createFileRoute('/dashboard/$electionDashboardSlug/')({
   beforeLoad: async ({ context, params }) => {
@@ -113,7 +113,7 @@ function OverviewPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Overview</h1>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           Quick stats for {election.name}.
         </p>
       </div>
@@ -128,7 +128,7 @@ function OverviewPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm text-muted-foreground">
               Daily {election.votingHourStart}:00 – {election.votingHourEnd}:00
             </p>
           </CardContent>
@@ -141,7 +141,7 @@ function OverviewPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm text-muted-foreground">
               {election.noOfVoters
                 ? `Up to ${election.noOfVoters.toLocaleString()} voters`
                 : 'Voter quota not set'}
@@ -203,12 +203,12 @@ function OverviewPage() {
                   <span className="text-3xl font-bold">
                     {stats.turnout.percent}%
                   </span>
-                  <span className="text-muted-foreground text-xs">turnout</span>
+                  <span className="text-xs text-muted-foreground">turnout</span>
                 </div>
               </div>
               <div className="flex gap-4 text-xs">
-                <LegendDot color={TURNOUT_COLORS[0]!} label="Voted" />
-                <LegendDot color={TURNOUT_COLORS[1]!} label="Not voted" />
+                <LegendDot color={TURNOUT_COLORS[0]} label="Voted" />
+                <LegendDot color={TURNOUT_COLORS[1]} label="Not voted" />
               </div>
             </div>
           </CardContent>
@@ -267,9 +267,7 @@ function OverviewPage() {
         </CardHeader>
         <CardContent>
           {reports.length === 0 ? (
-            <p className="text-muted-foreground text-sm">
-              No reports yet.
-            </p>
+            <p className="text-sm text-muted-foreground">No reports yet.</p>
           ) : (
             <ul className="divide-y rounded-md border">
               {reports.map((r) => (
@@ -283,8 +281,11 @@ function OverviewPage() {
                       {r.summary.voted.toLocaleString()} of{' '}
                       {r.summary.total.toLocaleString()}
                     </div>
-                    <div className="text-muted-foreground text-xs">
-                      Generated {dayjs(r.summary.generatedAt).format('MMM D, YYYY h:mm A')}
+                    <div className="text-xs text-muted-foreground">
+                      Generated{' '}
+                      {dayjs(r.summary.generatedAt).format(
+                        'MMM D, YYYY h:mm A',
+                      )}
                     </div>
                   </div>
                   {r.url && (

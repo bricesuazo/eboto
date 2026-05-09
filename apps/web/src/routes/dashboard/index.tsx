@@ -61,9 +61,7 @@ function DashboardHome() {
       </div>
 
       {isError ? (
-        <p className="text-sm text-destructive">
-          {error?.message ?? 'Failed to load elections.'}
-        </p>
+        <p className="text-sm text-destructive">{error.message}</p>
       ) : elections.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center gap-3 py-12 text-center">

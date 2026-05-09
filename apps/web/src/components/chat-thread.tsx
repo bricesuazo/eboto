@@ -18,9 +18,7 @@ type Side = 'voter' | 'admin';
 
 interface ChatThreadProps {
   /** Room id — discriminated by `side`. */
-  roomId:
-    | Id<'commissioners_voters_rooms'>
-    | Id<'admin_commissioners_rooms'>;
+  roomId: Id<'commissioners_voters_rooms'> | Id<'admin_commissioners_rooms'>;
   side: Side;
   /** Logged-in user id; messages they sent are right-aligned. */
   currentUserId: string;
@@ -71,12 +69,9 @@ export function ChatThread({
 
   return (
     <div className={cn('flex h-full flex-col', className)}>
-      <div
-        ref={scrollRef}
-        className="flex-1 space-y-3 overflow-y-auto p-4"
-      >
+      <div ref={scrollRef} className="flex-1 space-y-3 overflow-y-auto p-4">
         {messages.length === 0 ? (
-          <p className="text-muted-foreground py-12 text-center text-sm">
+          <p className="py-12 text-center text-sm text-muted-foreground">
             {emptyState ?? 'No messages yet. Say hi.'}
           </p>
         ) : (
@@ -100,8 +95,8 @@ export function ChatThread({
                 >
                   {m.message}
                 </div>
-                <span className="text-muted-foreground text-xs">
-                  {!mine && (m.authorName || m.authorEmail) && (
+                <span className="text-xs text-muted-foreground">
+                  {!mine && (m.authorName ?? m.authorEmail) && (
                     <>
                       {m.authorName ?? m.authorEmail}
                       {' · '}
@@ -139,7 +134,7 @@ export function ChatThread({
             <Send className="size-4" />
           </Button>
         </div>
-        <p className="text-muted-foreground mt-1 text-xs">
+        <p className="mt-1 text-xs text-muted-foreground">
           Enter to send, Shift+Enter for newline.
         </p>
       </div>

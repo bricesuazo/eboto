@@ -1,12 +1,6 @@
 import { useState } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
-import {
-  ArrowRight,
-  Check,
-  ChevronDown,
-  Rocket,
-  Sparkles,
-} from 'lucide-react';
+import { ArrowRight, Check, ChevronDown, Rocket, Sparkles } from 'lucide-react';
 
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -20,12 +14,7 @@ import {
 import { Separator } from '~/components/ui/separator';
 import { Slider } from '~/components/ui/slider';
 import { HOME_FAQS, HOME_FEATURES, HOME_PRICING } from '~/lib/constants/home';
-import {
-  BOOST_BASE_PRICE,
-  num,
-  peso,
-  tierAt,
-} from '~/lib/constants/pricing';
+import { BOOST_BASE_PRICE, num, peso, tierAt } from '~/lib/constants/pricing';
 import { cn } from '~/lib/utils';
 
 export const Route = createFileRoute('/')({
@@ -36,12 +25,35 @@ function HomePage() {
   return (
     <main>
       <Hero />
+      <WhatIsEboto />
       <Features />
-      <BoostPreview />
       <Pricing />
+      <BoostPreview />
       <Faq />
       <FinalCta />
     </main>
+  );
+}
+
+function WhatIsEboto() {
+  return (
+    <section id="what" className="border-b">
+      <div className="container mx-auto max-w-6xl px-6 py-20 sm:py-24">
+        <h2 className="text-center text-3xl font-bold tracking-tight text-balance sm:text-4xl">
+          Ano ang eBoto? (What is eBoto?)
+        </h2>
+        <div className="mt-10 aspect-video overflow-hidden rounded-2xl border bg-muted shadow-sm">
+          <iframe
+            src="https://www.youtube.com/embed/BKud553RTbk?si=U5n1gPfc9OIfbt_U"
+            title="What is eBoto?"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            className="h-full w-full"
+          />
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -57,7 +69,7 @@ function BoostPreview() {
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Scale up only when you need to
           </h2>
-          <p className="text-muted-foreground mt-4">
+          <p className="mt-4 text-muted-foreground">
             Drag the slider to see how Boost pricing scales with your voter
             count.
           </p>
@@ -67,7 +79,7 @@ function BoostPreview() {
           <CardContent className="p-6 sm:p-8">
             <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <div className="text-muted-foreground text-sm font-medium uppercase tracking-wide">
+                <div className="text-sm font-medium tracking-wide text-muted-foreground uppercase">
                   Boost · per election
                 </div>
                 <div className="mt-2 text-5xl font-bold tracking-tight">
@@ -75,9 +87,9 @@ function BoostPreview() {
                     ? 'Contact us'
                     : peso.format(BOOST_BASE_PRICE + tier.priceAdded)}
                 </div>
-                <p className="text-muted-foreground mt-2">
+                <p className="mt-2 text-muted-foreground">
                   Up to{' '}
-                  <span className="text-foreground font-semibold">
+                  <span className="font-semibold text-foreground">
                     {isUnlimited ? 'Unlimited' : num.format(tier.label)}
                   </span>{' '}
                   voters
@@ -98,16 +110,17 @@ function BoostPreview() {
 
             <Slider
               value={[value]}
-              onValueChange={(v) =>
-                setValue(Array.isArray(v) ? (v[0] ?? 0) : 0)
-              }
+              onValueChange={(v: number | readonly number[]) => {
+                const next = typeof v === 'number' ? v : (v[0] ?? 0);
+                setValue(next);
+              }}
               min={0}
               max={100}
               step={20}
               className="mt-8"
             />
 
-            <div className="text-muted-foreground mt-3 flex justify-between text-xs">
+            <div className="mt-3 flex justify-between text-xs text-muted-foreground">
               <span>1.5K</span>
               <span>2.5K</span>
               <span>5K</span>
@@ -126,7 +139,7 @@ function Hero() {
   return (
     <section className="relative overflow-hidden border-b">
       <div
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,var(--color-primary),transparent_60%)]/18"
+        className="bg-[radial-gradient(circle_at_top,var(--color-primary),transparent_60%)]/18 pointer-events-none absolute inset-0 -z-10"
         aria-hidden
       />
       <div className="container mx-auto max-w-6xl px-6 py-20 sm:py-28 lg:py-32">
@@ -138,7 +151,7 @@ function Hero() {
           <h1 className="text-4xl font-bold tracking-tight text-balance sm:text-5xl lg:text-6xl">
             Your one-stop online voting solution
           </h1>
-          <p className="text-muted-foreground mt-6 max-w-2xl text-balance text-lg sm:text-xl">
+          <p className="mt-6 max-w-2xl text-lg text-balance text-muted-foreground sm:text-xl">
             eBoto is a versatile, web-based platform for running secure online
             elections — for student councils, organizations, and anything in
             between.
@@ -151,11 +164,13 @@ function Hero() {
                   <ArrowRight className="size-4" />
                 </Link>
               }
-              size="lg"            />
+              size="lg"
+            />
             <Button
               render={<Link to="/pricing">View pricing</Link>}
               size="lg"
-              variant="outline"            />
+              variant="outline"
+            />
           </div>
         </div>
       </div>
@@ -171,7 +186,7 @@ function Features() {
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Everything you need to run an election
           </h2>
-          <p className="text-muted-foreground mt-4">
+          <p className="mt-4 text-muted-foreground">
             Built for organizations that want secure voting without standing up
             their own infrastructure.
           </p>
@@ -180,7 +195,7 @@ function Features() {
           {HOME_FEATURES.map(({ icon: Icon, title, body }) => (
             <Card key={title} className="border-border/60">
               <CardHeader>
-                <div className="bg-primary/10 text-primary mb-3 flex size-10 items-center justify-center rounded-lg">
+                <div className="mb-3 flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <Icon className="size-5" />
                 </div>
                 <CardTitle className="text-lg">{title}</CardTitle>
@@ -206,7 +221,7 @@ function Pricing() {
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Simple pricing
           </h2>
-          <p className="text-muted-foreground mt-4">
+          <p className="mt-4 text-muted-foreground">
             Start free. Pay only when you need more headroom or features.
           </p>
         </div>
@@ -217,7 +232,7 @@ function Pricing() {
               className={cn(
                 'flex flex-col',
                 tier.highlighted &&
-                  'border-primary ring-primary/20 shadow-lg ring-1',
+                  'border-primary shadow-lg ring-1 ring-primary/20',
               )}
             >
               <CardHeader>
@@ -232,7 +247,7 @@ function Pricing() {
                     {tier.price}
                   </span>
                   {tier.cadence && (
-                    <span className="text-muted-foreground text-sm">
+                    <span className="text-sm text-muted-foreground">
                       {tier.cadence}
                     </span>
                   )}
@@ -245,7 +260,7 @@ function Pricing() {
                 <ul className="space-y-2.5 text-sm">
                   {tier.features.map((f) => (
                     <li key={f} className="flex items-start gap-2">
-                      <Check className="text-primary mt-0.5 size-4 shrink-0" />
+                      <Check className="mt-0.5 size-4 shrink-0 text-primary" />
                       <span>{f}</span>
                     </li>
                   ))}
@@ -274,7 +289,7 @@ function Faq() {
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Frequently asked questions
           </h2>
-          <p className="text-muted-foreground mt-4">
+          <p className="mt-4 text-muted-foreground">
             Anything else?{' '}
             <Link
               to="/contact"
@@ -285,7 +300,7 @@ function Faq() {
             .
           </p>
         </div>
-        <div className="mt-12 divide-border/60 border-border/60 divide-y rounded-xl border">
+        <div className="mt-12 divide-y divide-border/60 rounded-xl border border-border/60">
           {HOME_FAQS.map(({ q, a }) => (
             <details
               key={q}
@@ -293,9 +308,9 @@ function Faq() {
             >
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left font-medium">
                 <span>{q}</span>
-                <ChevronDown className="text-muted-foreground size-4 shrink-0 transition-transform duration-200 group-open:rotate-180" />
+                <ChevronDown className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-180" />
               </summary>
-              <p className="text-muted-foreground mt-3 text-sm leading-relaxed">
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 {a}
               </p>
             </details>
@@ -310,12 +325,12 @@ function FinalCta() {
   return (
     <section className="border-b">
       <div className="container mx-auto max-w-4xl px-6 py-20 sm:py-24">
-        <Card className="border-primary/30 from-primary/10 bg-linear-to-br to-transparent">
+        <Card className="border-primary/30 bg-linear-to-br from-primary/10 to-transparent">
           <CardContent className="flex flex-col items-center gap-6 px-6 py-12 text-center sm:px-12">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
               Run your next election on eBoto
             </h2>
-            <p className="text-muted-foreground max-w-xl">
+            <p className="max-w-xl text-muted-foreground">
               Create an account in seconds. The free tier is enough for most
               student elections — upgrade only when you need more.
             </p>
@@ -337,8 +352,8 @@ function FinalCta() {
                 nativeButton={false}
               />
             </div>
-            <Separator className="bg-border/60 mt-2" />
-            <p className="text-muted-foreground text-xs">
+            <Separator className="mt-2 bg-border/60" />
+            <p className="text-xs text-muted-foreground">
               Open-source · Built in the Philippines · contact@eboto.app
             </p>
           </CardContent>

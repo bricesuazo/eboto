@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
+import { MailIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
+import { Spinner } from '~/components/ui/spinner';
 import { useAuthActions } from '~/lib/auth/provider';
 import { safeInternalPath } from '~/lib/redirect';
+import googleIcon from './../../images/google-logo.svg';
 
 interface SignInSearch {
   to?: string;
@@ -47,11 +50,11 @@ function SignInPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center px-6">
+    <main className="flex flex-col items-center justify-center px-6 py-40">
       <div className="w-full max-w-sm space-y-6">
         <div className="space-y-2 text-center">
           <h1 className="text-2xl font-semibold">Sign in to eBoto</h1>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             We'll email you a magic link.
           </p>
         </div>
@@ -79,12 +82,14 @@ function SignInPage() {
             <Input
               id="email"
               type="email"
+              placeholder="you@example.com"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <Button type="submit" className="w-full" disabled={submitting}>
+            {submitting ? <Spinner /> : <MailIcon />}{' '}
             {submitting ? 'Sending…' : 'Send magic link'}
           </Button>
         </form>
@@ -94,6 +99,7 @@ function SignInPage() {
           onClick={handleGoogle}
           disabled={oauthLoading}
         >
+          <img src={googleIcon} alt="Google" className="size-4" />{' '}
           {oauthLoading ? 'Redirecting…' : 'Continue with Google'}
         </Button>
       </div>

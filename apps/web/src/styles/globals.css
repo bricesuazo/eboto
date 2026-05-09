@@ -3,6 +3,82 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Self-hosted Poppins. font-display: block keeps text invisible until the
+ * font loads (no fallback flash). After the first paint the file is cached
+ * by the browser, so subsequent reloads have no visible delay. */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 100;
+  font-display: block;
+  src: url('@fontsource/poppins/files/poppins-latin-100-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 200;
+  font-display: block;
+  src: url('@fontsource/poppins/files/poppins-latin-200-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 300;
+  font-display: block;
+  src: url('@fontsource/poppins/files/poppins-latin-300-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url('@fontsource/poppins/files/poppins-latin-400-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url('@fontsource/poppins/files/poppins-latin-500-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  font-display: block;
+  src: url('@fontsource/poppins/files/poppins-latin-600-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 700;
+  font-display: block;
+  src: url('@fontsource/poppins/files/poppins-latin-700-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 800;
+  font-display: block;
+  src: url('@fontsource/poppins/files/poppins-latin-800-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 900;
+  font-display: block;
+  src: url('@fontsource/poppins/files/poppins-latin-900-normal.woff2')
+    format('woff2');
+}
+
 @theme {
   --font-sans:
     'Poppins', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,

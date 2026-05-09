@@ -34,7 +34,11 @@ export function SiteHeader() {
           {user ? (
             <UserMenu user={user} />
           ) : (
-            <Button render={<Link to="/sign-in">Sign in</Link>} size="sm" />
+            <Button
+              render={<Link to="/sign-in">Sign in</Link>}
+              className="rounded-full"
+              size="default"
+            />
           )}
         </nav>
       </div>
@@ -65,11 +69,7 @@ function UserMenu({ user }: { user: UserShape }) {
 
   return (
     <>
-      <Button
-        render={<Link to="/dashboard">Dashboard</Link>}
-        variant="ghost"
-        size="sm"
-      />
+      <Button render={<Link to="/dashboard">Dashboard</Link>} variant="ghost" />
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
