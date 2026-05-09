@@ -13,6 +13,7 @@ import {
   Copy,
   Fingerprint,
   Info,
+  MessagesSquare,
   QrCode,
   User as UserIcon,
 } from 'lucide-react';
@@ -160,6 +161,22 @@ function ElectionPage() {
                 )
               }
               size="lg"
+              className="rounded-full"
+            />
+          )}
+          {(isVoter || isCommissioner) && (
+            <Button
+              render={
+                <Link
+                  to="/$electionSlug/messages"
+                  params={{ electionSlug: election.slug }}
+                >
+                  <MessagesSquare className="mr-2 size-4" />
+                  Messages
+                </Link>
+              }
+              size="lg"
+              variant="outline"
               className="rounded-full"
             />
           )}

@@ -14,7 +14,9 @@ import { z } from 'zod';
 import { api } from '@eboto/backend/api';
 
 import { DashboardPending } from '~/components/dashboard-pending';
+import { ImageUpload } from '~/components/image-upload';
 import { Button } from '~/components/ui/button';
+import { useImageUpload } from '~/lib/use-image-upload';
 import {
   Card,
   CardContent,
@@ -91,7 +93,9 @@ function SettingsPage() {
   if (!election) throw notFound();
   const electionId = election._id;
   const update = useMutation(api.elections.update);
+  const setLogo = useMutation(api.elections.setLogo);
   const softDelete = useMutation(api.elections.softDelete);
+  const logo = useImageUpload(election.logoUrl);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -111,12 +115,16 @@ function SettingsPage() {
 
   async function onSubmit(values: FormValues) {
     try {
+      const logoStorageId = await logo.commit();
       await update({
         id: electionId,
         ...values,
         startDate: new Date(values.startDate).getTime(),
         endDate: new Date(values.endDate).getTime(),
       });
+      if (logoStorageId !== undefined) {
+        await setLogo({ id: electionId, storageId: logoStorageId });
+      }
       toast.success('Settings saved');
     } catch (err) {
       toast.error(
@@ -144,6 +152,13 @@ function SettingsPage() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+              <ImageUpload
+                label="Logo"
+                previewUrl={logo.previewUrl}
+                onPick={logo.pick}
+                error={logo.error}
+                disabled={form.formState.isSubmitting}
+              />
               <FormField
                 control={form.control}
                 name="name"

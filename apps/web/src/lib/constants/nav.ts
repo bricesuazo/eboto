@@ -5,6 +5,7 @@ import type { LucideIcon } from 'lucide-react';
 import {
   Flag,
   LayoutDashboard,
+  MessagesSquare,
   Replace,
   Settings,
   Users,
@@ -27,5 +28,6 @@ export const DASHBOARD_NAV_ITEMS: readonly DashboardNavItem[] = [
   { to: 'position', label: 'Positions', icon: Replace },
   { to: 'candidate', label: 'Candidates', icon: UserSearch },
   { to: 'voter', label: 'Voters', icon: Users },
+  { to: 'messages', label: 'Messages', icon: MessagesSquare },
   { to: 'settings', label: 'Settings', icon: Settings },
 ];

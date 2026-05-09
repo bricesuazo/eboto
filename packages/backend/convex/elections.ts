@@ -246,6 +246,7 @@ export const create = mutation({
     votingHourStart: v.number(),
     votingHourEnd: v.number(),
     template: v.string(),
+    logoStorageId: v.optional(v.id('_storage')),
   },
   handler: async (ctx, args) => {
     const userId = await requireUser(ctx);
@@ -301,6 +302,7 @@ export const create = mutation({
       isCandidatesVisibleInRealtimeWhenOngoing: false,
       nameArrangement: 0,
       variantId: DEFAULT_FREE_VARIANT_ID,
+      logoStorageId: args.logoStorageId,
     });
 
     await ctx.db.insert('commissioners', { userId, electionId });
@@ -393,5 +395,36 @@ export const softDelete = mutation({
     }
     await requireCommissioner(ctx, id);
     await ctx.db.patch(id, { deletedAt: Date.now() });
+  },
+});
+
+/**
+ * Sets the election's logo. Pass `null` to remove. Old blob (if any) is
+ * deleted so storage doesn't accumulate orphans on replace.
+ */
+export const setLogo = mutation({
+  args: {
+    id: v.id('elections'),
+    storageId: v.union(v.id('_storage'), v.null()),
+  },
+  handler: async (ctx, { id, storageId }) => {
+    await requireCommissioner(ctx, id);
+
+    const election = await ctx.db.get(id);
+    if (!election || election.deletedAt) {
+      throw new ConvexError({
+        code: 'not_found',
+        message: 'Election not found',
+      });
+    }
+    const previous = election.logoStorageId;
+    await ctx.db.patch(id, { logoStorageId: storageId ?? undefined });
+    if (previous && previous !== storageId) {
+      try {
+        await ctx.storage.delete(previous);
+      } catch {
+        // best-effort; the new logo is already attached
+      }
+    }
   },
 });

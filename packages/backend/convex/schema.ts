@@ -189,9 +189,12 @@ export default defineSchema({
 
   commissioners_voters_rooms: defineTable({
     name: v.string(),
+    voterId: v.optional(v.id('voters')),
     electionId: v.id('elections'),
     deletedAt: v.optional(v.number()),
-  }).index('by_election', ['electionId']),
+  })
+    .index('by_election', ['electionId'])
+    .index('by_election_voter', ['electionId', 'voterId']),
 
   commissioners_voters_messages: defineTable({
     message: v.string(),

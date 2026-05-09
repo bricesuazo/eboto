@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, notFound } from '@tanstack/react-router';
 import { useMutation } from 'convex/react';
 import { ConvexError } from 'convex/values';
-import { Pencil, Plus, Trash2, User } from 'lucide-react';
+import { ListChecks, Pencil, Plus, Trash2, User } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -13,8 +13,11 @@ import { z } from 'zod';
 import { api } from '@eboto/backend/api';
 import type { Doc } from '@eboto/backend/data-model';
 
+import { CandidateCredentialsEditor } from '~/components/candidate-credentials-editor';
 import { DashboardPending } from '~/components/dashboard-pending';
+import { ImageUpload } from '~/components/image-upload';
 import { Button } from '~/components/ui/button';
+import { useImageUpload } from '~/lib/use-image-upload';
 import {
   Card,
   CardContent,
@@ -115,6 +118,9 @@ function CandidatePage() {
   const [editing, setEditing] = useState<(typeof candidates)[number] | null>(
     null,
   );
+  const [credentialsFor, setCredentialsFor] = useState<
+    (typeof candidates)[number] | null
+  >(null);
 
   const noDeps = positions.length === 0 || partylists.length === 0;
 
@@ -169,9 +175,17 @@ function CandidatePage() {
             <Card key={c._id}>
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-base">
-                  <div className="bg-muted flex size-10 shrink-0 items-center justify-center rounded-full">
-                    <User className="size-5" />
-                  </div>
+                  {c.imageUrl ? (
+                    <img
+                      src={c.imageUrl}
+                      alt=""
+                      className="size-10 shrink-0 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="bg-muted flex size-10 shrink-0 items-center justify-center rounded-full">
+                      <User className="size-5" />
+                    </div>
+                  )}
                   <span className="truncate">
                     {c.firstName}{' '}
                     {c.middleName && `${c.middleName.charAt(0)}. `}
@@ -182,7 +196,14 @@ function CandidatePage() {
                   {c.position?.name ?? '—'} · {c.partylist?.acronym ?? '—'}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="flex justify-end gap-2">
+              <CardContent className="flex flex-wrap justify-end gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCredentialsFor(c)}
+                >
+                  <ListChecks className="mr-1.5 size-3.5" /> Credentials
+                </Button>
                 <Button
                   variant="outline"
                   size="sm"
@@ -208,7 +229,21 @@ function CandidatePage() {
             positions={positions}
             partylists={partylists}
             initial={editing}
+            initialImageUrl={editing.imageUrl}
             onClose={() => setEditing(null)}
+          />
+        )}
+      </Dialog>
+
+      <Dialog
+        open={Boolean(credentialsFor)}
+        onOpenChange={(open) => !open && setCredentialsFor(null)}
+      >
+        {credentialsFor && (
+          <CandidateCredentialsEditor
+            candidateId={credentialsFor._id}
+            candidateName={`${credentialsFor.firstName} ${credentialsFor.lastName}`}
+            onClose={() => setCredentialsFor(null)}
           />
         )}
       </Dialog>
@@ -222,6 +257,7 @@ function CandidateDialog({
   positions,
   partylists,
   initial,
+  initialImageUrl,
   onClose,
 }: {
   mode: 'create' | 'edit';
@@ -229,10 +265,13 @@ function CandidateDialog({
   positions: Doc<'positions'>[];
   partylists: Doc<'partylists'>[];
   initial?: Doc<'candidates'>;
+  initialImageUrl?: string | null;
   onClose: () => void;
 }) {
   const create = useMutation(api.candidates.create);
   const update = useMutation(api.candidates.update);
+  const setImage = useMutation(api.candidates.setImage);
+  const photo = useImageUpload(initialImageUrl);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -248,12 +287,14 @@ function CandidateDialog({
 
   async function onSubmit(values: FormValues) {
     try {
+      const imageStorageId = await photo.commit();
       if (mode === 'create') {
         await create({
           electionId,
           ...values,
           positionId: values.positionId as Doc<'positions'>['_id'],
           partylistId: values.partylistId as Doc<'partylists'>['_id'],
+          imageStorageId: imageStorageId ?? undefined,
         });
         toast.success('Candidate created');
       } else if (initial) {
@@ -263,6 +304,9 @@ function CandidateDialog({
           positionId: values.positionId as Doc<'positions'>['_id'],
           partylistId: values.partylistId as Doc<'partylists'>['_id'],
         });
+        if (imageStorageId !== undefined) {
+          await setImage({ id: initial._id, storageId: imageStorageId });
+        }
         toast.success('Candidate updated');
       }
       onClose();
@@ -282,11 +326,21 @@ function CandidateDialog({
           {mode === 'create' ? 'New candidate' : 'Edit candidate'}
         </DialogTitle>
         <DialogDescription>
-          Platforms and credentials can be added in a follow-up phase.
+          {mode === 'create'
+            ? 'Add the candidate. Platforms and credentials are managed from the candidate row after creation.'
+            : 'Update the candidate. Manage platforms and credentials from the credentials tab.'}
         </DialogDescription>
       </DialogHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <ImageUpload
+            label="Photo"
+            shape="square"
+            previewUrl={photo.previewUrl}
+            onPick={photo.pick}
+            error={photo.error}
+            disabled={form.formState.isSubmitting}
+          />
           <div className="grid grid-cols-2 gap-3">
             <FormField
               control={form.control}

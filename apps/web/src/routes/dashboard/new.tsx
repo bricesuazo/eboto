@@ -10,6 +10,8 @@ import { z } from 'zod';
 import { api } from '@eboto/backend/api';
 import { isSlugReserved } from '@eboto/backend/slugs';
 
+import { ImageUpload } from '~/components/image-upload';
+import { useImageUpload } from '~/lib/use-image-upload';
 import { Button } from '~/components/ui/button';
 import {
   Card,
@@ -71,6 +73,7 @@ export const Route = createFileRoute('/dashboard/new')({
 function NewElectionPage() {
   const navigate = useNavigate();
   const createElection = useMutation(api.elections.create);
+  const logo = useImageUpload();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -87,6 +90,7 @@ function NewElectionPage() {
 
   async function onSubmit(values: FormValues) {
     try {
+      const logoStorageId = await logo.commit();
       const result = await createElection({
         name: values.name,
         slug: values.slug,
@@ -95,6 +99,7 @@ function NewElectionPage() {
         votingHourStart: values.votingHourStart,
         votingHourEnd: values.votingHourEnd,
         template: values.template,
+        logoStorageId: logoStorageId ?? undefined,
       });
       toast.success('Election created');
       await navigate({
@@ -122,6 +127,13 @@ function NewElectionPage() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+              <ImageUpload
+                label="Election logo (optional)"
+                previewUrl={logo.previewUrl}
+                onPick={logo.pick}
+                error={logo.error}
+                disabled={form.formState.isSubmitting}
+              />
               <FormField
                 control={form.control}
                 name="name"

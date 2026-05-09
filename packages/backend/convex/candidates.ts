@@ -117,11 +117,16 @@ export const list = query({
     const partylistsById = new Map(partylists.map((p) => [p._id, p]));
     const positionsById = new Map(positions.map((p) => [p._id, p]));
 
-    return candidates.map((c) => ({
-      ...c,
-      partylist: partylistsById.get(c.partylistId) ?? null,
-      position: positionsById.get(c.positionId) ?? null,
-    }));
+    return await Promise.all(
+      candidates.map(async (c) => ({
+        ...c,
+        imageUrl: c.imageStorageId
+          ? await ctx.storage.getUrl(c.imageStorageId)
+          : null,
+        partylist: partylistsById.get(c.partylistId) ?? null,
+        position: positionsById.get(c.positionId) ?? null,
+      })),
+    );
   },
 });
 
@@ -134,6 +139,7 @@ export const create = mutation({
     slug: v.string(),
     positionId: v.id('positions'),
     partylistId: v.id('partylists'),
+    imageStorageId: v.optional(v.id('_storage')),
   },
   handler: async (ctx, args) => {
     await requireCommissioner(ctx, args.electionId);
@@ -171,6 +177,7 @@ export const create = mutation({
       positionId: args.positionId,
       partylistId: args.partylistId,
       credentialId,
+      imageStorageId: args.imageStorageId,
     });
   },
 });
@@ -235,5 +242,217 @@ export const softDelete = mutation({
     }
     await requireCommissioner(ctx, candidate.electionId);
     await ctx.db.patch(id, { deletedAt: Date.now() });
+  },
+});
+
+/** Loads platforms + all credential rows for the dashboard editor. */
+export const getCredentials = query({
+  args: { candidateId: v.id('candidates') },
+  handler: async (ctx, { candidateId }) => {
+    const candidate = await ctx.db.get(candidateId);
+    if (!candidate || candidate.deletedAt) return null;
+    await requireCommissioner(ctx, candidate.electionId);
+    const credentialId = candidate.credentialId;
+    const [platforms, achievements, affiliations, eventsAttended] =
+      await Promise.all([
+        ctx.db
+          .query('platforms')
+          .withIndex('by_candidate', (q) => q.eq('candidateId', candidateId))
+          .filter((q) => q.eq(q.field('deletedAt'), undefined))
+          .collect(),
+        ctx.db
+          .query('achievements')
+          .withIndex('by_credential', (q) => q.eq('credentialId', credentialId))
+          .filter((q) => q.eq(q.field('deletedAt'), undefined))
+          .collect(),
+        ctx.db
+          .query('affiliations')
+          .withIndex('by_credential', (q) => q.eq('credentialId', credentialId))
+          .filter((q) => q.eq(q.field('deletedAt'), undefined))
+          .collect(),
+        ctx.db
+          .query('events_attended')
+          .withIndex('by_credential', (q) => q.eq('credentialId', credentialId))
+          .filter((q) => q.eq(q.field('deletedAt'), undefined))
+          .collect(),
+      ]);
+    return {
+      platforms: platforms.map((p) => ({
+        title: p.title,
+        description: p.description ?? '',
+      })),
+      achievements: achievements.map((a) => ({ name: a.name, year: a.year })),
+      affiliations: affiliations.map((a) => ({
+        orgName: a.orgName,
+        orgPosition: a.orgPosition,
+        startYear: a.startYear,
+        endYear: a.endYear,
+      })),
+      eventsAttended: eventsAttended.map((e) => ({
+        name: e.name,
+        year: e.year,
+      })),
+    };
+  },
+});
+
+/**
+ * Replaces a candidate's platforms + credentials in one atomic mutation.
+ * The "set" semantics are intentional: rows in the request fully describe
+ * the desired state, so dropped rows are deleted and unchanged rows are
+ * patched. This way the dashboard can submit the entire form without
+ * juggling per-row create/update/delete calls.
+ */
+export const updateCandidateCredentials = mutation({
+  args: {
+    candidateId: v.id('candidates'),
+    platforms: v.array(
+      v.object({
+        title: v.string(),
+        description: v.optional(v.string()),
+      }),
+    ),
+    achievements: v.array(
+      v.object({
+        name: v.string(),
+        year: v.string(),
+      }),
+    ),
+    affiliations: v.array(
+      v.object({
+        orgName: v.string(),
+        orgPosition: v.string(),
+        startYear: v.string(),
+        endYear: v.string(),
+      }),
+    ),
+    eventsAttended: v.array(
+      v.object({
+        name: v.string(),
+        year: v.string(),
+      }),
+    ),
+  },
+  handler: async (ctx, args) => {
+    const candidate = await ctx.db.get(args.candidateId);
+    if (!candidate || candidate.deletedAt) {
+      throw new ConvexError({
+        code: 'not_found',
+        message: 'Candidate not found',
+      });
+    }
+    await requireCommissioner(ctx, candidate.electionId);
+    const credentialId = candidate.credentialId;
+
+    // Replace-all per table — easier to reason about than diffing in JS.
+    // For very long credential lists we could shift to diff-based upserts.
+    const [
+      existingPlatforms,
+      existingAchievements,
+      existingAffiliations,
+      existingEvents,
+    ] = await Promise.all([
+      ctx.db
+        .query('platforms')
+        .withIndex('by_candidate', (q) => q.eq('candidateId', args.candidateId))
+        .filter((q) => q.eq(q.field('deletedAt'), undefined))
+        .collect(),
+      ctx.db
+        .query('achievements')
+        .withIndex('by_credential', (q) => q.eq('credentialId', credentialId))
+        .filter((q) => q.eq(q.field('deletedAt'), undefined))
+        .collect(),
+      ctx.db
+        .query('affiliations')
+        .withIndex('by_credential', (q) => q.eq('credentialId', credentialId))
+        .filter((q) => q.eq(q.field('deletedAt'), undefined))
+        .collect(),
+      ctx.db
+        .query('events_attended')
+        .withIndex('by_credential', (q) => q.eq('credentialId', credentialId))
+        .filter((q) => q.eq(q.field('deletedAt'), undefined))
+        .collect(),
+    ]);
+
+    const now = Date.now();
+    await Promise.all([
+      ...existingPlatforms.map((p) => ctx.db.patch(p._id, { deletedAt: now })),
+      ...existingAchievements.map((a) =>
+        ctx.db.patch(a._id, { deletedAt: now }),
+      ),
+      ...existingAffiliations.map((a) =>
+        ctx.db.patch(a._id, { deletedAt: now }),
+      ),
+      ...existingEvents.map((e) => ctx.db.patch(e._id, { deletedAt: now })),
+    ]);
+
+    for (const p of args.platforms) {
+      const title = p.title.trim();
+      if (!title) continue;
+      await ctx.db.insert('platforms', {
+        title,
+        description: p.description?.trim() || undefined,
+        candidateId: args.candidateId,
+      });
+    }
+    for (const a of args.achievements) {
+      const name = a.name.trim();
+      if (!name) continue;
+      await ctx.db.insert('achievements', {
+        name,
+        year: a.year.trim(),
+        credentialId,
+      });
+    }
+    for (const a of args.affiliations) {
+      const orgName = a.orgName.trim();
+      if (!orgName) continue;
+      await ctx.db.insert('affiliations', {
+        orgName,
+        orgPosition: a.orgPosition.trim(),
+        startYear: a.startYear.trim(),
+        endYear: a.endYear.trim(),
+        credentialId,
+      });
+    }
+    for (const e of args.eventsAttended) {
+      const name = e.name.trim();
+      if (!name) continue;
+      await ctx.db.insert('events_attended', {
+        name,
+        year: e.year.trim(),
+        credentialId,
+      });
+    }
+  },
+});
+
+/**
+ * Sets the candidate's photo. Pass `null` to remove. Old blob is deleted on
+ * replace. Mirrors `elections.setLogo`.
+ */
+export const setImage = mutation({
+  args: {
+    id: v.id('candidates'),
+    storageId: v.union(v.id('_storage'), v.null()),
+  },
+  handler: async (ctx, { id, storageId }) => {
+    const candidate = await ctx.db.get(id);
+    if (!candidate || candidate.deletedAt) {
+      throw new ConvexError({
+        code: 'not_found',
+        message: 'Candidate not found',
+      });
+    }
+    await requireCommissioner(ctx, candidate.electionId);
+    const previous = candidate.imageStorageId;
+    await ctx.db.patch(id, { imageStorageId: storageId ?? undefined });
+    if (previous && previous !== storageId) {
+      try {
+        await ctx.storage.delete(previous);
+      } catch {
+        // best-effort
+      }
+    }
   },
 });
