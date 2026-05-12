@@ -2,8 +2,9 @@ import { getAuthUserId } from '@convex-dev/auth/server';
 import { ConvexError, v } from 'convex/values';
 
 import type { Id } from './_generated/dataModel';
-import { mutation, query } from './_generated/server';
+import { query } from './_generated/server';
 import { isVotingOpen } from './_helpers/election_timing';
+import { mutation } from './_helpers/triggers';
 
 /**
  * Loads everything the ballot UI needs in one query: election timing/meta,
@@ -307,6 +308,13 @@ export const cast = mutation({
           });
         }
       }
+    }
+
+    // Denormalize: mark voter as voted. The trigger on `voters` (see
+    // _helpers/triggers.ts) will add this voter to the voted-voters aggregate
+    // so the dashboard counts stay O(log n).
+    if (!voter.votedAt) {
+      await ctx.db.patch(voter._id, { votedAt: Date.now() });
     }
 
     return { ok: true as const };

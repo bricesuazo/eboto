@@ -138,9 +138,8 @@ function OverviewPage() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              {election.noOfVoters
-                ? `Up to ${election.noOfVoters.toLocaleString()} voters`
-                : 'Voter quota not set'}
+              {stats.turnout.total.toLocaleString()} registered voter
+              {stats.turnout.total === 1 ? '' : 's'}
             </p>
           </CardContent>
         </Card>

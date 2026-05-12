@@ -8,7 +8,6 @@ import { ConvexError } from 'convex/values';
 import { ListChecks, Pencil, Plus, Trash2, User } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
 
 import { api } from '@eboto/backend/api';
 import type { Doc } from '@eboto/backend/data-model';
@@ -49,6 +48,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
+import { candidateSchema } from '~/lib/schemas/candidate';
+import type { CandidateInput } from '~/lib/schemas/candidate';
 import { useImageUpload } from '~/lib/use-image-upload';
 
 export const Route = createFileRoute(
@@ -77,22 +78,7 @@ export const Route = createFileRoute(
   component: CandidatePage,
 });
 
-const schema = z.object({
-  firstName: z.string().min(1, 'Required'),
-  middleName: z.string().optional(),
-  lastName: z.string().min(1, 'Required'),
-  slug: z
-    .string()
-    .min(1, 'Required')
-    .toLowerCase()
-    .regex(
-      /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/,
-      'Lowercase letters/digits/dashes only',
-    ),
-  positionId: z.string().min(1, 'Required'),
-  partylistId: z.string().min(1, 'Required'),
-});
-type FormValues = z.infer<typeof schema>;
+type FormValues = CandidateInput;
 
 function CandidatePage() {
   const { electionDashboardSlug } = Route.useParams();
@@ -274,7 +260,7 @@ function CandidateDialog({
   const photo = useImageUpload(initialImageUrl);
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(candidateSchema),
     defaultValues: {
       firstName: initial?.firstName ?? '',
       middleName: initial?.middleName ?? '',

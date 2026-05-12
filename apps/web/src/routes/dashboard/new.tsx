@@ -5,11 +5,9 @@ import { ConvexError } from 'convex/values';
 import dayjs from 'dayjs';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
 
 import { api } from '@eboto/backend/api';
 import { votingEndAt, votingStartAt } from '@eboto/backend/election-timing';
-import { isSlugReserved } from '@eboto/backend/slugs';
 
 import { ImageUpload } from '~/components/image-upload';
 import { Button } from '~/components/ui/button';
@@ -39,35 +37,11 @@ import {
 } from '~/components/ui/select';
 import { parseHourTo12HourFormat } from '~/lib/election';
 import { scheduleElectionLifecycleFn } from '~/lib/inngest/server-fns';
+import { electionCreateSchema } from '~/lib/schemas/election';
+import type { ElectionCreateInput } from '~/lib/schemas/election';
 import { useImageUpload } from '~/lib/use-image-upload';
 
-const slugRegex = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
-
-const schema = z
-  .object({
-    name: z.string().min(1, 'Required'),
-    slug: z
-      .string()
-      .min(1, 'Required')
-      .toLowerCase()
-      .regex(slugRegex, 'Lowercase letters, digits, dashes only')
-      .refine((s) => !isSlugReserved(s), 'That slug is reserved'),
-    startDate: z.string().min(1, 'Required'),
-    endDate: z.string().min(1, 'Required'),
-    votingHourStart: z.number().int().min(0).max(23),
-    votingHourEnd: z.number().int().min(1).max(24),
-    template: z.string(),
-  })
-  .refine((d) => new Date(d.endDate) > new Date(d.startDate), {
-    path: ['endDate'],
-    message: 'End must be after start',
-  })
-  .refine((d) => d.votingHourEnd > d.votingHourStart, {
-    path: ['votingHourEnd'],
-    message: 'End hour must be after start hour',
-  });
-
-type FormValues = z.infer<typeof schema>;
+type FormValues = ElectionCreateInput;
 
 export const Route = createFileRoute('/dashboard/new')({
   component: NewElectionPage,
@@ -79,7 +53,7 @@ function NewElectionPage() {
   const logo = useImageUpload();
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(electionCreateSchema),
     defaultValues: {
       name: '',
       slug: '',

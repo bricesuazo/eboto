@@ -45,8 +45,10 @@
   },
   "dependencies": {
     "@auth/core": "^0.37.0",
+    "@convex-dev/aggregate": "^0.2.1",
     "@convex-dev/auth": "^0.0.91",
     "convex": "catalog:",
+    "convex-helpers": "^0.1.116",
     "pdf-lib": "^1.17.1"
   },
   "devDependencies": {

@@ -8,7 +8,6 @@ import { ConvexError } from 'convex/values';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
 
 import { api } from '@eboto/backend/api';
 import type { Doc } from '@eboto/backend/data-model';
@@ -42,6 +41,8 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
+import { positionSchema } from '~/lib/schemas/position';
+import type { PositionInput } from '~/lib/schemas/position';
 
 export const Route = createFileRoute(
   '/dashboard/$electionDashboardSlug/position',
@@ -61,18 +62,7 @@ export const Route = createFileRoute(
   component: PositionPage,
 });
 
-const schema = z
-  .object({
-    name: z.string().min(1, 'Required'),
-    description: z.string().optional(),
-    min: z.coerce.number().int().min(0),
-    max: z.coerce.number().int().min(1),
-  })
-  .refine((d) => d.min <= d.max, {
-    path: ['min'],
-    message: 'Min must be ≤ max',
-  });
-type FormValues = z.infer<typeof schema>;
+type FormValues = PositionInput;
 
 function PositionPage() {
   const { electionDashboardSlug } = Route.useParams();
@@ -193,7 +183,7 @@ function PositionDialog({
   const update = useMutation(api.positions.update);
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(positionSchema),
     defaultValues: {
       name: initial?.name ?? '',
       description: initial?.description ?? '',

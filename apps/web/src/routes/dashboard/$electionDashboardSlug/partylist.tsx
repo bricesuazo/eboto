@@ -8,7 +8,6 @@ import { ConvexError } from 'convex/values';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
 
 import { api } from '@eboto/backend/api';
 import type { Doc } from '@eboto/backend/data-model';
@@ -41,6 +40,8 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
+import { partylistSchema } from '~/lib/schemas/partylist';
+import type { PartylistInput } from '~/lib/schemas/partylist';
 
 export const Route = createFileRoute(
   '/dashboard/$electionDashboardSlug/partylist',
@@ -60,12 +61,7 @@ export const Route = createFileRoute(
   component: PartylistPage,
 });
 
-const schema = z.object({
-  name: z.string().min(1, 'Required'),
-  acronym: z.string().min(1, 'Required').max(10, 'Max 10 characters'),
-  description: z.string().optional(),
-});
-type FormValues = z.infer<typeof schema>;
+type FormValues = PartylistInput;
 
 function PartylistPage() {
   const { electionDashboardSlug } = Route.useParams();
@@ -178,7 +174,7 @@ function PartylistDialog({
   const update = useMutation(api.partylists.update);
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(partylistSchema),
     defaultValues: {
       name: initial?.name ?? '',
       acronym: initial?.acronym ?? '',

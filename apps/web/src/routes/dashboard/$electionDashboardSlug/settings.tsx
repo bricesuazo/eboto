@@ -9,11 +9,9 @@ import dayjs from 'dayjs';
 import { Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
 
 import { api } from '@eboto/backend/api';
 import { votingEndAt, votingStartAt } from '@eboto/backend/election-timing';
-import { isSlugReserved } from '@eboto/backend/slugs';
 
 import { DashboardPending } from '~/components/dashboard-pending';
 import { ImageUpload } from '~/components/image-upload';
@@ -46,6 +44,8 @@ import { Switch } from '~/components/ui/switch';
 import { Textarea } from '~/components/ui/textarea';
 import { parseHourTo12HourFormat } from '~/lib/election';
 import { scheduleElectionLifecycleFn } from '~/lib/inngest/server-fns';
+import { electionSettingsSchema } from '~/lib/schemas/election';
+import type { ElectionSettingsInput } from '~/lib/schemas/election';
 import { useImageUpload } from '~/lib/use-image-upload';
 
 export const Route = createFileRoute(
@@ -63,36 +63,7 @@ export const Route = createFileRoute(
   component: SettingsPage,
 });
 
-const slugRegex = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
-
-const schema = z
-  .object({
-    name: z.string().min(1, 'Required'),
-    slug: z
-      .string()
-      .min(1, 'Required')
-      .toLowerCase()
-      .regex(slugRegex, 'Lowercase letters, digits, dashes only')
-      .refine((s) => !isSlugReserved(s), 'That slug is reserved'),
-    description: z.string(),
-    startDate: z.string().min(1),
-    endDate: z.string().min(1),
-    votingHourStart: z.number().int().min(0).max(23),
-    votingHourEnd: z.number().int().min(1).max(24),
-    publicity: z.enum(['PRIVATE', 'VOTER', 'PUBLIC']),
-    nameArrangement: z.number().int().min(0).max(1),
-    isCandidatesVisibleInRealtimeWhenOngoing: z.boolean(),
-  })
-  .refine((d) => new Date(d.endDate) > new Date(d.startDate), {
-    path: ['endDate'],
-    message: 'End must be after start',
-  })
-  .refine((d) => d.votingHourEnd > d.votingHourStart, {
-    path: ['votingHourEnd'],
-    message: 'End hour must be after start hour',
-  });
-
-type FormValues = z.infer<typeof schema>;
+type FormValues = ElectionSettingsInput;
 
 function SettingsPage() {
   const { electionDashboardSlug } = Route.useParams();
@@ -109,7 +80,7 @@ function SettingsPage() {
   const logo = useImageUpload(election.logoUrl);
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(electionSettingsSchema),
     defaultValues: {
       name: election.name,
       slug: election.slug,

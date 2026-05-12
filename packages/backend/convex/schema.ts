@@ -1,7 +1,7 @@
 import { authTables } from '@convex-dev/auth/server';
 import { defineSchema, defineTable } from 'convex/server';
-import { v } from 'convex/values';
 import type { Infer } from 'convex/values';
+import { v } from 'convex/values';
 
 const publicity = v.union(
   v.literal('PRIVATE'),
@@ -47,7 +47,6 @@ export default defineSchema({
     isCandidatesVisibleInRealtimeWhenOngoing: v.boolean(),
     nameArrangement: v.number(),
     variantId: v.number(),
-    noOfVoters: v.optional(v.number()),
     deletedAt: v.optional(v.number()),
   })
     .index('by_slug', ['slug'])
@@ -153,11 +152,17 @@ export default defineSchema({
     email: v.string(),
     field: v.optional(v.any()),
     electionId: v.id('elections'),
+    votedAt: v.optional(v.number()),
     deletedAt: v.optional(v.number()),
   })
     .index('by_election', ['electionId'])
     .index('by_email', ['email'])
-    .index('by_election_email', ['electionId', 'email']),
+    .index('by_election_email', ['electionId', 'email'])
+    .index('by_election_voted', ['electionId', 'votedAt'])
+    .searchIndex('search_email', {
+      searchField: 'email',
+      filterFields: ['electionId', 'deletedAt'],
+    }),
 
   votes: defineTable({
     voterId: v.id('voters'),

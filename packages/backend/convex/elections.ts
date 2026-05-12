@@ -329,7 +329,6 @@ export const getDashboardBySlug = query({
       nameArrangement: election.nameArrangement,
       isCandidatesVisibleInRealtimeWhenOngoing:
         election.isCandidatesVisibleInRealtimeWhenOngoing,
-      noOfVoters: election.noOfVoters,
       variantId: election.variantId,
       logoUrl,
     };
@@ -468,12 +467,6 @@ export const update = mutation({
       throw new ConvexError({
         code: 'invalid_argument',
         message: 'End must be after start',
-      });
-    }
-    if (args.votingHourStart >= args.votingHourEnd) {
-      throw new ConvexError({
-        code: 'invalid_argument',
-        message: 'End hour must be after start hour',
       });
     }
 
