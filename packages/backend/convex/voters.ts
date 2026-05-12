@@ -1,7 +1,7 @@
 import { paginationOptsValidator } from 'convex/server';
 import { ConvexError, v } from 'convex/values';
 
-import { query } from './_generated/server';
+import { internalQuery, query } from './_generated/server';
 import { requireCommissioner } from './_helpers/auth';
 import {
   internalMutation,
@@ -9,6 +9,7 @@ import {
   rawInternalMutation,
 } from './_helpers/triggers';
 import { votedByElection, votersByElection } from './aggregates';
+import { voterNotificationPhase } from './schema';
 
 const statusFilter = v.union(
   v.literal('all'),
@@ -305,3 +306,112 @@ export const backfillAggregates = rawInternalMutation({
 // `internalMutation` is re-exported so other Convex files can write voters
 // via the triggered factory if needed in the future.
 export { internalMutation };
+
+/* ------------------------------------------------------------------ */
+/* Lifecycle email blast                                                */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Paginated voter listing used by the Inngest lifecycle fan-out. Returns
+ * only the columns needed to enqueue per-voter email events so the worker
+ * doesn't pull voter custom fields it won't use.
+ *
+ * Marked `internal` because the Inngest function calls it via an admin
+ * Convex client — no per-user auth needed (or available) at that layer.
+ */
+export const listForBlast = internalQuery({
+  args: {
+    electionId: v.id('elections'),
+    cursor: v.optional(v.union(v.string(), v.null())),
+    pageSize: v.optional(v.number()),
+  },
+  handler: async (ctx, { electionId, cursor, pageSize }) => {
+    const page = await ctx.db
+      .query('voters')
+      .withIndex('by_election', (q) => q.eq('electionId', electionId))
+      .filter((q) => q.eq(q.field('deletedAt'), undefined))
+      .paginate({ numItems: pageSize ?? 200, cursor: cursor ?? null });
+    return {
+      voters: page.page.map((v) => ({ _id: v._id, email: v.email })),
+      continueCursor: page.continueCursor,
+      isDone: page.isDone,
+    };
+  },
+});
+
+/**
+ * Internal lookup the Inngest sender uses to skip voters that have already
+ * been notified for a phase. Cheap due to the dedicated index.
+ */
+export const getNotification = internalQuery({
+  args: {
+    electionId: v.id('elections'),
+    voterId: v.id('voters'),
+    phase: voterNotificationPhase,
+  },
+  handler: async (ctx, { electionId, voterId, phase }) => {
+    return await ctx.db
+      .query('voter_notifications')
+      .withIndex('by_election_voter_phase', (q) =>
+        q
+          .eq('electionId', electionId)
+          .eq('voterId', voterId)
+          .eq('phase', phase),
+      )
+      .first();
+  },
+});
+
+/**
+ * Voter lookup for the Inngest sender. Returns null when the voter has
+ * been soft-deleted between fan-out and send so the handler can no-op.
+ */
+export const getForBlast = internalQuery({
+  args: { voterId: v.id('voters') },
+  handler: async (ctx, { voterId }) => {
+    const voter = await ctx.db.get(voterId);
+    if (!voter || voter.deletedAt) return null;
+    return { _id: voter._id, email: voter.email, electionId: voter.electionId };
+  },
+});
+
+/**
+ * Records the outcome of a single per-voter send. The pre-check on
+ * `by_election_voter_phase` plus this insert make the send effectively
+ * idempotent: if two parallel attempts race, the second sees the existing
+ * row and skips.
+ */
+export const recordNotification = internalMutation({
+  args: {
+    electionId: v.id('elections'),
+    voterId: v.id('voters'),
+    phase: voterNotificationPhase,
+    status: v.union(v.literal('sent'), v.literal('failed')),
+    providerId: v.optional(v.string()),
+    error: v.optional(v.string()),
+  },
+  handler: async (
+    ctx,
+    { electionId, voterId, phase, status, providerId, error },
+  ) => {
+    const existing = await ctx.db
+      .query('voter_notifications')
+      .withIndex('by_election_voter_phase', (q) =>
+        q
+          .eq('electionId', electionId)
+          .eq('voterId', voterId)
+          .eq('phase', phase),
+      )
+      .first();
+    if (existing) return existing._id;
+    return await ctx.db.insert('voter_notifications', {
+      electionId,
+      voterId,
+      phase,
+      status,
+      providerId,
+      error,
+      sentAt: Date.now(),
+    });
+  },
+});

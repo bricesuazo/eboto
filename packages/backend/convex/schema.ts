@@ -17,6 +17,12 @@ export const voterFieldType = v.union(
 );
 export type VoterFieldType = Infer<typeof voterFieldType>;
 
+export const voterNotificationPhase = v.union(
+  v.literal('start'),
+  v.literal('end'),
+);
+export type VoterNotificationPhase = Infer<typeof voterNotificationPhase>;
+
 export default defineSchema({
   // ---- Convex Auth tables (users, accounts, sessions, …) ----
   // The default `users` table from authTables is extended below.
@@ -163,6 +169,23 @@ export default defineSchema({
       searchField: 'email',
       filterFields: ['electionId', 'deletedAt'],
     }),
+
+  // Records every "election started"/"election ended" email we've handed to
+  // the email provider for a given voter. The `by_election_voter_phase`
+  // index doubles as an idempotency guard: the Inngest sender does a
+  // first-write-wins insert keyed on (electionId, voterId, phase) so a
+  // re-emit of the lifecycle event won't double-send.
+  voter_notifications: defineTable({
+    electionId: v.id('elections'),
+    voterId: v.id('voters'),
+    phase: voterNotificationPhase,
+    status: v.union(v.literal('sent'), v.literal('failed')),
+    providerId: v.optional(v.string()),
+    error: v.optional(v.string()),
+    sentAt: v.number(),
+  })
+    .index('by_election_phase', ['electionId', 'phase'])
+    .index('by_election_voter_phase', ['electionId', 'voterId', 'phase']),
 
   votes: defineTable({
     voterId: v.id('voters'),

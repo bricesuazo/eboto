@@ -42,3 +42,18 @@ export function convexUrlFromEnv(): string {
   }
   return url;
 }
+
+/**
+ * Shared secret that authenticates this worker when it calls
+ * `api.voterBlast.runLifecycle`. Must match the value set on the Convex
+ * deployment as `BLAST_TRIGGER_SECRET`.
+ */
+export function blastTriggerSecretFromEnv(): string {
+  const secret = process.env.BLAST_TRIGGER_SECRET;
+  if (!secret) {
+    throw new Error(
+      'Inngest function needs BLAST_TRIGGER_SECRET to call the voter blast',
+    );
+  }
+  return secret;
+}
