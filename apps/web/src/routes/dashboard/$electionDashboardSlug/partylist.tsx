@@ -87,7 +87,7 @@ function PartylistPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Partylists</h1>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             Groupings candidates can run under.
           </p>
         </div>
@@ -95,7 +95,7 @@ function PartylistPage() {
           <DialogTrigger
             render={
               <Button>
-                <Plus className="mr-2 size-4" />
+                <Plus className="size-4" />
                 New partylist
               </Button>
             }
@@ -110,7 +110,7 @@ function PartylistPage() {
 
       {partylists.length === 0 ? (
         <Card>
-          <CardContent className="text-muted-foreground py-12 text-center text-sm">
+          <CardContent className="py-12 text-center text-sm text-muted-foreground">
             No partylists yet.
           </CardContent>
         </Card>
@@ -121,7 +121,7 @@ function PartylistPage() {
               <CardHeader>
                 <CardTitle className="text-lg">
                   {pl.name}{' '}
-                  <span className="text-muted-foreground font-normal">
+                  <span className="font-normal text-muted-foreground">
                     ({pl.acronym})
                   </span>
                 </CardTitle>

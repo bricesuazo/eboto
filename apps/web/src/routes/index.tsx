@@ -28,7 +28,6 @@ function HomePage() {
       <WhatIsEboto />
       <Features />
       <Pricing />
-      <BoostPreview />
       <Faq />
       <FinalCta />
     </main>
@@ -52,84 +51,6 @@ function WhatIsEboto() {
             className="h-full w-full"
           />
         </div>
-      </div>
-    </section>
-  );
-}
-
-function BoostPreview() {
-  const [value, setValue] = useState(0);
-  const tier = tierAt(value);
-  const isUnlimited = tier.label === -1;
-
-  return (
-    <section className="border-b">
-      <div className="container mx-auto max-w-4xl px-6 py-20 sm:py-24">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Scale up only when you need to
-          </h2>
-          <p className="mt-4 text-muted-foreground">
-            Drag the slider to see how Boost pricing scales with your voter
-            count.
-          </p>
-        </div>
-
-        <Card className="mt-10 border-emerald-500/40 dark:border-emerald-800">
-          <CardContent className="p-6 sm:p-8">
-            <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <div className="text-sm font-medium tracking-wide text-muted-foreground uppercase">
-                  Boost · per election
-                </div>
-                <div className="mt-2 text-5xl font-bold tracking-tight">
-                  {isUnlimited
-                    ? 'Contact us'
-                    : peso.format(BOOST_BASE_PRICE + tier.priceAdded)}
-                </div>
-                <p className="mt-2 text-muted-foreground">
-                  Up to{' '}
-                  <span className="font-semibold text-foreground">
-                    {isUnlimited ? 'Unlimited' : num.format(tier.label)}
-                  </span>{' '}
-                  voters
-                </p>
-              </div>
-
-              <Button
-                render={
-                  <Link to={isUnlimited ? '/contact' : '/pricing'}>
-                    {isUnlimited ? 'Contact us' : 'See full pricing'}
-                    <Rocket className="size-4" />
-                  </Link>
-                }
-                size="lg"
-                className="rounded-full"
-              />
-            </div>
-
-            <Slider
-              value={[value]}
-              onValueChange={(v: number | readonly number[]) => {
-                const next = typeof v === 'number' ? v : (v[0] ?? 0);
-                setValue(next);
-              }}
-              min={0}
-              max={100}
-              step={20}
-              className="mt-8"
-            />
-
-            <div className="mt-3 flex justify-between text-xs text-muted-foreground">
-              <span>1.5K</span>
-              <span>2.5K</span>
-              <span>5K</span>
-              <span>7.5K</span>
-              <span>10K</span>
-              <span>Unlimited</span>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </section>
   );
@@ -214,9 +135,13 @@ function Features() {
 }
 
 function Pricing() {
+  const [value, setValue] = useState(0);
+  const tier = tierAt(value);
+  const isUnlimited = tier.label === -1;
+
   return (
     <section id="pricing" className="border-b">
-      <div className="container mx-auto max-w-6xl px-6 py-20 sm:py-24">
+      <div className="container mx-auto max-w-6xl px-6 py-12 sm:py-16">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
             Simple pricing
@@ -276,6 +201,74 @@ function Pricing() {
             </Card>
           ))}
         </div>
+      </div>
+
+      <div className="container mx-auto max-w-4xl px-6 py-12 sm:py-16">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            Scale up only when you need to
+          </h2>
+          <p className="mt-4 text-muted-foreground">
+            Drag the slider to see how Boost pricing scales with your voter
+            count.
+          </p>
+        </div>
+
+        <Card className="mt-10 border-emerald-500/40 dark:border-emerald-800">
+          <CardContent className="p-6 sm:p-8">
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <div className="text-sm font-medium tracking-wide text-muted-foreground uppercase">
+                  Boost · per election
+                </div>
+                <div className="mt-2 text-5xl font-bold tracking-tight">
+                  {isUnlimited
+                    ? 'Contact us'
+                    : peso.format(BOOST_BASE_PRICE + tier.priceAdded)}
+                </div>
+                <p className="mt-2 text-muted-foreground">
+                  Up to{' '}
+                  <span className="font-semibold text-foreground">
+                    {isUnlimited ? 'Unlimited' : num.format(tier.label)}
+                  </span>{' '}
+                  voters
+                </p>
+              </div>
+
+              <Button
+                render={
+                  <Link to={isUnlimited ? '/contact' : '/pricing'}>
+                    {isUnlimited ? 'Contact us' : 'See full pricing'}
+                    <Rocket className="size-4" />
+                  </Link>
+                }
+                size="lg"
+                className="rounded-full"
+              />
+            </div>
+
+            <Slider
+              value={[value]}
+              onValueChange={(v: number | readonly number[]) => {
+                const next = typeof v === 'number' ? v : (v[0] ?? 0);
+                setValue(next);
+              }}
+              min={0}
+              max={100}
+              step={20}
+              className="mt-8"
+            />
+
+            <div className="mt-3 flex justify-between text-xs text-muted-foreground">
+              <span>1.5K</span>
+              <span>2.5K</span>
+              <span>5K</span>
+              <span>7.5K</span>
+              <span>10K</span>
+              <span>Unlimited</span>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </section>
   );

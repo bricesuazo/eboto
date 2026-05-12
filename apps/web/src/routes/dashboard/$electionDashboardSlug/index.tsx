@@ -1,23 +1,27 @@
-import { useState } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, notFound } from '@tanstack/react-router';
-import { useAction } from 'convex/react';
-import { ConvexError } from 'convex/values';
 import dayjs from 'dayjs';
 import {
   CheckCircle2,
   Circle,
   Download,
-  FileText,
   Flag,
-  Loader2,
   Replace,
   Users,
   UserSearch,
 } from 'lucide-react';
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
-import { toast } from 'sonner';
+import {
+  Bar,
+  BarChart,
+  Cell,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 
 import { api } from '@eboto/backend/api';
 
@@ -55,6 +59,11 @@ export const Route = createFileRoute('/dashboard/$electionDashboardSlug/')({
             electionId: election._id,
           }),
         ),
+        context.queryClient.ensureQueryData(
+          convexQuery(api.voterFields.statsByField, {
+            electionId: election._id,
+          }),
+        ),
       );
     }
     await Promise.all(tasks);
@@ -81,25 +90,12 @@ function OverviewPage() {
     }),
     enabled: Boolean(election),
   });
-  const generatePdf = useAction(api.results.generateTurnoutPdf);
-  const [generating, setGenerating] = useState(false);
-
-  async function handleGenerate() {
-    if (!election) return;
-    setGenerating(true);
-    try {
-      await generatePdf({ electionId: election._id });
-      toast.success('Report generated');
-    } catch (err) {
-      toast.error(
-        err instanceof ConvexError
-          ? ((err.data as { message?: string }).message ?? 'Failed')
-          : 'Failed',
-      );
-    } finally {
-      setGenerating(false);
-    }
-  }
+  const { data: fieldStats = [] } = useQuery({
+    ...convexQuery(api.voterFields.statsByField, {
+      electionId: election?._id ?? ('' as never),
+    }),
+    enabled: Boolean(election),
+  });
 
   if (!election || !stats) throw notFound();
 
@@ -238,7 +234,7 @@ function OverviewPage() {
         </div>
       </div>
 
-      <Card>
+      <Card className="gap-1">
         <CardHeader className="flex-row items-start justify-between gap-4">
           <div>
             <CardTitle>Voter turnout report</CardTitle>
@@ -248,22 +244,6 @@ function OverviewPage() {
                 : 'Available after the election ends. Generate one anyway if you need a snapshot now.'}
             </CardDescription>
           </div>
-          <Button
-            type="button"
-            onClick={handleGenerate}
-            disabled={generating}
-            size="sm"
-          >
-            {generating ? (
-              <>
-                <Loader2 className="mr-1.5 size-4 animate-spin" /> Generating…
-              </>
-            ) : (
-              <>
-                <FileText className="mr-1.5 size-4" /> Generate report
-              </>
-            )}
-          </Button>
         </CardHeader>
         <CardContent>
           {reports.length === 0 ? (
@@ -308,6 +288,28 @@ function OverviewPage() {
                 </li>
               ))}
             </ul>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Voter fields</CardTitle>
+          <CardDescription>
+            Turnout broken down by each custom voter field.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {fieldStats.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              No custom fields. Add some from the Voters page.
+            </p>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2">
+              {fieldStats.map((f) => (
+                <FieldStatsBlock key={f.fieldId} field={f} />
+              ))}
+            </div>
           )}
         </CardContent>
       </Card>
@@ -386,6 +388,75 @@ function ChecklistItem({
         <Circle className="size-4" />
       )}
       <span className={cn(done && 'line-through')}>{children}</span>
+    </div>
+  );
+}
+
+function FieldStatsBlock({
+  field,
+}: {
+  field: {
+    fieldId: string;
+    name: string;
+    type: string;
+    buckets: { value: string; total: number; voted: number }[];
+  };
+}) {
+  const chartData = field.buckets.map((b) => ({
+    value: b.value,
+    voted: b.voted,
+    notVoted: Math.max(b.total - b.voted, 0),
+    total: b.total,
+  }));
+  const chartHeight = Math.max(80, chartData.length * 36 + 24);
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-baseline gap-2">
+        <span className="font-mono text-sm">{field.name}</span>
+        <span className="text-xs tracking-wide text-muted-foreground uppercase">
+          {field.type}
+        </span>
+      </div>
+      {chartData.length === 0 ? (
+        <p className="text-xs text-muted-foreground">No voters yet.</p>
+      ) : (
+        <>
+          <ResponsiveContainer width="100%" height={chartHeight}>
+            <BarChart
+              data={chartData}
+              layout="vertical"
+              margin={{ top: 4, right: 8, bottom: 4, left: 8 }}
+            >
+              <XAxis type="number" hide allowDecimals={false} />
+              <YAxis
+                type="category"
+                dataKey="value"
+                width={96}
+                tickLine={false}
+                axisLine={false}
+                tick={{ fontSize: 11, fontFamily: 'var(--font-mono)' }}
+              />
+              <Tooltip
+                cursor={{ fill: 'rgba(0,0,0,0.04)' }}
+                formatter={(value, name) => {
+                  const n = Number(value);
+                  return [
+                    `${n.toLocaleString()} voter${n === 1 ? '' : 's'}`,
+                    name === 'voted' ? 'Voted' : 'Not voted',
+                  ];
+                }}
+              />
+              <Bar dataKey="voted" stackId="a" fill="#16a34a" />
+              <Bar dataKey="notVoted" stackId="a" fill="#e5e7eb" />
+            </BarChart>
+          </ResponsiveContainer>
+          <div className="flex gap-4 text-xs">
+            <LegendDot color="#16a34a" label="Voted" />
+            <LegendDot color="#e5e7eb" label="Not voted" />
+          </div>
+        </>
+      )}
     </div>
   );
 }

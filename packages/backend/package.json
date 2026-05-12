@@ -35,6 +35,7 @@
   "scripts": {
     "clean": "git clean -xdf .turbo node_modules convex/_generated",
     "dev": "pnpm with-env convex dev",
+    "build": "pnpm with-env convex deploy",
     "deploy": "pnpm with-env convex deploy",
     "codegen": "pnpm with-env convex codegen",
     "lint": "eslint",

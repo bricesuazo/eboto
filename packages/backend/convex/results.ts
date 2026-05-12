@@ -1,10 +1,8 @@
 import { getAuthUserId } from '@convex-dev/auth/server';
 import { ConvexError, v } from 'convex/values';
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 
-import { internal } from './_generated/api';
 import type { Id } from './_generated/dataModel';
-import { action, internalMutation, internalQuery, query } from './_generated/server';
+import { internalMutation, internalQuery, query } from './_generated/server';
 import { requireCommissioner } from './_helpers/auth';
 import { isElectionInProgress } from './_helpers/election_timing';
 
@@ -247,146 +245,6 @@ export const recordGeneratedResult = internalMutation({
 });
 
 /**
- * Builds a turnout-report PDF for an ended election and stores it. Idempotent
- * is up to the caller — re-invoking creates a fresh row and a new blob.
- *
- * Trigger sources:
- *   - Inngest `election-ended` function (auto, on `endDate`).
- *   - Manual "Generate report" button in the dashboard for commissioners.
- */
-export const generateTurnoutPdf = action({
-  args: { electionId: v.id('elections') },
-  handler: async (
-    ctx,
-    { electionId },
-  ): Promise<{
-    generatedId: Id<'generated_election_results'>;
-    storageId: Id<'_storage'>;
-  }> => {
-    const snap = await ctx.runQuery(internal.results.getTurnoutSnapshot, {
-      electionId,
-    });
-    if (!snap) {
-      throw new ConvexError({
-        code: 'not_found',
-        message: 'Election not found',
-      });
-    }
-    const pdf = await PDFDocument.create();
-    const font = await pdf.embedFont(StandardFonts.Helvetica);
-    const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
-    const dark = rgb(0.04, 0.04, 0.04);
-    const muted = rgb(0.4, 0.4, 0.4);
-    const accent = rgb(0.086, 0.639, 0.29);
-
-    const totalVoters = snap.voters.length;
-    const totalVoted = snap.voters.filter((v) => v.hasVoted).length;
-    const percent =
-      totalVoters === 0 ? 0 : Math.round((totalVoted / totalVoters) * 1000) / 10;
-
-    let page = pdf.addPage([612, 792]);
-    let y = 760;
-    const margin = 48;
-
-    page.drawText('Voter Turnout Report', {
-      x: margin,
-      y,
-      size: 22,
-      font: bold,
-      color: dark,
-    });
-    y -= 28;
-    page.drawText(snap.election.name, {
-      x: margin,
-      y,
-      size: 14,
-      font,
-      color: muted,
-    });
-    y -= 18;
-    page.drawText(
-      `${formatDate(snap.election.startDate)} – ${formatDate(snap.election.endDate)}`,
-      { x: margin, y, size: 11, font, color: muted },
-    );
-    y -= 36;
-
-    page.drawText(`Turnout: ${percent}%`, {
-      x: margin,
-      y,
-      size: 18,
-      font: bold,
-      color: accent,
-    });
-    y -= 18;
-    page.drawText(
-      `${totalVoted.toLocaleString()} of ${totalVoters.toLocaleString()} registered voters cast a ballot.`,
-      { x: margin, y, size: 11, font, color: dark },
-    );
-    y -= 30;
-
-    page.drawText('Voter list', {
-      x: margin,
-      y,
-      size: 13,
-      font: bold,
-      color: dark,
-    });
-    y -= 18;
-    page.drawText('Email', { x: margin, y, size: 10, font: bold, color: dark });
-    page.drawText('Status', {
-      x: 460,
-      y,
-      size: 10,
-      font: bold,
-      color: dark,
-    });
-    y -= 14;
-
-    for (const voter of snap.voters) {
-      if (y < margin + 40) {
-        page = pdf.addPage([612, 792]);
-        y = 760;
-      }
-      page.drawText(voter.email, {
-        x: margin,
-        y,
-        size: 10,
-        font,
-        color: dark,
-      });
-      page.drawText(voter.hasVoted ? 'Voted' : 'Not voted', {
-        x: 460,
-        y,
-        size: 10,
-        font,
-        color: voter.hasVoted ? accent : muted,
-      });
-      y -= 14;
-    }
-
-    const bytes = await pdf.save();
-    const blob = new Blob([new Uint8Array(bytes)], { type: 'application/pdf' });
-    const storageId = await ctx.storage.store(blob);
-
-    const generatedId = await ctx.runMutation(
-      internal.results.recordGeneratedResult,
-      {
-        electionId,
-        storageId,
-        summary: {
-          total: totalVoters,
-          voted: totalVoted,
-          percent,
-          generatedAt: Date.now(),
-        },
-      },
-    );
-
-    return { generatedId, storageId };
-  },
-});
-
-/**
  * Lists generated reports for an election with download URLs. Caller must
  * be a commissioner.
  */
@@ -425,12 +283,3 @@ export const listGeneratedReports = query({
     );
   },
 });
-
-function formatDate(ms: number) {
-  const d = new Date(ms);
-  return d.toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}

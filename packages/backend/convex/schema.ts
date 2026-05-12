@@ -1,12 +1,21 @@
+import { authTables } from '@convex-dev/auth/server';
 import { defineSchema, defineTable } from 'convex/server';
 import { v } from 'convex/values';
-import { authTables } from '@convex-dev/auth/server';
+import type { Infer } from 'convex/values';
 
 const publicity = v.union(
   v.literal('PRIVATE'),
   v.literal('VOTER'),
   v.literal('PUBLIC'),
 );
+
+export const voterFieldType = v.union(
+  v.literal('text'),
+  v.literal('number'),
+  v.literal('boolean'),
+  v.literal('date'),
+);
+export type VoterFieldType = Infer<typeof voterFieldType>;
 
 export default defineSchema({
   // ---- Convex Auth tables (users, accounts, sessions, …) ----
@@ -135,6 +144,7 @@ export default defineSchema({
 
   voter_fields: defineTable({
     name: v.string(),
+    type: voterFieldType,
     electionId: v.id('elections'),
     deletedAt: v.optional(v.number()),
   }).index('by_election', ['electionId']),

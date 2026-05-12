@@ -94,7 +94,7 @@ function PositionPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Positions</h1>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             Roles voters will choose candidates for. Order is preserved on the
             ballot.
           </p>
@@ -103,7 +103,7 @@ function PositionPage() {
           <DialogTrigger
             render={
               <Button>
-                <Plus className="mr-2 size-4" />
+                <Plus className="size-4" />
                 New position
               </Button>
             }
@@ -118,7 +118,7 @@ function PositionPage() {
 
       {positions.length === 0 ? (
         <Card>
-          <CardContent className="text-muted-foreground py-12 text-center text-sm">
+          <CardContent className="py-12 text-center text-sm text-muted-foreground">
             No positions yet.
           </CardContent>
         </Card>
@@ -128,7 +128,7 @@ function PositionPage() {
             <Card key={pos._id}>
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-lg">
-                  <span className="text-muted-foreground text-xs font-mono">
+                  <span className="font-mono text-xs text-muted-foreground">
                     #{i + 1}
                   </span>
                   {pos.name}
@@ -140,7 +140,7 @@ function PositionPage() {
                 )}
               </CardHeader>
               <CardContent className="flex items-center justify-between">
-                <span className="text-muted-foreground text-sm">
+                <span className="text-sm text-muted-foreground">
                   {pos.min === 0 && pos.max === 1
                     ? 'Pick 1 candidate'
                     : `Pick ${pos.min}–${pos.max} candidates`}

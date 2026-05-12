@@ -134,7 +134,7 @@ function ElectionPage() {
                   to="/$electionSlug/result"
                   params={{ electionSlug: election.slug }}
                 >
-                  <Clock3 className="mr-2 size-4" />
+                  <Clock3 className="size-4" />
                   Realtime count
                 </Link>
               }
@@ -150,12 +150,12 @@ function ElectionPage() {
                     to="/$electionSlug/vote"
                     params={{ electionSlug: election.slug }}
                   >
-                    <Fingerprint className="mr-2 size-4" />
+                    <Fingerprint className="size-4" />
                     Vote now!
                   </Link>
                 ) : (
                   <Link to="/sign-in" search={{ to: `/${election.slug}/vote` }}>
-                    <Fingerprint className="mr-2 size-4" />
+                    <Fingerprint className="size-4" />
                     Vote now!
                   </Link>
                 )
@@ -171,7 +171,7 @@ function ElectionPage() {
                   to="/$electionSlug/messages"
                   params={{ electionSlug: election.slug }}
                 >
-                  <MessagesSquare className="mr-2 size-4" />
+                  <MessagesSquare className="size-4" />
                   Messages
                 </Link>
               }
@@ -306,7 +306,7 @@ function ShareQrButton({
         className="rounded-full"
         onClick={() => setOpen(true)}
       >
-        <QrCode className="mr-2 size-4" />
+        <QrCode className="size-4" />
         Share QR
       </Button>
       <DialogContent className="sm:max-w-sm">
@@ -336,7 +336,7 @@ function ShareQrButton({
             onClick={handleCopy}
             className="w-full sm:w-auto"
           >
-            <Copy className="mr-2 size-4" />
+            <Copy className="size-4" />
             Copy link
           </Button>
         </DialogFooter>

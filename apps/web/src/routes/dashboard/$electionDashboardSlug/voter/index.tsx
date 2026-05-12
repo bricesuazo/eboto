@@ -1,0 +1,614 @@
+import { useState } from 'react';
+import { convexQuery } from '@convex-dev/react-query';
+import { useQuery } from '@tanstack/react-query';
+import { createFileRoute, Link, notFound } from '@tanstack/react-router';
+import { useMutation } from 'convex/react';
+import { ConvexError } from 'convex/values';
+import {
+  CheckCircle2,
+  Info,
+  Pencil,
+  Plus,
+  Settings,
+  Trash2,
+  Upload,
+  X,
+} from 'lucide-react';
+import { toast } from 'sonner';
+
+import { api } from '@eboto/backend/api';
+import type { Doc } from '@eboto/backend/data-model';
+import type { VoterFieldType } from '@eboto/backend/schema';
+
+import { DashboardPending } from '~/components/dashboard-pending';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent } from '~/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '~/components/ui/dialog';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '~/components/ui/select';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '~/components/ui/tooltip';
+import {
+  FIELD_TYPES,
+  htmlInputTypeFor,
+  isVoterFieldType,
+  SAMPLE_VOTER_EMAILS,
+  sampleValueForType,
+  validateFieldValue,
+} from '~/lib/voter-fields';
+
+export const Route = createFileRoute(
+  '/dashboard/$electionDashboardSlug/voter/',
+)({
+  beforeLoad: async ({ context, params }) => {
+    const election = await context.queryClient.ensureQueryData(
+      convexQuery(api.elections.getDashboardBySlug, {
+        slug: params.electionDashboardSlug,
+      }),
+    );
+    if (!election) throw notFound();
+    await Promise.all([
+      context.queryClient.ensureQueryData(
+        convexQuery(api.voters.list, { electionId: election._id }),
+      ),
+      context.queryClient.ensureQueryData(
+        convexQuery(api.voterFields.list, { electionId: election._id }),
+      ),
+    ]);
+  },
+  pendingComponent: DashboardPending,
+  component: VoterPage,
+});
+
+function VoterPage() {
+  const { electionDashboardSlug } = Route.useParams();
+  const { data: election } = useQuery(
+    convexQuery(api.elections.getDashboardBySlug, {
+      slug: electionDashboardSlug,
+    }),
+  );
+  if (!election) throw notFound();
+  const { data: voters = [] } = useQuery(
+    convexQuery(api.voters.list, { electionId: election._id }),
+  );
+  const { data: voterFields = [] } = useQuery(
+    convexQuery(api.voterFields.list, { electionId: election._id }),
+  );
+
+  const totalVoted = voters.filter((v) => v.hasVoted).length;
+  const turnoutPct =
+    voters.length === 0 ? 0 : Math.round((totalVoted / voters.length) * 100);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Voters</h1>
+          <p className="text-sm text-muted-foreground">
+            {voters.length} registered · {totalVoted} voted ({turnoutPct}%
+            turnout)
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <ManageFieldsDialog electionId={election._id} fields={voterFields} />
+          <Button
+            variant="outline"
+            render={
+              <Link
+                to="/dashboard/$electionDashboardSlug/voter/import"
+                params={{ electionDashboardSlug }}
+              />
+            }
+          >
+            <Upload className="size-4" /> Bulk import
+          </Button>
+          <SingleAddDialog electionId={election._id} fields={voterFields} />
+        </div>
+      </div>
+
+      {voters.length === 0 ? (
+        <Card>
+          <CardContent className="py-12 text-center text-sm text-muted-foreground">
+            No voters registered yet.
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardContent className="p-0">
+            <ul className="divide-y">
+              {voters.map((v) => (
+                <li
+                  key={v._id}
+                  className="flex items-center justify-between gap-3 px-4 py-2.5"
+                >
+                  <span className="truncate font-mono text-sm">{v.email}</span>
+                  <div className="flex items-center gap-3">
+                    {v.hasVoted && (
+                      <span className="inline-flex items-center gap-1 text-xs text-emerald-600">
+                        <CheckCircle2 className="size-3" />
+                        voted
+                      </span>
+                    )}
+                    {!v.hasVoted && <DeleteVoterButton id={v._id} />}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
+
+function VoterFieldLabel({
+  htmlFor,
+  field,
+}: {
+  htmlFor: string;
+  field: Doc<'voter_fields'>;
+}) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <Label htmlFor={htmlFor}>
+        {field.name} <span className="text-muted-foreground">(optional)</span>
+      </Label>
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <button
+              type="button"
+              aria-label={`${field.name} field type`}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <Info className="size-3.5" />
+            </button>
+          }
+        />
+        <TooltipContent>
+          Type: <span className="font-mono uppercase">{field.type}</span>
+        </TooltipContent>
+      </Tooltip>
+    </div>
+  );
+}
+
+function SingleAddDialog({
+  electionId,
+  fields,
+}: {
+  electionId: Doc<'elections'>['_id'];
+  fields: Doc<'voter_fields'>[];
+}) {
+  const create = useMutation(api.voters.create);
+  const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState('');
+  const [fieldValues, setFieldValues] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
+
+  const fieldErrors: Record<string, string | null> = {};
+  for (const f of fields) {
+    fieldErrors[f._id] = validateFieldValue(f.type, fieldValues[f.name] ?? '');
+  }
+  const hasFieldErrors = Object.values(fieldErrors).some((e) => e !== null);
+
+  const reset = () => {
+    setEmail('');
+    setFieldValues({});
+  };
+
+  const handleOpenChange = (next: boolean) => {
+    setOpen(next);
+    if (!next) reset();
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger
+        render={
+          <Button>
+            <Plus className="size-4" /> Add voter
+          </Button>
+        }
+      />
+
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Add a voter</DialogTitle>
+          <DialogDescription>
+            They'll be able to sign in with this email and cast a ballot.
+          </DialogDescription>
+        </DialogHeader>
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            setSubmitting(true);
+            try {
+              const trimmed: Record<string, string> = {};
+              for (const f of fields) {
+                const value = fieldValues[f.name]?.trim();
+                if (value) trimmed[f.name] = value;
+              }
+              await create({
+                electionId,
+                email,
+                ...(Object.keys(trimmed).length > 0 ? { fields: trimmed } : {}),
+              });
+              toast.success('Voter added');
+              reset();
+              setOpen(false);
+            } catch (err) {
+              toast.error(
+                err instanceof ConvexError
+                  ? ((err.data as { message?: string }).message ?? 'Failed')
+                  : 'Failed',
+              );
+            } finally {
+              setSubmitting(false);
+            }
+          }}
+          className="space-y-3"
+        >
+          <div className="space-y-1">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={SAMPLE_VOTER_EMAILS[0]}
+            />
+          </div>
+
+          {fields.length > 0 && (
+            <div className="space-y-3 border-t pt-3">
+              {fields.map((f) => {
+                const id = `voter-field-${f._id}`;
+                const error = fieldErrors[f._id];
+                if (f.type === 'boolean') {
+                  return (
+                    <div key={f._id} className="space-y-1">
+                      <VoterFieldLabel htmlFor={id} field={f} />
+                      <Select
+                        value={fieldValues[f.name] ?? ''}
+                        onValueChange={(v) =>
+                          setFieldValues((s) => ({ ...s, [f.name]: v ?? '' }))
+                        }
+                      >
+                        <SelectTrigger id={id}>
+                          <SelectValue placeholder="true" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="true">true</SelectItem>
+                          <SelectItem value="false">false</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  );
+                }
+                return (
+                  <div key={f._id} className="space-y-1">
+                    <VoterFieldLabel htmlFor={id} field={f} />
+                    <Input
+                      id={id}
+                      type={htmlInputTypeFor(f.type)}
+                      value={fieldValues[f.name] ?? ''}
+                      placeholder={sampleValueForType(f.type, 0)}
+                      aria-invalid={error ? true : undefined}
+                      onChange={(e) =>
+                        setFieldValues((s) => ({
+                          ...s,
+                          [f.name]: e.target.value,
+                        }))
+                      }
+                    />
+                    {error && (
+                      <p className="text-xs text-destructive">{error}</p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => handleOpenChange(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={submitting || hasFieldErrors}>
+              Add
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function ManageFieldsDialog({
+  electionId,
+  fields,
+}: {
+  electionId: Doc<'elections'>['_id'];
+  fields: Doc<'voter_fields'>[];
+}) {
+  const create = useMutation(api.voterFields.create);
+  const update = useMutation(api.voterFields.update);
+  const softDelete = useMutation(api.voterFields.softDelete);
+
+  const [open, setOpen] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newType, setNewType] = useState<VoterFieldType>('text');
+  const [creating, setCreating] = useState(false);
+
+  const [editingId, setEditingId] = useState<Doc<'voter_fields'>['_id'] | null>(
+    null,
+  );
+  const [editName, setEditName] = useState('');
+  const [editType, setEditType] = useState<VoterFieldType>('text');
+  const [savingEdit, setSavingEdit] = useState(false);
+
+  const handleError = (err: unknown) => {
+    toast.error(
+      err instanceof ConvexError
+        ? ((err.data as { message?: string }).message ?? 'Failed')
+        : 'Failed',
+    );
+  };
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newName.trim()) return;
+    setCreating(true);
+    try {
+      await create({ electionId, name: newName, type: newType });
+      setNewName('');
+      setNewType('text');
+      toast.success('Field added');
+    } catch (err) {
+      handleError(err);
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const startEdit = (f: Doc<'voter_fields'>) => {
+    setEditingId(f._id);
+    setEditName(f.name);
+    setEditType(f.type);
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditName('');
+    setEditType('text');
+  };
+
+  const saveEdit = async () => {
+    if (!editingId) return;
+    setSavingEdit(true);
+    try {
+      await update({ id: editingId, name: editName, type: editType });
+      cancelEdit();
+      toast.success('Field updated');
+    } catch (err) {
+      handleError(err);
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
+  const handleDelete = async (f: Doc<'voter_fields'>) => {
+    if (!confirm(`Delete the "${f.name}" field?`)) return;
+    try {
+      await softDelete({ id: f._id });
+      if (editingId === f._id) cancelEdit();
+      toast.success('Field removed');
+    } catch (err) {
+      handleError(err);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger
+        render={
+          <Button variant="outline">
+            <Settings className="size-4" /> Manage fields
+          </Button>
+        }
+      />
+
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Voter fields</DialogTitle>
+          <DialogDescription>
+            Define the extra columns that appear in the sample import file and
+            on each voter record. The <span className="font-mono">email</span>{' '}
+            column is always required.
+          </DialogDescription>
+        </DialogHeader>
+
+        <form
+          onSubmit={handleCreate}
+          className="flex items-end gap-2 rounded-md border p-3"
+        >
+          <div className="flex-1">
+            <Label htmlFor="new-field-name" className="mb-1 text-xs">
+              Name
+            </Label>
+            <Input
+              id="new-field-name"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="Section"
+            />
+          </div>
+          <div className="flex-1">
+            <Label className="mb-1 text-xs">Type</Label>
+            <Select
+              value={
+                FIELD_TYPES.find((t) => t.value === newType)?.label ?? 'Text'
+              }
+              onValueChange={(v) => isVoterFieldType(v) && setNewType(v)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {FIELD_TYPES.map((t) => (
+                  <SelectItem key={t.value} value={t.value}>
+                    {t.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <Button type="submit" disabled={creating || !newName.trim()}>
+            <Plus className="mr-1 size-3.5" />
+            Add
+          </Button>
+        </form>
+
+        {fields.length === 0 ? (
+          <p className="py-4 text-center text-sm text-muted-foreground">
+            No custom fields yet.
+          </p>
+        ) : (
+          <ul className="divide-y rounded-md border">
+            {fields.map((f) => {
+              const isEditing = editingId === f._id;
+              return (
+                <li key={f._id} className="flex items-center gap-2 px-3 py-2">
+                  {isEditing ? (
+                    <>
+                      <Input
+                        className="flex-1"
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                      />
+                      <Select
+                        value={editType}
+                        onValueChange={(v) =>
+                          isVoterFieldType(v) && setEditType(v)
+                        }
+                      >
+                        <SelectTrigger className="w-28">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {FIELD_TYPES.map((t) => (
+                            <SelectItem key={t.value} value={t.value}>
+                              {t.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        size="sm"
+                        disabled={savingEdit || !editName.trim()}
+                        onClick={saveEdit}
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        disabled={savingEdit}
+                        onClick={cancelEdit}
+                      >
+                        <X className="size-3.5" />
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <span className="flex-1 truncate font-mono text-sm">
+                        {f.name}
+                      </span>
+                      <span className="text-xs tracking-wide text-muted-foreground uppercase">
+                        {f.type}
+                      </span>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => startEdit(f)}
+                      >
+                        <Pencil className="size-3.5" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleDelete(f)}
+                      >
+                        <Trash2 className="size-3.5" />
+                      </Button>
+                    </>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)}>
+            Close
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function DeleteVoterButton({ id }: { id: Doc<'voters'>['_id'] }) {
+  const softDelete = useMutation(api.voters.softDelete);
+  const [deleting, setDeleting] = useState(false);
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      disabled={deleting}
+      onClick={async () => {
+        if (!confirm('Remove this voter?')) return;
+        setDeleting(true);
+        try {
+          await softDelete({ id });
+          toast.success('Voter removed');
+        } catch (err) {
+          toast.error(
+            err instanceof ConvexError
+              ? ((err.data as { message?: string }).message ?? 'Failed')
+              : 'Failed',
+          );
+        } finally {
+          setDeleting(false);
+        }
+      }}
+    >
+      <Trash2 className="size-3.5" />
+    </Button>
+  );
+}

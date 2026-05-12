@@ -17,7 +17,6 @@ import { CandidateCredentialsEditor } from '~/components/candidate-credentials-e
 import { DashboardPending } from '~/components/dashboard-pending';
 import { ImageUpload } from '~/components/image-upload';
 import { Button } from '~/components/ui/button';
-import { useImageUpload } from '~/lib/use-image-upload';
 import {
   Card,
   CardContent,
@@ -50,6 +49,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
+import { useImageUpload } from '~/lib/use-image-upload';
 
 export const Route = createFileRoute(
   '/dashboard/$electionDashboardSlug/candidate',
@@ -129,7 +129,7 @@ function CandidatePage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Candidates</h1>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             Add candidates and assign each one to a position + partylist.
           </p>
         </div>
@@ -137,7 +137,7 @@ function CandidatePage() {
           <DialogTrigger
             render={
               <Button disabled={noDeps}>
-                <Plus className="mr-2 size-4" />
+                <Plus className="size-4" />
                 New candidate
               </Button>
             }
@@ -154,7 +154,7 @@ function CandidatePage() {
 
       {noDeps && (
         <Card>
-          <CardContent className="text-muted-foreground py-8 text-center text-sm">
+          <CardContent className="py-8 text-center text-sm text-muted-foreground">
             Add at least one position and one partylist before creating
             candidates.
           </CardContent>
@@ -164,7 +164,7 @@ function CandidatePage() {
       {candidates.length === 0 ? (
         !noDeps && (
           <Card>
-            <CardContent className="text-muted-foreground py-12 text-center text-sm">
+            <CardContent className="py-12 text-center text-sm text-muted-foreground">
               No candidates yet.
             </CardContent>
           </Card>
@@ -182,7 +182,7 @@ function CandidatePage() {
                       className="size-10 shrink-0 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="bg-muted flex size-10 shrink-0 items-center justify-center rounded-full">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted">
                       <User className="size-5" />
                     </div>
                   )}

@@ -29,8 +29,9 @@ export const create = mutation({
   args: {
     electionId: v.id('elections'),
     email: v.string(),
+    fields: v.optional(v.record(v.string(), v.string())),
   },
-  handler: async (ctx, { electionId, email }) => {
+  handler: async (ctx, { electionId, email, fields }) => {
     await requireCommissioner(ctx, electionId);
     const normalized = email.trim().toLowerCase();
     if (!normalized) {
@@ -52,16 +53,27 @@ export const create = mutation({
         message: 'That voter is already registered.',
       });
     }
-    return await ctx.db.insert('voters', { electionId, email: normalized });
+    const hasFields =
+      fields && Object.keys(fields).length > 0 ? fields : undefined;
+    return await ctx.db.insert('voters', {
+      electionId,
+      email: normalized,
+      ...(hasFields ? { field: hasFields } : {}),
+    });
   },
 });
 
 export const bulkCreate = mutation({
   args: {
     electionId: v.id('elections'),
-    emails: v.array(v.string()),
+    voters: v.array(
+      v.object({
+        email: v.string(),
+        fields: v.optional(v.record(v.string(), v.string())),
+      }),
+    ),
   },
-  handler: async (ctx, { electionId, emails }) => {
+  handler: async (ctx, { electionId, voters }) => {
     await requireCommissioner(ctx, electionId);
     const existing = await ctx.db
       .query('voters')
@@ -72,14 +84,22 @@ export const bulkCreate = mutation({
 
     let added = 0;
     const skipped: string[] = [];
-    for (const raw of emails) {
-      const email = raw.trim().toLowerCase();
+    for (const raw of voters) {
+      const email = raw.email.trim().toLowerCase();
       if (!email) continue;
       if (have.has(email)) {
         skipped.push(email);
         continue;
       }
-      await ctx.db.insert('voters', { electionId, email });
+      const hasFields =
+        raw.fields && Object.keys(raw.fields).length > 0
+          ? raw.fields
+          : undefined;
+      await ctx.db.insert('voters', {
+        electionId,
+        email,
+        ...(hasFields ? { field: hasFields } : {}),
+      });
       have.add(email);
       added++;
     }
