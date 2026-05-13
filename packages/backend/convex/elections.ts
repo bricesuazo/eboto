@@ -424,8 +424,7 @@ export const create = mutation({
       args.votingHourStart < 0 ||
       args.votingHourStart > 24 ||
       args.votingHourEnd < 0 ||
-      args.votingHourEnd > 24 ||
-      args.votingHourStart >= args.votingHourEnd
+      args.votingHourEnd > 24
     ) {
       throw new ConvexError({
         code: 'invalid_argument',

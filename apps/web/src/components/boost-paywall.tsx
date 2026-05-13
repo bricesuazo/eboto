@@ -16,13 +16,8 @@ import {
   CardTitle,
 } from '~/components/ui/card';
 import { Slider } from '~/components/ui/slider';
-import {
-  BOOST_BASE_PRICE,
-  num,
-  peso,
-  tierAt,
-} from '~/lib/constants/pricing';
 import type { BoostPrice } from '~/lib/constants/pricing';
+import { BOOST_BASE_PRICE, num, peso, tierAt } from '~/lib/constants/pricing';
 import { cn } from '~/lib/utils';
 
 /**
@@ -119,7 +114,7 @@ export function BoostPaywall({
             : isUnlimited
               ? 'Contact us'
               : 'Upgrade to Boost'}
-          <Rocket className="ml-2 size-4" />
+          <Rocket className="size-4" />
         </Button>
       </CardContent>
     </Card>

@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useState } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useAction, useMutation } from 'convex/react';
 import { ConvexError } from 'convex/values';
 import dayjs from 'dayjs';
-import { Plus, Rocket } from 'lucide-react';
+import { Loader2, Plus, Rocket } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -41,13 +41,20 @@ import {
 } from '~/components/ui/select';
 import { parseHourTo12HourFormat } from '~/lib/election';
 import { scheduleElectionLifecycleFn } from '~/lib/inngest/server-fns';
-import { electionCreateSchema } from '~/lib/schemas/election';
 import type { ElectionCreateInput } from '~/lib/schemas/election';
+import { electionCreateSchema } from '~/lib/schemas/election';
 import { useImageUpload } from '~/lib/use-image-upload';
 
 type FormValues = ElectionCreateInput;
 
+interface NewElectionSearch {
+  purchase?: 'plus';
+}
+
 export const Route = createFileRoute('/dashboard/new')({
+  validateSearch: (search: Record<string, unknown>): NewElectionSearch => ({
+    purchase: search.purchase === 'plus' ? 'plus' : undefined,
+  }),
   beforeLoad: async ({ context }) => {
     await context.queryClient.ensureQueryData(
       convexQuery(api.billing.myElectionQuota, {}),
@@ -58,11 +65,27 @@ export const Route = createFileRoute('/dashboard/new')({
 
 function NewElectionPage() {
   const navigate = useNavigate();
+  const { purchase } = Route.useSearch();
   const createElection = useMutation(api.elections.create);
   const { data: quota } = useQuery(
     convexQuery(api.billing.myElectionQuota, {}),
   );
   const logo = useImageUpload();
+
+  // After a successful Plus purchase LemonSqueezy redirects here with
+  // `?purchase=plus`. The webhook that records the credit races the redirect,
+  // so we show a confirming state until quota reflects it, then strip the
+  // marker so a refresh doesn't keep showing it.
+  const justPurchasedPlus = purchase === 'plus';
+  const creditAvailable =
+    !!quota && (quota.canCreateFree || quota.canCreateWithCredit);
+  const confirmingPurchase = justPurchasedPlus && !creditAvailable;
+  useEffect(() => {
+    if (justPurchasedPlus && creditAvailable) {
+      void navigate({ to: '/dashboard/new', search: {}, replace: true });
+      toast.success('Plus credit added');
+    }
+  }, [justPurchasedPlus, creditAvailable, navigate]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(electionCreateSchema),
@@ -92,6 +115,12 @@ function NewElectionPage() {
         template: values.template,
         logoStorageId: logoStorageId ?? undefined,
       });
+
+      await navigate({
+        to: '/dashboard/$electionDashboardSlug',
+        params: { electionDashboardSlug: result.slug },
+      });
+
       // Fire-and-forget — Inngest scheduling shouldn't block the redirect.
       // Failures are logged server-side and the schedule can be backfilled
       // by editing the election (which re-emits the event).
@@ -110,10 +139,6 @@ function NewElectionPage() {
         },
       });
       toast.success('Election created');
-      await navigate({
-        to: '/dashboard/$electionDashboardSlug',
-        params: { electionDashboardSlug: result.slug },
-      });
     } catch (err) {
       const msg =
         err instanceof ConvexError
@@ -129,7 +154,11 @@ function NewElectionPage() {
 
   return (
     <main className="container mx-auto max-w-xl px-6 py-12">
-      {blocked && <PlusUpgradePrompt />}
+      {confirmingPurchase ? (
+        <PurchaseConfirming />
+      ) : (
+        blocked && <PlusUpgradePrompt />
+      )}
       <Card>
         <CardHeader>
           <CardTitle>Create election</CardTitle>
@@ -317,6 +346,21 @@ function NewElectionPage() {
   );
 }
 
+function PurchaseConfirming() {
+  return (
+    <div className="mb-6 flex items-center gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-5 dark:border-emerald-800">
+      <Loader2 className="size-5 shrink-0 animate-spin text-emerald-600 dark:text-emerald-500" />
+      <div>
+        <p className="font-medium">Confirming your purchase…</p>
+        <p className="text-sm text-muted-foreground">
+          This usually takes a few seconds. The form unlocks as soon as your
+          Plus credit lands.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function PlusUpgradePrompt() {
   const createPlusCheckout = useAction(api.billing.createPlusCheckout);
   const [pending, setPending] = useState(false);
@@ -338,12 +382,10 @@ function PlusUpgradePrompt() {
 
   return (
     <div className="mb-6 rounded-2xl border-2 border-dashed border-emerald-500/50 p-6 dark:border-emerald-800">
-      <h2 className="text-lg font-semibold">
-        You've used your free election
-      </h2>
+      <h2 className="text-lg font-semibold">You've used your free election</h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        Each account gets one free election. Purchase Plus to add another —
-        each Plus credit unlocks one extra election. See the{' '}
+        Each account gets one free election. Purchase Plus to add another — each
+        Plus credit unlocks one extra election. See the{' '}
         <Link to="/pricing" className="underline">
           pricing page
         </Link>{' '}
@@ -352,15 +394,11 @@ function PlusUpgradePrompt() {
       <div className="mt-4 flex flex-wrap gap-2">
         <Button onClick={handleBuy} disabled={pending} size="lg">
           {pending ? 'Opening checkout…' : 'Get Plus'}
-          <Plus className="ml-2 size-4" />
+          <Plus className="size-4" />
         </Button>
-        <Button
-          render={<Link to="/pricing" />}
-          variant="outline"
-          size="lg"
-        >
+        <Button render={<Link to="/pricing" />} variant="outline" size="lg">
           See pricing
-          <Rocket className="ml-2 size-4" />
+          <Rocket className="size-4" />
         </Button>
       </div>
     </div>

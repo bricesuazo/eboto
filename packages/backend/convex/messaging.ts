@@ -1,9 +1,32 @@
 import { ConvexError, v } from 'convex/values';
-import { getAuthUserId } from '@convex-dev/auth/server';
 
-import { mutation, query } from './_generated/server';
 import type { Doc, Id } from './_generated/dataModel';
+import type { QueryCtx } from './_generated/server';
+import { mutation, query } from './_generated/server';
 import { requireCommissioner, requireUser } from './_helpers/auth';
+import { isFreeTier } from './_helpers/billing';
+
+/**
+ * Voter-side chat is a Boost-only feature. We gate every voter touchpoint
+ * (room ensure, list, send) so a non-commissioner on a free election can't
+ * open or write to a thread even by hitting the API directly.
+ */
+async function assertBoostForVoterChat(
+  ctx: QueryCtx,
+  electionId: Id<'elections'>,
+) {
+  const election = await ctx.db.get(electionId);
+  if (!election || election.deletedAt) {
+    throw new ConvexError({ code: 'not_found', message: 'Election not found' });
+  }
+  if (isFreeTier(election)) {
+    throw new ConvexError({
+      code: 'forbidden',
+      message:
+        'Voter messaging is a Boost feature. Ask the commissioner to upgrade.',
+    });
+  }
+}
 
 /* ------------------------------------------------------------------ */
 /* commissioner ↔ voter                                                */
@@ -18,6 +41,7 @@ export const listVoterRooms = query({
   args: { electionId: v.id('elections') },
   handler: async (ctx, { electionId }) => {
     await requireCommissioner(ctx, electionId);
+    await assertBoostForVoterChat(ctx, electionId);
     const rooms = await ctx.db
       .query('commissioners_voters_rooms')
       .withIndex('by_election', (q) => q.eq('electionId', electionId))
@@ -55,6 +79,7 @@ export const listVoterRooms = query({
 export const ensureMyVoterRoom = mutation({
   args: { electionId: v.id('elections') },
   handler: async (ctx, { electionId }) => {
+    await assertBoostForVoterChat(ctx, electionId);
     const userId = await requireUser(ctx);
     const user = await ctx.db.get(userId);
     if (!user?.email) {
@@ -133,6 +158,7 @@ export const listMessages = query({
     if (side === 'voter') {
       const room = await ctx.db.get(roomId as Id<'commissioners_voters_rooms'>);
       if (!room || room.deletedAt) return [];
+      await assertBoostForVoterChat(ctx, room.electionId);
       await assertVoterRoomAccess(ctx, room);
       const messages = await ctx.db
         .query('commissioners_voters_messages')
@@ -183,6 +209,7 @@ export const sendMessage = mutation({
       if (!room || room.deletedAt) {
         throw new ConvexError({ code: 'not_found', message: 'Room not found' });
       }
+      await assertBoostForVoterChat(ctx, room.electionId);
       await assertVoterRoomAccess(ctx, room);
       await ctx.db.insert('commissioners_voters_messages', {
         message: trimmed,

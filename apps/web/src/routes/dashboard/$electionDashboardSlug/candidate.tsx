@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
-import { createFileRoute, notFound } from '@tanstack/react-router';
+import { createFileRoute, Link, notFound } from '@tanstack/react-router';
 import { useMutation } from 'convex/react';
 import { ConvexError } from 'convex/values';
-import { ListChecks, Pencil, Plus, Trash2, User } from 'lucide-react';
+import { ListChecks, Pencil, Plus, Trash2, User, Users } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -30,11 +30,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '~/components/ui/dialog';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -100,7 +100,12 @@ function CandidatePage() {
     convexQuery(api.partylists.list, { electionId: election._id }),
   );
 
-  const [creating, setCreating] = useState(false);
+  // `creating` carries the position the user clicked "Add candidate" under,
+  // so the form opens with that position pre-selected and the user doesn't
+  // have to pick again in the dropdown.
+  const [creating, setCreating] = useState<{
+    positionId: Doc<'positions'>['_id'];
+  } | null>(null);
   const [editing, setEditing] = useState<(typeof candidates)[number] | null>(
     null,
   );
@@ -108,7 +113,22 @@ function CandidatePage() {
     (typeof candidates)[number] | null
   >(null);
 
-  const noDeps = positions.length === 0 || partylists.length === 0;
+  const noPositions = positions.length === 0;
+  const noPartylists = partylists.length === 0;
+  const noDeps = noPositions || noPartylists;
+
+  // Bucket candidates by position once. Positions render in `order`, and the
+  // map below is keyed on the position id so we can look up an array in O(1)
+  // per render row.
+  const candidatesByPosition = useMemo(() => {
+    const map = new Map<string, typeof candidates>();
+    for (const c of candidates) {
+      const list = map.get(c.positionId) ?? [];
+      list.push(c);
+      map.set(c.positionId, list);
+    }
+    return map;
+  }, [candidates]);
 
   return (
     <div className="space-y-6">
@@ -116,93 +136,164 @@ function CandidatePage() {
         <div>
           <h1 className="text-2xl font-bold">Candidates</h1>
           <p className="text-sm text-muted-foreground">
-            Add candidates and assign each one to a position + partylist.
+            Candidates are grouped by position. Use the button on each
+            position to add a candidate to it.
           </p>
         </div>
-        <Dialog open={creating} onOpenChange={setCreating}>
-          <DialogTrigger
-            render={
-              <Button disabled={noDeps}>
-                <Plus className="size-4" />
-                New candidate
-              </Button>
-            }
-          />
-          <CandidateDialog
-            mode="create"
-            electionId={election._id}
-            positions={positions}
-            partylists={partylists}
-            onClose={() => setCreating(false)}
-          />
-        </Dialog>
       </div>
 
       {noDeps && (
         <Card>
-          <CardContent className="py-8 text-center text-sm text-muted-foreground">
-            Add at least one position and one partylist before creating
-            candidates.
+          <CardContent className="space-y-2 py-8 text-center text-sm text-muted-foreground">
+            <p>Set up these first before adding candidates:</p>
+            <div className="flex flex-wrap justify-center gap-2 pt-2">
+              {noPositions && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  render={
+                    <Link
+                      to="/dashboard/$electionDashboardSlug/position"
+                      params={{ electionDashboardSlug }}
+                    >
+                      Add a position
+                    </Link>
+                  }
+                />
+              )}
+              {noPartylists && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  render={
+                    <Link
+                      to="/dashboard/$electionDashboardSlug/partylist"
+                      params={{ electionDashboardSlug }}
+                    >
+                      Add a partylist
+                    </Link>
+                  }
+                />
+              )}
+            </div>
           </CardContent>
         </Card>
       )}
 
-      {candidates.length === 0 ? (
-        !noDeps && (
-          <Card>
-            <CardContent className="py-12 text-center text-sm text-muted-foreground">
-              No candidates yet.
-            </CardContent>
-          </Card>
-        )
-      ) : (
-        <div className="grid gap-3 sm:grid-cols-2">
-          {candidates.map((c) => (
-            <Card key={c._id}>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-base">
-                  {c.imageUrl ? (
-                    <img
-                      src={c.imageUrl}
-                      alt=""
-                      className="size-10 shrink-0 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted">
-                      <User className="size-5" />
+      {!noDeps && (
+        <div className="space-y-4">
+          {positions.map((position) => {
+            const rows = candidatesByPosition.get(position._id) ?? [];
+            return (
+              <Card key={position._id}>
+                <CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0">
+                  <div className="min-w-0">
+                    <CardTitle className="text-lg">{position.name}</CardTitle>
+                    <CardDescription>
+                      {rows.length} candidate{rows.length === 1 ? '' : 's'} ·
+                      pick {position.min === position.max
+                        ? position.max
+                        : `${position.min}–${position.max}`}
+                    </CardDescription>
+                  </div>
+                  <Button
+                    size="sm"
+                    onClick={() => setCreating({ positionId: position._id })}
+                  >
+                    <Plus className="mr-1 size-4" />
+                    Add candidate
+                  </Button>
+                </CardHeader>
+                <CardContent>
+                  {rows.length === 0 ? (
+                    <div className="flex flex-col items-center gap-2 rounded-md border border-dashed py-8 text-center text-sm text-muted-foreground">
+                      <Users className="size-6" />
+                      <p>No candidates for this position yet.</p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          setCreating({ positionId: position._id })
+                        }
+                      >
+                        <Plus className="mr-1 size-4" />
+                        Add the first candidate
+                      </Button>
                     </div>
+                  ) : (
+                    <ul className="divide-y rounded-md border">
+                      {rows.map((c) => (
+                        <li
+                          key={c._id}
+                          className="flex flex-wrap items-center gap-3 px-3 py-2.5"
+                        >
+                          {c.imageUrl ? (
+                            <img
+                              src={c.imageUrl}
+                              alt=""
+                              className="size-10 shrink-0 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted">
+                              <User className="size-5" />
+                            </div>
+                          )}
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm font-medium">
+                              {c.firstName}{' '}
+                              {c.middleName && `${c.middleName.charAt(0)}. `}
+                              {c.lastName}
+                            </p>
+                            <p className="truncate text-xs text-muted-foreground">
+                              {c.partylist?.acronym ?? '—'}
+                            </p>
+                          </div>
+                          <div className="flex shrink-0 gap-1.5">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setCredentialsFor(c)}
+                            >
+                              <ListChecks className="size-3.5" />
+                              <span className="sr-only">Credentials</span>
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setEditing(c)}
+                            >
+                              <Pencil className="size-3.5" />
+                              <span className="sr-only">Edit</span>
+                            </Button>
+                            <DeleteCandidateButton id={c._id} />
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
                   )}
-                  <span className="truncate">
-                    {c.firstName}{' '}
-                    {c.middleName && `${c.middleName.charAt(0)}. `}
-                    {c.lastName}
-                  </span>
-                </CardTitle>
-                <CardDescription>
-                  {c.position?.name ?? '—'} · {c.partylist?.acronym ?? '—'}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="flex flex-wrap justify-end gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCredentialsFor(c)}
-                >
-                  <ListChecks className="mr-1.5 size-3.5" /> Credentials
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setEditing(c)}
-                >
-                  <Pencil className="mr-1.5 size-3.5" /> Edit
-                </Button>
-                <DeleteCandidateButton id={c._id} />
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
+
+      <Dialog
+        open={Boolean(creating)}
+        onOpenChange={(open) => !open && setCreating(null)}
+      >
+        {creating && (
+          <CandidateDialog
+            mode="create"
+            electionId={election._id}
+            electionSlug={election.slug}
+            positions={positions}
+            partylists={partylists}
+            defaultPositionId={creating.positionId}
+            onClose={() => setCreating(null)}
+          />
+        )}
+      </Dialog>
 
       <Dialog
         open={Boolean(editing)}
@@ -212,6 +303,7 @@ function CandidatePage() {
           <CandidateDialog
             mode="edit"
             electionId={election._id}
+            electionSlug={election.slug}
             positions={positions}
             partylists={partylists}
             initial={editing}
@@ -240,18 +332,23 @@ function CandidatePage() {
 function CandidateDialog({
   mode,
   electionId,
+  electionSlug,
   positions,
   partylists,
   initial,
   initialImageUrl,
+  defaultPositionId,
   onClose,
 }: {
   mode: 'create' | 'edit';
   electionId: Doc<'elections'>['_id'];
+  electionSlug: string;
   positions: Doc<'positions'>[];
   partylists: Doc<'partylists'>[];
   initial?: Doc<'candidates'>;
   initialImageUrl?: string | null;
+  /** Pre-selects a position when creating from a per-position "Add" button. */
+  defaultPositionId?: Doc<'positions'>['_id'];
   onClose: () => void;
 }) {
   const create = useMutation(api.candidates.create);
@@ -266,7 +363,8 @@ function CandidateDialog({
       middleName: initial?.middleName ?? '',
       lastName: initial?.lastName ?? '',
       slug: initial?.slug ?? '',
-      positionId: initial?.positionId ?? positions[0]?._id ?? '',
+      positionId:
+        initial?.positionId ?? defaultPositionId ?? positions[0]?._id ?? '',
       partylistId: initial?.partylistId ?? partylists[0]?._id ?? '',
     },
   });
@@ -377,6 +475,12 @@ function CandidateDialog({
                 <FormControl>
                   <Input placeholder="jane-doe" {...field} />
                 </FormControl>
+                <FormDescription>
+                  Candidate page:{' '}
+                  <span className="font-mono">
+                    eboto.app/{electionSlug}/{field.value || 'candidate-slug'}
+                  </span>
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -467,7 +571,7 @@ function DeleteCandidateButton({ id }: { id: Doc<'candidates'>['_id'] }) {
   const [deleting, setDeleting] = useState(false);
   return (
     <Button
-      variant="outline"
+      variant="ghost"
       size="sm"
       disabled={deleting}
       onClick={async () => {
@@ -487,7 +591,8 @@ function DeleteCandidateButton({ id }: { id: Doc<'candidates'>['_id'] }) {
         }
       }}
     >
-      <Trash2 className="mr-1.5 size-3.5" /> Delete
+      <Trash2 className="size-3.5 text-destructive" />
+      <span className="sr-only">Delete</span>
     </Button>
   );
 }

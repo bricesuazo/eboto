@@ -374,7 +374,11 @@ export const createPlusCheckout = action({
       userName: user?.name ?? null,
       variantQuantities: [{ variantId, quantity: qty }],
       customData: { user_id: userId, type: 'plus' },
-      redirectUrl: appUrl ? `${appUrl}/dashboard` : undefined,
+      // Land the buyer directly on the create page. `?purchase=plus` lets the
+      // page show a "Confirming purchase…" state while the webhook race
+      // resolves — the reactive quota query flips it off once the credit
+      // lands.
+      redirectUrl: appUrl ? `${appUrl}/dashboard/new?purchase=plus` : undefined,
       receiptLinkUrl: appUrl ? `${appUrl}/account/billing` : undefined,
     });
     return { url };

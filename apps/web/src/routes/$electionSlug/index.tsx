@@ -164,7 +164,10 @@ function ElectionPage() {
               className="rounded-full"
             />
           )}
-          {(isVoter || isCommissioner) && (
+          {/* Voter messaging is a Boost feature — hide for free elections.
+              Commissioners always see the entry point (they manage the
+              upgrade themselves). */}
+          {(isCommissioner || (isVoter && election.variantId !== 0)) && (
             <Button
               render={
                 <Link

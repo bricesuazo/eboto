@@ -35,6 +35,7 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/ui/table';
+import type { BoostPrice } from '~/lib/constants/pricing';
 import {
   BOOST_BASE_PRICE,
   num,
@@ -42,7 +43,6 @@ import {
   PLUS_PRICE,
   tierAt,
 } from '~/lib/constants/pricing';
-import type { BoostPrice } from '~/lib/constants/pricing';
 import { cn } from '~/lib/utils';
 
 export const Route = createFileRoute('/pricing')({
@@ -344,7 +344,7 @@ function CustomCard() {
         className="w-full rounded-full"
       >
         Contact Us
-        <Mail className="ml-2 size-4" />
+        <Mail className="size-4" />
       </Button>
     </PricingCard>
   );
@@ -396,7 +396,7 @@ function PlusCard() {
           disabled={pending}
         >
           {pending ? 'Opening checkout…' : 'Get Plus'}
-          <Plus className="ml-2 size-4" />
+          <Plus className="size-4" />
         </Button>
       </div>
     </div>
@@ -418,7 +418,7 @@ function GetBoostButton({ value }: { value: number }) {
         className="w-full rounded-full"
       >
         Contact Us
-        <Mail className="ml-2 size-4" />
+        <Mail className="size-4" />
       </Button>
     );
   }
@@ -437,7 +437,7 @@ function GetBoostButton({ value }: { value: number }) {
         }}
       >
         Get Boost
-        <Rocket className="ml-2 size-4" />
+        <Rocket className="size-4" />
       </Button>
       <BoostElectionPickerDialog
         open={open}
@@ -544,7 +544,9 @@ function BoostElectionPickerDialog({
         )}
 
         <DialogFooter>
-          <DialogClose render={<Button variant="outline" />}>Cancel</DialogClose>
+          <DialogClose render={<Button variant="outline" />}>
+            Cancel
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -45,7 +45,8 @@ export const getBySlug = query({
     }
 
     // VOTER-publicity results are gated on participation: voters can only see
-    // tallies once they've cast a ballot. Commissioners always see results.
+    // tallies once they've cast a ballot. Commissioners can still reach the
+    // page without voting, but they see the same throttled tally as voters.
     if (election.publicity === 'VOTER' && !isCommissioner) {
       let hasVoted = false;
       const userEmail = user?.email;
@@ -106,11 +107,11 @@ export const getBySlug = query({
     // Free-tier elections lag the live tally to the most recent elapsed hour
     // — e.g. at 8:51 AM the displayed counts only include votes whose
     // `_creationTime` is strictly before 8:00 AM. The bucket advances at the
-    // top of each hour. Commissioners always see live numbers so they can
-    // confirm vote arrival without waiting.
+    // top of each hour. The throttle applies to everyone including
+    // commissioners so the results page is consistent across viewers.
     const free = isFreeTier(election);
     const now = Date.now();
-    const cutoff = free && !isCommissioner ? freeTierResultsCutoff(now) : null;
+    const cutoff = free ? freeTierResultsCutoff(now) : null;
     const eligibleVotes =
       cutoff === null
         ? allVotes
@@ -147,7 +148,6 @@ export const getBySlug = query({
     // has chosen to hide them.
     const showRealNames =
       election.isCandidatesVisibleInRealtimeWhenOngoing ||
-      isCommissioner ||
       !isElectionInProgress(election);
 
     return {
@@ -169,7 +169,6 @@ export const getBySlug = query({
         nextRefreshAt:
           cutoff === null ? null : cutoff + FREE_RESULTS_LATENCY_MS,
       },
-      isCommissioner,
       positions: positions
         .sort((a, b) => a.order - b.order)
         .map((position) => {

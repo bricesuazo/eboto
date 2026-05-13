@@ -31,6 +31,16 @@ export const Route = createFileRoute('/$electionSlug/messages')({
         params: { electionSlug: params.electionSlug },
       });
     }
+    // Voter chat is Boost-only. A voter following a stale link to /messages
+    // on a free election lands back on the public page instead of hitting
+    // the server-side forbidden error from `ensureMyVoterRoom`. Commissioners
+    // get to keep using the route (they manage upgrades from the dashboard).
+    if (!data.isCommissioner && data.election.variantId === 0) {
+      throw redirect({
+        to: '/$electionSlug',
+        params: { electionSlug: params.electionSlug },
+      });
+    }
   },
   pendingComponent: PagePending,
   component: VoterMessagesPage,
