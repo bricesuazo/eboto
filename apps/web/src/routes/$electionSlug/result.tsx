@@ -43,7 +43,7 @@ function ResultPage() {
   );
   if (!data) throw notFound();
 
-  const { election, positions, isCommissioner } = data;
+  const { election, positions, isCommissioner, tier } = data;
 
   return (
     <main className="container mx-auto max-w-4xl px-6 py-12">
@@ -54,7 +54,14 @@ function ResultPage() {
           {dayjs(election.endDate).format('MMMM D, YYYY')}
         </p>
         <div className="mt-3 flex items-center justify-center gap-2">
-          <Badge variant="secondary">Live results</Badge>
+          {tier?.nextRefreshAt ? (
+            <Badge variant="secondary">
+              Hourly results · next update{' '}
+              {dayjs(tier.nextRefreshAt).format('h:mm A')}
+            </Badge>
+          ) : (
+            <Badge variant="secondary">Live results</Badge>
+          )}
           {isCommissioner && <Badge>Commissioner view</Badge>}
         </div>
       </header>

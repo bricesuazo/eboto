@@ -27,6 +27,7 @@
     "NODE_ENV",
     "SKIP_ENV_VALIDATION",
     "PORT",
+    "APP_URL",
     "VITE_CONVEX_URL",
     "CONVEX_DEPLOYMENT",
     "CONVEX_URL",

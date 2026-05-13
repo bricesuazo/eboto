@@ -341,8 +341,9 @@ export const getDashboardBySlug = query({
  * runs inside a single Convex mutation, so a failure in any step rolls
  * everything back.
  *
- * NOTE: the elections_plus quota gate from the Supabase impl is intentionally
- * skipped here — billing wiring lands in a later phase.
+ * Quota: each account gets one free election. Every election after that
+ * requires the buyer to redeem one unused `elections_plus` credit (granted
+ * by the LemonSqueezy webhook on Plus purchase).
  */
 export const create = mutation({
   args: {
@@ -376,6 +377,41 @@ export const create = mutation({
         code: 'conflict',
         message: 'An election with that slug already exists.',
       });
+    }
+
+    // One free election per account. Any further election must consume a
+    // Plus credit — looked up here so the failure mode is a clean
+    // "buy Plus" message instead of silently inserting and double-billing.
+    const ownedElections = await ctx.db
+      .query('commissioners')
+      .withIndex('by_user', (q) => q.eq('userId', userId))
+      .filter((q) => q.eq(q.field('deletedAt'), undefined))
+      .collect();
+    const activeOwned: typeof ownedElections = [];
+    for (const c of ownedElections) {
+      const election = await ctx.db.get(c.electionId);
+      if (election && !election.deletedAt) activeOwned.push(c);
+    }
+    let plusCreditToConsume: Id<'elections_plus'> | null = null;
+    if (activeOwned.length >= 1) {
+      const credit = await ctx.db
+        .query('elections_plus')
+        .withIndex('by_user', (q) => q.eq('userId', userId))
+        .filter((q) =>
+          q.and(
+            q.eq(q.field('redeemedAt'), undefined),
+            q.eq(q.field('deletedAt'), undefined),
+          ),
+        )
+        .first();
+      if (!credit) {
+        throw new ConvexError({
+          code: 'forbidden',
+          message:
+            'You already have an election. Purchase Plus to add another.',
+        });
+      }
+      plusCreditToConsume = credit._id;
     }
 
     if (args.startDate >= args.endDate) {
@@ -429,6 +465,10 @@ export const create = mutation({
         max: 1,
         electionId,
       });
+    }
+
+    if (plusCreditToConsume) {
+      await ctx.db.patch(plusCreditToConsume, { redeemedAt: Date.now() });
     }
 
     return { electionId, slug };

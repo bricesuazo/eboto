@@ -1,8 +1,12 @@
+import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useMutation } from 'convex/react';
+import { convexQuery } from '@convex-dev/react-query';
+import { useQuery } from '@tanstack/react-query';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { useAction, useMutation } from 'convex/react';
 import { ConvexError } from 'convex/values';
 import dayjs from 'dayjs';
+import { Plus, Rocket } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -44,12 +48,20 @@ import { useImageUpload } from '~/lib/use-image-upload';
 type FormValues = ElectionCreateInput;
 
 export const Route = createFileRoute('/dashboard/new')({
+  beforeLoad: async ({ context }) => {
+    await context.queryClient.ensureQueryData(
+      convexQuery(api.billing.myElectionQuota, {}),
+    );
+  },
   component: NewElectionPage,
 });
 
 function NewElectionPage() {
   const navigate = useNavigate();
   const createElection = useMutation(api.elections.create);
+  const { data: quota } = useQuery(
+    convexQuery(api.billing.myElectionQuota, {}),
+  );
   const logo = useImageUpload();
 
   const form = useForm<FormValues>({
@@ -111,14 +123,25 @@ function NewElectionPage() {
     }
   }
 
+  const blocked = quota
+    ? !quota.canCreateFree && !quota.canCreateWithCredit
+    : false;
+
   return (
     <main className="container mx-auto max-w-xl px-6 py-12">
+      {blocked && <PlusUpgradePrompt />}
       <Card>
         <CardHeader>
           <CardTitle>Create election</CardTitle>
           <CardDescription>
             Set the basics now — you can edit details and add candidates after.
           </CardDescription>
+          {quota && quota.canCreateWithCredit && (
+            <p className="text-sm text-emerald-600 dark:text-emerald-500">
+              Using 1 of your {quota.plusCredits} Plus credit
+              {quota.plusCredits === 1 ? '' : 's'}.
+            </p>
+          )}
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -281,7 +304,7 @@ function NewElectionPage() {
 
               <Button
                 type="submit"
-                disabled={form.formState.isSubmitting}
+                disabled={form.formState.isSubmitting || blocked}
                 className="w-full"
               >
                 {form.formState.isSubmitting ? 'Creating…' : 'Create election'}
@@ -291,5 +314,55 @@ function NewElectionPage() {
         </CardContent>
       </Card>
     </main>
+  );
+}
+
+function PlusUpgradePrompt() {
+  const createPlusCheckout = useAction(api.billing.createPlusCheckout);
+  const [pending, setPending] = useState(false);
+
+  async function handleBuy() {
+    setPending(true);
+    try {
+      const { url } = await createPlusCheckout({});
+      window.location.href = url;
+    } catch (err) {
+      const msg =
+        err instanceof ConvexError
+          ? (err.data as { message?: string }).message
+          : 'Checkout failed';
+      toast.error(msg ?? 'Checkout failed');
+      setPending(false);
+    }
+  }
+
+  return (
+    <div className="mb-6 rounded-2xl border-2 border-dashed border-emerald-500/50 p-6 dark:border-emerald-800">
+      <h2 className="text-lg font-semibold">
+        You've used your free election
+      </h2>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Each account gets one free election. Purchase Plus to add another —
+        each Plus credit unlocks one extra election. See the{' '}
+        <Link to="/pricing" className="underline">
+          pricing page
+        </Link>{' '}
+        for details.
+      </p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Button onClick={handleBuy} disabled={pending} size="lg">
+          {pending ? 'Opening checkout…' : 'Get Plus'}
+          <Plus className="ml-2 size-4" />
+        </Button>
+        <Button
+          render={<Link to="/pricing" />}
+          variant="outline"
+          size="lg"
+        >
+          See pricing
+          <Rocket className="ml-2 size-4" />
+        </Button>
+      </div>
+    </div>
   );
 }

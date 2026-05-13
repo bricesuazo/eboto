@@ -7,6 +7,7 @@ import { Fingerprint, Plus, Vote } from 'lucide-react';
 import { api } from '@eboto/backend/api';
 
 import { PagePending } from '~/components/page-pending';
+import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import {
   Card,
@@ -25,6 +26,9 @@ export const Route = createFileRoute('/dashboard/')({
       context.queryClient.ensureQueryData(
         convexQuery(api.dashboard.myVoterElections, {}),
       ),
+      context.queryClient.ensureQueryData(
+        convexQuery(api.billing.myElectionQuota, {}),
+      ),
     ]);
   },
   pendingComponent: PagePending,
@@ -38,26 +42,42 @@ function DashboardHome() {
   const { data: voterData } = useQuery(
     convexQuery(api.dashboard.myVoterElections, {}),
   );
+  const { data: quota } = useQuery(
+    convexQuery(api.billing.myElectionQuota, {}),
+  );
   const elections = data ?? [];
   const voterElections = voterData ?? [];
 
   return (
     <main className="container mx-auto max-w-6xl px-6 py-12">
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-8 flex items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">My elections</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Elections you commission. Click one to manage it.
           </p>
         </div>
-        <Button
-          render={
-            <Link to="/dashboard/new">
-              <Plus className="size-4" />
-              New election
-            </Link>
-          }
-        />
+        <div className="flex items-center gap-2">
+          {quota && (
+            <Badge variant="secondary" className="px-2 py-3 text-xs">
+              <Fingerprint className="mr-1.5 size-3.5" />
+              {quota.ownedCount} election{quota.ownedCount === 1 ? '' : 's'}
+              {quota.plusCredits > 0 && (
+                <span className="ml-1.5 text-emerald-600 dark:text-emerald-500">
+                  · {quota.plusCredits} Plus
+                </span>
+              )}
+            </Badge>
+          )}
+          <Button
+            render={
+              <Link to="/dashboard/new">
+                <Plus className="size-4" />
+                New election
+              </Link>
+            }
+          />
+        </div>
       </div>
 
       {isError ? (

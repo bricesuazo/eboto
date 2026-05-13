@@ -3,6 +3,7 @@ import { ConvexError, v } from 'convex/values';
 
 import { internalQuery, query } from './_generated/server';
 import { requireCommissioner } from './_helpers/auth';
+import { getElectionTier } from './_helpers/billing';
 import {
   internalMutation,
   mutation,
@@ -10,6 +11,36 @@ import {
 } from './_helpers/triggers';
 import { votedByElection, votersByElection } from './aggregates';
 import { voterNotificationPhase } from './schema';
+import type { Id } from './_generated/dataModel';
+import type { MutationCtx } from './_generated/server';
+
+/**
+ * Resolves the voter cap for an election from its billing tier. Returns
+ * `null` when the election is on the unlimited (-1) tier. Throws when the
+ * election is missing/deleted.
+ */
+async function getVoterCap(ctx: MutationCtx, electionId: Id<'elections'>) {
+  const election = await ctx.db.get(electionId);
+  if (!election || election.deletedAt) {
+    throw new ConvexError({
+      code: 'not_found',
+      message: 'Election not found',
+    });
+  }
+  const tier = getElectionTier(election);
+  if (tier.voterCap === -1) return null;
+  return tier.voterCap;
+}
+
+async function currentVoterCount(
+  ctx: MutationCtx,
+  electionId: Id<'elections'>,
+) {
+  return await votersByElection.count(ctx, {
+    namespace: electionId,
+    bounds: {},
+  });
+}
 
 const statusFilter = v.union(
   v.literal('all'),
@@ -124,6 +155,13 @@ export const create = mutation({
         message: 'That voter is already registered.',
       });
     }
+    const cap = await getVoterCap(ctx, electionId);
+    if (cap !== null && (await currentVoterCount(ctx, electionId)) >= cap) {
+      throw new ConvexError({
+        code: 'forbidden',
+        message: `Voter cap reached (${cap}). Upgrade to Boost to add more.`,
+      });
+    }
     const hasFields =
       fields && Object.keys(fields).length > 0 ? fields : undefined;
     return await ctx.db.insert('voters', {
@@ -146,6 +184,12 @@ export const bulkCreate = mutation({
   },
   handler: async (ctx, { electionId, voters }) => {
     await requireCommissioner(ctx, electionId);
+
+    const cap = await getVoterCap(ctx, electionId);
+    let remaining =
+      cap === null
+        ? Number.POSITIVE_INFINITY
+        : Math.max(cap - (await currentVoterCount(ctx, electionId)), 0);
 
     let added = 0;
     const skipped: string[] = [];
@@ -170,6 +214,10 @@ export const bulkCreate = mutation({
         continue;
       }
 
+      if (remaining <= 0) {
+        skipped.push(email);
+        continue;
+      }
       const hasFields =
         raw.fields && Object.keys(raw.fields).length > 0
           ? raw.fields
@@ -180,9 +228,10 @@ export const bulkCreate = mutation({
         ...(hasFields ? { field: hasFields } : {}),
       });
       added++;
+      remaining--;
     }
 
-    return { added, skipped };
+    return { added, skipped, capReached: remaining <= 0 && cap !== null };
   },
 });
 

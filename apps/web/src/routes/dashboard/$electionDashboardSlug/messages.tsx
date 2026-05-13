@@ -12,6 +12,7 @@ import { Shield, User as UserIcon } from 'lucide-react';
 import { api } from '@eboto/backend/api';
 import type { Id } from '@eboto/backend/data-model';
 
+import { BoostPaywall } from '~/components/boost-paywall';
 import { ChatThread } from '~/components/chat-thread';
 import { DashboardPending } from '~/components/dashboard-pending';
 import { Card, CardContent } from '~/components/ui/card';
@@ -31,9 +32,19 @@ export const Route = createFileRoute(
       }),
     );
     if (!election) throw notFound();
-    await context.queryClient.ensureQueryData(
-      convexQuery(api.messaging.listVoterRooms, { electionId: election._id }),
+    // Live support + voter chat are Boost-only features. We still ensure the
+    // tier so the page can render the paywall cleanly; the voter-rooms query
+    // is only required when the election is upgraded.
+    const tier = await context.queryClient.ensureQueryData(
+      convexQuery(api.billing.getElectionTierBySlug, {
+        slug: params.electionDashboardSlug,
+      }),
     );
+    if (tier?.isBoost) {
+      await context.queryClient.ensureQueryData(
+        convexQuery(api.messaging.listVoterRooms, { electionId: election._id }),
+      );
+    }
   },
   pendingComponent: DashboardPending,
   component: MessagesPage,
@@ -49,9 +60,18 @@ function MessagesPage() {
   );
   if (!election) throw notFound();
 
-  const { data: voterRooms = [] } = useQuery(
-    convexQuery(api.messaging.listVoterRooms, { electionId: election._id }),
+  const { data: tier } = useQuery(
+    convexQuery(api.billing.getElectionTierBySlug, {
+      slug: electionDashboardSlug,
+    }),
   );
+
+  const isPaywalled = tier !== undefined && tier !== null && !tier.isBoost;
+
+  const { data: voterRooms = [] } = useQuery({
+    ...convexQuery(api.messaging.listVoterRooms, { electionId: election._id }),
+    enabled: !isPaywalled,
+  });
   const ensureAdminRoom = useMutation(api.messaging.ensureAdminRoom);
 
   // Lazily ensure the single admin room exists when the commissioner picks
@@ -68,6 +88,24 @@ function MessagesPage() {
     if (activeRoom?.kind !== 'admin' || adminRoomId) return;
     void ensureAdminRoom({ electionId: election._id }).then(setAdminRoomId);
   }, [activeRoom, adminRoomId, election._id, ensureAdminRoom]);
+
+  if (isPaywalled) {
+    return (
+      <div className="space-y-4">
+        <div>
+          <h1 className="text-2xl font-bold">Messages</h1>
+          <p className="text-muted-foreground text-sm">
+            Chat with platform admin and registered voters.
+          </p>
+        </div>
+        <BoostPaywall
+          electionId={election._id}
+          title="Live support + realtime voter chat are Boost features"
+          description="Upgrade this election to Boost to unlock the admin-support inbox and per-voter realtime chat threads."
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">

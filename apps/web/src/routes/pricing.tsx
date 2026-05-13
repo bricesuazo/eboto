@@ -1,8 +1,30 @@
-import { useEffect, useState } from 'react';
-import { createFileRoute, Link, useRouteContext } from '@tanstack/react-router';
+import { useEffect, useMemo, useState } from 'react';
+import { convexQuery } from '@convex-dev/react-query';
+import { useQuery } from '@tanstack/react-query';
+import {
+  createFileRoute,
+  Link,
+  useNavigate,
+  useRouteContext,
+} from '@tanstack/react-router';
+import { useAction } from 'convex/react';
+import { ConvexError } from 'convex/values';
 import { CheckCircle2, Mail, Plus, Rocket, XCircle } from 'lucide-react';
+import { toast } from 'sonner';
+
+import { api } from '@eboto/backend/api';
+import type { Id } from '@eboto/backend/data-model';
 
 import { Button } from '~/components/ui/button';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '~/components/ui/dialog';
 import { Slider } from '~/components/ui/slider';
 import {
   Table,
@@ -20,6 +42,7 @@ import {
   PLUS_PRICE,
   tierAt,
 } from '~/lib/constants/pricing';
+import type { BoostPrice } from '~/lib/constants/pricing';
 import { cn } from '~/lib/utils';
 
 export const Route = createFileRoute('/pricing')({
@@ -329,6 +352,28 @@ function CustomCard() {
 
 function PlusCard() {
   const { user } = useRouteContext({ from: '__root__' });
+  const navigate = useNavigate();
+  const createPlusCheckout = useAction(api.billing.createPlusCheckout);
+  const [pending, setPending] = useState(false);
+
+  async function handleClick() {
+    if (!user) {
+      void navigate({ to: '/sign-in' });
+      return;
+    }
+    setPending(true);
+    try {
+      const { url } = await createPlusCheckout({});
+      window.location.href = url;
+    } catch (err) {
+      const message =
+        err instanceof ConvexError
+          ? ((err.data as { message?: string }).message ?? 'Checkout failed')
+          : 'Checkout failed';
+      toast.error(message);
+      setPending(false);
+    }
+  }
 
   return (
     <div className="flex flex-col gap-4 rounded-2xl border-4 border-border p-6 md:flex-row md:justify-between">
@@ -345,15 +390,12 @@ function PlusCard() {
       </div>
       <div className="flex flex-4 md:justify-end">
         <Button
-          // TODO: wire to LemonSqueezy checkout (or a Convex action that
-          // creates a checkout session) once payment creation is implemented
-          // server-side. The webhook in convex/billing.ts already grants the
-          // elections_plus credit on order_created.
-          render={<Link to={user ? '/contact' : '/sign-in'} />}
           size="lg"
           className="w-full rounded-full md:w-auto"
+          onClick={handleClick}
+          disabled={pending}
         >
-          Get Plus
+          {pending ? 'Opening checkout…' : 'Get Plus'}
           <Plus className="ml-2 size-4" />
         </Button>
       </div>
@@ -363,8 +405,12 @@ function PlusCard() {
 
 function GetBoostButton({ value }: { value: number }) {
   const { user } = useRouteContext({ from: '__root__' });
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
 
-  if (value === 100) {
+  const tier = tierAt(value);
+
+  if (value === 100 || tier.label === -1) {
     return (
       <Button
         render={<Link to="/contact" />}
@@ -377,16 +423,131 @@ function GetBoostButton({ value }: { value: number }) {
     );
   }
 
-  // TODO: wire to checkout once payment creation is implemented (see PlusCard).
   return (
-    <Button
-      render={<Link to={user ? '/contact' : '/sign-in'} />}
-      size="lg"
-      className="w-full rounded-full"
-    >
-      Get Boost
-      <Rocket className="ml-2 size-4" />
-    </Button>
+    <>
+      <Button
+        size="lg"
+        className="w-full rounded-full"
+        onClick={() => {
+          if (!user) {
+            void navigate({ to: '/sign-in' });
+            return;
+          }
+          setOpen(true);
+        }}
+      >
+        Get Boost
+        <Rocket className="ml-2 size-4" />
+      </Button>
+      <BoostElectionPickerDialog
+        open={open}
+        onOpenChange={setOpen}
+        price={((BOOST_BASE_PRICE + tier.priceAdded) * 100) as BoostPrice}
+        tierLabel={tier.label}
+      />
+    </>
+  );
+}
+
+function BoostElectionPickerDialog({
+  open,
+  onOpenChange,
+  price,
+  tierLabel,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  price: BoostPrice;
+  tierLabel: number;
+}) {
+  const { data: elections, isPending } = useQuery({
+    ...convexQuery(api.dashboard.myElections, {}),
+    enabled: open,
+  });
+  const createBoostCheckout = useAction(api.billing.createBoostCheckout);
+  const [pendingId, setPendingId] = useState<string | null>(null);
+
+  // Hide elections that are already on Boost (variantId !== 0). The Boost
+  // purchase needs to land on a free election.
+  const upgradable = useMemo(
+    () => (elections ?? []).filter((e) => !e.variantId || e.variantId === 0),
+    [elections],
+  );
+
+  async function handlePick(electionId: Id<'elections'>) {
+    setPendingId(electionId);
+    try {
+      const { url } = await createBoostCheckout({ electionId, price });
+      window.location.href = url;
+    } catch (err) {
+      const message =
+        err instanceof ConvexError
+          ? ((err.data as { message?: string }).message ?? 'Checkout failed')
+          : 'Checkout failed';
+      toast.error(message);
+      setPendingId(null);
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Choose an election to Boost</DialogTitle>
+          <DialogDescription>
+            Boost upgrades a specific election to up to {num.format(tierLabel)}{' '}
+            voters and unlocks live support, realtime chat, and per-second
+            result updates.
+          </DialogDescription>
+        </DialogHeader>
+
+        {isPending ? (
+          <p className="py-4 text-sm text-muted-foreground">Loading…</p>
+        ) : upgradable.length === 0 ? (
+          <div className="py-2 text-sm text-muted-foreground">
+            <p>You don't have any free elections to upgrade.</p>
+            <p className="mt-2">
+              <Link to="/dashboard" className="underline">
+                Go to the dashboard
+              </Link>{' '}
+              to create one first.
+            </p>
+          </div>
+        ) : (
+          <ul className="max-h-72 space-y-1 overflow-y-auto">
+            {upgradable.map((e) => (
+              <li key={e._id}>
+                <button
+                  type="button"
+                  disabled={pendingId !== null}
+                  onClick={() => handlePick(e._id)}
+                  className={cn(
+                    'flex w-full items-center justify-between rounded-md border px-3 py-2 text-left text-sm transition-colors',
+                    pendingId === e._id
+                      ? 'opacity-70'
+                      : 'hover:bg-accent hover:text-accent-foreground',
+                  )}
+                >
+                  <span>
+                    <span className="font-medium">{e.name}</span>
+                    <span className="ml-2 text-xs text-muted-foreground">
+                      /{e.slug}
+                    </span>
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {pendingId === e._id ? 'Opening…' : 'Boost'}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <DialogFooter>
+          <DialogClose render={<Button variant="outline" />}>Cancel</DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

@@ -5,6 +5,11 @@ import type { Id } from './_generated/dataModel';
 import { internalMutation, internalQuery, query } from './_generated/server';
 import { requireCommissioner } from './_helpers/auth';
 import { isElectionInProgress } from './_helpers/election_timing';
+import {
+  FREE_RESULTS_LATENCY_MS,
+  freeTierResultsCutoff,
+  isFreeTier,
+} from './_helpers/billing';
 
 /**
  * Live election tally. Candidates are anonymized as `Candidate N` while the
@@ -98,11 +103,24 @@ export const getBySlug = query({
       .withIndex('by_election_voter', (q) => q.eq('electionId', election._id))
       .collect();
 
+    // Free-tier elections lag the live tally to the most recent elapsed hour
+    // — e.g. at 8:51 AM the displayed counts only include votes whose
+    // `_creationTime` is strictly before 8:00 AM. The bucket advances at the
+    // top of each hour. Commissioners always see live numbers so they can
+    // confirm vote arrival without waiting.
+    const free = isFreeTier(election);
+    const now = Date.now();
+    const cutoff = free && !isCommissioner ? freeTierResultsCutoff(now) : null;
+    const eligibleVotes =
+      cutoff === null
+        ? allVotes
+        : allVotes.filter((v) => v._creationTime < cutoff);
+
     const candidateVoteCounts = new Map<string, number>();
     const positionVoteCounts = new Map<string, number>();
     const positionAbstainCounts = new Map<string, number>();
 
-    for (const vote of allVotes) {
+    for (const vote of eligibleVotes) {
       if (vote.candidateId) {
         candidateVoteCounts.set(
           vote.candidateId,
@@ -142,6 +160,14 @@ export const getBySlug = query({
         votingHourStart: election.votingHourStart,
         votingHourEnd: election.votingHourEnd,
         nameArrangement: election.nameArrangement,
+      },
+      tier: {
+        isFree: free,
+        // When throttled, this is the cutoff timestamp (votes after this are
+        // hidden) and the next refresh moment. Otherwise null.
+        resultsCutoff: cutoff,
+        nextRefreshAt:
+          cutoff === null ? null : cutoff + FREE_RESULTS_LATENCY_MS,
       },
       isCommissioner,
       positions: positions

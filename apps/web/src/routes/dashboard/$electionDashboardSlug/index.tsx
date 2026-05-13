@@ -25,6 +25,7 @@ import {
 
 import { api } from '@eboto/backend/api';
 
+import { BoostPaywall } from '~/components/boost-paywall';
 import { DashboardPending } from '~/components/dashboard-pending';
 import { Button } from '~/components/ui/button';
 import {
@@ -48,6 +49,11 @@ export const Route = createFileRoute('/dashboard/$electionDashboardSlug/')({
     const tasks: Promise<unknown>[] = [
       context.queryClient.ensureQueryData(
         convexQuery(api.elections.getDashboardStats, {
+          slug: params.electionDashboardSlug,
+        }),
+      ),
+      context.queryClient.ensureQueryData(
+        convexQuery(api.billing.getElectionTierBySlug, {
           slug: params.electionDashboardSlug,
         }),
       ),
@@ -96,6 +102,11 @@ function OverviewPage() {
     }),
     enabled: Boolean(election),
   });
+  const { data: tier } = useQuery(
+    convexQuery(api.billing.getElectionTierBySlug, {
+      slug: electionDashboardSlug,
+    }),
+  );
 
   if (!election || !stats) throw notFound();
 
@@ -113,6 +124,14 @@ function OverviewPage() {
           Quick stats for {election.name}.
         </p>
       </div>
+
+      {tier && !tier.isBoost && (
+        <BoostPaywall
+          electionId={election._id}
+          title="Upgrade this election to Boost"
+          description="Boost unlocks per-second result updates, realtime voter chat, live admin support, removes the watermark, and raises the voter cap (free is capped at 500)."
+        />
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Card>

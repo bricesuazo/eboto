@@ -53,6 +53,10 @@ export default defineSchema({
     isCandidatesVisibleInRealtimeWhenOngoing: v.boolean(),
     nameArrangement: v.number(),
     variantId: v.number(),
+    // Optional voter cap for paid (Boost) elections. Free elections leave this
+    // undefined and fall back to the constant FREE_TIER_VOTER_CAP. -1 means
+    // unlimited (custom contact-us tier).
+    voterCap: v.optional(v.number()),
     deletedAt: v.optional(v.number()),
   })
     .index('by_slug', ['slug'])
