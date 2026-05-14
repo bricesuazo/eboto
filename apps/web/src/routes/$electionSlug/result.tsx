@@ -98,7 +98,7 @@ function ResultPage() {
   })();
 
   return (
-    <main className="container mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
+    <main className="container mx-auto max-w-6xl px-6 py-10 sm:py-14">
       <Button
         render={
           <Link to="/$electionSlug" params={{ electionSlug: election.slug }}>
@@ -157,9 +157,7 @@ function ResultPage() {
       )}
 
       <section className="mt-12 sm:mt-16">
-        <SectionLabel
-          label={ongoing ? 'Live Standings' : 'Final Standings'}
-        />
+        <SectionLabel label={ongoing ? 'Live Standings' : 'Final Standings'} />
         <div className="mt-10 space-y-12 sm:space-y-16">
           {positions.map((position, idx) => (
             <PositionResult
@@ -228,14 +226,14 @@ function PositionResult({
     <section>
       <div className="mb-6 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-foreground/15 pb-3">
         <div className="flex items-baseline gap-3">
-          <span className="text-xs font-semibold tabular-nums text-muted-foreground">
+          <span className="text-xs font-semibold text-muted-foreground tabular-nums">
             {String(index + 1).padStart(2, '0')}
           </span>
           <h2 className="text-xl font-semibold tracking-tight text-balance sm:text-2xl">
             {position.name}
           </h2>
         </div>
-        <p className="text-[10px] font-medium tracking-widest text-muted-foreground uppercase tabular-nums whitespace-nowrap">
+        <p className="text-[10px] font-medium tracking-widest whitespace-nowrap text-muted-foreground uppercase tabular-nums">
           {position.totalVotes.toLocaleString()}{' '}
           {position.totalVotes === 1 ? 'vote' : 'votes'} cast
         </p>
@@ -326,7 +324,7 @@ function PositionResult({
             <MinusCircle className="size-3.5" aria-hidden />
             <span>Abstained</span>
           </div>
-          <span className="text-right tabular-nums text-muted-foreground">
+          <span className="text-right text-muted-foreground tabular-nums">
             <span className="font-medium text-foreground">
               {position.abstainVotes.toLocaleString()}
             </span>
@@ -386,19 +384,13 @@ function StatusPill({ ongoing }: { ongoing: boolean }) {
   );
 }
 
-function MetaCell({
-  label,
-  value,
-}: {
-  label: string;
-  value: ReactNode;
-}) {
+function MetaCell({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="px-4 py-4 sm:py-5">
       <dt className="text-[10px] font-semibold tracking-[0.22em] text-muted-foreground uppercase">
         {label}
       </dt>
-      <dd className="mt-1.5 text-sm font-medium leading-snug">{value}</dd>
+      <dd className="mt-1.5 text-sm leading-snug font-medium">{value}</dd>
     </div>
   );
 }

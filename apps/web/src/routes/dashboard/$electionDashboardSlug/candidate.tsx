@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 
 import { api } from '@eboto/backend/api';
 import type { Doc } from '@eboto/backend/data-model';
+import { slugify } from '@eboto/backend/slugs';
 
 import { CandidateCredentialsEditor } from '~/components/candidate-credentials-editor';
 import { DashboardPending } from '~/components/dashboard-pending';
@@ -358,6 +359,12 @@ function CandidateDialog({
   const update = useMutation(api.candidates.update);
   const setImage = useMutation(api.candidates.setImage);
   const photo = useImageUpload(initialImageUrl);
+  // On `create`, the slug auto-derives from first/middle/last as the user
+  // types. The flag flips when they edit the slug input directly, after
+  // which name changes stop touching the slug. On `edit`, the existing slug
+  // is the source of truth, so we start with the flag already set so we
+  // never overwrite it.
+  const [slugTouched, setSlugTouched] = useState(mode === 'edit');
 
   const form = useForm<FormValues>({
     resolver: zodResolver(candidateSchema),
@@ -371,6 +378,33 @@ function CandidateDialog({
       partylistId: initial?.partylistId ?? partylists[0]?._id ?? '',
     },
   });
+
+  /**
+   * Recomputes the slug from the current first/middle/last values, with
+   * one of them overridden by `nextValue` since react-hook-form hasn't
+   * committed it yet at the moment we're called from onChange.
+   */
+  function autofillSlug(
+    field: 'firstName' | 'middleName' | 'lastName',
+    nextValue: string,
+  ) {
+    if (slugTouched) return;
+    const v = form.getValues();
+    const parts = {
+      firstName: v.firstName,
+      middleName: v.middleName ?? '',
+      lastName: v.lastName,
+      [field]: nextValue,
+    };
+    const fullName = [parts.firstName, parts.middleName, parts.lastName]
+      .map((p) => p.trim())
+      .filter(Boolean)
+      .join(' ');
+    form.setValue('slug', slugify(fullName), {
+      shouldValidate: false,
+      shouldDirty: true,
+    });
+  }
 
   async function onSubmit(values: FormValues) {
     try {
@@ -436,7 +470,13 @@ function CandidateDialog({
                 <FormItem>
                   <FormLabel>First name</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        autofillSlug('firstName', e.target.value);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -449,7 +489,13 @@ function CandidateDialog({
                 <FormItem>
                   <FormLabel>Last name</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        autofillSlug('lastName', e.target.value);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -463,7 +509,13 @@ function CandidateDialog({
               <FormItem>
                 <FormLabel>Middle name (optional)</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      autofillSlug('middleName', e.target.value);
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -476,7 +528,14 @@ function CandidateDialog({
               <FormItem>
                 <FormLabel>Slug</FormLabel>
                 <FormControl>
-                  <Input placeholder="jane-doe" {...field} />
+                  <Input
+                    placeholder="jane-doe"
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      setSlugTouched(true);
+                    }}
+                  />
                 </FormControl>
                 <FormDescription>
                   Candidate page:{' '}

@@ -1,12 +1,17 @@
+import { useState } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, notFound } from '@tanstack/react-router';
+import { useAction } from 'convex/react';
+import { ConvexError } from 'convex/values';
 import dayjs from 'dayjs';
 import {
   CheckCircle2,
   Circle,
   Download,
+  FileText,
   Flag,
+  Loader2,
   Replace,
   Users,
   UserSearch,
@@ -22,6 +27,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+import { toast } from 'sonner';
 
 import { api } from '@eboto/backend/api';
 
@@ -35,6 +41,7 @@ import {
   CardHeader,
   CardTitle,
 } from '~/components/ui/card';
+import { parseHourTo12HourFormat } from '~/lib/election';
 import { cn } from '~/lib/utils';
 
 const TURNOUT_COLORS = ['#16a34a', '#e5e7eb'] as const;
@@ -147,7 +154,8 @@ function OverviewPage() {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Daily {election.votingHourStart}:00 – {election.votingHourEnd}:00
+              Daily {parseHourTo12HourFormat(election.votingHourStart)} –{' '}
+              {parseHourTo12HourFormat(election.votingHourEnd)}
             </p>
           </CardContent>
         </Card>
@@ -252,9 +260,7 @@ function OverviewPage() {
             value={stats.counts.voters}
             icon={<Users className="size-4" />}
             caption={
-              tier
-                ? `of ${tier.voterCap.toLocaleString()} cap`
-                : undefined
+              tier ? `of ${tier.voterCap.toLocaleString()} cap` : undefined
             }
           />
         </div>
@@ -270,6 +276,7 @@ function OverviewPage() {
                 : 'Available after the election ends. Generate one anyway if you need a snapshot now.'}
             </CardDescription>
           </div>
+          <GenerateReportButton electionId={election._id} />
         </CardHeader>
         <CardContent>
           {reports.length === 0 ? (
@@ -391,9 +398,7 @@ function StatCard({
           {label}
         </CardDescription>
         <CardTitle className="text-3xl">{value.toLocaleString()}</CardTitle>
-        {caption && (
-          <p className="text-muted-foreground text-xs">{caption}</p>
-        )}
+        {caption && <p className="text-xs text-muted-foreground">{caption}</p>}
       </CardHeader>
     </Card>
   );
@@ -501,5 +506,40 @@ function LegendDot({ color, label }: { color: string; label: string }) {
       />
       <span className="text-muted-foreground">{label}</span>
     </span>
+  );
+}
+
+function GenerateReportButton({ electionId }: { electionId: string }) {
+  const trigger = useAction(api.results.triggerTurnoutPdf);
+  const [pending, setPending] = useState(false);
+  return (
+    <Button
+      type="button"
+      size="sm"
+      variant="outline"
+      disabled={pending}
+      onClick={async () => {
+        setPending(true);
+        try {
+          await trigger({ electionId: electionId as never });
+          toast.success('Generating report — it will appear here in a moment.');
+        } catch (err) {
+          toast.error(
+            err instanceof ConvexError
+              ? ((err.data as { message?: string }).message ?? 'Failed')
+              : 'Failed to generate report',
+          );
+        } finally {
+          setPending(false);
+        }
+      }}
+    >
+      {pending ? (
+        <Loader2 className="mr-1.5 size-4 animate-spin" />
+      ) : (
+        <FileText className="mr-1.5 size-4" />
+      )}
+      Generate now
+    </Button>
   );
 }

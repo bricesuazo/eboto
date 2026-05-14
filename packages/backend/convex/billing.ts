@@ -104,6 +104,84 @@ export const getElectionTierBySlug = query({
   },
 });
 
+/**
+ * Summary for the `/account/billing` page: Plus credit ledger (total/used)
+ * and the list of Boost elections the user owns. Linked tier rows surface
+ * voter cap so the user can see what they paid for at a glance.
+ */
+export const myBillingSummary = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await requireUser(ctx);
+
+    const credits = await ctx.db
+      .query('elections_plus')
+      .withIndex('by_user', (q) => q.eq('userId', userId))
+      .filter((q) => q.eq(q.field('deletedAt'), undefined))
+      .collect();
+
+    const commissionerRows = await ctx.db
+      .query('commissioners')
+      .withIndex('by_user', (q) => q.eq('userId', userId))
+      .filter((q) => q.eq(q.field('deletedAt'), undefined))
+      .collect();
+
+    const boostElections: {
+      _id: string;
+      name: string;
+      slug: string;
+      voterCap: number;
+      isBoost: boolean;
+    }[] = [];
+    for (const c of commissionerRows) {
+      const election = await ctx.db.get(c.electionId);
+      if (!election || election.deletedAt) continue;
+      const tier = getElectionTier(election);
+      if (tier.isBoost) {
+        boostElections.push({
+          _id: election._id,
+          name: election.name,
+          slug: election.slug,
+          voterCap: tier.voterCap,
+          isBoost: true,
+        });
+      }
+    }
+
+    return {
+      plus: {
+        owned: credits.length,
+        available: credits.filter((c) => !c.redeemedAt).length,
+        redeemed: credits.filter((c) => Boolean(c.redeemedAt)).length,
+      },
+      boostElections,
+    };
+  },
+});
+
+/**
+ * Public variant — anyone can read whether an election is on a paid tier so
+ * the public election page can hide the eBoto watermark on Boost elections.
+ * Exposes feature flags + tier label only, not the voter cap or any
+ * commissioner-only info.
+ */
+export const getPublicElectionFeatures = query({
+  args: { slug: v.string() },
+  handler: async (ctx, { slug }) => {
+    const election = await ctx.db
+      .query('elections')
+      .withIndex('by_slug', (q) => q.eq('slug', slug))
+      .filter((q) => q.eq(q.field('deletedAt'), undefined))
+      .first();
+    if (!election) return null;
+    const tier = getElectionTier(election);
+    return {
+      isBoost: tier.isBoost,
+      features: tier.features,
+    };
+  },
+});
+
 /* ------------------------------------------------------------------ */
 /* Internal mutations / queries used by the actions + webhook           */
 /* ------------------------------------------------------------------ */
@@ -604,13 +682,40 @@ export const lemonWebhook = httpAction(async (ctx, request) => {
     const voterCap = variant
       ? BOOST_PRICE_TO_VOTER_CAP[variant.price]
       : undefined;
-    if (voterCap) {
-      await ctx.runMutation(internal.billing.upgradeElectionBoost, {
-        electionId: data.election_id as Id<'elections'>,
-        variantId: firstItem.variant_id,
-        voterCap,
-      });
+    if (!variant || !voterCap) {
+      // Fail loud: a Boost order arrived for a variant we don't recognize, or
+      // for a price we haven't mapped to a voter cap. Returning 5xx makes
+      // Lemon Squeezy retry the webhook (every ~10 min for up to 3 days), so
+      // updating BOOST_PRICE_TO_VOTER_CAP and replaying nothing else is
+      // enough — the next retry will succeed. The console.error gives the
+      // operator the order id + variant + price they need to fix the map.
+      const orderRef =
+        (payload.data as { id?: string | number } | undefined)?.id ??
+        'unknown';
+      console.error(
+        '[lemonWebhook] Unresolvable Boost order — refusing to upgrade.',
+        {
+          orderId: orderRef,
+          electionId: data.election_id,
+          variantId: firstItem.variant_id,
+          variantPrice: variant?.price,
+          knownPrices: Object.keys(BOOST_PRICE_TO_VOTER_CAP),
+        },
+      );
+      return new Response(
+        JSON.stringify({
+          error: 'unresolvable_boost_variant',
+          variantId: firstItem.variant_id,
+          variantPrice: variant?.price ?? null,
+        }),
+        { status: 503, headers: { 'content-type': 'application/json' } },
+      );
     }
+    await ctx.runMutation(internal.billing.upgradeElectionBoost, {
+      electionId: data.election_id as Id<'elections'>,
+      variantId: firstItem.variant_id,
+      voterCap,
+    });
   } else if (data.type === 'plus') {
     const qty = Math.max(1, firstItem?.quantity ?? 1);
     for (let i = 0; i < qty; i++) {

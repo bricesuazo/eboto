@@ -3,11 +3,12 @@ import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, Link, notFound } from '@tanstack/react-router';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { useMutation, usePaginatedQuery } from 'convex/react';
+import { useConvex, useMutation, usePaginatedQuery } from 'convex/react';
 import { ConvexError } from 'convex/values';
 import {
   CheckCircle2,
   Circle,
+  Download,
   Info,
   Loader2,
   Pencil,
@@ -174,6 +175,11 @@ function VoterPage() {
         </div>
         <div className="flex flex-wrap gap-2">
           <ManageFieldsDialog electionId={election._id} fields={voterFields} />
+          <ExportVotersButton
+            electionId={election._id}
+            slug={election.slug}
+            fields={voterFields}
+          />
           <Button
             variant="outline"
             render={
@@ -1052,6 +1058,85 @@ function DeleteVoterButton({ id }: { id: Doc<'voters'>['_id'] }) {
       }}
     >
       <Trash2 className="size-3.5" />
+    </Button>
+  );
+}
+
+function ExportVotersButton({
+  electionId,
+  slug,
+  fields,
+}: {
+  electionId: string;
+  slug: string;
+  fields: Doc<'voter_fields'>[];
+}) {
+  const convex = useConvex();
+  const [pending, setPending] = useState(false);
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      disabled={pending}
+      onClick={async () => {
+        setPending(true);
+        try {
+          const rows = await convex.query(api.voters.listForExport, {
+            electionId: electionId as never,
+          });
+          const customCols = fields.map((f) => f.name);
+          const header = [
+            'email',
+            'voted_at',
+            'unsubscribed_at',
+            ...customCols,
+          ];
+          const escape = (v: string | number | null | undefined) => {
+            if (v == null) return '';
+            const s = String(v);
+            return /[",\n]/.test(s) ? `"${s.replaceAll('"', '""')}"` : s;
+          };
+          const lines = [header.join(',')];
+          for (const r of rows) {
+            const fieldMap = r.field ?? {};
+            const cols = [
+              escape(r.email),
+              escape(r.votedAt ? new Date(r.votedAt).toISOString() : ''),
+              escape(
+                r.unsubscribedAt
+                  ? new Date(r.unsubscribedAt).toISOString()
+                  : '',
+              ),
+              ...customCols.map((name) => escape(fieldMap[name] ?? '')),
+            ];
+            lines.push(cols.join(','));
+          }
+          const blob = new Blob([lines.join('\n')], {
+            type: 'text/csv;charset=utf-8',
+          });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `${slug}-voters-${new Date().toISOString().slice(0, 10)}.csv`;
+          link.click();
+          URL.revokeObjectURL(url);
+        } catch (err) {
+          toast.error(
+            err instanceof ConvexError
+              ? ((err.data as { message?: string }).message ?? 'Failed')
+              : 'Failed to export voters',
+          );
+        } finally {
+          setPending(false);
+        }
+      }}
+    >
+      {pending ? (
+        <Loader2 className="size-4 animate-spin" />
+      ) : (
+        <Download className="size-4" />
+      )}{' '}
+      Export CSV
     </Button>
   );
 }

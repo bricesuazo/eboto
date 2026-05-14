@@ -1,5 +1,5 @@
 import { Link, useRouteContext } from '@tanstack/react-router';
-import { LogOut, User } from 'lucide-react';
+import { CreditCard, LogOut, User, UserCircle } from 'lucide-react';
 
 import { ModeToggle } from '~/components/mode-toggle';
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
@@ -100,6 +100,24 @@ function UserMenu({ user }: { user: UserShape }) {
               <Link to="/dashboard">
                 <User className="size-4" />
                 My elections
+              </Link>
+            }
+            nativeButton={false}
+          />
+          <DropdownMenuItem
+            render={
+              <Link to="/account">
+                <UserCircle className="size-4" />
+                Profile
+              </Link>
+            }
+            nativeButton={false}
+          />
+          <DropdownMenuItem
+            render={
+              <Link to="/account/billing">
+                <CreditCard className="size-4" />
+                Billing
               </Link>
             }
             nativeButton={false}

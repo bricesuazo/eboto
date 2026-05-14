@@ -16,6 +16,14 @@ export const electionFields = {
   nameArrangement: z.number().int().min(0).max(1),
   isCandidatesVisibleInRealtimeWhenOngoing: z.boolean(),
   template: z.string(),
+  voterDomain: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .refine(
+      (s) => s === '' || /^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(s),
+      'Must be a domain like "example.edu" (or leave empty)',
+    ),
 } as const;
 
 const datesValid = (d: Record<string, unknown>) =>
@@ -69,6 +77,7 @@ export const electionSettingsSchema = withDateHourRefinements(
     nameArrangement: electionFields.nameArrangement,
     isCandidatesVisibleInRealtimeWhenOngoing:
       electionFields.isCandidatesVisibleInRealtimeWhenOngoing,
+    voterDomain: electionFields.voterDomain,
   }),
 );
 

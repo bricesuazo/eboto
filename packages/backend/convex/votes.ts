@@ -1,9 +1,11 @@
 import { getAuthUserId } from '@convex-dev/auth/server';
 import { ConvexError, v } from 'convex/values';
 
+import { internal } from './_generated/api';
 import type { Id } from './_generated/dataModel';
 import { query } from './_generated/server';
 import { isVotingOpen } from './_helpers/election_timing';
+import { enforceRateLimit } from './_helpers/rateLimit';
 import { mutation } from './_helpers/triggers';
 
 /**
@@ -179,6 +181,16 @@ export const cast = mutation({
       });
     }
 
+    // Cap ballot-submission attempts per user to absorb script-driven retries.
+    // One ballot per election is enforced below — this protects the rest of
+    // the validation pipeline from getting hammered.
+    await enforceRateLimit(ctx, {
+      key: `vote:${userId}`,
+      limit: 10,
+      windowMs: 60_000,
+      message: 'Too many ballot submissions — try again in a minute.',
+    });
+
     const election = await ctx.db.get(electionId);
     if (!election || election.deletedAt) {
       throw new ConvexError({
@@ -316,6 +328,14 @@ export const cast = mutation({
     if (!voter.votedAt) {
       await ctx.db.patch(voter._id, { votedAt: Date.now() });
     }
+
+    // Confirmation email goes out asynchronously so the mutation stays fast
+    // (and a SES outage can't fail the ballot insert). Convex retries the
+    // action on transient errors.
+    await ctx.scheduler.runAfter(0, internal.voterBlast.sendVoteReceipt, {
+      electionId: election._id,
+      voterEmail: user.email,
+    });
 
     return { ok: true as const };
   },

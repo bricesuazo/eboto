@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 
 import { api } from '@eboto/backend/api';
 import { votingEndAt, votingStartAt } from '@eboto/backend/election-timing';
+import { slugify } from '@eboto/backend/slugs';
 
 import { DatePicker } from '~/components/date-picker';
 import { ImageUpload } from '~/components/image-upload';
@@ -73,6 +74,11 @@ function NewElectionPage() {
     convexQuery(api.billing.myElectionQuota, {}),
   );
   const logo = useImageUpload();
+  // Tracks whether the user has manually edited the slug. While false, the
+  // slug auto-fills from the election name. The flag flips on the first
+  // keystroke in the slug input and never resets — re-typing the name after
+  // that won't clobber a customized slug.
+  const [slugTouched, setSlugTouched] = useState(false);
 
   // After a successful Plus purchase LemonSqueezy redirects here with
   // `?purchase=plus`. The webhook that records the credit races the redirect,
@@ -191,7 +197,23 @@ function NewElectionPage() {
                   <FormItem>
                     <FormLabel>Election name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Spring 2026 Election" {...field} />
+                      <Input
+                        placeholder="Spring 2026 Election"
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          // Auto-fill the slug until the user manually
+                          // edits it (tracked in slugTouched). Re-typing
+                          // the name keeps the slug in sync; once they
+                          // touch the slug field, we stop.
+                          if (!slugTouched) {
+                            form.setValue('slug', slugify(e.target.value), {
+                              shouldValidate: false,
+                              shouldDirty: true,
+                            });
+                          }
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -204,7 +226,14 @@ function NewElectionPage() {
                   <FormItem>
                     <FormLabel>URL slug</FormLabel>
                     <FormControl>
-                      <Input placeholder="spring-2026" {...field} />
+                      <Input
+                        placeholder="spring-2026"
+                        {...field}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          setSlugTouched(true);
+                        }}
+                      />
                     </FormControl>
                     <FormDescription>
                       Voters will visit{' '}

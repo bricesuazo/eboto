@@ -334,6 +334,7 @@ export const getDashboardBySlug = query({
       isCandidatesVisibleInRealtimeWhenOngoing:
         election.isCandidatesVisibleInRealtimeWhenOngoing,
       variantId: election.variantId,
+      voterDomain: election.voterDomain ?? null,
       logoUrl,
     };
   },
@@ -426,13 +427,13 @@ export const create = mutation({
     }
     if (
       args.votingHourStart < 0 ||
-      args.votingHourStart > 24 ||
+      args.votingHourStart > 23 ||
       args.votingHourEnd < 0 ||
-      args.votingHourEnd > 24
+      args.votingHourEnd > 23
     ) {
       throw new ConvexError({
         code: 'invalid_argument',
-        message: 'Invalid voting hours.',
+        message: 'Voting hours must be between 0 and 23.',
       });
     }
     if (args.votingHourEnd <= args.votingHourStart) {
@@ -501,6 +502,10 @@ export const update = mutation({
     ),
     nameArrangement: v.number(),
     isCandidatesVisibleInRealtimeWhenOngoing: v.boolean(),
+    // Optional email-domain restriction. When set (e.g. "example.edu"),
+    // voter registration rejects emails outside that domain. Empty string
+    // clears the restriction.
+    voterDomain: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const election = await ctx.db.get(args.id);
@@ -517,6 +522,17 @@ export const update = mutation({
       throw new ConvexError({
         code: 'invalid_argument',
         message: 'End must be after start',
+      });
+    }
+    if (
+      args.votingHourStart < 0 ||
+      args.votingHourStart > 23 ||
+      args.votingHourEnd < 0 ||
+      args.votingHourEnd > 23
+    ) {
+      throw new ConvexError({
+        code: 'invalid_argument',
+        message: 'Voting hours must be between 0 and 23.',
       });
     }
     if (args.votingHourEnd <= args.votingHourStart) {
@@ -547,6 +563,14 @@ export const update = mutation({
       }
     }
 
+    const voterDomain = args.voterDomain?.trim().toLowerCase() ?? '';
+    if (voterDomain && !/^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(voterDomain)) {
+      throw new ConvexError({
+        code: 'invalid_argument',
+        message: 'Voter domain must look like "example.edu"',
+      });
+    }
+
     await ctx.db.patch(args.id, {
       name: args.name.trim(),
       slug,
@@ -559,6 +583,7 @@ export const update = mutation({
       nameArrangement: args.nameArrangement,
       isCandidatesVisibleInRealtimeWhenOngoing:
         args.isCandidatesVisibleInRealtimeWhenOngoing,
+      voterDomain: voterDomain || undefined,
     });
 
     return { slug };

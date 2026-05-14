@@ -12,6 +12,7 @@ import { ExternalLink, Lock, Sparkles } from 'lucide-react';
 import { api } from '@eboto/backend/api';
 import { votingStartAt } from '@eboto/backend/election-timing';
 
+import { ReportProblemDialog } from '~/components/report-problem-dialog';
 import { Badge } from '~/components/ui/badge';
 import { Separator } from '~/components/ui/separator';
 import {
@@ -124,6 +125,8 @@ function DashboardElectionShell() {
             />
           ))}
         </nav>
+        <Separator className="my-3" />
+        <ReportProblemDialog electionId={election._id} />
       </aside>
 
       <main className="min-w-0">

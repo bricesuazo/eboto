@@ -121,9 +121,16 @@ function MessagesPage() {
 
       <Card className="overflow-hidden p-0">
         <div className="grid h-[640px] grid-cols-[260px_1fr]">
-          <aside className="overflow-y-auto border-r">
+          <aside
+            className="overflow-y-auto border-r"
+            role="tablist"
+            aria-orientation="vertical"
+            aria-label="Conversations"
+          >
             <button
               type="button"
+              role="tab"
+              aria-selected={activeRoom?.kind === 'admin'}
               className={cn(
                 'flex w-full items-center gap-3 px-4 py-3 text-left text-sm hover:bg-accent',
                 activeRoom?.kind === 'admin' && 'bg-accent',
@@ -143,7 +150,10 @@ function MessagesPage() {
 
             <Separator />
 
-            <div className="text-muted-foreground px-4 py-2 text-xs uppercase">
+            <div
+              className="text-muted-foreground px-4 py-2 text-xs uppercase"
+              id="voter-rooms-heading"
+            >
               Voters
             </div>
             {voterRooms.length === 0 ? (
@@ -151,33 +161,38 @@ function MessagesPage() {
                 No voter conversations yet.
               </p>
             ) : (
-              voterRooms.map((room) => (
-                <button
-                  key={room._id}
-                  type="button"
-                  className={cn(
-                    'flex w-full items-center gap-3 px-4 py-3 text-left text-sm hover:bg-accent',
-                    activeRoom?.kind === 'voter' &&
-                      activeRoom.id === room._id &&
-                      'bg-accent',
-                  )}
-                  onClick={() =>
-                    setActiveRoom({ kind: 'voter', id: room._id })
-                  }
-                >
-                  <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted">
-                    <UserIcon className="size-4" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="truncate font-medium">
-                      {room.voterEmail ?? room.name}
+              voterRooms.map((room) => {
+                const isActive =
+                  activeRoom?.kind === 'voter' && activeRoom.id === room._id;
+                return (
+                  <button
+                    key={room._id}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    aria-describedby="voter-rooms-heading"
+                    className={cn(
+                      'flex w-full items-center gap-3 px-4 py-3 text-left text-sm hover:bg-accent',
+                      isActive && 'bg-accent',
+                    )}
+                    onClick={() =>
+                      setActiveRoom({ kind: 'voter', id: room._id })
+                    }
+                  >
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted">
+                      <UserIcon className="size-4" />
                     </div>
-                    <div className="text-muted-foreground truncate text-xs">
-                      {room.lastMessage?.message ?? 'No messages yet'}
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate font-medium">
+                        {room.voterEmail ?? room.name}
+                      </div>
+                      <div className="text-muted-foreground truncate text-xs">
+                        {room.lastMessage?.message ?? 'No messages yet'}
+                      </div>
                     </div>
-                  </div>
-                </button>
-              ))
+                  </button>
+                );
+              })
             )}
           </aside>
 

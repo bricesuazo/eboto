@@ -163,6 +163,11 @@ export default defineSchema({
     field: v.optional(v.any()),
     electionId: v.id('elections'),
     votedAt: v.optional(v.number()),
+    // Set when the voter clicks the unsubscribe link in any lifecycle email
+    // or commissioner blast. Lifecycle blasts skip voters whose
+    // `unsubscribedAt` is set; the voter can still log in and vote (the
+    // election URL works regardless), this just suppresses email touches.
+    unsubscribedAt: v.optional(v.number()),
     deletedAt: v.optional(v.number()),
   })
     .index('by_election', ['electionId'])
@@ -213,7 +218,7 @@ export default defineSchema({
     electionId: v.optional(v.id('elections')),
     userId: v.id('users'),
     deletedAt: v.optional(v.number()),
-  }),
+  }).index('by_user', ['userId']),
 
   // ---- Chat (kept as-is from schema; not yet wired into UI) ----
   admin_commissioners_rooms: defineTable({
@@ -244,6 +249,17 @@ export default defineSchema({
     roomId: v.id('commissioners_voters_rooms'),
     deletedAt: v.optional(v.number()),
   }).index('by_room', ['roomId']),
+
+  // ---- Rate limiting ----
+  // Sliding-window counter keyed on `{action}:{subject}` (e.g.
+  // `vote:user_abc`). Each mutation that wants to rate-limit calls
+  // `enforceRateLimit(ctx, ...)` which upserts into this table inside the
+  // same transaction.
+  rate_limits: defineTable({
+    key: v.string(),
+    windowStart: v.number(),
+    count: v.number(),
+  }).index('by_key', ['key']),
 
   // ---- Billing reference data ----
   products: defineTable({

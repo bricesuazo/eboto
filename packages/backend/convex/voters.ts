@@ -35,6 +35,19 @@ async function getVoterCap(ctx: MutationCtx, electionId: Id<'elections'>) {
   return tier.voterCap;
 }
 
+/**
+ * When the election has a `voterDomain` set, voter emails must match that
+ * domain (case-insensitive, ignoring an optional leading "@"). Returns the
+ * normalized domain string or `null` when no restriction applies.
+ */
+function emailMatchesDomain(email: string, domain: string | undefined) {
+  if (!domain) return true;
+  const at = email.lastIndexOf('@');
+  if (at < 0) return false;
+  const emailDomain = email.slice(at + 1).toLowerCase();
+  return emailDomain === domain.toLowerCase().replace(/^@/, '');
+}
+
 async function currentVoterCount(
   ctx: MutationCtx,
   electionId: Id<'elections'>,
@@ -130,6 +143,30 @@ export const stats = query({
   },
 });
 
+/**
+ * Returns every voter in an election (capped at the current max voter tier of
+ * 10k) for CSV download. Commissioner-only. Includes `votedAt` so the export
+ * can be used as a participation list. Custom-field shapes vary per
+ * election, so this returns the raw `field` blob and the client flattens it.
+ */
+export const listForExport = query({
+  args: { electionId: v.id('elections') },
+  handler: async (ctx, { electionId }) => {
+    await requireCommissioner(ctx, electionId);
+    const rows = await ctx.db
+      .query('voters')
+      .withIndex('by_election', (q) => q.eq('electionId', electionId))
+      .filter((q) => q.eq(q.field('deletedAt'), undefined))
+      .take(10_000);
+    return rows.map((v) => ({
+      email: v.email,
+      votedAt: v.votedAt ?? null,
+      unsubscribedAt: v.unsubscribedAt ?? null,
+      field: (v.field as Record<string, string> | undefined) ?? null,
+    }));
+  },
+});
+
 export const create = mutation({
   args: {
     electionId: v.id('elections'),
@@ -138,12 +175,18 @@ export const create = mutation({
   },
   handler: async (ctx, { electionId, email, fields }) => {
     await requireCommissioner(ctx, electionId);
-    await requireElectionEditable(ctx, electionId);
+    const election = await requireElectionEditable(ctx, electionId);
     const normalized = email.trim().toLowerCase();
     if (!normalized) {
       throw new ConvexError({
         code: 'invalid_argument',
         message: 'Email required',
+      });
+    }
+    if (!emailMatchesDomain(normalized, election.voterDomain)) {
+      throw new ConvexError({
+        code: 'invalid_argument',
+        message: `Email must be in the @${election.voterDomain} domain.`,
       });
     }
     const conflict = await ctx.db
@@ -188,7 +231,7 @@ export const bulkCreate = mutation({
   },
   handler: async (ctx, { electionId, voters }) => {
     await requireCommissioner(ctx, electionId);
-    await requireElectionEditable(ctx, electionId);
+    const election = await requireElectionEditable(ctx, electionId);
 
     const cap = await getVoterCap(ctx, electionId);
     let remaining =
@@ -198,6 +241,7 @@ export const bulkCreate = mutation({
 
     let added = 0;
     const skipped: string[] = [];
+    const domainRejected: string[] = [];
     const seenInBatch = new Set<string>();
     for (const raw of voters) {
       const email = raw.email.trim().toLowerCase();
@@ -206,6 +250,11 @@ export const bulkCreate = mutation({
         continue;
       }
       seenInBatch.add(email);
+
+      if (!emailMatchesDomain(email, election.voterDomain)) {
+        domainRejected.push(email);
+        continue;
+      }
 
       const conflict = await ctx.db
         .query('voters')
@@ -236,7 +285,12 @@ export const bulkCreate = mutation({
       remaining--;
     }
 
-    return { added, skipped, capReached: remaining <= 0 && cap !== null };
+    return {
+      added,
+      skipped,
+      domainRejected,
+      capReached: remaining <= 0 && cap !== null,
+    };
   },
 });
 
@@ -421,13 +475,36 @@ export const getNotification = internalQuery({
 /**
  * Voter lookup for the Inngest sender. Returns null when the voter has
  * been soft-deleted between fan-out and send so the handler can no-op.
+ * Surfaces `unsubscribedAt` so the sender can skip opted-out voters
+ * without a second lookup.
  */
 export const getForBlast = internalQuery({
   args: { voterId: v.id('voters') },
   handler: async (ctx, { voterId }) => {
     const voter = await ctx.db.get(voterId);
     if (!voter || voter.deletedAt) return null;
-    return { _id: voter._id, email: voter.email, electionId: voter.electionId };
+    return {
+      _id: voter._id,
+      email: voter.email,
+      electionId: voter.electionId,
+      unsubscribedAt: voter.unsubscribedAt ?? null,
+    };
+  },
+});
+
+/**
+ * Marks a voter as opted-out from future email blasts. Idempotent — re-clicking
+ * the unsubscribe link is a no-op. Public mutation because it's invoked by an
+ * unauthenticated HTTP route after token verification.
+ */
+export const markUnsubscribed = internalMutation({
+  args: { voterId: v.id('voters') },
+  handler: async (ctx, { voterId }) => {
+    const voter = await ctx.db.get(voterId);
+    if (!voter || voter.deletedAt) return { ok: false as const };
+    if (voter.unsubscribedAt) return { ok: true as const, alreadyOptedOut: true };
+    await ctx.db.patch(voterId, { unsubscribedAt: Date.now() });
+    return { ok: true as const, alreadyOptedOut: false };
   },
 });
 

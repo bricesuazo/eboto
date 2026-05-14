@@ -347,7 +347,7 @@ function FinalCta() {
             </div>
             <Separator className="mt-2 bg-border/60" />
             <p className="text-xs text-muted-foreground">
-              Open-source · Built in the Philippines · contact@eboto.app
+              Open-source · contact@eboto.app
             </p>
           </CardContent>
         </Card>

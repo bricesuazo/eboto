@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -13,6 +13,7 @@ import {
   ClipboardCheck,
   Clock3,
   Copy,
+  Download,
   Fingerprint,
   Info,
   MessagesSquare,
@@ -91,11 +92,10 @@ function ElectionPage() {
     ended ||
     (election.publicity === 'VOTER' && hasVoted);
   const canVote = ongoing && (!user || (isVoter && !hasVoted));
-  const canMessage =
-    isCommissioner || (isVoter && election.variantId !== 0);
+  const canMessage = isCommissioner || (isVoter && election.variantId !== 0);
 
   return (
-    <main className="container mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
+    <main className="container mx-auto max-w-6xl px-6 py-10 sm:py-14">
       <header>
         <div className="flex flex-col items-center text-center">
           <StatusPill status={status} />
@@ -125,7 +125,7 @@ function ElectionPage() {
           </p>
 
           {election.description && (
-            <p className="mx-auto mt-6 max-w-prose text-pretty leading-relaxed text-muted-foreground">
+            <p className="mx-auto mt-6 max-w-prose leading-relaxed text-pretty text-muted-foreground">
               {election.description}
             </p>
           )}
@@ -154,10 +154,7 @@ function ElectionPage() {
                     Vote now
                   </Link>
                 ) : (
-                  <Link
-                    to="/sign-in"
-                    search={{ to: `/${election.slug}/vote` }}
-                  >
+                  <Link to="/sign-in" search={{ to: `/${election.slug}/vote` }}>
                     <Fingerprint className="size-4" />
                     Vote now
                   </Link>
@@ -185,11 +182,7 @@ function ElectionPage() {
             <Dialog>
               <DialogTrigger
                 render={
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    disabled={!myBallot}
-                  >
+                  <Button size="lg" variant="outline" disabled={!myBallot}>
                     <ClipboardCheck className="size-4" />
                     Your ballot
                   </Button>
@@ -235,12 +228,12 @@ function ElectionPage() {
         </div>
 
         {ended ? (
-          <p className="mt-6 text-center text-xs uppercase tracking-widest text-muted-foreground">
+          <p className="mt-6 text-center text-xs tracking-widest text-muted-foreground uppercase">
             This election has ended
           </p>
         ) : (
           !ongoing && (
-            <p className="mt-6 text-center text-xs font-medium uppercase tracking-widest text-destructive">
+            <p className="mt-6 text-center text-xs font-medium tracking-widest text-destructive uppercase">
               Voting is not yet open
             </p>
           )
@@ -278,7 +271,7 @@ function SectionLabel({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-4">
       <div className="h-px flex-1 bg-border" aria-hidden />
-      <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
+      <p className="text-[10px] font-semibold tracking-[0.25em] text-muted-foreground uppercase">
         {label}
       </p>
       <div className="h-px flex-1 bg-border" aria-hidden />
@@ -319,14 +312,14 @@ function PositionSection({
     <section>
       <div className="mb-6 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-foreground/15 pb-3">
         <div className="flex items-baseline gap-3">
-          <span className="text-xs font-semibold tabular-nums text-muted-foreground">
+          <span className="text-xs font-semibold text-muted-foreground tabular-nums">
             {String(index + 1).padStart(2, '0')}
           </span>
           <h2 className="text-xl font-semibold tracking-tight text-balance sm:text-2xl">
             {position.name}
           </h2>
         </div>
-        <span className="text-[10px] font-medium tracking-widest text-muted-foreground uppercase whitespace-nowrap">
+        <span className="text-[10px] font-medium tracking-widest whitespace-nowrap text-muted-foreground uppercase">
           {rule} · {position.candidates.length}{' '}
           {position.candidates.length === 1 ? 'candidate' : 'candidates'}
         </span>
@@ -390,7 +383,7 @@ function CandidateCard({
         )}
       </div>
       <div className="border-t bg-card p-3">
-        <p className="line-clamp-2 text-sm font-medium leading-snug text-balance">
+        <p className="line-clamp-2 text-sm leading-snug font-medium text-balance">
           {name}
         </p>
         {candidate.partylist?.acronym && (
@@ -465,7 +458,7 @@ function MetaCell({
           </HoverCard>
         )}
       </dt>
-      <dd className="mt-1.5 text-sm font-medium leading-snug">{value}</dd>
+      <dd className="mt-1.5 text-sm leading-snug font-medium">{value}</dd>
     </div>
   );
 }
@@ -476,6 +469,7 @@ function ShareQrButton({
   election: { name: string; slug: string };
 }) {
   const [open, setOpen] = useState(false);
+  const qrWrapperRef = useRef<HTMLDivElement>(null);
   // Build the absolute URL on the client; SSR can't know the host reliably.
   const url =
     typeof window === 'undefined'
@@ -489,6 +483,43 @@ function ShareQrButton({
     } catch {
       toast.error('Could not copy link');
     }
+  }
+
+  // Rasterizes the rendered <QRCodeSVG> to a 1024px PNG and downloads it.
+  // Going through SVG → data URL → <img> → canvas avoids any extra deps
+  // while still producing a crisp print-quality image.
+  async function handleDownload() {
+    const svg = qrWrapperRef.current?.querySelector('svg');
+    if (!svg) return;
+    const cloned = svg.cloneNode(true) as SVGSVGElement;
+    if (!cloned.getAttribute('xmlns'))
+      cloned.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    const xml = new XMLSerializer().serializeToString(cloned);
+    const dataUrl = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(xml)))}`;
+    const img = new Image();
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error('QR render failed'));
+      img.src = dataUrl;
+    });
+    const size = 1024;
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, size, size);
+    ctx.drawImage(img, 0, 0, size, size);
+    const blob: Blob | null = await new Promise((resolve) =>
+      canvas.toBlob((b) => resolve(b), 'image/png'),
+    );
+    if (!blob) return;
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${election.slug}-eboto-qr.png`;
+    link.click();
+    URL.revokeObjectURL(link.href);
   }
 
   return (
@@ -505,7 +536,7 @@ function ShareQrButton({
           </DialogDescription>
         </DialogHeader>
         <div className="flex justify-center py-2">
-          <div className="rounded-lg border bg-white p-4">
+          <div ref={qrWrapperRef} className="rounded-lg border bg-white p-4">
             <QRCodeSVG
               value={url}
               size={224}
@@ -518,7 +549,7 @@ function ShareQrButton({
         <div className="rounded-md border bg-muted/40 px-3 py-2 text-center text-xs break-all text-muted-foreground">
           {url}
         </div>
-        <DialogFooter className="sm:justify-center">
+        <DialogFooter className="sm:justify-center sm:gap-2">
           <Button
             variant="outline"
             onClick={handleCopy}
@@ -526,6 +557,14 @@ function ShareQrButton({
           >
             <Copy className="size-4" />
             Copy link
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleDownload}
+            className="w-full sm:w-auto"
+          >
+            <Download className="size-4" />
+            Download PNG
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -17,6 +17,35 @@ function jsonResponse(body: unknown, status = 200) {
   });
 }
 
+/**
+ * Per-IP fixed-window rate limit for the contact form. In-memory only — good
+ * enough to slow a single client; a distributed attacker with rotating IPs
+ * still requires upstream protection (Cloudflare, Vercel firewall). Kept
+ * here rather than in Convex because the contact form is server-only and
+ * doesn't otherwise touch the deployment.
+ */
+const CONTACT_WINDOW_MS = 60 * 60 * 1000;
+const CONTACT_LIMIT_PER_WINDOW = 5;
+const contactBuckets = new Map<string, { windowStart: number; count: number }>();
+function takeContactToken(ip: string): boolean {
+  const now = Date.now();
+  const entry = contactBuckets.get(ip);
+  if (!entry || now >= entry.windowStart + CONTACT_WINDOW_MS) {
+    contactBuckets.set(ip, { windowStart: now, count: 1 });
+    return true;
+  }
+  if (entry.count >= CONTACT_LIMIT_PER_WINDOW) return false;
+  entry.count += 1;
+  return true;
+}
+function clientIp(request: Request): string {
+  const fwd = request.headers.get('x-forwarded-for');
+  if (fwd) return fwd.split(',')[0]?.trim() ?? 'unknown';
+  const real = request.headers.get('x-real-ip');
+  if (real) return real.trim();
+  return 'unknown';
+}
+
 function isCorsRequest(request: Request) {
   const origin = request.headers.get('origin');
   if (!origin) return false;
@@ -39,6 +68,13 @@ export const Route = createFileRoute('/api/contact')({
       POST: async ({ request }) => {
         if (isCorsRequest(request)) {
           return jsonResponse({ error: 'Invalid origin' }, 403);
+        }
+
+        if (!takeContactToken(clientIp(request))) {
+          return jsonResponse(
+            { error: 'Too many messages from your network. Try again later.' },
+            429,
+          );
         }
 
         let raw: unknown;

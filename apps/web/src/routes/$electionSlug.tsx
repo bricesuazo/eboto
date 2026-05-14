@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 
 import { api } from '@eboto/backend/api';
 
+import { EBotoWatermark } from '~/components/eboto-watermark';
 import { PagePending } from '~/components/page-pending';
 import {
   CONVEX_ERROR_UNAUTHORIZED,
@@ -69,5 +70,11 @@ export const Route = createFileRoute('/$electionSlug')({
 });
 
 function ElectionLayout() {
-  return <Outlet />;
+  const { electionSlug } = Route.useParams();
+  return (
+    <>
+      <Outlet />
+      <EBotoWatermark slug={electionSlug} />
+    </>
+  );
 }

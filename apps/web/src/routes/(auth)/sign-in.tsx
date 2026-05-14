@@ -64,7 +64,7 @@ function SignInPage() {
             e.preventDefault();
             setSubmitting(true);
             try {
-              const result = await signIn('resend', { email, redirectTo });
+              const result = await signIn('ses', { email, redirectTo });
               if (result.signingIn) {
                 await router.invalidate();
               }

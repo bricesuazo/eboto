@@ -97,6 +97,7 @@ function SettingsPage() {
       nameArrangement: election.nameArrangement,
       isCandidatesVisibleInRealtimeWhenOngoing:
         election.isCandidatesVisibleInRealtimeWhenOngoing,
+      voterDomain: election.voterDomain ?? '',
     },
   });
 
@@ -375,6 +376,30 @@ function SettingsPage() {
 
               <FormField
                 control={form.control}
+                name="voterDomain"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Voter email domain (optional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="example.edu"
+                        value={field.value}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      When set, only voter emails in this domain can be added.
+                      Leave empty to allow any domain.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="isCandidatesVisibleInRealtimeWhenOngoing"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-start gap-3 space-y-0 rounded-md border p-3">
@@ -404,6 +429,8 @@ function SettingsPage() {
           </Form>
         </CardContent>
       </Card>
+
+      <CommissionersCard electionId={election._id} />
 
       <Card>
         <CardHeader>
@@ -458,5 +485,113 @@ function DeleteElectionButton({
       <Trash2 className="size-4" />
       Delete election
     </Button>
+  );
+}
+
+function CommissionersCard({ electionId }: { electionId: string }) {
+  const { data: commissioners = [] } = useQuery(
+    convexQuery(api.commissioners.list, { electionId: electionId as never }),
+  );
+  const add = useMutation(api.commissioners.addByEmail);
+  const remove = useMutation(api.commissioners.remove);
+  const [email, setEmail] = useState('');
+  const [adding, setAdding] = useState(false);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Commissioners</CardTitle>
+        <CardDescription>
+          Anyone listed here can manage this election (edit settings,
+          candidates, voters, send messages). The target must already have an
+          eBoto account.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <form
+          className="flex items-center gap-2"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            if (!email.trim()) return;
+            setAdding(true);
+            try {
+              await add({
+                electionId: electionId as never,
+                email: email.trim(),
+              });
+              toast.success('Commissioner added.');
+              setEmail('');
+            } catch (err) {
+              toast.error(
+                err instanceof ConvexError
+                  ? ((err.data as { message?: string }).message ?? 'Failed')
+                  : 'Failed',
+              );
+            } finally {
+              setAdding(false);
+            }
+          }}
+        >
+          <Input
+            type="email"
+            placeholder="commissioner@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Button type="submit" disabled={adding}>
+            {adding ? 'Adding…' : 'Add'}
+          </Button>
+        </form>
+        <ul className="divide-y rounded-md border">
+          {commissioners.length === 0 ? (
+            <li className="px-3 py-2 text-sm text-muted-foreground">
+              No commissioners yet.
+            </li>
+          ) : (
+            commissioners.map((c) => (
+              <li
+                key={c._id}
+                className="flex items-center justify-between gap-2 px-3 py-2 text-sm"
+              >
+                <div>
+                  <div className="font-medium">{c.email ?? '—'}</div>
+                  {c.name && (
+                    <div className="text-xs text-muted-foreground">
+                      {c.name}
+                    </div>
+                  )}
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={async () => {
+                    if (
+                      !confirm(
+                        `Remove ${c.email ?? 'this commissioner'} from this election?`,
+                      )
+                    )
+                      return;
+                    try {
+                      await remove({ commissionerId: c._id });
+                      toast.success('Commissioner removed.');
+                    } catch (err) {
+                      toast.error(
+                        err instanceof ConvexError
+                          ? ((err.data as { message?: string }).message ??
+                              'Failed')
+                          : 'Failed',
+                      );
+                    }
+                  }}
+                >
+                  <Trash2 className="size-4" />
+                </Button>
+              </li>
+            ))
+          )}
+        </ul>
+      </CardContent>
+    </Card>
   );
 }

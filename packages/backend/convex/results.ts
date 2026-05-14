@@ -1,8 +1,16 @@
 import { getAuthUserId } from '@convex-dev/auth/server';
 import { ConvexError, v } from 'convex/values';
+import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 
+import { api, internal } from './_generated/api';
 import type { Id } from './_generated/dataModel';
-import { internalMutation, internalQuery, query } from './_generated/server';
+import {
+  action,
+  internalAction,
+  internalMutation,
+  internalQuery,
+  query,
+} from './_generated/server';
 import { requireCommissioner } from './_helpers/auth';
 import { isElectionInProgress } from './_helpers/election_timing';
 import {
@@ -42,6 +50,14 @@ export const getBySlug = query({
         .filter((q) => q.eq(q.field('deletedAt'), undefined))
         .first();
       isCommissioner = Boolean(commissioner);
+    }
+
+    // PRIVATE-publicity results are commissioner-only. We return `null` (the
+    // same shape as a not-found election) rather than throwing, so a
+    // non-commissioner who guesses the slug can't tell whether the election
+    // exists.
+    if (election.publicity === 'PRIVATE' && !isCommissioner) {
+      return null;
     }
 
     // VOTER-publicity results are gated on participation: voters can only see
@@ -169,6 +185,10 @@ export const getBySlug = query({
         nextRefreshAt:
           cutoff === null ? null : cutoff + FREE_RESULTS_LATENCY_MS,
       },
+      // When true, every candidate's real name was withheld and `displayName`
+      // is set to "Candidate N" instead. UI surfaces this to viewers so the
+      // anonymization isn't mistaken for a data bug.
+      anonymized: !showRealNames,
       positions: positions
         .sort((a, b) => a.order - b.order)
         .map((position) => {
@@ -190,7 +210,9 @@ export const getBySlug = query({
             .sort((a, b) => b.votes - a.votes)
             .map((c, index) => ({
               ...c,
-              displayName: showRealNames ? null : `Candidate ${index + 1}`,
+              displayName: showRealNames
+                ? undefined
+                : `Candidate ${index + 1}`,
             }));
 
           return {
@@ -266,6 +288,166 @@ export const recordGeneratedResult = internalMutation({
       electionId,
       result: { storageId, ...summary },
     });
+  },
+});
+
+/**
+ * Generates a turnout PDF for `electionId` and stores it in Convex storage,
+ * then records the resulting row. Re-callable; previous reports are kept so
+ * commissioners can compare snapshots.
+ *
+ * Invoked by:
+ *   - Inngest `electionEnded` step right after the end-of-election email
+ *     blast (`packages/inngest/src/functions/election-lifecycle.ts`).
+ *   - The commissioner-facing "Generate now" dashboard button via the
+ *     internal trigger below.
+ */
+export const generateTurnoutPdf = action({
+  args: { electionId: v.id('elections') },
+  handler: async (
+    ctx,
+    { electionId },
+  ): Promise<
+    | { skipped: true; reason: 'no-election' }
+    | {
+        skipped: false;
+        reportId: Id<'generated_election_results'>;
+        total: number;
+        voted: number;
+        percent: number;
+      }
+  > => {
+    const snapshot: {
+      election: {
+        name: string;
+        slug: string;
+        startDate: number;
+        endDate: number;
+      };
+      voters: { email: string; hasVoted: boolean }[];
+    } | null = await ctx.runQuery(internal.results.getTurnoutSnapshot, {
+      electionId,
+    });
+    if (!snapshot) return { skipped: true as const, reason: 'no-election' };
+
+    const total = snapshot.voters.length;
+    const voted = snapshot.voters.filter((v) => v.hasVoted).length;
+    const percent = total === 0 ? 0 : (voted / total) * 100;
+    const generatedAt = Date.now();
+
+    const pdf = await PDFDocument.create();
+    const font = await pdf.embedFont(StandardFonts.Helvetica);
+    const fontBold = await pdf.embedFont(StandardFonts.HelveticaBold);
+
+    const pageWidth = 612;
+    const pageHeight = 792;
+    const margin = 48;
+    const lineHeight = 14;
+    const ink = rgb(0.1, 0.12, 0.16);
+    const muted = rgb(0.45, 0.48, 0.55);
+
+    let page = pdf.addPage([pageWidth, pageHeight]);
+    let cursorY = pageHeight - margin;
+
+    const drawLine = (
+      text: string,
+      opts?: { bold?: boolean; size?: number; color?: ReturnType<typeof rgb> },
+    ) => {
+      const size = opts?.size ?? 11;
+      const usedFont = opts?.bold ? fontBold : font;
+      if (cursorY < margin + size) {
+        page = pdf.addPage([pageWidth, pageHeight]);
+        cursorY = pageHeight - margin;
+      }
+      cursorY -= size + 2;
+      page.drawText(text, {
+        x: margin,
+        y: cursorY,
+        size,
+        font: usedFont,
+        color: opts?.color ?? ink,
+      });
+      cursorY -= 4;
+    };
+
+    drawLine('Turnout Report', { bold: true, size: 22 });
+    drawLine(snapshot.election.name, { bold: true, size: 14 });
+    drawLine(`/${snapshot.election.slug}`, { color: muted });
+    drawLine(
+      `Generated ${new Date(generatedAt).toISOString()}`,
+      { color: muted, size: 9 },
+    );
+    cursorY -= lineHeight;
+
+    drawLine('Summary', { bold: true, size: 13 });
+    drawLine(`Eligible voters: ${total}`);
+    drawLine(`Ballots cast: ${voted}`);
+    drawLine(`Turnout: ${percent.toFixed(2)}%`);
+    cursorY -= lineHeight;
+
+    drawLine('Voter list', { bold: true, size: 13 });
+    for (const voter of snapshot.voters) {
+      drawLine(`${voter.hasVoted ? '[x]' : '[ ]'}  ${voter.email}`, {
+        size: 10,
+      });
+    }
+
+    const bytes = await pdf.save();
+    // pdf-lib returns Uint8Array; copy into a fresh ArrayBuffer so the Blob
+    // constructor's narrowed BlobPart type is satisfied (some envs widen it
+    // to SharedArrayBuffer otherwise).
+    const buffer = new ArrayBuffer(bytes.byteLength);
+    new Uint8Array(buffer).set(bytes);
+    const blob = new Blob([buffer], { type: 'application/pdf' });
+    const storageId = await ctx.storage.store(blob);
+
+    const reportId: Id<'generated_election_results'> = await ctx.runMutation(
+      internal.results.recordGeneratedResult,
+      {
+        electionId,
+        storageId,
+        summary: { total, voted, percent, generatedAt },
+      },
+    );
+
+    return {
+      skipped: false as const,
+      reportId,
+      total,
+      voted,
+      percent,
+    };
+  },
+});
+
+/**
+ * Commissioner-triggered manual generation. Verifies the caller, then
+ * schedules the action above. Returns immediately so the UI can show a
+ * pending state without holding the request.
+ */
+export const triggerTurnoutPdf = action({
+  args: { electionId: v.id('elections') },
+  handler: async (ctx, { electionId }): Promise<{ scheduled: true }> => {
+    await ctx.runQuery(internal.results.assertCommissioner, { electionId });
+    await ctx.scheduler.runAfter(0, internal.results.generateTurnoutPdfInternal, {
+      electionId,
+    });
+    return { scheduled: true };
+  },
+});
+
+export const generateTurnoutPdfInternal = internalAction({
+  args: { electionId: v.id('elections') },
+  handler: async (ctx, { electionId }): Promise<void> => {
+    await ctx.runAction(api.results.generateTurnoutPdf, { electionId });
+  },
+});
+
+export const assertCommissioner = internalQuery({
+  args: { electionId: v.id('elections') },
+  handler: async (ctx, { electionId }) => {
+    await requireCommissioner(ctx, electionId);
+    return null;
   },
 });
 

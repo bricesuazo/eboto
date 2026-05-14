@@ -249,9 +249,14 @@ function VoterImportPage() {
         electionId: election._id,
         voters: payload,
       });
-      toast.success(
-        `${result.added} added · ${result.skipped.length} already registered`,
-      );
+      const parts = [
+        `${result.added} added`,
+        `${result.skipped.length} already registered`,
+      ];
+      if (result.domainRejected.length > 0) {
+        parts.push(`${result.domainRejected.length} wrong domain`);
+      }
+      toast.success(parts.join(' · '));
       await navigate({
         to: '/dashboard/$electionDashboardSlug/voter',
         params: { electionDashboardSlug },
