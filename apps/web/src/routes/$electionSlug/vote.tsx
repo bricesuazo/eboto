@@ -10,13 +10,24 @@ import {
 } from '@tanstack/react-router';
 import { useMutation } from 'convex/react';
 import { ConvexError } from 'convex/values';
-import { User } from 'lucide-react';
+import { Check, MinusCircle, User } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { api } from '@eboto/backend/api';
 import type { Id } from '@eboto/backend/data-model';
 
 import { PagePending } from '~/components/page-pending';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '~/components/ui/alert-dialog';
 import { Button } from '~/components/ui/button';
 import { Checkbox } from '~/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group';
@@ -140,7 +151,7 @@ function BallotPage() {
         electionId: election._id,
         selections: positions.map((p) => ({
           positionId: p._id,
-          choice: selections[p._id]!,
+          choice: selections[p._id] ?? { kind: 'abstain' },
         })),
       });
       clearBallot(election._id);
@@ -169,7 +180,10 @@ function BallotPage() {
 
       <div className="mt-10 space-y-12">
         {positions.map((position) => {
-          const sel = selections[position._id]!;
+          const sel = selections[position._id];
+          if (!sel) {
+            return;
+          }
           const isSingle = position.min === 0 && position.max === 1;
 
           return (
@@ -206,24 +220,37 @@ function BallotPage() {
                     }
                   }}
                 >
-                  {position.candidates.map((candidate) => (
-                    <CandidateOption
-                      key={candidate._id}
-                      candidate={candidate}
-                      nameArrangement={election.nameArrangement}
-                      mode="radio"
-                      value={candidate._id}
-                    />
-                  ))}
+                  {position.candidates.map((candidate) => {
+                    const checked =
+                      sel.kind === 'candidates' &&
+                      sel.candidateIds[0] === candidate._id;
+                    return (
+                      <CandidateOption
+                        key={candidate._id}
+                        candidate={candidate}
+                        nameArrangement={election.nameArrangement}
+                        value={candidate._id}
+                        checked={checked}
+                      />
+                    );
+                  })}
                   {position.min === 0 && (
                     <label
                       className={cn(
-                        'flex cursor-pointer items-center gap-2 rounded-lg border p-3 text-sm',
-                        sel.kind === 'abstain' && 'border-primary bg-primary/5',
+                        'group relative flex cursor-pointer items-center justify-center gap-2 rounded-lg border p-3 text-sm transition-all hover:bg-accent/40',
+                        sel.kind === 'abstain' &&
+                          'border-primary bg-primary/5 shadow-sm ring-2 ring-primary/40',
                       )}
                     >
-                      <RadioGroupItem value="__abstain" />
+                      <RadioGroupItem value="__abstain" className="sr-only" />
+                      <MinusCircle
+                        className={cn(
+                          'size-4 text-muted-foreground transition-colors',
+                          sel.kind === 'abstain' && 'text-primary',
+                        )}
+                      />
                       Abstain
+                      {sel.kind === 'abstain' && <SelectedBadge />}
                     </label>
                   )}
                 </RadioGroup>
@@ -237,8 +264,9 @@ function BallotPage() {
                       <label
                         key={candidate._id}
                         className={cn(
-                          'flex cursor-pointer flex-col items-center gap-2 rounded-lg border p-3',
-                          checked && 'border-primary bg-primary/5',
+                          'group relative flex cursor-pointer flex-col items-center gap-2 rounded-lg border p-3 transition-all hover:bg-accent/40',
+                          checked &&
+                            'border-primary bg-primary/5 shadow-sm ring-2 ring-primary/40',
                         )}
                       >
                         <Checkbox
@@ -250,11 +278,14 @@ function BallotPage() {
                               position.max,
                             )
                           }
+                          className="sr-only"
                         />
                         <CandidatePreview
                           candidate={candidate}
                           nameArrangement={election.nameArrangement}
+                          checked={checked}
                         />
+                        {checked && <SelectedBadge />}
                       </label>
                     );
                   })}
@@ -274,9 +305,95 @@ function BallotPage() {
           }
           variant="outline"
         />
-        <Button disabled={submitting} onClick={submit}>
-          {submitting ? 'Submitting…' : 'Submit ballot'}
-        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger
+            render={
+              <Button disabled={submitting}>
+                {submitting ? 'Submitting…' : 'Submit ballot'}
+              </Button>
+            }
+          />
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Confirm your ballot</AlertDialogTitle>
+              <AlertDialogDescription>
+                Review your selections below. Once submitted, your ballot is
+                final and cannot be changed.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+
+            <ul className="max-h-[50vh] divide-y overflow-y-auto rounded-md border text-sm">
+              {positions.map((p) => {
+                const s = selections[p._id];
+                let detail: React.ReactNode;
+                if (!s || s.kind === 'candidates') {
+                  const names =
+                    s?.kind === 'candidates'
+                      ? s.candidateIds
+                          .map((id) =>
+                            p.candidates.find((c) => c._id === id),
+                          )
+                          .filter((c): c is NonNullable<typeof c> => Boolean(c))
+                          .map((c) => {
+                            const name = formatName(
+                              election.nameArrangement,
+                              c,
+                            );
+                            return c.partylistAcronym
+                              ? `${name} (${c.partylistAcronym})`
+                              : name;
+                          })
+                      : [];
+                  if (names.length === 0) {
+                    const required = p.min > 0;
+                    detail = (
+                      <p
+                        className={cn(
+                          'text-muted-foreground italic',
+                          required && 'text-amber-600 dark:text-amber-500',
+                        )}
+                      >
+                        {required
+                          ? `No selection — pick at least ${p.min}`
+                          : 'No selection'}
+                      </p>
+                    );
+                  } else {
+                    detail = (
+                      <ul className="list-disc space-y-0.5 pl-5">
+                        {names.map((n) => (
+                          <li key={n}>{n}</li>
+                        ))}
+                      </ul>
+                    );
+                  }
+                } else {
+                  detail = (
+                    <p className="text-muted-foreground italic">Abstained</p>
+                  );
+                }
+                return (
+                  <li key={p._id} className="px-3 py-2">
+                    <p className="font-medium">{p.name}</p>
+                    <div className="mt-1">{detail}</div>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={submitting}>
+                Go back
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => void submit()}
+                disabled={submitting}
+              >
+                {submitting ? 'Submitting…' : 'Confirm & submit'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </main>
   );
@@ -285,6 +402,7 @@ function BallotPage() {
 function CandidatePreview({
   candidate,
   nameArrangement,
+  checked,
 }: {
   candidate: {
     imageUrl: string | null;
@@ -294,10 +412,16 @@ function CandidatePreview({
     partylistAcronym: string;
   };
   nameArrangement: number;
+  checked: boolean;
 }) {
   return (
     <>
-      <div className="relative size-16 overflow-hidden rounded-md bg-muted">
+      <div
+        className={cn(
+          'relative size-24 overflow-hidden rounded-md bg-muted ring-2 ring-transparent transition-all',
+          checked && 'ring-primary',
+        )}
+      >
         {candidate.imageUrl ? (
           <img
             src={candidate.imageUrl}
@@ -308,7 +432,12 @@ function CandidatePreview({
           <User className="absolute inset-0 m-auto size-8 text-muted-foreground" />
         )}
       </div>
-      <span className="text-center text-xs">
+      <span
+        className={cn(
+          'text-center transition-colors',
+          checked && 'font-medium text-foreground',
+        )}
+      >
         {formatName(nameArrangement, candidate)}{' '}
         {candidate.partylistAcronym && `(${candidate.partylistAcronym})`}
       </span>
@@ -319,8 +448,8 @@ function CandidatePreview({
 function CandidateOption({
   candidate,
   nameArrangement,
-  mode,
   value,
+  checked,
 }: {
   candidate: {
     imageUrl: string | null;
@@ -330,16 +459,35 @@ function CandidateOption({
     partylistAcronym: string;
   };
   nameArrangement: number;
-  mode: 'radio';
   value: string;
+  checked: boolean;
 }) {
   return (
-    <label className="flex cursor-pointer flex-col items-center gap-2 rounded-lg border p-3">
-      <RadioGroupItem value={value} className="self-end" />
+    <label
+      className={cn(
+        'group relative flex cursor-pointer flex-col items-center gap-2 rounded-lg border p-3 transition-all hover:bg-accent/40',
+        checked &&
+          'border-primary bg-primary/5 shadow-sm ring-2 ring-primary/40',
+      )}
+    >
+      <RadioGroupItem value={value} className="sr-only" />
       <CandidatePreview
         candidate={candidate}
         nameArrangement={nameArrangement}
+        checked={checked}
       />
+      {checked && <SelectedBadge />}
     </label>
+  );
+}
+
+function SelectedBadge() {
+  return (
+    <span
+      aria-hidden
+      className="pointer-events-none absolute top-2 right-2 flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm"
+    >
+      <Check className="size-3" strokeWidth={3} />
+    </span>
   );
 }

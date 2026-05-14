@@ -31,6 +31,7 @@ export const Route = createFileRoute('/dashboard/')({
       ),
     ]);
   },
+  head: () => ({ meta: [{ title: 'Dashboard | eBoto' }] }),
   pendingComponent: PagePending,
   component: DashboardHome,
 });

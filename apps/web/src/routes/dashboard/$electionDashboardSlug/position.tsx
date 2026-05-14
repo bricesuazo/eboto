@@ -58,6 +58,9 @@ export const Route = createFileRoute(
       convexQuery(api.positions.list, { electionId: election._id }),
     );
   },
+  head: ({ params }) => ({
+    meta: [{ title: `${params.electionDashboardSlug} · Positions | eBoto` }],
+  }),
   pendingComponent: DashboardPending,
   component: PositionPage,
 });

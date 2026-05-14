@@ -21,6 +21,9 @@ export const electionFields = {
 const datesValid = (d: Record<string, unknown>) =>
   new Date(d.endDate as string) > new Date(d.startDate as string);
 
+const hoursValid = (d: Record<string, unknown>) =>
+  (d.votingHourEnd as number) > (d.votingHourStart as number);
+
 type DateHourShape = z.ZodRawShape & {
   startDate: z.ZodString;
   endDate: z.ZodString;
@@ -31,10 +34,15 @@ type DateHourShape = z.ZodRawShape & {
 const withDateHourRefinements = <Shape extends DateHourShape>(
   schema: z.ZodObject<Shape>,
 ) =>
-  schema.refine(datesValid, {
-    path: ['endDate'],
-    message: 'End must be after start',
-  });
+  schema
+    .refine(datesValid, {
+      path: ['endDate'],
+      message: 'End must be after start',
+    })
+    .refine(hoursValid, {
+      path: ['votingHourEnd'],
+      message: 'End hour must be after start hour',
+    });
 
 export const electionCreateSchema = withDateHourRefinements(
   z.object({

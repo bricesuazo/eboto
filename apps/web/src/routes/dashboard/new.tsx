@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { api } from '@eboto/backend/api';
 import { votingEndAt, votingStartAt } from '@eboto/backend/election-timing';
 
+import { DatePicker } from '~/components/date-picker';
 import { ImageUpload } from '~/components/image-upload';
 import { Button } from '~/components/ui/button';
 import {
@@ -60,6 +61,7 @@ export const Route = createFileRoute('/dashboard/new')({
       convexQuery(api.billing.myElectionQuota, {}),
     );
   },
+  head: () => ({ meta: [{ title: 'New election | eBoto' }] }),
   component: NewElectionPage,
 });
 
@@ -219,28 +221,61 @@ function NewElectionPage() {
                 <FormField
                   control={form.control}
                   name="startDate"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Start date</FormLabel>
-                      <FormControl>
-                        <Input type="date" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  render={({ field }) => {
+                    const earliestStart = dayjs()
+                      .add(1, 'day')
+                      .startOf('day')
+                      .toDate();
+                    return (
+                      <FormItem>
+                        <FormLabel>Start date</FormLabel>
+                        <FormControl>
+                          <DatePicker
+                            value={field.value}
+                            onChange={(next) => {
+                              field.onChange(next);
+                              const currentEnd = form.getValues('endDate');
+                              if (
+                                currentEnd &&
+                                !dayjs(currentEnd).isAfter(dayjs(next), 'day')
+                              ) {
+                                form.setValue('endDate', '');
+                              }
+                            }}
+                            disabledBefore={earliestStart}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
                 <FormField
                   control={form.control}
                   name="endDate"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>End date</FormLabel>
-                      <FormControl>
-                        <Input type="date" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  render={({ field }) => {
+                    const startDateValue = form.watch('startDate');
+                    const earliestEnd = startDateValue
+                      ? dayjs(startDateValue)
+                          .add(1, 'day')
+                          .startOf('day')
+                          .toDate()
+                      : dayjs().add(2, 'day').startOf('day').toDate();
+                    return (
+                      <FormItem>
+                        <FormLabel>End date</FormLabel>
+                        <FormControl>
+                          <DatePicker
+                            value={field.value}
+                            onChange={field.onChange}
+                            disabledBefore={earliestEnd}
+                            disabled={!startDateValue}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
               </div>
 
@@ -316,7 +351,7 @@ function NewElectionPage() {
                           <SelectValue placeholder="Pick a template" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="min-w-74">
                         <SelectItem value="none">No template</SelectItem>
                         <SelectItem value="ssg">
                           Supreme Student Government (SSG)

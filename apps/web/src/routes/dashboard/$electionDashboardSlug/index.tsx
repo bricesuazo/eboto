@@ -74,6 +74,9 @@ export const Route = createFileRoute('/dashboard/$electionDashboardSlug/')({
     }
     await Promise.all(tasks);
   },
+  head: ({ params }) => ({
+    meta: [{ title: `${params.electionDashboardSlug} · Overview | eBoto` }],
+  }),
   pendingComponent: DashboardPending,
   component: OverviewPage,
 });

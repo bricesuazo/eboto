@@ -14,6 +14,7 @@ import { api } from '@eboto/backend/api';
 import { votingEndAt, votingStartAt } from '@eboto/backend/election-timing';
 
 import { DashboardPending } from '~/components/dashboard-pending';
+import { DatePicker } from '~/components/date-picker';
 import { ImageUpload } from '~/components/image-upload';
 import { Button } from '~/components/ui/button';
 import {
@@ -44,8 +45,8 @@ import { Switch } from '~/components/ui/switch';
 import { Textarea } from '~/components/ui/textarea';
 import { parseHourTo12HourFormat } from '~/lib/election';
 import { scheduleElectionLifecycleFn } from '~/lib/inngest/server-fns';
-import { electionSettingsSchema } from '~/lib/schemas/election';
 import type { ElectionSettingsInput } from '~/lib/schemas/election';
+import { electionSettingsSchema } from '~/lib/schemas/election';
 import { useImageUpload } from '~/lib/use-image-upload';
 
 export const Route = createFileRoute(
@@ -59,6 +60,9 @@ export const Route = createFileRoute(
     );
     if (!election) throw notFound();
   },
+  head: ({ params }) => ({
+    meta: [{ title: `${params.electionDashboardSlug} · Settings | eBoto` }],
+  }),
   pendingComponent: DashboardPending,
   component: SettingsPage,
 });
@@ -228,28 +232,61 @@ function SettingsPage() {
                 <FormField
                   control={form.control}
                   name="startDate"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Start date</FormLabel>
-                      <FormControl>
-                        <Input type="date" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  render={({ field }) => {
+                    const earliestStart = dayjs()
+                      .add(1, 'day')
+                      .startOf('day')
+                      .toDate();
+                    return (
+                      <FormItem>
+                        <FormLabel>Start date</FormLabel>
+                        <FormControl>
+                          <DatePicker
+                            value={field.value}
+                            onChange={(next) => {
+                              field.onChange(next);
+                              const currentEnd = form.getValues('endDate');
+                              if (
+                                currentEnd &&
+                                !dayjs(currentEnd).isAfter(dayjs(next), 'day')
+                              ) {
+                                form.setValue('endDate', '');
+                              }
+                            }}
+                            disabledBefore={earliestStart}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
                 <FormField
                   control={form.control}
                   name="endDate"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>End date</FormLabel>
-                      <FormControl>
-                        <Input type="date" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  render={({ field }) => {
+                    const startDateValue = form.watch('startDate');
+                    const earliestEnd = startDateValue
+                      ? dayjs(startDateValue)
+                          .add(1, 'day')
+                          .startOf('day')
+                          .toDate()
+                      : dayjs().add(2, 'day').startOf('day').toDate();
+                    return (
+                      <FormItem>
+                        <FormLabel>End date</FormLabel>
+                        <FormControl>
+                          <DatePicker
+                            value={field.value}
+                            onChange={field.onChange}
+                            disabledBefore={earliestEnd}
+                            disabled={!startDateValue}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
                 <FormField
                   control={form.control}
@@ -319,7 +356,7 @@ function SettingsPage() {
                           <SelectValue />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="min-w-64">
                         <SelectItem value="PRIVATE">
                           Private — commissioners only
                         </SelectItem>

@@ -46,6 +46,9 @@ export const Route = createFileRoute(
       );
     }
   },
+  head: ({ params }) => ({
+    meta: [{ title: `${params.electionDashboardSlug} · Messages | eBoto` }],
+  }),
   pendingComponent: DashboardPending,
   component: MessagesPage,
 });

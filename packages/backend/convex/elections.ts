@@ -431,6 +431,12 @@ export const create = mutation({
         message: 'Invalid voting hours.',
       });
     }
+    if (args.votingHourEnd <= args.votingHourStart) {
+      throw new ConvexError({
+        code: 'invalid_argument',
+        message: 'End hour must be after start hour.',
+      });
+    }
 
     const electionId = await ctx.db.insert('elections', {
       slug,
@@ -506,6 +512,12 @@ export const update = mutation({
       throw new ConvexError({
         code: 'invalid_argument',
         message: 'End must be after start',
+      });
+    }
+    if (args.votingHourEnd <= args.votingHourStart) {
+      throw new ConvexError({
+        code: 'invalid_argument',
+        message: 'End hour must be after start hour.',
       });
     }
 

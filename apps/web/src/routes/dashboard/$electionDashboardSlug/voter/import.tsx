@@ -50,6 +50,11 @@ export const Route = createFileRoute(
       convexQuery(api.voterFields.list, { electionId: election._id }),
     );
   },
+  head: ({ params }) => ({
+    meta: [
+      { title: `${params.electionDashboardSlug} · Import voters | eBoto` },
+    ],
+  }),
   pendingComponent: DashboardPending,
   component: VoterImportPage,
 });

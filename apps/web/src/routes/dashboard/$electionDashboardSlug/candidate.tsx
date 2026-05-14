@@ -74,6 +74,9 @@ export const Route = createFileRoute(
       ),
     ]);
   },
+  head: ({ params }) => ({
+    meta: [{ title: `${params.electionDashboardSlug} · Candidates | eBoto` }],
+  }),
   pendingComponent: DashboardPending,
   component: CandidatePage,
 });
