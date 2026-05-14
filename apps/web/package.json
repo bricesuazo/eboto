@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
-    "@convex-dev/auth": "^0.0.91",
+    "@convex-dev/auth": "catalog:",
     "@convex-dev/react-query": "^0.1.0",
     "@eboto/backend": "workspace:*",
     "@eboto/inngest": "workspace:*",
@@ -34,7 +34,7 @@
     "convex": "catalog:",
     "date-fns": "^4.1.0",
     "dayjs": "catalog:",
-    "dotenv-cli": "10.0.0",
+    "dotenv-cli": "catalog:",
     "embla-carousel-react": "^8.6.0",
     "inngest": "catalog:",
     "input-otp": "^1.4.2",
