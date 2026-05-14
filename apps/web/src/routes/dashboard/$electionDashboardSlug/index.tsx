@@ -248,6 +248,11 @@ function OverviewPage() {
             label="Voters"
             value={stats.counts.voters}
             icon={<Users className="size-4" />}
+            caption={
+              tier
+                ? `of ${tier.voterCap.toLocaleString()} cap`
+                : undefined
+            }
           />
         </div>
       </div>
@@ -368,10 +373,12 @@ function StatCard({
   label,
   value,
   icon,
+  caption,
 }: {
   label: string;
   value: number;
   icon: React.ReactNode;
+  caption?: string;
 }) {
   return (
     <Card>
@@ -381,6 +388,9 @@ function StatCard({
           {label}
         </CardDescription>
         <CardTitle className="text-3xl">{value.toLocaleString()}</CardTitle>
+        {caption && (
+          <p className="text-muted-foreground text-xs">{caption}</p>
+        )}
       </CardHeader>
     </Card>
   );

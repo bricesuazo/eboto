@@ -1,15 +1,16 @@
 import { convexQuery } from '@convex-dev/react-query';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
   createFileRoute,
   Link,
   notFound,
   Outlet,
 } from '@tanstack/react-router';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Sparkles } from 'lucide-react';
 
 import { api } from '@eboto/backend/api';
 
+import { Badge } from '~/components/ui/badge';
 import { Separator } from '~/components/ui/separator';
 import {
   CONVEX_ERROR_FORBIDDEN,
@@ -30,6 +31,11 @@ export const Route = createFileRoute('/dashboard/$electionDashboardSlug')({
         }),
       );
       if (!data) throw notFound();
+      await context.queryClient.ensureQueryData(
+        convexQuery(api.billing.getElectionTierBySlug, {
+          slug: params.electionDashboardSlug,
+        }),
+      );
     } catch (err) {
       // forbidden → surface as 404 so we don't confirm the election's
       // existence to non-commissioners.
@@ -50,6 +56,11 @@ function DashboardElectionShell() {
       slug: electionDashboardSlug,
     }),
   );
+  const { data: tier } = useQuery(
+    convexQuery(api.billing.getElectionTierBySlug, {
+      slug: electionDashboardSlug,
+    }),
+  );
   if (!election) throw notFound();
 
   return (
@@ -60,10 +71,21 @@ function DashboardElectionShell() {
             Managing
           </p>
           <h2 className="truncate font-semibold">{election.name}</h2>
+          {tier &&
+            (tier.isBoost ? (
+              <Badge className="mt-1 gap-1 bg-amber-500/15 text-amber-700 hover:bg-amber-500/15 dark:text-amber-300">
+                <Sparkles className="size-3" />
+                Boost · {tier.voterCap.toLocaleString()} voter cap
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="mt-1">
+                Free · {tier.voterCap.toLocaleString()} voter cap
+              </Badge>
+            ))}
           <Link
             to="/$electionSlug"
             params={{ electionSlug: election.slug }}
-            className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-xs"
+            className="text-muted-foreground hover:text-foreground mt-1 inline-flex items-center gap-1 text-xs"
           >
             View public page <ExternalLink className="size-3" />
           </Link>

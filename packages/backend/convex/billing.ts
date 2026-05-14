@@ -364,7 +364,7 @@ export const createPlusCheckout = action({
     const apiKey = readEnv('LEMONSQUEEZY_API_KEY');
     const storeId = readEnv('LEMONSQUEEZY_STORE_ID');
     const variantId = readEnv('LEMONSQUEEZY_PLUS_VARIANT_ID');
-    const appUrl = process.env.APP_URL;
+    const siteUrl = process.env.SITE_URL ?? 'https://eboto.app';
 
     const url = await createLemonCheckout({
       apiKey,
@@ -378,8 +378,8 @@ export const createPlusCheckout = action({
       // page show a "Confirming purchase…" state while the webhook race
       // resolves — the reactive quota query flips it off once the credit
       // lands.
-      redirectUrl: appUrl ? `${appUrl}/dashboard/new?purchase=plus` : undefined,
-      receiptLinkUrl: appUrl ? `${appUrl}/account/billing` : undefined,
+      redirectUrl: `${siteUrl}/dashboard/new?purchase=plus`,
+      receiptLinkUrl: `${siteUrl}/account/billing`,
     });
     return { url };
   },
@@ -432,7 +432,7 @@ export const createBoostCheckout = action({
       });
     }
 
-    const appUrl = process.env.APP_URL;
+    const siteUrl = process.env.SITE_URL ?? 'https://eboto.app';
     const url = await createLemonCheckout({
       apiKey,
       storeId,
@@ -444,8 +444,8 @@ export const createBoostCheckout = action({
         election_id: electionId,
         type: 'boost',
       },
-      redirectUrl: appUrl ? `${appUrl}/dashboard/${election.slug}` : undefined,
-      receiptLinkUrl: appUrl ? `${appUrl}/account/billing` : undefined,
+      redirectUrl: `${siteUrl}/dashboard/${election.slug}`,
+      receiptLinkUrl: `${siteUrl}/account/billing`,
     });
     return { url };
   },

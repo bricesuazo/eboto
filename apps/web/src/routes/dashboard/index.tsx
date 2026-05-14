@@ -2,7 +2,7 @@ import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import dayjs from 'dayjs';
-import { Fingerprint, Plus, Vote } from 'lucide-react';
+import { Fingerprint, Plus, Sparkles, Vote } from 'lucide-react';
 
 import { api } from '@eboto/backend/api';
 
@@ -118,10 +118,18 @@ function DashboardHome() {
                         <Fingerprint className="size-6 text-muted-foreground" />
                       </div>
                     )}
-                    <div className="min-w-0">
-                      <CardTitle className="truncate text-lg">
-                        {election.name}
-                      </CardTitle>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <CardTitle className="truncate text-lg">
+                          {election.name}
+                        </CardTitle>
+                        {election.variantId ? (
+                          <Badge className="shrink-0 gap-1 bg-amber-500/15 text-amber-700 hover:bg-amber-500/15 dark:text-amber-300">
+                            <Sparkles className="size-3" />
+                            Boost
+                          </Badge>
+                        ) : null}
+                      </div>
                       <CardDescription className="truncate">
                         @{election.slug}
                       </CardDescription>
