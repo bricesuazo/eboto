@@ -9,6 +9,7 @@ import {
 } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import {
+  ClipboardCheck,
   Clock3,
   Copy,
   Fingerprint,
@@ -23,6 +24,7 @@ import { toast } from 'sonner';
 import { api } from '@eboto/backend/api';
 
 import { PagePending } from '~/components/page-pending';
+import { SubmittedBallot } from '~/components/submitted-ballot';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import {
@@ -32,6 +34,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from '~/components/ui/dialog';
 import {
   HoverCard,
@@ -60,6 +63,10 @@ function ElectionPage() {
   if (!data) throw notFound();
 
   const { election, positions, isVoter, hasVoted, isCommissioner } = data;
+  const { data: myBallot } = useQuery({
+    ...convexQuery(api.votes.myBallot, { slug: electionSlug }),
+    enabled: hasVoted,
+  });
   const ongoing = isElectionOngoing(election);
   const ended = isElectionEnded(election);
   const dateRange =
@@ -163,6 +170,39 @@ function ElectionPage() {
               size="lg"
               className="rounded-full"
             />
+          )}
+          {hasVoted && (
+            <Dialog>
+              <DialogTrigger
+                render={
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="rounded-full"
+                    disabled={!myBallot}
+                  >
+                    <ClipboardCheck className="size-4" />
+                    View your ballot
+                  </Button>
+                }
+              />
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Your ballot</DialogTitle>
+                  <DialogDescription>
+                    These are the selections you submitted for {election.name}.
+                  </DialogDescription>
+                </DialogHeader>
+                {myBallot && (
+                  <div className="max-h-[60vh] overflow-y-auto">
+                    <SubmittedBallot
+                      ballot={myBallot}
+                      nameArrangement={election.nameArrangement}
+                    />
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
           )}
           {/* Voter messaging is a Boost feature — hide for free elections.
               Commissioners always see the entry point (they manage the

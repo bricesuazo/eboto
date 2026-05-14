@@ -1,7 +1,11 @@
 import { ConvexError, v } from 'convex/values';
 
 import { mutation, query } from './_generated/server';
-import { getElectionOrThrow, requireCommissioner } from './_helpers/auth';
+import {
+  getElectionOrThrow,
+  requireCommissioner,
+  requireElectionEditable,
+} from './_helpers/auth';
 
 export const list = query({
   args: { electionId: v.id('elections') },
@@ -28,6 +32,7 @@ export const create = mutation({
   handler: async (ctx, args) => {
     await getElectionOrThrow(ctx, args.electionId);
     await requireCommissioner(ctx, args.electionId);
+    await requireElectionEditable(ctx, args.electionId);
 
     if (args.min < 0 || args.max < 1 || args.min > args.max) {
       throw new ConvexError({
@@ -73,6 +78,7 @@ export const update = mutation({
       });
     }
     await requireCommissioner(ctx, pos.electionId);
+    await requireElectionEditable(ctx, pos.electionId);
 
     if (args.min < 0 || args.max < 1 || args.min > args.max) {
       throw new ConvexError({
@@ -101,6 +107,7 @@ export const softDelete = mutation({
       });
     }
     await requireCommissioner(ctx, pos.electionId);
+    await requireElectionEditable(ctx, pos.electionId);
 
     const candidatesUsing = await ctx.db
       .query('candidates')
@@ -126,6 +133,7 @@ export const reorder = mutation({
   },
   handler: async (ctx, { electionId, orderedIds }) => {
     await requireCommissioner(ctx, electionId);
+    await requireElectionEditable(ctx, electionId);
     for (const [order, id] of orderedIds.entries()) {
       const pos = await ctx.db.get(id);
       if (pos && !pos.deletedAt && pos.electionId === electionId) {

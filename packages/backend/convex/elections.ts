@@ -4,7 +4,11 @@ import { ConvexError, v } from 'convex/values';
 import type { Doc, Id } from './_generated/dataModel';
 import type { QueryCtx } from './_generated/server';
 import { mutation, query } from './_generated/server';
-import { requireCommissioner, requireUser } from './_helpers/auth';
+import {
+  requireCommissioner,
+  requireElectionEditable,
+  requireUser,
+} from './_helpers/auth';
 import { isSlugReserved } from './_helpers/slugs';
 import { getTemplatePositions } from './_helpers/templates';
 
@@ -507,6 +511,7 @@ export const update = mutation({
       });
     }
     await requireCommissioner(ctx, election._id);
+    await requireElectionEditable(ctx, election._id);
 
     if (args.startDate >= args.endDate) {
       throw new ConvexError({
@@ -571,6 +576,7 @@ export const softDelete = mutation({
       });
     }
     await requireCommissioner(ctx, id);
+    await requireElectionEditable(ctx, id);
     await ctx.db.patch(id, { deletedAt: Date.now() });
   },
 });
@@ -586,6 +592,7 @@ export const setLogo = mutation({
   },
   handler: async (ctx, { id, storageId }) => {
     await requireCommissioner(ctx, id);
+    await requireElectionEditable(ctx, id);
 
     const election = await ctx.db.get(id);
     if (!election || election.deletedAt) {

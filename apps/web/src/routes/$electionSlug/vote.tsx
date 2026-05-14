@@ -17,6 +17,7 @@ import { api } from '@eboto/backend/api';
 import type { Id } from '@eboto/backend/data-model';
 
 import { PagePending } from '~/components/page-pending';
+import { SubmittedBallot } from '~/components/submitted-ballot';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -84,6 +85,10 @@ function BallotPage() {
   // Extract into locals so the narrowing survives into nested closures.
   const { election, positions, hasVoted } = data;
   const cast = useMutation(api.votes.cast);
+  const { data: myBallot } = useQuery({
+    ...convexQuery(api.votes.myBallot, { slug: electionSlug }),
+    enabled: hasVoted,
+  });
 
   const stored = useBallotStore((s) => s.ballots[election._id]);
   const setStoreChoice = useBallotStore((s) => s.setChoice);
@@ -115,19 +120,33 @@ function BallotPage() {
 
   if (hasVoted) {
     return (
-      <main className="container mx-auto max-w-xl px-6 py-16 text-center">
-        <h1 className="text-2xl font-bold">You've already voted</h1>
-        <p className="mt-2 text-muted-foreground">
-          Each voter gets one ballot per election.
-        </p>
-        <Button
-          render={
-            <Link to="/$electionSlug" params={{ electionSlug: election.slug }}>
-              Back to election
-            </Link>
-          }
-          className="mt-6"
-        />
+      <main className="container mx-auto max-w-xl px-6 py-16">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold">You've already voted</h1>
+          <p className="mt-2 text-muted-foreground">
+            Each voter gets one ballot per election.
+          </p>
+        </div>
+        {myBallot && (
+          <SubmittedBallot
+            ballot={myBallot}
+            nameArrangement={election.nameArrangement}
+            heading="Your ballot"
+            className="mt-8"
+          />
+        )}
+        <div className="mt-8 flex justify-center">
+          <Button
+            render={
+              <Link
+                to="/$electionSlug"
+                params={{ electionSlug: election.slug }}
+              >
+                Back to election
+              </Link>
+            }
+          />
+        </div>
       </main>
     );
   }

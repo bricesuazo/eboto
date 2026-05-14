@@ -1,7 +1,10 @@
 import { ConvexError, v } from 'convex/values';
 
 import { mutation, query } from './_generated/server';
-import { requireCommissioner } from './_helpers/auth';
+import {
+  requireCommissioner,
+  requireElectionEditable,
+} from './_helpers/auth';
 import { voterFieldType } from './schema';
 
 export const list = query({
@@ -24,6 +27,7 @@ export const create = mutation({
   },
   handler: async (ctx, { electionId, name, type }) => {
     await requireCommissioner(ctx, electionId);
+    await requireElectionEditable(ctx, electionId);
     const trimmed = name.trim();
     if (!trimmed) {
       throw new ConvexError({
@@ -68,6 +72,7 @@ export const update = mutation({
       throw new ConvexError({ code: 'not_found', message: 'Field not found' });
     }
     await requireCommissioner(ctx, field.electionId);
+    await requireElectionEditable(ctx, field.electionId);
     const trimmed = name.trim();
     if (!trimmed) {
       throw new ConvexError({
@@ -109,6 +114,7 @@ export const softDelete = mutation({
       throw new ConvexError({ code: 'not_found', message: 'Field not found' });
     }
     await requireCommissioner(ctx, field.electionId);
+    await requireElectionEditable(ctx, field.electionId);
     await ctx.db.patch(id, { deletedAt: Date.now() });
   },
 });

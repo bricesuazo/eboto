@@ -2,7 +2,10 @@ import { paginationOptsValidator } from 'convex/server';
 import { ConvexError, v } from 'convex/values';
 
 import { internalQuery, query } from './_generated/server';
-import { requireCommissioner } from './_helpers/auth';
+import {
+  requireCommissioner,
+  requireElectionEditable,
+} from './_helpers/auth';
 import { getElectionTier } from './_helpers/billing';
 import {
   internalMutation,
@@ -135,6 +138,7 @@ export const create = mutation({
   },
   handler: async (ctx, { electionId, email, fields }) => {
     await requireCommissioner(ctx, electionId);
+    await requireElectionEditable(ctx, electionId);
     const normalized = email.trim().toLowerCase();
     if (!normalized) {
       throw new ConvexError({
@@ -184,6 +188,7 @@ export const bulkCreate = mutation({
   },
   handler: async (ctx, { electionId, voters }) => {
     await requireCommissioner(ctx, electionId);
+    await requireElectionEditable(ctx, electionId);
 
     const cap = await getVoterCap(ctx, electionId);
     let remaining =
@@ -247,6 +252,7 @@ export const update = mutation({
       throw new ConvexError({ code: 'not_found', message: 'Voter not found' });
     }
     await requireCommissioner(ctx, voter.electionId);
+    await requireElectionEditable(ctx, voter.electionId);
     const normalized = email.trim().toLowerCase();
     if (!normalized) {
       throw new ConvexError({
@@ -286,6 +292,7 @@ export const softDelete = mutation({
       throw new ConvexError({ code: 'not_found', message: 'Voter not found' });
     }
     await requireCommissioner(ctx, voter.electionId);
+    await requireElectionEditable(ctx, voter.electionId);
     await ctx.db.patch(id, { deletedAt: Date.now() });
   },
 });

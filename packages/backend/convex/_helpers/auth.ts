@@ -1,7 +1,8 @@
 import { ConvexError } from 'convex/values';
 import { getAuthUserId } from '@convex-dev/auth/server';
 import type { MutationCtx, QueryCtx } from '../_generated/server';
-import type { Id } from '../_generated/dataModel';
+import type { Doc, Id } from '../_generated/dataModel';
+import { votingStartAt } from './election_timing';
 
 /** Throws unauthorized when the request isn't authenticated. */
 export async function requireUser(ctx: QueryCtx | MutationCtx) {
@@ -47,6 +48,37 @@ export async function getElectionOrThrow(
     throw new ConvexError({
       code: 'not_found',
       message: 'Election not found',
+    });
+  }
+  return election;
+}
+
+/**
+ * Tamper guard for ballot-affecting mutations. Throws `forbidden` once voting
+ * has opened (i.e. `Date.now() >= votingStartAt(election)`). Returns the
+ * loaded election so callers avoid a second fetch.
+ *
+ * Apply to every mutation that could change what voters see or who can vote:
+ * candidates, positions, partylists, voter fields, voters, election timing /
+ * publicity / logo, and election soft-delete. Do NOT apply to messaging,
+ * billing, or vote casting itself.
+ *
+ * The lock is intentionally strict: even "harmless" edits like fixing a
+ * description typo are blocked once voting starts, because the cost of a
+ * false block (re-clone, re-launch) is much smaller than the cost of an
+ * undetected mid-election tamper. Relax per-field only if a concrete need
+ * appears.
+ */
+export async function requireElectionEditable(
+  ctx: QueryCtx | MutationCtx,
+  electionId: Id<'elections'>,
+): Promise<Doc<'elections'>> {
+  const election = await getElectionOrThrow(ctx, electionId);
+  if (Date.now() >= votingStartAt(election)) {
+    throw new ConvexError({
+      code: 'forbidden',
+      message:
+        'Voting has already started; this change is locked to prevent ballot tampering.',
     });
   }
   return election;

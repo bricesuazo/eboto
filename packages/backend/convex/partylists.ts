@@ -1,7 +1,11 @@
 import { ConvexError, v } from 'convex/values';
 
 import { mutation, query } from './_generated/server';
-import { getElectionOrThrow, requireCommissioner } from './_helpers/auth';
+import {
+  getElectionOrThrow,
+  requireCommissioner,
+  requireElectionEditable,
+} from './_helpers/auth';
 
 export const list = query({
   args: { electionId: v.id('elections') },
@@ -26,6 +30,7 @@ export const create = mutation({
   handler: async (ctx, args) => {
     await getElectionOrThrow(ctx, args.electionId);
     await requireCommissioner(ctx, args.electionId);
+    await requireElectionEditable(ctx, args.electionId);
 
     const acronym = args.acronym.trim();
     if (!acronym) {
@@ -74,6 +79,7 @@ export const update = mutation({
       });
     }
     await requireCommissioner(ctx, pl.electionId);
+    await requireElectionEditable(ctx, pl.electionId);
 
     await ctx.db.patch(args.id, {
       name: args.name.trim(),
@@ -94,6 +100,7 @@ export const softDelete = mutation({
       });
     }
     await requireCommissioner(ctx, pl.electionId);
+    await requireElectionEditable(ctx, pl.electionId);
     if (pl.acronym === 'IND') {
       throw new ConvexError({
         code: 'forbidden',

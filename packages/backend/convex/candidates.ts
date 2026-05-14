@@ -1,7 +1,10 @@
 import { ConvexError, v } from 'convex/values';
 
 import { mutation, query } from './_generated/server';
-import { requireCommissioner } from './_helpers/auth';
+import {
+  requireCommissioner,
+  requireElectionEditable,
+} from './_helpers/auth';
 
 /**
  * Returns `null` when the election or candidate doesn't exist. Routes treat
@@ -143,6 +146,7 @@ export const create = mutation({
   },
   handler: async (ctx, args) => {
     await requireCommissioner(ctx, args.electionId);
+    await requireElectionEditable(ctx, args.electionId);
 
     const slug = args.slug.trim().toLowerCase();
     if (!slug) {
@@ -201,6 +205,7 @@ export const update = mutation({
       });
     }
     await requireCommissioner(ctx, candidate.electionId);
+    await requireElectionEditable(ctx, candidate.electionId);
 
     const slug = args.slug.trim().toLowerCase();
     if (slug !== candidate.slug) {
@@ -241,6 +246,7 @@ export const softDelete = mutation({
       });
     }
     await requireCommissioner(ctx, candidate.electionId);
+    await requireElectionEditable(ctx, candidate.electionId);
     await ctx.db.patch(id, { deletedAt: Date.now() });
   },
 });
@@ -342,6 +348,7 @@ export const updateCandidateCredentials = mutation({
       });
     }
     await requireCommissioner(ctx, candidate.electionId);
+    await requireElectionEditable(ctx, candidate.electionId);
     const credentialId = candidate.credentialId;
 
     // Replace-all per table — easier to reason about than diffing in JS.
@@ -445,6 +452,7 @@ export const setImage = mutation({
       });
     }
     await requireCommissioner(ctx, candidate.electionId);
+    await requireElectionEditable(ctx, candidate.electionId);
     const previous = candidate.imageStorageId;
     await ctx.db.patch(id, { imageStorageId: storageId ?? undefined });
     if (previous && previous !== storageId) {
