@@ -30,6 +30,7 @@ import {
 import { toast } from 'sonner';
 
 import { api } from '@eboto/backend/api';
+import type { Id } from '@eboto/backend/data-model';
 
 import { BoostPaywall } from '~/components/boost-paywall';
 import { DashboardPending } from '~/components/dashboard-pending';
@@ -102,13 +103,13 @@ function OverviewPage() {
   );
   const { data: reports = [] } = useQuery({
     ...convexQuery(api.results.listGeneratedReports, {
-      electionId: election?._id ?? ('' as never),
+      electionId: election!._id,
     }),
     enabled: Boolean(election),
   });
   const { data: fieldStats = [] } = useQuery({
     ...convexQuery(api.voterFields.statsByField, {
-      electionId: election?._id ?? ('' as never),
+      electionId: election!._id,
     }),
     enabled: Boolean(election),
   });
@@ -509,7 +510,7 @@ function LegendDot({ color, label }: { color: string; label: string }) {
   );
 }
 
-function GenerateReportButton({ electionId }: { electionId: string }) {
+function GenerateReportButton({ electionId }: { electionId: Id<'elections'> }) {
   const trigger = useAction(api.results.triggerTurnoutPdf);
   const [pending, setPending] = useState(false);
   return (
@@ -521,7 +522,7 @@ function GenerateReportButton({ electionId }: { electionId: string }) {
       onClick={async () => {
         setPending(true);
         try {
-          await trigger({ electionId: electionId as never });
+          await trigger({ electionId });
           toast.success('Generating report — it will appear here in a moment.');
         } catch (err) {
           toast.error(

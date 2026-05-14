@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { api } from '@eboto/backend/api';
+import type { Id } from '@eboto/backend/data-model';
 import { votingEndAt, votingStartAt } from '@eboto/backend/election-timing';
 
 import { DashboardPending } from '~/components/dashboard-pending';
@@ -134,7 +135,7 @@ function SettingsPage() {
           };
           void scheduleElectionLifecycleFn({
             data: {
-              electionId: electionId as unknown as string,
+              electionId,
               slug: result.slug,
               startAt: votingStartAt(timing),
               endAt: votingEndAt(timing),
@@ -297,11 +298,13 @@ function SettingsPage() {
                       <FormLabel>Voting starts</FormLabel>
                       <Select
                         onValueChange={(v) => field.onChange(Number(v))}
-                        value={parseHourTo12HourFormat(field.value)}
+                        value={String(field.value)}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue />
+                            <SelectValue placeholder="Pick a time">
+                              {parseHourTo12HourFormat(field.value)}
+                            </SelectValue>
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -324,11 +327,13 @@ function SettingsPage() {
                       <FormLabel>Voting ends</FormLabel>
                       <Select
                         onValueChange={(v) => field.onChange(Number(v))}
-                        value={parseHourTo12HourFormat(field.value)}
+                        value={String(field.value)}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue />
+                            <SelectValue placeholder="Pick a time">
+                              {parseHourTo12HourFormat(field.value)}
+                            </SelectValue>
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -455,7 +460,7 @@ function DeleteElectionButton({
   electionId,
   onDeleted,
 }: {
-  electionId: string;
+  electionId: Id<'elections'>;
   onDeleted: () => void;
 }) {
   const softDelete = useMutation(api.elections.softDelete);
@@ -468,7 +473,7 @@ function DeleteElectionButton({
         if (!confirm('Delete this election? This cannot be undone.')) return;
         setPending(true);
         try {
-          await softDelete({ id: electionId as never });
+          await softDelete({ id: electionId });
           toast.success('Election deleted');
           onDeleted();
         } catch (err) {
@@ -488,12 +493,16 @@ function DeleteElectionButton({
   );
 }
 
-function CommissionersCard({ electionId }: { electionId: string }) {
+function CommissionersCard({ electionId }: { electionId: Id<'elections'> }) {
   const { data: commissioners = [] } = useQuery(
-    convexQuery(api.commissioners.list, { electionId: electionId as never }),
+    convexQuery(api.commissioners.list, { electionId }),
+  );
+  const { data: invites = [] } = useQuery(
+    convexQuery(api.commissioners.listInvites, { electionId }),
   );
   const add = useMutation(api.commissioners.addByEmail);
   const remove = useMutation(api.commissioners.remove);
+  const cancelInvite = useMutation(api.commissioners.cancelInvite);
   const [email, setEmail] = useState('');
   const [adding, setAdding] = useState(false);
 
@@ -503,8 +512,9 @@ function CommissionersCard({ electionId }: { electionId: string }) {
         <CardTitle>Commissioners</CardTitle>
         <CardDescription>
           Anyone listed here can manage this election (edit settings,
-          candidates, voters, send messages). The target must already have an
-          eBoto account.
+          candidates, voters, send messages). Adding someone sends them an
+          email invite; they become a commissioner once they accept (which
+          uses one of their own Plus credits or their first free slot).
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -516,10 +526,10 @@ function CommissionersCard({ electionId }: { electionId: string }) {
             setAdding(true);
             try {
               await add({
-                electionId: electionId as never,
+                electionId,
                 email: email.trim(),
               });
-              toast.success('Commissioner added.');
+              toast.success('Invite sent.');
               setEmail('');
             } catch (err) {
               toast.error(
@@ -543,52 +553,91 @@ function CommissionersCard({ electionId }: { electionId: string }) {
           </Button>
         </form>
         <ul className="divide-y rounded-md border">
-          {commissioners.length === 0 ? (
+          {commissioners.length === 0 && invites.length === 0 ? (
             <li className="px-3 py-2 text-sm text-muted-foreground">
               No commissioners yet.
             </li>
           ) : (
-            commissioners.map((c) => (
-              <li
-                key={c._id}
-                className="flex items-center justify-between gap-2 px-3 py-2 text-sm"
-              >
-                <div>
-                  <div className="font-medium">{c.email ?? '—'}</div>
-                  {c.name && (
-                    <div className="text-xs text-muted-foreground">
-                      {c.name}
-                    </div>
-                  )}
-                </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={async () => {
-                    if (
-                      !confirm(
-                        `Remove ${c.email ?? 'this commissioner'} from this election?`,
-                      )
-                    )
-                      return;
-                    try {
-                      await remove({ commissionerId: c._id });
-                      toast.success('Commissioner removed.');
-                    } catch (err) {
-                      toast.error(
-                        err instanceof ConvexError
-                          ? ((err.data as { message?: string }).message ??
-                              'Failed')
-                          : 'Failed',
-                      );
-                    }
-                  }}
+            <>
+              {commissioners.map((c) => (
+                <li
+                  key={c._id}
+                  className="flex items-center justify-between gap-2 px-3 py-2 text-sm"
                 >
-                  <Trash2 className="size-4" />
-                </Button>
-              </li>
-            ))
+                  <div>
+                    <div className="font-medium">{c.email ?? '—'}</div>
+                    {c.name && (
+                      <div className="text-xs text-muted-foreground">
+                        {c.name}
+                      </div>
+                    )}
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={async () => {
+                      if (
+                        !confirm(
+                          `Remove ${c.email ?? 'this commissioner'} from this election?`,
+                        )
+                      )
+                        return;
+                      try {
+                        await remove({ commissionerId: c._id });
+                        toast.success('Commissioner removed.');
+                      } catch (err) {
+                        toast.error(
+                          err instanceof ConvexError
+                            ? ((err.data as { message?: string }).message ??
+                                'Failed')
+                            : 'Failed',
+                        );
+                      }
+                    }}
+                  >
+                    <Trash2 className="size-4" />
+                  </Button>
+                </li>
+              ))}
+              {invites.map((invite) => (
+                <li
+                  key={invite._id}
+                  className="flex items-center justify-between gap-2 px-3 py-2 text-sm"
+                >
+                  <div>
+                    <div className="font-medium">{invite.email}</div>
+                    <div className="text-xs text-muted-foreground">
+                      Pending — waiting for them to accept
+                    </div>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={async () => {
+                      if (
+                        !confirm(`Cancel the invite for ${invite.email}?`)
+                      )
+                        return;
+                      try {
+                        await cancelInvite({ inviteId: invite._id });
+                        toast.success('Invite cancelled.');
+                      } catch (err) {
+                        toast.error(
+                          err instanceof ConvexError
+                            ? ((err.data as { message?: string }).message ??
+                                'Failed')
+                            : 'Failed',
+                        );
+                      }
+                    }}
+                  >
+                    <Trash2 className="size-4" />
+                  </Button>
+                </li>
+              ))}
+            </>
           )}
         </ul>
       </CardContent>

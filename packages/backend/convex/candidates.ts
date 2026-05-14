@@ -309,6 +309,47 @@ export const getCredentials = query({
  * patched. This way the dashboard can submit the entire form without
  * juggling per-row create/update/delete calls.
  */
+// Year-string bounds for credential rows. Kept here (not in `_helpers/`)
+// because they're cheap, self-contained, and the helper file would be a
+// single 4-line export. Mirrors the frontend Zod schema at
+// `apps/web/src/lib/schemas/candidate-credentials.ts`.
+const CREDENTIAL_MIN_YEAR = 1900;
+const CREDENTIAL_MAX_YEAR_OFFSET = 10;
+
+function assertYearString(value: string, label: string): void {
+  const trimmed = value.trim();
+  if (!/^\d{4}$/.test(trimmed)) {
+    throw new ConvexError({
+      code: 'invalid_argument',
+      message: `${label} must be a 4-digit year.`,
+    });
+  }
+  const n = Number(trimmed);
+  const max = new Date().getFullYear() + CREDENTIAL_MAX_YEAR_OFFSET;
+  if (n < CREDENTIAL_MIN_YEAR || n > max) {
+    throw new ConvexError({
+      code: 'invalid_argument',
+      message: `${label} must be between ${CREDENTIAL_MIN_YEAR} and ${max}.`,
+    });
+  }
+}
+
+function assertOptionalEndYearString(
+  value: string,
+  startYear: string,
+  label: string,
+): void {
+  const trimmed = value.trim();
+  if (trimmed === '') return; // blank = ongoing affiliation
+  assertYearString(trimmed, label);
+  if (Number(trimmed) < Number(startYear.trim())) {
+    throw new ConvexError({
+      code: 'invalid_argument',
+      message: `${label} must be the same as or after the start year.`,
+    });
+  }
+}
+
 export const updateCandidateCredentials = mutation({
   args: {
     candidateId: v.id('candidates'),
@@ -350,6 +391,28 @@ export const updateCandidateCredentials = mutation({
     await requireCommissioner(ctx, candidate.electionId);
     await requireElectionEditable(ctx, candidate.electionId);
     const credentialId = candidate.credentialId;
+
+    // Validate years before any writes — if anything is malformed we want
+    // to reject the whole payload (we soft-delete existing rows below, so
+    // a partial failure mid-loop would otherwise nuke valid credentials
+    // and replace them with nothing).
+    for (const a of args.achievements) {
+      if (!a.name.trim()) continue;
+      assertYearString(a.year, 'Achievement year');
+    }
+    for (const a of args.affiliations) {
+      if (!a.orgName.trim()) continue;
+      assertYearString(a.startYear, 'Affiliation start year');
+      assertOptionalEndYearString(
+        a.endYear,
+        a.startYear,
+        'Affiliation end year',
+      );
+    }
+    for (const e of args.eventsAttended) {
+      if (!e.name.trim()) continue;
+      assertYearString(e.year, 'Event year');
+    }
 
     // Replace-all per table — easier to reason about than diffing in JS.
     // For very long credential lists we could shift to diff-based upserts.

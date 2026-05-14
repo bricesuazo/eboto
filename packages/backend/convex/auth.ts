@@ -1,7 +1,7 @@
-import { SendEmailCommand, SESv2Client } from '@aws-sdk/client-sesv2';
 import Google from '@auth/core/providers/google';
-import { convexAuth } from '@convex-dev/auth/server';
+import { SendEmailCommand, SESv2Client } from '@aws-sdk/client-sesv2';
 import { Email } from '@convex-dev/auth/providers/Email';
+import { convexAuth } from '@convex-dev/auth/server';
 
 /**
  * Custom magic-link provider sending via AWS SES v2 — same channel as the
@@ -10,7 +10,6 @@ import { Email } from '@convex-dev/auth/providers/Email';
  *
  * Honors:
  *   - `SES_FROM_EMAIL` — full From: line. Defaults to the no-reply address.
- *   - `AUTH_FROM_EMAIL` — override just for auth (optional).
  *   - `AWS_REGION` — SES region (defaults to us-east-1).
  *   - AWS credentials picked up automatically from env / IAM.
  */
@@ -24,11 +23,20 @@ const SesEmail = Email({
     url: string;
   }) {
     const region = process.env.AWS_REGION ?? 'us-east-1';
-    const from =
-      process.env.AUTH_FROM_EMAIL ??
-      process.env.SES_FROM_EMAIL ??
-      'eBoto <no-reply@eboto.app>';
-    const ses = new SESv2Client({ region });
+    const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+    const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+
+    if (!accessKeyId || !secretAccessKey) {
+      throw new Error(
+        'AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY must be set',
+      );
+    }
+
+    const from = process.env.SES_FROM_EMAIL ?? 'eBoto <no-reply@eboto.app>';
+    const ses = new SESv2Client({
+      region,
+      credentials: { accessKeyId, secretAccessKey },
+    });
     const subject = 'Sign in to eBoto';
     const text = `Sign in to eBoto: ${url}`;
     const html = `<p>Click the link below to sign in to eBoto. This link will expire shortly.</p><p><a href="${url}">${url}</a></p><p>If you didn't request this, you can ignore this email.</p>`;

@@ -23,7 +23,7 @@ import {
 import { toast } from 'sonner';
 
 import { api } from '@eboto/backend/api';
-import type { Doc } from '@eboto/backend/data-model';
+import type { Doc, Id } from '@eboto/backend/data-model';
 import type { VoterFieldType } from '@eboto/backend/schema';
 
 import { DashboardPending } from '~/components/dashboard-pending';
@@ -1067,7 +1067,7 @@ function ExportVotersButton({
   slug,
   fields,
 }: {
-  electionId: string;
+  electionId: Id<'elections'>;
   slug: string;
   fields: Doc<'voter_fields'>[];
 }) {
@@ -1082,7 +1082,7 @@ function ExportVotersButton({
         setPending(true);
         try {
           const rows = await convex.query(api.voters.listForExport, {
-            electionId: electionId as never,
+            electionId,
           });
           const customCols = fields.map((f) => f.name);
           const header = [

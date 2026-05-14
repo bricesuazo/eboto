@@ -317,11 +317,13 @@ function NewElectionPage() {
                       <FormLabel>Voting starts at</FormLabel>
                       <Select
                         onValueChange={(v) => field.onChange(Number(v))}
-                        value={parseHourTo12HourFormat(field.value)}
+                        value={String(field.value)}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue />
+                            <SelectValue placeholder="Pick a time">
+                              {parseHourTo12HourFormat(field.value)}
+                            </SelectValue>
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -344,11 +346,13 @@ function NewElectionPage() {
                       <FormLabel>Voting ends at</FormLabel>
                       <Select
                         onValueChange={(v) => field.onChange(Number(v))}
-                        value={parseHourTo12HourFormat(field.value)}
+                        value={String(field.value)}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue />
+                            <SelectValue placeholder="Pick a time">
+                              {parseHourTo12HourFormat(field.value)}
+                            </SelectValue>
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>

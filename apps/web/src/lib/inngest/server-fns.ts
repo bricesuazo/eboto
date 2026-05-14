@@ -1,9 +1,11 @@
 import { createServerFn } from '@tanstack/react-start';
 
+import type { Id } from '@eboto/backend/data-model';
+
 import { scheduleElectionLifecycle } from '~/server/inngest';
 
 interface ScheduleInput {
-  electionId: string;
+  electionId: Id<'elections'>;
   slug: string;
   /** Absolute unix-ms — must already include voting-hour-of-day. */
   startAt: number;
@@ -19,7 +21,7 @@ export const scheduleElectionLifecycleFn = createServerFn({ method: 'POST' })
   .inputValidator((input: ScheduleInput) => input)
   .handler(async ({ data }) => {
     await scheduleElectionLifecycle({
-      electionId: data.electionId as never,
+      electionId: data.electionId,
       slug: data.slug,
       startAt: data.startAt,
       endAt: data.endAt,

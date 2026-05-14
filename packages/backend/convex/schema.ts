@@ -77,6 +77,22 @@ export default defineSchema({
     .index('by_user', ['userId'])
     .index('by_user_election', ['userId', 'electionId']),
 
+  // Outstanding "you've been added as a commissioner" invites. Every add
+  // routes through this table — the invitee must explicitly accept (which
+  // consumes one of *their* Plus credits, or their first free slot) or
+  // decline. Inviters can cancel an unaccepted invite via `deletedAt`.
+  commissioner_invites: defineTable({
+    electionId: v.id('elections'),
+    email: v.string(),
+    invitedByUserId: v.id('users'),
+    acceptedAt: v.optional(v.number()),
+    declinedAt: v.optional(v.number()),
+    deletedAt: v.optional(v.number()),
+  })
+    .index('by_election', ['electionId'])
+    .index('by_email', ['email'])
+    .index('by_election_email', ['electionId', 'email']),
+
   partylists: defineTable({
     name: v.string(),
     acronym: v.string(),

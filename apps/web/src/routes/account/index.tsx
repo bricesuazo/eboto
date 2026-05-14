@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
-import { useAuthActions } from '@convex-dev/auth/react';
 import { useMutation } from 'convex/react';
 import { ConvexError } from 'convex/values';
-import { CreditCard, LifeBuoy, Trash2 } from 'lucide-react';
+import { Check, CreditCard, LifeBuoy, Trash2, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { api } from '@eboto/backend/api';
+import type { Id } from '@eboto/backend/data-model';
 
 import { Button } from '~/components/ui/button';
 import {
@@ -21,6 +21,7 @@ import {
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { Separator } from '~/components/ui/separator';
+import { useAuthActions } from '~/lib/auth/provider';
 
 export const Route = createFileRoute('/account/')({
   head: () => ({
@@ -55,13 +56,23 @@ function AccountPage() {
       </div>
 
       <nav className="flex flex-wrap gap-2">
-        <Button variant="outline" size="sm" render={<Link to="/account/billing" />}>
+        <Button
+          variant="outline"
+          size="sm"
+          render={<Link to="/account/billing" />}
+        >
           <CreditCard className="size-4" /> Billing
         </Button>
-        <Button variant="outline" size="sm" render={<Link to="/account/reports" />}>
+        <Button
+          variant="outline"
+          size="sm"
+          render={<Link to="/account/reports" />}
+        >
           <LifeBuoy className="size-4" /> My reports
         </Button>
       </nav>
+
+      <PendingInvitesCard />
 
       <Card>
         <CardHeader>
@@ -153,5 +164,111 @@ function AccountPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+function PendingInvitesCard() {
+  const { data } = useQuery(
+    convexQuery(api.commissioners.myPendingInvites, {}),
+  );
+  const acceptInvite = useMutation(api.commissioners.acceptInvite);
+  const declineInvite = useMutation(api.commissioners.declineInvite);
+  const [pendingId, setPendingId] = useState<Id<'commissioner_invites'> | null>(
+    null,
+  );
+
+  if (!data || data.invites.length === 0) return null;
+
+  const canAccept = data.canAcceptFree || data.canAcceptWithCredit;
+  const reason = data.canAcceptFree
+    ? 'Your first commissioner role is free.'
+    : data.canAcceptWithCredit
+      ? `Accepting will use one of your ${data.plusCredits} Plus credit${data.plusCredits === 1 ? '' : 's'}.`
+      : "You're out of free slots and have no Plus credits — purchase Plus before accepting.";
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Pending invites</CardTitle>
+        <CardDescription>{reason}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ul className="divide-y rounded-md border">
+          {data.invites.map((invite) => (
+            <li
+              key={invite._id}
+              className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 text-sm"
+            >
+              <div>
+                <div className="font-medium">{invite.electionName}</div>
+                <div className="text-xs text-muted-foreground">
+                  Invited by{' '}
+                  {invite.invitedByName ?? invite.invitedByEmail ?? 'someone'}
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  disabled={!canAccept || pendingId === invite._id}
+                  onClick={async () => {
+                    setPendingId(invite._id);
+                    try {
+                      await acceptInvite({ inviteId: invite._id });
+                      toast.success('Invite accepted.');
+                    } catch (err) {
+                      toast.error(
+                        err instanceof ConvexError
+                          ? ((err.data as { message?: string }).message ??
+                              'Failed')
+                          : 'Failed',
+                      );
+                    } finally {
+                      setPendingId(null);
+                    }
+                  }}
+                >
+                  <Check className="size-4" /> Accept
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  disabled={pendingId === invite._id}
+                  onClick={async () => {
+                    setPendingId(invite._id);
+                    try {
+                      await declineInvite({ inviteId: invite._id });
+                      toast.success('Invite declined.');
+                    } catch (err) {
+                      toast.error(
+                        err instanceof ConvexError
+                          ? ((err.data as { message?: string }).message ??
+                              'Failed')
+                          : 'Failed',
+                      );
+                    } finally {
+                      setPendingId(null);
+                    }
+                  }}
+                >
+                  <X className="size-4" /> Decline
+                </Button>
+              </div>
+            </li>
+          ))}
+        </ul>
+        {!canAccept && (
+          <div className="mt-3 text-xs">
+            <Link
+              to="/account/billing"
+              className="text-primary underline-offset-2 hover:underline"
+            >
+              Purchase Plus to accept invites
+            </Link>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

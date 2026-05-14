@@ -5,6 +5,7 @@ import { LifeBuoy } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { api } from '@eboto/backend/api';
+import type { Id } from '@eboto/backend/data-model';
 
 import { Button } from '~/components/ui/button';
 import {
@@ -30,7 +31,7 @@ export function ReportProblemDialog({
   variant = 'outline',
   size = 'sm',
 }: {
-  electionId?: string;
+  electionId?: Id<'elections'>;
   variant?: 'outline' | 'ghost' | 'default';
   size?: 'sm' | 'default';
 }) {
@@ -54,8 +55,8 @@ export function ReportProblemDialog({
         <DialogHeader>
           <DialogTitle>Report a problem</DialogTitle>
           <DialogDescription>
-            Tell us what went wrong. Our team gets every report and follows
-            up on the email tied to your account.
+            Tell us what went wrong. Our team gets every report and follows up
+            on the email tied to your account.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
@@ -90,7 +91,7 @@ export function ReportProblemDialog({
                 await report({
                   subject,
                   description,
-                  electionId: electionId as never,
+                  electionId,
                 });
                 toast.success('Thanks — your report was sent.');
                 setOpen(false);

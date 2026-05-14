@@ -135,8 +135,16 @@ function unsubscribeUrlFor(token: string): string {
 let cachedSes: SESv2Client | null = null;
 function getSes(): SESv2Client {
   if (cachedSes) return cachedSes;
+  const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+  const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+
+  if (!accessKeyId || !secretAccessKey) {
+    throw new Error('AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY must be set');
+  }
+
   cachedSes = new SESv2Client({
     region: awsRegion(),
+    credentials: { accessKeyId, secretAccessKey },
     // When AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY are set in env the SDK
     // picks them up automatically; passing nothing here lets IAM roles or
     // other credential providers work too.
@@ -334,7 +342,7 @@ export const processBatch = internalAction({
     // voters. Unsubscribed voters get a `voter_notifications` row with the
     // synthetic `unsubscribed` provider id so the operator can audit suppress
     // counts — and so a future re-emit doesn't bother re-checking them.
-    const voters: { _id: string; email: string }[] = [];
+    const voters: { _id: Id<'voters'>; email: string }[] = [];
     const optedOut: string[] = [];
     await Promise.all(
       voterIds.map(async (voterId) => {
@@ -360,7 +368,7 @@ export const processBatch = internalAction({
       optedOut.map((voterId) =>
         ctx.runMutation(internal.voters.recordNotification, {
           electionId,
-          voterId: voterId as never,
+          voterId,
           phase,
           status: 'sent',
           providerId: 'unsubscribed',
@@ -382,7 +390,11 @@ export const processBatch = internalAction({
         String(voter._id),
       );
       const unsubscribeUrl = unsubscribeUrlFor(token);
-      const { subject, html, text } = buildEmail(phase, election, unsubscribeUrl);
+      const { subject, html, text } = buildEmail(
+        phase,
+        election,
+        unsubscribeUrl,
+      );
       const command = new SendEmailCommand({
         FromEmailAddress: fromEmail,
         Destination: { ToAddresses: [voter.email] },
@@ -420,7 +432,7 @@ export const processBatch = internalAction({
           sent += 1;
           await ctx.runMutation(internal.voters.recordNotification, {
             electionId,
-            voterId: voter._id as never,
+            voterId: voter._id,
             phase,
             status: 'sent',
             providerId: result.value.messageId,
@@ -433,7 +445,7 @@ export const processBatch = internalAction({
               : String(result.reason);
           await ctx.runMutation(internal.voters.recordNotification, {
             electionId,
-            voterId: voter._id as never,
+            voterId: voter._id,
             phase,
             status: 'failed',
             error: message,

@@ -41,7 +41,8 @@
     "lint": "eslint",
     "format": "prettier --check \"**/*.{mjs,ts,md,json}\"",
     "typecheck": "tsc --noEmit",
-    "with-env": "dotenv -e ../../.env --"
+    "with-env": "dotenv -e ../../.env --",
+    "env:push": "convex env set --from-file .env.local"
   },
   "dependencies": {
     "@auth/core": "^0.37.0",

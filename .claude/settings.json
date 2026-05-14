@@ -17,7 +17,11 @@
       "Bash(grep -n \"slug\\\\b\\\\|api.elections.create\\\\|api.candidates.create\" /Users/bricesuazo/Documents/GitHub/eboto/apps/web/src/routes/dashboard/new.tsx '/Users/bricesuazo/Documents/GitHub/eboto/apps/web/src/routes/dashboard/$electionDashboardSlug/candidate.tsx' | head -30)",
       "Bash(grep -n \"candidateSchema\\\\|CandidateInput\\\\|FormValues\" '/Users/bricesuazo/Documents/GitHub/eboto/apps/web/src/routes/dashboard/$electionDashboardSlug/candidate.tsx' | head -10)",
       "Bash(grep -n \"^import.*react\\\\|useState\\\\|useForm\" '/Users/bricesuazo/Documents/GitHub/eboto/apps/web/src/routes/dashboard/$electionDashboardSlug/candidate.tsx' | head -5)",
-      "Bash(grep -n \"@eboto/backend\" '/Users/bricesuazo/Documents/GitHub/eboto/apps/web/src/routes/dashboard/$electionDashboardSlug/candidate.tsx' | head -5)"
+      "Bash(grep -n \"@eboto/backend\" '/Users/bricesuazo/Documents/GitHub/eboto/apps/web/src/routes/dashboard/$electionDashboardSlug/candidate.tsx' | head -5)",
+      "Bash(grep -n \"commissioner\\\\|addByEmail\" /Users/bricesuazo/Documents/GitHub/eboto/apps/web/src/routes/dashboard/\\\\$electionDashboardSlug/settings.tsx | head -30)",
+      "Bash(grep -rn \"from '@eboto/backend\" /Users/bricesuazo/Documents/GitHub/eboto/apps/web/src/routes/dashboard/\\\\$electionDashboardSlug/settings.tsx | head -5)",
+      "Bash(pnpm --filter @eboto/backend exec tsc --noEmit)",
+      "Bash(pnpm --filter @eboto/web exec tsc --noEmit)"
     ]
   }
 }
