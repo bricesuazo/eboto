@@ -1,7 +1,7 @@
 import { formatName } from '~/lib/election';
 import { cn } from '~/lib/utils';
 
-type BallotPosition = {
+interface BallotPosition {
   id: string;
   name: string;
   isAbstain: boolean;
@@ -12,7 +12,7 @@ type BallotPosition = {
     lastName: string;
     partylistAcronym: string;
   }[];
-};
+}
 
 export function SubmittedBallot({
   ballot,

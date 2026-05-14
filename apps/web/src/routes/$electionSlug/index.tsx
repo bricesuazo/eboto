@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
@@ -25,7 +26,6 @@ import { api } from '@eboto/backend/api';
 
 import { PagePending } from '~/components/page-pending';
 import { SubmittedBallot } from '~/components/submitted-ballot';
-import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import {
   Dialog,
@@ -48,11 +48,14 @@ import {
   isElectionOngoing,
   parseHourTo12HourFormat,
 } from '~/lib/election';
+import { cn } from '~/lib/utils';
 
 export const Route = createFileRoute('/$electionSlug/')({
   pendingComponent: PagePending,
   component: ElectionPage,
 });
+
+type Status = 'live' | 'upcoming' | 'concluded';
 
 function ElectionPage() {
   const { electionSlug } = Route.useParams();
@@ -69,87 +72,77 @@ function ElectionPage() {
   });
   const ongoing = isElectionOngoing(election);
   const ended = isElectionEnded(election);
+  const status: Status = ended ? 'concluded' : ongoing ? 'live' : 'upcoming';
+
   const dateRange =
-    dayjs(election.startDate).format('MMMM D, YYYY') +
+    dayjs(election.startDate).format('MMM D, YYYY') +
     ' – ' +
-    dayjs(election.endDate).format('MMMM D, YYYY');
+    dayjs(election.endDate).format('MMM D, YYYY');
+  const hours =
+    election.votingHourStart === 0 && election.votingHourEnd === 24
+      ? 'Whole day'
+      : `${parseHourTo12HourFormat(election.votingHourStart)} – ${parseHourTo12HourFormat(election.votingHourEnd)}`;
+  const visibilityLabel =
+    election.publicity.charAt(0) + election.publicity.slice(1).toLowerCase();
+
+  const canSeeResults =
+    isCommissioner ||
+    election.publicity === 'PUBLIC' ||
+    ended ||
+    (election.publicity === 'VOTER' && hasVoted);
+  const canVote = ongoing && (!user || (isVoter && !hasVoted));
+  const canMessage =
+    isCommissioner || (isVoter && election.variantId !== 0);
 
   return (
-    <main className="container mx-auto max-w-4xl px-6 py-12">
-      <header className="flex flex-col items-center text-center">
-        <div className="mb-3 flex size-32 items-center justify-center">
-          {election.logoUrl ? (
-            <img
-              src={election.logoUrl}
-              alt={`${election.name} logo`}
-              className="size-32 rounded-full object-cover"
-            />
-          ) : (
-            <Fingerprint className="size-24 text-muted-foreground" />
-          )}
-        </div>
-        <h1 className="text-3xl font-bold text-balance sm:text-4xl">
-          {election.name}{' '}
-          <span className="font-normal text-muted-foreground">
-            (@{election.slug})
-          </span>
-        </h1>
-        <p className="mt-1 text-muted-foreground">{dateRange}</p>
-        <p className="text-sm text-muted-foreground">
-          Voting hours:{' '}
-          {election.votingHourStart === 0 && election.votingHourEnd === 24
-            ? 'Whole day'
-            : `${parseHourTo12HourFormat(election.votingHourStart)} – ${parseHourTo12HourFormat(election.votingHourEnd)}`}
-        </p>
+    <main className="container mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
+      <header>
+        <div className="flex flex-col items-center text-center">
+          <StatusPill status={status} />
 
-        <div className="mt-3 flex items-center gap-1.5">
-          <Badge variant="secondary">
-            {election.publicity.charAt(0) +
-              election.publicity.slice(1).toLowerCase()}
-          </Badge>
-          <HoverCard>
-            <HoverCardTrigger
-              render={
-                <button
-                  aria-label="Publicity info"
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <Info className="size-4" />
-                </button>
-              }
-            />
-            <HoverCardContent className="text-sm">
-              {describePublicity(election.publicity)}
-            </HoverCardContent>
-          </HoverCard>
-        </div>
+          <div className="mt-8 mb-6 flex size-24 items-center justify-center sm:size-28">
+            {election.logoUrl ? (
+              <img
+                src={election.logoUrl}
+                alt={`${election.name} logo`}
+                className="size-full rounded-full object-cover ring-1 ring-border"
+              />
+            ) : (
+              <div className="flex size-full items-center justify-center rounded-full border bg-muted/40">
+                <Fingerprint
+                  className="size-10 text-muted-foreground sm:size-12"
+                  aria-hidden
+                />
+              </div>
+            )}
+          </div>
 
-        {election.description && (
-          <p className="mt-4 max-w-prose text-pretty text-muted-foreground">
-            {election.description}
+          <h1 className="text-3xl font-bold tracking-tight text-balance sm:text-5xl">
+            {election.name}
+          </h1>
+          <p className="mt-3 text-[11px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
+            @{election.slug}
           </p>
-        )}
 
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-          {(isCommissioner ||
-            election.publicity === 'PUBLIC' ||
-            ended ||
-            (election.publicity === 'VOTER' && hasVoted)) && (
-            <Button
-              render={
-                <Link
-                  to="/$electionSlug/result"
-                  params={{ electionSlug: election.slug }}
-                >
-                  <Clock3 className="size-4" />
-                  Realtime count
-                </Link>
-              }
-              size="lg"
-              className="rounded-full"
-            />
+          {election.description && (
+            <p className="mx-auto mt-6 max-w-prose text-pretty leading-relaxed text-muted-foreground">
+              {election.description}
+            </p>
           )}
-          {ongoing && (!user || (isVoter && !hasVoted)) && (
+        </div>
+
+        <dl className="mt-10 grid grid-cols-1 divide-y border-y sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+          <MetaCell label="Dates" value={dateRange} />
+          <MetaCell label="Voting Hours" value={hours} />
+          <MetaCell
+            label="Visibility"
+            value={visibilityLabel}
+            info={describePublicity(election.publicity)}
+          />
+        </dl>
+
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
+          {canVote && (
             <Button
               render={
                 user ? (
@@ -158,17 +151,34 @@ function ElectionPage() {
                     params={{ electionSlug: election.slug }}
                   >
                     <Fingerprint className="size-4" />
-                    Vote now!
+                    Vote now
                   </Link>
                 ) : (
-                  <Link to="/sign-in" search={{ to: `/${election.slug}/vote` }}>
+                  <Link
+                    to="/sign-in"
+                    search={{ to: `/${election.slug}/vote` }}
+                  >
                     <Fingerprint className="size-4" />
-                    Vote now!
+                    Vote now
                   </Link>
                 )
               }
               size="lg"
-              className="rounded-full"
+            />
+          )}
+          {canSeeResults && (
+            <Button
+              render={
+                <Link
+                  to="/$electionSlug/result"
+                  params={{ electionSlug: election.slug }}
+                >
+                  <Clock3 className="size-4" />
+                  {ended ? 'View results' : 'Live results'}
+                </Link>
+              }
+              variant={canVote ? 'outline' : 'default'}
+              size="lg"
             />
           )}
           {hasVoted && (
@@ -178,11 +188,10 @@ function ElectionPage() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="rounded-full"
                     disabled={!myBallot}
                   >
                     <ClipboardCheck className="size-4" />
-                    View your ballot
+                    Your ballot
                   </Button>
                 }
               />
@@ -207,7 +216,7 @@ function ElectionPage() {
           {/* Voter messaging is a Boost feature — hide for free elections.
               Commissioners always see the entry point (they manage the
               upgrade themselves). */}
-          {(isCommissioner || (isVoter && election.variantId !== 0)) && (
+          {canMessage && (
             <Button
               render={
                 <Link
@@ -220,103 +229,244 @@ function ElectionPage() {
               }
               size="lg"
               variant="outline"
-              className="rounded-full"
             />
           )}
           <ShareQrButton election={election} />
         </div>
 
         {ended ? (
-          <p className="mt-6 text-sm text-muted-foreground">
-            This election has ended.
+          <p className="mt-6 text-center text-xs uppercase tracking-widest text-muted-foreground">
+            This election has ended
           </p>
         ) : (
           !ongoing && (
-            <p className="mt-6 text-sm text-destructive">
-              Voting is not yet open.
+            <p className="mt-6 text-center text-xs font-medium uppercase tracking-widest text-destructive">
+              Voting is not yet open
             </p>
           )
         )}
       </header>
 
-      <section className="mt-12 space-y-12">
+      <section className="mt-16 sm:mt-20">
         {positions.length === 0 ? (
-          <p className="text-center text-muted-foreground">
-            This election has no positions yet. Contact the election
-            commissioner for more information.
-          </p>
+          <div className="rounded-lg border border-dashed py-12 text-center">
+            <p className="text-sm text-muted-foreground">
+              This election has no positions yet. Contact the election
+              commissioner for more information.
+            </p>
+          </div>
         ) : (
-          positions.map((position) => (
-            <div key={position._id}>
-              <div className="sticky top-14 z-10 flex items-center justify-center gap-2 bg-background/80 py-3 backdrop-blur">
-                <h2 className="text-2xl font-semibold text-balance">
-                  {position.name}
-                </h2>
-                <HoverCard>
-                  <HoverCardTrigger
-                    render={
-                      <button
-                        aria-label="Position rules"
-                        className="text-muted-foreground hover:text-foreground"
-                      >
-                        <Info className="size-4" />
-                      </button>
-                    }
-                  />
-                  <HoverCardContent className="text-sm">
-                    {position.min === 0 && position.max === 1
-                      ? `Voters can only vote 1 candidate for ${position.name}.`
-                      : `Voters can vote a minimum of ${position.min} and a maximum of ${position.max} candidates for ${position.name}.`}
-                  </HoverCardContent>
-                </HoverCard>
-              </div>
-
-              {position.candidates.length === 0 ? (
-                <p className="text-center text-lg text-muted-foreground">
-                  No candidates for {position.name} yet.
-                </p>
-              ) : (
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
-                  {position.candidates.map((candidate) => {
-                    const name =
-                      formatName(election.nameArrangement, candidate) +
-                      (candidate.partylist
-                        ? ` (${candidate.partylist.acronym})`
-                        : '');
-                    return (
-                      <Link
-                        key={candidate._id}
-                        to="/$electionSlug/$candidateSlug"
-                        params={{
-                          electionSlug: election.slug,
-                          candidateSlug: candidate.slug,
-                        }}
-                        className="rounded-lg border p-3 transition-colors hover:bg-accent"
-                      >
-                        <div className="relative aspect-square overflow-hidden rounded-md bg-muted">
-                          {candidate.imageUrl ? (
-                            <img
-                              src={candidate.imageUrl}
-                              alt={name}
-                              className="absolute inset-0 size-full object-cover"
-                            />
-                          ) : (
-                            <UserIcon className="absolute inset-0 m-auto size-16 text-muted-foreground" />
-                          )}
-                        </div>
-                        <p className="mt-2 line-clamp-2 text-center text-sm">
-                          {name}
-                        </p>
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          ))
+          <div className="space-y-14 sm:space-y-20">
+            <SectionLabel label="Positions & Candidates" />
+            {positions.map((position, idx) => (
+              <PositionSection
+                key={position._id}
+                index={idx}
+                position={position}
+                nameArrangement={election.nameArrangement}
+                electionSlug={election.slug}
+              />
+            ))}
+          </div>
         )}
       </section>
     </main>
+  );
+}
+
+function SectionLabel({ label }: { label: string }) {
+  return (
+    <div className="flex items-center gap-4">
+      <div className="h-px flex-1 bg-border" aria-hidden />
+      <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
+        {label}
+      </p>
+      <div className="h-px flex-1 bg-border" aria-hidden />
+    </div>
+  );
+}
+
+function PositionSection({
+  index,
+  position,
+  nameArrangement,
+  electionSlug,
+}: {
+  index: number;
+  position: {
+    _id: string;
+    name: string;
+    min: number;
+    max: number;
+    candidates: {
+      _id: string;
+      slug: string;
+      firstName: string;
+      middleName?: string;
+      lastName: string;
+      imageUrl: string | null;
+      partylist?: { acronym: string } | null;
+    }[];
+  };
+  nameArrangement: number;
+  electionSlug: string;
+}) {
+  const rule =
+    position.min === 0 && position.max === 1
+      ? 'Pick 1'
+      : `Pick ${position.min}–${position.max}`;
+  return (
+    <section>
+      <div className="mb-6 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-foreground/15 pb-3">
+        <div className="flex items-baseline gap-3">
+          <span className="text-xs font-semibold tabular-nums text-muted-foreground">
+            {String(index + 1).padStart(2, '0')}
+          </span>
+          <h2 className="text-xl font-semibold tracking-tight text-balance sm:text-2xl">
+            {position.name}
+          </h2>
+        </div>
+        <span className="text-[10px] font-medium tracking-widest text-muted-foreground uppercase whitespace-nowrap">
+          {rule} · {position.candidates.length}{' '}
+          {position.candidates.length === 1 ? 'candidate' : 'candidates'}
+        </span>
+      </div>
+
+      {position.candidates.length === 0 ? (
+        <p className="text-sm text-muted-foreground">
+          No candidates for this position yet.
+        </p>
+      ) : (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {position.candidates.map((candidate) => (
+            <CandidateCard
+              key={candidate._id}
+              candidate={candidate}
+              nameArrangement={nameArrangement}
+              electionSlug={electionSlug}
+            />
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function CandidateCard({
+  candidate,
+  nameArrangement,
+  electionSlug,
+}: {
+  candidate: {
+    slug: string;
+    firstName: string;
+    middleName?: string;
+    lastName: string;
+    imageUrl: string | null;
+    partylist?: { acronym: string } | null;
+  };
+  nameArrangement: number;
+  electionSlug: string;
+}) {
+  const name = formatName(nameArrangement, candidate);
+  return (
+    <Link
+      to="/$electionSlug/$candidateSlug"
+      params={{ electionSlug, candidateSlug: candidate.slug }}
+      className="group block overflow-hidden rounded-md border bg-card transition-colors hover:border-foreground/30"
+    >
+      <div className="relative aspect-square overflow-hidden bg-muted">
+        {candidate.imageUrl ? (
+          <img
+            src={candidate.imageUrl}
+            alt=""
+            className="absolute inset-0 size-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+          />
+        ) : (
+          <UserIcon
+            className="absolute inset-0 m-auto size-12 text-muted-foreground/60"
+            aria-hidden
+          />
+        )}
+      </div>
+      <div className="border-t bg-card p-3">
+        <p className="line-clamp-2 text-sm font-medium leading-snug text-balance">
+          {name}
+        </p>
+        {candidate.partylist?.acronym && (
+          <p className="mt-1 text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">
+            {candidate.partylist.acronym}
+          </p>
+        )}
+      </div>
+    </Link>
+  );
+}
+
+function StatusPill({ status }: { status: Status }) {
+  const config: Record<
+    Status,
+    { dot: string; label: string; animate?: boolean }
+  > = {
+    live: {
+      dot: 'bg-emerald-500',
+      label: 'Voting now open',
+      animate: true,
+    },
+    upcoming: { dot: 'bg-amber-500', label: 'Upcoming' },
+    concluded: { dot: 'bg-muted-foreground', label: 'Concluded' },
+  };
+  const { dot, label, animate } = config[status];
+  return (
+    <span className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-[11px] font-semibold tracking-[0.18em] text-foreground uppercase">
+      <span className="relative flex size-1.5" aria-hidden>
+        {animate && (
+          <span
+            className={cn(
+              'absolute inset-0 animate-ping rounded-full opacity-60',
+              dot,
+            )}
+          />
+        )}
+        <span className={cn('relative size-1.5 rounded-full', dot)} />
+      </span>
+      {label}
+    </span>
+  );
+}
+
+function MetaCell({
+  label,
+  value,
+  info,
+}: {
+  label: string;
+  value: ReactNode;
+  info?: string;
+}) {
+  return (
+    <div className="px-4 py-4 sm:py-5">
+      <dt className="flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.22em] text-muted-foreground uppercase">
+        {label}
+        {info && (
+          <HoverCard>
+            <HoverCardTrigger
+              render={
+                <button
+                  type="button"
+                  aria-label={`${label} info`}
+                  className="text-muted-foreground/70 hover:text-foreground"
+                >
+                  <Info className="size-3" aria-hidden />
+                </button>
+              }
+            />
+            <HoverCardContent className="text-sm">{info}</HoverCardContent>
+          </HoverCard>
+        )}
+      </dt>
+      <dd className="mt-1.5 text-sm font-medium leading-snug">{value}</dd>
+    </div>
   );
 }
 
@@ -343,12 +493,7 @@ function ShareQrButton({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <Button
-        variant="outline"
-        size="lg"
-        className="rounded-full"
-        onClick={() => setOpen(true)}
-      >
+      <Button variant="outline" size="lg" onClick={() => setOpen(true)}>
         <QrCode className="size-4" />
         Share QR
       </Button>
