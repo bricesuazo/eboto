@@ -3,8 +3,14 @@ packages:
   - packages/*
   - tooling/*
 
+allowBuilds:
+  core-js: true
+  esbuild: true
+  protobufjs: true
+  sharp: true
+
 catalog:
-  '@convex-dev/auth': ^0.0.91
+  '@convex-dev/auth': ^0.0.92
   '@tanstack/react-query': 5.89.0
   '@types/node': 24.5.2
   '@types/react': 19.1.13
@@ -13,10 +19,10 @@ catalog:
   dayjs: 1.11.18
   dotenv-cli: 10.0.0
   eslint: 9.35.0
-  inngest: 3.54.2
+  inngest: 4.4.0
   prettier: 3.6.2
   react: 19.1.1
   react-dom: 19.1.1
-  typescript: 5.9.2
+  typescript: 6.0.3
   typescript-eslint: 8.39.0
   zod: 4.1.9

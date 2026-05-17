@@ -1,14 +1,14 @@
 {
   "name": "eboto",
-  "packageManager": "pnpm@10.15.1",
+  "packageManager": "pnpm@11.1.2",
   "private": true,
   "scripts": {
     "build": "turbo run build",
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "turbo run clean",
     "deploy": "pnpm --filter @eboto/backend convex:deploy",
-    "dev": "turbo dev --parallel",
-    "start": "turbo start --parallel",
+    "dev": "turbo dev",
+    "start": "turbo start",
     "postinstall": "pnpm lint:ws",
     "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
     "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache",
@@ -21,9 +21,9 @@
   "prettier": "@eboto/prettier-config",
   "devDependencies": {
     "@eboto/prettier-config": "workspace:*",
-    "@turbo/gen": "2.5.6",
+    "@turbo/gen": "^2.9.12",
     "prettier": "catalog:",
-    "turbo": "2.5.6",
+    "turbo": "^2.9.12",
     "typescript": "catalog:"
   }
 }

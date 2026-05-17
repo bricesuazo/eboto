@@ -25,11 +25,11 @@ import {
 export const electionStarted = inngest.createFunction(
   {
     id: 'election-started',
+    triggers: [{ event: ELECTION_LIFECYCLE_EVENT }],
     cancelOn: [
       { event: ELECTION_LIFECYCLE_EVENT, match: 'data.electionId' },
     ],
   },
-  { event: ELECTION_LIFECYCLE_EVENT },
   async ({ event, step }) => {
     const { electionId, slug, startAt } = event.data as ElectionLifecycleData;
     await step.sleepUntil('wait-for-start', new Date(startAt));
@@ -52,11 +52,11 @@ export const electionStarted = inngest.createFunction(
 export const electionEnded = inngest.createFunction(
   {
     id: 'election-ended',
+    triggers: [{ event: ELECTION_LIFECYCLE_EVENT }],
     cancelOn: [
       { event: ELECTION_LIFECYCLE_EVENT, match: 'data.electionId' },
     ],
   },
-  { event: ELECTION_LIFECYCLE_EVENT },
   async ({ event, step }) => {
     const { electionId, slug, endAt } = event.data as ElectionLifecycleData;
     await step.sleepUntil('wait-for-end', new Date(endAt));

@@ -16,3 +16,23 @@ export function initPostHog() {
   });
   initialized = true;
 }
+
+interface IdentifyArgs {
+  id: string;
+  email?: string;
+  name?: string;
+}
+
+export function identifyPostHogUser({ id, email, name }: IdentifyArgs) {
+  if (!initialized) return;
+  if (posthog.get_distinct_id() === id) return;
+  posthog.identify(id, {
+    ...(email ? { email } : {}),
+    ...(name ? { name } : {}),
+  });
+}
+
+export function resetPostHog() {
+  if (!initialized) return;
+  posthog.reset();
+}
