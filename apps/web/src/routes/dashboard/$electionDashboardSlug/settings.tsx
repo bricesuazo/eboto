@@ -182,6 +182,7 @@ function SettingsPage() {
                 previewUrl={logo.previewUrl}
                 onPick={logo.pick}
                 error={logo.error}
+                processing={logo.processing}
                 disabled={form.formState.isSubmitting}
               />
               <FormField

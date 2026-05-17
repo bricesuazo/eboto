@@ -148,7 +148,7 @@ export default defineSchema({
     orgName: v.string(),
     orgPosition: v.string(),
     startYear: v.string(),
-    endYear: v.string(),
+    endYear: v.optional(v.string()),
     credentialId: v.id('credentials'),
     deletedAt: v.optional(v.number()),
   }).index('by_credential', ['credentialId']),

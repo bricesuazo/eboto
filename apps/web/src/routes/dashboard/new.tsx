@@ -6,7 +6,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useAction, useMutation } from 'convex/react';
 import { ConvexError } from 'convex/values';
 import dayjs from 'dayjs';
-import { Loader2, Plus, Rocket } from 'lucide-react';
+import { Loader2, Minus, Plus, Rocket } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -41,6 +41,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
+import { peso, PLUS_PRICE } from '~/lib/constants/pricing';
 import { parseHourTo12HourFormat } from '~/lib/election';
 import { scheduleElectionLifecycleFn } from '~/lib/inngest/server-fns';
 import type { ElectionCreateInput } from '~/lib/schemas/election';
@@ -188,6 +189,7 @@ function NewElectionPage() {
                 previewUrl={logo.previewUrl}
                 onPick={logo.pick}
                 error={logo.error}
+                processing={logo.processing}
                 disabled={form.formState.isSubmitting}
               />
               <FormField
@@ -429,14 +431,22 @@ function PurchaseConfirming() {
   );
 }
 
+const PLUS_QTY_MIN = 1;
+const PLUS_QTY_MAX = 100;
+
+function clampPlusQty(n: number) {
+  return Math.max(PLUS_QTY_MIN, Math.min(PLUS_QTY_MAX, n));
+}
+
 function PlusUpgradePrompt() {
   const createPlusCheckout = useAction(api.billing.createPlusCheckout);
   const [pending, setPending] = useState(false);
+  const [quantity, setQuantity] = useState(1);
 
   async function handleBuy() {
     setPending(true);
     try {
-      const { url } = await createPlusCheckout({});
+      const { url } = await createPlusCheckout({ quantity });
       window.location.href = url;
     } catch (err) {
       const msg =
@@ -459,9 +469,50 @@ function PlusUpgradePrompt() {
         </Link>{' '}
         for details.
       </p>
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <div className="inline-flex items-center rounded-full border">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="rounded-full"
+            disabled={pending ? true : quantity <= PLUS_QTY_MIN}
+            onClick={() => setQuantity((q) => clampPlusQty(q - 1))}
+            aria-label="Decrease quantity"
+          >
+            <Minus className="size-4" />
+          </Button>
+          <input
+            type="number"
+            inputMode="numeric"
+            min={PLUS_QTY_MIN}
+            max={PLUS_QTY_MAX}
+            value={quantity}
+            onChange={(e) => {
+              const parsed = Number.parseInt(e.target.value, 10);
+              if (Number.isNaN(parsed)) return;
+              setQuantity(clampPlusQty(parsed));
+            }}
+            disabled={pending}
+            aria-label="Number of Plus credits"
+            className="w-12 bg-transparent text-center text-sm font-medium tabular-nums outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="rounded-full"
+            disabled={pending ? true : quantity >= PLUS_QTY_MAX}
+            onClick={() => setQuantity((q) => clampPlusQty(q + 1))}
+            aria-label="Increase quantity"
+          >
+            <Plus className="size-4" />
+          </Button>
+        </div>
         <Button onClick={handleBuy} disabled={pending} size="lg">
-          {pending ? 'Opening checkout…' : 'Get Plus'}
+          {pending
+            ? 'Opening checkout…'
+            : `Get Plus — ${peso.format(PLUS_PRICE * quantity)}`}
           <Plus className="size-4" />
         </Button>
         <Button render={<Link to="/pricing" />} variant="outline" size="lg">

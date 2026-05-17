@@ -3,7 +3,7 @@ import { ConvexError, v } from 'convex/values';
 
 import type { Doc, Id } from './_generated/dataModel';
 import type { QueryCtx } from './_generated/server';
-import { mutation, query } from './_generated/server';
+import { internalMutation, mutation, query } from './_generated/server';
 import {
   requireCommissioner,
   requireElectionEditable,
@@ -590,6 +590,23 @@ export const update = mutation({
   },
 });
 
+/**
+ * Called by the Inngest start-of-election worker (via `voterBlast.runLifecycle`):
+ * flips `PRIVATE` → `VOTER` so registered voters can actually load the page
+ * once voting opens. No-ops on `VOTER`/`PUBLIC` so a commissioner who already
+ * set a wider audience isn't overridden.
+ */
+export const openToVotersOnStart = internalMutation({
+  args: { id: v.id('elections') },
+  handler: async (ctx, { id }) => {
+    const election = await ctx.db.get(id);
+    if (!election || election.deletedAt) return { changed: false as const };
+    if (election.publicity !== 'PRIVATE') return { changed: false as const };
+    await ctx.db.patch(id, { publicity: 'VOTER' });
+    return { changed: true as const };
+  },
+});
+
 export const softDelete = mutation({
   args: { id: v.id('elections') },
   handler: async (ctx, { id }) => {
@@ -601,7 +618,6 @@ export const softDelete = mutation({
       });
     }
     await requireCommissioner(ctx, id);
-    await requireElectionEditable(ctx, id);
     await ctx.db.patch(id, { deletedAt: Date.now() });
   },
 });

@@ -14,6 +14,8 @@ interface ImageUploadProps {
   onPick: (file: File | null) => void;
   /** Validation error from the hook, surfaced as a toast. */
   error?: string | null;
+  /** True while the picked file is being resized/encoded. */
+  processing?: boolean;
   shape?: 'circle' | 'square';
   label?: string;
   className?: string;
@@ -24,6 +26,7 @@ export function ImageUpload({
   previewUrl,
   onPick,
   error,
+  processing,
   shape = 'circle',
   label,
   className,
@@ -74,17 +77,19 @@ export function ImageUpload({
             type="button"
             variant="outline"
             size="sm"
-            disabled={disabled}
+            disabled={disabled || processing}
             onClick={() => fileRef.current?.click()}
           >
-            {previewUrl ? 'Replace' : 'Upload'} image
+            {processing
+              ? 'Processing…'
+              : `${previewUrl ? 'Replace' : 'Upload'} image`}
           </Button>
           {previewUrl && (
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              disabled={disabled}
+              disabled={disabled || processing}
               onClick={() => onPick(null)}
               className="text-muted-foreground"
             >
@@ -93,7 +98,8 @@ export function ImageUpload({
             </Button>
           )}
           <span className="text-xs text-muted-foreground">
-            PNG, JPG, or WebP. Up to 5MB. Saved when you submit.
+            PNG, JPG, or WebP. Up to 5MB. Resized to 800px and saved as WebP on
+            submit.
           </span>
         </div>
       </div>

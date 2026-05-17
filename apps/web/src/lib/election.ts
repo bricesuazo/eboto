@@ -4,6 +4,7 @@ import {
   isElectionInProgress,
   isVotingOpen,
 } from '@eboto/backend/election-timing';
+import dayjs from 'dayjs';
 
 // Re-export the shared helpers so existing imports from `~/lib/election`
 // keep working. The single source of truth lives in
@@ -66,6 +67,17 @@ export function formatName(
     return `${candidate.lastName}, ${candidate.firstName}${candidate.middleName ? ' ' + candidate.middleName : ''}`;
   }
   return 'No name';
+}
+
+/**
+ * Credential year fields are stored as strings but legacy/imported rows
+ * occasionally have empty or unparseable values. Returns the `YYYY` form
+ * or `null` so callers can omit the year entirely.
+ */
+export function formatYear(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const parsed = dayjs(value);
+  return parsed.isValid() ? parsed.format('YYYY') : null;
 }
 
 export function describePublicity(publicity: 'PRIVATE' | 'VOTER' | 'PUBLIC') {

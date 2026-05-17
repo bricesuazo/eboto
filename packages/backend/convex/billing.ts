@@ -372,7 +372,10 @@ async function createLemonCheckout(opts: {
           checkout_data: {
             email: opts.email ?? undefined,
             name: opts.userName ?? undefined,
-            variant_quantities: opts.variantQuantities,
+            variant_quantities: opts.variantQuantities?.map((v) => ({
+              variant_id: Number(v.variantId),
+              quantity: v.quantity,
+            })),
             custom: opts.customData,
           },
           product_options:

@@ -1,13 +1,19 @@
-import { Link, createFileRoute, notFound } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
 import { convexQuery } from '@convex-dev/react-query';
 import { api } from '@eboto/backend/api';
-import { User as UserIcon } from 'lucide-react';
-import dayjs from 'dayjs';
+import { useQuery } from '@tanstack/react-query';
+import { Link, createFileRoute, notFound } from '@tanstack/react-router';
+import {
+  ArrowLeft,
+  Award,
+  Building2,
+  CalendarDays,
+  User as UserIcon,
+} from 'lucide-react';
+import type { ReactNode } from 'react';
 
 import { PagePending } from '~/components/page-pending';
 import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, SITE_URL } from '~/lib/constants';
-import { formatName } from '~/lib/election';
+import { formatName, formatYear } from '~/lib/election';
 
 export const Route = createFileRoute('/$electionSlug/$candidateSlug')({
   beforeLoad: async ({ context, params }) => {
@@ -72,23 +78,27 @@ function CandidatePage() {
   const { election, candidate } = data;
   const fullName = formatName(election.nameArrangement, candidate);
   const { achievements, affiliations, eventsAttended } = candidate.credentials;
+  const hasCredentials =
+    achievements.length > 0 ||
+    affiliations.length > 0 ||
+    eventsAttended.length > 0;
 
   return (
-    <main className="container mx-auto max-w-3xl px-6 py-12">
-      <nav className="text-muted-foreground mb-6 text-sm">
-        <Link
-          to="/$electionSlug"
-          params={{ electionSlug }}
-          className="hover:text-foreground"
-        >
-          {election.name}
-        </Link>
-        <span className="mx-2">/</span>
-        <span className="text-foreground">{fullName}</span>
-      </nav>
+    <main className="container mx-auto max-w-4xl px-6 py-10 sm:py-14">
+      <Link
+        to="/$electionSlug"
+        params={{ electionSlug }}
+        className="text-muted-foreground hover:text-foreground group inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.18em] uppercase transition-colors"
+      >
+        <ArrowLeft
+          className="size-3.5 transition-transform group-hover:-translate-x-0.5"
+          aria-hidden
+        />
+        <span className="line-clamp-1">Back to {election.name}</span>
+      </Link>
 
-      <div className="flex flex-col gap-6 sm:flex-row">
-        <div className="bg-muted relative aspect-square w-full overflow-hidden rounded-lg sm:w-64 shrink-0 sm:sticky sm:top-20 sm:self-start">
+      <header className="mt-10 flex flex-col items-center text-center sm:mt-14">
+        <div className="ring-border relative size-40 overflow-hidden rounded-full ring-1 sm:size-52">
           {candidate.imageUrl ? (
             <img
               src={candidate.imageUrl}
@@ -96,106 +106,176 @@ function CandidatePage() {
               className="absolute inset-0 size-full object-cover"
             />
           ) : (
-            <UserIcon className="text-muted-foreground absolute inset-0 m-auto size-24" />
+            <div className="bg-muted/40 flex size-full items-center justify-center">
+              <UserIcon
+                className="text-muted-foreground size-14 sm:size-16"
+                aria-hidden
+              />
+            </div>
           )}
         </div>
 
-        <div className="flex-1 space-y-1">
-          <h1 className="text-3xl font-bold">{fullName}</h1>
+        <h1 className="mt-8 text-3xl font-bold tracking-tight text-balance sm:text-5xl">
+          {fullName}
+        </h1>
+
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
           {candidate.position && (
-            <p className="text-muted-foreground">
-              Running for{' '}
-              <span className="text-foreground">
-                {candidate.position.name}
-              </span>
-            </p>
+            <Pill label="Running for" value={candidate.position.name} />
           )}
           {candidate.partylist && (
-            <p className="text-muted-foreground">
-              {candidate.partylist.name}
-            </p>
+            <Pill
+              label={candidate.partylist.acronym || 'Party'}
+              value={candidate.partylist.name}
+            />
           )}
+        </div>
+      </header>
 
-          {candidate.platforms.length > 0 && (
-            <section className="mt-8">
-              <h2 className="text-xl font-semibold">
-                Platform{candidate.platforms.length > 1 ? 's' : ''}
-              </h2>
-              <ul className="mt-3 space-y-3">
-                {candidate.platforms.map((p) => (
-                  <li key={p._id}>
-                    <h3 className="font-medium">{p.title}</h3>
+      {candidate.platforms.length > 0 && (
+        <section className="mt-16 sm:mt-20">
+          <SectionLabel
+            label={`Platform${candidate.platforms.length > 1 ? 's' : ''}`}
+          />
+          <ol className="mt-10 space-y-8">
+            {candidate.platforms.map((p, i) => (
+              <li
+                key={p._id}
+                className="border-foreground/10 border-b pb-8 last:border-0 last:pb-0"
+              >
+                <div className="flex items-baseline gap-4">
+                  <span className="text-muted-foreground text-xs font-semibold tabular-nums">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold tracking-tight text-balance sm:text-xl">
+                      {p.title}
+                    </h3>
                     {p.description && (
-                      <p className="text-muted-foreground text-sm">
+                      <p className="text-muted-foreground mt-2 leading-relaxed text-pretty">
                         {p.description}
                       </p>
                     )}
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
-          {(achievements.length || affiliations.length || eventsAttended.length) ? (
-            <section className="mt-8 space-y-6">
-              <h2 className="text-xl font-semibold">Credentials</h2>
-
-              {achievements.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-semibold">
-                    Achievement{achievements.length > 1 ? 's' : ''}
-                  </h3>
-                  <ul className="mt-1.5 space-y-1 text-sm">
-                    {achievements.map((a) => (
-                      <li key={a._id}>
-                        {a.name} — ({dayjs(a.year).format('YYYY')})
-                      </li>
-                    ))}
-                  </ul>
+                  </div>
                 </div>
-              )}
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
 
-              {affiliations.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-semibold">
-                    Affiliation{affiliations.length > 1 ? 's' : ''}
-                  </h3>
-                  <ul className="mt-1.5 space-y-1 text-sm">
-                    {affiliations.map((a) => (
-                      <li key={a._id}>
-                        {a.orgName} — {a.orgPosition} (
-                        {dayjs(a.startYear).format('YYYY')}–
-                        {dayjs(a.endYear).format('YYYY')})
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {eventsAttended.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-semibold">
-                    Seminar{eventsAttended.length > 1 ? 's' : ''}/Event
-                    {eventsAttended.length > 1 ? 's' : ''} Attended
-                  </h3>
-                  <ul className="mt-1.5 space-y-1 text-sm">
-                    {eventsAttended.map((e) => (
-                      <li key={e._id}>
-                        {e.name} ({dayjs(e.year).format('YYYY')})
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </section>
-          ) : (
-            <p className="text-muted-foreground mt-8 text-sm">
-              No credentials found. If you are the candidate, please contact
-              the election commissioner to add your credentials.
+      <section className="mt-16 sm:mt-20">
+        <SectionLabel label="Credentials" />
+        {hasCredentials ? (
+          <div className="mt-10 grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3">
+            <CredentialBlock
+              icon={<Award className="size-3.5" aria-hidden />}
+              label={`Achievement${achievements.length === 1 ? '' : 's'}`}
+              items={achievements.map((a) => ({
+                _id: a._id,
+                primary: a.name,
+                secondary: formatYear(a.year),
+              }))}
+            />
+            <CredentialBlock
+              icon={<Building2 className="size-3.5" aria-hidden />}
+              label={`Affiliation${affiliations.length === 1 ? '' : 's'}`}
+              items={affiliations.map((a) => ({
+                _id: a._id,
+                primary: a.orgName,
+                secondary: formatAffiliationMeta(a),
+              }))}
+            />
+            <CredentialBlock
+              icon={<CalendarDays className="size-3.5" aria-hidden />}
+              label={`Event${eventsAttended.length === 1 ? '' : 's'} Attended`}
+              items={eventsAttended.map((e) => ({
+                _id: e._id,
+                primary: e.name,
+                secondary: formatYear(e.year),
+              }))}
+            />
+          </div>
+        ) : (
+          <div className="mt-8 rounded-lg border border-dashed py-10 text-center">
+            <p className="text-muted-foreground mx-auto max-w-md px-6 text-sm">
+              No credentials available yet. If you are this candidate, please
+              contact the election commissioner to add your credentials.
             </p>
-          )}
-        </div>
-      </div>
+          </div>
+        )}
+      </section>
     </main>
   );
+}
+
+function Pill({ label, value }: { label: string; value: string }) {
+  return (
+    <span className="bg-card inline-flex items-center gap-2 rounded-full border px-3 py-1">
+      <span className="text-muted-foreground text-[10px] font-semibold tracking-[0.18em] uppercase">
+        {label}
+      </span>
+      <span className="text-sm font-medium">{value}</span>
+    </span>
+  );
+}
+
+function SectionLabel({ label }: { label: string }) {
+  return (
+    <div className="flex items-center gap-4">
+      <div className="bg-border h-px flex-1" aria-hidden />
+      <p className="text-muted-foreground text-[10px] font-semibold tracking-[0.25em] uppercase">
+        {label}
+      </p>
+      <div className="bg-border h-px flex-1" aria-hidden />
+    </div>
+  );
+}
+
+function CredentialBlock({
+  icon,
+  label,
+  items,
+}: {
+  icon: ReactNode;
+  label: string;
+  items: { _id: string; primary: string; secondary: string | null }[];
+}) {
+  if (items.length === 0) return null;
+  return (
+    <div>
+      <div className="text-muted-foreground mb-4 flex items-center gap-2">
+        {icon}
+        <p className="text-[10px] font-semibold tracking-[0.22em] uppercase">
+          {label}
+        </p>
+      </div>
+      <ul className="space-y-3">
+        {items.map((item) => (
+          <li
+            key={item._id}
+            className="border-foreground/15 border-l-2 pl-3 leading-snug"
+          >
+            <p className="text-sm font-medium text-balance">{item.primary}</p>
+            {item.secondary && (
+              <p className="text-muted-foreground mt-0.5 text-xs">
+                {item.secondary}
+              </p>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function formatAffiliationMeta(a: {
+  orgPosition: string;
+  startYear?: string | null;
+  endYear?: string | null;
+}): string {
+  const start = formatYear(a.startYear);
+  const end = formatYear(a.endYear);
+  const range = start && end ? `${start}–${end}` : (start ?? end);
+  return range ? `${a.orgPosition} · ${range}` : a.orgPosition;
 }

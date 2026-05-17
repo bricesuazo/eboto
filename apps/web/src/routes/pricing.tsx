@@ -9,7 +9,7 @@ import {
 } from '@tanstack/react-router';
 import { useAction } from 'convex/react';
 import { ConvexError } from 'convex/values';
-import { CheckCircle2, Mail, Plus, Rocket, XCircle } from 'lucide-react';
+import { CheckCircle2, Mail, Minus, Plus, Rocket, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { api } from '@eboto/backend/api';
@@ -355,6 +355,7 @@ function PlusCard() {
   const navigate = useNavigate();
   const createPlusCheckout = useAction(api.billing.createPlusCheckout);
   const [pending, setPending] = useState(false);
+  const [quantity, setQuantity] = useState(1);
 
   async function handleClick() {
     if (!user) {
@@ -363,7 +364,7 @@ function PlusCard() {
     }
     setPending(true);
     try {
-      const { url } = await createPlusCheckout({});
+      const { url } = await createPlusCheckout({ quantity });
       window.location.href = url;
     } catch (err) {
       const message =
@@ -388,17 +389,85 @@ function PlusCard() {
           <FeatureItem accent>Add 1 election to your account</FeatureItem>
         </ul>
       </div>
-      <div className="flex flex-4 md:justify-end">
+      <div className="flex flex-4 flex-col gap-3 md:items-end md:justify-end">
+        <QuantityStepper
+          value={quantity}
+          onChange={setQuantity}
+          disabled={pending}
+          ariaLabel="Number of Plus credits"
+        />
         <Button
           size="lg"
           className="w-full rounded-full md:w-auto"
           onClick={handleClick}
           disabled={pending}
         >
-          {pending ? 'Opening checkout…' : 'Get Plus'}
+          {pending
+            ? 'Opening checkout…'
+            : `Get Plus — ${peso.format(PLUS_PRICE * quantity)}`}
           <Plus className="size-4" />
         </Button>
       </div>
+    </div>
+  );
+}
+
+const PLUS_MIN = 1;
+const PLUS_MAX = 100;
+
+function QuantityStepper({
+  value,
+  onChange,
+  disabled = false,
+  ariaLabel,
+}: {
+  value: number;
+  onChange: (next: number) => void;
+  disabled?: boolean;
+  ariaLabel: string;
+}) {
+  function clamp(n: number) {
+    return Math.max(PLUS_MIN, Math.min(PLUS_MAX, n));
+  }
+  return (
+    <div className="inline-flex items-center rounded-full border">
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        className="rounded-full"
+        disabled={disabled ? true : value <= PLUS_MIN}
+        onClick={() => onChange(clamp(value - 1))}
+        aria-label="Decrease quantity"
+      >
+        <Minus className="size-4" />
+      </Button>
+      <input
+        type="number"
+        inputMode="numeric"
+        min={PLUS_MIN}
+        max={PLUS_MAX}
+        value={value}
+        onChange={(e) => {
+          const parsed = Number.parseInt(e.target.value, 10);
+          if (Number.isNaN(parsed)) return;
+          onChange(clamp(parsed));
+        }}
+        disabled={disabled}
+        aria-label={ariaLabel}
+        className="w-12 bg-transparent text-center text-sm font-medium tabular-nums outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+      />
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        className="rounded-full"
+        disabled={disabled ? true : value >= PLUS_MAX}
+        onClick={() => onChange(clamp(value + 1))}
+        aria-label="Increase quantity"
+      >
+        <Plus className="size-4" />
+      </Button>
     </div>
   );
 }

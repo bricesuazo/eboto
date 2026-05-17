@@ -207,6 +207,15 @@ export const runLifecycle = action({
     });
     if (!election) return { skipped: true as const, reason: 'no-election' };
 
+    // Voting just opened — flip PRIVATE elections to VOTER so registered
+    // voters can actually access the page. Idempotent; gated on first run
+    // (no cursor) so re-entrant continuations don't repeat the patch.
+    if (phase === 'start' && !cursor) {
+      await ctx.runMutation(internal.elections.openToVotersOnStart, {
+        id: electionId,
+      });
+    }
+
     let nextCursor: string | null = cursor ?? null;
     let scheduled = 0;
     let voterCount = 0;

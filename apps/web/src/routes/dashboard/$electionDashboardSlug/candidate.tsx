@@ -460,6 +460,7 @@ function CandidateDialog({
             previewUrl={photo.previewUrl}
             onPick={photo.pick}
             error={photo.error}
+            processing={photo.processing}
             disabled={form.formState.isSubmitting}
           />
           <div className="grid grid-cols-2 gap-3">

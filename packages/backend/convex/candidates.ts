@@ -292,7 +292,9 @@ export const getCredentials = query({
         orgName: a.orgName,
         orgPosition: a.orgPosition,
         startYear: a.startYear,
-        endYear: a.endYear,
+        // The DB stores ongoing affiliations as `undefined`; the form's
+        // year input expects a string, so coerce here.
+        endYear: a.endYear ?? '',
       })),
       eventsAttended: eventsAttended.map((e) => ({
         name: e.name,
@@ -481,7 +483,7 @@ export const updateCandidateCredentials = mutation({
         orgName,
         orgPosition: a.orgPosition.trim(),
         startYear: a.startYear.trim(),
-        endYear: a.endYear.trim(),
+        endYear: a.endYear.trim() || undefined,
         credentialId,
       });
     }

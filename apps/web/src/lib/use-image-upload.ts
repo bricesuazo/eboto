@@ -1,11 +1,14 @@
-import { useEffect, useState } from 'react';
 import { useMutation } from 'convex/react';
+import { useEffect, useState } from 'react';
 
 import { api } from '@eboto/backend/api';
 import type { Id } from '@eboto/backend/data-model';
 
+import { compressImage } from './compress-image';
+
 const ACCEPTED = ['image/png', 'image/jpeg', 'image/webp'];
-const MAX_BYTES = 5 * 1024 * 1024;
+const MAX_BYTES = 5 * 1024 * 1024; // 5MB
+const MAX_DIM = 800;
 
 /**
  * Defers image upload until the form is submitted. Holds the picked `File`
@@ -25,6 +28,7 @@ export function useImageUpload(initialUrl?: string | null) {
   const [cleared, setCleared] = useState(false);
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
     return () => {
@@ -32,7 +36,7 @@ export function useImageUpload(initialUrl?: string | null) {
     };
   }, [blobUrl]);
 
-  function pick(next: File | null) {
+  async function pick(next: File | null) {
     setError(null);
     if (blobUrl) URL.revokeObjectURL(blobUrl);
     if (!next) {
@@ -50,9 +54,20 @@ export function useImageUpload(initialUrl?: string | null) {
       setError('Image must be 5MB or less.');
       return;
     }
-    setFile(next);
-    setBlobUrl(URL.createObjectURL(next));
-    setCleared(false);
+    setProcessing(true);
+    try {
+      const compressed = await compressImage(next, { maxDim: MAX_DIM });
+      setFile(compressed);
+      setBlobUrl(URL.createObjectURL(compressed));
+      setCleared(false);
+    } catch (err) {
+      console.error('Image compression failed', err);
+      setError('Could not process that image. Try a different file.');
+      setFile(null);
+      setBlobUrl(null);
+    } finally {
+      setProcessing(false);
+    }
   }
 
   /**
@@ -79,5 +94,5 @@ export function useImageUpload(initialUrl?: string | null) {
 
   const previewUrl = blobUrl ?? (cleared ? null : (initialUrl ?? null));
 
-  return { file, cleared, previewUrl, error, pick, commit };
+  return { file, cleared, previewUrl, error, processing, pick, commit };
 }

@@ -1,5 +1,3 @@
-import type { ReactNode } from 'react';
-import { useRef, useState } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -21,6 +19,8 @@ import {
   User as UserIcon,
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
+import type { ReactNode } from 'react';
+import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { api } from '@eboto/backend/api';
@@ -92,7 +92,8 @@ function ElectionPage() {
     ended ||
     (election.publicity === 'VOTER' && hasVoted);
   const canVote = ongoing && (!user || (isVoter && !hasVoted));
-  const canMessage = isCommissioner || (isVoter && election.variantId !== 0);
+  const isFreeTier = election.variantId === 0;
+  const canMessage = !isFreeTier && (isCommissioner || (isVoter && isFreeTier));
 
   return (
     <main className="container mx-auto max-w-6xl px-6 py-10 sm:py-14">
