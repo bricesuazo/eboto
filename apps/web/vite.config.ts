@@ -11,5 +11,8 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
+  ssr: {
+    noExternal: ['@eboto/backend', '@eboto/inngest'],
+  },
   plugins: [tailwindcss(), tanstackStart(), nitro(), viteReact()],
 });
