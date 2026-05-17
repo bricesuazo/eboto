@@ -38,6 +38,18 @@ export const Route = createFileRoute('/api/auth')({
         }
 
         const tokens = await exchangeCodeForTokens(code);
+        if (!tokens) {
+          const signInUrl = new URL('/sign-in', url.origin);
+          signInUrl.searchParams.set('error', 'invalid-link');
+          const rawTo = url.searchParams.get(AUTH_REDIRECT_PARAM);
+          if (rawTo?.startsWith('/')) {
+            signInUrl.searchParams.set('to', rawTo);
+          }
+          return new Response(null, {
+            status: 303,
+            headers: { Location: signInUrl.toString() },
+          });
+        }
         setAuthTokens(tokens);
         return new Response(null, {
           status: 303,

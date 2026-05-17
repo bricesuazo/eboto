@@ -36,3 +36,16 @@ export const AUTH_VERIFIER_COOKIE_NAME = '__convexAuthOAuthVerifier';
  *  Secure, no Domain). Skipped on localhost since `Secure` is incompatible
  *  with plain HTTP there. */
 export const AUTH_HOST_COOKIE_PREFIX = '__Host-';
+
+/** Discriminator values for `?error=` on `/sign-in`, surfaced when the GET
+ *  `/api/auth` magic-link / OAuth callback fails. */
+export type SignInError = 'invalid-link';
+
+export const SIGN_IN_ERROR_MESSAGES: Record<SignInError, string> = {
+  'invalid-link':
+    'That sign-in link is invalid or has expired. Request a new one below.',
+};
+
+export function parseSignInError(raw: unknown): SignInError | undefined {
+  return raw === 'invalid-link' ? 'invalid-link' : undefined;
+}

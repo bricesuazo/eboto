@@ -54,7 +54,7 @@ function fromAddress(): string {
 }
 
 function awsRegion(): string {
-  return process.env.AWS_REGION ?? 'us-east-1';
+  return process.env.AWS_REGION ?? 'ap-southeast-1';
 }
 
 function buildEmail(

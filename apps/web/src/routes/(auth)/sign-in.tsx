@@ -1,23 +1,35 @@
-import { useState } from 'react';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
-import { MailIcon } from 'lucide-react';
+import { AlertCircleIcon, MailIcon } from 'lucide-react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { Spinner } from '~/components/ui/spinner';
 import { useAuthActions } from '~/lib/auth/provider';
+import type { SignInError } from '~/lib/constants';
+import {
+  parseSignInError,
+  SIGN_IN_ERROR_MESSAGES
+} from '~/lib/constants';
 import { safeInternalPath } from '~/lib/redirect';
 import googleIcon from './../../images/google-logo.svg';
 
 interface SignInSearch {
   to?: string;
+  error?: SignInError;
 }
 
 export const Route = createFileRoute('/(auth)/sign-in')({
   validateSearch: (search: Record<string, unknown>): SignInSearch => ({
     to: safeInternalPath(search.to) ?? undefined,
+    error: parseSignInError(search.error),
   }),
   component: SignInPage,
 });
@@ -25,7 +37,7 @@ export const Route = createFileRoute('/(auth)/sign-in')({
 function SignInPage() {
   const { signIn } = useAuthActions();
   const router = useRouter();
-  const { to } = Route.useSearch();
+  const { to, error } = Route.useSearch();
   const redirectTo = to ?? '/dashboard';
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -58,6 +70,15 @@ function SignInPage() {
             We'll email you a magic link.
           </p>
         </div>
+        {error ? (
+          <Alert variant="destructive">
+            <AlertCircleIcon />
+            <AlertTitle>Sign-in failed</AlertTitle>
+            <AlertDescription>
+              {SIGN_IN_ERROR_MESSAGES[error]}
+            </AlertDescription>
+          </Alert>
+        ) : null}
         <form
           className="space-y-4"
           onSubmit={async (e) => {

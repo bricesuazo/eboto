@@ -93,6 +93,11 @@ export async function proxyAuthAction(
           : null,
       });
     }
+    // Email/phone signin start (result.started). Clear any stale OAuth
+    // verifier cookie — the magic-link GET handler would otherwise pass it
+    // to Convex, which fails the strict `verificationCode.verifier !==
+    // verifier` check (email codes are stored with no verifier).
+    setAuthVerifier(null, config);
     return jsonResponse(result);
   }
 
