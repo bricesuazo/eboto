@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -rn \"file\\\\|upload\\\\|storageId\" /Users/bricesuazo/Documents/GitHub/eboto/apps/web/src/routes/dashboard/\\\\$electionDashboardSlug/voter/import.tsx | head -30)",
+      "Read(//Users/bricesuazo/Documents/GitHub/eboto/apps/web/src/routes/dashboard/$electionDashboardSlug/voter/**)"
+    ]
+  }
+}

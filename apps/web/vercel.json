@@ -1,0 +1,5 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "cd ../../packages/backend && pnpm exec convex codegen && pnpm exec convex deploy --cmd-url-env-var-name VITE_CONVEX_URL --cmd 'cd ../../apps/web && pnpm exec vite build'"
+}

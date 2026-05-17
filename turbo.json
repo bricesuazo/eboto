@@ -5,12 +5,10 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [
-        ".next/**",
-        "!.next/cache/**",
-        ".cache/tsbuildinfo.json",
-        "dist/**"
-      ]
+      "outputs": [".output/**", ".cache/tsbuildinfo.json", "dist/**"]
+    },
+    "deploy": {
+      "cache": false
     },
     "lint": {},
     "typecheck": {},
@@ -19,43 +17,43 @@
       "cache": false,
       "persistent": true
     },
-    "start": {},
-    "db:push": {},
-    "db:studio": {},
-    "db:seed": {},
-    "db:generate": {},
-    "email:dev": {}
+    "start": {
+      "cache": false,
+      "persistent": true,
+    }
   },
   "globalEnv": [
     "CI",
-    "EXPO_ROUTER_APP_ROOT",
     "NODE_ENV",
     "SKIP_ENV_VALIDATION",
     "PORT",
-    "AWS_SES_REGION",
-    "AWS_ACCESS_KEY_ID",
-    "AWS_SECRET_ACCESS_KEY",
-    "SMTP_USER",
-    "SMTP_PASSWORD",
-    "SMTP_HOST",
-    "SMTP_PORT",
-    "EMAIL_FROM",
-    "DISCORD_WEBHOOK_URL",
+    "APP_URL",
+    "VITE_CONVEX_URL",
+    "CONVEX_DEPLOYMENT",
+    "CONVEX_URL",
+    "VITE_SENTRY_DSN",
+    "VITE_POSTHOG_KEY",
+    "VITE_POSTHOG_HOST",
+    "AUTH_GOOGLE_ID",
+    "AUTH_GOOGLE_SECRET",
+    "AUTH_RESEND_KEY",
+    "JWT_PRIVATE_KEY",
+    "JWKS",
+    "SITE_URL",
+    "INNGEST_SIGNING_KEY",
+    "INNGEST_EVENT_KEY",
     "LEMONSQUEEZY_API_KEY",
     "LEMONSQUEEZY_STORE_ID",
     "LEMONSQUEEZY_FREE_VARIANT_ID",
     "LEMONSQUEEZY_BOOST_PRODUCT_ID",
     "LEMONSQUEEZY_PLUS_VARIANT_ID",
     "LEMONSQUEEZY_WEBHOOK_SECRET",
-    "APP_URL",
-    "SUPABASE_SERVICE_ROLE_KEY",
-    "NEXT_PUBLIC_SUPABASE_URL",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-    "TRANSACTION_POOLER_URL",
-    "INNGEST_SIGNING_KEY",
-    "INNGEST_EVENT_KEY",
-    "NEXT_PUBLIC_POSTHOG_KEY",
-    "NEXT_PUBLIC_POSTHOG_HOST",
-    "NEXT_PUBLIC_SENTRY_DSN"
+    "DISCORD_WEBHOOK_URL",
+    "BLAST_TRIGGER_SECRET",
+    "AWS_REGION",
+    "AWS_ACCESS_KEY_ID",
+    "AWS_SECRET_ACCESS_KEY",
+    "SES_FROM_EMAIL",
+    "SES_CONFIGURATION_SET"
   ]
 }

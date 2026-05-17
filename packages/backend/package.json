@@ -1,0 +1,73 @@
+{
+  "name": "@eboto/backend",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./api": "./convex/_generated/api.js",
+    "./data-model": "./convex/_generated/dataModel.js",
+    "./schema": "./convex/schema.ts",
+    "./auth": "./convex/auth.ts",
+    "./election-timing": "./convex/_helpers/election_timing.ts",
+    "./slugs": "./convex/_helpers/slugs.ts"
+  },
+  "typesVersions": {
+    "*": {
+      "api": [
+        "./convex/_generated/api.d.ts"
+      ],
+      "data-model": [
+        "./convex/_generated/dataModel.d.ts"
+      ],
+      "schema": [
+        "./convex/schema.ts"
+      ],
+      "auth": [
+        "./convex/auth.ts"
+      ],
+      "election-timing": [
+        "./convex/_helpers/election_timing.ts"
+      ],
+      "slugs": [
+        "./convex/_helpers/slugs.ts"
+      ]
+    }
+  },
+  "scripts": {
+    "clean": "git clean -xdf .turbo node_modules convex/_generated",
+    "dev": "pnpm with-env convex dev",
+    "build": "pnpm with-env convex deploy",
+    "deploy": "pnpm with-env convex deploy",
+    "codegen": "pnpm with-env convex codegen",
+    "lint": "eslint",
+    "format": "prettier --check \"**/*.{mjs,ts,md,json}\"",
+    "typecheck": "tsc --noEmit",
+    "with-env": "dotenv -e ../../.env --",
+    "env:push": "convex env set --from-file .env.local"
+  },
+  "dependencies": {
+    "@auth/core": "^0.37.0",
+    "@aws-sdk/client-sesv2": "^3.700.0",
+    "@convex-dev/aggregate": "^0.2.1",
+    "@convex-dev/auth": "catalog:",
+    "convex": "catalog:",
+    "convex-helpers": "^0.1.116",
+    "pdf-lib": "^1.17.1"
+  },
+  "devDependencies": {
+    "@eboto/eslint-config": "workspace:*",
+    "@eboto/prettier-config": "workspace:*",
+    "@eboto/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "dotenv-cli": "catalog:",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@eboto/eslint-config/base"
+    ]
+  },
+  "prettier": "@eboto/prettier-config"
+}

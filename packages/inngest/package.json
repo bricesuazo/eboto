@@ -1,21 +1,50 @@
 {
   "name": "@eboto/inngest",
   "type": "module",
-  "main": "./index.ts",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts",
+    "./functions": "./src/functions/index.ts"
+  },
+  "typesVersions": {
+    "*": {
+      "client": [
+        "./src/client.ts"
+      ],
+      "functions": [
+        "./src/functions/index.ts"
+      ]
+    }
+  },
   "scripts": {
-    "dev": "npx inngest-cli@latest dev -u http://localhost:3000/api/inngest",
-    "start": "npx inngest-cli@latest dev -u http://localhost:3000/api/inngest"
+    "clean": "git clean -xdf .turbo node_modules",
+    "dev": "pnpm with-env npx inngest-cli@latest dev -u http://localhost:3000/api/inngest",
+    "lint": "eslint",
+    "format": "prettier --check \"**/*.{ts,md,json}\"",
+    "typecheck": "tsc --noEmit",
+    "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@eboto/constants": "workspace:*",
-    "@eboto/email": "workspace:*",
-    "@eboto/env": "workspace:*",
-    "@supabase/supabase-js": "catalog:",
-    "inngest": "catalog:",
-    "moment": "2.30.1",
-    "zod": "catalog:"
+    "@eboto/backend": "workspace:*",
+    "convex": "catalog:",
+    "inngest": "catalog:"
   },
   "devDependencies": {
-    "@eboto/tsconfig": "workspace:*"
-  }
+    "@eboto/eslint-config": "workspace:*",
+    "@eboto/prettier-config": "workspace:*",
+    "@eboto/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "dotenv-cli": "catalog:",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@eboto/eslint-config/base"
+    ]
+  },
+  "prettier": "@eboto/prettier-config"
 }
