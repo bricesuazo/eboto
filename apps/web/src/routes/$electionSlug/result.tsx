@@ -9,7 +9,13 @@ import {
 } from '@tanstack/react-router';
 import { ConvexError } from 'convex/values';
 import dayjs from 'dayjs';
-import { AlertTriangle, ArrowLeft, MinusCircle, Trophy } from 'lucide-react';
+import {
+  AlertTriangle,
+  ArrowLeft,
+  CalendarClock,
+  MinusCircle,
+  Trophy,
+} from 'lucide-react';
 
 import { api } from '@eboto/backend/api';
 
@@ -19,9 +25,12 @@ import { CONVEX_ERROR_FORBIDDEN } from '~/lib/constants';
 import {
   formatName,
   isElectionEnded,
+  isElectionInProgress,
   parseHourTo12HourFormat,
 } from '~/lib/election';
 import { cn } from '~/lib/utils';
+
+type Status = 'upcoming' | 'ongoing' | 'concluded';
 
 export const Route = createFileRoute('/$electionSlug/result')({
   beforeLoad: async ({ context, params }) => {
@@ -56,7 +65,15 @@ function ResultPage() {
   if (!data) throw notFound();
 
   const { election, positions, tier } = data;
-  const ongoing = !isElectionEnded(election);
+  const ended = isElectionEnded(election);
+  const inProgress = isElectionInProgress(election);
+  const status: Status = ended
+    ? 'concluded'
+    : inProgress
+      ? 'ongoing'
+      : 'upcoming';
+  const ongoing = status === 'ongoing';
+  const upcoming = status === 'upcoming';
 
   const dateRange =
     dayjs(election.startDate).format('MMM D, YYYY') +
@@ -68,6 +85,7 @@ function ResultPage() {
       : `${parseHourTo12HourFormat(election.votingHourStart)} – ${parseHourTo12HourFormat(election.votingHourEnd)}`;
 
   const updatedValue: ReactNode = (() => {
+    if (upcoming) return 'Not started';
     if (tier.nextRefreshAt && tier.resultsCutoff) {
       return (
         <span>
@@ -113,7 +131,7 @@ function ResultPage() {
 
       <header>
         <div className="flex flex-col items-center text-center">
-          <StatusPill ongoing={ongoing} />
+          <StatusPill status={status} />
           <h1 className="mt-6 text-3xl font-bold tracking-tight text-balance sm:text-5xl">
             {election.name}
           </h1>
@@ -156,8 +174,41 @@ function ResultPage() {
         </div>
       )}
 
+      {upcoming && (
+        <div className="mt-10 flex items-start gap-3 rounded-md border bg-muted/40 p-4">
+          <CalendarClock
+            className="text-muted-foreground mt-0.5 size-4 shrink-0"
+            aria-hidden
+          />
+          <div className="space-y-1">
+            <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
+              Voting hasn't started
+            </p>
+            <p className="text-sm leading-relaxed">
+              Ballots will appear here once voting opens on{' '}
+              <span className="font-medium tabular-nums">
+                {dayjs(election.startDate).format('MMM D, YYYY')}
+              </span>{' '}
+              at{' '}
+              <span className="font-medium tabular-nums">
+                {parseHourTo12HourFormat(election.votingHourStart)}
+              </span>
+              .
+            </p>
+          </div>
+        </div>
+      )}
+
       <section className="mt-12 sm:mt-16">
-        <SectionLabel label={ongoing ? 'Live Standings' : 'Final Standings'} />
+        <SectionLabel
+          label={
+            upcoming
+              ? 'Standings'
+              : ongoing
+                ? 'Live Standings'
+                : 'Final Standings'
+          }
+        />
         <div className="mt-10 space-y-12 sm:space-y-16">
           {positions.map((position, idx) => (
             <PositionResult
@@ -364,8 +415,8 @@ function RankBadge({
   );
 }
 
-function StatusPill({ ongoing }: { ongoing: boolean }) {
-  if (ongoing) {
+function StatusPill({ status }: { status: Status }) {
+  if (status === 'ongoing') {
     return (
       <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-50 px-3 py-1 text-[11px] font-semibold tracking-[0.18em] text-amber-800 uppercase dark:bg-amber-500/10 dark:text-amber-300">
         <span className="relative flex size-1.5" aria-hidden>
@@ -373,6 +424,14 @@ function StatusPill({ ongoing }: { ongoing: boolean }) {
           <span className="relative size-1.5 rounded-full bg-amber-500" />
         </span>
         Election ongoing
+      </span>
+    );
+  }
+  if (status === 'upcoming') {
+    return (
+      <span className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-[11px] font-semibold tracking-[0.18em] text-foreground uppercase">
+        <span className="size-1.5 rounded-full bg-amber-500" aria-hidden />
+        Upcoming
       </span>
     );
   }
