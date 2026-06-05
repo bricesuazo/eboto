@@ -13,6 +13,14 @@ export const AUTH_API_ROUTE = '/api/auth';
  *  redirect after the GET handler exchanges the code. */
 export const AUTH_REDIRECT_PARAM = '_to';
 
+/** Marker the proxy bakes into the magic-link `redirectTo` so the GET handler
+ *  knows the incoming `code` came from an email sign-in. Email verification
+ *  codes are stored with no verifier, so the handler must NOT send the OAuth
+ *  verifier cookie (a stale one would fail Convex's strict
+ *  `verificationCode.verifier !== verifier` check, and because the code is
+ *  deleted before that check, every retry then fails as "invalid code"). */
+export const AUTH_MAGIC_LINK_PARAM = '_ml';
+
 /** Placeholder we return to the browser instead of the real refresh token —
  *  the real one stays in the httpOnly cookie. The proxy substitutes the cookie
  *  value when it sees this sentinel on a refresh request. */

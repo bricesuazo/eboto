@@ -121,15 +121,22 @@ export async function exchangeCode(code: string) {
  * Exchanges an OAuth/magic-link code for tokens and returns the resulting
  * tokens (or null on failure). Does NOT touch global setCookie state — caller
  * is responsible for serializing the result into Set-Cookie response headers.
+ *
+ * Magic-link codes are stored with no verifier, so the caller passes
+ * `skipVerifier` for those — sending a stale OAuth verifier cookie would fail
+ * Convex's strict `verificationCode.verifier !== verifier` check.
  */
 export async function exchangeCodeForTokens(
   code: string,
+  options: { skipVerifier?: boolean } = {},
 ): Promise<{ token: string; refreshToken: string } | null> {
-  const { verifier } = getAuthCookies();
+  const verifier = options.skipVerifier
+    ? undefined
+    : (getAuthCookies().verifier ?? undefined);
   try {
     const result = (await fetchAction('auth:signIn', {
       params: { code },
-      verifier: verifier ?? undefined,
+      verifier,
     })) as { tokens?: { token: string; refreshToken: string } | null };
     return result.tokens ?? null;
   } catch (err) {

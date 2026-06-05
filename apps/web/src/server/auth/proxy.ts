@@ -1,4 +1,4 @@
-import { AUTH_REFRESH_SENTINEL } from '~/lib/constants';
+import { AUTH_MAGIC_LINK_PARAM, AUTH_REFRESH_SENTINEL } from '~/lib/constants';
 import { fetchAction } from './convex';
 import type { CookieConfig } from './cookies';
 import { getAuthCookies, setAuthTokens, setAuthVerifier } from './cookies';
@@ -68,6 +68,18 @@ export async function proxyAuthAction(
     const params = (args.params as Record<string, unknown> | undefined) ?? {};
     const skipAuthForRequest =
       'refreshToken' in args || params.code !== undefined;
+
+    // Magic-link start: tag the `redirectTo` so the GET handler that later
+    // exchanges the emailed code knows to skip the OAuth verifier cookie.
+    // `params.email` is only present for email/phone sign-ins, never OAuth.
+    if (
+      params.code === undefined &&
+      typeof params.email === 'string' &&
+      typeof params.redirectTo === 'string'
+    ) {
+      const separator = params.redirectTo.includes('?') ? '&' : '?';
+      params.redirectTo = `${params.redirectTo}${separator}${AUTH_MAGIC_LINK_PARAM}=1`;
+    }
     try {
       result = (await fetchAction(
         action,
