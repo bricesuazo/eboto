@@ -1,7 +1,10 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { AlertCircleIcon, MailIcon } from 'lucide-react';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { z } from 'zod';
 
 import {
   Alert,
@@ -9,8 +12,15 @@ import {
   AlertTitle,
 } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import { Label } from '~/components/ui/label';
 import { Spinner } from '~/components/ui/spinner';
 import { useAuthActions } from '~/lib/auth/provider';
 import type { SignInError } from '~/lib/constants';
@@ -34,14 +44,41 @@ export const Route = createFileRoute('/(auth)/sign-in')({
   component: SignInPage,
 });
 
+const signInSchema = z.object({
+  email: z.email('Enter a valid email'),
+});
+
+type SignInFormValues = z.infer<typeof signInSchema>;
+
 function SignInPage() {
   const { signIn } = useAuthActions();
   const router = useRouter();
   const { to, error } = Route.useSearch();
   const redirectTo = to ?? '/dashboard';
-  const [email, setEmail] = useState('');
-  const [submitting, setSubmitting] = useState(false);
   const [oauthLoading, setOauthLoading] = useState(false);
+
+  const form = useForm<SignInFormValues>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: { email: '' },
+  });
+
+  const submitting = form.formState.isSubmitting;
+
+  async function onSubmit(values: SignInFormValues) {
+    try {
+      const result = await signIn('ses', {
+        email: values.email,
+        redirectTo,
+      });
+      if (result.signingIn) {
+        await router.invalidate();
+      }
+      toast.success('Check your inbox for the magic link.');
+    } catch (err) {
+      toast.error('Failed to send magic link.');
+      console.error(err);
+    }
+  }
 
   async function handleGoogle() {
     setOauthLoading(true);
@@ -79,41 +116,35 @@ function SignInPage() {
             </AlertDescription>
           </Alert>
         ) : null}
-        <form
-          className="space-y-4"
-          onSubmit={async (e) => {
-            e.preventDefault();
-            setSubmitting(true);
-            try {
-              const result = await signIn('ses', { email, redirectTo });
-              if (result.signingIn) {
-                await router.invalidate();
-              }
-              toast.success('Check your inbox for the magic link.');
-            } catch (err) {
-              toast.error('Failed to send magic link.');
-              console.error(err);
-            } finally {
-              setSubmitting(false);
-            }
-          }}
-        >
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="you@example.com"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+        <Form {...form}>
+          <form
+            className="space-y-4"
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="you@example.com"
+                      disabled={submitting}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <Button type="submit" className="w-full" disabled={submitting}>
-            {submitting ? <Spinner /> : <MailIcon />}{' '}
-            {submitting ? 'Sending…' : 'Send magic link'}
-          </Button>
-        </form>
+            <Button type="submit" className="w-full" disabled={submitting}>
+              {submitting ? <Spinner /> : <MailIcon />}{' '}
+              {submitting ? 'Sending…' : 'Send magic link'}
+            </Button>
+          </form>
+        </Form>
         <Button
           variant="outline"
           className="w-full"

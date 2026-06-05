@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { AUTH_REDIRECT_PARAM } from '~/lib/constants';
+import { AUTH_MAGIC_LINK_PARAM, AUTH_REDIRECT_PARAM } from '~/lib/constants';
 import { exchangeCodeForTokens } from '~/server/auth';
 import { setAuthTokens } from '~/server/auth/cookies';
 import { proxyAuthAction } from '~/server/auth/proxy';
@@ -25,6 +25,7 @@ export const Route = createFileRoute('/api/auth')({
       GET: async ({ request }) => {
         const url = new URL(request.url);
         const code = url.searchParams.get('code');
+        const isMagicLink = url.searchParams.get(AUTH_MAGIC_LINK_PARAM) === '1';
         const target = safeRedirectTarget(
           url.searchParams.get(AUTH_REDIRECT_PARAM),
           url.origin,
@@ -37,7 +38,9 @@ export const Route = createFileRoute('/api/auth')({
           });
         }
 
-        const tokens = await exchangeCodeForTokens(code);
+        const tokens = await exchangeCodeForTokens(code, {
+          skipVerifier: isMagicLink,
+        });
         if (!tokens) {
           const signInUrl = new URL('/sign-in', url.origin);
           signInUrl.searchParams.set('error', 'invalid-link');
