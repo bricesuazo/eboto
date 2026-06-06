@@ -19,7 +19,7 @@ import { voterNotificationPhase } from './schema';
  *     gives a soft rate limit independent of SES's per-second cap.
  *   - {@link processBatch} — internal action that sends one batch (up to
  *     ~50 voters) through AWS SES v2. Idempotency comes from
- *     `voter_notifications` rows: a per-voter pre-check skips already-sent
+ *     `voterNotifications` rows: a per-voter pre-check skips already-sent
  *     recipients, and the post-send insert records outcome for audit + dedup
  *     on retry.
  *
@@ -277,9 +277,9 @@ export const continueLifecycle = internalAction({
 
 /**
  * Sends one batch of ~50 voter emails through SES, then records a
- * `voter_notifications` row per voter (success or failure).
+ * `voterNotifications` row per voter (success or failure).
  *
- * Skips voters that already have a `voter_notifications` row for this
+ * Skips voters that already have a `voterNotifications` row for this
  * `(electionId, voterId, phase)` so a re-run after partial failure won't
  * double-send. SES has no native idempotency key, so we rely on that
  * pre-check plus our post-send insert.
@@ -382,7 +382,7 @@ export const processBatch = internalAction({
     // Surface partial failure to Convex so the action shows up in the
     // failed-functions log, but only if *everything* failed (otherwise a
     // single bad address would mark the whole batch as failed forever —
-    // the recorded `voter_notifications` rows are the authoritative state).
+    // the recorded `voterNotifications` rows are the authoritative state).
     if (failed > 0 && sent === 0) {
       throw new Error(
         `voterBlast batch ${batchIndex}: all ${failed} sends failed`,

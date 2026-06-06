@@ -32,12 +32,12 @@ export async function enforceRateLimit(
 ): Promise<void> {
   const now = Date.now();
   const existing = await ctx.db
-    .query('rate_limits')
+    .query('rateLimits')
     .withIndex('by_key', (q) => q.eq('key', key))
     .first();
 
   if (!existing) {
-    await ctx.db.insert('rate_limits', { key, windowStart: now, count: 1 });
+    await ctx.db.insert('rateLimits', { key, windowStart: now, count: 1 });
     return;
   }
 

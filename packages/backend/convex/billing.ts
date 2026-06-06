@@ -27,7 +27,7 @@ export const myCreditCount = query({
   handler: async (ctx) => {
     const userId = await requireUser(ctx);
     const credits = await ctx.db
-      .query('elections_plus')
+      .query('electionsPlus')
       .withIndex('by_user', (q) => q.eq('userId', userId))
       .filter((q) =>
         q.and(
@@ -42,7 +42,7 @@ export const myCreditCount = query({
 
 /**
  * Quota for creating a new election: 1 free election per account, then one
- * extra per unredeemed `elections_plus` credit. The new-election page uses
+ * extra per unredeemed `electionsPlus` credit. The new-election page uses
  * this to render an explicit "buy Plus" prompt instead of letting the user
  * submit and hit a server-side error.
  */
@@ -63,7 +63,7 @@ export const myElectionQuota = query({
     }
 
     const credits = await ctx.db
-      .query('elections_plus')
+      .query('electionsPlus')
       .withIndex('by_user', (q) => q.eq('userId', userId))
       .filter((q) =>
         q.and(
@@ -115,7 +115,7 @@ export const myBillingSummary = query({
     const userId = await requireUser(ctx);
 
     const credits = await ctx.db
-      .query('elections_plus')
+      .query('electionsPlus')
       .withIndex('by_user', (q) => q.eq('userId', userId))
       .filter((q) => q.eq(q.field('deletedAt'), undefined))
       .collect();
@@ -255,14 +255,14 @@ export const getVariantByLemonId = internalQuery({
 });
 
 /**
- * Grants the user one "elections_plus" credit, redeemable when they create
+ * Grants the user one "electionsPlus" credit, redeemable when they create
  * their next election. Caller is expected to invoke this `quantity` times if
  * the buyer purchased multiple credits.
  */
 export const grantElectionsPlus = internalMutation({
   args: { userId: v.id('users') },
   handler: async (ctx, { userId }) => {
-    await ctx.db.insert('elections_plus', { userId });
+    await ctx.db.insert('electionsPlus', { userId });
   },
 });
 
@@ -430,7 +430,7 @@ function readEnv(key: string): string {
 /**
  * Creates a LemonSqueezy checkout for the Plus product. Quantity is passed
  * via `variant_quantities` so the buyer can purchase multiple credits in
- * one go. Webhook (`order_created`) grants one `elections_plus` credit per
+ * one go. Webhook (`order_created`) grants one `electionsPlus` credit per
  * purchased unit.
  */
 export const createPlusCheckout = action({
@@ -631,7 +631,7 @@ interface LemonWebhookPayload {
  *
  * Verifies the HMAC-SHA256 signature against `LEMONSQUEEZY_WEBHOOK_SECRET`,
  * then dispatches on `meta.event_name`. Today we handle `order_created` for
- * type=plus (grants `elections_plus` credits) and type=boost (upgrades the
+ * type=plus (grants `electionsPlus` credits) and type=boost (upgrades the
  * election using the order's `first_order_item.variant_id` and the variant's
  * tier-derived voter cap).
  */

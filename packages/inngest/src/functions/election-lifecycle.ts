@@ -26,7 +26,7 @@ import {
  * Convex action (`api.voterBlast.runLifecycle`). The action fans out
  * batches of ~50 emails via `ctx.scheduler` and sends them through AWS
  * SES v2 so voter PII never leaves the Convex deployment.
- * `voter_notifications` rows guard against double-sends on retry.
+ * `voterNotifications` rows guard against double-sends on retry.
  */
 export const electionStarted = inngest.createFunction(
   {

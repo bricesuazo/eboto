@@ -12,7 +12,7 @@ export const list = query({
   handler: async (ctx, { electionId }) => {
     await requireCommissioner(ctx, electionId);
     return await ctx.db
-      .query('voter_fields')
+      .query('voterFields')
       .withIndex('by_election', (q) => q.eq('electionId', electionId))
       .filter((q) => q.eq(q.field('deletedAt'), undefined))
       .collect();
@@ -42,7 +42,7 @@ export const create = mutation({
       });
     }
     const existing = await ctx.db
-      .query('voter_fields')
+      .query('voterFields')
       .withIndex('by_election', (q) => q.eq('electionId', electionId))
       .filter((q) => q.eq(q.field('deletedAt'), undefined))
       .collect();
@@ -52,7 +52,7 @@ export const create = mutation({
         message: 'A field with that name already exists.',
       });
     }
-    return await ctx.db.insert('voter_fields', {
+    return await ctx.db.insert('voterFields', {
       electionId,
       name: trimmed,
       type,
@@ -62,7 +62,7 @@ export const create = mutation({
 
 export const update = mutation({
   args: {
-    id: v.id('voter_fields'),
+    id: v.id('voterFields'),
     name: v.string(),
     type: voterFieldType,
   },
@@ -87,7 +87,7 @@ export const update = mutation({
       });
     }
     const conflict = await ctx.db
-      .query('voter_fields')
+      .query('voterFields')
       .withIndex('by_election', (q) => q.eq('electionId', field.electionId))
       .filter((q) => q.eq(q.field('deletedAt'), undefined))
       .collect();
@@ -107,7 +107,7 @@ export const update = mutation({
 });
 
 export const softDelete = mutation({
-  args: { id: v.id('voter_fields') },
+  args: { id: v.id('voterFields') },
   handler: async (ctx, { id }) => {
     const field = await ctx.db.get(id);
     if (!field || field.deletedAt) {
@@ -125,7 +125,7 @@ export const statsByField = query({
     await requireCommissioner(ctx, electionId);
     const [fields, voters, votes] = await Promise.all([
       ctx.db
-        .query('voter_fields')
+        .query('voterFields')
         .withIndex('by_election', (q) => q.eq('electionId', electionId))
         .filter((q) => q.eq(q.field('deletedAt'), undefined))
         .collect(),

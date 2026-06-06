@@ -43,7 +43,7 @@ export const listVoterRooms = query({
     await requireCommissioner(ctx, electionId);
     await assertBoostForVoterChat(ctx, electionId);
     const rooms = await ctx.db
-      .query('commissioners_voters_rooms')
+      .query('commissionersVotersRooms')
       .withIndex('by_election', (q) => q.eq('electionId', electionId))
       .filter((q) => q.eq(q.field('deletedAt'), undefined))
       .collect();
@@ -51,7 +51,7 @@ export const listVoterRooms = query({
       rooms.map(async (room) => {
         const voter = room.voterId ? await ctx.db.get(room.voterId) : null;
         const lastMessage = await ctx.db
-          .query('commissioners_voters_messages')
+          .query('commissionersVotersMessages')
           .withIndex('by_room', (q) => q.eq('roomId', room._id))
           .order('desc')
           .first();
@@ -96,14 +96,14 @@ export const ensureMyVoterRoom = mutation({
       });
     }
     const existing = await ctx.db
-      .query('commissioners_voters_rooms')
+      .query('commissionersVotersRooms')
       .withIndex('by_election_voter', (q) =>
         q.eq('electionId', electionId).eq('voterId', voter._id),
       )
       .filter((q) => q.eq(q.field('deletedAt'), undefined))
       .first();
     if (existing) return existing._id;
-    return await ctx.db.insert('commissioners_voters_rooms', {
+    return await ctx.db.insert('commissionersVotersRooms', {
       name: user.email,
       voterId: voter._id,
       electionId,
@@ -125,13 +125,13 @@ export const ensureAdminRoom = mutation({
   handler: async (ctx, { electionId }) => {
     await requireCommissioner(ctx, electionId);
     const existing = await ctx.db
-      .query('admin_commissioners_rooms')
+      .query('adminCommissionersRooms')
       .withIndex('by_election', (q) => q.eq('electionId', electionId))
       .filter((q) => q.eq(q.field('deletedAt'), undefined))
       .first();
     if (existing) return existing._id;
     const election = await ctx.db.get(electionId);
-    return await ctx.db.insert('admin_commissioners_rooms', {
+    return await ctx.db.insert('adminCommissionersRooms', {
       name: election?.name ?? 'Admin chat',
       electionId,
     });
@@ -149,29 +149,29 @@ export const ensureAdminRoom = mutation({
 export const listMessages = query({
   args: {
     roomId: v.union(
-      v.id('commissioners_voters_rooms'),
-      v.id('admin_commissioners_rooms'),
+      v.id('commissionersVotersRooms'),
+      v.id('adminCommissionersRooms'),
     ),
     side: v.union(v.literal('voter'), v.literal('admin')),
   },
   handler: async (ctx, { roomId, side }) => {
     if (side === 'voter') {
-      const room = await ctx.db.get(roomId as Id<'commissioners_voters_rooms'>);
+      const room = await ctx.db.get(roomId as Id<'commissionersVotersRooms'>);
       if (!room || room.deletedAt) return [];
       await assertBoostForVoterChat(ctx, room.electionId);
       await assertVoterRoomAccess(ctx, room);
       const messages = await ctx.db
-        .query('commissioners_voters_messages')
+        .query('commissionersVotersMessages')
         .withIndex('by_room', (q) => q.eq('roomId', room._id))
         .filter((q) => q.eq(q.field('deletedAt'), undefined))
         .collect();
       return await attachUserName(ctx, messages);
     }
-    const room = await ctx.db.get(roomId as Id<'admin_commissioners_rooms'>);
+    const room = await ctx.db.get(roomId as Id<'adminCommissionersRooms'>);
     if (!room || room.deletedAt) return [];
     await requireCommissioner(ctx, room.electionId);
     const messages = await ctx.db
-      .query('admin_commissioners_messages')
+      .query('adminCommissionersMessages')
       .withIndex('by_room', (q) => q.eq('roomId', room._id))
       .filter((q) => q.eq(q.field('deletedAt'), undefined))
       .collect();
@@ -182,8 +182,8 @@ export const listMessages = query({
 export const sendMessage = mutation({
   args: {
     roomId: v.union(
-      v.id('commissioners_voters_rooms'),
-      v.id('admin_commissioners_rooms'),
+      v.id('commissionersVotersRooms'),
+      v.id('adminCommissionersRooms'),
     ),
     side: v.union(v.literal('voter'), v.literal('admin')),
     message: v.string(),
@@ -205,13 +205,13 @@ export const sendMessage = mutation({
     const userId = await requireUser(ctx);
 
     if (side === 'voter') {
-      const room = await ctx.db.get(roomId as Id<'commissioners_voters_rooms'>);
+      const room = await ctx.db.get(roomId as Id<'commissionersVotersRooms'>);
       if (!room || room.deletedAt) {
         throw new ConvexError({ code: 'not_found', message: 'Room not found' });
       }
       await assertBoostForVoterChat(ctx, room.electionId);
       await assertVoterRoomAccess(ctx, room);
-      await ctx.db.insert('commissioners_voters_messages', {
+      await ctx.db.insert('commissionersVotersMessages', {
         message: trimmed,
         userId,
         roomId: room._id,
@@ -219,12 +219,12 @@ export const sendMessage = mutation({
       return;
     }
 
-    const room = await ctx.db.get(roomId as Id<'admin_commissioners_rooms'>);
+    const room = await ctx.db.get(roomId as Id<'adminCommissionersRooms'>);
     if (!room || room.deletedAt) {
       throw new ConvexError({ code: 'not_found', message: 'Room not found' });
     }
     await requireCommissioner(ctx, room.electionId);
-    await ctx.db.insert('admin_commissioners_messages', {
+    await ctx.db.insert('adminCommissionersMessages', {
       message: trimmed,
       userId,
       roomId: room._id,
@@ -254,7 +254,7 @@ async function voterForUser(
 
 async function assertVoterRoomAccess(
   ctx: Parameters<typeof requireUser>[0],
-  room: Doc<'commissioners_voters_rooms'>,
+  room: Doc<'commissionersVotersRooms'>,
 ) {
   const userId = await requireUser(ctx);
   const commissioner = await ctx.db

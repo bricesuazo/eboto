@@ -67,7 +67,7 @@ export const getBySlug = query({
         .filter((q) => q.eq(q.field('deletedAt'), undefined))
         .collect(),
       ctx.db
-        .query('events_attended')
+        .query('eventsAttended')
         .withIndex('by_credential', (q) =>
           q.eq('credentialId', candidate.credentialId),
         )
@@ -277,7 +277,7 @@ export const getCredentials = query({
           .filter((q) => q.eq(q.field('deletedAt'), undefined))
           .collect(),
         ctx.db
-          .query('events_attended')
+          .query('eventsAttended')
           .withIndex('by_credential', (q) => q.eq('credentialId', credentialId))
           .filter((q) => q.eq(q.field('deletedAt'), undefined))
           .collect(),
@@ -440,7 +440,7 @@ export const updateCandidateCredentials = mutation({
         .filter((q) => q.eq(q.field('deletedAt'), undefined))
         .collect(),
       ctx.db
-        .query('events_attended')
+        .query('eventsAttended')
         .withIndex('by_credential', (q) => q.eq('credentialId', credentialId))
         .filter((q) => q.eq(q.field('deletedAt'), undefined))
         .collect(),
@@ -490,7 +490,7 @@ export const updateCandidateCredentials = mutation({
     for (const e of args.eventsAttended) {
       const name = e.name.trim();
       if (!name) continue;
-      await ctx.db.insert('events_attended', {
+      await ctx.db.insert('eventsAttended', {
         name,
         year: e.year.trim(),
         credentialId,

@@ -74,7 +74,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const csvEscape = (v: string) =>
   /[",\n\r]/.test(v) ? `"${v.replaceAll('"', '""')}"` : v;
 
-const downloadSampleCsv = (fields: Doc<'voter_fields'>[]) => {
+const downloadSampleCsv = (fields: Doc<'voterFields'>[]) => {
   const headers = ['email', ...fields.map((f) => f.name)];
   const rows = SAMPLE_VOTER_EMAILS.map((email, i) => [
     email,

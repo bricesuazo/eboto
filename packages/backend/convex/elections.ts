@@ -113,7 +113,7 @@ export const getBySlug = query({
           .filter((q) => q.eq(q.field('deletedAt'), undefined))
           .collect(),
         ctx.db
-          .query('voter_fields')
+          .query('voterFields')
           .withIndex('by_election', (q) => q.eq('electionId', election._id))
           .filter((q) => q.eq(q.field('deletedAt'), undefined))
           .collect(),
@@ -378,7 +378,7 @@ export const getDashboardBySlug = query({
  * everything back.
  *
  * Quota: each account gets one free election. Every election after that
- * requires the buyer to redeem one unused `elections_plus` credit (granted
+ * requires the buyer to redeem one unused `electionsPlus` credit (granted
  * by the LemonSqueezy webhook on Plus purchase).
  */
 export const create = mutation({
@@ -429,10 +429,10 @@ export const create = mutation({
       const election = await ctx.db.get(c.electionId);
       if (election && !election.deletedAt) activeOwned.push(c);
     }
-    let plusCreditToConsume: Id<'elections_plus'> | null = null;
+    let plusCreditToConsume: Id<'electionsPlus'> | null = null;
     if (activeOwned.length >= 1) {
       const credit = await ctx.db
-        .query('elections_plus')
+        .query('electionsPlus')
         .withIndex('by_user', (q) => q.eq('userId', userId))
         .filter((q) =>
           q.and(

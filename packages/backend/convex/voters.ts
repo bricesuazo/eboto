@@ -460,7 +460,7 @@ export const getNotification = internalQuery({
   },
   handler: async (ctx, { electionId, voterId, phase }) => {
     return await ctx.db
-      .query('voter_notifications')
+      .query('voterNotifications')
       .withIndex('by_election_voter_phase', (q) =>
         q
           .eq('electionId', electionId)
@@ -508,7 +508,7 @@ export const recordNotification = internalMutation({
     { electionId, voterId, phase, status, providerId, error },
   ) => {
     const existing = await ctx.db
-      .query('voter_notifications')
+      .query('voterNotifications')
       .withIndex('by_election_voter_phase', (q) =>
         q
           .eq('electionId', electionId)
@@ -517,7 +517,7 @@ export const recordNotification = internalMutation({
       )
       .first();
     if (existing) return existing._id;
-    return await ctx.db.insert('voter_notifications', {
+    return await ctx.db.insert('voterNotifications', {
       electionId,
       voterId,
       phase,

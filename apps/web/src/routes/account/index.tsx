@@ -173,7 +173,7 @@ function PendingInvitesCard() {
   );
   const acceptInvite = useMutation(api.commissioners.acceptInvite);
   const declineInvite = useMutation(api.commissioners.declineInvite);
-  const [pendingId, setPendingId] = useState<Id<'commissioner_invites'> | null>(
+  const [pendingId, setPendingId] = useState<Id<'commissionerInvites'> | null>(
     null,
   );
 

@@ -92,7 +92,7 @@ export const getVotingPage = query({
         )
         .collect(),
       ctx.db
-        .query('voter_fields')
+        .query('voterFields')
         .withIndex('by_election', (q) => q.eq('electionId', election._id))
         .filter((q) => q.eq(q.field('deletedAt'), undefined))
         .collect(),
@@ -198,7 +198,7 @@ export const submitVoterFields = mutation({
     }
 
     const voterFields = await ctx.db
-      .query('voter_fields')
+      .query('voterFields')
       .withIndex('by_election', (q) => q.eq('electionId', election._id))
       .filter((q) => q.eq(q.field('deletedAt'), undefined))
       .collect();
@@ -332,7 +332,7 @@ export const cast = mutation({
     // The voting page collects these up front, but enforce server-side too so
     // the requirement can't be bypassed.
     const voterFields = await ctx.db
-      .query('voter_fields')
+      .query('voterFields')
       .withIndex('by_election', (q) => q.eq('electionId', election._id))
       .filter((q) => q.eq(q.field('deletedAt'), undefined))
       .collect();

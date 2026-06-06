@@ -19,8 +19,8 @@ import { Card, CardContent } from '~/components/ui/card';
 import { Separator } from '~/components/ui/separator';
 import { cn } from '~/lib/utils';
 
-type AdminRoomId = Id<'admin_commissioners_rooms'>;
-type VoterRoomId = Id<'commissioners_voters_rooms'>;
+type AdminRoomId = Id<'adminCommissionersRooms'>;
+type VoterRoomId = Id<'commissionersVotersRooms'>;
 
 export const Route = createFileRoute(
   '/dashboard/$electionDashboardSlug/messages',

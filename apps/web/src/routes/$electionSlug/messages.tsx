@@ -54,7 +54,7 @@ function VoterMessagesPage() {
   );
   const ensureMyVoterRoom = useMutation(api.messaging.ensureMyVoterRoom);
   const [roomId, setRoomId] = useState<
-    Id<'commissioners_voters_rooms'> | null
+    Id<'commissionersVotersRooms'> | null
   >(null);
   const [error, setError] = useState<string | null>(null);
 

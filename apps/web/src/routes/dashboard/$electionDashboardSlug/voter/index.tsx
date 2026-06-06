@@ -276,7 +276,7 @@ function VoterList({
   hasActiveFilter,
 }: {
   results: Doc<'voters'>[];
-  fields: Doc<'voter_fields'>[];
+  fields: Doc<'voterFields'>[];
   columns: string;
   pageStatus: 'LoadingFirstPage' | 'LoadingMore' | 'CanLoadMore' | 'Exhausted';
   loadMore: (n: number) => void;
@@ -382,7 +382,7 @@ function VoterRow({
   fields,
 }: {
   voter: Doc<'voters'>;
-  fields: Doc<'voter_fields'>[];
+  fields: Doc<'voterFields'>[];
 }) {
   const hasVoted = !!voter.votedAt;
   const fieldData =
@@ -440,7 +440,7 @@ function VoterFieldLabel({
   field,
 }: {
   htmlFor: string;
-  field: Doc<'voter_fields'>;
+  field: Doc<'voterFields'>;
 }) {
   return (
     <div className="flex items-center gap-1.5">
@@ -472,7 +472,7 @@ function SingleAddDialog({
   fields,
 }: {
   electionId: Doc<'elections'>['_id'];
-  fields: Doc<'voter_fields'>[];
+  fields: Doc<'voterFields'>[];
 }) {
   const create = useMutation(api.voters.create);
   const [open, setOpen] = useState(false);
@@ -629,7 +629,7 @@ function EditVoterDialog({
   fields,
 }: {
   voter: Doc<'voters'>;
-  fields: Doc<'voter_fields'>[];
+  fields: Doc<'voterFields'>[];
 }) {
   const update = useMutation(api.voters.update);
   const [open, setOpen] = useState(false);
@@ -802,7 +802,7 @@ function ManageFieldsDialog({
   fields,
 }: {
   electionId: Doc<'elections'>['_id'];
-  fields: Doc<'voter_fields'>[];
+  fields: Doc<'voterFields'>[];
 }) {
   const create = useMutation(api.voterFields.create);
   const update = useMutation(api.voterFields.update);
@@ -813,7 +813,7 @@ function ManageFieldsDialog({
   const [newType, setNewType] = useState<VoterFieldType>('text');
   const [creating, setCreating] = useState(false);
 
-  const [editingId, setEditingId] = useState<Doc<'voter_fields'>['_id'] | null>(
+  const [editingId, setEditingId] = useState<Doc<'voterFields'>['_id'] | null>(
     null,
   );
   const [editName, setEditName] = useState('');
@@ -844,7 +844,7 @@ function ManageFieldsDialog({
     }
   };
 
-  const startEdit = (f: Doc<'voter_fields'>) => {
+  const startEdit = (f: Doc<'voterFields'>) => {
     setEditingId(f._id);
     setEditName(f.name);
     setEditType(f.type);
@@ -870,7 +870,7 @@ function ManageFieldsDialog({
     }
   };
 
-  const handleDelete = async (f: Doc<'voter_fields'>) => {
+  const handleDelete = async (f: Doc<'voterFields'>) => {
     if (!confirm(`Delete the "${f.name}" field?`)) return;
     try {
       await softDelete({ id: f._id });
@@ -1069,7 +1069,7 @@ function ExportVotersButton({
 }: {
   electionId: Id<'elections'>;
   slug: string;
-  fields: Doc<'voter_fields'>[];
+  fields: Doc<'voterFields'>[];
 }) {
   const convex = useConvex();
   const [pending, setPending] = useState(false);

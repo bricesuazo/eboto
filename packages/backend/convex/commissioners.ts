@@ -51,7 +51,7 @@ export const listInvites = query({
   handler: async (ctx, { electionId }) => {
     await requireCommissioner(ctx, electionId);
     return await ctx.db
-      .query('commissioner_invites')
+      .query('commissionerInvites')
       .withIndex('by_election', (q) => q.eq('electionId', electionId))
       .filter((q) =>
         q.and(
@@ -77,7 +77,7 @@ export const myPendingInvites = query({
     const quota = await loadInviteeQuota(ctx, userId);
     const empty = {
       invites: [] as {
-        _id: Id<'commissioner_invites'>;
+        _id: Id<'commissionerInvites'>;
         electionId: Id<'elections'>;
         electionName: string;
         electionSlug: string;
@@ -93,7 +93,7 @@ export const myPendingInvites = query({
     if (!email) return empty;
 
     const invites = await ctx.db
-      .query('commissioner_invites')
+      .query('commissionerInvites')
       .withIndex('by_email', (q) => q.eq('email', email))
       .filter((q) =>
         q.and(
@@ -179,7 +179,7 @@ export const addByEmail = mutation({
     }
 
     const pending = await ctx.db
-      .query('commissioner_invites')
+      .query('commissionerInvites')
       .withIndex('by_election_email', (q) =>
         q.eq('electionId', electionId).eq('email', normalized),
       )
@@ -198,7 +198,7 @@ export const addByEmail = mutation({
       });
     }
 
-    const inviteId = await ctx.db.insert('commissioner_invites', {
+    const inviteId = await ctx.db.insert('commissionerInvites', {
       electionId,
       email: normalized,
       invitedByUserId: inviterId,
@@ -221,7 +221,7 @@ export const addByEmail = mutation({
  * left untouched and we throw a friendly not_found.
  */
 export const cancelInvite = mutation({
-  args: { inviteId: v.id('commissioner_invites') },
+  args: { inviteId: v.id('commissionerInvites') },
   handler: async (ctx, { inviteId }) => {
     const invite = await ctx.db.get(inviteId);
     if (!invite || invite.deletedAt || invite.acceptedAt || invite.declinedAt) {
@@ -244,7 +244,7 @@ export const cancelInvite = mutation({
  * to buy Plus before retrying.
  */
 export const acceptInvite = mutation({
-  args: { inviteId: v.id('commissioner_invites') },
+  args: { inviteId: v.id('commissionerInvites') },
   handler: async (ctx, { inviteId }) => {
     const userId = await requireUser(ctx);
     const invite = await ctx.db.get(inviteId);
@@ -296,7 +296,7 @@ export const acceptInvite = mutation({
 
     if (quota.canAcceptWithCredit) {
       const credit = await ctx.db
-        .query('elections_plus')
+        .query('electionsPlus')
         .withIndex('by_user', (q) => q.eq('userId', userId))
         .filter((q) =>
           q.and(
@@ -334,7 +334,7 @@ export const acceptInvite = mutation({
  * resolved invites.
  */
 export const declineInvite = mutation({
-  args: { inviteId: v.id('commissioner_invites') },
+  args: { inviteId: v.id('commissionerInvites') },
   handler: async (ctx, { inviteId }) => {
     const userId = await requireUser(ctx);
     const invite = await ctx.db.get(inviteId);
@@ -418,7 +418,7 @@ async function loadInviteeQuota(
     if (election && !election.deletedAt) activeOwnedCount++;
   }
   const credits = await ctx.db
-    .query('elections_plus')
+    .query('electionsPlus')
     .withIndex('by_user', (q) => q.eq('userId', userId))
     .filter((q) =>
       q.and(

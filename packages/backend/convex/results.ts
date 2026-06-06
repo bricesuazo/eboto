@@ -286,7 +286,7 @@ export const getTurnoutSnapshot = internalQuery({
 });
 
 /**
- * Records a freshly generated PDF in `generated_election_results`. Called
+ * Records a freshly generated PDF in `generatedElectionResults`. Called
  * by the action below after `ctx.storage.store()`.
  */
 export const recordGeneratedResult = internalMutation({
@@ -301,7 +301,7 @@ export const recordGeneratedResult = internalMutation({
     }),
   },
   handler: async (ctx, { electionId, storageId, summary }) => {
-    return await ctx.db.insert('generated_election_results', {
+    return await ctx.db.insert('generatedElectionResults', {
       electionId,
       result: { storageId, ...summary },
     });
@@ -328,7 +328,7 @@ export const generateTurnoutPdf = action({
     | { skipped: true; reason: 'no-election' }
     | {
         skipped: false;
-        reportId: Id<'generated_election_results'>;
+        reportId: Id<'generatedElectionResults'>;
         total: number;
         voted: number;
         percent: number;
@@ -418,7 +418,7 @@ export const generateTurnoutPdf = action({
     const blob = new Blob([buffer], { type: 'application/pdf' });
     const storageId = await ctx.storage.store(blob);
 
-    const reportId: Id<'generated_election_results'> = await ctx.runMutation(
+    const reportId: Id<'generatedElectionResults'> = await ctx.runMutation(
       internal.results.recordGeneratedResult,
       {
         electionId,
@@ -477,7 +477,7 @@ export const listGeneratedReports = query({
   handler: async (ctx, { electionId }) => {
     await requireCommissioner(ctx, electionId);
     const rows = await ctx.db
-      .query('generated_election_results')
+      .query('generatedElectionResults')
       .withIndex('by_election', (q) => q.eq('electionId', electionId))
       .filter((q) => q.eq(q.field('deletedAt'), undefined))
       .order('desc')

@@ -30,7 +30,7 @@ export default defineSchema({
 
   // Profile fields layered on top of the auth `users` table.
   // (authTables already provides id, email, name, image, emailVerificationTime.)
-  user_profiles: defineTable({
+  userProfiles: defineTable({
     userId: v.id('users'),
     name: v.optional(v.string()),
     imageStorageId: v.optional(v.id('_storage')),
@@ -68,7 +68,7 @@ export default defineSchema({
     .index('by_slug', ['slug'])
     .index('by_deleted_slug', ['deletedAt', 'slug']),
 
-  elections_plus: defineTable({
+  electionsPlus: defineTable({
     userId: v.id('users'),
     redeemedAt: v.optional(v.number()),
     deletedAt: v.optional(v.number()),
@@ -87,7 +87,7 @@ export default defineSchema({
   // routes through this table — the invitee must explicitly accept (which
   // consumes one of *their* Plus credits, or their first free slot) or
   // decline. Inviters can cancel an unaccepted invite via `deletedAt`.
-  commissioner_invites: defineTable({
+  commissionerInvites: defineTable({
     electionId: v.id('elections'),
     email: v.string(),
     invitedByUserId: v.id('users'),
@@ -159,7 +159,7 @@ export default defineSchema({
     deletedAt: v.optional(v.number()),
   }).index('by_credential', ['credentialId']),
 
-  events_attended: defineTable({
+  eventsAttended: defineTable({
     name: v.string(),
     year: v.string(),
     credentialId: v.id('credentials'),
@@ -173,7 +173,7 @@ export default defineSchema({
     deletedAt: v.optional(v.number()),
   }).index('by_candidate', ['candidateId']),
 
-  voter_fields: defineTable({
+  voterFields: defineTable({
     name: v.string(),
     type: voterFieldType,
     electionId: v.id('elections'),
@@ -201,7 +201,7 @@ export default defineSchema({
   // index doubles as an idempotency guard: the Inngest sender does a
   // first-write-wins insert keyed on (electionId, voterId, phase) so a
   // re-emit of the lifecycle event won't double-send.
-  voter_notifications: defineTable({
+  voterNotifications: defineTable({
     electionId: v.id('elections'),
     voterId: v.id('voters'),
     phase: voterNotificationPhase,
@@ -223,13 +223,13 @@ export default defineSchema({
     .index('by_candidate', ['candidateId'])
     .index('by_position', ['positionId']),
 
-  generated_election_results: defineTable({
+  generatedElectionResults: defineTable({
     electionId: v.id('elections'),
     result: v.any(),
     deletedAt: v.optional(v.number()),
   }).index('by_election', ['electionId']),
 
-  reported_problems: defineTable({
+  reportedProblems: defineTable({
     subject: v.string(),
     description: v.string(),
     electionId: v.optional(v.id('elections')),
@@ -238,20 +238,20 @@ export default defineSchema({
   }).index('by_user', ['userId']),
 
   // ---- Chat (kept as-is from schema; not yet wired into UI) ----
-  admin_commissioners_rooms: defineTable({
+  adminCommissionersRooms: defineTable({
     name: v.string(),
     electionId: v.id('elections'),
     deletedAt: v.optional(v.number()),
   }).index('by_election', ['electionId']),
 
-  admin_commissioners_messages: defineTable({
+  adminCommissionersMessages: defineTable({
     message: v.string(),
     userId: v.id('users'),
-    roomId: v.id('admin_commissioners_rooms'),
+    roomId: v.id('adminCommissionersRooms'),
     deletedAt: v.optional(v.number()),
   }).index('by_room', ['roomId']),
 
-  commissioners_voters_rooms: defineTable({
+  commissionersVotersRooms: defineTable({
     name: v.string(),
     voterId: v.optional(v.id('voters')),
     electionId: v.id('elections'),
@@ -260,10 +260,10 @@ export default defineSchema({
     .index('by_election', ['electionId'])
     .index('by_election_voter', ['electionId', 'voterId']),
 
-  commissioners_voters_messages: defineTable({
+  commissionersVotersMessages: defineTable({
     message: v.string(),
     userId: v.id('users'),
-    roomId: v.id('commissioners_voters_rooms'),
+    roomId: v.id('commissionersVotersRooms'),
     deletedAt: v.optional(v.number()),
   }).index('by_room', ['roomId']),
 
@@ -272,7 +272,7 @@ export default defineSchema({
   // `vote:user_abc`). Each mutation that wants to rate-limit calls
   // `enforceRateLimit(ctx, ...)` which upserts into this table inside the
   // same transaction.
-  rate_limits: defineTable({
+  rateLimits: defineTable({
     key: v.string(),
     windowStart: v.number(),
     count: v.number(),

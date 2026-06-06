@@ -18,7 +18,7 @@ type Side = 'voter' | 'admin';
 
 interface ChatThreadProps {
   /** Room id — discriminated by `side`. */
-  roomId: Id<'commissioners_voters_rooms'> | Id<'admin_commissioners_rooms'>;
+  roomId: Id<'commissionersVotersRooms'> | Id<'adminCommissionersRooms'>;
   side: Side;
   /** Logged-in user id; messages they sent are right-aligned. */
   currentUserId: string;

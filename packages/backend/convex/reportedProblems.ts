@@ -31,7 +31,7 @@ export const create = mutation({
         message: 'Please describe the problem in at least 10 characters.',
       });
     }
-    return await ctx.db.insert('reported_problems', {
+    return await ctx.db.insert('reportedProblems', {
       subject: trimmedSubject,
       description: trimmedDescription,
       userId,
@@ -49,7 +49,7 @@ export const listMine = query({
   handler: async (ctx) => {
     const userId = await requireUser(ctx);
     return await ctx.db
-      .query('reported_problems')
+      .query('reportedProblems')
       .withIndex('by_user', (q) => q.eq('userId', userId))
       .filter((q) => q.eq(q.field('deletedAt'), undefined))
       .order('desc')
