@@ -18,9 +18,10 @@ export function EBotoWatermark({ slug }: { slug: string }) {
     <Link
       to="/"
       aria-label="Made with eBoto"
-      className="fixed right-3 bottom-3 z-40 rounded-full bg-foreground/90 px-3 py-1.5 text-xs font-medium text-background shadow-md backdrop-blur transition-colors hover:bg-foreground"
+      className="fixed right-3 flex items-center gap-1 bottom-3 z-40 rounded-full bg-foreground/90 px-3 py-2 shadow-md backdrop-blur transition-colors hover:bg-foreground"
     >
-      Made with eBoto
+      <img src="/logo.png" alt="eBoto" width={16} height={16} />
+      <span className='text-xs font-semibold text-background'>Made with eBoto</span>
     </Link>
   );
 }

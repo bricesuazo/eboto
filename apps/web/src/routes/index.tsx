@@ -5,11 +5,11 @@ import { useState } from 'react';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from '~/components/ui/card';
 import { Separator } from '~/components/ui/separator';
 import { Slider } from '~/components/ui/slider';
@@ -65,10 +65,12 @@ function Hero() {
       />
       <div className="container mx-auto max-w-6xl px-6 py-20 sm:py-28 lg:py-32">
         <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-          <Badge variant="secondary" className="mb-6 gap-1.5">
-            <Sparkles className="size-3" />
-            Open-source online voting platform
-          </Badge>
+          <a href='https://github.com/bricesuazo/eboto.git' target='_blank'>
+            <Badge variant="secondary" className="mb-6 gap-1.5">
+              <Sparkles className="size-3" />
+              Open-source online voting platform
+            </Badge>
+          </a>
           <h1 className="text-4xl font-bold text-balance sm:text-5xl lg:text-6xl">
             Your one-stop online voting solution
           </h1>
@@ -119,7 +121,7 @@ function Features() {
                 <div className="mb-3 flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <Icon className="size-5" />
                 </div>
-                <CardTitle className="text-lg">{title}</CardTitle>
+                <CardTitle className="text-lg font-medium">{title}</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-pretty">
@@ -218,7 +220,7 @@ function Pricing() {
           <CardContent className="p-6 sm:p-8">
             <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <div className="text-sm font-medium tracking-wide text-muted-foreground uppercase">
+                <div className="text-sm font-medium  text-muted-foreground uppercase">
                   Boost · per election
                 </div>
                 <div className="mt-2 text-5xl font-bold">

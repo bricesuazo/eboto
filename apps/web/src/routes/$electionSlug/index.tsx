@@ -1,22 +1,22 @@
 import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
 import {
-    createFileRoute,
-    Link,
-    notFound,
-    useRouteContext,
+  createFileRoute,
+  Link,
+  notFound,
+  useRouteContext,
 } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import {
-    ClipboardCheck,
-    Clock3,
-    Copy,
-    Download,
-    Fingerprint,
-    Info,
-    MessagesSquare,
-    QrCode,
-    User as UserIcon,
+  ClipboardCheck,
+  Clock3,
+  Copy,
+  Download,
+  Fingerprint,
+  Info,
+  MessagesSquare,
+  QrCode,
+  User as UserIcon,
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import type { ReactNode } from 'react';
@@ -29,25 +29,25 @@ import { PagePending } from '~/components/page-pending';
 import { SubmittedBallot } from '~/components/submitted-ballot';
 import { Button } from '~/components/ui/button';
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from '~/components/ui/dialog';
 import {
-    HoverCard,
-    HoverCardContent,
-    HoverCardTrigger,
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
 } from '~/components/ui/hover-card';
 import {
-    describePublicity,
-    formatName,
-    isElectionEnded,
-    isElectionOngoing,
-    parseHourTo12HourFormat,
+  describePublicity,
+  formatName,
+  isElectionEnded,
+  isElectionOngoing,
+  parseHourTo12HourFormat,
 } from '~/lib/election';
 import { cn } from '~/lib/utils';
 
@@ -121,7 +121,7 @@ function ElectionPage() {
           <h1 className="text-3xl font-bold text-balance sm:text-5xl">
             {election.name}
           </h1>
-          <p className="mt-3 text-xs font-medium  text-muted-foreground uppercase">
+          <p className="mt-2 font-medium text-muted-foreground">
             @{election.slug}
           </p>
 
@@ -229,12 +229,12 @@ function ElectionPage() {
         </div>
 
         {ended ? (
-          <p className="mt-6 text-center text-xs tracking-widest text-muted-foreground uppercase">
+          <p className="mt-6 text-center font-semibold text-destructive uppercase">
             This election has ended
           </p>
         ) : (
           !ongoing && (
-            <p className="mt-6 text-center text-xs font-medium tracking-widest text-destructive uppercase">
+            <p className="mt-6 text-center text-xs font-medium  text-destructive uppercase">
               Voting is not yet open
             </p>
           )
@@ -272,7 +272,7 @@ function SectionLabel({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-4">
       <div className="h-px flex-1 bg-border" aria-hidden />
-      <p className="text-sm   text-muted-foreground uppercase">
+      <p className="text-sm font-semibold text-muted-foreground uppercase">
         {label}
       </p>
       <div className="h-px flex-1 bg-border" aria-hidden />
@@ -316,11 +316,11 @@ function PositionSection({
           <span className="text-xs  text-muted-foreground tabular-nums">
             {String(index + 1).padStart(2, '0')}
           </span>
-          <h2 className="text-xl  text-balance sm:text-2xl">
+          <h2 className="text-xl font-semibold text-balance sm:text-2xl">
             {position.name}
           </h2>
         </div>
-        <span className="text-xs font-medium tracking-widest whitespace-nowrap text-muted-foreground uppercase">
+        <span className="text-xs font-medium  whitespace-nowrap text-muted-foreground uppercase">
           {rule} · {position.candidates.length}{' '}
           {position.candidates.length === 1 ? 'candidate' : 'candidates'}
         </span>
@@ -412,7 +412,7 @@ function StatusPill({ status }: { status: Status }) {
   };
   const { dot, label, animate } = config[status];
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs   text-foreground uppercase">
+    <span className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs font-semibold text-foreground uppercase">
       <span className="relative flex size-1.5" aria-hidden>
         {animate && (
           <span
@@ -440,7 +440,7 @@ function MetaCell({
 }) {
   return (
     <div className="px-4 py-4 sm:py-5">
-      <dt className="flex items-center gap-1.5 text-xs   text-muted-foreground uppercase">
+      <dt className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground uppercase">
         {label}
         {info && (
           <HoverCard>

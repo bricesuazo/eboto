@@ -37,9 +37,6 @@ packages/backend      Convex deployment (schema, queries, mutations, auth)
 tooling/{eslint,prettier,tsconfig}   shared dev configs
 ```
 
-See [`apps/web/MIGRATION.md`](apps/web/MIGRATION.md) for the detailed
-migration log from the prior Next.js + Supabase + Mantine stack.
-
 ## License
 
 This project is licensed under the GNU Affero General Public License v3.0 — see [LICENSE](LICENSE) for details.

@@ -5,27 +5,27 @@ import { useAction } from 'convex/react';
 import { ConvexError } from 'convex/values';
 import dayjs from 'dayjs';
 import {
-    CheckCircle2,
-    Circle,
-    Download,
-    FileText,
-    Flag,
-    Loader2,
-    Replace,
-    Users,
-    UserSearch,
+  CheckCircle2,
+  Circle,
+  Download,
+  FileText,
+  Flag,
+  Loader2,
+  Replace,
+  Users,
+  UserSearch,
 } from 'lucide-react';
 import { useState } from 'react';
 import {
-    Bar,
-    BarChart,
-    Cell,
-    Pie,
-    PieChart,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis,
+  Bar,
+  BarChart,
+  Cell,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from 'recharts';
 import { toast } from 'sonner';
 
@@ -36,11 +36,11 @@ import { BoostPaywall } from '~/components/boost-paywall';
 import { DashboardPending } from '~/components/dashboard-pending';
 import { Button } from '~/components/ui/button';
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from '~/components/ui/card';
 import { parseHourTo12HourFormat } from '~/lib/election';
 import { cn } from '~/lib/utils';
@@ -267,17 +267,17 @@ function OverviewPage() {
         </div>
       </div>
 
-      <Card className="gap-1">
-        <CardHeader className="flex-row items-start justify-between gap-4">
-          <div>
+      <Card className="gap-4">
+        <CardHeader >
+          <div className="flex items-center justify-between gap-4">
             <CardTitle>Voter turnout report</CardTitle>
+              <GenerateReportButton electionId={election._id} />
+              </div>
             <CardDescription>
               {stats.checklist.hasEnded
                 ? 'PDF reports auto-generate when the election ends. Download a fresh copy or trigger one manually.'
                 : 'Available after the election ends. Generate one anyway if you need a snapshot now.'}
             </CardDescription>
-          </div>
-          <GenerateReportButton electionId={election._id} />
         </CardHeader>
         <CardContent>
           {reports.length === 0 ? (
@@ -291,7 +291,7 @@ function OverviewPage() {
                 >
                   <div>
                     <div className="font-medium">
-                      {r.summary.percent}% turnout —{' '}
+                      {(r.summary.percent.toFixed(2))}% turnout —{' '}
                       {r.summary.voted.toLocaleString()} of{' '}
                       {r.summary.total.toLocaleString()}
                     </div>
@@ -451,7 +451,7 @@ function FieldStatsBlock({
     <div className="space-y-2">
       <div className="flex items-baseline gap-2">
         <span className="font-mono text-sm">{field.name}</span>
-        <span className="text-xs tracking-wide text-muted-foreground uppercase">
+        <span className="text-xs  text-muted-foreground uppercase">
           {field.type}
         </span>
       </div>
@@ -516,7 +516,7 @@ function GenerateReportButton({ electionId }: { electionId: Id<'elections'> }) {
   return (
     <Button
       type="button"
-      size="sm"
+      size="xs"
       variant="outline"
       disabled={pending}
       onClick={async () => {

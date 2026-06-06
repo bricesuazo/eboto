@@ -7,26 +7,26 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 
 import {
-    Alert,
-    AlertDescription,
-    AlertTitle,
+  Alert,
+  AlertDescription,
+  AlertTitle,
 } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Spinner } from '~/components/ui/spinner';
 import { useAuthActions } from '~/lib/auth/provider';
 import type { SignInError } from '~/lib/constants';
 import {
-    parseSignInError,
-    SIGN_IN_ERROR_MESSAGES
+  parseSignInError,
+  SIGN_IN_ERROR_MESSAGES
 } from '~/lib/constants';
 import { safeInternalPath } from '~/lib/redirect';
 import googleIcon from './../../images/google-logo.svg';
@@ -103,7 +103,7 @@ function SignInPage() {
     <main className="flex flex-col items-center justify-center px-6 py-40">
       <div className="w-full max-w-sm space-y-6">
         <div className="space-y-2 text-center">
-          <h1 className="text-2xl ">Sign in to eBoto</h1>
+          <h1 className="text-2xl font-semibold">Sign in to eBoto</h1>
           <p className="text-sm text-muted-foreground">
             We'll email you a magic link.
           </p>
@@ -146,6 +146,15 @@ function SignInPage() {
             </Button>
           </form>
         </Form>
+
+      <div className="flex items-center gap-4">
+          <div className="h-px flex-1 bg-border" aria-hidden />
+          <p className="text-sm font-semibold text-muted-foreground uppercase">
+            or
+          </p>
+          <div className="h-px flex-1 bg-border" aria-hidden />
+        </div>
+
         <Button
           variant="outline"
           className="w-full"

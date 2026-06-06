@@ -1,4 +1,3 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, Link, notFound } from '@tanstack/react-router';
@@ -6,20 +5,21 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { useConvex, useMutation, usePaginatedQuery } from 'convex/react';
 import { ConvexError } from 'convex/values';
 import {
-  CheckCircle2,
-  Circle,
-  Download,
-  Info,
-  Loader2,
-  Pencil,
-  Plus,
-  Search,
-  Settings,
-  Trash2,
-  Upload,
-  Users,
-  X,
+    CheckCircle2,
+    Circle,
+    Download,
+    Info,
+    Loader2,
+    Pencil,
+    Plus,
+    Search,
+    Settings,
+    Trash2,
+    Upload,
+    Users,
+    X,
 } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { api } from '@eboto/backend/api';
@@ -31,43 +31,43 @@ import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Card } from '~/components/ui/card';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
 } from '~/components/ui/dialog';
 import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
+    Empty,
+    EmptyDescription,
+    EmptyHeader,
+    EmptyMedia,
+    EmptyTitle,
 } from '~/components/ui/empty';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from '~/components/ui/select';
 import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
 } from '~/components/ui/tooltip';
 import {
-  FIELD_TYPES,
-  htmlInputTypeFor,
-  isVoterFieldType,
-  SAMPLE_VOTER_EMAILS,
-  sampleValueForType,
-  validateFieldValue,
+    FIELD_TYPES,
+    htmlInputTypeFor,
+    isVoterFieldType,
+    SAMPLE_VOTER_EMAILS,
+    sampleValueForType,
+    validateFieldValue,
 } from '~/lib/voter-fields';
 
 export const Route = createFileRoute(
@@ -997,7 +997,7 @@ function ManageFieldsDialog({
                       <span className="flex-1 truncate font-mono text-sm">
                         {f.name}
                       </span>
-                      <span className="text-xs tracking-wide text-muted-foreground uppercase">
+                      <span className="text-xs  text-muted-foreground uppercase">
                         {f.type}
                       </span>
                       <Button
