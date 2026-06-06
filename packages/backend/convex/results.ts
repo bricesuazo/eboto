@@ -12,7 +12,10 @@ import {
   query,
 } from './_generated/server';
 import { requireCommissioner } from './_helpers/auth';
-import { isElectionInProgress } from './_helpers/election_timing';
+import {
+  isElectionEnded,
+  isElectionInProgress,
+} from './_helpers/election_timing';
 import {
   FREE_RESULTS_LATENCY_MS,
   freeTierResultsCutoff,
@@ -60,10 +63,13 @@ export const getBySlug = query({
       return null;
     }
 
-    // VOTER-publicity results are gated on participation: voters can only see
-    // tallies once they've cast a ballot. Commissioners can still reach the
-    // page without voting, but they see the same throttled tally as voters.
+    // VOTER-publicity results stay restricted to registered voters (and
+    // commissioners). While the election is still running, a voter must have
+    // cast a ballot first — this stops peeking at live tallies before voting.
+    // Once it has concluded the tally is final, so any registered voter can
+    // view it whether or not they voted.
     if (election.publicity === 'VOTER' && !isCommissioner) {
+      let isVoter = false;
       let hasVoted = false;
       const userEmail = user?.email;
       if (userEmail) {
@@ -75,6 +81,7 @@ export const getBySlug = query({
           .filter((q) => q.eq(q.field('deletedAt'), undefined))
           .first();
         if (voter) {
+          isVoter = true;
           const existingVote = await ctx.db
             .query('votes')
             .withIndex('by_election_voter', (q) =>
@@ -84,10 +91,14 @@ export const getBySlug = query({
           hasVoted = Boolean(existingVote);
         }
       }
-      if (!hasVoted) {
+      const ended = isElectionEnded(election);
+      const allowed = ended ? isVoter : hasVoted;
+      if (!allowed) {
         throw new ConvexError({
           code: 'forbidden',
-          message: 'Cast your ballot to view results',
+          message: ended
+            ? 'Only registered voters can view these results'
+            : 'Cast your ballot to view results',
         });
       }
     }
@@ -158,12 +169,17 @@ export const getBySlug = query({
       }
     }
 
-    // For hiding real names we use the date-only "in progress" check —
-    // viewers outside voting hours but still within the election window
-    // must continue to see anonymized candidates when the commissioner
-    // has chosen to hide them.
+    // Real names are revealed when: the commissioner allows realtime names,
+    // OR the election has fully concluded (past the closing hour on the end
+    // day — `isElectionEnded`), OR it hasn't started yet. While voting is
+    // in progress (including the overnight gaps between daily voting hours)
+    // anonymized candidates stay hidden if the commissioner chose to. The
+    // hour-aware `isElectionEnded` check matters on the final day: once
+    // voting closes, names show even though the calendar day (the date-only
+    // `isElectionInProgress`) hasn't rolled over yet.
     const showRealNames =
       election.isCandidatesVisibleInRealtimeWhenOngoing ||
+      isElectionEnded(election) ||
       !isElectionInProgress(election);
 
     return {

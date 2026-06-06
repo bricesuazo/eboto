@@ -8,11 +8,11 @@ import { api } from '@eboto/backend/api';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from '~/components/ui/card';
 
 export const Route = createFileRoute('/account/billing')({
@@ -114,7 +114,7 @@ function BillingPage() {
 function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div>
-      <div className="text-2xl font-semibold">{value.toLocaleString()}</div>
+      <div className="text-2xl ">{value.toLocaleString()}</div>
       <div className="text-xs text-muted-foreground">{label}</div>
     </div>
   );

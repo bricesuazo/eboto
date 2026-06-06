@@ -135,15 +135,22 @@ function ResultPage() {
           <h1 className="mt-6 text-3xl font-bold text-balance sm:text-5xl">
             {election.name}
           </h1>
-          <p className="mt-3 text-xs font-semibold  text-muted-foreground uppercase">
+          <p className="mt-3 text-xs   text-muted-foreground uppercase">
             Election Results
           </p>
         </div>
 
-        <dl className="mt-10 grid grid-cols-1 divide-y border-y sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+        <dl
+          className={cn(
+            'mt-10 grid grid-cols-1 divide-y border-y sm:divide-x sm:divide-y-0',
+            // The "Updated" cell only applies to a live tally — drop it once
+            // the election has concluded (results are final).
+            ended ? 'sm:grid-cols-2' : 'sm:grid-cols-3',
+          )}
+        >
           <MetaCell label="Dates" value={dateRange} />
           <MetaCell label="Voting Hours" value={hours} />
-          <MetaCell label="Updated" value={updatedValue} />
+          {!ended && <MetaCell label="Updated" value={updatedValue} />}
         </dl>
       </header>
 
@@ -154,7 +161,7 @@ function ResultPage() {
             aria-hidden
           />
           <div className="space-y-1">
-            <p className="text-xs font-semibold  text-amber-900 uppercase dark:text-amber-200">
+            <p className="text-xs   text-amber-900 uppercase dark:text-amber-200">
               Partial & Unofficial
             </p>
             <p className="text-sm leading-relaxed text-amber-900/90 dark:text-amber-100/90">
@@ -181,7 +188,7 @@ function ResultPage() {
             aria-hidden
           />
           <div className="space-y-1">
-            <p className="text-muted-foreground text-xs font-semibold  uppercase">
+            <p className="text-muted-foreground text-xs   uppercase">
               Voting hasn't started
             </p>
             <p className="text-sm leading-relaxed">
@@ -235,7 +242,7 @@ function SectionLabel({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-4">
       <div className="h-px flex-1 bg-border" aria-hidden />
-      <p className="text-xs font-semibold  text-muted-foreground uppercase">
+      <p className="text-xs   text-muted-foreground uppercase">
         {label}
       </p>
       <div className="h-px flex-1 bg-border" aria-hidden />
@@ -277,10 +284,10 @@ function PositionResult({
     <section>
       <div className="mb-6 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-foreground/15 pb-3">
         <div className="flex items-baseline gap-3">
-          <span className="text-xs font-semibold text-muted-foreground tabular-nums">
+          <span className="text-xs  text-muted-foreground tabular-nums">
             {String(index + 1).padStart(2, '0')}
           </span>
-          <h2 className="text-xl font-semibold text-balance sm:text-2xl">
+          <h2 className="text-xl  text-balance sm:text-2xl">
             {position.name}
           </h2>
         </div>
@@ -319,18 +326,18 @@ function PositionResult({
                       <p
                         className={cn(
                           'truncate',
-                          isLeading ? 'font-semibold' : 'font-medium',
+                          isLeading ? '' : 'font-medium',
                         )}
                       >
                         {name}
                       </p>
                       {showWinner && (
-                        <p className="mt-0.5 text-xs font-semibold  text-amber-700 uppercase dark:text-amber-400">
+                        <p className="mt-0.5 text-xs   text-amber-700 uppercase dark:text-amber-400">
                           Winner
                         </p>
                       )}
                       {ongoing && isLeading && !showWinner && (
-                        <p className="mt-0.5 text-xs font-semibold  text-primary uppercase">
+                        <p className="mt-0.5 text-xs   text-primary uppercase">
                           Leading
                         </p>
                       )}
@@ -340,7 +347,7 @@ function PositionResult({
                     <span
                       className={cn(
                         'block leading-none',
-                        isLeading ? 'font-semibold' : 'font-medium',
+                        isLeading ? '' : 'font-medium',
                       )}
                     >
                       {candidate.votes.toLocaleString()}
@@ -401,7 +408,7 @@ function RankBadge({
   return (
     <span
       className={cn(
-        'flex size-7 shrink-0 items-center justify-center rounded-full border text-xs font-semibold tabular-nums',
+        'flex size-7 shrink-0 items-center justify-center rounded-full border text-xs  tabular-nums',
         showWinner
           ? 'border-amber-500/60 bg-amber-500/15 text-amber-700 dark:text-amber-300'
           : isLeading
@@ -418,7 +425,7 @@ function RankBadge({
 function StatusPill({ status }: { status: Status }) {
   if (status === 'ongoing') {
     return (
-      <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-50 px-3 py-1 text-xs font-semibold  text-amber-800 uppercase dark:bg-amber-500/10 dark:text-amber-300">
+      <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-50 px-3 py-1 text-xs   text-amber-800 uppercase dark:bg-amber-500/10 dark:text-amber-300">
         <span className="relative flex size-1.5" aria-hidden>
           <span className="absolute inset-0 animate-ping rounded-full bg-amber-500 opacity-60" />
           <span className="relative size-1.5 rounded-full bg-amber-500" />
@@ -429,14 +436,14 @@ function StatusPill({ status }: { status: Status }) {
   }
   if (status === 'upcoming') {
     return (
-      <span className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs font-semibold  text-foreground uppercase">
+      <span className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs   text-foreground uppercase">
         <span className="size-1.5 rounded-full bg-amber-500" aria-hidden />
         Upcoming
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs font-semibold  text-foreground uppercase">
+    <span className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs   text-foreground uppercase">
       <span className="size-1.5 rounded-full bg-emerald-500" aria-hidden />
       Concluded
     </span>
@@ -446,7 +453,7 @@ function StatusPill({ status }: { status: Status }) {
 function MetaCell({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="px-4 py-4 sm:py-5">
-      <dt className="text-xs font-semibold  text-muted-foreground uppercase">
+      <dt className="text-xs   text-muted-foreground uppercase">
         {label}
       </dt>
       <dd className="mt-1.5 text-sm leading-snug font-medium">{value}</dd>

@@ -5,13 +5,13 @@ import { ModeToggle } from '~/components/mode-toggle';
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
 import { useAuthActions } from '~/lib/auth/provider';
 
@@ -26,7 +26,7 @@ export function SiteHeader() {
           className="flex items-center gap-2"
         >
           <img src="/logo.png" alt="eBoto" width={32} height={32} />
-          <span className="font-semibold">eBoto</span>
+          <span className="">eBoto</span>
         </Link>
 
         <nav className="flex items-center gap-2">
