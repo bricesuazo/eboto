@@ -23,7 +23,7 @@
     "lint": "eslint",
     "format": "prettier --check \"**/*.{ts,md,json}\"",
     "typecheck": "tsc --noEmit",
-    "with-env": "dotenv -e ../../.env --"
+    "with-env": "dotenv -e ../../.env.local --"
   },
   "dependencies": {
     "@eboto/backend": "workspace:*",
