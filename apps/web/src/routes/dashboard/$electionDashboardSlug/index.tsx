@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, notFound } from '@tanstack/react-router';
@@ -6,26 +5,27 @@ import { useAction } from 'convex/react';
 import { ConvexError } from 'convex/values';
 import dayjs from 'dayjs';
 import {
-  CheckCircle2,
-  Circle,
-  Download,
-  FileText,
-  Flag,
-  Loader2,
-  Replace,
-  Users,
-  UserSearch,
+    CheckCircle2,
+    Circle,
+    Download,
+    FileText,
+    Flag,
+    Loader2,
+    Replace,
+    Users,
+    UserSearch,
 } from 'lucide-react';
+import { useState } from 'react';
 import {
-  Bar,
-  BarChart,
-  Cell,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
+    Bar,
+    BarChart,
+    Cell,
+    Pie,
+    PieChart,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis,
 } from 'recharts';
 import { toast } from 'sonner';
 
@@ -36,11 +36,11 @@ import { BoostPaywall } from '~/components/boost-paywall';
 import { DashboardPending } from '~/components/dashboard-pending';
 import { Button } from '~/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from '~/components/ui/card';
 import { parseHourTo12HourFormat } from '~/lib/election';
 import { cn } from '~/lib/utils';
@@ -148,7 +148,7 @@ function OverviewPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardDescription>Voting window</CardDescription>
-            <CardTitle className="text-base font-semibold">
+            <CardTitle className="text-base ">
               {dayjs(election.startDate).format('MMM D, YYYY')} –{' '}
               {dayjs(election.endDate).format('MMM D, YYYY')}
             </CardTitle>
@@ -163,7 +163,7 @@ function OverviewPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardDescription>Publicity</CardDescription>
-            <CardTitle className="text-base font-semibold capitalize">
+            <CardTitle className="text-base  capitalize">
               {election.publicity.toLowerCase()}
             </CardTitle>
           </CardHeader>

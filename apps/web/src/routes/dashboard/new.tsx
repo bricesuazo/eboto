@@ -18,28 +18,28 @@ import { DatePicker } from '~/components/date-picker';
 import { ImageUpload } from '~/components/image-upload';
 import { Button } from '~/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from '~/components/ui/card';
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from '~/components/ui/select';
 import { peso, PLUS_PRICE } from '~/lib/constants/pricing';
 import { parseHourTo12HourFormat } from '~/lib/election';
@@ -482,7 +482,7 @@ function PlusUpgradePrompt() {
 
   return (
     <div className="mb-6 rounded-2xl border-2 border-dashed border-emerald-500/50 p-6 dark:border-emerald-800">
-      <h2 className="text-lg font-semibold">You've used your free election</h2>
+      <h2 className="text-lg ">You've used your free election</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Each account gets one free election. Purchase Plus to add another — each
         Plus credit unlocks one extra election. See the{' '}

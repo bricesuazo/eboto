@@ -1,11 +1,11 @@
 import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
 import {
-  createFileRoute,
-  Link,
-  notFound,
-  redirect,
-  useNavigate,
+    createFileRoute,
+    Link,
+    notFound,
+    redirect,
+    useNavigate,
 } from '@tanstack/react-router';
 import { useMutation } from 'convex/react';
 import { ConvexError } from 'convex/values';
@@ -19,15 +19,15 @@ import type { Id } from '@eboto/backend/data-model';
 import { PagePending } from '~/components/page-pending';
 import { SubmittedBallot } from '~/components/submitted-ballot';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
 } from '~/components/ui/alert-dialog';
 import { Button } from '~/components/ui/button';
 import { Checkbox } from '~/components/ui/checkbox';
@@ -35,9 +35,9 @@ import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group';
 import {
-  CONVEX_ERROR_FORBIDDEN,
-  CONVEX_ERROR_NOT_FOUND,
-  CONVEX_ERROR_VOTING_CLOSED,
+    CONVEX_ERROR_FORBIDDEN,
+    CONVEX_ERROR_NOT_FOUND,
+    CONVEX_ERROR_VOTING_CLOSED,
 } from '~/lib/constants';
 import { formatName, isVotingOpen } from '~/lib/election';
 import type { Choice } from '~/lib/stores/ballot';
@@ -125,7 +125,7 @@ function BallotPage() {
     return (
       <main className="container mx-auto max-w-2xl px-4 py-12 sm:px-6 sm:py-16">
         <div className="text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs font-semibold  text-foreground uppercase">
+          <span className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs   text-foreground uppercase">
             <Check
               className="size-3 text-primary"
               strokeWidth={3}
@@ -234,11 +234,11 @@ function BallotPage() {
       <div className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
         <div className="container mx-auto max-w-3xl px-4 py-3 sm:px-6">
           <div className="flex items-center justify-between gap-4">
-            <p className="text-xs font-semibold  text-muted-foreground uppercase">
+            <p className="text-xs   text-muted-foreground uppercase">
               Ballot Progress
             </p>
             <p className="text-xs tabular-nums text-muted-foreground">
-              <span className="font-semibold text-foreground">
+              <span className=" text-foreground">
                 {completedCount}
               </span>{' '}
               / {totalPositions}{' '}
@@ -262,7 +262,7 @@ function BallotPage() {
 
       <main className="container mx-auto max-w-3xl px-4 pt-10 pb-32 sm:px-6 sm:pt-14">
         <header>
-          <p className="text-xs font-semibold  text-muted-foreground uppercase">
+          <p className="text-xs   text-muted-foreground uppercase">
             Official ballot
           </p>
           <h1 className="mt-2 text-3xl font-bold text-balance sm:text-4xl">
@@ -480,10 +480,10 @@ function PositionBlock({
       <div className="mb-6 border-b border-foreground/15 pb-3">
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
           <div className="flex items-baseline gap-3">
-            <span className="text-xs font-semibold tabular-nums text-muted-foreground">
+            <span className="text-xs  tabular-nums text-muted-foreground">
               {String(index + 1).padStart(2, '0')}
             </span>
-            <h2 className="text-xl font-semibold text-balance sm:text-2xl">
+            <h2 className="text-xl  text-balance sm:text-2xl">
               {position.name}
             </h2>
           </div>
@@ -668,7 +668,7 @@ function CandidateCard({
         <p
           className={cn(
             'line-clamp-2 text-sm leading-snug text-balance',
-            checked ? 'font-semibold text-foreground' : 'font-medium',
+            checked ? ' text-foreground' : 'font-medium',
           )}
         >
           {formatName(nameArrangement, candidate)}

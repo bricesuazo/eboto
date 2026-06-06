@@ -5,11 +5,11 @@ import { useState } from 'react';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from '~/components/ui/card';
 import { Separator } from '~/components/ui/separator';
 import { Slider } from '~/components/ui/slider';
@@ -228,7 +228,7 @@ function Pricing() {
                 </div>
                 <p className="mt-2 text-muted-foreground">
                   Up to{' '}
-                  <span className="font-semibold text-foreground">
+                  <span className=" text-foreground">
                     {isUnlimited ? 'Unlimited' : num.format(tier.label)}
                   </span>{' '}
                   voters
