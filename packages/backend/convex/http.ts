@@ -1,7 +1,7 @@
 import { httpRouter } from 'convex/server';
 import { auth } from './auth';
 import { lemonWebhook } from './billing';
-import { handleUnsubscribe } from './voterBlast';
+import { handleUnsubscribe } from './unsubscribe';
 
 const http = httpRouter();
 

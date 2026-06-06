@@ -1,9 +1,11 @@
+'use node';
+
 import { SendEmailCommand, SESv2Client } from '@aws-sdk/client-sesv2';
 import { ConvexError, v } from 'convex/values';
 
 import { api, internal } from './_generated/api';
 import type { Id } from './_generated/dataModel';
-import { action, httpAction, internalAction } from './_generated/server';
+import { action, internalAction } from './_generated/server';
 import { voterNotificationPhase } from './schema';
 
 /**
@@ -352,7 +354,7 @@ export const processBatch = internalAction({
     // synthetic `unsubscribed` provider id so the operator can audit suppress
     // counts — and so a future re-emit doesn't bother re-checking them.
     const voters: { _id: Id<'voters'>; email: string }[] = [];
-    const optedOut: string[] = [];
+    const optedOut: Id<'voters'>[] = [];
     await Promise.all(
       voterIds.map(async (voterId) => {
         const [voter, existing] = await Promise.all([
@@ -363,7 +365,11 @@ export const processBatch = internalAction({
             phase,
           }),
         ]);
-        if (!voter || existing) return;
+        // Skip only voters already *successfully* notified (a 'sent' row,
+        // including the synthetic 'unsubscribed' suppression). A prior
+        // 'failed' row is retryable — otherwise a transient error (SES
+        // throttle, a missing env var) would suppress that voter forever.
+        if (!voter || existing?.status === 'sent') return;
         if (voter.unsubscribedAt) {
           optedOut.push(voter._id);
           return;
@@ -527,86 +533,6 @@ export const sendVoteReceipt = internalAction({
   },
 });
 
-/* ------------------------------------------------------------------ */
-/* Unsubscribe                                                          */
-/* ------------------------------------------------------------------ */
-
-/**
- * HTTP unsubscribe handler. Two paths share this endpoint:
- *   - GET  /api/unsubscribe?t=<token> — clicked from email body, renders HTML
- *   - POST /api/unsubscribe?t=<token> — RFC 8058 one-click unsubscribe
- *     (inbox providers POST here on the user's behalf)
- *
- * Both verify the HMAC token and call `internal.voters.markUnsubscribed`.
- * Idempotent.
- */
-export const handleUnsubscribe = httpAction(async (ctx, request) => {
-  const url = new URL(request.url);
-  const token = url.searchParams.get('t') ?? '';
-  const parsed = await verifyUnsubscribeToken(token);
-  if (!parsed) {
-    return new Response(htmlPage('Invalid or expired unsubscribe link.'), {
-      status: 400,
-      headers: { 'content-type': 'text/html; charset=utf-8' },
-    });
-  }
-  const result = await ctx.runMutation(internal.voters.markUnsubscribed, {
-    voterId: parsed.voterId as Id<'voters'>,
-  });
-  const body = result.ok
-    ? htmlPage(
-        result.alreadyOptedOut
-          ? "You're already unsubscribed. No further election emails will be sent."
-          : "You've been unsubscribed. We won't email you about this election again.",
-      )
-    : htmlPage('That voter could not be found.');
-  return new Response(body, {
-    status: result.ok ? 200 : 404,
-    headers: { 'content-type': 'text/html; charset=utf-8' },
-  });
-});
-
-async function verifyUnsubscribeToken(
-  token: string,
-): Promise<{ electionId: string; voterId: string } | null> {
-  if (!token) return null;
-  const secret = process.env.UNSUBSCRIBE_SECRET;
-  if (!secret) return null;
-  const [payloadB64, sigHex] = token.split('.');
-  if (!payloadB64 || !sigHex) return null;
-  let payload: string;
-  try {
-    payload = atob(payloadB64.replaceAll('-', '+').replaceAll('_', '/'));
-  } catch {
-    return null;
-  }
-  const enc = new TextEncoder();
-  const key = await crypto.subtle.importKey(
-    'raw',
-    enc.encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign'],
-  );
-  const expected = await crypto.subtle.sign('HMAC', key, enc.encode(payload));
-  const expectedHex = [...new Uint8Array(expected)]
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
-  if (!timingSafeEqual(sigHex, expectedHex)) return null;
-  const [electionId, voterId] = payload.split(':');
-  if (!electionId || !voterId) return null;
-  return { electionId, voterId };
-}
-
-function timingSafeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) {
-    diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  }
-  return diff === 0;
-}
-
-function htmlPage(message: string): string {
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Unsubscribe — eBoto</title><meta name="viewport" content="width=device-width, initial-scale=1"><style>body{font-family:system-ui,-apple-system,Segoe UI,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;background:#fafafa;color:#222}main{max-width:32rem;padding:2rem;text-align:center}h1{font-size:1.25rem;margin:0 0 0.5rem}p{margin:0;color:#555}</style></head><body><main><h1>eBoto</h1><p>${message}</p></main></body></html>`;
-}
+/* The voter unsubscribe HTTP handler lives in `./unsubscribe` — it can't be
+ * in this `"use node"` module because Convex forbids `httpAction`s there. The
+ * matching `signUnsubscribeToken` stays here next to the sender. */

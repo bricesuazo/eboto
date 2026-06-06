@@ -71,12 +71,21 @@ export const getBySlug = query({
       const hasAccess = await viewerHasAccess(ctx, election, user);
       if (!hasAccess) {
         // PRIVATE elections must be indistinguishable from non-existent ones
-        // to avoid leaking that they exist. VOTER access surfaces a hint to
-        // sign in, since the existence is non-secret.
+        // to avoid leaking that they exist.
         if (election.publicity === 'PRIVATE') return null;
+        // VOTER publicity: existence is non-secret. A signed-out viewer is
+        // told to sign in (the page redirects to /sign-in with a return
+        // path); a signed-in non-voter genuinely lacks access, so it 404s
+        // (signing in again wouldn't help).
+        if (!userId) {
+          throw new ConvexError({
+            code: 'requires_auth',
+            message: 'Sign in to view this election',
+          });
+        }
         throw new ConvexError({
           code: 'unauthorized',
-          message: 'Sign in to view this election',
+          message: 'You do not have access to this election',
         });
       }
     }
