@@ -58,4 +58,3 @@ Then configure auth secrets in the Convex dashboard:
 - `npx @convex-dev/auth` (run from this directory) → generates
   `JWT_PRIVATE_KEY` + `JWKS`.
 - `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET` for OAuth.
-- `AUTH_RESEND_KEY` (or replace with the project's SES provider).

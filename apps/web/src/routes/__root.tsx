@@ -9,7 +9,6 @@ import {
 import type { ConvexReactClient } from 'convex/react';
 import { Toaster } from 'sonner';
 
-import { AnalyticsBootstrap } from '~/components/analytics-bootstrap';
 import { DefaultCatchBoundary } from '~/components/default-catch-boundary';
 import { NotFound } from '~/components/not-found';
 import { SiteHeader } from '~/components/site-header';
@@ -111,7 +110,6 @@ function RootComponent() {
       <ThemeProvider defaultTheme="system">
         <TooltipProvider>
           <ConvexAuthProvider client={convexClient} serverState={auth}>
-            <AnalyticsBootstrap />
             <SiteHeader />
             <Outlet />
             <Toaster richColors position="top-right" />

@@ -51,6 +51,7 @@
     "@convex-dev/auth": "catalog:",
     "convex": "catalog:",
     "convex-helpers": "^0.1.116",
+    "jose": "^6.2.3",
     "pdf-lib": "^1.17.1"
   },
   "devDependencies": {

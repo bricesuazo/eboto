@@ -12,8 +12,6 @@ Empower your elections with eBoto, the versatile and web-based voting platform t
 - **Forms**: [react-hook-form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
 - **Jobs**: [Inngest](https://www.inngest.com/) (served from `/api/inngest`)
 - **Payment**: [Lemon Squeezy](https://www.lemonsqueezy.com/) (webhook at `/api/billing/webhook`)
-- **Analytics**: [PostHog](https://posthog.com/)
-- **Errors**: [Sentry](https://sentry.io/)
 - **Deployment**: [Vercel](https://vercel.com) (or any Node-compatible host) + Convex Cloud
 
 ## Running locally
@@ -29,8 +27,7 @@ pnpm dev
 ```
 
 Copy `.env.example` to `.env` for the rest of the optional env vars.
-Configure Convex Auth secrets (`AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`,
-`AUTH_RESEND_KEY`, `JWT_PRIVATE_KEY`, `JWKS`) in the Convex dashboard.
+Configure Convex Auth secrets (`AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `JWT_PRIVATE_KEY`, `JWKS`) in the Convex dashboard.
 
 ## Layout
 
