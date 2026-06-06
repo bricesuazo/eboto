@@ -6,7 +6,7 @@
     "build": "turbo run build",
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "turbo run clean",
-    "deploy": "pnpm --filter @eboto/backend convex:deploy",
+    "deploy": "pnpm --filter @eboto/backend deploy",
     "dev": "turbo dev",
     "start": "turbo start",
     "postinstall": "pnpm lint:ws",
