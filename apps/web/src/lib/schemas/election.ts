@@ -27,8 +27,9 @@ export const electionFields = {
     ),
 } as const;
 
+// End may be the same day as start (a one-day election) — just not earlier.
 const datesValid = (d: Record<string, unknown>) =>
-  new Date(d.endDate as string) > new Date(d.startDate as string);
+  new Date(d.endDate as string) >= new Date(d.startDate as string);
 
 const hoursValid = (d: Record<string, unknown>) =>
   (d.votingHourEnd as number) > (d.votingHourStart as number);
@@ -46,7 +47,7 @@ const withDateHourRefinements = <Shape extends DateHourShape>(
   schema
     .refine(datesValid, {
       path: ['endDate'],
-      message: 'End must be after start',
+      message: 'End must be on or after start',
     })
     .refine(hoursValid, {
       path: ['votingHourEnd'],

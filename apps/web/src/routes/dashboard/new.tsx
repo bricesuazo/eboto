@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
@@ -7,6 +6,7 @@ import { useAction, useMutation } from 'convex/react';
 import { ConvexError } from 'convex/values';
 import dayjs from 'dayjs';
 import { Loader2, Minus, Plus, Rocket } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -221,7 +221,7 @@ function NewElectionPage() {
                     <FormLabel>Election name</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Spring 2026 Election"
+                        placeholder="Summer 2026 Election"
                         {...field}
                         onChange={(e) => {
                           field.onChange(e);
@@ -250,7 +250,7 @@ function NewElectionPage() {
                     <FormLabel>URL slug</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="spring-2026"
+                        placeholder="summer-2026"
                         {...field}
                         onChange={(e) => {
                           field.onChange(e);
@@ -287,9 +287,12 @@ function NewElectionPage() {
                             onChange={(next) => {
                               field.onChange(next);
                               const currentEnd = form.getValues('endDate');
+                              // Same-day elections are allowed, so only clear
+                              // the end date when it falls *before* the new
+                              // start day.
                               if (
                                 currentEnd &&
-                                !dayjs(currentEnd).isAfter(dayjs(next), 'day')
+                                dayjs(currentEnd).isBefore(dayjs(next), 'day')
                               ) {
                                 form.setValue('endDate', '');
                               }
@@ -307,12 +310,10 @@ function NewElectionPage() {
                   name="endDate"
                   render={({ field }) => {
                     const startDateValue = form.watch('startDate');
+                    // End date may equal the start date (a one-day election).
                     const earliestEnd = startDateValue
-                      ? dayjs(startDateValue)
-                          .add(1, 'day')
-                          .startOf('day')
-                          .toDate()
-                      : dayjs().add(2, 'day').startOf('day').toDate();
+                      ? dayjs(startDateValue).startOf('day').toDate()
+                      : dayjs().add(1, 'day').startOf('day').toDate();
                     return (
                       <FormItem>
                         <FormLabel>End date</FormLabel>
