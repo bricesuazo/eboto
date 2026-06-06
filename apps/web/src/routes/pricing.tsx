@@ -1,4 +1,3 @@
-import { useEffect, useMemo, useState } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -10,6 +9,7 @@ import {
 import { useAction } from 'convex/react';
 import { ConvexError } from 'convex/values';
 import { CheckCircle2, Mail, Minus, Plus, Rocket, XCircle } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { api } from '@eboto/backend/api';
@@ -57,7 +57,7 @@ function PricingPage() {
       <MainPricing value={value} setValue={setValue} />
 
       <section className="mt-32">
-        <h2 className="text-center text-3xl font-bold tracking-tight">
+        <h2 className="text-center text-3xl font-bold">
           Compare
         </h2>
         <p className="mt-2 text-center text-muted-foreground">
@@ -197,7 +197,7 @@ function MainPricing({
 }) {
   return (
     <>
-      <h1 className="text-center text-4xl font-bold tracking-tight">Pricing</h1>
+      <h1 className="text-center text-4xl font-bold">Pricing</h1>
       <p className="mt-2 text-center text-muted-foreground">
         Unlock more features: Your Election Boost awaits.
       </p>

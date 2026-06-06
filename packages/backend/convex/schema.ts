@@ -185,11 +185,6 @@ export default defineSchema({
     field: v.optional(v.any()),
     electionId: v.id('elections'),
     votedAt: v.optional(v.number()),
-    // Set when the voter clicks the unsubscribe link in any lifecycle email
-    // or commissioner blast. Lifecycle blasts skip voters whose
-    // `unsubscribedAt` is set; the voter can still log in and vote (the
-    // election URL works regardless), this just suppresses email touches.
-    unsubscribedAt: v.optional(v.number()),
     deletedAt: v.optional(v.number()),
   })
     .index('by_election', ['electionId'])

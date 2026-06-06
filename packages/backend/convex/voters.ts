@@ -161,7 +161,6 @@ export const listForExport = query({
     return rows.map((v) => ({
       email: v.email,
       votedAt: v.votedAt ?? null,
-      unsubscribedAt: v.unsubscribedAt ?? null,
       field: (v.field as Record<string, string> | undefined) ?? null,
     }));
   },
@@ -475,8 +474,6 @@ export const getNotification = internalQuery({
 /**
  * Voter lookup for the Inngest sender. Returns null when the voter has
  * been soft-deleted between fan-out and send so the handler can no-op.
- * Surfaces `unsubscribedAt` so the sender can skip opted-out voters
- * without a second lookup.
  */
 export const getForBlast = internalQuery({
   args: { voterId: v.id('voters') },
@@ -487,24 +484,7 @@ export const getForBlast = internalQuery({
       _id: voter._id,
       email: voter.email,
       electionId: voter.electionId,
-      unsubscribedAt: voter.unsubscribedAt ?? null,
     };
-  },
-});
-
-/**
- * Marks a voter as opted-out from future email blasts. Idempotent — re-clicking
- * the unsubscribe link is a no-op. Public mutation because it's invoked by an
- * unauthenticated HTTP route after token verification.
- */
-export const markUnsubscribed = internalMutation({
-  args: { voterId: v.id('voters') },
-  handler: async (ctx, { voterId }) => {
-    const voter = await ctx.db.get(voterId);
-    if (!voter || voter.deletedAt) return { ok: false as const };
-    if (voter.unsubscribedAt) return { ok: true as const, alreadyOptedOut: true };
-    await ctx.db.patch(voterId, { unsubscribedAt: Date.now() });
-    return { ok: true as const, alreadyOptedOut: false };
   },
 });
 
