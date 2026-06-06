@@ -167,6 +167,9 @@ importers:
       react-hook-form:
         specifier: ^7.55.0
         version: 7.75.0(react@19.1.1)
+      react-microsoft-clarity:
+        specifier: ^2.0.0
+        version: 2.0.0
       react-resizable-panels:
         specifier: ^4.11.0
         version: 4.11.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -4686,6 +4689,9 @@ packages:
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
+
+  react-microsoft-clarity@2.0.0:
+    resolution: {integrity: sha512-Hnbmiv+/vHSekS+Diho7SzvigNLNm+wayZMhxS4otaxPBlN3ccpY7k+PJd2Ytg3F6umU3JZzFtLzvK1WmfdhpA==}
 
   react-redux@9.2.0:
     resolution: {integrity: sha512-ROY9fvHhwOD9ySfrF0wmvu//bKCQ6AeZZq1nJNtbDC+kk5DuSuNX/n6YWYF/SYy7bSba4D4FSz8DJeKY/S/r+g==}
@@ -10058,6 +10064,8 @@ snapshots:
       react: 19.1.1
 
   react-is@16.13.1: {}
+
+  react-microsoft-clarity@2.0.0: {}
 
   react-redux@9.2.0(@types/react@19.1.13)(react@19.1.1)(redux@5.0.1):
     dependencies:

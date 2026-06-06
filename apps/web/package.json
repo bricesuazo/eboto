@@ -44,6 +44,7 @@
     "react-day-picker": "^10.0.0",
     "react-dom": "catalog:",
     "react-hook-form": "^7.55.0",
+    "react-microsoft-clarity": "^2.0.0",
     "react-resizable-panels": "^4.11.0",
     "recharts": "3.8.0",
     "sonner": "^1.7.4",

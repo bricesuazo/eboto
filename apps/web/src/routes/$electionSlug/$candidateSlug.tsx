@@ -3,11 +3,11 @@ import { api } from '@eboto/backend/api';
 import { useQuery } from '@tanstack/react-query';
 import { Link, createFileRoute, notFound } from '@tanstack/react-router';
 import {
-    ArrowLeft,
-    Award,
-    Building2,
-    CalendarDays,
-    User as UserIcon,
+  ArrowLeft,
+  Award,
+  Building2,
+  CalendarDays,
+  User as UserIcon,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 
@@ -224,7 +224,7 @@ function SectionLabel({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-4">
       <div className="bg-border h-px flex-1" aria-hidden />
-      <p className="text-muted-foreground text-sm   uppercase">
+      <p className="text-muted-foreground text-sm font-semibold uppercase">
         {label}
       </p>
       <div className="bg-border h-px flex-1" aria-hidden />

@@ -1,11 +1,11 @@
+import type { LucideIcon } from 'lucide-react';
 import {
   BarChart3,
   Lock,
   MessageSquare,
   Settings2,
   Sparkles,
-  Zap,
-  type LucideIcon,
+  Zap
 } from 'lucide-react';
 
 export interface HomeFeature {

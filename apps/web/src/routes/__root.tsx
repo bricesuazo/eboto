@@ -7,13 +7,16 @@ import {
   Scripts,
 } from '@tanstack/react-router';
 import type { ConvexReactClient } from 'convex/react';
+import { clarity } from 'react-microsoft-clarity';
 import { Toaster } from 'sonner';
 
+import { useEffect } from 'react';
 import { DefaultCatchBoundary } from '~/components/default-catch-boundary';
 import { NotFound } from '~/components/not-found';
 import { SiteHeader } from '~/components/site-header';
 import { ThemeProvider } from '~/components/theme-provider';
 import { TooltipProvider } from '~/components/ui/tooltip';
+import { env } from '~/env';
 import type { AuthServerState } from '~/lib/auth/provider';
 import { ConvexAuthProvider } from '~/lib/auth/provider';
 import { getServerAuth } from '~/lib/auth/server-fns';
@@ -105,6 +108,13 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootComponent() {
   const { auth, convexClient } = Route.useRouteContext();
+
+  useEffect(() => {
+    if (!import.meta.env.PROD) return
+    
+    clarity.init(env.VITE_MICROSOFT_CLARITY_ID);
+  }, []);
+  
   return (
     <RootDocument>
       <ThemeProvider defaultTheme="system">

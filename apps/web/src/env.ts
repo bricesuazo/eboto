@@ -15,6 +15,7 @@ export const env = createEnv({
   clientPrefix: 'VITE_',
   client: {
     VITE_CONVEX_URL: z.url(),
+    VITE_MICROSOFT_CLARITY_ID: z.string()
   },
   server: {
     DISCORD_WEBHOOK_URL: z.url(),

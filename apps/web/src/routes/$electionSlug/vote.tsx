@@ -487,7 +487,7 @@ function PositionBlock({
               {position.name}
             </h2>
           </div>
-          <p className="text-xs font-medium tracking-widest text-muted-foreground uppercase whitespace-nowrap">
+          <p className="text-xs font-medium  text-muted-foreground uppercase whitespace-nowrap">
             {rule}
           </p>
         </div>

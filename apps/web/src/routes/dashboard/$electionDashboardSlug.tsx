@@ -1,10 +1,10 @@
 import { convexQuery } from '@convex-dev/react-query';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
-    createFileRoute,
-    Link,
-    notFound,
-    Outlet,
+  createFileRoute,
+  Link,
+  notFound,
+  Outlet,
 } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { ExternalLink, Lock, Sparkles } from 'lucide-react';
@@ -16,8 +16,8 @@ import { ReportProblemDialog } from '~/components/report-problem-dialog';
 import { Badge } from '~/components/ui/badge';
 import { Separator } from '~/components/ui/separator';
 import {
-    CONVEX_ERROR_FORBIDDEN,
-    CONVEX_ERROR_NOT_FOUND,
+  CONVEX_ERROR_FORBIDDEN,
+  CONVEX_ERROR_NOT_FOUND,
 } from '~/lib/constants';
 import { DASHBOARD_NAV_ITEMS } from '~/lib/constants/nav';
 import { getConvexErrorCode } from '~/lib/convex-error';
@@ -77,11 +77,11 @@ function DashboardElectionShell() {
     <div className="container mx-auto grid max-w-6xl gap-6 px-6 py-8 md:grid-cols-[200px_1fr]">
       <aside className="md:sticky md:top-20 md:self-start">
         <div className="mb-4">
-          <p className="text-xs tracking-wide text-muted-foreground uppercase">
+          <p className="text-xs  text-muted-foreground uppercase">
             Managing
           </p>
           <div className="flex items-center gap-2">
-            <h2 className="truncate ">{election.name}</h2>
+            <h2 className="truncate font-semibold">{election.name}</h2>
             {locked && (
               <Badge
                 variant="outline"
@@ -154,7 +154,7 @@ function LockedBanner({
         aria-hidden
       />
       <div className="space-y-1">
-        <p className=" text-amber-900 dark:text-amber-100">
+        <p className=" text-amber-900 font-medium dark:text-amber-100">
           Editing is locked — voting has started
         </p>
         <p className="text-sm leading-relaxed text-amber-900/80 dark:text-amber-200/80">
