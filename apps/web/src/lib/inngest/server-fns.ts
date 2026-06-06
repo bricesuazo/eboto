@@ -10,6 +10,8 @@ interface ScheduleInput {
   /** Absolute unix-ms — must already include voting-hour-of-day. */
   startAt: number;
   endAt: number;
+  /** IANA timezone the dates/hours are interpreted in. */
+  timezone: string;
 }
 
 /**
@@ -20,11 +22,26 @@ interface ScheduleInput {
 export const scheduleElectionLifecycleFn = createServerFn({ method: 'POST' })
   .inputValidator((input: ScheduleInput) => input)
   .handler(async ({ data }) => {
-    await scheduleElectionLifecycle({
-      electionId: data.electionId,
-      slug: data.slug,
-      startAt: data.startAt,
-      endAt: data.endAt,
-    });
-    return { ok: true } as const;
+    try {
+      await scheduleElectionLifecycle({
+        electionId: data.electionId,
+        slug: data.slug,
+        startAt: data.startAt,
+        endAt: data.endAt,
+        timezone: data.timezone,
+      });
+      return { ok: true as const };
+    } catch (err) {
+      // Don't throw: scheduling is non-blocking and must not fail the save.
+      // Return the reason so the browser can surface it (otherwise a misconfig
+      // like a missing INNGEST_ENV is invisible — it only logs server-side).
+      console.error('[inngest] failed to schedule election lifecycle', err);
+      return {
+        ok: false as const,
+        error:
+          err instanceof Error
+            ? err.message
+            : 'Failed to schedule election lifecycle',
+      };
+    }
   });

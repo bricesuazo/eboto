@@ -74,6 +74,7 @@ function SignInPage() {
         await router.invalidate();
       }
       toast.success('Check your inbox for the magic link.');
+      form.reset();
     } catch (err) {
       toast.error('Failed to send magic link.');
       console.error(err);

@@ -12,6 +12,7 @@ export const electionFields = {
   endDate: z.string().min(1, 'Required'),
   votingHourStart: z.number().int().min(0).max(23),
   votingHourEnd: z.number().int().min(0).max(23),
+  timezone: z.string().min(1, 'Required'),
   publicity: z.enum(['PRIVATE', 'VOTER', 'PUBLIC']),
   nameArrangement: z.number().int().min(0).max(1),
   isCandidatesVisibleInRealtimeWhenOngoing: z.boolean(),
@@ -73,6 +74,7 @@ export const electionSettingsSchema = withDateHourRefinements(
     endDate: electionFields.endDate,
     votingHourStart: electionFields.votingHourStart,
     votingHourEnd: electionFields.votingHourEnd,
+    timezone: electionFields.timezone,
     publicity: electionFields.publicity,
     nameArrangement: electionFields.nameArrangement,
     isCandidatesVisibleInRealtimeWhenOngoing:

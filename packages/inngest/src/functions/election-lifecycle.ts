@@ -13,8 +13,14 @@ import {
 /**
  * Election lifecycle: one event triggers two functions, one fires on
  * `startAt`, one on `endAt`. Each function declares `cancelOn` matched on
- * `data.electionId` so a fresh emit (commissioner edits dates) aborts any
- * prior in-flight run for the same election.
+ * `data.electionId` so a fresh emit (commissioner edits dates/timezone) aborts
+ * any prior in-flight run for the same election.
+ *
+ * The fire moments (`startAt` / `endAt`) are taken straight from the event —
+ * the scheduler already resolved them in the election's timezone before
+ * emitting, so there's no need to re-read the database here. A timing or
+ * timezone change re-emits the event with fresh instants, and `cancelOn`
+ * supersedes the stale run.
  *
  * After waking up, both functions delegate the voter email blast to a
  * Convex action (`api.voterBlast.runLifecycle`). The action fans out

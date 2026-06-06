@@ -46,6 +46,7 @@ import { parseHourTo12HourFormat } from '~/lib/election';
 import { scheduleElectionLifecycleFn } from '~/lib/inngest/server-fns';
 import type { ElectionCreateInput } from '~/lib/schemas/election';
 import { electionCreateSchema } from '~/lib/schemas/election';
+import { detectTimezone } from '~/lib/timezone';
 import { useImageUpload } from '~/lib/use-image-upload';
 
 type FormValues = ElectionCreateInput;
@@ -114,6 +115,9 @@ function NewElectionPage() {
       const logoStorageId = await logo.commit();
       const startDate = new Date(values.startDate).getTime();
       const endDate = new Date(values.endDate).getTime();
+      // Default to the creator's timezone (falls back to Philippine time).
+      // Editable later in election settings.
+      const timezone = detectTimezone();
       const result = await createElection({
         name: values.name,
         slug: values.slug,
@@ -121,6 +125,7 @@ function NewElectionPage() {
         endDate,
         votingHourStart: values.votingHourStart,
         votingHourEnd: values.votingHourEnd,
+        timezone,
         template: values.template,
         logoStorageId: logoStorageId ?? undefined,
       });
@@ -138,15 +143,31 @@ function NewElectionPage() {
         endDate,
         votingHourStart: values.votingHourStart,
         votingHourEnd: values.votingHourEnd,
+        timezone,
       };
-      void scheduleElectionLifecycleFn({
+      scheduleElectionLifecycleFn({
         data: {
           electionId: result.electionId,
           slug: result.slug,
           startAt: votingStartAt(timing),
           endAt: votingEndAt(timing),
+          timezone: timing.timezone,
         },
-      });
+      })
+        .then((res) => {
+          if (!res.ok) {
+            console.error('[inngest] schedule failed:', res.error);
+            toast.warning(
+              'Election created, but scheduling email notifications failed.',
+            );
+          }
+        })
+        .catch((err) => {
+          console.error('[inngest] schedule request failed', err);
+          toast.warning(
+            'Election created, but scheduling email notifications failed.',
+          );
+        });
       toast.success('Election created');
     } catch (err) {
       const msg =

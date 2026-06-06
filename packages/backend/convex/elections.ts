@@ -9,6 +9,7 @@ import {
   requireElectionEditable,
   requireUser,
 } from './_helpers/auth';
+import { DEFAULT_TIMEZONE } from './_helpers/election_timing';
 import { isSlugReserved } from './_helpers/slugs';
 import { getTemplatePositions } from './_helpers/templates';
 
@@ -18,6 +19,26 @@ import { getTemplatePositions } from './_helpers/templates';
  * wired in.
  */
 const DEFAULT_FREE_VARIANT_ID = 0;
+
+/**
+ * Validates and normalizes a client-supplied IANA timezone. Falls back to the
+ * default when absent; throws on an unrecognized name so a typo can't silently
+ * skew every scheduled time. Uses `Intl` (available in the Convex runtime).
+ */
+function resolveTimezone(timezone: string | undefined): string {
+  const tz = timezone?.trim();
+  if (!tz) return DEFAULT_TIMEZONE;
+  try {
+    // Throws RangeError for an invalid timezone identifier.
+    new Intl.DateTimeFormat('en-US', { timeZone: tz });
+    return tz;
+  } catch {
+    throw new ConvexError({
+      code: 'invalid_argument',
+      message: `Unknown timezone: ${tz}`,
+    });
+  }
+}
 
 /**
  * Public-facing election landing query.
@@ -329,6 +350,7 @@ export const getDashboardBySlug = query({
       endDate: election.endDate,
       votingHourStart: election.votingHourStart,
       votingHourEnd: election.votingHourEnd,
+      timezone: election.timezone ?? null,
       publicity: election.publicity,
       nameArrangement: election.nameArrangement,
       isCandidatesVisibleInRealtimeWhenOngoing:
@@ -358,6 +380,7 @@ export const create = mutation({
     endDate: v.number(),
     votingHourStart: v.number(),
     votingHourEnd: v.number(),
+    timezone: v.optional(v.string()),
     template: v.string(),
     logoStorageId: v.optional(v.id('_storage')),
   },
@@ -451,6 +474,7 @@ export const create = mutation({
       endDate: args.endDate,
       votingHourStart: args.votingHourStart,
       votingHourEnd: args.votingHourEnd,
+      timezone: resolveTimezone(args.timezone),
       publicity: 'PRIVATE',
       isCandidatesVisibleInRealtimeWhenOngoing: false,
       nameArrangement: 0,
@@ -495,6 +519,7 @@ export const update = mutation({
     endDate: v.number(),
     votingHourStart: v.number(),
     votingHourEnd: v.number(),
+    timezone: v.optional(v.string()),
     publicity: v.union(
       v.literal('PRIVATE'),
       v.literal('VOTER'),
@@ -579,6 +604,7 @@ export const update = mutation({
       endDate: args.endDate,
       votingHourStart: args.votingHourStart,
       votingHourEnd: args.votingHourEnd,
+      timezone: resolveTimezone(args.timezone),
       publicity: args.publicity,
       nameArrangement: args.nameArrangement,
       isCandidatesVisibleInRealtimeWhenOngoing:

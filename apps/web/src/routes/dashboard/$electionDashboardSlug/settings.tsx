@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
@@ -7,6 +6,7 @@ import { useMutation } from 'convex/react';
 import { ConvexError } from 'convex/values';
 import dayjs from 'dayjs';
 import { Trash2 } from 'lucide-react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -25,6 +25,14 @@ import {
   CardHeader,
   CardTitle,
 } from '~/components/ui/card';
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from '~/components/ui/combobox';
 import {
   Form,
   FormControl,
@@ -48,6 +56,7 @@ import { parseHourTo12HourFormat } from '~/lib/election';
 import { scheduleElectionLifecycleFn } from '~/lib/inngest/server-fns';
 import type { ElectionSettingsInput } from '~/lib/schemas/election';
 import { electionSettingsSchema } from '~/lib/schemas/election';
+import { DEFAULT_TIMEZONE, listTimezones } from '~/lib/timezone';
 import { useImageUpload } from '~/lib/use-image-upload';
 
 export const Route = createFileRoute(
@@ -69,6 +78,10 @@ export const Route = createFileRoute(
 });
 
 type FormValues = ElectionSettingsInput;
+
+// IANA timezone names are static for the runtime — compute once.
+const TIMEZONES = listTimezones();
+const formatTimezoneLabel = (tz: string) => tz.replace(/_/g, ' ');
 
 function SettingsPage() {
   const { electionDashboardSlug } = Route.useParams();
@@ -94,6 +107,7 @@ function SettingsPage() {
       endDate: dayjs(election.endDate).format('YYYY-MM-DD'),
       votingHourStart: election.votingHourStart,
       votingHourEnd: election.votingHourEnd,
+      timezone: election.timezone ?? DEFAULT_TIMEZONE,
       publicity: election.publicity,
       nameArrangement: election.nameArrangement,
       isCandidatesVisibleInRealtimeWhenOngoing:
@@ -125,22 +139,42 @@ function SettingsPage() {
           startDate !== prev.startDate ||
           endDate !== prev.endDate ||
           values.votingHourStart !== prev.votingHourStart ||
-          values.votingHourEnd !== prev.votingHourEnd;
+          values.votingHourEnd !== prev.votingHourEnd ||
+          values.timezone !== (prev.timezone ?? DEFAULT_TIMEZONE);
         if (timingChanged) {
           const timing = {
             startDate,
             endDate,
             votingHourStart: values.votingHourStart,
             votingHourEnd: values.votingHourEnd,
+            timezone: values.timezone,
           };
-          void scheduleElectionLifecycleFn({
+          // Non-blocking: the settings are already saved. Surface a warning
+          // (rather than swallow) if the schedule emit fails so a misconfig
+          // isn't invisible.
+          scheduleElectionLifecycleFn({
             data: {
               electionId,
               slug: result.slug,
               startAt: votingStartAt(timing),
               endAt: votingEndAt(timing),
+              timezone: timing.timezone,
             },
-          });
+          })
+            .then((res) => {
+              if (!res.ok) {
+                console.error('[inngest] schedule failed:', res.error);
+                toast.warning(
+                  'Settings saved, but updating the email schedule failed. Save again to retry.',
+                );
+              }
+            })
+            .catch((err) => {
+              console.error('[inngest] schedule request failed', err);
+              toast.warning(
+                'Settings saved, but updating the email schedule failed. Save again to retry.',
+              );
+            });
         }
       }
       toast.success('Settings saved');
@@ -350,6 +384,42 @@ function SettingsPage() {
                   )}
                 />
               </div>
+
+              <FormField
+                control={form.control}
+                name="timezone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Timezone</FormLabel>
+                    <Combobox
+                      items={TIMEZONES}
+                      value={field.value}
+                      onValueChange={(value) =>
+                        field.onChange(value ?? DEFAULT_TIMEZONE)
+                      }
+                      itemToStringLabel={formatTimezoneLabel}
+                    >
+                      <FormControl>
+                        <ComboboxInput placeholder="Search timezone…" />
+                      </FormControl>
+                      <ComboboxContent>
+                        <ComboboxEmpty>No timezone found.</ComboboxEmpty>
+                        <ComboboxList>
+                          {(tz: string) => (
+                            <ComboboxItem key={tz} value={tz}>
+                              {formatTimezoneLabel(tz)}
+                            </ComboboxItem>
+                          )}
+                        </ComboboxList>
+                      </ComboboxContent>
+                    </Combobox>
+                    <FormDescription>
+                      Voting dates and hours are interpreted in this timezone.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}
