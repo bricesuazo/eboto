@@ -32,13 +32,7 @@ declare module '@tanstack/router-core' {
       handlers?:
         | Partial<
             Record<
-              | 'GET'
-              | 'POST'
-              | 'PUT'
-              | 'DELETE'
-              | 'PATCH'
-              | 'OPTIONS'
-              | 'HEAD',
+              'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'OPTIONS' | 'HEAD',
               (ctx: ServerHandlerCtx) => Response | Promise<Response>
             >
           >

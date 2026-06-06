@@ -69,7 +69,11 @@ function UserMenu({ user }: { user: UserShape }) {
 
   return (
     <>
-      <Button render={<Link to="/dashboard">Dashboard</Link>} variant="outline" size="sm" />
+      <Button
+        render={<Link to="/dashboard">Dashboard</Link>}
+        variant="outline"
+        size="sm"
+      />
       <DropdownMenu>
         <DropdownMenuTrigger
           render={

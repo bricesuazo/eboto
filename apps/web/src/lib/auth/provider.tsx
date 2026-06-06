@@ -1,5 +1,3 @@
-import type { ConvexReactClient } from 'convex/react';
-import { ConvexProviderWithAuth } from 'convex/react';
 import type { ReactNode } from 'react';
 import {
   createContext,
@@ -10,6 +8,8 @@ import {
   useRef,
   useState,
 } from 'react';
+import type { ConvexReactClient } from 'convex/react';
+import { ConvexProviderWithAuth } from 'convex/react';
 
 import {
   AUTH_API_ROUTE,

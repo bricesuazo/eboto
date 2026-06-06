@@ -1,15 +1,15 @@
+import { useEffect, useMemo, useState } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
 import {
-    createFileRoute,
-    Link,
-    useNavigate,
-    useRouteContext,
+  createFileRoute,
+  Link,
+  useNavigate,
+  useRouteContext,
 } from '@tanstack/react-router';
 import { useAction } from 'convex/react';
 import { ConvexError } from 'convex/values';
 import { CheckCircle2, Mail, Minus, Plus, Rocket, XCircle } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { api } from '@eboto/backend/api';
@@ -17,31 +17,31 @@ import type { Id } from '@eboto/backend/data-model';
 
 import { Button } from '~/components/ui/button';
 import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from '~/components/ui/dialog';
 import { Slider } from '~/components/ui/slider';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableFooter,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '~/components/ui/table';
 import type { BoostPrice } from '~/lib/constants/pricing';
 import {
-    BOOST_BASE_PRICE,
-    num,
-    peso,
-    PLUS_PRICE,
-    tierAt,
+  BOOST_BASE_PRICE,
+  num,
+  peso,
+  PLUS_PRICE,
+  tierAt,
 } from '~/lib/constants/pricing';
 import { cn } from '~/lib/utils';
 
@@ -57,9 +57,7 @@ function PricingPage() {
       <MainPricing value={value} setValue={setValue} />
 
       <section className="mt-32">
-        <h2 className="text-center text-3xl font-bold">
-          Compare
-        </h2>
+        <h2 className="text-center text-3xl font-bold">Compare</h2>
         <p className="mt-2 text-center text-muted-foreground">
           Compare all features between Free and Boost to see which one is right
           for you.
@@ -71,17 +69,13 @@ function PricingPage() {
               <TableRow>
                 <TableHead />
                 <TableHead>
-                  <div className="text-xl  text-foreground">
-                    Free
-                  </div>
+                  <div className="text-xl text-foreground">Free</div>
                   <div className="text-sm font-normal text-muted-foreground">
                     For a lifetime
                   </div>
                 </TableHead>
                 <TableHead>
-                  <div className="text-xl  text-foreground">
-                    Boost
-                  </div>
+                  <div className="text-xl text-foreground">Boost</div>
                   <div className="text-sm font-normal text-muted-foreground">
                     Per Election
                   </div>
@@ -239,9 +233,9 @@ function FreeCard() {
   return (
     <PricingCard className="min-h-80 flex-2 sm:min-h-112">
       <div>
-        <h3 className="text-2xl ">Free</h3>
+        <h3 className="text-2xl">Free</h3>
         <p className="text-muted-foreground">For a lifetime</p>
-        <p className="mt-6 mb-2 text-lg ">Key Features</p>
+        <p className="mt-6 mb-2 text-lg">Key Features</p>
         <ul className="space-y-2 text-sm">
           <FeatureItem>Every Hour Result Realtime Update</FeatureItem>
           <FeatureItem>Up to 500 voters</FeatureItem>
@@ -283,7 +277,7 @@ function BoostCard({
       )}
     >
       <div>
-        <h3 className="text-2xl ">Boost</h3>
+        <h3 className="text-2xl">Boost</h3>
         <div className="text-4xl font-bold">
           {tier.label === -1
             ? 'Contact us'
@@ -307,7 +301,7 @@ function BoostCard({
           className="mt-6"
         />
 
-        <p className="mt-8 mb-2 text-lg ">Key Features</p>
+        <p className="mt-8 mb-2 text-lg">Key Features</p>
         <ul className="space-y-2 text-sm">
           <FeatureItem accent>Ad-Free</FeatureItem>
           <FeatureItem accent>Live Support</FeatureItem>
@@ -327,11 +321,11 @@ function CustomCard() {
   return (
     <PricingCard className="min-h-80 flex-2 sm:min-h-112">
       <div>
-        <h3 className="text-2xl ">Custom</h3>
+        <h3 className="text-2xl">Custom</h3>
         <p className="text-muted-foreground">
           Want us to host your election locally?
         </p>
-        <p className="mt-6 mb-2 text-lg ">Key Features</p>
+        <p className="mt-6 mb-2 text-lg">Key Features</p>
         <ul className="space-y-2 text-sm">
           <FeatureItem>Unlimited Voters</FeatureItem>
           <FeatureItem>We will host your election in your facility</FeatureItem>
@@ -379,12 +373,12 @@ function PlusCard() {
   return (
     <div className="flex flex-col gap-4 rounded-2xl border-4 border-border p-6 md:flex-row md:justify-between">
       <div className="flex-4">
-        <h3 className="text-2xl ">Plus</h3>
+        <h3 className="text-2xl">Plus</h3>
         <div className="text-4xl font-bold">{peso.format(PLUS_PRICE)}</div>
         <p className="text-muted-foreground">Per Election</p>
       </div>
       <div className="flex-2">
-        <p className="text-lg ">Key Features</p>
+        <p className="text-lg">Key Features</p>
         <ul className="mt-2 space-y-2 text-sm">
           <FeatureItem accent>Add 1 election to your account</FeatureItem>
         </ul>
@@ -455,7 +449,7 @@ function QuantityStepper({
         }}
         disabled={disabled}
         aria-label={ariaLabel}
-        className="w-12 bg-transparent text-center text-sm font-medium tabular-nums outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+        className="w-12 [appearance:textfield] bg-transparent text-center text-sm font-medium tabular-nums outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
       />
       <Button
         type="button"

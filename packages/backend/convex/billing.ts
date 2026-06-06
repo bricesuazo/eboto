@@ -693,8 +693,7 @@ export const lemonWebhook = httpAction(async (ctx, request) => {
       // enough — the next retry will succeed. The console.error gives the
       // operator the order id + variant + price they need to fix the map.
       const orderRef =
-        (payload.data as { id?: string | number } | undefined)?.id ??
-        'unknown';
+        (payload.data as { id?: string | number } | undefined)?.id ?? 'unknown';
       console.error(
         '[lemonWebhook] Unresolvable Boost order — refusing to upgrade.',
         {

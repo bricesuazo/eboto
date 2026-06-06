@@ -8,11 +8,11 @@ import { api } from '@eboto/backend/api';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from '~/components/ui/card';
 
 export const Route = createFileRoute('/account/billing')({
@@ -47,8 +47,8 @@ function BillingPage() {
         <CardHeader>
           <CardTitle>Plus credits</CardTitle>
           <CardDescription>
-            Each Plus credit lets you create one extra election beyond your
-            free election.
+            Each Plus credit lets you create one extra election beyond your free
+            election.
           </CardDescription>
         </CardHeader>
         <CardContent className="grid grid-cols-3 gap-4 text-center sm:text-left">
@@ -73,8 +73,8 @@ function BillingPage() {
         <CardHeader>
           <CardTitle>Boost elections</CardTitle>
           <CardDescription>
-            Elections you've upgraded to Boost. Voter cap reflects the tier
-            you purchased.
+            Elections you've upgraded to Boost. Voter cap reflects the tier you
+            purchased.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -114,7 +114,7 @@ function BillingPage() {
 function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div>
-      <div className="text-2xl ">{value.toLocaleString()}</div>
+      <div className="text-2xl">{value.toLocaleString()}</div>
       <div className="text-xs text-muted-foreground">{label}</div>
     </div>
   );

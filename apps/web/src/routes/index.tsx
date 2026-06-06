@@ -1,6 +1,6 @@
+import { useState } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { ArrowRight, Check, ChevronDown, Rocket, Sparkles } from 'lucide-react';
-import { useState } from 'react';
 
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -65,7 +65,7 @@ function Hero() {
       />
       <div className="container mx-auto max-w-6xl px-6 py-20 sm:py-28 lg:py-32">
         <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-          <a href='https://github.com/bricesuazo/eboto.git' target='_blank'>
+          <a href="https://github.com/bricesuazo/eboto.git" target="_blank">
             <Badge variant="secondary" className="mb-6 gap-1.5">
               <Sparkles className="size-3" />
               Open-source online voting platform
@@ -145,9 +145,7 @@ function Pricing() {
     <section id="pricing" className="border-b">
       <div className="container mx-auto max-w-6xl px-6 py-12 sm:py-16">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold sm:text-4xl">
-            Simple pricing
-          </h2>
+          <h2 className="text-3xl font-bold sm:text-4xl">Simple pricing</h2>
           <p className="mt-4 text-muted-foreground">
             Start free. Pay only when you need more headroom or features.
           </p>
@@ -170,9 +168,7 @@ function Pricing() {
                   )}
                 </div>
                 <div className="mt-3 flex items-baseline gap-1">
-                  <span className="text-3xl font-bold">
-                    {tier.price}
-                  </span>
+                  <span className="text-3xl font-bold">{tier.price}</span>
                   {tier.cadence && (
                     <span className="text-sm text-muted-foreground">
                       {tier.cadence}
@@ -220,7 +216,7 @@ function Pricing() {
           <CardContent className="p-6 sm:p-8">
             <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <div className="text-sm font-medium  text-muted-foreground uppercase">
+                <div className="text-sm font-medium text-muted-foreground uppercase">
                   Boost · per election
                 </div>
                 <div className="mt-2 text-5xl font-bold">
@@ -230,7 +226,7 @@ function Pricing() {
                 </div>
                 <p className="mt-2 text-muted-foreground">
                   Up to{' '}
-                  <span className=" text-foreground">
+                  <span className="text-foreground">
                     {isUnlimited ? 'Unlimited' : num.format(tier.label)}
                   </span>{' '}
                   voters

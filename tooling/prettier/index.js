@@ -1,5 +1,8 @@
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+const require = createRequire(import.meta.url);
 
 /** @typedef  {import("prettier").Config} PrettierConfig */
 /** @typedef  {import("@ianvs/prettier-plugin-sort-imports").PluginConfig} SortImportsConfig */
@@ -10,8 +13,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 /** @type { PrettierConfig | SortImportsConfig | TailwindConfig } */
 const config = {
   plugins: [
-    '@ianvs/prettier-plugin-sort-imports',
-    'prettier-plugin-tailwindcss',
+    require.resolve('@ianvs/prettier-plugin-sort-imports'),
+    require.resolve('prettier-plugin-tailwindcss'),
   ],
   tailwindStylesheet: path.join(
     __dirname,

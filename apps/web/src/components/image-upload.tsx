@@ -1,5 +1,5 @@
-import { ImagePlus, ReplaceIcon, Trash2 } from 'lucide-react';
 import { useEffect, useRef } from 'react';
+import { ImagePlus, ReplaceIcon, Trash2, UploadIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '~/components/ui/button';
@@ -74,7 +74,7 @@ export function ImageUpload({
               if (fileRef.current) fileRef.current.value = '';
             }}
           />
-          <div className='flex items-center gap-2'>
+          <div className="flex items-center gap-2">
             <Button
               type="button"
               variant="outline"
@@ -82,10 +82,19 @@ export function ImageUpload({
               disabled={disabled ?? processing}
               onClick={() => fileRef.current?.click()}
             >
-              {processing
-                ? <><Spinner className="mr-1 size-4" /> Processing...</>
-                : <> <ReplaceIcon className="mr-1 size-4" /> {previewUrl ? 'Replace' : 'Upload'} image</>
-              }
+              {processing ? (
+                <>
+                  <Spinner className="mr-1 size-4" /> Processing...
+                </>
+              ) : previewUrl ? (
+                <>
+                  <ReplaceIcon className="mr-1 size-4" /> Replace
+                </>
+              ) : (
+                <>
+                  <UploadIcon className="mr-1 size-4" /> Upload
+                </>
+              )}
             </Button>
             {previewUrl && (
               <Button

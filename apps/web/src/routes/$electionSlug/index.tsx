@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+import { useRef, useState } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -19,8 +21,6 @@ import {
   User as UserIcon,
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
-import type { ReactNode } from 'react';
-import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { api } from '@eboto/backend/api';
@@ -234,7 +234,7 @@ function ElectionPage() {
           </p>
         ) : (
           !ongoing && (
-            <p className="mt-6 text-center text-xs font-medium  text-destructive uppercase">
+            <p className="mt-6 text-center text-xs font-medium text-destructive uppercase">
               Voting is not yet open
             </p>
           )
@@ -313,14 +313,14 @@ function PositionSection({
     <section>
       <div className="mb-6 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-foreground/15 pb-3">
         <div className="flex items-baseline gap-3">
-          <span className="text-xs  text-muted-foreground tabular-nums">
+          <span className="text-xs text-muted-foreground tabular-nums">
             {String(index + 1).padStart(2, '0')}
           </span>
           <h2 className="text-xl font-semibold text-balance sm:text-2xl">
             {position.name}
           </h2>
         </div>
-        <span className="text-xs font-medium  whitespace-nowrap text-muted-foreground uppercase">
+        <span className="text-xs font-medium whitespace-nowrap text-muted-foreground uppercase">
           {rule} · {position.candidates.length}{' '}
           {position.candidates.length === 1 ? 'candidate' : 'candidates'}
         </span>
@@ -388,7 +388,7 @@ function CandidateCard({
           {name}
         </p>
         {candidate.partylist?.acronym && (
-          <p className="mt-1 text-xs font-medium  text-muted-foreground uppercase">
+          <p className="mt-1 text-xs font-medium text-muted-foreground uppercase">
             {candidate.partylist.acronym}
           </p>
         )}

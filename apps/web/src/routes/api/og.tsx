@@ -118,7 +118,9 @@ function electionCard(params: {
           {params.electionName}
         </div>
         {params.electionDate && (
-          <div style={{ display: 'flex', fontSize: 28, color: OG_COLORS.muted }}>
+          <div
+            style={{ display: 'flex', fontSize: 28, color: OG_COLORS.muted }}
+          >
             {params.electionDate}
           </div>
         )}
@@ -202,7 +204,9 @@ function candidateCard(params: {
             {params.candidateName}
           </div>
           {params.candidatePosition && (
-            <div style={{ display: 'flex', fontSize: 32, color: OG_COLORS.muted }}>
+            <div
+              style={{ display: 'flex', fontSize: 32, color: OG_COLORS.muted }}
+            >
               {params.candidatePosition}
             </div>
           )}

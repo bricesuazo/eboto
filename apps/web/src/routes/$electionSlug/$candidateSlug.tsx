@@ -1,7 +1,7 @@
+import type { ReactNode } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
-import { api } from '@eboto/backend/api';
 import { useQuery } from '@tanstack/react-query';
-import { Link, createFileRoute, notFound } from '@tanstack/react-router';
+import { createFileRoute, Link, notFound } from '@tanstack/react-router';
 import {
   ArrowLeft,
   Award,
@@ -9,7 +9,8 @@ import {
   CalendarDays,
   User as UserIcon,
 } from 'lucide-react';
-import type { ReactNode } from 'react';
+
+import { api } from '@eboto/backend/api';
 
 import { PagePending } from '~/components/page-pending';
 import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, SITE_URL } from '~/lib/constants';
@@ -88,7 +89,7 @@ function CandidatePage() {
       <Link
         to="/$electionSlug"
         params={{ electionSlug }}
-        className="text-muted-foreground hover:text-foreground group inline-flex items-center gap-2 text-xs   uppercase transition-colors"
+        className="group inline-flex items-center gap-2 text-xs text-muted-foreground uppercase transition-colors hover:text-foreground"
       >
         <ArrowLeft
           className="size-3.5 transition-transform group-hover:-translate-x-0.5"
@@ -98,7 +99,7 @@ function CandidatePage() {
       </Link>
 
       <header className="mt-10 flex flex-col items-center text-center sm:mt-14">
-        <div className="ring-border relative size-40 overflow-hidden rounded-full ring-1 sm:size-52">
+        <div className="relative size-40 overflow-hidden rounded-full ring-1 ring-border sm:size-52">
           {candidate.imageUrl ? (
             <img
               src={candidate.imageUrl}
@@ -106,9 +107,9 @@ function CandidatePage() {
               className="absolute inset-0 size-full object-cover"
             />
           ) : (
-            <div className="bg-muted/40 flex size-full items-center justify-center">
+            <div className="flex size-full items-center justify-center bg-muted/40">
               <UserIcon
-                className="text-muted-foreground size-14 sm:size-16"
+                className="size-14 text-muted-foreground sm:size-16"
                 aria-hidden
               />
             </div>
@@ -141,18 +142,18 @@ function CandidatePage() {
             {candidate.platforms.map((p, i) => (
               <li
                 key={p._id}
-                className="border-foreground/10 border-b pb-8 last:border-0 last:pb-0"
+                className="border-b border-foreground/10 pb-8 last:border-0 last:pb-0"
               >
                 <div className="flex items-baseline gap-4">
-                  <span className="text-muted-foreground text-xs  tabular-nums">
+                  <span className="text-xs text-muted-foreground tabular-nums">
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <div className="flex-1">
-                    <h3 className="text-lg  text-balance sm:text-xl">
+                    <h3 className="text-lg text-balance sm:text-xl">
                       {p.title}
                     </h3>
                     {p.description && (
-                      <p className="text-muted-foreground mt-2 leading-relaxed text-pretty">
+                      <p className="mt-2 leading-relaxed text-pretty text-muted-foreground">
                         {p.description}
                       </p>
                     )}
@@ -198,7 +199,7 @@ function CandidatePage() {
           </div>
         ) : (
           <div className="mt-8 rounded-lg border border-dashed py-10 text-center">
-            <p className="text-muted-foreground mx-auto max-w-md px-6 text-sm">
+            <p className="mx-auto max-w-md px-6 text-sm text-muted-foreground">
               No credentials available yet. If you are this candidate, please
               contact the election commissioner to add your credentials.
             </p>
@@ -211,10 +212,8 @@ function CandidatePage() {
 
 function Pill({ label, value }: { label: string; value: string }) {
   return (
-    <span className="bg-card inline-flex items-center gap-2 rounded-full border px-3 py-1">
-      <span className="text-muted-foreground text-xs   uppercase">
-        {label}
-      </span>
+    <span className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1">
+      <span className="text-xs text-muted-foreground uppercase">{label}</span>
       <span className="text-sm font-medium">{value}</span>
     </span>
   );
@@ -223,11 +222,11 @@ function Pill({ label, value }: { label: string; value: string }) {
 function SectionLabel({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-4">
-      <div className="bg-border h-px flex-1" aria-hidden />
-      <p className="text-muted-foreground text-sm font-semibold uppercase">
+      <div className="h-px flex-1 bg-border" aria-hidden />
+      <p className="text-sm font-semibold text-muted-foreground uppercase">
         {label}
       </p>
-      <div className="bg-border h-px flex-1" aria-hidden />
+      <div className="h-px flex-1 bg-border" aria-hidden />
     </div>
   );
 }
@@ -244,21 +243,19 @@ function CredentialBlock({
   if (items.length === 0) return null;
   return (
     <div>
-      <div className="text-muted-foreground mb-4 flex items-center gap-2">
+      <div className="mb-4 flex items-center gap-2 text-muted-foreground">
         {icon}
-        <p className="text-xs   uppercase">
-          {label}
-        </p>
+        <p className="text-xs uppercase">{label}</p>
       </div>
       <ul className="space-y-3">
         {items.map((item) => (
           <li
             key={item._id}
-            className="border-foreground/15 border-l-2 pl-3 leading-snug"
+            className="border-l-2 border-foreground/15 pl-3 leading-snug"
           >
             <p className="text-sm font-medium text-balance">{item.primary}</p>
             {item.secondary && (
-              <p className="text-muted-foreground mt-0.5 text-xs">
+              <p className="mt-0.5 text-xs text-muted-foreground">
                 {item.secondary}
               </p>
             )}

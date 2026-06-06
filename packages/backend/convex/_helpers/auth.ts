@@ -1,5 +1,6 @@
 import { getAuthUserId } from '@convex-dev/auth/server';
 import { ConvexError } from 'convex/values';
+
 import type { Doc, Id } from '../_generated/dataModel';
 import type { MutationCtx, QueryCtx } from '../_generated/server';
 import { votingStartAt } from './election_timing';
@@ -8,7 +9,10 @@ import { votingStartAt } from './election_timing';
 export async function requireUser(ctx: QueryCtx | MutationCtx) {
   const userId = await getAuthUserId(ctx);
   if (!userId) {
-    throw new ConvexError({ code: 'unauthorized', message: 'Sign in required' });
+    throw new ConvexError({
+      code: 'unauthorized',
+      message: 'Sign in required',
+    });
   }
   return userId;
 }

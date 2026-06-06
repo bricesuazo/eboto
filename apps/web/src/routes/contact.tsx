@@ -7,12 +7,12 @@ import { z } from 'zod';
 
 import { Button } from '~/components/ui/button';
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
@@ -72,9 +72,7 @@ function ContactInfoPanel() {
             <li key={title} className="flex items-start gap-4">
               <Icon className="mt-1 size-5 shrink-0 opacity-90" />
               <div>
-                <div className="text-xs  text-white/70 uppercase">
-                  {title}
-                </div>
+                <div className="text-xs text-white/70 uppercase">{title}</div>
                 <div className="text-sm">{value}</div>
               </div>
             </li>

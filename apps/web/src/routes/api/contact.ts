@@ -26,7 +26,10 @@ function jsonResponse(body: unknown, status = 200) {
  */
 const CONTACT_WINDOW_MS = 60 * 60 * 1000;
 const CONTACT_LIMIT_PER_WINDOW = 5;
-const contactBuckets = new Map<string, { windowStart: number; count: number }>();
+const contactBuckets = new Map<
+  string,
+  { windowStart: number; count: number }
+>();
 function takeContactToken(ip: string): boolean {
   const now = Date.now();
   const entry = contactBuckets.get(ip);
