@@ -1,4 +1,3 @@
-import { useMemo, useState } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -11,6 +10,7 @@ import {
 import { useMutation } from 'convex/react';
 import { ConvexError } from 'convex/values';
 import { Check, MinusCircle, User as UserIcon } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { api } from '@eboto/backend/api';
@@ -31,6 +31,8 @@ import {
 } from '~/components/ui/alert-dialog';
 import { Button } from '~/components/ui/button';
 import { Checkbox } from '~/components/ui/checkbox';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group';
 import {
   CONVEX_ERROR_FORBIDDEN,
@@ -83,7 +85,8 @@ function BallotPage() {
   );
   if (!data) throw notFound();
   // Extract into locals so the narrowing survives into nested closures.
-  const { election, positions, hasVoted } = data;
+  const { election, positions, hasVoted, voterFields, voter, missingVoterFields } =
+    data;
   const cast = useMutation(api.votes.cast);
   const { data: myBallot } = useQuery({
     ...convexQuery(api.votes.myBallot, { slug: electionSlug }),
@@ -122,7 +125,7 @@ function BallotPage() {
     return (
       <main className="container mx-auto max-w-2xl px-4 py-12 sm:px-6 sm:py-16">
         <div className="text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-[11px] font-semibold tracking-[0.18em] text-foreground uppercase">
+          <span className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs font-semibold  text-foreground uppercase">
             <Check
               className="size-3 text-primary"
               strokeWidth={3}
@@ -130,7 +133,7 @@ function BallotPage() {
             />
             Ballot submitted
           </span>
-          <h1 className="mt-6 text-3xl font-bold tracking-tight text-balance sm:text-4xl">
+          <h1 className="mt-6 text-3xl font-bold text-balance sm:text-4xl">
             You've cast your vote
           </h1>
           <p className="mt-3 text-muted-foreground">
@@ -159,6 +162,19 @@ function BallotPage() {
           />
         </div>
       </main>
+    );
+  }
+
+  // Gate the ballot behind the voter's custom fields: if any required field
+  // is still blank, prompt for them first. The Convex query is reactive, so
+  // once saved this re-renders straight into the ballot.
+  if (missingVoterFields.length > 0) {
+    return (
+      <VoterFieldsPrompt
+        electionId={election._id}
+        fields={voterFields}
+        existing={voter.field as Record<string, string> | undefined}
+      />
     );
   }
 
@@ -218,7 +234,7 @@ function BallotPage() {
       <div className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
         <div className="container mx-auto max-w-3xl px-4 py-3 sm:px-6">
           <div className="flex items-center justify-between gap-4">
-            <p className="text-[10px] font-semibold tracking-[0.22em] text-muted-foreground uppercase">
+            <p className="text-xs font-semibold  text-muted-foreground uppercase">
               Ballot Progress
             </p>
             <p className="text-xs tabular-nums text-muted-foreground">
@@ -246,10 +262,10 @@ function BallotPage() {
 
       <main className="container mx-auto max-w-3xl px-4 pt-10 pb-32 sm:px-6 sm:pt-14">
         <header>
-          <p className="text-[10px] font-semibold tracking-[0.22em] text-muted-foreground uppercase">
+          <p className="text-xs font-semibold  text-muted-foreground uppercase">
             Official ballot
           </p>
-          <h1 className="mt-2 text-3xl font-bold tracking-tight text-balance sm:text-4xl">
+          <h1 className="mt-2 text-3xl font-bold text-balance sm:text-4xl">
             {election.name}
           </h1>
           <p className="mt-3 text-muted-foreground">
@@ -467,11 +483,11 @@ function PositionBlock({
             <span className="text-xs font-semibold tabular-nums text-muted-foreground">
               {String(index + 1).padStart(2, '0')}
             </span>
-            <h2 className="text-xl font-semibold tracking-tight text-balance sm:text-2xl">
+            <h2 className="text-xl font-semibold text-balance sm:text-2xl">
               {position.name}
             </h2>
           </div>
-          <p className="text-[10px] font-medium tracking-widest text-muted-foreground uppercase whitespace-nowrap">
+          <p className="text-xs font-medium tracking-widest text-muted-foreground uppercase whitespace-nowrap">
             {rule}
           </p>
         </div>
@@ -658,11 +674,121 @@ function CandidateCard({
           {formatName(nameArrangement, candidate)}
         </p>
         {candidate.partylistAcronym && (
-          <p className="mt-1 text-[10px] font-medium tracking-[0.15em] text-muted-foreground uppercase">
+          <p className="mt-1 text-xs font-medium  text-muted-foreground uppercase">
             {candidate.partylistAcronym}
           </p>
         )}
       </div>
     </label>
+  );
+}
+
+interface VoterField {
+  _id: string;
+  name: string;
+  type: 'text' | 'number' | 'boolean' | 'date';
+}
+
+/**
+ * Shown before the ballot when the voter still has blank custom fields. Saving
+ * patches the voter's `field` blob; the (reactive) voting-page query then
+ * re-renders straight into the ballot.
+ */
+function VoterFieldsPrompt({
+  electionId,
+  fields,
+  existing,
+}: {
+  electionId: Id<'elections'>;
+  fields: VoterField[];
+  existing: Record<string, string> | undefined;
+}) {
+  const submitFields = useMutation(api.votes.submitVoterFields);
+  const [values, setValues] = useState<Record<string, string>>(() => {
+    const init: Record<string, string> = {};
+    for (const f of fields) {
+      init[f.name] =
+        existing?.[f.name] ?? (f.type === 'boolean' ? 'false' : '');
+    }
+    return init;
+  });
+  const [submitting, setSubmitting] = useState(false);
+
+  function setValue(name: string, value: string) {
+    setValues((prev) => ({ ...prev, [name]: value }));
+  }
+
+  const allFilled = fields.every((f) => (values[f.name] ?? '').trim() !== '');
+
+  async function save() {
+    setSubmitting(true);
+    try {
+      await submitFields({ electionId, fields: values });
+      toast.success('Information saved');
+    } catch (err) {
+      const msg =
+        err instanceof ConvexError
+          ? (err.data as { message?: string }).message
+          : 'Failed to save information';
+      toast.error(msg ?? 'Failed to save information');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <main className="container mx-auto max-w-lg px-4 py-12 sm:px-6 sm:py-16">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold sm:text-3xl">Before you vote</h1>
+        <p className="mt-2 text-muted-foreground">
+          Please complete your voter information to continue.
+        </p>
+      </div>
+      <form
+        className="mt-8 space-y-5"
+        onSubmit={(e) => {
+          e.preventDefault();
+          void save();
+        }}
+      >
+        {fields.map((f) =>
+          f.type === 'boolean' ? (
+            <label key={f._id} className="flex items-center gap-3">
+              <Checkbox
+                checked={values[f.name] === 'true'}
+                onCheckedChange={(checked) =>
+                  setValue(f.name, checked ? 'true' : 'false')
+                }
+              />
+              <span className="text-sm font-medium">{f.name}</span>
+            </label>
+          ) : (
+            <div key={f._id} className="space-y-2">
+              <Label htmlFor={f._id}>{f.name}</Label>
+              <Input
+                id={f._id}
+                type={
+                  f.type === 'number'
+                    ? 'number'
+                    : f.type === 'date'
+                      ? 'date'
+                      : 'text'
+                }
+                value={values[f.name] ?? ''}
+                onChange={(e) => setValue(f.name, e.target.value)}
+                required
+              />
+            </div>
+          ),
+        )}
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={submitting || !allFilled}
+        >
+          {submitting ? 'Saving…' : 'Continue to ballot'}
+        </Button>
+      </form>
+    </main>
   );
 }

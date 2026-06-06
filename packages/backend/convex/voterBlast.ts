@@ -62,72 +62,20 @@ function awsRegion(): string {
 function buildEmail(
   phase: 'start' | 'end',
   election: ElectionForEmail,
-  unsubscribeUrl: string,
 ): { subject: string; html: string; text: string } {
   const url = `${siteOrigin()}/${election.slug}`;
-  const footerHtml = `<p style="color:#888;font-size:12px;margin-top:24px">If you no longer want emails about this election, <a href="${unsubscribeUrl}">unsubscribe</a>.</p>`;
-  const footerText = `\n\nDon't want these emails? Unsubscribe: ${unsubscribeUrl}`;
   if (phase === 'start') {
     return {
       subject: `${election.name} is now open for voting`,
-      text: `${election.name} is open. Cast your ballot at ${url}${footerText}`,
-      html: `<p>Hi voter,</p><p><strong>${election.name}</strong> is now open. Cast your ballot:</p><p><a href="${url}">${url}</a></p><p>— eBoto</p>${footerHtml}`,
+      text: `${election.name} is open. Cast your ballot at ${url}`,
+      html: `<p>Hi voter,</p><p><strong>${election.name}</strong> is now open. Cast your ballot:</p><p><a href="${url}">${url}</a></p><p>— eBoto</p>`,
     };
   }
   return {
     subject: `${election.name} has ended`,
-    text: `${election.name} has ended. View results at ${url}${footerText}`,
-    html: `<p>Hi voter,</p><p><strong>${election.name}</strong> has now ended. Final results:</p><p><a href="${url}">${url}</a></p><p>Thanks for participating.</p><p>— eBoto</p>${footerHtml}`,
+    text: `${election.name} has ended. View results at ${url}`,
+    html: `<p>Hi voter,</p><p><strong>${election.name}</strong> has now ended. Final results:</p><p><a href="${url}">${url}</a></p><p>Thanks for participating.</p><p>— eBoto</p>`,
   };
-}
-
-/**
- * HMAC-signed unsubscribe token. Encodes `(electionId, voterId)` so each link
- * can only opt the matching voter out — guessing voter IDs gets the attacker
- * nowhere without the secret.
- *
- * Format: `base64url(payload).hex(hmac_sha256(secret, payload))`
- *
- * `UNSUBSCRIBE_SECRET` is required in production. We refuse to mint a token
- * without it so a misconfigured env can't ship a publicly-guessable link.
- */
-async function signUnsubscribeToken(
-  electionId: string,
-  voterId: string,
-): Promise<string> {
-  const secret = process.env.UNSUBSCRIBE_SECRET;
-  if (!secret) {
-    throw new Error(
-      'UNSUBSCRIBE_SECRET env var is required to send voter emails',
-    );
-  }
-  const payload = `${electionId}:${voterId}`;
-  const enc = new TextEncoder();
-  const key = await crypto.subtle.importKey(
-    'raw',
-    enc.encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign'],
-  );
-  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(payload));
-  const hex = [...new Uint8Array(sig)]
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
-  const b64 = btoa(payload)
-    .replaceAll('+', '-')
-    .replaceAll('/', '_')
-    .replaceAll('=', '');
-  return `${b64}.${hex}`;
-}
-
-function unsubscribeUrlFor(token: string): string {
-  // Routes to the Convex deployment's HTTP host (not the marketing site),
-  // since the unsubscribe handler is mounted in `http.ts`. Convex injects
-  // `CONVEX_SITE_URL` at runtime in every deployment.
-  const base = process.env.CONVEX_SITE_URL ?? '';
-  const params = new URLSearchParams({ t: token });
-  return `${base}/api/unsubscribe?${params.toString()}`;
 }
 
 /**
@@ -349,12 +297,8 @@ export const processBatch = internalAction({
     });
     if (!election) return { skipped: true as const, reason: 'no-election' };
 
-    // Pull voters in parallel + filter out already-notified and opted-out
-    // voters. Unsubscribed voters get a `voter_notifications` row with the
-    // synthetic `unsubscribed` provider id so the operator can audit suppress
-    // counts — and so a future re-emit doesn't bother re-checking them.
+    // Pull voters in parallel + filter out already-notified voters.
     const voters: { _id: Id<'voters'>; email: string }[] = [];
-    const optedOut: Id<'voters'>[] = [];
     await Promise.all(
       voterIds.map(async (voterId) => {
         const [voter, existing] = await Promise.all([
@@ -365,34 +309,16 @@ export const processBatch = internalAction({
             phase,
           }),
         ]);
-        // Skip only voters already *successfully* notified (a 'sent' row,
-        // including the synthetic 'unsubscribed' suppression). A prior
-        // 'failed' row is retryable — otherwise a transient error (SES
+        // Skip only voters already *successfully* notified (a 'sent' row). A
+        // prior 'failed' row is retryable — otherwise a transient error (SES
         // throttle, a missing env var) would suppress that voter forever.
         if (!voter || existing?.status === 'sent') return;
-        if (voter.unsubscribedAt) {
-          optedOut.push(voter._id);
-          return;
-        }
         voters.push({ _id: voter._id, email: voter.email });
       }),
     );
 
-    // Record suppression so re-runs don't keep re-checking.
-    await Promise.all(
-      optedOut.map((voterId) =>
-        ctx.runMutation(internal.voters.recordNotification, {
-          electionId,
-          voterId,
-          phase,
-          status: 'sent',
-          providerId: 'unsubscribed',
-        }),
-      ),
-    );
-
     if (voters.length === 0) {
-      return { sent: 0, skipped: optedOut.length, batchIndex };
+      return { sent: 0, skipped: 0, batchIndex };
     }
 
     const ses = getSes();
@@ -400,16 +326,7 @@ export const processBatch = internalAction({
     const configurationSet = process.env.SES_CONFIGURATION_SET;
 
     const tasks = voters.map((voter) => async () => {
-      const token = await signUnsubscribeToken(
-        String(electionId),
-        String(voter._id),
-      );
-      const unsubscribeUrl = unsubscribeUrlFor(token);
-      const { subject, html, text } = buildEmail(
-        phase,
-        election,
-        unsubscribeUrl,
-      );
+      const { subject, html, text } = buildEmail(phase, election);
       const command = new SendEmailCommand({
         FromEmailAddress: fromEmail,
         Destination: { ToAddresses: [voter.email] },
@@ -420,13 +337,6 @@ export const processBatch = internalAction({
               Html: { Data: html, Charset: 'UTF-8' },
               Text: { Data: text, Charset: 'UTF-8' },
             },
-            Headers: [
-              { Name: 'List-Unsubscribe', Value: `<${unsubscribeUrl}>` },
-              {
-                Name: 'List-Unsubscribe-Post',
-                Value: 'List-Unsubscribe=One-Click',
-              },
-            ],
           },
         },
         ConfigurationSetName: configurationSet,
@@ -533,6 +443,3 @@ export const sendVoteReceipt = internalAction({
   },
 });
 
-/* The voter unsubscribe HTTP handler lives in `./unsubscribe` — it can't be
- * in this `"use node"` module because Convex forbids `httpAction`s there. The
- * matching `signUnsubscribeToken` stays here next to the sender. */

@@ -41,7 +41,7 @@ function ContactPage() {
   return (
     <main className="container mx-auto max-w-5xl px-6 py-16">
       <div className="space-y-3 text-center">
-        <h1 className="text-4xl font-bold tracking-tight">Contact Us</h1>
+        <h1 className="text-4xl font-bold">Contact Us</h1>
         <p className="mx-auto max-w-prose text-muted-foreground">
           We are happy to answer any questions you may have. Please reach out to
           us and we will respond as soon as we can.

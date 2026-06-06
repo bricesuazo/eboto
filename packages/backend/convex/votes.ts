@@ -122,6 +122,7 @@ export const getVotingPage = query({
       },
       voter: { _id: voter._id, field: voter.field },
       voterFields,
+      missingVoterFields: getMissingVoterFields(voterFields, voter.field),
       hasVoted: Boolean(existingVote),
       positions: positions
         .sort((a, b) => a.order - b.order)
@@ -132,6 +133,99 @@ export const getVotingPage = query({
           ),
         })),
     };
+  },
+});
+
+/**
+ * Names of the election's custom voter fields that the voter hasn't filled in
+ * yet. A field counts as missing when there's no value or only whitespace.
+ * `field` is the voter's stored answer blob (`Record<fieldName, value>`).
+ */
+function getMissingVoterFields(
+  voterFields: { name: string }[],
+  field: unknown,
+): string[] {
+  const values = (field as Record<string, string> | undefined) ?? {};
+  return voterFields
+    .filter((f) => {
+      const value = values[f.name];
+      return value === undefined || value.trim() === '';
+    })
+    .map((f) => f.name);
+}
+
+/**
+ * Lets a registered voter fill in (or update) their own custom voter-field
+ * answers for an election — the voting page prompts for these before showing
+ * the ballot when any required field is missing. Only the election's defined
+ * fields are stored; every one must be non-empty.
+ */
+export const submitVoterFields = mutation({
+  args: {
+    electionId: v.id('elections'),
+    fields: v.record(v.string(), v.string()),
+  },
+  handler: async (ctx, { electionId, fields }) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new ConvexError({ code: 'unauthorized', message: 'Sign in to vote' });
+    }
+    const user = await ctx.db.get(userId);
+    if (!user?.email) {
+      throw new ConvexError({
+        code: 'unauthorized',
+        message: 'Account email is required to vote',
+      });
+    }
+
+    const election = await ctx.db.get(electionId);
+    if (!election || election.deletedAt) {
+      throw new ConvexError({ code: 'not_found', message: 'Election not found' });
+    }
+
+    const voter = await ctx.db
+      .query('voters')
+      .withIndex('by_election_email', (q) =>
+        q.eq('electionId', election._id).eq('email', user.email!),
+      )
+      .filter((q) => q.eq(q.field('deletedAt'), undefined))
+      .first();
+    if (!voter) {
+      throw new ConvexError({
+        code: 'forbidden',
+        message: 'You are not a registered voter for this election',
+      });
+    }
+
+    const voterFields = await ctx.db
+      .query('voter_fields')
+      .withIndex('by_election', (q) => q.eq('electionId', election._id))
+      .filter((q) => q.eq(q.field('deletedAt'), undefined))
+      .collect();
+
+    // Build the stored blob only from the election's defined fields (ignore
+    // any extra keys) and require every one to be non-empty.
+    const merged: Record<string, string> = {
+      ...((voter.field as Record<string, string> | undefined) ?? {}),
+    };
+    const missing: string[] = [];
+    for (const vf of voterFields) {
+      const value = fields[vf.name]?.trim() ?? '';
+      if (!value) {
+        missing.push(vf.name);
+        continue;
+      }
+      merged[vf.name] = value;
+    }
+    if (missing.length > 0) {
+      throw new ConvexError({
+        code: 'invalid_argument',
+        message: `Please fill in all fields: ${missing.join(', ')}`,
+      });
+    }
+
+    await ctx.db.patch(voter._id, { field: merged });
+    return { ok: true as const };
   },
 });
 
@@ -231,6 +325,22 @@ export const cast = mutation({
       throw new ConvexError({
         code: 'conflict',
         message: 'You have already voted in this election',
+      });
+    }
+
+    // Require the voter's custom fields to be filled before accepting a ballot.
+    // The voting page collects these up front, but enforce server-side too so
+    // the requirement can't be bypassed.
+    const voterFields = await ctx.db
+      .query('voter_fields')
+      .withIndex('by_election', (q) => q.eq('electionId', election._id))
+      .filter((q) => q.eq(q.field('deletedAt'), undefined))
+      .collect();
+    const missingVoterFields = getMissingVoterFields(voterFields, voter.field);
+    if (missingVoterFields.length > 0) {
+      throw new ConvexError({
+        code: 'invalid_argument',
+        message: `Please complete your voter information first: ${missingVoterFields.join(', ')}`,
       });
     }
 

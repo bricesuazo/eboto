@@ -1085,12 +1085,7 @@ function ExportVotersButton({
             electionId,
           });
           const customCols = fields.map((f) => f.name);
-          const header = [
-            'email',
-            'voted_at',
-            'unsubscribed_at',
-            ...customCols,
-          ];
+          const header = ['email', 'voted_at', ...customCols];
           const escape = (v: string | number | null | undefined) => {
             if (v == null) return '';
             const s = String(v);
@@ -1102,11 +1097,6 @@ function ExportVotersButton({
             const cols = [
               escape(r.email),
               escape(r.votedAt ? new Date(r.votedAt).toISOString() : ''),
-              escape(
-                r.unsubscribedAt
-                  ? new Date(r.unsubscribedAt).toISOString()
-                  : '',
-              ),
               ...customCols.map((name) => escape(fieldMap[name] ?? '')),
             ];
             lines.push(cols.join(','));

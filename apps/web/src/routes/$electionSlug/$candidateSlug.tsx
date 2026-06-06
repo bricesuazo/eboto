@@ -88,7 +88,7 @@ function CandidatePage() {
       <Link
         to="/$electionSlug"
         params={{ electionSlug }}
-        className="text-muted-foreground hover:text-foreground group inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.18em] uppercase transition-colors"
+        className="text-muted-foreground hover:text-foreground group inline-flex items-center gap-2 text-xs font-semibold  uppercase transition-colors"
       >
         <ArrowLeft
           className="size-3.5 transition-transform group-hover:-translate-x-0.5"
@@ -115,7 +115,7 @@ function CandidatePage() {
           )}
         </div>
 
-        <h1 className="mt-8 text-3xl font-bold tracking-tight text-balance sm:text-5xl">
+        <h1 className="mt-8 text-3xl font-bold text-balance sm:text-5xl">
           {fullName}
         </h1>
 
@@ -148,7 +148,7 @@ function CandidatePage() {
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold tracking-tight text-balance sm:text-xl">
+                    <h3 className="text-lg font-semibold text-balance sm:text-xl">
                       {p.title}
                     </h3>
                     {p.description && (
@@ -212,7 +212,7 @@ function CandidatePage() {
 function Pill({ label, value }: { label: string; value: string }) {
   return (
     <span className="bg-card inline-flex items-center gap-2 rounded-full border px-3 py-1">
-      <span className="text-muted-foreground text-[10px] font-semibold tracking-[0.18em] uppercase">
+      <span className="text-muted-foreground text-xs font-semibold  uppercase">
         {label}
       </span>
       <span className="text-sm font-medium">{value}</span>
@@ -224,7 +224,7 @@ function SectionLabel({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-4">
       <div className="bg-border h-px flex-1" aria-hidden />
-      <p className="text-muted-foreground text-[10px] font-semibold tracking-[0.25em] uppercase">
+      <p className="text-muted-foreground text-sm font-semibold  uppercase">
         {label}
       </p>
       <div className="bg-border h-px flex-1" aria-hidden />
@@ -246,7 +246,7 @@ function CredentialBlock({
     <div>
       <div className="text-muted-foreground mb-4 flex items-center gap-2">
         {icon}
-        <p className="text-[10px] font-semibold tracking-[0.22em] uppercase">
+        <p className="text-xs font-semibold  uppercase">
           {label}
         </p>
       </div>

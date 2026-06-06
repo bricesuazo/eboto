@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -16,6 +15,7 @@ import {
   MinusCircle,
   Trophy,
 } from 'lucide-react';
+import type { ReactNode } from 'react';
 
 import { api } from '@eboto/backend/api';
 
@@ -132,10 +132,10 @@ function ResultPage() {
       <header>
         <div className="flex flex-col items-center text-center">
           <StatusPill status={status} />
-          <h1 className="mt-6 text-3xl font-bold tracking-tight text-balance sm:text-5xl">
+          <h1 className="mt-6 text-3xl font-bold text-balance sm:text-5xl">
             {election.name}
           </h1>
-          <p className="mt-3 text-[11px] font-semibold tracking-[0.22em] text-muted-foreground uppercase">
+          <p className="mt-3 text-xs font-semibold  text-muted-foreground uppercase">
             Election Results
           </p>
         </div>
@@ -154,7 +154,7 @@ function ResultPage() {
             aria-hidden
           />
           <div className="space-y-1">
-            <p className="text-[11px] font-semibold tracking-[0.18em] text-amber-900 uppercase dark:text-amber-200">
+            <p className="text-xs font-semibold  text-amber-900 uppercase dark:text-amber-200">
               Partial & Unofficial
             </p>
             <p className="text-sm leading-relaxed text-amber-900/90 dark:text-amber-100/90">
@@ -181,7 +181,7 @@ function ResultPage() {
             aria-hidden
           />
           <div className="space-y-1">
-            <p className="text-muted-foreground text-[11px] font-semibold tracking-[0.18em] uppercase">
+            <p className="text-muted-foreground text-xs font-semibold  uppercase">
               Voting hasn't started
             </p>
             <p className="text-sm leading-relaxed">
@@ -223,7 +223,7 @@ function ResultPage() {
       </section>
 
       {ongoing && (
-        <p className="mt-12 text-center text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase">
+        <p className="mt-12 text-center text-xs font-medium  text-muted-foreground uppercase">
           Partial & unofficial — revisit for the latest tally
         </p>
       )}
@@ -235,7 +235,7 @@ function SectionLabel({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-4">
       <div className="h-px flex-1 bg-border" aria-hidden />
-      <p className="text-[10px] font-semibold tracking-[0.25em] text-muted-foreground uppercase">
+      <p className="text-xs font-semibold  text-muted-foreground uppercase">
         {label}
       </p>
       <div className="h-px flex-1 bg-border" aria-hidden />
@@ -280,11 +280,11 @@ function PositionResult({
           <span className="text-xs font-semibold text-muted-foreground tabular-nums">
             {String(index + 1).padStart(2, '0')}
           </span>
-          <h2 className="text-xl font-semibold tracking-tight text-balance sm:text-2xl">
+          <h2 className="text-xl font-semibold text-balance sm:text-2xl">
             {position.name}
           </h2>
         </div>
-        <p className="text-[10px] font-medium tracking-widest whitespace-nowrap text-muted-foreground uppercase tabular-nums">
+        <p className="text-xs font-medium tracking-widest whitespace-nowrap text-muted-foreground uppercase tabular-nums">
           {position.totalVotes.toLocaleString()}{' '}
           {position.totalVotes === 1 ? 'vote' : 'votes'} cast
         </p>
@@ -325,12 +325,12 @@ function PositionResult({
                         {name}
                       </p>
                       {showWinner && (
-                        <p className="mt-0.5 text-[10px] font-semibold tracking-[0.2em] text-amber-700 uppercase dark:text-amber-400">
+                        <p className="mt-0.5 text-xs font-semibold  text-amber-700 uppercase dark:text-amber-400">
                           Winner
                         </p>
                       )}
                       {ongoing && isLeading && !showWinner && (
-                        <p className="mt-0.5 text-[10px] font-semibold tracking-[0.2em] text-primary uppercase">
+                        <p className="mt-0.5 text-xs font-semibold  text-primary uppercase">
                           Leading
                         </p>
                       )}
@@ -345,7 +345,7 @@ function PositionResult({
                     >
                       {candidate.votes.toLocaleString()}
                     </span>
-                    <span className="mt-0.5 block text-[11px] leading-none text-muted-foreground">
+                    <span className="mt-0.5 block text-xs leading-none text-muted-foreground">
                       {pct.toFixed(1)}%
                     </span>
                   </div>
@@ -418,7 +418,7 @@ function RankBadge({
 function StatusPill({ status }: { status: Status }) {
   if (status === 'ongoing') {
     return (
-      <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-50 px-3 py-1 text-[11px] font-semibold tracking-[0.18em] text-amber-800 uppercase dark:bg-amber-500/10 dark:text-amber-300">
+      <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-50 px-3 py-1 text-xs font-semibold  text-amber-800 uppercase dark:bg-amber-500/10 dark:text-amber-300">
         <span className="relative flex size-1.5" aria-hidden>
           <span className="absolute inset-0 animate-ping rounded-full bg-amber-500 opacity-60" />
           <span className="relative size-1.5 rounded-full bg-amber-500" />
@@ -429,14 +429,14 @@ function StatusPill({ status }: { status: Status }) {
   }
   if (status === 'upcoming') {
     return (
-      <span className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-[11px] font-semibold tracking-[0.18em] text-foreground uppercase">
+      <span className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs font-semibold  text-foreground uppercase">
         <span className="size-1.5 rounded-full bg-amber-500" aria-hidden />
         Upcoming
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-[11px] font-semibold tracking-[0.18em] text-foreground uppercase">
+    <span className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs font-semibold  text-foreground uppercase">
       <span className="size-1.5 rounded-full bg-emerald-500" aria-hidden />
       Concluded
     </span>
@@ -446,7 +446,7 @@ function StatusPill({ status }: { status: Status }) {
 function MetaCell({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="px-4 py-4 sm:py-5">
-      <dt className="text-[10px] font-semibold tracking-[0.22em] text-muted-foreground uppercase">
+      <dt className="text-xs font-semibold  text-muted-foreground uppercase">
         {label}
       </dt>
       <dd className="mt-1.5 text-sm leading-snug font-medium">{value}</dd>

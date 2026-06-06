@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { ArrowRight, Check, ChevronDown, Rocket, Sparkles } from 'lucide-react';
+import { useState } from 'react';
 
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -38,7 +38,7 @@ function WhatIsEboto() {
   return (
     <section id="what" className="border-b">
       <div className="container mx-auto max-w-6xl px-6 py-20 sm:py-24">
-        <h2 className="text-center text-3xl font-bold tracking-tight text-balance sm:text-4xl">
+        <h2 className="text-center text-3xl font-bold text-balance sm:text-4xl">
           Ano ang eBoto? (What is eBoto?)
         </h2>
         <div className="mt-10 aspect-video overflow-hidden rounded-2xl border bg-muted shadow-sm">
@@ -69,7 +69,7 @@ function Hero() {
             <Sparkles className="size-3" />
             Open-source online voting platform
           </Badge>
-          <h1 className="text-4xl font-bold tracking-tight text-balance sm:text-5xl lg:text-6xl">
+          <h1 className="text-4xl font-bold text-balance sm:text-5xl lg:text-6xl">
             Your one-stop online voting solution
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-balance text-muted-foreground sm:text-xl">
@@ -104,7 +104,7 @@ function Features() {
     <section className="border-b">
       <div className="container mx-auto max-w-6xl px-6 py-20 sm:py-24">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+          <h2 className="text-3xl font-bold sm:text-4xl">
             Everything you need to run an election
           </h2>
           <p className="mt-4 text-muted-foreground">
@@ -143,7 +143,7 @@ function Pricing() {
     <section id="pricing" className="border-b">
       <div className="container mx-auto max-w-6xl px-6 py-12 sm:py-16">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+          <h2 className="text-3xl font-bold sm:text-4xl">
             Simple pricing
           </h2>
           <p className="mt-4 text-muted-foreground">
@@ -168,7 +168,7 @@ function Pricing() {
                   )}
                 </div>
                 <div className="mt-3 flex items-baseline gap-1">
-                  <span className="text-3xl font-bold tracking-tight">
+                  <span className="text-3xl font-bold">
                     {tier.price}
                   </span>
                   {tier.cadence && (
@@ -205,7 +205,7 @@ function Pricing() {
 
       <div className="container mx-auto max-w-4xl px-6 py-12 sm:py-16">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+          <h2 className="text-3xl font-bold sm:text-4xl">
             Scale up only when you need to
           </h2>
           <p className="mt-4 text-muted-foreground">
@@ -221,7 +221,7 @@ function Pricing() {
                 <div className="text-sm font-medium tracking-wide text-muted-foreground uppercase">
                   Boost · per election
                 </div>
-                <div className="mt-2 text-5xl font-bold tracking-tight">
+                <div className="mt-2 text-5xl font-bold">
                   {isUnlimited
                     ? 'Contact us'
                     : peso.format(BOOST_BASE_PRICE + tier.priceAdded)}
@@ -279,7 +279,7 @@ function Faq() {
     <section id="faq" className="border-b">
       <div className="container mx-auto max-w-3xl px-6 py-20 sm:py-24">
         <div className="text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+          <h2 className="text-3xl font-bold sm:text-4xl">
             Frequently asked questions
           </h2>
           <p className="mt-4 text-muted-foreground">
@@ -320,7 +320,7 @@ function FinalCta() {
       <div className="container mx-auto max-w-4xl px-6 py-20 sm:py-24">
         <Card className="border-primary/30 bg-linear-to-br from-primary/10 to-transparent">
           <CardContent className="flex flex-col items-center gap-6 px-6 py-12 text-center sm:px-12">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            <h2 className="text-3xl font-bold sm:text-4xl">
               Run your next election on eBoto
             </h2>
             <p className="max-w-xl text-muted-foreground">
