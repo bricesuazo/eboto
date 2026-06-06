@@ -8,8 +8,10 @@ node_modules
 # testing
 coverage
 
-# next.js
-.next/
+# build outputs
+.output/
+.vinxi/
+.nitro/
 out/
 build
 
@@ -35,7 +37,7 @@ yarn-error.log*
 .vercel
 .env*.local
 
-.react-email
-
 dist
 .cache
+
+tsconfig.tsbuildinfo

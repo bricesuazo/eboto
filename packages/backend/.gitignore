@@ -1,0 +1,8 @@
+node_modules
+.turbo
+.cache
+
+# Convex auto-generated types — regenerated on every `convex dev`/`convex codegen`.
+convex/_generated
+
+.env.local

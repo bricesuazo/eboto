@@ -1,20 +1,14 @@
 {
   "name": "eboto",
-  "packageManager": "pnpm@10.15.1+sha512.34e538c329b5553014ca8e8f4535997f96180a1d0f614339357449935350d924e22f8614682191264ec33d1462ac21561aff97f6bb18065351c162c7e8f6de67",
+  "packageManager": "pnpm@11.1.2",
   "private": true,
   "scripts": {
     "build": "turbo run build",
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "turbo run clean",
-    "db:cli": "pnpm db:dump && pnpm db:gen && pnpm db:diff",
-    "db:push": "supabase db push",
-    "db:diff": "supabase db diff --local -f",
-    "db:gen": "supabase gen types typescript --local --schema public > supabase/types.ts",
-    "db:reset": "supabase db reset --local",
-    "db:dump": "supabase db dump -f supabase/schema.sql --local",
-    "email:dev": "pnpm turbo --filter=@eboto/email email:dev",
-    "dev": "turbo dev --parallel",
-    "start": "turbo start --parallel",
+    "deploy": "pnpm --filter @eboto/backend deploy",
+    "dev": "turbo dev",
+    "start": "turbo start",
     "postinstall": "pnpm lint:ws",
     "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
     "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache",
@@ -27,9 +21,9 @@
   "prettier": "@eboto/prettier-config",
   "devDependencies": {
     "@eboto/prettier-config": "workspace:*",
-    "@turbo/gen": "2.5.6",
+    "@turbo/gen": "^2.9.12",
     "prettier": "catalog:",
-    "turbo": "2.5.6",
+    "turbo": "^2.9.12",
     "typescript": "catalog:"
   }
 }

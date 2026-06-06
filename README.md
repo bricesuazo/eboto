@@ -4,42 +4,42 @@
 
 Empower your elections with eBoto, the versatile and web-based voting platform that offers secure online elections for any type of organization.
 
-- **Monorepo**: [TurboRepo](https://turbo.build/)
-- **Framework**: [Next.js](https://nextjs.org/) + [Typescript](https://www.typescriptlang.org/)
-- **Database, Storage, and Authentication**: [Supabase](https://supabase.com/)
-- **API**: [tRPC](https://trpc.io/) + [TanStack Query](https://tanstack.com/query/)
-- **Payment**: [Lemon Squeezy](https://www.lemonsqueezy.com/)
-- **Deployment**: [Vercel](https://vercel.com)
-- **Styling**: [Mantine](https://mantine.dev/)
-- **Email**: [React Email](https://react.email/) + [Amazon SES](https://aws.amazon.com/ses/)
-- **Data Validator**: [Zod](https://zod.dev/)
-- **Analytics**: [PostHog](https://posthog.com/)
+- **Monorepo**: [TurboRepo](https://turbo.build/) + [pnpm](https://pnpm.io/)
+- **Framework**: [TanStack Start](https://tanstack.com/start) (Vite + React, SSR)
+- **Backend**: [Convex](https://convex.dev/) — schema, queries, mutations, storage, auth
+- **Auth**: [`@convex-dev/auth`](https://labs.convex.dev/auth) (magic link + Google)
+- **UI**: [shadcn/ui](https://ui.shadcn.com/) + [Tailwind CSS v4](https://tailwindcss.com/) + [Lucide](https://lucide.dev/)
+- **Forms**: [react-hook-form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
+- **Jobs**: [Inngest](https://www.inngest.com/) (served from `/api/inngest`)
+- **Payment**: [Lemon Squeezy](https://www.lemonsqueezy.com/) (webhook at `/api/billing/webhook`)
+- **Deployment**: [Vercel](https://vercel.com) (or any Node-compatible host) + Convex Cloud
 
-## Running Locally
-
-### For the [Web](/apps/www) Version
+## Running locally
 
 ```bash
 git clone https://github.com/bricesuazo/eboto.git
 cd eboto
 pnpm install
-pnpm run dev
+
+# provisions a Convex deployment, generates types, writes
+# CONVEX_DEPLOYMENT + VITE_CONVEX_URL into ./.env
+pnpm dev
 ```
 
-Create a `.env` file similar to [`.env.example`](.env.example).
+Copy `.env.example` to `.env` for the rest of the optional env vars.
+Configure Convex Auth secrets (`AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `JWT_PRIVATE_KEY`, `JWKS`) in the Convex dashboard.
 
-### For the [Mobile](/apps/mobile) Version
+## Layout
 
-```bash
-Coming soon...
+```
+apps/web              TanStack Start frontend
+packages/backend      Convex deployment (schema, queries, mutations, auth)
+tooling/{eslint,prettier,tsconfig}   shared dev configs
 ```
 
-### For the [Local](/apps/local) Version
-
-```bash
-Coming soon...
-```
+See [`apps/web/MIGRATION.md`](apps/web/MIGRATION.md) for the detailed
+migration log from the prior Next.js + Supabase + Mantine stack.
 
 ## License
 
-This project is licensed under the GNU Affero General Public License v3.0 License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU Affero General Public License v3.0 — see [LICENSE](LICENSE) for details.

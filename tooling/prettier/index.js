@@ -1,9 +1,23 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 /** @typedef  {import("prettier").Config} PrettierConfig */
 /** @typedef  {import("@ianvs/prettier-plugin-sort-imports").PluginConfig} SortImportsConfig */
+/** @typedef  {import("prettier-plugin-tailwindcss").PluginOptions} TailwindConfig */
 
-/** @type { PrettierConfig | SortImportsConfig } */
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+/** @type { PrettierConfig | SortImportsConfig | TailwindConfig } */
 const config = {
-  plugins: ['@ianvs/prettier-plugin-sort-imports'],
+  plugins: [
+    '@ianvs/prettier-plugin-sort-imports',
+    'prettier-plugin-tailwindcss',
+  ],
+  tailwindStylesheet: path.join(
+    __dirname,
+    '../../apps/web/src/styles/globals.css',
+  ),
+  tailwindFunctions: ['cn', 'cva'],
   trailingComma: 'all',
   singleQuote: true,
   semi: true,
