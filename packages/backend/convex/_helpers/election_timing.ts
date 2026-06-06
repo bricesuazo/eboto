@@ -87,7 +87,11 @@ function partsInZone(instant: number, timezone: string): WallClock {
 }
 
 /** The UTC calendar Y-M-D encoded by a stored midnight-marker timestamp. */
-function calendarDay(dateMs: number): { year: number; month: number; day: number } {
+function calendarDay(dateMs: number): {
+  year: number;
+  month: number;
+  day: number;
+} {
   const d = new Date(dateMs);
   return {
     year: d.getUTCFullYear(),
@@ -99,7 +103,14 @@ function calendarDay(dateMs: number): { year: number; month: number; day: number
 /** Offset (ms) of `timezone` at a given instant: zonedWallClock − instant. */
 function offsetMsAt(instant: number, timezone: string): number {
   const p = partsInZone(instant, timezone);
-  const asUtc = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second);
+  const asUtc = Date.UTC(
+    p.year,
+    p.month - 1,
+    p.day,
+    p.hour,
+    p.minute,
+    p.second,
+  );
   return asUtc - instant;
 }
 

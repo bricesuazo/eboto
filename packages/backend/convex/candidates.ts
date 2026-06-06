@@ -1,10 +1,7 @@
 import { ConvexError, v } from 'convex/values';
 
 import { mutation, query } from './_generated/server';
-import {
-  requireCommissioner,
-  requireElectionEditable,
-} from './_helpers/auth';
+import { requireCommissioner, requireElectionEditable } from './_helpers/auth';
 
 /**
  * Returns `null` when the election or candidate doesn't exist. Routes treat

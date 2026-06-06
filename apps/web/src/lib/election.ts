@@ -1,10 +1,11 @@
+import dayjs from 'dayjs';
+
 import type { ElectionTiming } from '@eboto/backend/election-timing';
 import {
   isElectionEnded as isElectionEndedShared,
   isElectionInProgress,
   isVotingOpen,
 } from '@eboto/backend/election-timing';
-import dayjs from 'dayjs';
 
 // Re-export the shared helpers so existing imports from `~/lib/election`
 // keep working. The single source of truth lives in

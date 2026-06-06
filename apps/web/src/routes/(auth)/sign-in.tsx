@@ -1,16 +1,12 @@
+import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { AlertCircleIcon, MailIcon } from 'lucide-react';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from '~/components/ui/alert';
+import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
 import {
   Form,
@@ -24,10 +20,7 @@ import { Input } from '~/components/ui/input';
 import { Spinner } from '~/components/ui/spinner';
 import { useAuthActions } from '~/lib/auth/provider';
 import type { SignInError } from '~/lib/constants';
-import {
-  parseSignInError,
-  SIGN_IN_ERROR_MESSAGES
-} from '~/lib/constants';
+import { parseSignInError, SIGN_IN_ERROR_MESSAGES } from '~/lib/constants';
 import { safeInternalPath } from '~/lib/redirect';
 import googleIcon from './../../images/google-logo.svg';
 
@@ -112,16 +105,11 @@ function SignInPage() {
           <Alert variant="destructive">
             <AlertCircleIcon />
             <AlertTitle>Sign-in failed</AlertTitle>
-            <AlertDescription>
-              {SIGN_IN_ERROR_MESSAGES[error]}
-            </AlertDescription>
+            <AlertDescription>{SIGN_IN_ERROR_MESSAGES[error]}</AlertDescription>
           </Alert>
         ) : null}
         <Form {...form}>
-          <form
-            className="space-y-4"
-            onSubmit={form.handleSubmit(onSubmit)}
-          >
+          <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
             <FormField
               control={form.control}
               name="email"
@@ -147,7 +135,7 @@ function SignInPage() {
           </form>
         </Form>
 
-      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4">
           <div className="h-px flex-1 bg-border" aria-hidden />
           <p className="text-sm font-semibold text-muted-foreground uppercase">
             or

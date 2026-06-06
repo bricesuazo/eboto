@@ -1,10 +1,7 @@
 import { ConvexError, v } from 'convex/values';
 
 import { mutation, query } from './_generated/server';
-import {
-  requireCommissioner,
-  requireElectionEditable,
-} from './_helpers/auth';
+import { requireCommissioner, requireElectionEditable } from './_helpers/auth';
 import { voterFieldType } from './schema';
 
 export const list = query({
@@ -93,8 +90,7 @@ export const update = mutation({
       .collect();
     if (
       conflict.some(
-        (f) =>
-          f._id !== id && f.name.toLowerCase() === trimmed.toLowerCase(),
+        (f) => f._id !== id && f.name.toLowerCase() === trimmed.toLowerCase(),
       )
     ) {
       throw new ConvexError({
@@ -145,7 +141,9 @@ export const statsByField = query({
     return fields.map((f) => {
       const buckets = new Map<string, { total: number; voted: number }>();
       const fieldData = (raw: unknown): Record<string, unknown> | null =>
-        raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : null;
+        raw && typeof raw === 'object'
+          ? (raw as Record<string, unknown>)
+          : null;
       for (const voter of voters) {
         const data = fieldData(voter.field);
         const cell = data ? data[f.name] : undefined;

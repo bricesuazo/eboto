@@ -4,10 +4,10 @@ import { api } from '@eboto/backend/api';
 
 import type { ElectionLifecycleData } from '../client';
 import {
-    ELECTION_LIFECYCLE_EVENT,
-    blastTriggerSecretFromEnv,
-    convexUrlFromEnv,
-    inngest
+  blastTriggerSecretFromEnv,
+  convexUrlFromEnv,
+  ELECTION_LIFECYCLE_EVENT,
+  inngest,
 } from '../client';
 
 /**
@@ -32,9 +32,7 @@ export const electionStarted = inngest.createFunction(
   {
     id: 'election-started',
     triggers: [{ event: ELECTION_LIFECYCLE_EVENT }],
-    cancelOn: [
-      { event: ELECTION_LIFECYCLE_EVENT, match: 'data.electionId' },
-    ],
+    cancelOn: [{ event: ELECTION_LIFECYCLE_EVENT, match: 'data.electionId' }],
   },
   async ({ event, step }) => {
     const { electionId, slug, startAt } = event.data as ElectionLifecycleData;
@@ -59,9 +57,7 @@ export const electionEnded = inngest.createFunction(
   {
     id: 'election-ended',
     triggers: [{ event: ELECTION_LIFECYCLE_EVENT }],
-    cancelOn: [
-      { event: ELECTION_LIFECYCLE_EVENT, match: 'data.electionId' },
-    ],
+    cancelOn: [{ event: ELECTION_LIFECYCLE_EVENT, match: 'data.electionId' }],
   },
   async ({ event, step }) => {
     const { electionId, slug, endAt } = event.data as ElectionLifecycleData;
@@ -85,7 +81,8 @@ export const electionEnded = inngest.createFunction(
       const election = await convex.query(api.elections.getPublicById, {
         id: electionId,
       });
-      if (!election) return { skipped: true, slug, blast: blastResult } as const;
+      if (!election)
+        return { skipped: true, slug, blast: blastResult } as const;
       await convex.action(api.results.generateTurnoutPdf, { electionId });
       return { endedAt: Date.now(), slug, blast: blastResult } as const;
     });

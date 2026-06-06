@@ -53,9 +53,9 @@ function VoterMessagesPage() {
     convexQuery(api.elections.getBySlug, { slug: electionSlug }),
   );
   const ensureMyVoterRoom = useMutation(api.messaging.ensureMyVoterRoom);
-  const [roomId, setRoomId] = useState<
-    Id<'commissionersVotersRooms'> | null
-  >(null);
+  const [roomId, setRoomId] = useState<Id<'commissionersVotersRooms'> | null>(
+    null,
+  );
   const [error, setError] = useState<string | null>(null);
 
   // Lazily create the room on mount. Voters who never open this page won't
@@ -79,14 +79,14 @@ function VoterMessagesPage() {
     <main className="container mx-auto max-w-2xl px-6 py-8">
       <div className="mb-4">
         <h1 className="text-2xl font-bold">Messages</h1>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           Direct line to the commissioners of {data.election.name}.
         </p>
       </div>
       <Card className="overflow-hidden p-0">
         <div className="h-[640px]">
           {error ? (
-            <CardContent className="text-destructive flex h-full items-center justify-center text-sm">
+            <CardContent className="flex h-full items-center justify-center text-sm text-destructive">
               {error}
             </CardContent>
           ) : roomId ? (
@@ -97,7 +97,7 @@ function VoterMessagesPage() {
               emptyState="Send a message to the commissioners."
             />
           ) : (
-            <CardContent className="text-muted-foreground flex h-full items-center justify-center text-sm">
+            <CardContent className="flex h-full items-center justify-center text-sm text-muted-foreground">
               Opening chat…
             </CardContent>
           )}

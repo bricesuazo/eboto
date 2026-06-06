@@ -8,7 +8,8 @@
     "./schema": "./convex/schema.ts",
     "./auth": "./convex/auth.ts",
     "./election-timing": "./convex/_helpers/election_timing.ts",
-    "./slugs": "./convex/_helpers/slugs.ts"
+    "./slugs": "./convex/_helpers/slugs.ts",
+    "./templates": "./convex/_helpers/templates.ts"
   },
   "typesVersions": {
     "*": {
@@ -29,6 +30,9 @@
       ],
       "slugs": [
         "./convex/_helpers/slugs.ts"
+      ],
+      "templates": [
+        "./convex/_helpers/templates.ts"
       ]
     }
   },

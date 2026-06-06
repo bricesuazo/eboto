@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, notFound } from '@tanstack/react-router';
@@ -15,7 +16,6 @@ import {
   Users,
   UserSearch,
 } from 'lucide-react';
-import { useState } from 'react';
 import {
   Bar,
   BarChart,
@@ -148,7 +148,7 @@ function OverviewPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardDescription>Voting window</CardDescription>
-            <CardTitle className="text-base ">
+            <CardTitle className="text-base">
               {dayjs(election.startDate).format('MMM D, YYYY')} –{' '}
               {dayjs(election.endDate).format('MMM D, YYYY')}
             </CardTitle>
@@ -163,7 +163,7 @@ function OverviewPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardDescription>Publicity</CardDescription>
-            <CardTitle className="text-base  capitalize">
+            <CardTitle className="text-base capitalize">
               {election.publicity.toLowerCase()}
             </CardTitle>
           </CardHeader>
@@ -268,16 +268,16 @@ function OverviewPage() {
       </div>
 
       <Card className="gap-4">
-        <CardHeader >
+        <CardHeader>
           <div className="flex items-center justify-between gap-4">
             <CardTitle>Voter turnout report</CardTitle>
-              <GenerateReportButton electionId={election._id} />
-              </div>
-            <CardDescription>
-              {stats.checklist.hasEnded
-                ? 'PDF reports auto-generate when the election ends. Download a fresh copy or trigger one manually.'
-                : 'Available after the election ends. Generate one anyway if you need a snapshot now.'}
-            </CardDescription>
+            <GenerateReportButton electionId={election._id} />
+          </div>
+          <CardDescription>
+            {stats.checklist.hasEnded
+              ? 'PDF reports auto-generate when the election ends. Download a fresh copy or trigger one manually.'
+              : 'Available after the election ends. Generate one anyway if you need a snapshot now.'}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {reports.length === 0 ? (
@@ -291,7 +291,7 @@ function OverviewPage() {
                 >
                   <div>
                     <div className="font-medium">
-                      {(r.summary.percent.toFixed(2))}% turnout —{' '}
+                      {r.summary.percent.toFixed(2)}% turnout —{' '}
                       {r.summary.voted.toLocaleString()} of{' '}
                       {r.summary.total.toLocaleString()}
                     </div>
@@ -451,7 +451,7 @@ function FieldStatsBlock({
     <div className="space-y-2">
       <div className="flex items-baseline gap-2">
         <span className="font-mono text-sm">{field.name}</span>
-        <span className="text-xs  text-muted-foreground uppercase">
+        <span className="text-xs text-muted-foreground uppercase">
           {field.type}
         </span>
       </div>

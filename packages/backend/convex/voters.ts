@@ -1,11 +1,10 @@
 import { paginationOptsValidator } from 'convex/server';
 import { ConvexError, v } from 'convex/values';
 
+import type { Id } from './_generated/dataModel';
 import { internalQuery, query } from './_generated/server';
-import {
-  requireCommissioner,
-  requireElectionEditable,
-} from './_helpers/auth';
+import type { MutationCtx } from './_generated/server';
+import { requireCommissioner, requireElectionEditable } from './_helpers/auth';
 import { getElectionTier } from './_helpers/billing';
 import {
   internalMutation,
@@ -14,8 +13,6 @@ import {
 } from './_helpers/triggers';
 import { votedByElection, votersByElection } from './aggregates';
 import { voterNotificationPhase } from './schema';
-import type { Id } from './_generated/dataModel';
-import type { MutationCtx } from './_generated/server';
 
 /**
  * Resolves the voter cap for an election from its billing tier. Returns

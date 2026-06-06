@@ -2,7 +2,7 @@ import { Inngest } from 'inngest';
 
 import type { Id } from '@eboto/backend/data-model';
 
-export const inngest = new Inngest({ id: 'eboto', });
+export const inngest = new Inngest({ id: 'eboto' });
 
 export const ELECTION_LIFECYCLE_EVENT = 'eboto/election.lifecycle';
 

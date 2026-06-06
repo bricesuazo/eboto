@@ -442,4 +442,3 @@ export const sendVoteReceipt = internalAction({
     return { sent: true as const };
   },
 });
-

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
@@ -6,13 +7,13 @@ import { useAction, useMutation } from 'convex/react';
 import { ConvexError } from 'convex/values';
 import dayjs from 'dayjs';
 import { Loader2, Minus, Plus, Rocket } from 'lucide-react';
-import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { api } from '@eboto/backend/api';
 import { votingEndAt, votingStartAt } from '@eboto/backend/election-timing';
 import { slugify } from '@eboto/backend/slugs';
+import { POSITION_TEMPLATES } from '@eboto/backend/templates';
 
 import { DatePicker } from '~/components/date-picker';
 import { ImageUpload } from '~/components/image-upload';
@@ -405,14 +406,19 @@ function NewElectionPage() {
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Pick a template" />
+                          <SelectValue placeholder="Pick a template">
+                            {POSITION_TEMPLATES[field.value]?.label}
+                          </SelectValue>
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="min-w-74">
-                        <SelectItem value="none">No template</SelectItem>
-                        <SelectItem value="ssg">
-                          Supreme Student Government (SSG)
-                        </SelectItem>
+                        {Object.entries(POSITION_TEMPLATES).map(
+                          ([id, template]) => (
+                            <SelectItem key={id} value={id}>
+                              {template.label}
+                            </SelectItem>
+                          ),
+                        )}
                       </SelectContent>
                     </Select>
                     <FormDescription>
@@ -482,7 +488,7 @@ function PlusUpgradePrompt() {
 
   return (
     <div className="mb-6 rounded-2xl border-2 border-dashed border-emerald-500/50 p-6 dark:border-emerald-800">
-      <h2 className="text-lg ">You've used your free election</h2>
+      <h2 className="text-lg">You've used your free election</h2>
       <p className="mt-1 text-sm text-muted-foreground">
         Each account gets one free election. Purchase Plus to add another — each
         Plus credit unlocks one extra election. See the{' '}
@@ -517,7 +523,7 @@ function PlusUpgradePrompt() {
             }}
             disabled={pending}
             aria-label="Number of Plus credits"
-            className="w-12 bg-transparent text-center text-sm font-medium tabular-nums outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+            className="w-12 [appearance:textfield] bg-transparent text-center text-sm font-medium tabular-nums outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           />
           <Button
             type="button"

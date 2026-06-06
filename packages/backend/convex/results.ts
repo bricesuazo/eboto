@@ -1,6 +1,6 @@
 import { getAuthUserId } from '@convex-dev/auth/server';
 import { ConvexError, v } from 'convex/values';
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
 import { api, internal } from './_generated/api';
 import type { Id } from './_generated/dataModel';
@@ -13,14 +13,14 @@ import {
 } from './_generated/server';
 import { requireCommissioner } from './_helpers/auth';
 import {
-  isElectionEnded,
-  isElectionInProgress,
-} from './_helpers/election_timing';
-import {
   FREE_RESULTS_LATENCY_MS,
   freeTierResultsCutoff,
   isFreeTier,
 } from './_helpers/billing';
+import {
+  isElectionEnded,
+  isElectionInProgress,
+} from './_helpers/election_timing';
 
 /**
  * Live election tally. Candidates are anonymized as `Candidate N` while the
@@ -227,9 +227,7 @@ export const getBySlug = query({
             .sort((a, b) => b.votes - a.votes)
             .map((c, index) => ({
               ...c,
-              displayName: showRealNames
-                ? undefined
-                : `Candidate ${index + 1}`,
+              displayName: showRealNames ? undefined : `Candidate ${index + 1}`,
             }));
 
           return {
@@ -390,10 +388,10 @@ export const generateTurnoutPdf = action({
     drawLine('Turnout Report', { bold: true, size: 22 });
     drawLine(snapshot.election.name, { bold: true, size: 14 });
     drawLine(`/${snapshot.election.slug}`, { color: muted });
-    drawLine(
-      `Generated ${new Date(generatedAt).toISOString()}`,
-      { color: muted, size: 9 },
-    );
+    drawLine(`Generated ${new Date(generatedAt).toISOString()}`, {
+      color: muted,
+      size: 9,
+    });
     cursorY -= lineHeight;
 
     drawLine('Summary', { bold: true, size: 13 });
@@ -446,9 +444,13 @@ export const triggerTurnoutPdf = action({
   args: { electionId: v.id('elections') },
   handler: async (ctx, { electionId }): Promise<{ scheduled: true }> => {
     await ctx.runQuery(internal.results.assertCommissioner, { electionId });
-    await ctx.scheduler.runAfter(0, internal.results.generateTurnoutPdfInternal, {
-      electionId,
-    });
+    await ctx.scheduler.runAfter(
+      0,
+      internal.results.generateTurnoutPdfInternal,
+      {
+        electionId,
+      },
+    );
     return { scheduled: true };
   },
 });

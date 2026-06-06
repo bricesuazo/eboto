@@ -1,16 +1,16 @@
+import { useMemo, useState } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
 import {
-    createFileRoute,
-    Link,
-    notFound,
-    redirect,
-    useNavigate,
+  createFileRoute,
+  Link,
+  notFound,
+  redirect,
+  useNavigate,
 } from '@tanstack/react-router';
 import { useMutation } from 'convex/react';
 import { ConvexError } from 'convex/values';
 import { Check, MinusCircle, User as UserIcon } from 'lucide-react';
-import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { api } from '@eboto/backend/api';
@@ -19,15 +19,15 @@ import type { Id } from '@eboto/backend/data-model';
 import { PagePending } from '~/components/page-pending';
 import { SubmittedBallot } from '~/components/submitted-ballot';
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from '~/components/ui/alert-dialog';
 import { Button } from '~/components/ui/button';
 import { Checkbox } from '~/components/ui/checkbox';
@@ -35,9 +35,9 @@ import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group';
 import {
-    CONVEX_ERROR_FORBIDDEN,
-    CONVEX_ERROR_NOT_FOUND,
-    CONVEX_ERROR_VOTING_CLOSED,
+  CONVEX_ERROR_FORBIDDEN,
+  CONVEX_ERROR_NOT_FOUND,
+  CONVEX_ERROR_VOTING_CLOSED,
 } from '~/lib/constants';
 import { formatName, isVotingOpen } from '~/lib/election';
 import type { Choice } from '~/lib/stores/ballot';
@@ -85,8 +85,14 @@ function BallotPage() {
   );
   if (!data) throw notFound();
   // Extract into locals so the narrowing survives into nested closures.
-  const { election, positions, hasVoted, voterFields, voter, missingVoterFields } =
-    data;
+  const {
+    election,
+    positions,
+    hasVoted,
+    voterFields,
+    voter,
+    missingVoterFields,
+  } = data;
   const cast = useMutation(api.votes.cast);
   const { data: myBallot } = useQuery({
     ...convexQuery(api.votes.myBallot, { slug: electionSlug }),
@@ -125,7 +131,7 @@ function BallotPage() {
     return (
       <main className="container mx-auto max-w-2xl px-4 py-12 sm:px-6 sm:py-16">
         <div className="text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs   text-foreground uppercase">
+          <span className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs text-foreground uppercase">
             <Check
               className="size-3 text-primary"
               strokeWidth={3}
@@ -234,15 +240,12 @@ function BallotPage() {
       <div className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
         <div className="container mx-auto max-w-3xl px-4 py-3 sm:px-6">
           <div className="flex items-center justify-between gap-4">
-            <p className="text-xs   text-muted-foreground uppercase">
+            <p className="text-xs text-muted-foreground uppercase">
               Ballot Progress
             </p>
-            <p className="text-xs tabular-nums text-muted-foreground">
-              <span className=" text-foreground">
-                {completedCount}
-              </span>{' '}
-              / {totalPositions}{' '}
-              {totalPositions === 1 ? 'position' : 'positions'}
+            <p className="text-xs text-muted-foreground tabular-nums">
+              <span className="text-foreground">{completedCount}</span> /{' '}
+              {totalPositions} {totalPositions === 1 ? 'position' : 'positions'}
             </p>
           </div>
           <div
@@ -262,7 +265,7 @@ function BallotPage() {
 
       <main className="container mx-auto max-w-3xl px-4 pt-10 pb-32 sm:px-6 sm:pt-14">
         <header>
-          <p className="text-xs   text-muted-foreground uppercase">
+          <p className="text-xs text-muted-foreground uppercase">
             Official ballot
           </p>
           <h1 className="mt-2 text-3xl font-bold text-balance sm:text-4xl">
@@ -330,8 +333,8 @@ function BallotPage() {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Confirm your ballot</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Review your selections below. Once submitted, your ballot
-                    is final and cannot be changed.
+                    Review your selections below. Once submitted, your ballot is
+                    final and cannot be changed.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
 
@@ -458,15 +461,11 @@ function PositionBlock({
     max: number,
   ) => void;
 }) {
-  const rule = isSingle
-    ? 'Choose 1'
-    : `Choose ${position.min}–${position.max}`;
+  const rule = isSingle ? 'Choose 1' : `Choose ${position.min}–${position.max}`;
   const statusLabel = (() => {
     if (isAbstain) return 'Abstained';
     if (selectedCount === 0) {
-      return position.min > 0
-        ? `${position.min} required`
-        : 'No selection';
+      return position.min > 0 ? `${position.min} required` : 'No selection';
     }
     if (isSingle) return '1 selected';
     return `${selectedCount} selected`;
@@ -480,14 +479,14 @@ function PositionBlock({
       <div className="mb-6 border-b border-foreground/15 pb-3">
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
           <div className="flex items-baseline gap-3">
-            <span className="text-xs  tabular-nums text-muted-foreground">
+            <span className="text-xs text-muted-foreground tabular-nums">
               {String(index + 1).padStart(2, '0')}
             </span>
-            <h2 className="text-xl  text-balance sm:text-2xl">
+            <h2 className="text-xl text-balance sm:text-2xl">
               {position.name}
             </h2>
           </div>
-          <p className="text-xs font-medium  text-muted-foreground uppercase whitespace-nowrap">
+          <p className="text-xs font-medium whitespace-nowrap text-muted-foreground uppercase">
             {rule}
           </p>
         </div>
@@ -568,11 +567,7 @@ function PositionBlock({
                   <Checkbox
                     checked={checked}
                     onCheckedChange={() =>
-                      toggleCandidate(
-                        position._id,
-                        candidate._id,
-                        position.max,
-                      )
+                      toggleCandidate(position._id, candidate._id, position.max)
                     }
                     className="sr-only"
                   />
@@ -668,13 +663,13 @@ function CandidateCard({
         <p
           className={cn(
             'line-clamp-2 text-sm leading-snug text-balance',
-            checked ? ' text-foreground' : 'font-medium',
+            checked ? 'text-foreground' : 'font-medium',
           )}
         >
           {formatName(nameArrangement, candidate)}
         </p>
         {candidate.partylistAcronym && (
-          <p className="mt-1 text-xs font-medium  text-muted-foreground uppercase">
+          <p className="mt-1 text-xs font-medium text-muted-foreground uppercase">
             {candidate.partylistAcronym}
           </p>
         )}

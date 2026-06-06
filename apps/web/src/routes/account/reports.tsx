@@ -38,8 +38,8 @@ function ReportsPage() {
           </Link>
           <h1 className="text-2xl font-bold">My reports</h1>
           <p className="text-sm text-muted-foreground">
-            Problems you've reported. Our team replies on the email tied to
-            your account.
+            Problems you've reported. Our team replies on the email tied to your
+            account.
           </p>
         </div>
         <ReportProblemDialog />

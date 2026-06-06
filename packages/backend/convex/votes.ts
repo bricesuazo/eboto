@@ -168,7 +168,10 @@ export const submitVoterFields = mutation({
   handler: async (ctx, { electionId, fields }) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) {
-      throw new ConvexError({ code: 'unauthorized', message: 'Sign in to vote' });
+      throw new ConvexError({
+        code: 'unauthorized',
+        message: 'Sign in to vote',
+      });
     }
     const user = await ctx.db.get(userId);
     if (!user?.email) {
@@ -180,7 +183,10 @@ export const submitVoterFields = mutation({
 
     const election = await ctx.db.get(electionId);
     if (!election || election.deletedAt) {
-      throw new ConvexError({ code: 'not_found', message: 'Election not found' });
+      throw new ConvexError({
+        code: 'not_found',
+        message: 'Election not found',
+      });
     }
 
     const voter = await ctx.db

@@ -5,7 +5,7 @@ import {
   MessageSquare,
   Settings2,
   Sparkles,
-  Zap
+  Zap,
 } from 'lucide-react';
 
 export interface HomeFeature {
@@ -23,7 +23,7 @@ export const HOME_FEATURES: readonly HomeFeature[] = [
   {
     icon: BarChart3,
     title: 'Real-time results',
-    body: "Live vote counts as ballots come in. Candidate names stay hidden during the election to keep results fair.",
+    body: 'Live vote counts as ballots come in. Candidate names stay hidden during the election to keep results fair.',
   },
   {
     icon: Settings2,
@@ -43,7 +43,7 @@ export const HOME_FEATURES: readonly HomeFeature[] = [
   {
     icon: Sparkles,
     title: 'Adjustable publicity',
-    body: "Choose Private, Voter-only, or Public — the right amount of visibility for each election you run.",
+    body: 'Choose Private, Voter-only, or Public — the right amount of visibility for each election you run.',
   },
 ];
 

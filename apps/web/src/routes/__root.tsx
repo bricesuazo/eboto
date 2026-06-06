@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import type { ConvexQueryClient } from '@convex-dev/react-query';
 import type { QueryClient } from '@tanstack/react-query';
 import {
@@ -6,11 +7,13 @@ import {
   Outlet,
   Scripts,
 } from '@tanstack/react-router';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import type { ConvexReactClient } from 'convex/react';
-import { clarity } from 'react-microsoft-clarity';
+import ReactGA from 'react-ga4';
+import pkg from 'react-microsoft-clarity';
 import { Toaster } from 'sonner';
 
-import { useEffect } from 'react';
 import { DefaultCatchBoundary } from '~/components/default-catch-boundary';
 import { NotFound } from '~/components/not-found';
 import { SiteHeader } from '~/components/site-header';
@@ -22,6 +25,8 @@ import { ConvexAuthProvider } from '~/lib/auth/provider';
 import { getServerAuth } from '~/lib/auth/server-fns';
 import { AUTH_QUERY_KEY, THEME_BOOTSTRAP } from '~/lib/constants';
 import appCss from '~/styles/globals.css?url';
+
+const { clarity } = pkg;
 
 interface RouterContext {
   queryClient: QueryClient;
@@ -110,17 +115,20 @@ function RootComponent() {
   const { auth, convexClient } = Route.useRouteContext();
 
   useEffect(() => {
-    if (!import.meta.env.PROD) return
-    
+    if (!import.meta.env.PROD) return;
+
+    ReactGA.initialize(env.VITE_GOOGLE_ANALYTICS_TRACKING_ID);
     clarity.init(env.VITE_MICROSOFT_CLARITY_ID);
   }, []);
-  
+
   return (
     <RootDocument>
       <ThemeProvider defaultTheme="system">
         <TooltipProvider>
           <ConvexAuthProvider client={convexClient} serverState={auth}>
             <SiteHeader />
+            <Analytics />
+            <SpeedInsights />
             <Outlet />
             <Toaster richColors position="top-right" />
           </ConvexAuthProvider>

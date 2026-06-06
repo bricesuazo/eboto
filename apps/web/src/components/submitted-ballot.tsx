@@ -27,8 +27,10 @@ export function SubmittedBallot({
 }) {
   return (
     <div className={cn(className)}>
-      {heading && <h2 className="text-lg ">{heading}</h2>}
-      <ul className={cn('divide-y rounded-md border text-sm', heading && 'mt-3')}>
+      {heading && <h2 className="text-lg">{heading}</h2>}
+      <ul
+        className={cn('divide-y rounded-md border text-sm', heading && 'mt-3')}
+      >
         {ballot.map((position) => (
           <li key={position.id} className="px-3 py-2">
             <p className="font-medium">{position.name}</p>

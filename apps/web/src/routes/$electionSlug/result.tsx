@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -15,7 +16,6 @@ import {
   MinusCircle,
   Trophy,
 } from 'lucide-react';
-import type { ReactNode } from 'react';
 
 import { api } from '@eboto/backend/api';
 
@@ -161,7 +161,7 @@ function ResultPage() {
             aria-hidden
           />
           <div className="space-y-1">
-            <p className="text-xs   text-amber-900 uppercase dark:text-amber-200">
+            <p className="text-xs text-amber-900 uppercase dark:text-amber-200">
               Partial & Unofficial
             </p>
             <p className="text-sm leading-relaxed text-amber-900/90 dark:text-amber-100/90">
@@ -184,11 +184,11 @@ function ResultPage() {
       {upcoming && (
         <div className="mt-10 flex items-start gap-3 rounded-md border bg-muted/40 p-4">
           <CalendarClock
-            className="text-muted-foreground mt-0.5 size-4 shrink-0"
+            className="mt-0.5 size-4 shrink-0 text-muted-foreground"
             aria-hidden
           />
           <div className="space-y-1">
-            <p className="text-muted-foreground text-xs   uppercase">
+            <p className="text-xs text-muted-foreground uppercase">
               Voting hasn't started
             </p>
             <p className="text-sm leading-relaxed">
@@ -229,7 +229,7 @@ function ResultPage() {
       </section>
 
       {ongoing && (
-        <p className="mt-12 text-center text-xs font-medium  text-muted-foreground uppercase">
+        <p className="mt-12 text-center text-xs font-medium text-muted-foreground uppercase">
           Partial & unofficial — revisit for the latest tally
         </p>
       )}
@@ -280,9 +280,9 @@ function PositionResult({
   return (
     <section>
       <div className="mb-6 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-foreground/15 pb-3">
-          <h2 className="text-xl font-semibold text-balance sm:text-2xl">
-            {position.name}
-          </h2>
+        <h2 className="text-xl font-semibold text-balance sm:text-2xl">
+          {position.name}
+        </h2>
       </div>
 
       {position.candidates.length === 0 ? (
@@ -325,7 +325,7 @@ function PositionResult({
                         </p>
                       )}
                       {ongoing && isLeading && !showWinner && (
-                        <p className="mt-0.5 text-xs   text-primary uppercase">
+                        <p className="mt-0.5 text-xs text-primary uppercase">
                           Leading
                         </p>
                       )}
@@ -396,7 +396,7 @@ function RankBadge({
   return (
     <span
       className={cn(
-        'flex size-7 shrink-0 items-center justify-center rounded-full border text-xs  tabular-nums',
+        'flex size-7 shrink-0 items-center justify-center rounded-full border text-xs tabular-nums',
         showWinner
           ? 'border-amber-500/60 bg-amber-500/15 text-amber-700 dark:text-amber-300'
           : isLeading
@@ -413,7 +413,7 @@ function RankBadge({
 function StatusPill({ status }: { status: Status }) {
   if (status === 'ongoing') {
     return (
-      <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-50 px-3 py-1 text-xs   text-amber-800 uppercase dark:bg-amber-500/10 dark:text-amber-300">
+      <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-50 px-3 py-1 text-xs text-amber-800 uppercase dark:bg-amber-500/10 dark:text-amber-300">
         <span className="relative flex size-1.5" aria-hidden>
           <span className="absolute inset-0 animate-ping rounded-full bg-amber-500 opacity-60" />
           <span className="relative size-1.5 rounded-full bg-amber-500" />

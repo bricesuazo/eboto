@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { convexQuery } from '@convex-dev/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
@@ -6,7 +7,6 @@ import { useMutation } from 'convex/react';
 import { ConvexError } from 'convex/values';
 import dayjs from 'dayjs';
 import { Trash2 } from 'lucide-react';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -193,16 +193,25 @@ function SettingsPage() {
       );
     }
   }
-  const publicityDescriptions: Record<'PRIVATE' | 'VOTER' | 'PUBLIC', {
-    title: string;
-    description: string;
-  }> = {
+  const publicityDescriptions: Record<
+    'PRIVATE' | 'VOTER' | 'PUBLIC',
+    {
+      title: string;
+      description: string;
+    }
+  > = {
     PRIVATE: {
-      title:"Private", description:'commissioners only'},
+      title: 'Private',
+      description: 'commissioners only',
+    },
     VOTER: {
-      title:"Voter", description:'registered voters only'},
+      title: 'Voter',
+      description: 'registered voters only',
+    },
     PUBLIC: {
-      title:"Public", description:'anyone can view'},
+      title: 'Public',
+      description: 'anyone can view',
+    },
   };
 
   return (
@@ -448,11 +457,13 @@ function SettingsPage() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="min-w-64">
-                        {Object.entries(publicityDescriptions).map(([value, { title, description }]) => (
-                          <SelectItem key={value} value={value}>
-                            {title} — {description}
-                          </SelectItem>
-                        ))}
+                        {Object.entries(publicityDescriptions).map(
+                          ([value, { title, description }]) => (
+                            <SelectItem key={value} value={value}>
+                              {title} — {description}
+                            </SelectItem>
+                          ),
+                        )}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -593,9 +604,9 @@ function CommissionersCard({ electionId }: { electionId: Id<'elections'> }) {
         <CardTitle>Commissioners</CardTitle>
         <CardDescription>
           Anyone listed here can manage this election (edit settings,
-          candidates, voters, send messages). Adding someone sends them an
-          email invite; they become a commissioner once they accept (which
-          uses one of their own Plus credits or their first free slot).
+          candidates, voters, send messages). Adding someone sends them an email
+          invite; they become a commissioner once they accept (which uses one of
+          their own Plus credits or their first free slot).
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -697,9 +708,7 @@ function CommissionersCard({ electionId }: { electionId: Id<'elections'> }) {
                     variant="ghost"
                     size="sm"
                     onClick={async () => {
-                      if (
-                        !confirm(`Cancel the invite for ${invite.email}?`)
-                      )
+                      if (!confirm(`Cancel the invite for ${invite.email}?`))
                         return;
                       try {
                         await cancelInvite({ inviteId: invite._id });

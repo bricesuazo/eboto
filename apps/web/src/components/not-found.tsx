@@ -9,7 +9,7 @@ export function NotFound() {
     <main className="flex min-h-[80vh] flex-col items-center justify-center gap-6 p-6 text-center">
       <div className="space-y-2">
         <p className="text-6xl font-bold text-muted-foreground/40">404</p>
-        <h1 className="text-2xl ">We couldn't find that page</h1>
+        <h1 className="text-2xl">We couldn't find that page</h1>
         <p className="max-w-md text-sm text-muted-foreground">
           The election, dashboard, or page you're looking for might have been
           moved, deleted, or never existed.

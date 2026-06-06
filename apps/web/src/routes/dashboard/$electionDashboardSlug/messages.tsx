@@ -82,9 +82,7 @@ function MessagesPage() {
   // for elections that never use admin chat.
   const [adminRoomId, setAdminRoomId] = useState<AdminRoomId | null>(null);
   const [activeRoom, setActiveRoom] = useState<
-    | { kind: 'admin' }
-    | { kind: 'voter'; id: VoterRoomId }
-    | null
+    { kind: 'admin' } | { kind: 'voter'; id: VoterRoomId } | null
   >(null);
 
   useEffect(() => {
@@ -97,7 +95,7 @@ function MessagesPage() {
       <div className="space-y-4">
         <div>
           <h1 className="text-2xl font-bold">Messages</h1>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             Chat with platform admin and registered voters.
           </p>
         </div>
@@ -114,7 +112,7 @@ function MessagesPage() {
     <div className="space-y-4">
       <div>
         <h1 className="text-2xl font-bold">Messages</h1>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           Chat with platform admin and registered voters.
         </p>
       </div>
@@ -142,7 +140,7 @@ function MessagesPage() {
               </div>
               <div className="min-w-0">
                 <div className="font-medium">Platform admin</div>
-                <div className="text-muted-foreground truncate text-xs">
+                <div className="truncate text-xs text-muted-foreground">
                   Support for this election
                 </div>
               </div>
@@ -151,13 +149,13 @@ function MessagesPage() {
             <Separator />
 
             <div
-              className="text-muted-foreground px-4 py-2 text-xs uppercase"
+              className="px-4 py-2 text-xs text-muted-foreground uppercase"
               id="voter-rooms-heading"
             >
               Voters
             </div>
             {voterRooms.length === 0 ? (
-              <p className="text-muted-foreground px-4 py-3 text-xs">
+              <p className="px-4 py-3 text-xs text-muted-foreground">
                 No voter conversations yet.
               </p>
             ) : (
@@ -186,7 +184,7 @@ function MessagesPage() {
                       <div className="truncate font-medium">
                         {room.voterEmail ?? room.name}
                       </div>
-                      <div className="text-muted-foreground truncate text-xs">
+                      <div className="truncate text-xs text-muted-foreground">
                         {room.lastMessage?.message ?? 'No messages yet'}
                       </div>
                     </div>
@@ -197,7 +195,7 @@ function MessagesPage() {
           </aside>
 
           {!activeRoom ? (
-            <CardContent className="text-muted-foreground flex items-center justify-center text-sm">
+            <CardContent className="flex items-center justify-center text-sm text-muted-foreground">
               Pick a conversation to start chatting.
             </CardContent>
           ) : activeRoom.kind === 'admin' ? (
@@ -209,7 +207,7 @@ function MessagesPage() {
                 emptyState="Send a message to the platform admin."
               />
             ) : (
-              <CardContent className="text-muted-foreground flex items-center justify-center text-sm">
+              <CardContent className="flex items-center justify-center text-sm text-muted-foreground">
                 Opening chat…
               </CardContent>
             )

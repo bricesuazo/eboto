@@ -140,8 +140,8 @@ function CandidatePage() {
         <div>
           <h1 className="text-2xl font-bold">Candidates</h1>
           <p className="text-sm text-muted-foreground">
-            Candidates are grouped by position. Use the button on each
-            position to add a candidate to it.
+            Candidates are grouped by position. Use the button on each position
+            to add a candidate to it.
           </p>
         </div>
       </div>
@@ -195,7 +195,8 @@ function CandidatePage() {
                     <CardTitle className="text-lg">{position.name}</CardTitle>
                     <CardDescription>
                       {rows.length} candidate{rows.length === 1 ? '' : 's'} ·
-                      pick {position.min === position.max
+                      pick{' '}
+                      {position.min === position.max
                         ? position.max
                         : `${position.min}–${position.max}`}
                     </CardDescription>
