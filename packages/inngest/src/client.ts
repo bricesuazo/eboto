@@ -2,30 +2,34 @@ import { Inngest } from 'inngest';
 
 import type { Id } from '@eboto/backend/data-model';
 
-export const inngest = new Inngest({ id: 'eboto' });
+export const inngest = new Inngest({ id: 'eboto', });
 
 export const ELECTION_LIFECYCLE_EVENT = 'eboto/election.lifecycle';
 
 export interface ElectionLifecycleData {
   electionId: Id<'elections'>;
   slug: string;
-  /** Absolute unix-ms moment we want the function to fire — already
-   *  rolled forward to the voting-hour boundary by the caller. */
+  /** Absolute unix-ms moment we want the function to fire — already resolved
+   *  in the election's `timezone` (below) by the caller. The lifecycle
+   *  functions sleep on these directly; a timing/timezone change re-emits the
+   *  event with fresh instants and `cancelOn` supersedes the stale run. */
   startAt: number;
   endAt: number;
+  /** IANA timezone the dates/hours were interpreted in when `startAt`/`endAt`
+   *  were resolved. Carried for reference (e.g. local-time email copy). */
+  timezone: string;
 }
 
 /**
- * Helper for emitting the lifecycle event. Failures are logged but
- * swallowed so a flaky Inngest connection can't block a Convex write.
- * A retry on the next edit re-emits the event.
+ * Helper for emitting the lifecycle event. Throws on failure so the caller
+ * (the `scheduleElectionLifecycleFn` server fn) can report it back to the
+ * browser instead of failing silently — a swallowed error here is invisible
+ * because this runs server-side (e.g. a missing `INNGEST_ENV` for a branch
+ * environment key 400s on every send). The caller keeps it non-blocking so a
+ * flaky send can't fail the Convex write; a re-save re-emits the event.
  */
 export async function scheduleElectionLifecycle(data: ElectionLifecycleData) {
-  try {
-    await inngest.send({ name: ELECTION_LIFECYCLE_EVENT, data });
-  } catch (err) {
-    console.warn('inngest schedule failed', err);
-  }
+  await inngest.send({ name: ELECTION_LIFECYCLE_EVENT, data });
 }
 
 /**

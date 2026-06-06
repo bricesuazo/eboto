@@ -47,6 +47,12 @@ export default defineSchema({
     endDate: v.number(),
     votingHourStart: v.number(),
     votingHourEnd: v.number(),
+    // IANA timezone (e.g. "Asia/Manila") that the calendar dates and voting
+    // hours are interpreted in. Defaults to the election creator's timezone,
+    // falling back to Philippine time. Optional for backward compatibility
+    // with rows created before this field existed — timing helpers treat an
+    // absent value as "Asia/Manila".
+    timezone: v.optional(v.string()),
     publicity,
     logoStorageId: v.optional(v.id('_storage')),
     voterDomain: v.optional(v.string()),

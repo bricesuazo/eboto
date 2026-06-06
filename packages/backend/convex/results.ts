@@ -175,6 +175,7 @@ export const getBySlug = query({
         endDate: election.endDate,
         votingHourStart: election.votingHourStart,
         votingHourEnd: election.votingHourEnd,
+        timezone: election.timezone ?? null,
         nameArrangement: election.nameArrangement,
       },
       tier: {
