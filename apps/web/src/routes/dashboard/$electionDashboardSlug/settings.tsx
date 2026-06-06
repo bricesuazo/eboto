@@ -193,6 +193,17 @@ function SettingsPage() {
       );
     }
   }
+  const publicityDescriptions: Record<'PRIVATE' | 'VOTER' | 'PUBLIC', {
+    title: string;
+    description: string;
+  }> = {
+    PRIVATE: {
+      title:"Private", description:'commissioners only'},
+    VOTER: {
+      title:"Voter", description:'registered voters only'},
+    PUBLIC: {
+      title:"Public", description:'anyone can view'},
+  };
 
   return (
     <div className="space-y-6">
@@ -283,9 +294,12 @@ function SettingsPage() {
                             onChange={(next) => {
                               field.onChange(next);
                               const currentEnd = form.getValues('endDate');
+                              // Same-day elections are allowed, so only clear
+                              // the end date when it falls *before* the new
+                              // start day.
                               if (
                                 currentEnd &&
-                                !dayjs(currentEnd).isAfter(dayjs(next), 'day')
+                                dayjs(currentEnd).isBefore(dayjs(next), 'day')
                               ) {
                                 form.setValue('endDate', '');
                               }
@@ -303,12 +317,10 @@ function SettingsPage() {
                   name="endDate"
                   render={({ field }) => {
                     const startDateValue = form.watch('startDate');
+                    // End date may equal the start date (a one-day election).
                     const earliestEnd = startDateValue
-                      ? dayjs(startDateValue)
-                          .add(1, 'day')
-                          .startOf('day')
-                          .toDate()
-                      : dayjs().add(2, 'day').startOf('day').toDate();
+                      ? dayjs(startDateValue).startOf('day').toDate()
+                      : dayjs().add(1, 'day').startOf('day').toDate();
                     return (
                       <FormItem>
                         <FormLabel>End date</FormLabel>
@@ -430,19 +442,17 @@ function SettingsPage() {
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue />
+                          <SelectValue placeholder="Pick a publicity">
+                            {publicityDescriptions[field.value].title}
+                          </SelectValue>
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="min-w-64">
-                        <SelectItem value="PRIVATE">
-                          Private — commissioners only
-                        </SelectItem>
-                        <SelectItem value="VOTER">
-                          Voter — registered voters only
-                        </SelectItem>
-                        <SelectItem value="PUBLIC">
-                          Public — anyone can view
-                        </SelectItem>
+                        {Object.entries(publicityDescriptions).map(([value, { title, description }]) => (
+                          <SelectItem key={value} value={value}>
+                            {title} — {description}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />

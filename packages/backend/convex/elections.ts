@@ -442,10 +442,10 @@ export const create = mutation({
       plusCreditToConsume = credit._id;
     }
 
-    if (args.startDate >= args.endDate) {
+    if (args.startDate > args.endDate) {
       throw new ConvexError({
         code: 'invalid_argument',
-        message: 'End date must be after start date.',
+        message: 'End date must be on or after start date.',
       });
     }
     if (
@@ -543,10 +543,10 @@ export const update = mutation({
     await requireCommissioner(ctx, election._id);
     await requireElectionEditable(ctx, election._id);
 
-    if (args.startDate >= args.endDate) {
+    if (args.startDate > args.endDate) {
       throw new ConvexError({
         code: 'invalid_argument',
-        message: 'End must be after start',
+        message: 'End must be on or after start',
       });
     }
     if (
