@@ -386,6 +386,15 @@ export const cast = mutation({
             message: `Select at least one candidate for ${pos.name}, or choose to abstain`,
           });
         }
+        // Reject duplicate picks so the min/max check below counts distinct
+        // candidates — otherwise [c1, c1, c1] would slip past `max` and insert
+        // three vote rows for the same candidate.
+        if (new Set(sel.choice.candidateIds).size !== count) {
+          throw new ConvexError({
+            code: 'invalid_argument',
+            message: `Duplicate candidate selected for ${pos.name}`,
+          });
+        }
         if (count < pos.min || count > pos.max) {
           throw new ConvexError({
             code: 'invalid_argument',
