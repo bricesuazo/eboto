@@ -77,6 +77,19 @@ export const Route = createFileRoute('/$electionSlug/vote')({
   component: BallotPage,
 });
 
+// A position is answered when the voter explicitly abstained, or picked a
+// valid number of candidates. An empty candidate list is NOT an answer — to
+// select no one the voter must abstain (mirrors the server-side check in
+// `votes.cast`).
+function isPositionComplete(min: number, max: number, sel: Choice | undefined) {
+  if (!sel) return false;
+  if (sel.kind === 'abstain') return true;
+  return (
+    sel.candidateIds.length >= Math.max(min, 1) &&
+    sel.candidateIds.length <= max
+  );
+}
+
 function BallotPage() {
   const { electionSlug } = Route.useParams();
   const navigate = useNavigate();
@@ -197,6 +210,17 @@ function BallotPage() {
   }
 
   async function submit() {
+    const incomplete = positions.filter(
+      (p) => !isPositionComplete(p.min, p.max, selections[p._id]),
+    );
+    if (incomplete.length > 0) {
+      toast.error(
+        `Select a candidate or abstain for: ${incomplete
+          .map((p) => p.name)
+          .join(', ')}`,
+      );
+      return;
+    }
     setSubmitting(true);
     try {
       await cast({
@@ -223,17 +247,15 @@ function BallotPage() {
     }
   }
 
-  // Progress: a position is "complete" when at least `min` candidates are
-  // chosen, or when the voter explicitly abstained.
-  const completedCount = positions.filter((p) => {
-    const sel = selections[p._id];
-    if (!sel) return false;
-    if (sel.kind === 'abstain') return true;
-    return sel.candidateIds.length >= p.min;
-  }).length;
+  // Progress: a position is "complete" when the voter picked a valid number
+  // of candidates, or explicitly abstained.
+  const completedCount = positions.filter((p) =>
+    isPositionComplete(p.min, p.max, selections[p._id]),
+  ).length;
   const totalPositions = positions.length;
   const progressPct =
     totalPositions === 0 ? 0 : (completedCount / totalPositions) * 100;
+  const allComplete = completedCount === totalPositions;
 
   return (
     <>
@@ -324,8 +346,12 @@ function BallotPage() {
             <AlertDialog>
               <AlertDialogTrigger
                 render={
-                  <Button disabled={submitting}>
-                    {submitting ? 'Submitting…' : 'Submit ballot'}
+                  <Button disabled={submitting || !allComplete}>
+                    {submitting
+                      ? 'Submitting…'
+                      : allComplete
+                        ? 'Submit ballot'
+                        : `${totalPositions - completedCount} left`}
                   </Button>
                 }
               />
@@ -470,9 +496,7 @@ function PositionBlock({
     if (isSingle) return '1 selected';
     return `${selectedCount} selected`;
   })();
-  const statusComplete =
-    isAbstain ||
-    (sel.kind === 'candidates' && sel.candidateIds.length >= position.min);
+  const statusComplete = isPositionComplete(position.min, position.max, sel);
 
   return (
     <section>
@@ -578,7 +602,7 @@ function PositionBlock({
         </div>
       )}
 
-      {isSingle && position.min === 0 && (
+      {position.min === 0 && (
         <button
           type="button"
           onClick={() => setChoice(position._id, { kind: 'abstain' })}
