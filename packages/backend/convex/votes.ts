@@ -377,6 +377,15 @@ export const cast = mutation({
 
       if (sel.choice.kind === 'candidates') {
         const count = sel.choice.candidateIds.length;
+        // An empty candidate list is not a valid vote — to select no one the
+        // voter must explicitly abstain. This blocks "blank" ballots that
+        // neither pick a candidate nor abstain (possible when pos.min === 0).
+        if (count === 0) {
+          throw new ConvexError({
+            code: 'invalid_argument',
+            message: `Select at least one candidate for ${pos.name}, or choose to abstain`,
+          });
+        }
         if (count < pos.min || count > pos.max) {
           throw new ConvexError({
             code: 'invalid_argument',
