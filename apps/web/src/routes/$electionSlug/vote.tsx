@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import { api } from '@eboto/backend/api';
 import type { Id } from '@eboto/backend/data-model';
 
+import { EBotoWatermark } from '~/components/eboto-watermark';
 import { PagePending } from '~/components/page-pending';
 import { SubmittedBallot } from '~/components/submitted-ballot';
 import {
@@ -260,7 +261,7 @@ function BallotPage() {
   return (
     <>
       <div className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
-        <div className="container mx-auto max-w-3xl px-4 py-3 sm:px-6">
+        <div className="container mx-auto max-w-3xl px-4 py-4 sm:px-6">
           <div className="flex items-center justify-between gap-4">
             <p className="text-xs text-muted-foreground uppercase">
               Ballot Progress
@@ -300,7 +301,7 @@ function BallotPage() {
         </header>
 
         <div className="mt-12 space-y-14 sm:space-y-16">
-          {positions.map((position, idx) => {
+          {positions.map((position) => {
             const sel = selections[position._id];
             if (!sel) return null;
             const isSingle = position.min === 0 && position.max === 1;
@@ -311,7 +312,6 @@ function BallotPage() {
             return (
               <PositionBlock
                 key={position._id}
-                index={idx}
                 position={position}
                 nameArrangement={election.nameArrangement}
                 isSingle={isSingle}
@@ -328,10 +328,13 @@ function BallotPage() {
 
       <div className="fixed right-0 bottom-0 left-0 z-30 border-t bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
         <div className="container mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-          <p className="hidden text-xs text-muted-foreground sm:block">
-            Once submitted, your ballot is final.
-          </p>
-          <div className="flex flex-1 items-center justify-end gap-2">
+          <div className="flex items-center gap-3">
+            <EBotoWatermark slug={electionSlug} variant="inline" />
+            <p className="hidden text-xs text-muted-foreground sm:block">
+              Once submitted, your ballot is final.
+            </p>
+          </div>
+          <div className="flex items-center justify-end gap-2">
             <Button
               render={
                 <Link
@@ -463,7 +466,6 @@ interface PositionData {
 }
 
 function PositionBlock({
-  index,
   position,
   nameArrangement,
   isSingle,
@@ -473,7 +475,6 @@ function PositionBlock({
   setChoice,
   toggleCandidate,
 }: {
-  index: number;
   position: PositionData;
   nameArrangement: number;
   isSingle: boolean;
@@ -502,14 +503,9 @@ function PositionBlock({
     <section>
       <div className="mb-6 border-b border-foreground/15 pb-3">
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-          <div className="flex items-baseline gap-3">
-            <span className="text-xs text-muted-foreground tabular-nums">
-              {String(index + 1).padStart(2, '0')}
-            </span>
-            <h2 className="text-xl text-balance sm:text-2xl">
-              {position.name}
-            </h2>
-          </div>
+          <h2 className="text-xl font-semibold text-balance sm:text-2xl">
+            {position.name}
+          </h2>
           <p className="text-xs font-medium whitespace-nowrap text-muted-foreground uppercase">
             {rule}
           </p>
@@ -524,7 +520,7 @@ function PositionBlock({
           />
           <p
             className={cn(
-              'text-xs tabular-nums',
+              'text-sm tabular-nums',
               statusComplete ? 'text-foreground' : 'text-muted-foreground',
             )}
           >
@@ -569,7 +565,10 @@ function PositionBlock({
                 nameArrangement={nameArrangement}
                 checked={checked}
                 control={
-                  <RadioGroupItem value={candidate._id} className="sr-only" />
+                  <RadioGroupItem
+                    value={candidate._id}
+                    className="sr-only hidden"
+                  />
                 }
               />
             );
@@ -593,7 +592,7 @@ function PositionBlock({
                     onCheckedChange={() =>
                       toggleCandidate(position._id, candidate._id, position.max)
                     }
-                    className="sr-only"
+                    className="sr-only hidden"
                   />
                 }
               />
@@ -657,7 +656,7 @@ function CandidateCard({
     <label
       className={cn(
         'group relative block cursor-pointer overflow-hidden rounded-md border bg-card transition-colors hover:border-foreground/30',
-        checked && 'border-foreground',
+        checked && 'border-foreground hover:border-foreground/80',
       )}
     >
       {control}
