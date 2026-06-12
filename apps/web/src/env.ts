@@ -17,9 +17,11 @@ export const env = createEnv({
     VITE_CONVEX_URL: z.url(),
     VITE_MICROSOFT_CLARITY_ID: z.string(),
     VITE_GOOGLE_ANALYTICS_TRACKING_ID: z.string(),
+    VITE_RECAPTCHA_SITE_KEY: z.string(),
   },
   server: {
     DISCORD_WEBHOOK_URL: z.url(),
+    RECAPTCHA_SECRET_KEY: z.string(),
   },
   shared: {
     MODE: z.enum(['development', 'test', 'production']).default('development'),

@@ -16,6 +16,7 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
+import { getRecaptchaToken } from '~/lib/recaptcha';
 
 export const Route = createFileRoute('/contact')({
   component: ContactPage,
@@ -93,6 +94,14 @@ function ContactFormPanel() {
 
   async function onSubmit(values: FormValues) {
     try {
+      let token: string;
+      try {
+        token = await getRecaptchaToken('contact');
+      } catch {
+        toast.error('Could not verify you are human. Please try again.');
+        return;
+      }
+
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
@@ -101,6 +110,7 @@ function ContactFormPanel() {
           email: values.email,
           subject: values.subject,
           message: values.message,
+          token,
         }),
       });
       if (!response.ok) {
