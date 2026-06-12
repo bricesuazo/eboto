@@ -8,7 +8,49 @@ const bodySchema = z.object({
   email: z.email(),
   subject: z.string().min(1),
   message: z.string().min(10),
+  token: z.string().min(1),
 });
+
+/**
+ * Verify a reCAPTCHA v3 token against Google's siteverify endpoint. v3 returns
+ * a score in [0, 1]; we reject low-scoring (likely bot) submissions. Returns
+ * true only when the token is valid, the action matches, and the score clears
+ * the threshold.
+ */
+const RECAPTCHA_MIN_SCORE = 0.5;
+async function verifyRecaptcha(
+  token: string,
+  ip: string,
+): Promise<boolean> {
+  try {
+    const params = new URLSearchParams({
+      secret: env.RECAPTCHA_SECRET_KEY,
+      response: token,
+    });
+    if (ip !== 'unknown') params.set('remoteip', ip);
+
+    const res = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: params,
+    });
+    if (!res.ok) return false;
+
+    const data = (await res.json()) as {
+      success?: boolean;
+      score?: number;
+      action?: string;
+    };
+    return (
+      data.success === true &&
+      data.action === 'contact' &&
+      (data.score ?? 0) >= RECAPTCHA_MIN_SCORE
+    );
+  } catch (err) {
+    console.error('[contact] recaptcha verify failed', err);
+    return false;
+  }
+}
 
 function jsonResponse(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -73,7 +115,9 @@ export const Route = createFileRoute('/api/contact')({
           return jsonResponse({ error: 'Invalid origin' }, 403);
         }
 
-        if (!takeContactToken(clientIp(request))) {
+        const ip = clientIp(request);
+
+        if (!takeContactToken(ip)) {
           return jsonResponse(
             { error: 'Too many messages from your network. Try again later.' },
             429,
@@ -96,7 +140,14 @@ export const Route = createFileRoute('/api/contact')({
           );
         }
 
-        const { name, email, subject, message } = parsed.data;
+        const { name, email, subject, message, token } = parsed.data;
+
+        if (!(await verifyRecaptcha(token, ip))) {
+          return jsonResponse(
+            { error: 'Captcha verification failed. Please try again.' },
+            400,
+          );
+        }
 
         const embed = {
           title: '📩 New message from eboto.app',
