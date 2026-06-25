@@ -1,4 +1,5 @@
 import { AUTH_MAGIC_LINK_PARAM, AUTH_REFRESH_SENTINEL } from '~/lib/constants';
+import { verifyRecaptchaToken } from '~/server/recaptcha';
 import { fetchAction } from './convex';
 import type { CookieConfig } from './cookies';
 import { getAuthCookies, setAuthTokens, setAuthVerifier } from './cookies';
@@ -17,6 +18,14 @@ function jsonResponse(body: unknown, status = 200) {
     headers: { 'content-type': 'application/json' },
     status,
   });
+}
+
+function clientIp(request: Request): string {
+  const fwd = request.headers.get('x-forwarded-for');
+  if (fwd) return fwd.split(',')[0]?.trim() ?? 'unknown';
+  const real = request.headers.get('x-real-ip');
+  if (real) return real.trim();
+  return 'unknown';
 }
 
 function isCorsRequest(request: Request) {
@@ -40,7 +49,11 @@ export async function proxyAuthAction(
     return new Response('Invalid origin', { status: 403 });
   }
 
-  let payload: { action?: string; args?: Record<string, unknown> };
+  let payload: {
+    action?: string;
+    args?: Record<string, unknown>;
+    captchaToken?: string;
+  };
   try {
     payload = await request.json();
   } catch {
@@ -68,6 +81,23 @@ export async function proxyAuthAction(
     const params = (args.params as Record<string, unknown> | undefined) ?? {};
     const skipAuthForRequest =
       'refreshToken' in args || params.code !== undefined;
+
+    // A fresh sign-in start (magic-link or OAuth) must clear reCAPTCHA before
+    // we hit Convex. Token refreshes and OAuth code exchanges are not
+    // user-initiated form submissions, so they carry no captcha token.
+    if (!skipAuthForRequest) {
+      const verified = await verifyRecaptchaToken(
+        payload.captchaToken,
+        'sign_in',
+        clientIp(request),
+      );
+      if (!verified) {
+        return jsonResponse(
+          { error: 'Captcha verification failed. Please try again.' },
+          400,
+        );
+      }
+    }
 
     // Magic-link start: tag the `redirectTo` so the GET handler that later
     // exchanges the emailed code knows to skip the OAuth verifier cookie.

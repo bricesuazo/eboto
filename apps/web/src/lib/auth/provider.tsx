@@ -33,6 +33,7 @@ export interface AuthActions {
   signIn: (
     provider: string,
     params?: SignInArgs['params'],
+    options?: { captchaToken?: string },
   ) => Promise<{ signingIn: boolean; redirect?: URL }>;
   signOut: () => Promise<void>;
 }
@@ -62,10 +63,11 @@ const InternalAuthContext = createContext<InternalAuthState>({
 async function callAuthApi(
   action: 'auth:signIn' | 'auth:signOut',
   args: SignInArgs,
+  captchaToken?: string,
 ): Promise<SignInResponse | null> {
   const response = await fetch(AUTH_API_ROUTE, {
     method: 'POST',
-    body: JSON.stringify({ action, args }),
+    body: JSON.stringify({ action, args, captchaToken }),
     headers: { 'content-type': 'application/json' },
   });
   if (response.status >= 400) {
@@ -126,14 +128,18 @@ export function ConvexAuthProvider({
   );
 
   const signIn = useCallback<AuthActions['signIn']>(
-    async (provider, params) => {
+    async (provider, params, options) => {
       const wrappedParams = { ...params };
       const finalRedirect = params?.redirectTo ?? '/';
       wrappedParams.redirectTo = `${AUTH_API_ROUTE}?${AUTH_REDIRECT_PARAM}=${encodeURIComponent(finalRedirect)}`;
-      const result = await callAuthApi('auth:signIn', {
-        provider,
-        params: wrappedParams,
-      });
+      const result = await callAuthApi(
+        'auth:signIn',
+        {
+          provider,
+          params: wrappedParams,
+        },
+        options?.captchaToken,
+      );
       if (result?.redirect) {
         return { signingIn: false, redirect: new URL(result.redirect) };
       }
