@@ -21,6 +21,7 @@ import { Spinner } from '~/components/ui/spinner';
 import { useAuthActions } from '~/lib/auth/provider';
 import type { SignInError } from '~/lib/constants';
 import { parseSignInError, SIGN_IN_ERROR_MESSAGES } from '~/lib/constants';
+import { getRecaptchaToken } from '~/lib/recaptcha';
 import { safeInternalPath } from '~/lib/redirect';
 import googleIcon from './../../images/google-logo.svg';
 
@@ -58,11 +59,22 @@ function SignInPage() {
   const submitting = form.formState.isSubmitting;
 
   async function onSubmit(values: SignInFormValues) {
+    let token: string;
     try {
-      const result = await signIn('ses', {
-        email: values.email,
-        redirectTo,
-      });
+      token = await getRecaptchaToken('sign_in');
+    } catch {
+      toast.error('Could not verify you are human. Please try again.');
+      return;
+    }
+    try {
+      const result = await signIn(
+        'ses',
+        {
+          email: values.email,
+          redirectTo,
+        },
+        { captchaToken: token },
+      );
       if (result.signingIn) {
         await router.invalidate();
       }
@@ -76,8 +88,16 @@ function SignInPage() {
 
   async function handleGoogle() {
     setOauthLoading(true);
+    let token: string;
     try {
-      const result = await signIn('google', { redirectTo });
+      token = await getRecaptchaToken('sign_in');
+    } catch {
+      toast.error('Could not verify you are human. Please try again.');
+      setOauthLoading(false);
+      return;
+    }
+    try {
+      const result = await signIn('google', { redirectTo }, { captchaToken: token });
       if (result.redirect) {
         window.location.href = result.redirect.toString();
       }
