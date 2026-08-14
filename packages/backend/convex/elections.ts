@@ -1,15 +1,28 @@
 import { getAuthUserId } from '@convex-dev/auth/server';
 import { ConvexError, v } from 'convex/values';
 
-import type { Doc, Id } from './_generated/dataModel';
-import type { QueryCtx } from './_generated/server';
+import type { Id } from './_generated/dataModel';
 import { internalMutation, mutation, query } from './_generated/server';
 import {
+  getElectionOrThrow,
+  loadElectionForEdit,
+  requireBeforeVotingOpens,
+  requireChangeReason,
   requireCommissioner,
-  requireElectionEditable,
   requireUser,
+  viewerHasElectionAccess,
 } from './_helpers/auth';
-import { DEFAULT_TIMEZONE } from './_helpers/election_timing';
+import type { FieldSpec } from './_helpers/changeLog';
+import {
+  diffFields,
+  formatDay,
+  formatHour,
+  formatNameArrangement,
+  formatPublicity,
+  formatToggle,
+  recordElectionChange,
+} from './_helpers/changeLog';
+import { DEFAULT_TIMEZONE, votingEndAt } from './_helpers/election_timing';
 import { isSlugReserved } from './_helpers/slugs';
 import { getTemplatePositions } from './_helpers/templates';
 
@@ -68,7 +81,9 @@ export const getBySlug = query({
     const user = userId ? await ctx.db.get(userId) : null;
 
     if (election.publicity !== 'PUBLIC') {
-      const hasAccess = await viewerHasAccess(ctx, election, user);
+      // The rule itself lives in `_helpers/auth.ts` so the change-log query
+      // can't drift from the page its entries are published on.
+      const hasAccess = await viewerHasElectionAccess(ctx, election, user);
       if (!hasAccess) {
         // PRIVATE elections must be indistinguishable from non-existent ones
         // to avoid leaking that they exist.
@@ -184,39 +199,6 @@ export const getBySlug = query({
     };
   },
 });
-
-async function viewerHasAccess(
-  ctx: QueryCtx,
-  election: Doc<'elections'>,
-  user: Doc<'users'> | null,
-) {
-  if (!user) return false;
-
-  const commissioner = await ctx.db
-    .query('commissioners')
-    .withIndex('by_user_election', (q) =>
-      q.eq('userId', user._id).eq('electionId', election._id),
-    )
-    .filter((q) => q.eq(q.field('deletedAt'), undefined))
-    .first();
-
-  if (commissioner) return true;
-
-  const email = user.email;
-
-  if (election.publicity === 'VOTER' && email) {
-    const voter = await ctx.db
-      .query('voters')
-      .withIndex('by_election_email', (q) =>
-        q.eq('electionId', election._id).eq('email', email),
-      )
-      .filter((q) => q.eq(q.field('deletedAt'), undefined))
-      .first();
-    if (voter) return true;
-  }
-
-  return false;
-}
 
 // Re-exported helper used elsewhere; flagged with the Id<> generic.
 export type ElectionId = Id<'elections'>;
@@ -518,6 +500,30 @@ export const create = mutation({
   },
 });
 
+/**
+ * Election fields a commissioner may still change once voting has opened.
+ * Everything absent from this list is either immutable at that point (see the
+ * locked-field check in the handler) or lives in its own mutation.
+ */
+const ELECTION_LOGGED_FIELDS: FieldSpec[] = [
+  { key: 'name', label: 'Election name' },
+  { key: 'description', label: 'Description' },
+  { key: 'endDate', label: 'End date', format: formatDay },
+  { key: 'votingHourEnd', label: 'Voting closes', format: formatHour },
+  { key: 'publicity', label: 'Visibility', format: formatPublicity },
+  {
+    key: 'nameArrangement',
+    label: 'Candidate name format',
+    format: formatNameArrangement,
+  },
+  {
+    key: 'isCandidatesVisibleInRealtimeWhenOngoing',
+    label: 'Real names in live results',
+    format: formatToggle,
+  },
+  { key: 'voterDomain', label: 'Voter email domain' },
+];
+
 export const update = mutation({
   args: {
     id: v.id('elections'),
@@ -540,17 +546,12 @@ export const update = mutation({
     // voter registration rejects emails outside that domain. Empty string
     // clears the restriction.
     voterDomain: v.optional(v.string()),
+    // Published alongside the diff once voting has opened. Ignored before.
+    reason: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const election = await ctx.db.get(args.id);
-    if (!election || election.deletedAt) {
-      throw new ConvexError({
-        code: 'not_found',
-        message: 'Election not found',
-      });
-    }
-    await requireCommissioner(ctx, election._id);
-    await requireElectionEditable(ctx, election._id);
+    const { election, votingStarted } = await loadElectionForEdit(ctx, args.id);
+    const { userId } = await requireCommissioner(ctx, election._id);
 
     if (args.startDate > args.endDate) {
       throw new ConvexError({
@@ -605,7 +606,50 @@ export const update = mutation({
       });
     }
 
-    await ctx.db.patch(args.id, {
+    const timezone = resolveTimezone(args.timezone);
+
+    if (votingStarted) {
+      // These four can't move once ballots exist. The slug is in the list
+      // because voters were emailed a link built from it; the other three
+      // would redefine the window votes were already cast in.
+      const locked: string[] = [];
+      if (slug !== election.slug) {
+        locked.push('the URL slug (voters were emailed links using it)');
+      }
+      if (args.startDate !== election.startDate) locked.push('the start date');
+      if (args.votingHourStart !== election.votingHourStart) {
+        locked.push('the opening hour');
+      }
+      if (timezone !== (election.timezone ?? DEFAULT_TIMEZONE)) {
+        locked.push('the timezone');
+      }
+      if (locked.length > 0) {
+        throw new ConvexError({
+          code: 'forbidden',
+          message: `Voting has started, so you can no longer change ${locked.join(', ')}. Everything else on this page is still editable and will be published to the change log.`,
+        });
+      }
+      // Moving the close is allowed in both directions — extending is the
+      // common case, and an election set to run far too long needs a way
+      // back — but it can never land in the past, which would retroactively
+      // close a window that voters were told was open.
+      const newEnd = votingEndAt({
+        startDate: args.startDate,
+        endDate: args.endDate,
+        votingHourStart: args.votingHourStart,
+        votingHourEnd: args.votingHourEnd,
+        timezone,
+      });
+      if (newEnd <= Date.now()) {
+        throw new ConvexError({
+          code: 'invalid_argument',
+          message:
+            'Voting must still close at some point in the future. Pick a later end date or closing hour.',
+        });
+      }
+    }
+
+    const patch = {
       name: args.name.trim(),
       slug,
       description: args.description.trim(),
@@ -613,13 +657,35 @@ export const update = mutation({
       endDate: args.endDate,
       votingHourStart: args.votingHourStart,
       votingHourEnd: args.votingHourEnd,
-      timezone: resolveTimezone(args.timezone),
+      timezone,
       publicity: args.publicity,
       nameArrangement: args.nameArrangement,
       isCandidatesVisibleInRealtimeWhenOngoing:
         args.isCandidatesVisibleInRealtimeWhenOngoing,
       voterDomain: voterDomain || undefined,
-    });
+    };
+
+    // A no-op save (the form submits every field on every submit) shouldn't
+    // demand a reason or add a log entry.
+    const changes = votingStarted
+      ? diffFields(election, patch, ELECTION_LOGGED_FIELDS)
+      : [];
+    const reason = requireChangeReason(args.reason, changes.length > 0);
+
+    await ctx.db.patch(args.id, patch);
+
+    if (changes.length > 0) {
+      await recordElectionChange(ctx, {
+        electionId: election._id,
+        actorUserId: userId,
+        entity: 'election',
+        entityId: election._id,
+        entityLabel: patch.name,
+        action: 'update',
+        changes,
+        reason,
+      });
+    }
 
     return { slug };
   },
@@ -645,14 +711,12 @@ export const openToVotersOnStart = internalMutation({
 export const softDelete = mutation({
   args: { id: v.id('elections') },
   handler: async (ctx, { id }) => {
-    const election = await ctx.db.get(id);
-    if (!election || election.deletedAt) {
-      throw new ConvexError({
-        code: 'not_found',
-        message: 'Election not found',
-      });
-    }
-    await requireCommissioner(ctx, id);
+    const election = await getElectionOrThrow(ctx, id);
+    await requireCommissioner(ctx, election._id);
+    // Hard lock — and note this guard did not previously exist, so a live
+    // election could be deleted outright. Nothing that gets logged can undo
+    // making the whole election (and every ballot in it) inaccessible.
+    await requireBeforeVotingOpens(ctx, id, 'deleting the election');
     await ctx.db.patch(id, { deletedAt: Date.now() });
   },
 });
@@ -660,25 +724,50 @@ export const softDelete = mutation({
 /**
  * Sets the election's logo. Pass `null` to remove. Old blob (if any) is
  * deleted so storage doesn't accumulate orphans on replace.
+ *
+ * Purely presentational, so it stays available after voting opens — logged
+ * like any other post-start change.
  */
 export const setLogo = mutation({
   args: {
     id: v.id('elections'),
     storageId: v.union(v.id('_storage'), v.null()),
+    reason: v.optional(v.string()),
   },
-  handler: async (ctx, { id, storageId }) => {
-    await requireCommissioner(ctx, id);
-    await requireElectionEditable(ctx, id);
+  handler: async (ctx, { id, storageId, reason: rawReason }) => {
+    const { election, votingStarted } = await loadElectionForEdit(ctx, id);
+    const { userId } = await requireCommissioner(ctx, id);
 
-    const election = await ctx.db.get(id);
-    if (!election || election.deletedAt) {
-      throw new ConvexError({
-        code: 'not_found',
-        message: 'Election not found',
+    const previous = election.logoStorageId;
+    if (previous === (storageId ?? undefined)) return;
+
+    const reason = requireChangeReason(rawReason, votingStarted);
+
+    await ctx.db.patch(id, { logoStorageId: storageId ?? undefined });
+
+    if (votingStarted) {
+      await recordElectionChange(ctx, {
+        electionId: election._id,
+        actorUserId: userId,
+        entity: 'election',
+        entityId: election._id,
+        entityLabel: election.name,
+        action: 'update',
+        // The image bytes themselves can't be shown in a text diff, so the
+        // entry records that the logo moved and leaves the current one on
+        // the page to speak for itself.
+        changes: [
+          {
+            field: 'logo',
+            label: 'Logo',
+            before: previous ? 'A logo was set' : 'No logo',
+            after: storageId ? 'Replaced with a new logo' : 'No logo',
+          },
+        ],
+        reason,
       });
     }
-    const previous = election.logoStorageId;
-    await ctx.db.patch(id, { logoStorageId: storageId ?? undefined });
+
     if (previous && previous !== storageId) {
       try {
         await ctx.storage.delete(previous);

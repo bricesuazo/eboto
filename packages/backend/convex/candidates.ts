@@ -1,7 +1,19 @@
 import { ConvexError, v } from 'convex/values';
 
 import { mutation, query } from './_generated/server';
-import { requireCommissioner, requireElectionEditable } from './_helpers/auth';
+import {
+  loadElectionForEdit,
+  requireBeforeVotingOpens,
+  requireChangeReason,
+  requireCommissioner,
+} from './_helpers/auth';
+import type { FieldChange, FieldSpec } from './_helpers/changeLog';
+import {
+  candidateLabel,
+  diffFields,
+  fieldChange,
+  recordElectionChange,
+} from './_helpers/changeLog';
 
 /**
  * Returns `null` when the election or candidate doesn't exist. Routes treat
@@ -143,7 +155,13 @@ export const create = mutation({
   },
   handler: async (ctx, args) => {
     await requireCommissioner(ctx, args.electionId);
-    await requireElectionEditable(ctx, args.electionId);
+    // Hard lock: a candidate added after voting opens cannot be chosen by
+    // anyone who already cast a ballot.
+    await requireBeforeVotingOpens(
+      ctx,
+      args.electionId,
+      'adding a new candidate',
+    );
 
     const slug = args.slug.trim().toLowerCase();
     if (!slug) {
@@ -183,6 +201,18 @@ export const create = mutation({
   },
 });
 
+/**
+ * Candidate fields that stay editable after voting opens. Correcting a
+ * misspelled name here is the single most common reason a commissioner needs
+ * to touch a live election.
+ */
+const CANDIDATE_LOGGED_FIELDS: FieldSpec[] = [
+  { key: 'firstName', label: 'First name' },
+  { key: 'middleName', label: 'Middle name' },
+  { key: 'lastName', label: 'Last name' },
+  { key: 'slug', label: 'Profile URL' },
+];
+
 export const update = mutation({
   args: {
     id: v.id('candidates'),
@@ -192,6 +222,7 @@ export const update = mutation({
     slug: v.string(),
     positionId: v.id('positions'),
     partylistId: v.id('partylists'),
+    reason: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const candidate = await ctx.db.get(args.id);
@@ -201,8 +232,11 @@ export const update = mutation({
         message: 'Candidate not found',
       });
     }
-    await requireCommissioner(ctx, candidate.electionId);
-    await requireElectionEditable(ctx, candidate.electionId);
+    const { userId } = await requireCommissioner(ctx, candidate.electionId);
+    const { votingStarted } = await loadElectionForEdit(
+      ctx,
+      candidate.electionId,
+    );
 
     const slug = args.slug.trim().toLowerCase();
     if (slug !== candidate.slug) {
@@ -221,14 +255,49 @@ export const update = mutation({
       }
     }
 
-    await ctx.db.patch(args.id, {
+    // Moving a candidate between races or parties rewrites what a cast
+    // ballot means, so both are locked once voting opens.
+    if (votingStarted) {
+      const locked: string[] = [];
+      if (args.positionId !== candidate.positionId) locked.push('position');
+      if (args.partylistId !== candidate.partylistId) locked.push('partylist');
+      if (locked.length > 0) {
+        throw new ConvexError({
+          code: 'forbidden',
+          message: `Voting has started, so a candidate's ${locked.join(' and ')} can no longer change — votes already cast were recorded against the current one. Names and photos are still editable.`,
+        });
+      }
+    }
+
+    const patch = {
       slug,
       firstName: args.firstName.trim(),
       middleName: args.middleName?.trim() ?? undefined,
       lastName: args.lastName.trim(),
       positionId: args.positionId,
       partylistId: args.partylistId,
-    });
+    };
+    const changes = votingStarted
+      ? diffFields(candidate, patch, CANDIDATE_LOGGED_FIELDS)
+      : [];
+    const reason = requireChangeReason(args.reason, changes.length > 0);
+
+    await ctx.db.patch(args.id, patch);
+
+    if (changes.length > 0) {
+      await recordElectionChange(ctx, {
+        electionId: candidate.electionId,
+        actorUserId: userId,
+        entity: 'candidate',
+        entityId: args.id,
+        // Label with the pre-edit name so an entry that renames someone
+        // still says who it was about.
+        entityLabel: candidateLabel(candidate),
+        action: 'update',
+        changes,
+        reason,
+      });
+    }
   },
 });
 
@@ -243,7 +312,13 @@ export const softDelete = mutation({
       });
     }
     await requireCommissioner(ctx, candidate.electionId);
-    await requireElectionEditable(ctx, candidate.electionId);
+    // Hard lock: removing a candidate discards the votes already cast for
+    // them.
+    await requireBeforeVotingOpens(
+      ctx,
+      candidate.electionId,
+      'removing a candidate',
+    );
     await ctx.db.patch(id, { deletedAt: Date.now() });
   },
 });
@@ -349,6 +424,51 @@ function assertOptionalEndYearString(
   }
 }
 
+/* --- Credential diffing -------------------------------------------------
+ * Credentials are replace-all lists rather than scalar fields, so instead of
+ * a per-field diff each list is rendered to one compact line and the two
+ * lines are compared. That catches edits the row counts alone would miss
+ * (a reworded platform, a corrected year) while keeping the log entry
+ * readable by a voter rather than an auditor.
+ */
+const joinList = (parts: string[]) => (parts.length ? parts.join(' • ') : '—');
+
+function platformsLine(rows: { title: string; description?: string }[]) {
+  return joinList(rows.map((p) => p.title.trim()).filter(Boolean));
+}
+function achievementsLine(rows: { name: string; year: string }[]) {
+  return joinList(
+    rows
+      .filter((a) => a.name.trim())
+      .map((a) => `${a.name.trim()} (${a.year.trim()})`),
+  );
+}
+function affiliationsLine(
+  rows: {
+    orgName: string;
+    orgPosition: string;
+    startYear: string;
+    endYear?: string;
+  }[],
+) {
+  return joinList(
+    rows
+      .filter((a) => a.orgName.trim())
+      .map((a) => {
+        // Blank/absent end year means the affiliation is ongoing.
+        const end = a.endYear?.trim() ?? '';
+        return `${a.orgPosition.trim()} at ${a.orgName.trim()} (${a.startYear.trim()}–${end === '' ? 'present' : end})`;
+      }),
+  );
+}
+function eventsLine(rows: { name: string; year: string }[]) {
+  return joinList(
+    rows
+      .filter((e) => e.name.trim())
+      .map((e) => `${e.name.trim()} (${e.year.trim()})`),
+  );
+}
+
 export const updateCandidateCredentials = mutation({
   args: {
     candidateId: v.id('candidates'),
@@ -378,6 +498,7 @@ export const updateCandidateCredentials = mutation({
         year: v.string(),
       }),
     ),
+    reason: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const candidate = await ctx.db.get(args.candidateId);
@@ -387,8 +508,13 @@ export const updateCandidateCredentials = mutation({
         message: 'Candidate not found',
       });
     }
-    await requireCommissioner(ctx, candidate.electionId);
-    await requireElectionEditable(ctx, candidate.electionId);
+    const { userId } = await requireCommissioner(ctx, candidate.electionId);
+    // Credentials and platforms are informational — they describe a
+    // candidate rather than define the ballot — so they stay editable.
+    const { votingStarted } = await loadElectionForEdit(
+      ctx,
+      candidate.electionId,
+    );
     const credentialId = candidate.credentialId;
 
     // Validate years before any writes — if anything is malformed we want
@@ -443,6 +569,37 @@ export const updateCandidateCredentials = mutation({
         .collect(),
     ]);
 
+    // Diff before the replace-all wipes the current rows.
+    const changes: FieldChange[] = votingStarted
+      ? [
+          ...fieldChange(
+            'platforms',
+            'Platforms',
+            platformsLine(existingPlatforms),
+            platformsLine(args.platforms),
+          ),
+          ...fieldChange(
+            'achievements',
+            'Achievements',
+            achievementsLine(existingAchievements),
+            achievementsLine(args.achievements),
+          ),
+          ...fieldChange(
+            'affiliations',
+            'Affiliations',
+            affiliationsLine(existingAffiliations),
+            affiliationsLine(args.affiliations),
+          ),
+          ...fieldChange(
+            'eventsAttended',
+            'Events attended',
+            eventsLine(existingEvents),
+            eventsLine(args.eventsAttended),
+          ),
+        ]
+      : [];
+    const reason = requireChangeReason(args.reason, changes.length > 0);
+
     const now = Date.now();
     await Promise.all([
       ...existingPlatforms.map((p) => ctx.db.patch(p._id, { deletedAt: now })),
@@ -493,19 +650,34 @@ export const updateCandidateCredentials = mutation({
         credentialId,
       });
     }
+
+    if (changes.length > 0) {
+      await recordElectionChange(ctx, {
+        electionId: candidate.electionId,
+        actorUserId: userId,
+        entity: 'candidate',
+        entityId: args.candidateId,
+        entityLabel: candidateLabel(candidate),
+        action: 'update',
+        changes,
+        reason,
+      });
+    }
   },
 });
 
 /**
  * Sets the candidate's photo. Pass `null` to remove. Old blob is deleted on
- * replace. Mirrors `elections.setLogo`.
+ * replace. Mirrors `elections.setLogo` — presentational, so it survives the
+ * start of voting and is logged instead.
  */
 export const setImage = mutation({
   args: {
     id: v.id('candidates'),
     storageId: v.union(v.id('_storage'), v.null()),
+    reason: v.optional(v.string()),
   },
-  handler: async (ctx, { id, storageId }) => {
+  handler: async (ctx, { id, storageId, reason: rawReason }) => {
     const candidate = await ctx.db.get(id);
     if (!candidate || candidate.deletedAt) {
       throw new ConvexError({
@@ -513,10 +685,39 @@ export const setImage = mutation({
         message: 'Candidate not found',
       });
     }
-    await requireCommissioner(ctx, candidate.electionId);
-    await requireElectionEditable(ctx, candidate.electionId);
+    const { userId } = await requireCommissioner(ctx, candidate.electionId);
+    const { votingStarted } = await loadElectionForEdit(
+      ctx,
+      candidate.electionId,
+    );
+
     const previous = candidate.imageStorageId;
+    if (previous === (storageId ?? undefined)) return;
+
+    const reason = requireChangeReason(rawReason, votingStarted);
+
     await ctx.db.patch(id, { imageStorageId: storageId ?? undefined });
+
+    if (votingStarted) {
+      await recordElectionChange(ctx, {
+        electionId: candidate.electionId,
+        actorUserId: userId,
+        entity: 'candidate',
+        entityId: id,
+        entityLabel: candidateLabel(candidate),
+        action: 'update',
+        changes: [
+          {
+            field: 'photo',
+            label: 'Photo',
+            before: previous ? 'A photo was set' : 'No photo',
+            after: storageId ? 'Replaced with a new photo' : 'No photo',
+          },
+        ],
+        reason,
+      });
+    }
+
     if (previous && previous !== storageId) {
       try {
         await ctx.storage.delete(previous);

@@ -12,6 +12,11 @@ import { toast } from 'sonner';
 import { api } from '@eboto/backend/api';
 import type { Doc } from '@eboto/backend/data-model';
 
+import {
+  ChangeReasonProvider,
+  useChangeReason,
+  useChangeReasonGate,
+} from '~/components/change-reason';
 import { DashboardPending } from '~/components/dashboard-pending';
 import { Button } from '~/components/ui/button';
 import {
@@ -80,85 +85,95 @@ function PartylistPage() {
 
   const [editing, setEditing] = useState<Doc<'partylists'> | null>(null);
   const [creating, setCreating] = useState(false);
+  const gate = useChangeReason(electionDashboardSlug);
+  const { live } = gate;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Partylists</h1>
-          <p className="text-sm text-muted-foreground">
-            Groupings candidates can run under.
-          </p>
-        </div>
-        <Dialog open={creating} onOpenChange={setCreating}>
-          <DialogTrigger
-            render={
-              <Button>
-                <Plus className="size-4" />
-                New partylist
-              </Button>
-            }
-          />
-          <PartylistDialog
-            mode="create"
-            electionId={election._id}
-            onClose={() => setCreating(false)}
-          />
-        </Dialog>
-      </div>
-
-      {partylists.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center text-sm text-muted-foreground">
-            No partylists yet.
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid gap-3 sm:grid-cols-2">
-          {partylists.map((pl) => (
-            <Card key={pl._id}>
-              <CardHeader>
-                <CardTitle className="text-lg">
-                  {pl.name}{' '}
-                  <span className="font-normal text-muted-foreground">
-                    ({pl.acronym})
-                  </span>
-                </CardTitle>
-                {pl.description && (
-                  <CardDescription className="line-clamp-2">
-                    {pl.description}
-                  </CardDescription>
-                )}
-              </CardHeader>
-              <CardContent className="flex justify-end gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setEditing(pl)}
-                >
-                  <Pencil className="mr-1.5 size-3.5" /> Edit
+    <ChangeReasonProvider value={gate}>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">Partylists</h1>
+            <p className="text-sm text-muted-foreground">
+              {live
+                ? 'Voting has opened. Partylists can still be edited — each change is published to the change log — but one with candidates already on the ballot can no longer be deleted.'
+                : 'Groupings candidates can run under.'}
+            </p>
+          </div>
+          <Dialog open={creating} onOpenChange={setCreating}>
+            <DialogTrigger
+              render={
+                <Button>
+                  <Plus className="size-4" />
+                  New partylist
                 </Button>
-                {pl.acronym !== 'IND' && <DeletePartylistButton id={pl._id} />}
-              </CardContent>
-            </Card>
-          ))}
+              }
+            />
+            <PartylistDialog
+              mode="create"
+              electionId={election._id}
+              onClose={() => setCreating(false)}
+            />
+          </Dialog>
         </div>
-      )}
 
-      <Dialog
-        open={Boolean(editing)}
-        onOpenChange={(open) => !open && setEditing(null)}
-      >
-        {editing && (
-          <PartylistDialog
-            mode="edit"
-            initial={editing}
-            electionId={election._id}
-            onClose={() => setEditing(null)}
-          />
+        {partylists.length === 0 ? (
+          <Card>
+            <CardContent className="py-12 text-center text-sm text-muted-foreground">
+              No partylists yet.
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid gap-3 sm:grid-cols-2">
+            {partylists.map((pl) => (
+              <Card key={pl._id}>
+                <CardHeader>
+                  <CardTitle className="text-lg">
+                    {pl.name}{' '}
+                    <span className="font-normal text-muted-foreground">
+                      ({pl.acronym})
+                    </span>
+                  </CardTitle>
+                  {pl.description && (
+                    <CardDescription className="line-clamp-2">
+                      {pl.description}
+                    </CardDescription>
+                  )}
+                </CardHeader>
+                <CardContent className="flex justify-end gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setEditing(pl)}
+                  >
+                    <Pencil className="mr-1.5 size-3.5" /> Edit
+                  </Button>
+                  {pl.acronym !== 'IND' && (
+                    <DeletePartylistButton id={pl._id} />
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         )}
-      </Dialog>
-    </div>
+
+        <Dialog
+          open={Boolean(editing)}
+          onOpenChange={(open) => !open && setEditing(null)}
+        >
+          {editing && (
+            <PartylistDialog
+              mode="edit"
+              initial={editing}
+              electionId={election._id}
+              onClose={() => setEditing(null)}
+            />
+          )}
+        </Dialog>
+
+        {gate.reasonDialog}
+      </div>
+    </ChangeReasonProvider>
   );
 }
 
@@ -173,6 +188,7 @@ function PartylistDialog({
   initial?: Doc<'partylists'>;
   onClose: () => void;
 }) {
+  const { requestReason } = useChangeReasonGate();
   const create = useMutation(api.partylists.create);
   const update = useMutation(api.partylists.update);
 
@@ -186,12 +202,14 @@ function PartylistDialog({
   });
 
   async function onSubmit(values: FormValues) {
+    const reason = await requestReason();
+    if (reason === null) return;
     try {
       if (mode === 'create') {
-        await create({ electionId, ...values });
+        await create({ electionId, ...values, reason });
         toast.success('Partylist created');
       } else if (initial) {
-        await update({ id: initial._id, ...values });
+        await update({ id: initial._id, ...values, reason });
         toast.success('Partylist updated');
       }
       onClose();
@@ -279,6 +297,7 @@ function PartylistDialog({
 }
 
 function DeletePartylistButton({ id }: { id: Doc<'partylists'>['_id'] }) {
+  const { requestReason } = useChangeReasonGate();
   const softDelete = useMutation(api.partylists.softDelete);
   const [deleting, setDeleting] = useState(false);
 
@@ -289,9 +308,11 @@ function DeletePartylistButton({ id }: { id: Doc<'partylists'>['_id'] }) {
       disabled={deleting}
       onClick={async () => {
         if (!confirm('Delete this partylist? This cannot be undone.')) return;
+        const reason = await requestReason();
+        if (reason === null) return;
         setDeleting(true);
         try {
-          await softDelete({ id });
+          await softDelete({ id, reason });
           toast.success('Partylist deleted');
         } catch (err) {
           toast.error(

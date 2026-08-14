@@ -26,6 +26,11 @@ import { api } from '@eboto/backend/api';
 import type { Doc, Id } from '@eboto/backend/data-model';
 import type { VoterFieldType } from '@eboto/backend/schema';
 
+import {
+  ChangeReasonProvider,
+  useChangeReason,
+  useChangeReasonGate,
+} from '~/components/change-reason';
 import { DashboardPending } from '~/components/dashboard-pending';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -142,6 +147,8 @@ function VoterPage() {
   const totalPending = stats?.pending ?? 0;
   const turnoutPct = total === 0 ? 0 : Math.round((totalVoted / total) * 100);
 
+  const gate = useChangeReason(electionDashboardSlug);
+
   const columns = useMemo(
     () =>
       [
@@ -154,113 +161,122 @@ function VoterPage() {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-bold">Voters</h1>
-          <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-            <span>
-              <span className="font-medium text-foreground">{total}</span>{' '}
-              registered
-            </span>
-            <span className="text-muted-foreground/40">·</span>
-            <span>
-              <span className="font-medium text-foreground">{totalVoted}</span>{' '}
-              voted
-            </span>
-            <Badge variant="secondary" className="font-medium">
-              {turnoutPct}% turnout
-            </Badge>
-          </div>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <ManageFieldsDialog electionId={election._id} fields={voterFields} />
-          <ExportVotersButton
-            electionId={election._id}
-            slug={election.slug}
-            fields={voterFields}
-          />
-          <Button
-            variant="outline"
-            render={
-              <Link
-                to="/dashboard/$electionDashboardSlug/voter/import"
-                params={{ electionDashboardSlug }}
-              />
-            }
-          >
-            <Upload className="size-4" /> Bulk import
-          </Button>
-          <SingleAddDialog electionId={election._id} fields={voterFields} />
-        </div>
-      </div>
-
-      {total === 0 && pageStatus !== 'LoadingFirstPage' ? (
-        <Empty className="border">
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <Users />
-            </EmptyMedia>
-            <EmptyTitle>No voters yet</EmptyTitle>
-            <EmptyDescription>
-              Add voters individually or bulk import a CSV to get started.
-            </EmptyDescription>
-          </EmptyHeader>
-        </Empty>
-      ) : (
-        <Card className="overflow-hidden p-0">
-          <div className="flex flex-col gap-3 border-b p-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="relative w-full sm:max-w-sm">
-              <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Search by email"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-8"
-              />
+    <ChangeReasonProvider value={gate}>
+      <div className="space-y-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="space-y-2">
+            <h1 className="text-2xl font-bold">Voters</h1>
+            <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+              <span>
+                <span className="font-medium text-foreground">{total}</span>{' '}
+                registered
+              </span>
+              <span className="text-muted-foreground/40">·</span>
+              <span>
+                <span className="font-medium text-foreground">
+                  {totalVoted}
+                </span>{' '}
+                voted
+              </span>
+              <Badge variant="secondary" className="font-medium">
+                {turnoutPct}% turnout
+              </Badge>
             </div>
-            <Tabs
-              value={debouncedSearch ? 'all' : status}
-              onValueChange={(v) => setStatus(v as StatusFilter)}
-            >
-              <TabsList>
-                <TabsTrigger value="all" disabled={!!debouncedSearch}>
-                  All
-                  <span className="ml-1 text-xs text-muted-foreground">
-                    {total}
-                  </span>
-                </TabsTrigger>
-                <TabsTrigger value="voted" disabled={!!debouncedSearch}>
-                  Voted
-                  <span className="ml-1 text-xs text-muted-foreground">
-                    {totalVoted}
-                  </span>
-                </TabsTrigger>
-                <TabsTrigger value="pending" disabled={!!debouncedSearch}>
-                  Pending
-                  <span className="ml-1 text-xs text-muted-foreground">
-                    {totalPending}
-                  </span>
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
           </div>
+          <div className="flex flex-wrap gap-2">
+            <ManageFieldsDialog
+              electionId={election._id}
+              fields={voterFields}
+            />
+            <ExportVotersButton
+              electionId={election._id}
+              slug={election.slug}
+              fields={voterFields}
+            />
+            <Button
+              variant="outline"
+              render={
+                <Link
+                  to="/dashboard/$electionDashboardSlug/voter/import"
+                  params={{ electionDashboardSlug }}
+                />
+              }
+            >
+              <Upload className="size-4" /> Bulk import
+            </Button>
+            <SingleAddDialog electionId={election._id} fields={voterFields} />
+          </div>
+        </div>
 
-          <VoterList
-            results={results}
-            fields={voterFields}
-            columns={columns}
-            pageStatus={pageStatus}
-            loadMore={loadMore}
-            onClearFilters={() => {
-              setSearch('');
-              setStatus('all');
-            }}
-            hasActiveFilter={!!debouncedSearch || status !== 'all'}
-          />
-        </Card>
-      )}
-    </div>
+        {total === 0 && pageStatus !== 'LoadingFirstPage' ? (
+          <Empty className="border">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <Users />
+              </EmptyMedia>
+              <EmptyTitle>No voters yet</EmptyTitle>
+              <EmptyDescription>
+                Add voters individually or bulk import a CSV to get started.
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
+        ) : (
+          <Card className="overflow-hidden p-0">
+            <div className="flex flex-col gap-3 border-b p-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="relative w-full sm:max-w-sm">
+                <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Search by email"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-8"
+                />
+              </div>
+              <Tabs
+                value={debouncedSearch ? 'all' : status}
+                onValueChange={(v) => setStatus(v as StatusFilter)}
+              >
+                <TabsList>
+                  <TabsTrigger value="all" disabled={!!debouncedSearch}>
+                    All
+                    <span className="ml-1 text-xs text-muted-foreground">
+                      {total}
+                    </span>
+                  </TabsTrigger>
+                  <TabsTrigger value="voted" disabled={!!debouncedSearch}>
+                    Voted
+                    <span className="ml-1 text-xs text-muted-foreground">
+                      {totalVoted}
+                    </span>
+                  </TabsTrigger>
+                  <TabsTrigger value="pending" disabled={!!debouncedSearch}>
+                    Pending
+                    <span className="ml-1 text-xs text-muted-foreground">
+                      {totalPending}
+                    </span>
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+
+            <VoterList
+              results={results}
+              fields={voterFields}
+              columns={columns}
+              pageStatus={pageStatus}
+              loadMore={loadMore}
+              onClearFilters={() => {
+                setSearch('');
+                setStatus('all');
+              }}
+              hasActiveFilter={!!debouncedSearch || status !== 'all'}
+            />
+          </Card>
+        )}
+
+        {gate.reasonDialog}
+      </div>
+    </ChangeReasonProvider>
   );
 }
 
@@ -474,6 +490,7 @@ function SingleAddDialog({
   electionId: Doc<'elections'>['_id'];
   fields: Doc<'voterFields'>[];
 }) {
+  const { requestReason } = useChangeReasonGate();
   const create = useMutation(api.voters.create);
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState('');
@@ -516,6 +533,8 @@ function SingleAddDialog({
         <form
           onSubmit={async (e) => {
             e.preventDefault();
+            const reason = await requestReason();
+            if (reason === null) return;
             setSubmitting(true);
             try {
               const trimmed: Record<string, string> = {};
@@ -527,6 +546,7 @@ function SingleAddDialog({
                 electionId,
                 email,
                 ...(Object.keys(trimmed).length > 0 ? { fields: trimmed } : {}),
+                reason,
               });
               toast.success('Voter added');
               reset();
@@ -631,6 +651,7 @@ function EditVoterDialog({
   voter: Doc<'voters'>;
   fields: Doc<'voterFields'>[];
 }) {
+  const { requestReason } = useChangeReasonGate();
   const update = useMutation(api.voters.update);
   const [open, setOpen] = useState(false);
   const initialFieldValues = (): Record<string, string> => {
@@ -691,6 +712,8 @@ function EditVoterDialog({
         <form
           onSubmit={async (e) => {
             e.preventDefault();
+            const reason = await requestReason();
+            if (reason === null) return;
             setSubmitting(true);
             try {
               const trimmed: Record<string, string> = {};
@@ -702,6 +725,7 @@ function EditVoterDialog({
                 id: voter._id,
                 email,
                 ...(Object.keys(trimmed).length > 0 ? { fields: trimmed } : {}),
+                reason,
               });
               toast.success('Voter updated');
               setOpen(false);
@@ -804,6 +828,7 @@ function ManageFieldsDialog({
   electionId: Doc<'elections'>['_id'];
   fields: Doc<'voterFields'>[];
 }) {
+  const { requestReason } = useChangeReasonGate();
   const create = useMutation(api.voterFields.create);
   const update = useMutation(api.voterFields.update);
   const softDelete = useMutation(api.voterFields.softDelete);
@@ -831,9 +856,11 @@ function ManageFieldsDialog({
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newName.trim()) return;
+    const reason = await requestReason();
+    if (reason === null) return;
     setCreating(true);
     try {
-      await create({ electionId, name: newName, type: newType });
+      await create({ electionId, name: newName, type: newType, reason });
       setNewName('');
       setNewType('text');
       toast.success('Field added');
@@ -858,9 +885,11 @@ function ManageFieldsDialog({
 
   const saveEdit = async () => {
     if (!editingId) return;
+    const reason = await requestReason();
+    if (reason === null) return;
     setSavingEdit(true);
     try {
-      await update({ id: editingId, name: editName, type: editType });
+      await update({ id: editingId, name: editName, type: editType, reason });
       cancelEdit();
       toast.success('Field updated');
     } catch (err) {
@@ -872,8 +901,10 @@ function ManageFieldsDialog({
 
   const handleDelete = async (f: Doc<'voterFields'>) => {
     if (!confirm(`Delete the "${f.name}" field?`)) return;
+    const reason = await requestReason();
+    if (reason === null) return;
     try {
-      await softDelete({ id: f._id });
+      await softDelete({ id: f._id, reason });
       if (editingId === f._id) cancelEdit();
       toast.success('Field removed');
     } catch (err) {
@@ -1033,6 +1064,7 @@ function ManageFieldsDialog({
 }
 
 function DeleteVoterButton({ id }: { id: Doc<'voters'>['_id'] }) {
+  const { requestReason } = useChangeReasonGate();
   const softDelete = useMutation(api.voters.softDelete);
   const [deleting, setDeleting] = useState(false);
   return (
@@ -1042,9 +1074,11 @@ function DeleteVoterButton({ id }: { id: Doc<'voters'>['_id'] }) {
       disabled={deleting}
       onClick={async () => {
         if (!confirm('Remove this voter?')) return;
+        const reason = await requestReason();
+        if (reason === null) return;
         setDeleting(true);
         try {
-          await softDelete({ id });
+          await softDelete({ id, reason });
           toast.success('Voter removed');
         } catch (err) {
           toast.error(

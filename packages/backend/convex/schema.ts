@@ -23,6 +23,25 @@ export const voterNotificationPhase = v.union(
 );
 export type VoterNotificationPhase = Infer<typeof voterNotificationPhase>;
 
+/** Kind of record an `electionChangeLogs` entry describes. */
+export const changeLogEntity = v.union(
+  v.literal('election'),
+  v.literal('position'),
+  v.literal('partylist'),
+  v.literal('candidate'),
+  v.literal('voter'),
+  v.literal('voterField'),
+);
+export type ChangeLogEntity = Infer<typeof changeLogEntity>;
+
+export const changeLogAction = v.union(
+  v.literal('create'),
+  v.literal('update'),
+  v.literal('delete'),
+  v.literal('reorder'),
+);
+export type ChangeLogAction = Infer<typeof changeLogAction>;
+
 export default defineSchema({
   // ---- Convex Auth tables (users, accounts, sessions, …) ----
   // The default `users` table from authTables is extended below.
@@ -227,6 +246,52 @@ export default defineSchema({
     electionId: v.id('elections'),
     result: v.any(),
     deletedAt: v.optional(v.number()),
+  }).index('by_election', ['electionId']),
+
+  // Append-only public record of every edit made to an election *after*
+  // voting opened. Nothing ever updates or deletes a row here — that's the
+  // whole point: a commissioner can fix a mid-election mistake, but the fix
+  // is on the record.
+  //
+  // Pre-start setup churn is deliberately NOT recorded. The log exists to
+  // make mid-election changes accountable, and hundreds of setup entries
+  // would bury the handful that matter.
+  //
+  // Rows are read by two queries with different audiences — see
+  // `convex/changeLogs.ts`. The public one strips `actorEmail` and, for
+  // `voter` rows, `entityLabel`/`changes` (which carry voter emails),
+  // leaving only the action and `count`.
+  electionChangeLogs: defineTable({
+    electionId: v.id('elections'),
+    // Actor identity is snapshotted at write time so an entry stays readable
+    // after the commissioner renames or deletes their account.
+    actorUserId: v.optional(v.id('users')),
+    actorName: v.string(),
+    actorEmail: v.optional(v.string()),
+    entity: changeLogEntity,
+    entityId: v.optional(v.string()),
+    // Human label for what changed ("President", "Juan Dela Cruz"). Holds a
+    // voter email on `voter` rows, so the public query drops it there.
+    entityLabel: v.string(),
+    action: changeLogAction,
+    // Field-level diff, pre-rendered to display strings server-side: dates
+    // and hours are only meaningful in the election's own timezone, which
+    // the server knows and an arbitrary viewer's browser does not.
+    changes: v.optional(
+      v.array(
+        v.object({
+          field: v.string(),
+          label: v.string(),
+          before: v.string(),
+          after: v.string(),
+        }),
+      ),
+    ),
+    // Why the change was made. Every post-start mutation requires one.
+    reason: v.string(),
+    // Rows affected. Lets the public view say "12 voters added" without
+    // naming anyone.
+    count: v.optional(v.number()),
   }).index('by_election', ['electionId']),
 
   reportedProblems: defineTable({

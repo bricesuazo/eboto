@@ -14,6 +14,11 @@ import type { Doc } from '@eboto/backend/data-model';
 import { slugify } from '@eboto/backend/slugs';
 
 import { CandidateCredentialsEditor } from '~/components/candidate-credentials-editor';
+import {
+  ChangeReasonProvider,
+  useChangeReason,
+  useChangeReasonGate,
+} from '~/components/change-reason';
 import { DashboardPending } from '~/components/dashboard-pending';
 import { ImageUpload } from '~/components/image-upload';
 import { Button } from '~/components/ui/button';
@@ -117,6 +122,9 @@ function CandidatePage() {
     (typeof candidates)[number] | null
   >(null);
 
+  const gate = useChangeReason(electionDashboardSlug);
+  const { live } = gate;
+
   const noPositions = positions.length === 0;
   const noPartylists = partylists.length === 0;
   const noDeps = noPositions || noPartylists;
@@ -135,202 +143,213 @@ function CandidatePage() {
   }, [candidates]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Candidates</h1>
-          <p className="text-sm text-muted-foreground">
-            Candidates are grouped by position. Use the button on each position
-            to add a candidate to it.
-          </p>
+    <ChangeReasonProvider value={gate}>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">Candidates</h1>
+            <p className="text-sm text-muted-foreground">
+              {live
+                ? 'Voting has opened. Names, photos, platforms, and credentials can still be corrected — each edit is published to the change log — but candidates can no longer be added, removed, or moved to a different position or partylist.'
+                : 'Candidates are grouped by position. Use the button on each position to add a candidate to it.'}
+            </p>
+          </div>
         </div>
-      </div>
 
-      {noDeps && (
-        <Card>
-          <CardContent className="space-y-2 py-8 text-center text-sm text-muted-foreground">
-            <p>Set up these first before adding candidates:</p>
-            <div className="flex flex-wrap justify-center gap-2 pt-2">
-              {noPositions && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  render={
-                    <Link
-                      to="/dashboard/$electionDashboardSlug/position"
-                      params={{ electionDashboardSlug }}
-                    >
-                      Add a position
-                    </Link>
-                  }
-                />
-              )}
-              {noPartylists && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  render={
-                    <Link
-                      to="/dashboard/$electionDashboardSlug/partylist"
-                      params={{ electionDashboardSlug }}
-                    >
-                      Add a partylist
-                    </Link>
-                  }
-                />
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {!noDeps && (
-        <div className="space-y-4">
-          {positions.map((position) => {
-            const rows = candidatesByPosition.get(position._id) ?? [];
-            return (
-              <Card key={position._id}>
-                <CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0">
-                  <div className="min-w-0">
-                    <CardTitle className="text-lg">{position.name}</CardTitle>
-                    <CardDescription>
-                      {rows.length} candidate{rows.length === 1 ? '' : 's'} ·
-                      pick{' '}
-                      {position.min === position.max
-                        ? position.max
-                        : `${position.min}–${position.max}`}
-                    </CardDescription>
-                  </div>
+        {noDeps && (
+          <Card>
+            <CardContent className="space-y-2 py-8 text-center text-sm text-muted-foreground">
+              <p>Set up these first before adding candidates:</p>
+              <div className="flex flex-wrap justify-center gap-2 pt-2">
+                {noPositions && (
                   <Button
+                    variant="outline"
                     size="sm"
-                    onClick={() => setCreating({ positionId: position._id })}
-                  >
-                    <Plus className="mr-1 size-4" />
-                    Add candidate
-                  </Button>
-                </CardHeader>
-                <CardContent>
-                  {rows.length === 0 ? (
-                    <div className="flex flex-col items-center gap-2 rounded-md border border-dashed py-8 text-center text-sm text-muted-foreground">
-                      <Users className="size-6" />
-                      <p>No candidates for this position yet.</p>
+                    render={
+                      <Link
+                        to="/dashboard/$electionDashboardSlug/position"
+                        params={{ electionDashboardSlug }}
+                      >
+                        Add a position
+                      </Link>
+                    }
+                  />
+                )}
+                {noPartylists && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    render={
+                      <Link
+                        to="/dashboard/$electionDashboardSlug/partylist"
+                        params={{ electionDashboardSlug }}
+                      >
+                        Add a partylist
+                      </Link>
+                    }
+                  />
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {!noDeps && (
+          <div className="space-y-4">
+            {positions.map((position) => {
+              const rows = candidatesByPosition.get(position._id) ?? [];
+              return (
+                <Card key={position._id}>
+                  <CardHeader className="flex flex-row items-start justify-between gap-3 space-y-0">
+                    <div className="min-w-0">
+                      <CardTitle className="text-lg">{position.name}</CardTitle>
+                      <CardDescription>
+                        {rows.length} candidate{rows.length === 1 ? '' : 's'} ·
+                        pick{' '}
+                        {position.min === position.max
+                          ? position.max
+                          : `${position.min}–${position.max}`}
+                      </CardDescription>
+                    </div>
+                    {!live && (
                       <Button
-                        variant="outline"
                         size="sm"
                         onClick={() =>
                           setCreating({ positionId: position._id })
                         }
                       >
                         <Plus className="mr-1 size-4" />
-                        Add the first candidate
+                        Add candidate
                       </Button>
-                    </div>
-                  ) : (
-                    <ul className="divide-y rounded-md border">
-                      {rows.map((c) => (
-                        <li
-                          key={c._id}
-                          className="flex flex-wrap items-center gap-3 px-3 py-2.5"
-                        >
-                          {c.imageUrl ? (
-                            <img
-                              src={c.imageUrl}
-                              alt=""
-                              className="size-10 shrink-0 rounded-full object-cover"
-                            />
-                          ) : (
-                            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted">
-                              <User className="size-5" />
+                    )}
+                  </CardHeader>
+                  <CardContent>
+                    {rows.length === 0 ? (
+                      <div className="flex flex-col items-center gap-2 rounded-md border border-dashed py-8 text-center text-sm text-muted-foreground">
+                        <Users className="size-6" />
+                        <p>No candidates for this position yet.</p>
+                        {!live && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              setCreating({ positionId: position._id })
+                            }
+                          >
+                            <Plus className="mr-1 size-4" />
+                            Add the first candidate
+                          </Button>
+                        )}
+                      </div>
+                    ) : (
+                      <ul className="divide-y rounded-md border">
+                        {rows.map((c) => (
+                          <li
+                            key={c._id}
+                            className="flex flex-wrap items-center gap-3 px-3 py-2.5"
+                          >
+                            {c.imageUrl ? (
+                              <img
+                                src={c.imageUrl}
+                                alt=""
+                                className="size-10 shrink-0 rounded-full object-cover"
+                              />
+                            ) : (
+                              <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted">
+                                <User className="size-5" />
+                              </div>
+                            )}
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-sm font-medium">
+                                {c.firstName}{' '}
+                                {c.middleName && `${c.middleName.charAt(0)}. `}
+                                {c.lastName}
+                              </p>
+                              <p className="truncate text-xs text-muted-foreground">
+                                {c.partylist?.acronym ?? '—'}
+                              </p>
                             </div>
-                          )}
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-medium">
-                              {c.firstName}{' '}
-                              {c.middleName && `${c.middleName.charAt(0)}. `}
-                              {c.lastName}
-                            </p>
-                            <p className="truncate text-xs text-muted-foreground">
-                              {c.partylist?.acronym ?? '—'}
-                            </p>
-                          </div>
-                          <div className="flex shrink-0 gap-1.5">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setCredentialsFor(c)}
-                            >
-                              <ListChecks className="size-3.5" />
-                              <span className="sr-only">Credentials</span>
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setEditing(c)}
-                            >
-                              <Pencil className="size-3.5" />
-                              <span className="sr-only">Edit</span>
-                            </Button>
-                            <DeleteCandidateButton id={c._id} />
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      )}
-
-      <Dialog
-        open={Boolean(creating)}
-        onOpenChange={(open) => !open && setCreating(null)}
-      >
-        {creating && (
-          <CandidateDialog
-            mode="create"
-            electionId={election._id}
-            electionSlug={election.slug}
-            positions={positions}
-            partylists={partylists}
-            defaultPositionId={creating.positionId}
-            onClose={() => setCreating(null)}
-          />
+                            <div className="flex shrink-0 gap-1.5">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setCredentialsFor(c)}
+                              >
+                                <ListChecks className="size-3.5" />
+                                <span className="sr-only">Credentials</span>
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setEditing(c)}
+                              >
+                                <Pencil className="size-3.5" />
+                                <span className="sr-only">Edit</span>
+                              </Button>
+                              {!live && <DeleteCandidateButton id={c._id} />}
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
         )}
-      </Dialog>
 
-      <Dialog
-        open={Boolean(editing)}
-        onOpenChange={(open) => !open && setEditing(null)}
-      >
-        {editing && (
-          <CandidateDialog
-            mode="edit"
-            electionId={election._id}
-            electionSlug={election.slug}
-            positions={positions}
-            partylists={partylists}
-            initial={editing}
-            initialImageUrl={editing.imageUrl}
-            onClose={() => setEditing(null)}
-          />
-        )}
-      </Dialog>
+        <Dialog
+          open={Boolean(creating)}
+          onOpenChange={(open) => !open && setCreating(null)}
+        >
+          {creating && (
+            <CandidateDialog
+              mode="create"
+              electionId={election._id}
+              electionSlug={election.slug}
+              positions={positions}
+              partylists={partylists}
+              defaultPositionId={creating.positionId}
+              onClose={() => setCreating(null)}
+            />
+          )}
+        </Dialog>
 
-      <Dialog
-        open={Boolean(credentialsFor)}
-        onOpenChange={(open) => !open && setCredentialsFor(null)}
-      >
-        {credentialsFor && (
-          <CandidateCredentialsEditor
-            candidateId={credentialsFor._id}
-            candidateName={`${credentialsFor.firstName} ${credentialsFor.lastName}`}
-            onClose={() => setCredentialsFor(null)}
-          />
-        )}
-      </Dialog>
-    </div>
+        <Dialog
+          open={Boolean(editing)}
+          onOpenChange={(open) => !open && setEditing(null)}
+        >
+          {editing && (
+            <CandidateDialog
+              mode="edit"
+              electionId={election._id}
+              electionSlug={election.slug}
+              positions={positions}
+              partylists={partylists}
+              initial={editing}
+              initialImageUrl={editing.imageUrl}
+              onClose={() => setEditing(null)}
+            />
+          )}
+        </Dialog>
+
+        <Dialog
+          open={Boolean(credentialsFor)}
+          onOpenChange={(open) => !open && setCredentialsFor(null)}
+        >
+          {credentialsFor && (
+            <CandidateCredentialsEditor
+              candidateId={credentialsFor._id}
+              candidateName={`${credentialsFor.firstName} ${credentialsFor.lastName}`}
+              onClose={() => setCredentialsFor(null)}
+            />
+          )}
+        </Dialog>
+
+        {gate.reasonDialog}
+      </div>
+    </ChangeReasonProvider>
   );
 }
 
@@ -356,6 +375,9 @@ function CandidateDialog({
   defaultPositionId?: Doc<'positions'>['_id'];
   onClose: () => void;
 }) {
+  // `live` here means voting has opened: position/partylist are frozen and
+  // every other edit is published.
+  const { live, requestReason } = useChangeReasonGate();
   const create = useMutation(api.candidates.create);
   const update = useMutation(api.candidates.update);
   const setImage = useMutation(api.candidates.setImage);
@@ -408,6 +430,8 @@ function CandidateDialog({
   }
 
   async function onSubmit(values: FormValues) {
+    const reason = await requestReason();
+    if (reason === null) return;
     try {
       const imageStorageId = await photo.commit();
       if (mode === 'create') {
@@ -425,9 +449,14 @@ function CandidateDialog({
           ...values,
           positionId: values.positionId as Doc<'positions'>['_id'],
           partylistId: values.partylistId as Doc<'partylists'>['_id'],
+          reason,
         });
         if (imageStorageId !== undefined) {
-          await setImage({ id: initial._id, storageId: imageStorageId });
+          await setImage({
+            id: initial._id,
+            storageId: imageStorageId,
+            reason,
+          });
         }
         toast.success('Candidate updated');
       }
@@ -559,6 +588,7 @@ function CandidateDialog({
                   <Select
                     onValueChange={field.onChange}
                     value={positions.find((p) => p._id === field.value)?.name}
+                    disabled={live}
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
@@ -573,6 +603,11 @@ function CandidateDialog({
                       ))}
                     </SelectContent>
                   </Select>
+                  {live && (
+                    <FormDescription>
+                      Locked — votes were cast against this position.
+                    </FormDescription>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -588,6 +623,7 @@ function CandidateDialog({
                     value={
                       partylists.find((p) => p._id === field.value)?.acronym
                     }
+                    disabled={live}
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
@@ -602,6 +638,11 @@ function CandidateDialog({
                       ))}
                     </SelectContent>
                   </Select>
+                  {live && (
+                    <FormDescription>
+                      Locked — votes were cast against this partylist.
+                    </FormDescription>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
