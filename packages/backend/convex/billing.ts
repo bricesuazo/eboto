@@ -51,15 +51,18 @@ export const myElectionQuota = query({
   handler: async (ctx) => {
     const userId = await requireUser(ctx);
 
+    // Must match the quota rule enforced in `elections.create`: the free slot
+    // is spent on creation, so soft-deleted elections still count against it.
+    // If this drifts, the dashboard offers a "create free election" button
+    // that the create mutation then refuses.
     const owned = await ctx.db
       .query('commissioners')
       .withIndex('by_user', (q) => q.eq('userId', userId))
       .filter((q) => q.eq(q.field('deletedAt'), undefined))
       .collect();
-    let activeOwnedCount = 0;
+    let electionsUsed = 0;
     for (const c of owned) {
-      const election = await ctx.db.get(c.electionId);
-      if (election && !election.deletedAt) activeOwnedCount++;
+      if (await ctx.db.get(c.electionId)) electionsUsed++;
     }
 
     const credits = await ctx.db
@@ -74,10 +77,10 @@ export const myElectionQuota = query({
       .collect();
 
     return {
-      ownedCount: activeOwnedCount,
+      ownedCount: electionsUsed,
       plusCredits: credits.length,
-      canCreateFree: activeOwnedCount === 0,
-      canCreateWithCredit: activeOwnedCount > 0 && credits.length > 0,
+      canCreateFree: electionsUsed === 0,
+      canCreateWithCredit: electionsUsed > 0 && credits.length > 0,
     };
   },
 });

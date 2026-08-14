@@ -581,7 +581,6 @@ function SettingsPage() {
         <CardContent>
           <DeleteElectionButton
             electionId={election._id}
-            locked={live}
             onDeleted={() => navigate({ to: '/dashboard' })}
           />
         </CardContent>
@@ -594,11 +593,9 @@ function SettingsPage() {
 
 function DeleteElectionButton({
   electionId,
-  locked,
   onDeleted,
 }: {
   electionId: Id<'elections'>;
-  locked: boolean;
   onDeleted: () => void;
 }) {
   const softDelete = useMutation(api.elections.softDelete);
@@ -606,7 +603,7 @@ function DeleteElectionButton({
   return (
     <Button
       variant="destructive"
-      disabled={pending || locked}
+      disabled={pending}
       onClick={async () => {
         if (!confirm('Delete this election? This cannot be undone.')) return;
         setPending(true);
