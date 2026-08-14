@@ -1,7 +1,12 @@
 import { ConvexError, v } from 'convex/values';
 
 import { mutation, query } from './_generated/server';
-import { requireCommissioner, requireElectionEditable } from './_helpers/auth';
+import {
+  loadElectionForEdit,
+  requireChangeReason,
+  requireCommissioner,
+} from './_helpers/auth';
+import { diffFields, recordElectionChange } from './_helpers/changeLog';
 import { voterFieldType } from './schema';
 
 export const list = query({
@@ -21,10 +26,14 @@ export const create = mutation({
     electionId: v.id('elections'),
     name: v.string(),
     type: voterFieldType,
+    reason: v.optional(v.string()),
   },
-  handler: async (ctx, { electionId, name, type }) => {
-    await requireCommissioner(ctx, electionId);
-    await requireElectionEditable(ctx, electionId);
+  handler: async (ctx, { electionId, name, type, reason: rawReason }) => {
+    const { userId } = await requireCommissioner(ctx, electionId);
+    // Voter fields are roster metadata (year level, department, …). They
+    // never appear on a ballot, so they stay editable once voting opens.
+    const { votingStarted } = await loadElectionForEdit(ctx, electionId);
+    const reason = requireChangeReason(rawReason, votingStarted);
     const trimmed = name.trim();
     if (!trimmed) {
       throw new ConvexError({
@@ -49,11 +58,25 @@ export const create = mutation({
         message: 'A field with that name already exists.',
       });
     }
-    return await ctx.db.insert('voterFields', {
+    const fieldId = await ctx.db.insert('voterFields', {
       electionId,
       name: trimmed,
       type,
     });
+
+    if (votingStarted) {
+      await recordElectionChange(ctx, {
+        electionId,
+        actorUserId: userId,
+        entity: 'voterField',
+        entityId: fieldId,
+        entityLabel: trimmed,
+        action: 'create',
+        reason,
+      });
+    }
+
+    return fieldId;
   },
 });
 
@@ -62,14 +85,15 @@ export const update = mutation({
     id: v.id('voterFields'),
     name: v.string(),
     type: voterFieldType,
+    reason: v.optional(v.string()),
   },
-  handler: async (ctx, { id, name, type }) => {
+  handler: async (ctx, { id, name, type, reason: rawReason }) => {
     const field = await ctx.db.get(id);
     if (!field || field.deletedAt) {
       throw new ConvexError({ code: 'not_found', message: 'Field not found' });
     }
-    await requireCommissioner(ctx, field.electionId);
-    await requireElectionEditable(ctx, field.electionId);
+    const { userId } = await requireCommissioner(ctx, field.electionId);
+    const { votingStarted } = await loadElectionForEdit(ctx, field.electionId);
     const trimmed = name.trim();
     if (!trimmed) {
       throw new ConvexError({
@@ -98,20 +122,56 @@ export const update = mutation({
         message: 'A field with that name already exists.',
       });
     }
-    await ctx.db.patch(id, { name: trimmed, type });
+    const patch = { name: trimmed, type };
+    const changes = votingStarted
+      ? diffFields(field, patch, [
+          { key: 'name', label: 'Field name' },
+          { key: 'type', label: 'Field type' },
+        ])
+      : [];
+    const reason = requireChangeReason(rawReason, changes.length > 0);
+
+    await ctx.db.patch(id, patch);
+
+    if (changes.length > 0) {
+      await recordElectionChange(ctx, {
+        electionId: field.electionId,
+        actorUserId: userId,
+        entity: 'voterField',
+        entityId: id,
+        entityLabel: field.name,
+        action: 'update',
+        changes,
+        reason,
+      });
+    }
   },
 });
 
 export const softDelete = mutation({
-  args: { id: v.id('voterFields') },
-  handler: async (ctx, { id }) => {
+  args: { id: v.id('voterFields'), reason: v.optional(v.string()) },
+  handler: async (ctx, { id, reason: rawReason }) => {
     const field = await ctx.db.get(id);
     if (!field || field.deletedAt) {
       throw new ConvexError({ code: 'not_found', message: 'Field not found' });
     }
-    await requireCommissioner(ctx, field.electionId);
-    await requireElectionEditable(ctx, field.electionId);
+    const { userId } = await requireCommissioner(ctx, field.electionId);
+    const { votingStarted } = await loadElectionForEdit(ctx, field.electionId);
+    const reason = requireChangeReason(rawReason, votingStarted);
+
     await ctx.db.patch(id, { deletedAt: Date.now() });
+
+    if (votingStarted) {
+      await recordElectionChange(ctx, {
+        electionId: field.electionId,
+        actorUserId: userId,
+        entity: 'voterField',
+        entityId: id,
+        entityLabel: field.name,
+        action: 'delete',
+        reason,
+      });
+    }
   },
 });
 

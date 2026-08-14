@@ -4,8 +4,17 @@ import { ConvexError, v } from 'convex/values';
 import type { Id } from './_generated/dataModel';
 import { internalQuery, query } from './_generated/server';
 import type { MutationCtx } from './_generated/server';
-import { requireCommissioner, requireElectionEditable } from './_helpers/auth';
+import {
+  loadElectionForEdit,
+  requireChangeReason,
+  requireCommissioner,
+} from './_helpers/auth';
 import { getElectionTier } from './_helpers/billing';
+import {
+  diffFields,
+  formatFieldBlob,
+  recordElectionChange,
+} from './_helpers/changeLog';
 import {
   internalMutation,
   mutation,
@@ -163,15 +172,29 @@ export const listForExport = query({
   },
 });
 
+/*
+ * Roster changes stay possible after voting opens — a voter left off the
+ * list has to be able to vote — and they are the entries most worth
+ * publishing. But a voter's email is not the commissioner's to publish, so
+ * every log row written here is redacted for the public view: `changeLogs.ts`
+ * drops `entityLabel` and `changes` on `voter` rows and shows only the action
+ * and `count`. That's the "12 voters added" signal without the roster.
+ */
+
 export const create = mutation({
   args: {
     electionId: v.id('elections'),
     email: v.string(),
     fields: v.optional(v.record(v.string(), v.string())),
+    reason: v.optional(v.string()),
   },
-  handler: async (ctx, { electionId, email, fields }) => {
-    await requireCommissioner(ctx, electionId);
-    const election = await requireElectionEditable(ctx, electionId);
+  handler: async (ctx, { electionId, email, fields, reason: rawReason }) => {
+    const { userId } = await requireCommissioner(ctx, electionId);
+    const { election, votingStarted } = await loadElectionForEdit(
+      ctx,
+      electionId,
+    );
+    const reason = requireChangeReason(rawReason, votingStarted);
     const normalized = email.trim().toLowerCase();
     if (!normalized) {
       throw new ConvexError({
@@ -207,11 +230,26 @@ export const create = mutation({
     }
     const hasFields =
       fields && Object.keys(fields).length > 0 ? fields : undefined;
-    return await ctx.db.insert('voters', {
+    const voterId = await ctx.db.insert('voters', {
       electionId,
       email: normalized,
       ...(hasFields ? { field: hasFields } : {}),
     });
+
+    if (votingStarted) {
+      await recordElectionChange(ctx, {
+        electionId,
+        actorUserId: userId,
+        entity: 'voter',
+        entityId: voterId,
+        entityLabel: normalized,
+        action: 'create',
+        count: 1,
+        reason,
+      });
+    }
+
+    return voterId;
   },
 });
 
@@ -224,10 +262,15 @@ export const bulkCreate = mutation({
         fields: v.optional(v.record(v.string(), v.string())),
       }),
     ),
+    reason: v.optional(v.string()),
   },
-  handler: async (ctx, { electionId, voters }) => {
-    await requireCommissioner(ctx, electionId);
-    const election = await requireElectionEditable(ctx, electionId);
+  handler: async (ctx, { electionId, voters, reason: rawReason }) => {
+    const { userId } = await requireCommissioner(ctx, electionId);
+    const { election, votingStarted } = await loadElectionForEdit(
+      ctx,
+      electionId,
+    );
+    const reason = requireChangeReason(rawReason, votingStarted);
 
     const cap = await getVoterCap(ctx, electionId);
     let remaining =
@@ -281,6 +324,20 @@ export const bulkCreate = mutation({
       remaining--;
     }
 
+    // One entry for the whole import, not one per voter — the import is the
+    // event a reader cares about.
+    if (votingStarted && added > 0) {
+      await recordElectionChange(ctx, {
+        electionId,
+        actorUserId: userId,
+        entity: 'voter',
+        entityLabel: `${added} ${added === 1 ? 'voter' : 'voters'} imported`,
+        action: 'create',
+        count: added,
+        reason,
+      });
+    }
+
     return {
       added,
       skipped,
@@ -295,14 +352,15 @@ export const update = mutation({
     id: v.id('voters'),
     email: v.string(),
     fields: v.optional(v.record(v.string(), v.string())),
+    reason: v.optional(v.string()),
   },
-  handler: async (ctx, { id, email, fields }) => {
+  handler: async (ctx, { id, email, fields, reason: rawReason }) => {
     const voter = await ctx.db.get(id);
     if (!voter || voter.deletedAt) {
       throw new ConvexError({ code: 'not_found', message: 'Voter not found' });
     }
-    await requireCommissioner(ctx, voter.electionId);
-    await requireElectionEditable(ctx, voter.electionId);
+    const { userId } = await requireCommissioner(ctx, voter.electionId);
+    const { votingStarted } = await loadElectionForEdit(ctx, voter.electionId);
     const normalized = email.trim().toLowerCase();
     if (!normalized) {
       throw new ConvexError({
@@ -327,23 +385,79 @@ export const update = mutation({
     }
     const hasFields =
       fields && Object.keys(fields).length > 0 ? fields : undefined;
-    await ctx.db.patch(id, {
-      email: normalized,
-      field: hasFields,
-    });
+    const patch = { email: normalized, field: hasFields };
+    const changes = votingStarted
+      ? diffFields(voter, patch, [
+          { key: 'email', label: 'Email' },
+          { key: 'field', label: 'Voter details', format: formatFieldBlob },
+        ])
+      : [];
+    const reason = requireChangeReason(rawReason, changes.length > 0);
+
+    await ctx.db.patch(id, patch);
+
+    if (changes.length > 0) {
+      await recordElectionChange(ctx, {
+        electionId: voter.electionId,
+        actorUserId: userId,
+        entity: 'voter',
+        entityId: id,
+        entityLabel: voter.email,
+        action: 'update',
+        changes,
+        count: 1,
+        reason,
+      });
+    }
   },
 });
 
 export const softDelete = mutation({
-  args: { id: v.id('voters') },
-  handler: async (ctx, { id }) => {
+  args: { id: v.id('voters'), reason: v.optional(v.string()) },
+  handler: async (ctx, { id, reason: rawReason }) => {
     const voter = await ctx.db.get(id);
     if (!voter || voter.deletedAt) {
       throw new ConvexError({ code: 'not_found', message: 'Voter not found' });
     }
-    await requireCommissioner(ctx, voter.electionId);
-    await requireElectionEditable(ctx, voter.electionId);
+    const { userId } = await requireCommissioner(ctx, voter.electionId);
+    const { votingStarted } = await loadElectionForEdit(ctx, voter.electionId);
+
+    // Removing a voter who has already voted would strip a cast ballot from
+    // the roster it belongs to. `votedAt` is the canonical marker, but check
+    // the votes table too so a row predating that field can't slip through.
+    const hasVoted =
+      Boolean(voter.votedAt) ||
+      Boolean(
+        await ctx.db
+          .query('votes')
+          .withIndex('by_election_voter', (q) =>
+            q.eq('electionId', voter.electionId).eq('voterId', id),
+          )
+          .first(),
+      );
+    if (hasVoted) {
+      throw new ConvexError({
+        code: 'forbidden',
+        message:
+          'This voter has already cast a ballot and can no longer be removed.',
+      });
+    }
+
+    const reason = requireChangeReason(rawReason, votingStarted);
     await ctx.db.patch(id, { deletedAt: Date.now() });
+
+    if (votingStarted) {
+      await recordElectionChange(ctx, {
+        electionId: voter.electionId,
+        actorUserId: userId,
+        entity: 'voter',
+        entityId: id,
+        entityLabel: voter.email,
+        action: 'delete',
+        count: 1,
+        reason,
+      });
+    }
   },
 });
 

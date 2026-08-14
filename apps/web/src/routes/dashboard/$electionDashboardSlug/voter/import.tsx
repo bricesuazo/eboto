@@ -16,6 +16,7 @@ import { api } from '@eboto/backend/api';
 import type { Doc } from '@eboto/backend/data-model';
 import type { VoterFieldType } from '@eboto/backend/schema';
 
+import { useChangeReason } from '~/components/change-reason';
 import { DashboardPending } from '~/components/dashboard-pending';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
@@ -111,6 +112,9 @@ function VoterImportPage() {
   );
 
   const bulk = useMutation(api.voters.bulkCreate);
+  const { live, requestReason, reasonDialog } = useChangeReason(
+    electionDashboardSlug,
+  );
 
   const [parsing, setParsing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -231,6 +235,8 @@ function VoterImportPage() {
 
   const handleSave = async () => {
     if (!parsed) return;
+    const reason = await requestReason();
+    if (reason === null) return;
     setSubmitting(true);
     try {
       const payload = parsed.rows.map((r) => {
@@ -248,6 +254,7 @@ function VoterImportPage() {
       const result = await bulk({
         electionId: election._id,
         voters: payload,
+        reason,
       });
       const parts = [
         `${result.added} added`,
@@ -306,6 +313,14 @@ function VoterImportPage() {
           Download sample
         </Button>
       </div>
+
+      {live && (
+        <div className="rounded-lg border border-amber-300/60 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200">
+          Voting has already opened. You can still import voters who were left
+          off the list, but the import is recorded on this election&apos;s
+          public change log as a count — no email addresses are published.
+        </div>
+      )}
 
       {!parsed ? (
         <Card>
@@ -424,6 +439,8 @@ function VoterImportPage() {
           </CardContent>
         </Card>
       )}
+
+      {reasonDialog}
     </div>
   );
 }

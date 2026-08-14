@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   MessagesSquare,
   Replace,
+  ScrollText,
   Settings,
   Users,
   UserSearch,
@@ -29,5 +30,6 @@ export const DASHBOARD_NAV_ITEMS: readonly DashboardNavItem[] = [
   { to: 'candidate', label: 'Candidates', icon: UserSearch },
   { to: 'voter', label: 'Voters', icon: Users },
   { to: 'messages', label: 'Messages', icon: MessagesSquare },
+  { to: 'changes', label: 'Change log', icon: ScrollText },
   { to: 'settings', label: 'Settings', icon: Settings },
 ];

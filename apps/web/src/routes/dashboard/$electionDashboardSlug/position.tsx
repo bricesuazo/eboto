@@ -12,6 +12,11 @@ import { toast } from 'sonner';
 import { api } from '@eboto/backend/api';
 import type { Doc } from '@eboto/backend/data-model';
 
+import {
+  ChangeReasonProvider,
+  useChangeReason,
+  useChangeReasonGate,
+} from '~/components/change-reason';
 import { DashboardPending } from '~/components/dashboard-pending';
 import { Button } from '~/components/ui/button';
 import {
@@ -81,93 +86,102 @@ function PositionPage() {
 
   const [editing, setEditing] = useState<Doc<'positions'> | null>(null);
   const [creating, setCreating] = useState(false);
+  const gate = useChangeReason(electionDashboardSlug);
+  const { live } = gate;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Positions</h1>
-          <p className="text-sm text-muted-foreground">
-            Roles voters will choose candidates for. Order is preserved on the
-            ballot.
-          </p>
-        </div>
-        <Dialog open={creating} onOpenChange={setCreating}>
-          <DialogTrigger
-            render={
-              <Button>
-                <Plus className="size-4" />
-                New position
-              </Button>
-            }
-          />
-          <PositionDialog
-            mode="create"
-            electionId={election._id}
-            onClose={() => setCreating(false)}
-          />
-        </Dialog>
-      </div>
-
-      {positions.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center text-sm text-muted-foreground">
-            No positions yet.
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="space-y-3">
-          {positions.map((pos, i) => (
-            <Card key={pos._id}>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3 text-lg">
-                  <span className="font-mono text-xs text-muted-foreground">
-                    #{i + 1}
-                  </span>
-                  {pos.name}
-                </CardTitle>
-                {pos.description && (
-                  <CardDescription className="line-clamp-2">
-                    {pos.description}
-                  </CardDescription>
-                )}
-              </CardHeader>
-              <CardContent className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">
-                  {pos.min === 0 && pos.max === 1
-                    ? 'Pick 1 candidate'
-                    : `Pick ${pos.min}–${pos.max} candidates`}
-                </span>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setEditing(pos)}
-                  >
-                    <Pencil className="mr-1.5 size-3.5" /> Edit
+    <ChangeReasonProvider value={gate}>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">Positions</h1>
+            <p className="text-sm text-muted-foreground">
+              {live
+                ? 'Voting has opened. Names and descriptions can still be corrected — each edit is published to the change log — but positions can no longer be added, removed, or have their pick limits changed.'
+                : 'Roles voters will choose candidates for. Order is preserved on the ballot.'}
+            </p>
+          </div>
+          {!live && (
+            <Dialog open={creating} onOpenChange={setCreating}>
+              <DialogTrigger
+                render={
+                  <Button>
+                    <Plus className="size-4" />
+                    New position
                   </Button>
-                  <DeletePositionButton id={pos._id} />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                }
+              />
+              <PositionDialog
+                mode="create"
+                electionId={election._id}
+                onClose={() => setCreating(false)}
+              />
+            </Dialog>
+          )}
         </div>
-      )}
 
-      <Dialog
-        open={Boolean(editing)}
-        onOpenChange={(open) => !open && setEditing(null)}
-      >
-        {editing && (
-          <PositionDialog
-            mode="edit"
-            initial={editing}
-            electionId={election._id}
-            onClose={() => setEditing(null)}
-          />
+        {positions.length === 0 ? (
+          <Card>
+            <CardContent className="py-12 text-center text-sm text-muted-foreground">
+              No positions yet.
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {positions.map((pos, i) => (
+              <Card key={pos._id}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3 text-lg">
+                    <span className="font-mono text-xs text-muted-foreground">
+                      #{i + 1}
+                    </span>
+                    {pos.name}
+                  </CardTitle>
+                  {pos.description && (
+                    <CardDescription className="line-clamp-2">
+                      {pos.description}
+                    </CardDescription>
+                  )}
+                </CardHeader>
+                <CardContent className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    {pos.min === 0 && pos.max === 1
+                      ? 'Pick 1 candidate'
+                      : `Pick ${pos.min}–${pos.max} candidates`}
+                  </span>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setEditing(pos)}
+                    >
+                      <Pencil className="mr-1.5 size-3.5" /> Edit
+                    </Button>
+                    {!live && <DeletePositionButton id={pos._id} />}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         )}
-      </Dialog>
-    </div>
+
+        <Dialog
+          open={Boolean(editing)}
+          onOpenChange={(open) => !open && setEditing(null)}
+        >
+          {editing && (
+            <PositionDialog
+              mode="edit"
+              initial={editing}
+              electionId={election._id}
+              onClose={() => setEditing(null)}
+            />
+          )}
+        </Dialog>
+
+        {gate.reasonDialog}
+      </div>
+    </ChangeReasonProvider>
   );
 }
 
@@ -182,6 +196,7 @@ function PositionDialog({
   initial?: Doc<'positions'>;
   onClose: () => void;
 }) {
+  const { live, requestReason } = useChangeReasonGate();
   const create = useMutation(api.positions.create);
   const update = useMutation(api.positions.update);
 
@@ -196,12 +211,14 @@ function PositionDialog({
   });
 
   async function onSubmit(values: FormValues) {
+    const reason = await requestReason();
+    if (reason === null) return;
     try {
       if (mode === 'create') {
         await create({ electionId, ...values });
         toast.success('Position created');
       } else if (initial) {
-        await update({ id: initial._id, ...values });
+        await update({ id: initial._id, ...values, reason });
         toast.success('Position updated');
       }
       onClose();
@@ -258,9 +275,13 @@ function PositionDialog({
                 <FormItem>
                   <FormLabel>Min picks</FormLabel>
                   <FormControl>
-                    <Input type="number" min={0} {...field} />
+                    <Input type="number" min={0} {...field} disabled={live} />
                   </FormControl>
-                  <FormDescription>0 allows abstain</FormDescription>
+                  <FormDescription>
+                    {live
+                      ? 'Locked — ballots already cast were checked against this limit.'
+                      : '0 allows abstain'}
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -272,8 +293,14 @@ function PositionDialog({
                 <FormItem>
                   <FormLabel>Max picks</FormLabel>
                   <FormControl>
-                    <Input type="number" min={1} {...field} />
+                    <Input type="number" min={1} {...field} disabled={live} />
                   </FormControl>
+                  {live && (
+                    <FormDescription>
+                      Locked — ballots already cast were checked against this
+                      limit.
+                    </FormDescription>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}

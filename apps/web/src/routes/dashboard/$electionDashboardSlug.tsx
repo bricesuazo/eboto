@@ -7,7 +7,7 @@ import {
   Outlet,
 } from '@tanstack/react-router';
 import dayjs from 'dayjs';
-import { ExternalLink, Lock, Sparkles } from 'lucide-react';
+import { ExternalLink, Megaphone, Sparkles } from 'lucide-react';
 
 import { api } from '@eboto/backend/api';
 import { votingStartAt } from '@eboto/backend/election-timing';
@@ -67,11 +67,11 @@ function DashboardElectionShell() {
   );
   if (!election) throw notFound();
 
-  // Voting opens at this absolute moment; once we're past it, all
-  // ballot-affecting mutations are rejected server-side. We mirror that
-  // server policy in the UI so commissioners see the lock before they try.
-  const lockAt = votingStartAt(election);
-  const locked = Date.now() >= lockAt;
+  // Voting opens at this absolute moment. Past it the election isn't frozen —
+  // safe corrections are still allowed — but every one of them is published to
+  // the change log. We mirror that server policy here so commissioners know
+  // what they're agreeing to before they start typing.
+  const live = Date.now() >= votingStartAt(election);
 
   return (
     <div className="container mx-auto grid max-w-6xl gap-6 px-6 py-8 md:grid-cols-[200px_1fr]">
@@ -80,13 +80,13 @@ function DashboardElectionShell() {
           <p className="text-xs text-muted-foreground uppercase">Managing</p>
           <div className="flex items-center gap-2">
             <h2 className="truncate font-semibold">{election.name}</h2>
-            {locked && (
+            {live && (
               <Badge
                 variant="outline"
                 className="mt-1 gap-1 border-amber-300/60 bg-amber-50 text-amber-800 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300"
               >
-                <Lock className="size-3" />
-                Locked
+                <Megaphone className="size-3" />
+                Live
               </Badge>
             )}
           </div>
@@ -128,32 +128,37 @@ function DashboardElectionShell() {
       </aside>
 
       <main className="min-w-0">
-        {locked && <LockedBanner election={election} />}
+        {live && (
+          <LiveBanner
+            election={election}
+            electionDashboardSlug={electionDashboardSlug}
+          />
+        )}
         <Outlet />
       </main>
     </div>
   );
 }
 
-function LockedBanner({
+function LiveBanner({
   election,
+  electionDashboardSlug,
 }: {
   election: {
     startDate: number;
     votingHourStart: number;
-    votingHourEnd: number;
-    endDate: number;
   };
+  electionDashboardSlug: string;
 }) {
   return (
     <div className="mb-6 flex items-start gap-3 rounded-lg border border-amber-300/60 bg-amber-50 p-4 dark:border-amber-500/40 dark:bg-amber-500/10">
-      <Lock
+      <Megaphone
         className="mt-0.5 size-5 shrink-0 text-amber-600 dark:text-amber-400"
         aria-hidden
       />
       <div className="space-y-1">
         <p className="font-medium text-amber-900 dark:text-amber-100">
-          Editing is locked — voting has started
+          Voting is live — changes are now public
         </p>
         <p className="text-sm leading-relaxed text-amber-900/80 dark:text-amber-200/80">
           Voting opened on{' '}
@@ -164,19 +169,20 @@ function LockedBanner({
           <span className="font-medium">
             {parseHourTo12HourFormat(election.votingHourStart)}
           </span>
-          . To preserve ballot integrity, changes to candidates, positions,
-          partylists, voters, voter fields, and election settings (including the
-          logo, timing, and publicity) are now permanently locked — even after
-          voting concludes on{' '}
-          <span className="font-medium">
-            {dayjs(election.endDate).format('MMMM D, YYYY')}
-          </span>{' '}
-          at{' '}
-          <span className="font-medium">
-            {parseHourTo12HourFormat(election.votingHourEnd)}
-          </span>
-          . You can still view this election, message voters, and download
-          results.
+          . You can still fix mistakes — names, descriptions, photos, the
+          closing time, and the voter list — but each edit is recorded on this
+          election&apos;s{' '}
+          <Link
+            to="/dashboard/$electionDashboardSlug/changes"
+            params={{ electionDashboardSlug }}
+            className="font-medium underline underline-offset-2"
+          >
+            change log
+          </Link>
+          , visible to everyone who can see the election, with your name and the
+          reason you give. Changes that would invalidate ballots already cast —
+          adding or removing candidates and positions, moving a candidate, or
+          changing pick limits — stay blocked.
         </p>
       </div>
     </div>

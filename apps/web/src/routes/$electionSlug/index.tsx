@@ -18,6 +18,7 @@ import {
   Info,
   MessagesSquare,
   QrCode,
+  ScrollText,
   User as UserIcon,
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
@@ -25,6 +26,8 @@ import { toast } from 'sonner';
 
 import { api } from '@eboto/backend/api';
 
+import type { ChangeLogEntry } from '~/components/change-log';
+import { ChangeLogList } from '~/components/change-log';
 import { PagePending } from '~/components/page-pending';
 import { SubmittedBallot } from '~/components/submitted-ballot';
 import { Button } from '~/components/ui/button';
@@ -71,6 +74,12 @@ function ElectionPage() {
     ...convexQuery(api.votes.myBallot, { slug: electionSlug }),
     enabled: hasVoted,
   });
+  // Post-start edits to this election, redacted server-side. Absent until a
+  // commissioner actually changes something, so the section below stays
+  // hidden for the overwhelming majority of elections.
+  const { data: changeLog } = useQuery(
+    convexQuery(api.changeLogs.listForElection, { slug: electionSlug }),
+  );
   const ongoing = isElectionOngoing(election);
   const ended = isElectionEnded(election);
   const status: Status = ended ? 'concluded' : ongoing ? 'live' : 'upcoming';
@@ -225,6 +234,11 @@ function ElectionPage() {
               variant="outline"
             />
           )}
+          {/* Only surfaced once something has actually been changed — most
+              elections never edit anything after voting opens. */}
+          {changeLog && changeLog.length > 0 && (
+            <ChangeLogButton entries={changeLog} electionName={election.name} />
+          )}
           <ShareQrButton election={election} />
         </div>
 
@@ -265,6 +279,50 @@ function ElectionPage() {
         )}
       </section>
     </main>
+  );
+}
+
+/**
+ * Opens the election's public change log. Rendered only when there is at
+ * least one entry, so a spotless election doesn't carry a button implying
+ * something happened.
+ */
+function ChangeLogButton({
+  entries,
+  electionName,
+}: {
+  entries: ChangeLogEntry[];
+  electionName: string;
+}) {
+  return (
+    <Dialog>
+      <DialogTrigger
+        render={
+          <Button size="lg" variant="outline">
+            <ScrollText className="size-4" />
+            Changes
+            <span className="ml-0.5 rounded-full bg-muted px-1.5 py-0.5 text-xs font-medium tabular-nums">
+              {entries.length}
+            </span>
+          </Button>
+        }
+      />
+      <DialogContent className="sm:max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Changes since voting opened</DialogTitle>
+          <DialogDescription>
+            Commissioners can correct mistakes to {electionName} after voting
+            begins, but not quietly. Each change below was recorded
+            automatically as it was made and cannot be edited or removed.
+            Changes that would invalidate ballots already cast — adding or
+            removing candidates and positions — are not permitted at all.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="max-h-[60vh] overflow-y-auto">
+          <ChangeLogList entries={entries} />
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

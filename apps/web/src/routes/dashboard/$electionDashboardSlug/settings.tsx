@@ -14,6 +14,7 @@ import { api } from '@eboto/backend/api';
 import type { Id } from '@eboto/backend/data-model';
 import { votingEndAt, votingStartAt } from '@eboto/backend/election-timing';
 
+import { useChangeReason } from '~/components/change-reason';
 import { DashboardPending } from '~/components/dashboard-pending';
 import { DatePicker } from '~/components/date-picker';
 import { ImageUpload } from '~/components/image-upload';
@@ -96,6 +97,9 @@ function SettingsPage() {
   const update = useMutation(api.elections.update);
   const setLogo = useMutation(api.elections.setLogo);
   const logo = useImageUpload(election.logoUrl);
+  const { live, requestReason, reasonDialog } = useChangeReason(
+    electionDashboardSlug,
+  );
 
   const form = useForm<FormValues>({
     resolver: zodResolver(electionSettingsSchema),
@@ -117,6 +121,10 @@ function SettingsPage() {
   });
 
   async function onSubmit(values: FormValues) {
+    // Ask for the published reason before touching anything, so a cancel
+    // leaves the election exactly as it was.
+    const reason = await requestReason();
+    if (reason === null) return;
     try {
       const logoStorageId = await logo.commit();
       const startDate = new Date(values.startDate).getTime();
@@ -126,9 +134,10 @@ function SettingsPage() {
         ...values,
         startDate,
         endDate,
+        reason,
       });
       if (logoStorageId !== undefined) {
-        await setLogo({ id: electionId, storageId: logoStorageId });
+        await setLogo({ id: electionId, storageId: logoStorageId, reason });
       }
       // Re-emit lifecycle on any timing change. Inngest's `cancelOn`
       // (matched on `electionId`) aborts any prior in-flight runs, so the
@@ -259,13 +268,22 @@ function SettingsPage() {
                   <FormItem>
                     <FormLabel>URL slug</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input {...field} disabled={live} />
                     </FormControl>
                     <FormDescription>
-                      Voters will visit{' '}
-                      <span className="font-mono">
-                        eboto.app/{field.value || 'your-slug'}
-                      </span>
+                      {live ? (
+                        <>
+                          Locked — voters were emailed links built from this
+                          slug, and changing it would break them.
+                        </>
+                      ) : (
+                        <>
+                          Voters will visit{' '}
+                          <span className="font-mono">
+                            eboto.app/{field.value || 'your-slug'}
+                          </span>
+                        </>
+                      )}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -314,8 +332,14 @@ function SettingsPage() {
                               }
                             }}
                             disabledBefore={earliestStart}
+                            disabled={live}
                           />
                         </FormControl>
+                        {live && (
+                          <FormDescription>
+                            Locked — voting already opened.
+                          </FormDescription>
+                        )}
                         <FormMessage />
                       </FormItem>
                     );
@@ -355,6 +379,7 @@ function SettingsPage() {
                       <Select
                         onValueChange={(v) => field.onChange(Number(v))}
                         value={String(field.value)}
+                        disabled={live}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -371,6 +396,11 @@ function SettingsPage() {
                           ))}
                         </SelectContent>
                       </Select>
+                      {live && (
+                        <FormDescription>
+                          Locked — voting already opened.
+                        </FormDescription>
+                      )}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -419,9 +449,13 @@ function SettingsPage() {
                         field.onChange(value ?? DEFAULT_TIMEZONE)
                       }
                       itemToStringLabel={formatTimezoneLabel}
+                      disabled={live}
                     >
                       <FormControl>
-                        <ComboboxInput placeholder="Search timezone…" />
+                        <ComboboxInput
+                          placeholder="Search timezone…"
+                          disabled={live}
+                        />
                       </FormControl>
                       <ComboboxContent>
                         <ComboboxEmpty>No timezone found.</ComboboxEmpty>
@@ -435,7 +469,9 @@ function SettingsPage() {
                       </ComboboxContent>
                     </Combobox>
                     <FormDescription>
-                      Voting dates and hours are interpreted in this timezone.
+                      {live
+                        ? 'Locked — shifting the timezone would move the window ballots were cast in.'
+                        : 'Voting dates and hours are interpreted in this timezone.'}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -520,7 +556,11 @@ function SettingsPage() {
               />
 
               <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? 'Saving…' : 'Save changes'}
+                {form.formState.isSubmitting
+                  ? 'Saving…'
+                  : live
+                    ? 'Save & publish change'
+                    : 'Save changes'}
               </Button>
             </form>
           </Form>
@@ -533,26 +573,32 @@ function SettingsPage() {
         <CardHeader>
           <CardTitle className="text-destructive">Danger zone</CardTitle>
           <CardDescription>
-            Deleting an election hides it from voters and the dashboard. Votes
-            are preserved server-side but become inaccessible.
+            {live
+              ? 'An election that has already opened for voting can no longer be deleted — that would take every ballot cast so far with it.'
+              : 'Deleting an election hides it from voters and the dashboard. Votes are preserved server-side but become inaccessible.'}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <DeleteElectionButton
             electionId={election._id}
+            locked={live}
             onDeleted={() => navigate({ to: '/dashboard' })}
           />
         </CardContent>
       </Card>
+
+      {reasonDialog}
     </div>
   );
 }
 
 function DeleteElectionButton({
   electionId,
+  locked,
   onDeleted,
 }: {
   electionId: Id<'elections'>;
+  locked: boolean;
   onDeleted: () => void;
 }) {
   const softDelete = useMutation(api.elections.softDelete);
@@ -560,7 +606,7 @@ function DeleteElectionButton({
   return (
     <Button
       variant="destructive"
-      disabled={pending}
+      disabled={pending || locked}
       onClick={async () => {
         if (!confirm('Delete this election? This cannot be undone.')) return;
         setPending(true);

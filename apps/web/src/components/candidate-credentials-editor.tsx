@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { api } from '@eboto/backend/api';
 import type { Id } from '@eboto/backend/data-model';
 
+import { useChangeReasonGate } from '~/components/change-reason';
 import { Button } from '~/components/ui/button';
 import {
   DialogContent,
@@ -44,6 +45,9 @@ export function CandidateCredentialsEditor({
   candidateName: string;
   onClose: () => void;
 }) {
+  // Credentials stay editable after voting opens; the gate collects the
+  // reason that gets published alongside the diff.
+  const { requestReason } = useChangeReasonGate();
   const { data, isLoading } = useQuery(
     convexQuery(api.candidates.getCredentials, { candidateId }),
   );
@@ -77,8 +81,10 @@ export function CandidateCredentialsEditor({
   });
 
   async function onSubmit(values: FormValues) {
+    const reason = await requestReason();
+    if (reason === null) return;
     try {
-      await update({ candidateId, ...values });
+      await update({ candidateId, ...values, reason });
       toast.success('Credentials saved');
       onClose();
     } catch (err) {
