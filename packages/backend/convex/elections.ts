@@ -6,7 +6,6 @@ import { internalMutation, mutation, query } from './_generated/server';
 import {
   getElectionOrThrow,
   loadElectionForEdit,
-  requireBeforeVotingOpens,
   requireChangeReason,
   requireCommissioner,
   requireUser,
@@ -398,21 +397,26 @@ export const create = mutation({
       });
     }
 
-    // One free election per account. Any further election must consume a
-    // Plus credit — looked up here so the failure mode is a clean
-    // "buy Plus" message instead of silently inserting and double-billing.
-    const ownedElections = await ctx.db
+    // One free election per account, and the slot is spent on creation rather
+    // than held for as long as the election lives. Soft-deleted elections
+    // therefore still count — otherwise a free account could delete and
+    // recreate indefinitely and never need Plus. Any election beyond the first
+    // must consume a Plus credit, looked up here so the failure mode is a
+    // clean "buy Plus" message instead of silently inserting and
+    // double-billing.
+    const commissionerRows = await ctx.db
       .query('commissioners')
       .withIndex('by_user', (q) => q.eq('userId', userId))
       .filter((q) => q.eq(q.field('deletedAt'), undefined))
       .collect();
-    const activeOwned: typeof ownedElections = [];
-    for (const c of ownedElections) {
-      const election = await ctx.db.get(c.electionId);
-      if (election && !election.deletedAt) activeOwned.push(c);
+    let electionsUsed = 0;
+    for (const c of commissionerRows) {
+      // The `get` guards against a dangling commissioner row; elections are
+      // only ever soft-deleted, so this is normally always truthy.
+      if (await ctx.db.get(c.electionId)) electionsUsed++;
     }
     let plusCreditToConsume: Id<'electionsPlus'> | null = null;
-    if (activeOwned.length >= 1) {
+    if (electionsUsed >= 1) {
       const credit = await ctx.db
         .query('electionsPlus')
         .withIndex('by_user', (q) => q.eq('userId', userId))
@@ -427,7 +431,7 @@ export const create = mutation({
         throw new ConvexError({
           code: 'forbidden',
           message:
-            'You already have an election. Purchase Plus to add another.',
+            "This account's free election has already been used — deleting an election doesn't restore it. Purchase Plus to create another.",
         });
       }
       plusCreditToConsume = credit._id;
@@ -713,10 +717,6 @@ export const softDelete = mutation({
   handler: async (ctx, { id }) => {
     const election = await getElectionOrThrow(ctx, id);
     await requireCommissioner(ctx, election._id);
-    // Hard lock — and note this guard did not previously exist, so a live
-    // election could be deleted outright. Nothing that gets logged can undo
-    // making the whole election (and every ballot in it) inaccessible.
-    await requireBeforeVotingOpens(ctx, id, 'deleting the election');
     await ctx.db.patch(id, { deletedAt: Date.now() });
   },
 });
