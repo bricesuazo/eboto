@@ -338,16 +338,16 @@ export const upsertProductWithVariants = internalMutation({
 /* ------------------------------------------------------------------ */
 
 interface LemonCheckoutResponse {
-  data?: { attributes?: { url?: string } };
-  errors?: { detail?: string }[];
+  data?: { attributes?: { url?: string; }; };
+  errors?: { detail?: string; }[];
 }
 
 interface LemonVariantsResponse {
   data?: {
     id: string;
-    attributes?: { name?: string; price?: number; status?: string };
+    attributes?: { name?: string; price?: number; status?: string; };
   }[];
-  errors?: { detail?: string }[];
+  errors?: { detail?: string; }[];
 }
 
 async function createLemonCheckout(opts: {
@@ -357,7 +357,7 @@ async function createLemonCheckout(opts: {
   email?: string | null;
   userName?: string | null;
   customData: Record<string, string>;
-  variantQuantities?: { variantId: string; quantity: number }[];
+  variantQuantities?: { variantId: string; quantity: number; }[];
   redirectUrl?: string;
   receiptLinkUrl?: string;
 }): Promise<string> {
@@ -384,9 +384,9 @@ async function createLemonCheckout(opts: {
           product_options:
             opts.redirectUrl || opts.receiptLinkUrl
               ? {
-                  redirect_url: opts.redirectUrl,
-                  receipt_link_url: opts.receiptLinkUrl,
-                }
+                redirect_url: opts.redirectUrl,
+                receipt_link_url: opts.receiptLinkUrl,
+              }
               : undefined,
         },
         relationships: {
@@ -426,6 +426,15 @@ function readEnv(key: string): string {
   return v;
 }
 
+function requirePaymentsEnabled() {
+  if (process.env.PAYMENTS_ENABLED !== 'true') {
+    throw new ConvexError({
+      code: 'internal',
+      message: 'Payments are disabled in this deployment',
+    });
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /* Checkout creation                                                    */
 /* ------------------------------------------------------------------ */
@@ -440,7 +449,8 @@ export const createPlusCheckout = action({
   args: {
     quantity: v.optional(v.number()),
   },
-  handler: async (ctx, { quantity }): Promise<{ url: string }> => {
+  handler: async (ctx, { quantity }): Promise<{ url: string; }> => {
+    requirePaymentsEnabled();
     const qty = Math.max(1, Math.min(quantity ?? 1, 100));
     const userId = await ctx.runQuery(internal.billing.requireUserId, {});
     const user = await ctx.runQuery(internal.billing.getUserById, { userId });
@@ -488,7 +498,8 @@ export const createBoostCheckout = action({
     electionId: v.id('elections'),
     price: boostPriceValidator,
   },
-  handler: async (ctx, { electionId, price }): Promise<{ url: string }> => {
+  handler: async (ctx, { electionId, price }): Promise<{ url: string; }> => {
+    requirePaymentsEnabled();
     const { userId, election } = await ctx.runQuery(
       internal.billing.requireBoostContext,
       { electionId },
@@ -549,7 +560,8 @@ export const createBoostCheckout = action({
  */
 export const syncBoostVariants = internalAction({
   args: {},
-  handler: async (ctx): Promise<{ synced: number }> => {
+  handler: async (ctx): Promise<{ synced: number; }> => {
+    requirePaymentsEnabled();
     const apiKey = readEnv('LEMONSQUEEZY_API_KEY');
     const lemonProductId = Number(readEnv('LEMONSQUEEZY_BOOST_PRODUCT_ID'));
     if (!Number.isFinite(lemonProductId)) {
@@ -614,8 +626,8 @@ interface LemonWebhookPayload {
   meta?: {
     event_name?: string;
     custom_data?:
-      | { type: 'boost'; election_id: string; user_id: string }
-      | { type: 'plus'; user_id: string };
+    | { type: 'boost'; election_id: string; user_id: string; }
+    | { type: 'plus'; user_id: string; };
   };
   data?: {
     attributes?: {
@@ -639,6 +651,11 @@ interface LemonWebhookPayload {
  * tier-derived voter cap).
  */
 export const lemonWebhook = httpAction(async (ctx, request) => {
+  if (process.env.PAYMENTS_ENABLED !== 'true') {
+    return new Response('Payments are disabled in this deployment', {
+      status: 404,
+    });
+  }
   const secret = process.env.LEMONSQUEEZY_WEBHOOK_SECRET;
   if (!secret) {
     return new Response('Server misconfigured: missing webhook secret', {
@@ -696,7 +713,7 @@ export const lemonWebhook = httpAction(async (ctx, request) => {
       // enough — the next retry will succeed. The console.error gives the
       // operator the order id + variant + price they need to fix the map.
       const orderRef =
-        (payload.data as { id?: string | number } | undefined)?.id ?? 'unknown';
+        (payload.data as { id?: string | number; } | undefined)?.id ?? 'unknown';
       console.error(
         '[lemonWebhook] Unresolvable Boost order — refusing to upgrade.',
         {
