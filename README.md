@@ -29,6 +29,60 @@ pnpm dev
 Copy `.env.example` to `.env` for the rest of the optional env vars.
 Configure Convex Auth secrets (`AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `JWT_PRIVATE_KEY`, `JWKS`) in the Convex dashboard.
 
+## Running with Docker
+
+The web container uses an existing Convex deployment. Payment credentials are
+optional for starting the app and are only needed when a user opens checkout.
+
+```bash
+docker compose up --build                         # production image
+docker compose --profile dev up --build web-dev   # Vite hot reload
+```
+
+The development Compose profile starts a local Convex backend and defaults the
+browser URL to `http://localhost:3210`:
+
+```bash
+docker compose --profile dev up --build
+```
+
+For self-hosting, copy `.env.selfhost.example` to `.env` and adjust the public
+hostnames or ports as needed. The Lemon Squeezy and email variables may remain
+blank when running the free/local workflow.
+
+### Open the Convex dashboard
+
+Start the self-hosted services, then generate an admin key for the dashboard:
+
+```bash
+docker compose up -d
+docker compose exec backend ./generate_admin_key.sh
+```
+
+Copy the generated key and open [http://localhost:6791](http://localhost:6791).
+When prompted, enter the admin key to access the self-hosted Convex dashboard.
+Keep this key private. If you changed `DASHBOARD_PORT` in `.env`, use that port
+instead of `6791`.
+
+The production image requires Convex generated files. For a cloud deployment,
+pass `CONVEX_DEPLOY_KEY` during the build. For self-hosted Convex, run codegen
+before building with a supported Convex project setup and keep the generated
+`packages/backend/convex/_generated` files in the Docker build context.
+
+Set `VITE_CONVEX_URL` only when connecting the frontend to a different Convex
+deployment. Add the Lemon Squeezy variables from `.env.example` only when
+testing paid checkout or the webhook.
+
+Set `PAYMENTS_ENABLED=true` only when Lemon Squeezy is configured. Keep it
+`false` to detach the payment gateway from a self-hosted deployment.
+
+To print the URLs published by the local Convex backend:
+
+```bash
+pnpm convex:local-url
+pnpm convex:local-site-url
+```
+
 ## Layout
 
 ```

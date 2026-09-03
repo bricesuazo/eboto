@@ -1,0 +1,86 @@
+name: eboto-self-host
+services:
+  backend:
+    # Change this to :${REV} if you want to pin to a specific version
+    image: ghcr.io/get-convex/convex-backend:latest
+    stop_grace_period: 10s
+    stop_signal: SIGINT
+    ports:
+      - "${PORT:-3210}:3210"
+      - "${SITE_PROXY_PORT:-3211}:3211"
+    volumes:
+      - data:/convex/data
+    environment:
+      - V8_ACTION_USER_TIMEOUT_SECS
+      - NODE_ACTION_USER_TIMEOUT_SECS
+      - APPLICATION_MAX_CONCURRENT_MUTATIONS=${APPLICATION_MAX_CONCURRENT_MUTATIONS:-16}
+      - APPLICATION_MAX_CONCURRENT_NODE_ACTIONS=${APPLICATION_MAX_CONCURRENT_NODE_ACTIONS:-16}
+      - APPLICATION_MAX_CONCURRENT_QUERIES=${APPLICATION_MAX_CONCURRENT_QUERIES:-16}
+      - APPLICATION_MAX_CONCURRENT_V8_ACTIONS=${APPLICATION_MAX_CONCURRENT_V8_ACTIONS:-16}
+      - CONVEX_CLOUD_ORIGIN=${CONVEX_CLOUD_ORIGIN:-http://127.0.0.1:${PORT:-3210}}
+      - CONVEX_RELEASE_VERSION_DEV
+      - CONVEX_SITE_ORIGIN=${CONVEX_SITE_ORIGIN:-http://127.0.0.1:${SITE_PROXY_PORT:-3211}}
+      - CONVEX_SITE_URL=${CONVEX_SITE_URL:-http://localhost:${SITE_PROXY_PORT:-3210}}
+      - DATABASE_URL
+      - JWT_PRIVATE_KEY
+      - JWKS
+      - AUTH_GOOGLE_ID
+      - AUTH_GOOGLE_SECRET
+      - PAYMENTS_ENABLED
+      - AWS_REGION
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - SES_FROM_EMAIL
+      - SES_CONFIGURATION_SET
+      - BLAST_TRIGGER_SECRET
+
+    healthcheck:
+      test: curl -f http://localhost:3210/version
+      interval: 5s
+      start_period: 10s
+  dashboard:
+    # Change this to :${REV} if you want to pin to a specific version
+    image: ghcr.io/get-convex/convex-dashboard:latest
+    stop_grace_period: 10s
+    stop_signal: SIGINT
+    ports:
+      - "${DASHBOARD_PORT:-6791}:6791"
+    environment:
+      - NEXT_PUBLIC_DEPLOYMENT_URL=${NEXT_PUBLIC_DEPLOYMENT_URL:-http://127.0.0.1:${PORT:-3210}}
+      - NEXT_PUBLIC_LOAD_MONACO_INTERNALLY
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  web-dev:
+    depends_on:
+      backend:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      SKIP_ENV_VALIDATION: "true"
+      # The browser reaches the published backend through localhost.
+      VITE_CONVEX_URL: ${VITE_CONVEX_URL:-http://localhost:3210}
+      CONVEX_URL: ${CONVEX_URL:-http://backend:3210}
+      CONVEX_SITE_URL: ${CONVEX_SITE_URL:-http://localhost:3211}
+      SITE_URL: ${SITE_URL:-http://localhost:3000}
+      VITE_RECAPTCHA_SITE_KEY: ${VITE_RECAPTCHA_SITE_KEY:-}
+      RECAPTCHA_SECRET_KEY: ${RECAPTCHA_SECRET_KEY:-}
+      DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL:-}
+      LEMONSQUEEZY_API_KEY: ${LEMONSQUEEZY_API_KEY:-}
+      PAYMENTS_ENABLED: ${PAYMENTS_ENABLED:-false}
+    volumes:
+      - .:/app
+      - web_dev_node_modules:/app/node_modules
+      - web_dev_web_node_modules:/app/apps/web/node_modules
+    ports:
+      - "3000:3000"
+
+volumes:
+  data:
+  web_dev_node_modules:
+  web_dev_web_node_modules:
